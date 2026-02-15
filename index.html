@@ -95,7 +95,7 @@
             background: #1E2128;
         }
 
-        /* Плашка Pingcoins */
+        /* Плашка Pingcoins (без смайлика) */
         .coins-badge {
             position: absolute;
             top: 45px;
@@ -104,17 +104,10 @@
             border: 1px solid #2A2F3A;
             border-radius: 20px;
             padding: 6px 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
             font-size: 13px;
             color: #FFFFFF;
             z-index: 5;
-        }
-
-        .coins-icon {
-            color: #F6465D;
-            font-size: 16px;
+            white-space: nowrap;
         }
 
         .section-title {
@@ -212,7 +205,7 @@
             margin-top: 8px;
         }
 
-        /* Нижняя навигация */
+        /* Нижняя навигация (везде одинаковая) */
         .bottom-nav {
             display: flex;
             justify-content: space-around;
@@ -523,6 +516,7 @@
             color: #9BA1B0;
             cursor: pointer;
             border-radius: 6px;
+            transition: all 0.2s;
         }
 
         .shop-tab.active {
@@ -540,18 +534,12 @@
             border-radius: 12px;
             margin: 16px 0;
             padding: 40px 20px;
+            text-align: center;
         }
 
         .development-text {
             font-size: 14px;
             color: #9BA1B0;
-        }
-
-        .development-text span {
-            color: #F6465D;
-            font-size: 32px;
-            display: block;
-            margin-bottom: 12px;
         }
 
         /* Экраны режимов */
@@ -681,10 +669,9 @@
                 </div>
             </div>
 
-            <!-- Плашка Pingcoins (только в магазине, показывается через JS) -->
+            <!-- Плашка Pingcoins (только в магазине) -->
             <div id="coinsBadge" class="coins-badge" style="display: none;">
-                <span class="coins-icon">🪙</span>
-                <span>Pingcoins: 0</span>
+                Pingcoins: 0
             </div>
 
             <!-- СТАРТОВЫЙ ЭКРАН -->
@@ -748,7 +735,6 @@
 
                 <div class="development-card">
                     <div class="development-text">
-                        <span>🛠️</span>
                         В разработке
                     </div>
                 </div>
@@ -846,8 +832,21 @@
                     <p style="color:#9BA1B0; font-size:13px;">Люди мы будем</p>
                 </div>
 
-                <!-- Кнопка назад, которая возвращает на предыдущий экран -->
-                <button class="secondary-btn" onclick="goBackFromSettings()" style="margin-top: auto;">Назад</button>
+                <!-- Нижняя навигация как везде -->
+                <div class="bottom-nav" style="margin-top: auto;">
+                    <div class="nav-item" onclick="showMainScreen()">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-label">Главная</span>
+                    </div>
+                    <div class="nav-item" onclick="showShopScreen()">
+                        <span class="nav-icon">🛒</span>
+                        <span class="nav-label">Магазин</span>
+                    </div>
+                    <div class="nav-item active" onclick="showSettingsScreen()">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-label">Настройки</span>
+                    </div>
+                </div>
             </div>
 
             <!-- ЭКРАНЫ РЕЖИМОВ -->
@@ -954,8 +953,6 @@
     </div>
 
     <script>
-        let previousScreen = 'mainScreen'; // Запоминаем, откуда пришли в настройки
-
         function generateFriends() {
             const friendsList = document.getElementById('friendsList');
             if (!friendsList) return;
@@ -1002,28 +999,9 @@
         }
 
         function showSettingsScreen() {
-            // Запоминаем текущий экран перед переходом в настройки
-            const screens = ['mainScreen', 'profileScreen', 'shopScreen', 'faceitScreen', 'premierScreen', 'publicScreen'];
-            for (let id of screens) {
-                if (document.getElementById(id).style.display === 'flex') {
-                    previousScreen = id;
-                    break;
-                }
-            }
             hideAllScreens();
             document.getElementById('settingsScreen').style.display = 'flex';
             hideCoinsBadge();
-        }
-
-        function goBackFromSettings() {
-            hideAllScreens();
-            document.getElementById(previousScreen).style.display = 'flex';
-            // Если возвращаемся в магазин, показываем плашку с монетами
-            if (previousScreen === 'shopScreen') {
-                showCoinsBadge();
-            } else {
-                hideCoinsBadge();
-            }
         }
 
         function showShopScreen() {
@@ -1067,7 +1045,7 @@
 
         function showCoinsBadge() {
             const badge = document.getElementById('coinsBadge');
-            if (badge) badge.style.display = 'flex';
+            if (badge) badge.style.display = 'block';
         }
 
         function hideCoinsBadge() {
