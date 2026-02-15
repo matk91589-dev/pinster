@@ -53,6 +53,7 @@
             padding: 4px 0 12px 0;
             border-bottom: 1px solid #1E2128;
             margin-bottom: 12px;
+            position: relative;
         }
 
         .logo {
@@ -86,11 +87,34 @@
             color: #FFFFFF;
             opacity: 0.8;
             background: transparent;
+            z-index: 10;
         }
 
         .icon-settings:hover {
             opacity: 1;
             background: #1E2128;
+        }
+
+        /* Плашка Pingcoins */
+        .coins-badge {
+            position: absolute;
+            top: 45px;
+            right: 0;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 20px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #FFFFFF;
+            z-index: 5;
+        }
+
+        .coins-icon {
+            color: #F6465D;
+            font-size: 16px;
         }
 
         .section-title {
@@ -311,6 +335,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            flex-wrap: wrap;
         }
 
         .profile-name {
@@ -339,6 +364,18 @@
         .profile-name-label {
             font-size: 12px;
             color: #9BA1B0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .profile-status {
+            color: #4CAF50;
+            font-size: 11px;
+            background: rgba(76, 175, 80, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(76, 175, 80, 0.3);
         }
 
         .stats-grid {
@@ -379,7 +416,7 @@
             margin: 8px 0;
         }
 
-        /* Ваши друзья - больше места */
+        /* Ваши друзья */
         .friends-section {
             width: 100%;
             flex: 1;
@@ -470,7 +507,7 @@
         .shop-tabs {
             display: flex;
             gap: 12px;
-            margin: 16px 0;
+            margin: 45px 0 16px 0;
             padding: 4px;
             background: #1A1D24;
             border-radius: 8px;
@@ -644,6 +681,12 @@
                 </div>
             </div>
 
+            <!-- Плашка Pingcoins (только в магазине, показывается через JS) -->
+            <div id="coinsBadge" class="coins-badge" style="display: none;">
+                <span class="coins-icon">🪙</span>
+                <span>Pingcoins: 0</span>
+            </div>
+
             <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
                 <div class="start-title">
@@ -733,7 +776,10 @@
                 <div class="profile-header">
                     <div class="profile-avatar">👤</div>
                     <div class="profile-info">
-                        <div class="profile-name-label">ваш никнейм</div>
+                        <div class="profile-name-label">
+                            ваш никнейм
+                            <span class="profile-status">новичок</span>
+                        </div>
                         <div class="profile-name-row">
                             <span class="profile-name">Pingster</span>
                             <span class="profile-rating">
@@ -800,7 +846,8 @@
                     <p style="color:#9BA1B0; font-size:13px;">Люди мы будем</p>
                 </div>
 
-                <button class="secondary-btn" onclick="showMainScreen()" style="margin-top: auto;">На главную</button>
+                <!-- Кнопка назад, которая возвращает на предыдущий экран -->
+                <button class="secondary-btn" onclick="goBackFromSettings()" style="margin-top: auto;">Назад</button>
             </div>
 
             <!-- ЭКРАНЫ РЕЖИМОВ -->
@@ -907,6 +954,8 @@
     </div>
 
     <script>
+        let previousScreen = 'mainScreen'; // Запоминаем, откуда пришли в настройки
+
         function generateFriends() {
             const friendsList = document.getElementById('friendsList');
             if (!friendsList) return;
@@ -937,41 +986,68 @@
         function startApp() {
             hideAllScreens();
             document.getElementById('mainScreen').style.display = 'flex';
+            hideCoinsBadge();
         }
 
         function showMainScreen() {
             hideAllScreens();
             document.getElementById('mainScreen').style.display = 'flex';
+            hideCoinsBadge();
         }
 
         function showProfileScreen() {
             hideAllScreens();
             document.getElementById('profileScreen').style.display = 'flex';
+            hideCoinsBadge();
         }
 
         function showSettingsScreen() {
+            // Запоминаем текущий экран перед переходом в настройки
+            const screens = ['mainScreen', 'profileScreen', 'shopScreen', 'faceitScreen', 'premierScreen', 'publicScreen'];
+            for (let id of screens) {
+                if (document.getElementById(id).style.display === 'flex') {
+                    previousScreen = id;
+                    break;
+                }
+            }
             hideAllScreens();
             document.getElementById('settingsScreen').style.display = 'flex';
+            hideCoinsBadge();
+        }
+
+        function goBackFromSettings() {
+            hideAllScreens();
+            document.getElementById(previousScreen).style.display = 'flex';
+            // Если возвращаемся в магазин, показываем плашку с монетами
+            if (previousScreen === 'shopScreen') {
+                showCoinsBadge();
+            } else {
+                hideCoinsBadge();
+            }
         }
 
         function showShopScreen() {
             hideAllScreens();
             document.getElementById('shopScreen').style.display = 'flex';
+            showCoinsBadge();
         }
 
         function showFaceitScreen() {
             hideAllScreens();
             document.getElementById('faceitScreen').style.display = 'flex';
+            hideCoinsBadge();
         }
 
         function showPremierScreen() {
             hideAllScreens();
             document.getElementById('premierScreen').style.display = 'flex';
+            hideCoinsBadge();
         }
 
         function showPublicScreen() {
             hideAllScreens();
             document.getElementById('publicScreen').style.display = 'flex';
+            hideCoinsBadge();
         }
 
         function startSearch(mode) {
@@ -989,6 +1065,16 @@
             }
         }
 
+        function showCoinsBadge() {
+            const badge = document.getElementById('coinsBadge');
+            if (badge) badge.style.display = 'flex';
+        }
+
+        function hideCoinsBadge() {
+            const badge = document.getElementById('coinsBadge');
+            if (badge) badge.style.display = 'none';
+        }
+
         function hideAllScreens() {
             const screens = ['startScreen', 'mainScreen', 'profileScreen', 'settingsScreen', 'shopScreen',
                            'faceitScreen', 'premierScreen', 'publicScreen'];
@@ -1002,6 +1088,7 @@
             generateFriends();
             hideAllScreens();
             document.getElementById('startScreen').style.display = 'flex';
+            hideCoinsBadge();
         };
     </script>
 </body>
