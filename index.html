@@ -83,7 +83,7 @@
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
         }
 
-        /* Заголовок поиска тиммейтов на стартовом экране - белый без свечения */
+        /* Заголовок поиска тиммейтов на стартовом экране */
         .start-search-title {
             font-size: 28px;
             font-weight: 900;
@@ -93,6 +93,24 @@
             color: white;
             letter-spacing: 1px;
             text-transform: uppercase;
+        }
+
+        /* Стили для изображения */
+        .start-image-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0 15px 0;
+            flex-shrink: 0;
+        }
+
+        .start-image {
+            width: 200px;
+            height: auto;
+            border-radius: 20px;
+            border: 2px solid #2A3140;
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
         }
 
         /* Плашка с описанием */
@@ -632,8 +650,8 @@
 
         /* Стартовая кнопка */
         .start-btn {
-            width: 220px;
-            height: 65px;
+            width: 100%;
+            padding: 18px;
             background: linear-gradient(135deg, #FF3B3B, #D32F2F);
             border: none;
             border-radius: 40px;
@@ -642,21 +660,23 @@
             color: white;
             text-transform: uppercase;
             cursor: pointer;
-            box-shadow: 0 12px 0 #8B1E1E;
-            margin-bottom: 15px;
+            box-shadow: 0 8px 0 #8B1E1E;
+            margin: 10px 0 8px 0;
             flex-shrink: 0;
             transition: all 0.1s;
         }
 
         .start-btn:active {
-            transform: translateY(6px);
-            box-shadow: 0 6px 0 #8B1E1E;
+            transform: translateY(5px);
+            box-shadow: 0 3px 0 #8B1E1E;
         }
 
         .online-counter {
             color: #4A5568;
-            font-size: 12px;
+            font-size: 13px;
+            text-align: center;
             flex-shrink: 0;
+            margin-bottom: 5px;
         }
 
         .home-bar {
@@ -680,6 +700,12 @@
                     <span class="ping">Ping</span><span class="ster">ster</span>
                 </div>
                 <div class="start-search-title">Поиск Тиммейтов</div>
+                
+                <!-- КАРТИНКА -->
+                <div class="start-image-container">
+                    <img src="https://i.ibb.co/qj0KfbR/2026-02-15-212108128.jpg" alt="Pingster Logo" class="start-image">
+                </div>
+
                 <div class="description-card">
                     <div class="subtitle">
                         Здесь вы можете найти<br>подходящий для вас режим
@@ -691,7 +717,7 @@
                 </div>
             </div>
 
-            <!-- ГЛАВНЫЙ ЭКРАН (БЕЗ "Поиск Тиммейтов") -->
+            <!-- ГЛАВНЫЙ ЭКРАН -->
             <div id="mainScreen" class="screen screen-main">
                 <div class="main-pingster">
                     <span class="ping">Ping</span><span class="ster">ster</span>
