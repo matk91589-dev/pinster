@@ -65,7 +65,7 @@
             position: relative;
         }
 
-        /* Хедер в стиле Telegram */
+        /* Хедер */
         .header {
             display: flex;
             align-items: center;
@@ -92,7 +92,7 @@
             opacity: 0.9;
         }
 
-        /* Пустые белые иконки в стиле Telegram */
+        /* Пустые белые иконки */
         .icon-settings {
             width: 36px;
             height: 36px;
@@ -113,11 +113,6 @@
             background: #1E2128;
         }
 
-        .icon-settings:active {
-            transform: scale(0.95);
-        }
-
-        /* Заголовки */
         .section-title {
             font-size: 20px;
             font-weight: 600;
@@ -206,32 +201,6 @@
             margin: 8px 0;
         }
 
-        .primary-btn:hover {
-            background: #FF5A6E;
-        }
-
-        .primary-btn:active {
-            transform: translateY(2px);
-        }
-
-        .secondary-btn {
-            width: 100%;
-            padding: 14px;
-            background: transparent;
-            border: 1px solid #2A2F3A;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #9BA1B0;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .secondary-btn:hover {
-            border-color: #F6465D;
-            color: #FFFFFF;
-        }
-
         .online-counter {
             color: #5D6472;
             font-size: 12px;
@@ -239,7 +208,7 @@
             margin-top: 8px;
         }
 
-        /* Пустые иконки навигации в стиле Telegram */
+        /* Нижняя навигация с пустыми иконками */
         .bottom-nav {
             display: flex;
             justify-content: space-around;
@@ -279,7 +248,6 @@
         .nav-label {
             font-size: 10px;
             font-weight: 500;
-            letter-spacing: 0.3px;
         }
 
         /* Кнопки режимов */
@@ -306,12 +274,6 @@
             text-align: left;
             position: relative;
             transition: all 0.2s;
-        }
-
-        .mode-btn:hover {
-            border-color: #F6465D;
-            background: #1E2128;
-            transform: translateY(-1px);
         }
 
         .mode-btn.faceit {
@@ -360,27 +322,29 @@
 
         .profile-info {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
-        .profile-name-label {
-            font-size: 12px;
-            color: #9BA1B0;
-            margin-bottom: 4px;
+        .profile-name-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .profile-name {
             font-size: 22px;
             font-weight: 600;
-            margin-bottom: 6px;
             color: #FFFFFF;
         }
 
         .profile-rating {
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             background: #1A1D24;
-            padding: 6px 14px;
+            padding: 4px 10px;
             border-radius: 20px;
             border: 1px solid #2A2F3A;
             font-size: 13px;
@@ -390,6 +354,11 @@
         .rating-star {
             color: #F6465D;
             font-size: 14px;
+        }
+
+        .profile-name-label {
+            font-size: 12px;
+            color: #9BA1B0;
         }
 
         .stats-grid {
@@ -430,12 +399,7 @@
             margin: 8px 0;
         }
 
-        .input-field:focus {
-            border-color: #F6465D;
-            outline: none;
-        }
-
-        /* Друзья */
+        /* Ваши друзья - видно 3 */
         .friends-section {
             width: 100%;
             flex: 1;
@@ -492,11 +456,6 @@
             border: 1px solid #2A2F3A;
             border-radius: 8px;
             margin-bottom: 8px;
-            transition: all 0.2s;
-        }
-
-        .friend-item:hover {
-            border-color: #F6465D;
         }
 
         .friend-avatar {
@@ -547,7 +506,6 @@
             color: #9BA1B0;
             cursor: pointer;
             border-radius: 6px;
-            transition: all 0.2s;
         }
 
         .shop-tab.active {
@@ -565,7 +523,6 @@
             border-radius: 12px;
             margin: 20px 0;
             padding: 40px 20px;
-            text-align: center;
         }
 
         .development-text {
@@ -600,12 +557,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .back-btn:hover {
-            border-color: #F6465D;
-            color: #FFFFFF;
         }
 
         .mode-title {
@@ -643,8 +594,6 @@
             border-radius: 6px;
             cursor: pointer;
             font-size: 13px;
-            font-weight: 500;
-            transition: all 0.2s;
             color: #9BA1B0;
         }
 
@@ -674,7 +623,6 @@
             font-size: 13px;
             resize: none;
             height: 80px;
-            font-family: inherit;
         }
 
         .home-bar {
@@ -685,7 +633,6 @@
             margin: 8px auto 0;
         }
 
-        /* Экраны */
         .screen {
             flex: 1;
             display: flex;
@@ -726,7 +673,7 @@
                 </div>
                 
                 <div class="start-image-container">
-                    <img src="https://i.ibb.co/qj0KfbR/2026-02-15-212108128.jpg" alt="Pingster Logo" class="start-image">
+                    <img src=".....jpg" alt="Pingster Logo" class="start-image">
                 </div>
 
                 <div class="info-card">
@@ -809,10 +756,12 @@
                     <div class="profile-avatar">👤</div>
                     <div class="profile-info">
                         <div class="profile-name-label">ваш никнейм</div>
-                        <div class="profile-name">Pingster</div>
-                        <div class="profile-rating">
-                            <span>рейтинг 5</span>
-                            <span class="rating-star">⭐</span>
+                        <div class="profile-name-row">
+                            <span class="profile-name">Pingster</span>
+                            <span class="profile-rating">
+                                <span>5</span>
+                                <span class="rating-star">⭐</span>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -836,7 +785,7 @@
 
                 <div class="friends-section">
                     <div class="friends-header">
-                        <span class="friends-title">Друзья</span>
+                        <span class="friends-title">Ваши друзья</span>
                         <span class="friends-count">10 друзей</span>
                     </div>
                     
