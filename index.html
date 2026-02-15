@@ -73,7 +73,7 @@
             opacity: 0.9;
         }
 
-        /* Пустые белые иконки */
+        /* SVG иконки */
         .icon-settings {
             width: 36px;
             height: 36px;
@@ -81,21 +81,24 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
             cursor: pointer;
             transition: all 0.2s;
-            color: #FFFFFF;
-            opacity: 0.8;
             background: transparent;
-            z-index: 10;
         }
 
         .icon-settings:hover {
-            opacity: 1;
             background: #1E2128;
         }
 
-        /* Плашка Pingcoins (без смайлика) */
+        .icon-settings svg {
+            width: 22px;
+            height: 22px;
+            stroke: #FFFFFF;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* Плашка Pingcoins */
         .coins-badge {
             position: absolute;
             top: 45px;
@@ -205,7 +208,7 @@
             margin-top: 8px;
         }
 
-        /* Нижняя навигация (везде одинаковая) */
+        /* Нижняя навигация с SVG */
         .bottom-nav {
             display: flex;
             justify-content: space-around;
@@ -225,7 +228,6 @@
             opacity: 0.6;
             padding: 6px 12px;
             transition: all 0.2s;
-            color: #FFFFFF;
         }
 
         .nav-item:hover {
@@ -234,17 +236,24 @@
 
         .nav-item.active {
             opacity: 1;
-            color: #F6465D;
         }
 
-        .nav-icon {
-            font-size: 22px;
-            font-weight: 300;
+        .nav-item.active svg {
+            stroke: #F6465D;
+        }
+
+        .nav-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: #FFFFFF;
+            stroke-width: 2;
+            fill: none;
         }
 
         .nav-label {
             font-size: 10px;
             font-weight: 500;
+            color: #FFFFFF;
         }
 
         /* Кнопки режимов */
@@ -665,11 +674,14 @@
                     <span class="ping">Ping</span><span class="ster">ster</span>
                 </div>
                 <div class="icon-settings" onclick="showSettingsScreen()">
-                    ⚙️
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/>
+                    </svg>
                 </div>
             </div>
 
-            <!-- Плашка Pingcoins (только в магазине) -->
+            <!-- Плашка Pingcoins -->
             <div id="coinsBadge" class="coins-badge" style="display: none;">
                 Pingcoins: 0
             </div>
@@ -709,15 +721,30 @@
 
                 <div class="bottom-nav">
                     <div class="nav-item active" onclick="showMainScreen()">
-                        <span class="nav-icon">🏠</span>
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                        </span>
                         <span class="nav-label">Главная</span>
                     </div>
                     <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon">🛒</span>
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M6 6h15l-1.5 9h-12z"/>
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="18" cy="21" r="1"/>
+                            </svg>
+                        </span>
                         <span class="nav-label">Магазин</span>
                     </div>
                     <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon">👤</span>
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4"/>
+                                <path d="M4 21c2-4 14-4 16 0"/>
+                            </svg>
+                        </span>
                         <span class="nav-label">Профиль</span>
                     </div>
                 </div>
@@ -741,15 +768,30 @@
 
                 <div class="bottom-nav">
                     <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon">🏠</span>
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                        </span>
                         <span class="nav-label">Главная</span>
                     </div>
                     <div class="nav-item active" onclick="showShopScreen()">
-                        <span class="nav-icon">🛒</span>
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M6 6h15l-1.5 9h-12z"/>
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="18" cy="21" r="1"/>
+                            </svg>
+                        </span>
                         <span class="nav-label">Магазин</span>
                     </div>
                     <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon">👤</span>
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4"/>
+                                <path d="M4 21c2-4 14-4 16 0"/>
+                            </svg>
+                        </span>
                         <span class="nav-label">Профиль</span>
                     </div>
                 </div>
@@ -804,15 +846,30 @@
 
                 <div class="bottom-nav">
                     <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon">🏠</span>
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                        </span>
                         <span class="nav-label">Главная</span>
                     </div>
                     <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon">🛒</span>
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M6 6h15l-1.5 9h-12z"/>
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="18" cy="21" r="1"/>
+                            </svg>
+                        </span>
                         <span class="nav-label">Магазин</span>
                     </div>
                     <div class="nav-item active" onclick="showProfileScreen()">
-                        <span class="nav-icon">👤</span>
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4"/>
+                                <path d="M4 21c2-4 14-4 16 0"/>
+                            </svg>
+                        </span>
                         <span class="nav-label">Профиль</span>
                     </div>
                 </div>
@@ -832,18 +889,32 @@
                     <p style="color:#9BA1B0; font-size:13px;">Люди мы будем</p>
                 </div>
 
-                <!-- Нижняя навигация как везде -->
                 <div class="bottom-nav" style="margin-top: auto;">
                     <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon">🏠</span>
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                        </span>
                         <span class="nav-label">Главная</span>
                     </div>
                     <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon">🛒</span>
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M6 6h15l-1.5 9h-12z"/>
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="18" cy="21" r="1"/>
+                            </svg>
+                        </span>
                         <span class="nav-label">Магазин</span>
                     </div>
                     <div class="nav-item active" onclick="showSettingsScreen()">
-                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/>
+                            </svg>
+                        </span>
                         <span class="nav-label">Настройки</span>
                     </div>
                 </div>
