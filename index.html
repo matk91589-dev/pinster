@@ -12,32 +12,33 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #0B0E16;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0D0F15;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: #E5E7EB;
         }
 
         .phone-frame {
             width: 100%;
             max-width: 380px;
             height: 700px;
-            background: #0F1219;
+            background: #111317;
             border-radius: 40px;
-            padding: 12px 20px 8px 20px;
+            padding: 16px 20px 8px 20px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .speaker {
             width: 120px;
             height: 25px;
-            background: #1A1F2B;
+            background: #1E2128;
             border-radius: 20px;
             margin: 0 auto 8px;
             position: relative;
@@ -48,7 +49,7 @@
             position: absolute;
             width: 30px;
             height: 6px;
-            background: #2A3140;
+            background: #2A2F3A;
             border-radius: 10px;
             top: 9px;
             left: 45px;
@@ -64,162 +65,277 @@
             position: relative;
         }
 
-        /* Кнопка настроек в правом верхнем углу */
-        .settings-corner {
-            position: absolute;
-            top: 0;
-            right: 0;
-            z-index: 100;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            background: #1A1F2B;
-            border: 2px solid #2A3140;
-            border-radius: 12px;
+        /* Хедер в стиле Bybit */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0 12px 0;
+            border-bottom: 1px solid #1E2128;
+            margin-bottom: 16px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #FFFFFF;
+        }
+
+        .logo .ping {
+            color: #F6465D; /* Bybit красный */
+        }
+
+        .logo .ster {
+            color: #FFFFFF;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        .settings-icon {
+            width: 36px;
+            height: 36px;
+            background: #1E2128;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 20px;
+            cursor: pointer;
             transition: all 0.2s;
+            color: #9BA1B0;
+            border: 1px solid #2A2F3A;
         }
 
-        .settings-corner:hover {
-            background: #2A3140;
-            transform: scale(1.05);
+        .settings-icon:hover {
+            background: #2A2F3A;
+            color: #FFFFFF;
         }
 
-        .settings-corner:active {
+        .settings-icon:active {
             transform: scale(0.95);
         }
 
-        /* Логотип Pingster */
-        .main-pingster {
-            font-size: 36px;
-            font-weight: 800;
+        /* Заголовки в стиле Bybit */
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: #9BA1B0;
+            margin-bottom: 20px;
+        }
+
+        /* Стартовый экран */
+        .start-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .start-title {
+            font-size: 32px;
+            font-weight: 700;
             text-align: center;
-            margin-bottom: 5px;
-            flex-shrink: 0;
-            letter-spacing: 1px;
-            margin-top: 40px; /* Отступ для кнопки настроек */
+            margin-bottom: 24px;
+            color: #FFFFFF;
+            letter-spacing: -0.5px;
         }
 
-        .main-pingster .ping {
-            color: #FF3B3B;
-            text-shadow: 0 0 10px rgba(255, 59, 59, 0.3);
+        .start-title .ping {
+            color: #F6465D;
         }
 
-        .main-pingster .ster {
-            color: white;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-        }
-
-        /* Заголовок поиска тиммейтов на стартовом экране */
-        .start-search-title {
-            font-size: 28px;
-            font-weight: 900;
-            text-align: center;
-            margin-bottom: 15px;
-            flex-shrink: 0;
-            color: white;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        /* Стили для изображения */
         .start-image-container {
             width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 10px 0 15px 0;
-            flex-shrink: 0;
+            margin: 20px 0 30px 0;
         }
 
         .start-image {
-            width: 200px;
+            width: 180px;
             height: auto;
-            border-radius: 20px;
-            border: 2px solid #2A3140;
-            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
+            border-radius: 16px;
+            border: 1px solid #2A2F3A;
         }
 
-        /* Плашка с описанием */
-        .description-card {
-            background: #1A1F2B;
-            border: 2px solid #2A3140;
-            border-radius: 20px;
-            padding: 16px 12px;
-            margin-bottom: 20px;
-            flex-shrink: 0;
-            box-shadow: 0 8px 0 #0B0E16;
+        .info-card {
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            width: 100%;
         }
 
-        .subtitle {
-            font-size: 15px;
-            color: #8F9BB3;
+        .info-text {
+            font-size: 14px;
+            color: #9BA1B0;
             text-align: center;
             line-height: 1.5;
+        }
+
+        .info-text span {
+            color: #F6465D;
             font-weight: 500;
         }
 
-        .subtitle span {
-            color: #FF3B3B;
-            font-weight: 700;
-        }
-
-        /* Шапка с кнопкой назад и Pingster для экранов режимов */
-        .mode-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            padding: 0;
-            flex-shrink: 0;
-            position: relative;
-            height: 40px;
-            margin-top: 40px; /* Отступ для кнопки настроек */
-        }
-
-        .back-btn {
-            width: 40px;
-            height: 40px;
-            background: #1A1F2B;
-            border: 2px solid #2A3140;
-            border-radius: 12px;
+        .primary-btn {
+            width: 100%;
+            padding: 16px;
+            background: #F6465D;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
             color: white;
-            font-size: 24px;
+            text-transform: uppercase;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+            margin: 8px 0;
+        }
+
+        .primary-btn:hover {
+            background: #FF5A6E;
+        }
+
+        .primary-btn:active {
+            transform: translateY(2px);
+        }
+
+        .secondary-btn {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            border: 1px solid #2A2F3A;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #9BA1B0;
+            cursor: pointer;
             transition: all 0.2s;
         }
 
-        .back-btn:hover {
-            background: #2A3140;
+        .secondary-btn:hover {
+            border-color: #F6465D;
+            color: #FFFFFF;
         }
 
-        .back-btn:active {
-            transform: scale(0.95);
+        .online-counter {
+            color: #5D6472;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 8px;
         }
 
-        .mode-pingster {
-            font-size: 24px;
-            font-weight: 800;
+        /* Кнопки режимов */
+        .mode-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .mode-btn {
+            width: 100%;
+            padding: 18px;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 12px;
+            color: #E5E7EB;
+            font-size: 16px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            text-align: left;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .mode-btn:hover {
+            border-color: #F6465D;
+            background: #1E2128;
+            transform: translateY(-1px);
+        }
+
+        .mode-btn.faceit {
+            border-left: 4px solid #F6465D;
+        }
+
+        .mode-btn.premier {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .mode-btn.public {
+            border-left: 4px solid #2196F3;
+        }
+
+        .mode-btn::after {
+            content: '→';
             position: absolute;
-            right: 0;
-            top: 6px;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #5D6472;
         }
 
-        .mode-pingster .ping {
-            color: #FF3B3B;
+        /* Нижняя навигация */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0;
+            background: #1A1D24;
+            border-radius: 12px;
+            margin-top: 8px;
+            border: 1px solid #2A2F3A;
         }
 
-        .mode-pingster .ster {
-            color: white;
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            opacity: 0.6;
+            padding: 6px 12px;
+            transition: all 0.2s;
+            color: #9BA1B0;
         }
 
+        .nav-item:hover {
+            opacity: 1;
+            color: #F6465D;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+            color: #F6465D;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        /* Экраны */
         .screen {
             flex: 1;
             display: flex;
@@ -228,22 +344,7 @@
             min-height: 0;
         }
 
-        /* Стартовый экран */
-        .screen-start {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .screen-main, .screen-profile, .screen-settings, .screen-shop {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-            min-height: 0;
-        }
-
+        .screen-start, .screen-main, .screen-profile, .screen-settings, .screen-shop,
         .screen-faceit, .screen-premier, .screen-public {
             display: none;
             flex-direction: column;
@@ -252,478 +353,32 @@
             min-height: 0;
         }
 
-        /* Контейнер для кнопок режимов */
-        .mode-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 15px;
-            margin: 5px 0;
-        }
-
-        .mode-btn {
-            width: 100%;
-            padding: 20px;
-            background: #1A1F2B;
-            border: 2px solid #2A3140;
-            border-radius: 22px;
-            color: white;
-            font-size: 22px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            text-align: left;
-            position: relative;
-            transition: all 0.2s;
-        }
-
-        .mode-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 0 #0B0E16;
-        }
-
-        .mode-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #0B0E16;
-        }
-
-        .mode-btn.faceit {
-            border-left: 6px solid #FF5500;
-        }
-
-        .mode-btn.premier {
-            border-left: 6px solid #4CAF50;
-        }
-
-        .mode-btn.public {
-            border-left: 6px solid #2196F3;
-        }
-
-        .mode-btn::after {
-            content: '→';
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 26px;
-            color: #8F9BB3;
-        }
-
-        /* Заголовок режима */
-        .mode-title {
-            font-size: 32px;
-            font-weight: 800;
-            text-align: center;
-            margin: 0 0 2px 0;
-        }
-
-        .mode-title.faceit { color: #FF5500; }
-        .mode-title.premier { color: #4CAF50; }
-        .mode-title.public { color: #2196F3; }
-
-        .mode-subtitle {
-            font-size: 12px;
-            color: #8F9BB3;
-            text-align: center;
-            margin-bottom: 12px;
-        }
-
-        /* Статистика для режимов */
-        .mode-stats {
-            display: flex;
-            gap: 10px;
-            margin: 0 0 12px 0;
-            width: 100%;
-        }
-
-        .mode-stat-card {
-            flex: 1;
-            background: #1A1F2B;
-            border: 2px solid #2A3140;
-            border-radius: 16px;
-            padding: 12px 3px;
-            text-align: center;
-        }
-
-        .mode-stat-label {
-            font-size: 12px;
-            color: #8F9BB3;
-            margin-bottom: 4px;
-        }
-
-        .mode-stat-value {
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .mode-stat-value.faceit { color: #FF5500; }
-        .mode-stat-value.premier { color: #4CAF50; }
-        .mode-stat-value.public { color: #2196F3; }
-
-        /* Переключатель Fan/Tryhard */
-        .play-style {
-            display: flex;
-            gap: 10px;
-            margin: 10px 0;
-            background: #1A1F2B;
-            border: 2px solid #2A3140;
-            border-radius: 30px;
-            padding: 5px;
-        }
-
-        .style-option {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .style-option.active {
-            background: #FF3B3B;
-        }
-
-        /* Steam ссылка */
-        .steam-input {
-            width: 100%;
-            background: #1A1F2B;
-            border: 2px solid #2A3140;
-            border-radius: 16px;
-            padding: 12px 14px;
-            color: white;
-            font-size: 13px;
-            margin: 8px 0;
-        }
-
-        .steam-input:read-only {
-            cursor: pointer;
-        }
-
-        /* Комментарий */
-        .comment-section {
-            width: 100%;
-            margin: 5px 0 8px 0;
-            flex-shrink: 0;
-        }
-
-        .comment-label {
-            font-size: 14px;
-            color: #8F9BB3;
-            margin-bottom: 5px;
-        }
-
-        .comment-input {
-            width: 100%;
-            background: #1A1F2B;
-            border: 2px solid #2A3140;
-            border-radius: 16px;
-            padding: 14px;
-            color: white;
-            font-size: 14px;
-            resize: none;
-            height: 90px;
-            font-family: inherit;
-        }
-
-        .comment-input::placeholder {
-            color: #4A5568;
-        }
-
-        /* Кнопка начать поиск */
-        .search-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #FF3B3B, #D32F2F);
-            border: none;
-            border-radius: 30px;
-            color: white;
-            font-size: 20px;
-            font-weight: 700;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 6px 0 #8B1E1E;
-            margin-top: 5px;
-            transition: all 0.1s;
-            flex-shrink: 0;
-        }
-
-        .search-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #8B1E1E;
-        }
-
-        /* Профиль */
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-            padding: 5px 0;
-            width: 100%;
-            flex-shrink: 0;
-        }
-
-        .profile-avatar {
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            background: #2A3140;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            color: #8F9BB3;
-            border: 3px solid #3A4150;
-        }
-
-        .profile-info {
-            flex: 1;
-        }
-
-        .profile-name-label {
-            font-size: 11px;
-            color: #8F9BB3;
-            margin-bottom: 3px;
-        }
-
-        .profile-name {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 5px;
-            color: white;
-        }
-
-        .profile-rating {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: #1A1F2B;
-            padding: 5px 12px;
-            border-radius: 18px;
-            border: 2px solid #2A3140;
-            font-size: 14px;
-        }
-
-        .rating-heart {
-            color: #FF3B3B;
-            font-size: 15px;
-        }
-
-        .stats-grid {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            width: 100%;
-            flex-shrink: 0;
-        }
-
-        .stat-card {
-            flex: 1;
-            background: #1A1F2B;
-            border: 2px solid #2A3140;
-            border-radius: 16px;
-            padding: 12px 3px;
-            text-align: center;
-        }
-
-        .stat-label {
-            font-size: 11px;
-            color: #8F9BB3;
-            margin-bottom: 3px;
-        }
-
-        .stat-value {
-            font-size: 17px;
-            font-weight: 700;
-        }
-
-        /* Друзья */
-        .friends-section {
-            width: 100%;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            margin-bottom: 8px;
-        }
-
-        .friends-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            padding: 3px 0;
-            flex-shrink: 0;
-        }
-
-        .friends-title {
-            font-size: 17px;
-            font-weight: 600;
-        }
-
-        .friends-count {
-            color: #8F9BB3;
-            font-size: 13px;
-        }
-
-        .friends-list-container {
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 5px;
-            min-height: 0;
-        }
-
-        .friends-list-container::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .friends-list-container::-webkit-scrollbar-track {
-            background: #1A1F2B;
-            border-radius: 10px;
-        }
-
-        .friends-list-container::-webkit-scrollbar-thumb {
-            background: #FF3B3B;
-            border-radius: 10px;
-        }
-
-        .friends-list-vertical {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .friend-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 10px;
-            background: #1A1F2B;
-            border-radius: 16px;
-            border: 2px solid #2A3140;
-            transition: all 0.2s;
-        }
-
-        .friend-item:hover {
-            background: #2A3140;
-            transform: translateX(5px);
-        }
-
-        .friend-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #2A3140;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            border: 2px solid #FF3B3B;
-        }
-
-        .friend-info {
-            flex: 1;
-        }
-
-        .friend-name {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 3px;
-            color: white;
-        }
-
-        .friend-steam {
-            font-size: 10px;
-            color: #8F9BB3;
-            word-break: break-all;
-        }
-
-        /* Нижняя навигация - НОВАЯ */
-        .bottom-nav {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 12px 0;
-            background: #1A1F2B;
-            border-radius: 30px;
-            margin-top: 5px;
-            border: 2px solid #2A3140;
-            flex-shrink: 0;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            cursor: pointer;
-            opacity: 0.6;
-            padding: 4px 15px;
-            transition: all 0.2s;
-        }
-
-        .nav-item:hover {
-            opacity: 1;
-            transform: translateY(-2px);
-        }
-
-        .nav-item.active {
-            opacity: 1;
-            color: #FF3B3B;
-        }
-
-        .nav-icon {
-            font-size: 22px;
-        }
-
-        .nav-label {
-            font-size: 11px;
-            font-weight: 500;
-        }
-
         /* Магазин */
-        .shop-header {
-            text-align: center;
-            margin: 10px 0 20px 0;
-        }
-
-        .shop-title {
-            font-size: 28px;
-            font-weight: 800;
-            color: #FF3B3B;
-        }
-
-        .shop-sections {
+        .shop-tabs {
             display: flex;
-            justify-content: center;
-            gap: 20px;
+            gap: 12px;
             margin: 20px 0;
+            padding: 4px;
+            background: #1A1D24;
+            border-radius: 8px;
+            border: 1px solid #2A2F3A;
         }
 
-        .shop-section-btn {
-            padding: 10px 20px;
-            background: #1A1F2B;
-            border: 2px solid #2A3140;
-            border-radius: 20px;
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
+        .shop-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #9BA1B0;
             cursor: pointer;
+            border-radius: 6px;
             transition: all 0.2s;
         }
 
-        .shop-section-btn.active {
-            background: #FF3B3B;
-            border-color: #FF3B3B;
-        }
-
-        .shop-section-btn:hover {
-            transform: translateY(-2px);
+        .shop-tab.active {
+            background: #F6465D;
+            color: white;
         }
 
         .development-card {
@@ -731,64 +386,293 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #1A1F2B;
-            border: 2px solid #2A3140;
-            border-radius: 30px;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 12px;
             margin: 20px 0;
             padding: 40px 20px;
             text-align: center;
         }
 
         .development-text {
-            font-size: 20px;
-            color: #8F9BB3;
+            font-size: 14px;
+            color: #9BA1B0;
         }
 
         .development-text span {
-            color: #FF3B3B;
-            font-size: 40px;
+            color: #F6465D;
+            font-size: 32px;
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
-        /* Стартовая кнопка */
-        .start-btn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #FF3B3B, #D32F2F);
-            border: none;
-            border-radius: 40px;
-            font-size: 24px;
-            font-weight: 700;
-            color: white;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 8px 0 #8B1E1E;
-            margin: 10px 0 8px 0;
-            flex-shrink: 0;
-            transition: all 0.1s;
+        /* Профиль */
+        .profile-stats {
+            display: flex;
+            gap: 8px;
+            margin: 20px 0;
         }
 
-        .start-btn:active {
-            transform: translateY(5px);
-            box-shadow: 0 3px 0 #8B1E1E;
-        }
-
-        .online-counter {
-            color: #4A5568;
-            font-size: 13px;
+        .stat-item {
+            flex: 1;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 8px;
+            padding: 12px 4px;
             text-align: center;
-            flex-shrink: 0;
-            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #9BA1B0;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .friends-section {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            margin: 16px 0;
+        }
+
+        .friends-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .friends-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .friends-count {
+            color: #9BA1B0;
+            font-size: 12px;
+        }
+
+        .friends-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .friends-list::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .friends-list::-webkit-scrollbar-track {
+            background: #1A1D24;
+            border-radius: 10px;
+        }
+
+        .friends-list::-webkit-scrollbar-thumb {
+            background: #F6465D;
+            border-radius: 10px;
+        }
+
+        .friend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+
+        .friend-item:hover {
+            border-color: #F6465D;
+        }
+
+        .friend-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #2A2F3A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .friend-info {
+            flex: 1;
+        }
+
+        .friend-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+            color: #FFFFFF;
+        }
+
+        .friend-steam {
+            font-size: 10px;
+            color: #9BA1B0;
+        }
+
+        /* Экраны режимов */
+        .mode-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 8px;
+            color: #9BA1B0;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            border-color: #F6465D;
+            color: #FFFFFF;
+        }
+
+        .mode-title {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin: 0 0 4px 0;
+        }
+
+        .mode-title.faceit { color: #F6465D; }
+        .mode-title.premier { color: #4CAF50; }
+        .mode-title.public { color: #2196F3; }
+
+        .mode-subtitle {
+            font-size: 12px;
+            color: #9BA1B0;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: flex;
+            gap: 8px;
+            margin: 0 0 16px 0;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 8px;
+            padding: 12px 4px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #9BA1B0;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .stat-value.faceit { color: #F6465D; }
+        .stat-value.premier { color: #4CAF50; }
+        .stat-value.public { color: #2196F3; }
+
+        .play-style {
+            display: flex;
+            gap: 8px;
+            margin: 16px 0;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .style-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: #9BA1B0;
+        }
+
+        .style-option.active {
+            background: #F6465D;
+            color: white;
+        }
+
+        .input-field {
+            width: 100%;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 8px;
+            padding: 12px 14px;
+            color: white;
+            font-size: 13px;
+            margin: 8px 0;
+        }
+
+        .input-field:focus {
+            border-color: #F6465D;
+            outline: none;
+        }
+
+        .comment-section {
+            width: 100%;
+            margin: 12px 0;
+        }
+
+        .comment-label {
+            font-size: 13px;
+            color: #9BA1B0;
+            margin-bottom: 6px;
+        }
+
+        .comment-input {
+            width: 100%;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
+            font-size: 13px;
+            resize: none;
+            height: 80px;
+            font-family: inherit;
         }
 
         .home-bar {
             width: 130px;
             height: 5px;
-            background: #2A3140;
+            background: #2A2F3A;
             border-radius: 10px;
-            margin: 5px auto 0;
-            flex-shrink: 0;
+            margin: 8px auto 0;
         }
     </style>
 </head>
@@ -797,29 +681,33 @@
         <div class="speaker"></div>
 
         <div class="content">
-            <!-- Кнопка настроек в правом верхнем углу -->
-            <div class="settings-corner" onclick="showSettingsScreen()">
-                ⚙️
+            <!-- Хедер в стиле Bybit -->
+            <div class="header">
+                <div class="logo">
+                    <span class="ping">Ping</span><span class="ster">ster</span>
+                </div>
+                <div class="settings-icon" onclick="showSettingsScreen()">
+                    ⚙️
+                </div>
             </div>
 
             <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen screen-start">
-                <div class="main-pingster">
+                <div class="start-title">
                     <span class="ping">Ping</span><span class="ster">ster</span>
                 </div>
-                <div class="start-search-title">Поиск Тиммейтов</div>
                 
-                <!-- КАРТИНКА -->
                 <div class="start-image-container">
                     <img src="https://i.ibb.co/qj0KfbR/2026-02-15-212108128.jpg" alt="Pingster Logo" class="start-image">
                 </div>
 
-                <div class="description-card">
-                    <div class="subtitle">
-                        Здесь вы можете найти<br>подходящий для вас режим
+                <div class="info-card">
+                    <div class="info-text">
+                        Найдите тиммейтов для <span>CS2</span> за 20 секунд
                     </div>
                 </div>
-                <button class="start-btn" onclick="startApp()">Начать</button>
+
+                <button class="primary-btn" onclick="startApp()">Начать</button>
                 <div class="online-counter">
                     более 1000+ игроков онлайн
                 </div>
@@ -827,15 +715,8 @@
 
             <!-- ГЛАВНЫЙ ЭКРАН -->
             <div id="mainScreen" class="screen screen-main">
-                <div class="main-pingster">
-                    <span class="ping">Ping</span><span class="ster">ster</span>
-                </div>
-                
-                <div class="description-card">
-                    <div class="subtitle">
-                        Здесь вы можете найти<br>подходящий для вас режим
-                    </div>
-                </div>
+                <div class="section-title">Выбор режима</div>
+                <div class="section-subtitle">Найдите подходящий для вас режим игры</div>
 
                 <div class="mode-container">
                     <button class="mode-btn faceit" onclick="showFaceitScreen()">FACEIT</button>
@@ -843,7 +724,6 @@
                     <button class="mode-btn public" onclick="showPublicScreen()">PUBLIC</button>
                 </div>
 
-                <!-- НОВАЯ навигация: Главная | Магазин | Профиль -->
                 <div class="bottom-nav">
                     <div class="nav-item active" onclick="showMainScreen()">
                         <span class="nav-icon">🏠</span>
@@ -862,29 +742,21 @@
 
             <!-- ЭКРАН МАГАЗИНА -->
             <div id="shopScreen" class="screen screen-shop">
-                <div class="main-pingster">
-                    <span class="ping">Ping</span><span class="ster">ster</span>
+                <div class="section-title">Магазин</div>
+                <div class="section-subtitle">Зарабатывайте и покупайте</div>
+
+                <div class="shop-tabs">
+                    <div class="shop-tab active" onclick="showShopTab('shop')">Магазин</div>
+                    <div class="shop-tab" onclick="showShopTab('tasks')">Задания</div>
                 </div>
 
-                <div class="shop-header">
-                    <div class="shop-title">МАГАЗИН</div>
-                </div>
-
-                <!-- Два отдела: Магазин и Задания -->
-                <div class="shop-sections">
-                    <div class="shop-section-btn active" onclick="showShopSection('shop')">Магазин</div>
-                    <div class="shop-section-btn" onclick="showShopSection('tasks')">Задания</div>
-                </div>
-
-                <!-- Контент в разработке -->
                 <div class="development-card">
                     <div class="development-text">
                         <span>🛠️</span>
-                        В разработке<br><small>Скоро здесь появятся крутые приколючи!</small>
+                        В разработке<br>Скоро здесь появятся крутые приколючи
                     </div>
                 </div>
 
-                <!-- Навигация (та же) -->
                 <div class="bottom-nav">
                     <div class="nav-item" onclick="showMainScreen()">
                         <span class="nav-icon">🏠</span>
@@ -903,38 +775,24 @@
 
             <!-- ЭКРАН ПРОФИЛЯ -->
             <div id="profileScreen" class="screen screen-profile">
-                <div class="main-pingster">
-                    <span class="ping">Ping</span><span class="ster">ster</span>
-                </div>
+                <div class="section-title">Профиль</div>
 
-                <div class="profile-header">
-                    <div class="profile-avatar">👤</div>
-                    <div class="profile-info">
-                        <div class="profile-name-label">ваш никнейм</div>
-                        <div class="profile-name">Pingster</div>
-                        <div class="profile-rating">
-                            <span>рейтинг 5</span>
-                            <span class="rating-heart">🏅</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stats-grid">
-                    <div class="stat-card">
+                <div class="profile-stats">
+                    <div class="stat-item">
                         <div class="stat-label">ELO</div>
-                        <div class="stat-value">1500</div>
+                        <div class="stat-value">1 500</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-item">
                         <div class="stat-label">Premier</div>
-                        <div class="stat-value">12500</div>
+                        <div class="stat-value">12 500</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-item">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value">21</div>
                     </div>
                 </div>
 
-                <input type="text" class="steam-input" value="https://steamcommunity.com/id/pingster" readonly>
+                <input type="text" class="input-field" value="https://steamcommunity.com/id/pingster" readonly>
 
                 <div class="friends-section">
                     <div class="friends-header">
@@ -942,12 +800,9 @@
                         <span class="friends-count">10 друзей</span>
                     </div>
                     
-                    <div class="friends-list-container">
-                        <div class="friends-list-vertical" id="friendsList"></div>
-                    </div>
+                    <div class="friends-list" id="friendsList"></div>
                 </div>
 
-                <!-- Навигация (та же) -->
                 <div class="bottom-nav">
                     <div class="nav-item" onclick="showMainScreen()">
                         <span class="nav-icon">🏠</span>
@@ -966,46 +821,38 @@
 
             <!-- ЭКРАН НАСТРОЕК -->
             <div id="settingsScreen" class="screen screen-settings">
-                <div class="main-pingster">
-                    <span class="ping">Ping</span><span class="ster">ster</span>
+                <div class="section-title">Настройки</div>
+
+                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:16px; margin-bottom:12px;">
+                    <h3 style="font-size:15px; margin-bottom:8px;">Тема</h3>
+                    <p style="color:#9BA1B0; font-size:13px;">Тёмная / Светлая</p>
                 </div>
 
-                <div style="width:100%; margin-top: 10px; flex-shrink: 0;">
-                    <div style="background:#1A1F2B; border:2px solid #2A3140; border-radius:18px; padding:16px; margin-bottom:15px;">
-                        <h3 style="font-size:17px; margin-bottom:5px;">Тема</h3>
-                        <p style="color:#8F9BB3; font-size:13px;">Тёмная / Светлая</p>
-                    </div>
-
-                    <div style="background:#1A1F2B; border:2px solid #2A3140; border-radius:18px; padding:16px; margin-bottom:15px;">
-                        <h3 style="font-size:17px; margin-bottom:5px;">Модерация</h3>
-                        <p style="color:#8F9BB3; font-size:13px;">Люди мы будем</p>
-                    </div>
+                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:16px; margin-bottom:12px;">
+                    <h3 style="font-size:15px; margin-bottom:8px;">Модерация</h3>
+                    <p style="color:#9BA1B0; font-size:13px;">Люди мы будем</p>
                 </div>
 
-                <!-- Кнопка назад из настроек -->
-                <button class="search-btn" onclick="showMainScreen()" style="margin-top: auto;">На главную</button>
+                <button class="secondary-btn" onclick="showMainScreen()" style="margin-top: auto;">На главную</button>
             </div>
 
-            <!-- ЭКРАН FACEIT, PREMIER, PUBLIC (без изменений) -->
+            <!-- ЭКРАНЫ РЕЖИМОВ -->
             <div id="faceitScreen" class="screen screen-faceit">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
-                    <div class="mode-pingster">
-                        <span class="ping">Ping</span><span class="ster">ster</span>
-                    </div>
                 </div>
 
                 <div class="mode-title faceit">FACEIT</div>
                 <div class="mode-subtitle">ваши данные</div>
 
-                <div class="mode-stats">
-                    <div class="mode-stat-card">
-                        <div class="mode-stat-label">ELO</div>
-                        <div class="mode-stat-value faceit">1500</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">ELO</div>
+                        <div class="stat-value faceit">1500</div>
                     </div>
-                    <div class="mode-stat-card">
-                        <div class="mode-stat-label">Возраст</div>
-                        <div class="mode-stat-value">21</div>
+                    <div class="stat-card">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value">21</div>
                     </div>
                 </div>
 
@@ -1014,35 +861,32 @@
                     <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
                 </div>
 
-                <input type="text" class="steam-input" value="https://steamcommunity.com/id/pingster" readonly>
+                <input type="text" class="input-field" value="https://steamcommunity.com/id/pingster" readonly>
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
                     <textarea class="comment-input" placeholder="Введите информацию о себе..."></textarea>
                 </div>
 
-                <button class="search-btn" onclick="startSearch('FACEIT')">Начать поиск</button>
+                <button class="primary-btn" onclick="startSearch('FACEIT')">Начать поиск</button>
             </div>
 
             <div id="premierScreen" class="screen screen-premier">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
-                    <div class="mode-pingster">
-                        <span class="ping">Ping</span><span class="ster">ster</span>
-                    </div>
                 </div>
 
                 <div class="mode-title premier">PREMIER</div>
                 <div class="mode-subtitle">ваши данные</div>
 
-                <div class="mode-stats">
-                    <div class="mode-stat-card">
-                        <div class="mode-stat-label">Ранг</div>
-                        <div class="mode-stat-value premier">10</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Ранг</div>
+                        <div class="stat-value premier">10</div>
                     </div>
-                    <div class="mode-stat-card">
-                        <div class="mode-stat-label">Возраст</div>
-                        <div class="mode-stat-value">21</div>
+                    <div class="stat-card">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value">21</div>
                     </div>
                 </div>
 
@@ -1051,31 +895,28 @@
                     <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
                 </div>
 
-                <input type="text" class="steam-input" value="https://steamcommunity.com/id/pingster" readonly>
+                <input type="text" class="input-field" value="https://steamcommunity.com/id/pingster" readonly>
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
                     <textarea class="comment-input" placeholder="Введите информацию о себе..."></textarea>
                 </div>
 
-                <button class="search-btn" onclick="startSearch('PREMIER')">Начать поиск</button>
+                <button class="primary-btn" onclick="startSearch('PREMIER')">Начать поиск</button>
             </div>
 
             <div id="publicScreen" class="screen screen-public">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
-                    <div class="mode-pingster">
-                        <span class="ping">Ping</span><span class="ster">ster</span>
-                    </div>
                 </div>
 
                 <div class="mode-title public">PUBLIC</div>
                 <div class="mode-subtitle">ваши данные</div>
 
-                <div class="mode-stats">
-                    <div class="mode-stat-card">
-                        <div class="mode-stat-label">Возраст</div>
-                        <div class="mode-stat-value">21</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value">21</div>
                     </div>
                 </div>
 
@@ -1084,14 +925,14 @@
                     <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
                 </div>
 
-                <input type="text" class="steam-input" value="https://steamcommunity.com/id/pingster" readonly>
+                <input type="text" class="input-field" value="https://steamcommunity.com/id/pingster" readonly>
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
                     <textarea class="comment-input" placeholder="Введите информацию о себе..."></textarea>
                 </div>
 
-                <button class="search-btn" onclick="startSearch('PUBLIC')">Начать поиск</button>
+                <button class="primary-btn" onclick="startSearch('PUBLIC')">Начать поиск</button>
             </div>
         </div>
 
@@ -1099,7 +940,6 @@
     </div>
 
     <script>
-        // Генерация друзей
         function generateFriends() {
             const friendsList = document.getElementById('friendsList');
             if (!friendsList) return;
@@ -1120,7 +960,6 @@
             }
         }
 
-        // Переключение стиля игры
         function setStyle(style, element) {
             const parent = element.parentElement;
             const options = parent.querySelectorAll('.style-option');
@@ -1128,7 +967,6 @@
             element.classList.add('active');
         }
 
-        // Функции навигации
         function startApp() {
             hideAllScreens();
             document.getElementById('mainScreen').style.display = 'flex';
@@ -1173,18 +1011,15 @@
             alert(`Поиск в режиме ${mode} начат! 🔍`);
         }
 
-        function showShopSection(section) {
-            const buttons = document.querySelectorAll('.shop-section-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
+        function showShopTab(tab) {
+            const tabs = document.querySelectorAll('.shop-tab');
+            tabs.forEach(t => t.classList.remove('active'));
             
-            if (section === 'shop') {
-                buttons[0].classList.add('active');
+            if (tab === 'shop') {
+                tabs[0].classList.add('active');
             } else {
-                buttons[1].classList.add('active');
+                tabs[1].classList.add('active');
             }
-            
-            // Показываем заглушку "в разработке" для обоих разделов
-            // Позже здесь будет разный контент
         }
 
         function hideAllScreens() {
@@ -1196,7 +1031,6 @@
             });
         }
 
-        // Инициализация
         window.onload = function() {
             generateFriends();
             hideAllScreens();
