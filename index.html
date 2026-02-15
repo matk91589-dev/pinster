@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: #0D0F15;
             min-height: 100vh;
             display: flex;
@@ -65,7 +65,7 @@
             position: relative;
         }
 
-        /* Хедер в стиле Bybit */
+        /* Хедер в стиле Telegram */
         .header {
             display: flex;
             align-items: center;
@@ -83,7 +83,7 @@
         }
 
         .logo .ping {
-            color: #F6465D; /* Bybit красный */
+            color: #F6465D;
         }
 
         .logo .ster {
@@ -92,31 +92,32 @@
             opacity: 0.9;
         }
 
-        .settings-icon {
+        /* Пустые белые иконки в стиле Telegram */
+        .icon-settings {
             width: 36px;
             height: 36px;
-            background: #1E2128;
-            border-radius: 8px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 22px;
             cursor: pointer;
             transition: all 0.2s;
-            color: #9BA1B0;
-            border: 1px solid #2A2F3A;
-        }
-
-        .settings-icon:hover {
-            background: #2A2F3A;
             color: #FFFFFF;
+            opacity: 0.8;
+            background: transparent;
         }
 
-        .settings-icon:active {
+        .icon-settings:hover {
+            opacity: 1;
+            background: #1E2128;
+        }
+
+        .icon-settings:active {
             transform: scale(0.95);
         }
 
-        /* Заголовки в стиле Bybit */
+        /* Заголовки */
         .section-title {
             font-size: 20px;
             font-weight: 600;
@@ -238,6 +239,49 @@
             margin-top: 8px;
         }
 
+        /* Пустые иконки навигации в стиле Telegram */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0;
+            background: transparent;
+            margin-top: 8px;
+            border-top: 1px solid #1E2128;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            opacity: 0.6;
+            padding: 6px 12px;
+            transition: all 0.2s;
+            color: #FFFFFF;
+        }
+
+        .nav-item:hover {
+            opacity: 1;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+            color: #F6465D;
+        }
+
+        .nav-icon {
+            font-size: 22px;
+            font-weight: 300;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
         /* Кнопки режимов */
         .mode-container {
             flex: 1;
@@ -292,128 +336,69 @@
             color: #5D6472;
         }
 
-        /* Нижняя навигация */
-        .bottom-nav {
+        /* Профиль */
+        .profile-header {
             display: flex;
-            justify-content: space-around;
             align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
             padding: 8px 0;
+        }
+
+        .profile-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
             background: #1A1D24;
-            border-radius: 12px;
-            margin-top: 8px;
-            border: 1px solid #2A2F3A;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            opacity: 0.6;
-            padding: 6px 12px;
-            transition: all 0.2s;
-            color: #9BA1B0;
-        }
-
-        .nav-item:hover {
-            opacity: 1;
-            color: #F6465D;
-        }
-
-        .nav-item.active {
-            opacity: 1;
-            color: #F6465D;
-        }
-
-        .nav-icon {
-            font-size: 20px;
-        }
-
-        .nav-label {
-            font-size: 10px;
-            font-weight: 500;
-        }
-
-        /* Экраны */
-        .screen {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            min-height: 0;
-        }
-
-        .screen-start, .screen-main, .screen-profile, .screen-settings, .screen-shop,
-        .screen-faceit, .screen-premier, .screen-public {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-            min-height: 0;
-        }
-
-        /* Магазин */
-        .shop-tabs {
-            display: flex;
-            gap: 12px;
-            margin: 20px 0;
-            padding: 4px;
-            background: #1A1D24;
-            border-radius: 8px;
-            border: 1px solid #2A2F3A;
-        }
-
-        .shop-tab {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            font-size: 14px;
-            font-weight: 500;
-            color: #9BA1B0;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .shop-tab.active {
-            background: #F6465D;
-            color: white;
-        }
-
-        .development-card {
-            flex: 1;
+            border: 2px solid #2A2F3A;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 12px;
-            margin: 20px 0;
-            padding: 40px 20px;
-            text-align: center;
-        }
-
-        .development-text {
-            font-size: 14px;
+            font-size: 32px;
             color: #9BA1B0;
         }
 
-        .development-text span {
-            color: #F6465D;
-            font-size: 32px;
-            display: block;
-            margin-bottom: 12px;
+        .profile-info {
+            flex: 1;
         }
 
-        /* Профиль */
-        .profile-stats {
+        .profile-name-label {
+            font-size: 12px;
+            color: #9BA1B0;
+            margin-bottom: 4px;
+        }
+
+        .profile-name {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #FFFFFF;
+        }
+
+        .profile-rating {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #1A1D24;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid #2A2F3A;
+            font-size: 13px;
+            color: #FFFFFF;
+        }
+
+        .rating-star {
+            color: #F6465D;
+            font-size: 14px;
+        }
+
+        .stats-grid {
             display: flex;
             gap: 8px;
-            margin: 20px 0;
+            margin: 0 0 16px 0;
         }
 
-        .stat-item {
+        .stat-card {
             flex: 1;
             background: #1A1D24;
             border: 1px solid #2A2F3A;
@@ -434,6 +419,23 @@
             color: #FFFFFF;
         }
 
+        .input-field {
+            width: 100%;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 8px;
+            padding: 12px 14px;
+            color: white;
+            font-size: 13px;
+            margin: 8px 0;
+        }
+
+        .input-field:focus {
+            border-color: #F6465D;
+            outline: none;
+        }
+
+        /* Друзья */
         .friends-section {
             width: 100%;
             flex: 1;
@@ -506,6 +508,7 @@
             align-items: center;
             justify-content: center;
             font-size: 18px;
+            color: #9BA1B0;
         }
 
         .friend-info {
@@ -524,6 +527,59 @@
             color: #9BA1B0;
         }
 
+        /* Магазин */
+        .shop-tabs {
+            display: flex;
+            gap: 12px;
+            margin: 20px 0;
+            padding: 4px;
+            background: #1A1D24;
+            border-radius: 8px;
+            border: 1px solid #2A2F3A;
+        }
+
+        .shop-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #9BA1B0;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .shop-tab.active {
+            background: #F6465D;
+            color: white;
+        }
+
+        .development-card {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 12px;
+            margin: 20px 0;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .development-text {
+            font-size: 14px;
+            color: #9BA1B0;
+        }
+
+        .development-text span {
+            color: #F6465D;
+            font-size: 32px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
         /* Экраны режимов */
         .mode-header {
             display: flex;
@@ -535,9 +591,9 @@
         .back-btn {
             width: 36px;
             height: 36px;
-            background: #1A1D24;
+            border-radius: 50%;
+            background: transparent;
             border: 1px solid #2A2F3A;
-            border-radius: 8px;
             color: #9BA1B0;
             font-size: 20px;
             cursor: pointer;
@@ -570,36 +626,6 @@
             margin-bottom: 20px;
         }
 
-        .stats-grid {
-            display: flex;
-            gap: 8px;
-            margin: 0 0 16px 0;
-        }
-
-        .stat-card {
-            flex: 1;
-            background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 8px;
-            padding: 12px 4px;
-            text-align: center;
-        }
-
-        .stat-label {
-            font-size: 11px;
-            color: #9BA1B0;
-            margin-bottom: 4px;
-        }
-
-        .stat-value {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .stat-value.faceit { color: #F6465D; }
-        .stat-value.premier { color: #4CAF50; }
-        .stat-value.public { color: #2196F3; }
-
         .play-style {
             display: flex;
             gap: 8px;
@@ -625,22 +651,6 @@
         .style-option.active {
             background: #F6465D;
             color: white;
-        }
-
-        .input-field {
-            width: 100%;
-            background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 8px;
-            padding: 12px 14px;
-            color: white;
-            font-size: 13px;
-            margin: 8px 0;
-        }
-
-        .input-field:focus {
-            border-color: #F6465D;
-            outline: none;
         }
 
         .comment-section {
@@ -674,6 +684,24 @@
             border-radius: 10px;
             margin: 8px auto 0;
         }
+
+        /* Экраны */
+        .screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            min-height: 0;
+        }
+
+        .screen-start, .screen-main, .screen-profile, .screen-settings, .screen-shop,
+        .screen-faceit, .screen-premier, .screen-public {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            min-height: 0;
+        }
     </style>
 </head>
 <body>
@@ -681,18 +709,18 @@
         <div class="speaker"></div>
 
         <div class="content">
-            <!-- Хедер в стиле Bybit -->
+            <!-- Хедер -->
             <div class="header">
                 <div class="logo">
                     <span class="ping">Ping</span><span class="ster">ster</span>
                 </div>
-                <div class="settings-icon" onclick="showSettingsScreen()">
+                <div class="icon-settings" onclick="showSettingsScreen()">
                     ⚙️
                 </div>
             </div>
 
             <!-- СТАРТОВЫЙ ЭКРАН -->
-            <div id="startScreen" class="screen screen-start">
+            <div id="startScreen" class="screen start-screen">
                 <div class="start-title">
                     <span class="ping">Ping</span><span class="ster">ster</span>
                 </div>
@@ -753,7 +781,7 @@
                 <div class="development-card">
                     <div class="development-text">
                         <span>🛠️</span>
-                        В разработке<br>Скоро здесь появятся крутые приколючи
+                        В разработке
                     </div>
                 </div>
 
@@ -777,16 +805,28 @@
             <div id="profileScreen" class="screen screen-profile">
                 <div class="section-title">Профиль</div>
 
-                <div class="profile-stats">
-                    <div class="stat-item">
+                <div class="profile-header">
+                    <div class="profile-avatar">👤</div>
+                    <div class="profile-info">
+                        <div class="profile-name-label">ваш никнейм</div>
+                        <div class="profile-name">Pingster</div>
+                        <div class="profile-rating">
+                            <span>рейтинг 5</span>
+                            <span class="rating-star">⭐</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
                         <div class="stat-label">ELO</div>
                         <div class="stat-value">1 500</div>
                     </div>
-                    <div class="stat-item">
+                    <div class="stat-card">
                         <div class="stat-label">Premier</div>
                         <div class="stat-value">12 500</div>
                     </div>
-                    <div class="stat-item">
+                    <div class="stat-card">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value">21</div>
                     </div>
@@ -848,7 +888,7 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-label">ELO</div>
-                        <div class="stat-value faceit">1500</div>
+                        <div class="stat-value">1500</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Возраст</div>
@@ -882,7 +922,7 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-label">Ранг</div>
-                        <div class="stat-value premier">10</div>
+                        <div class="stat-value">10</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Возраст</div>
