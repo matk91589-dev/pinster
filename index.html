@@ -444,6 +444,18 @@
             border-width: 3px;
         }
 
+        .profile-avatar.frame-red { border-color: #FF6B4A; border-width: 3px; }
+        .profile-avatar.frame-gold { border-color: #FFD700; border-width: 3px; }
+        .profile-avatar.frame-blue { border-color: #2196F3; border-width: 3px; }
+        .profile-avatar.frame-green { border-color: #4CAF50; border-width: 3px; }
+        .profile-avatar.frame-purple { border-color: #9C27B0; border-width: 3px; }
+        .profile-avatar.frame-rainbow { 
+            border: 3px solid transparent;
+            background: linear-gradient(45deg, #FF6B4A, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+        }
+
         .profile-info {
             flex: 1;
             display: flex;
@@ -468,6 +480,18 @@
 
         .profile-name.editable {
             color: #FF6B4A;
+        }
+
+        .profile-name.red { color: #FF6B4A; }
+        .profile-name.green { color: #4CAF50; }
+        .profile-name.blue { color: #2196F3; }
+        .profile-name.purple { color: #9C27B0; }
+        .profile-name.orange { color: #FF9800; }
+        .profile-name.multicolor { 
+            background: linear-gradient(45deg, #FF6B4A, #4CAF50, #2196F3, #9C27B0, #FF9800);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
         }
 
         .profile-name-label {
@@ -497,17 +521,11 @@
             margin-bottom: 16px;
         }
 
-        .profile-row {
-            display: flex;
-            gap: 8px;
-        }
-
         .profile-stat-card {
-            flex: 1;
             background: #1A1D24;
             border: 1px solid #2A2F3A;
             border-radius: 8px;
-            padding: 8px 12px;
+            padding: 10px 12px;
             cursor: pointer;
             transition: border 0.1s ease, border-width 0.1s ease;
         }
@@ -553,10 +571,10 @@
             background: #1A1D24;
             border: 1px solid #2A2F3A;
             border-radius: 8px;
-            padding: 12px 14px;
+            padding: 10px 12px;
             color: white;
             font-size: 13px;
-            margin: 8px 0;
+            margin: 4px 0;
             cursor: text;
             transition: border 0.1s ease, border-width 0.1s ease;
         }
@@ -564,6 +582,11 @@
         .input-field:focus {
             outline: none;
             border-color: #FF6B4A;
+        }
+
+        .input-field.editable {
+            border-color: #FF6B4A;
+            border-width: 2px;
         }
 
         /* Поиск друзей */
@@ -681,22 +704,22 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 10px;
+            padding: 8px 10px;
             background: #1A1D24;
             border: 1px solid #2A2F3A;
             border-radius: 8px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .friend-avatar {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: #2A2F3A;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 16px;
             color: #9BA1B0;
         }
 
@@ -707,27 +730,27 @@
         .friend-name-row {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             margin-bottom: 2px;
         }
 
         .friend-name {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: #FFFFFF;
         }
 
         .friend-id {
-            font-size: 10px;
+            font-size: 9px;
             color: #FF6B4A;
             background: rgba(255, 107, 74, 0.1);
-            padding: 2px 6px;
+            padding: 2px 5px;
             border-radius: 4px;
             font-family: monospace;
         }
 
         .friend-steam {
-            font-size: 10px;
+            font-size: 9px;
             color: #9BA1B0;
         }
 
@@ -799,8 +822,8 @@
             justify-content: space-between;
             background: #1A1D24;
             border-radius: 8px;
-            padding: 12px;
-            border: none;
+            padding: 10px 12px;
+            border: 1px solid #2A2F3A;
         }
 
         .item-info {
@@ -843,7 +866,7 @@
         }
 
         .item-name {
-            font-size: 15px;
+            font-size: 14px;
             color: #FFFFFF;
         }
 
@@ -876,9 +899,9 @@
         }
 
         .buy-btn.owned {
-            background: transparent;
-            border-color: #4CAF50;
-            color: #4CAF50;
+            background: #FF6B4A;
+            border-color: #FF6B4A;
+            color: white;
             cursor: default;
         }
 
@@ -949,7 +972,7 @@
             background: #1A1D24;
             border: 1px solid #2A2F3A;
             border-radius: 8px;
-            padding: 12px 14px;
+            padding: 10px 12px;
             color: white;
             font-size: 14px;
             margin: 4px 0 12px 0;
@@ -970,52 +993,44 @@
             margin: 0;
         }
 
-        /* Верхние плашки для рейтинга и возраста */
-        .top-stats-grid {
+        /* Плашки рейтинга и возраста */
+        .stats-row {
             display: flex;
             gap: 8px;
-            margin: 4px 0;
+            margin: 12px 0;
         }
 
-        .top-stat-card {
+        .stat-card {
             flex: 1;
             background: #1A1D24;
             border: 1px solid #2A2F3A;
             border-radius: 8px;
-            padding: 12px 8px;
+            padding: 10px 12px;
         }
 
-        .top-stat-label {
+        .stat-label {
             font-size: 11px;
             color: #9BA1B0;
             margin-bottom: 4px;
-            margin-left: 0;
         }
 
-        .top-stat-value {
-            font-size: 16px;
-            font-weight: 600;
+        .stat-value {
+            font-size: 14px;
+            font-weight: 500;
             color: #FFFFFF;
             display: flex;
             align-items: center;
             gap: 4px;
-            line-height: 1;
         }
 
-        .top-stat-value .heart-icon {
+        .stat-value .heart-icon {
             display: flex;
             align-items: center;
-            line-height: 1;
         }
 
-        .top-stat-value .heart-icon svg {
+        .stat-value .heart-icon svg {
             width: 18px;
             height: 18px;
-            display: block;
-        }
-
-        .top-stat-value.orange {
-            color: #FF6B4A;
         }
 
         /* Стильный выбор звания */
@@ -1026,7 +1041,7 @@
             border-radius: 8px;
             color: white;
             font-size: 14px;
-            padding: 12px 14px;
+            padding: 10px 12px;
             margin: 4px 0 12px 0;
             cursor: pointer;
             transition: all 0.2s;
@@ -1063,7 +1078,7 @@
         .style-option {
             flex: 1;
             text-align: center;
-            padding: 10px;
+            padding: 8px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 13px;
@@ -1085,7 +1100,6 @@
             font-size: 12px;
             color: #9BA1B0;
             margin-bottom: 4px;
-            margin-left: 0;
         }
 
         .comment-input {
@@ -1093,7 +1107,7 @@
             background: #1A1D24;
             border: 1px solid #2A2F3A;
             border-radius: 8px;
-            padding: 12px;
+            padding: 10px 12px;
             color: white;
             font-size: 13px;
             resize: none;
@@ -1133,7 +1147,6 @@
             font-size: 12px;
             color: #9BA1B0;
             margin-bottom: 4px;
-            margin-left: 0;
         }
     </style>
 </head>
@@ -1186,13 +1199,13 @@
                     <button class="mode-btn prime" onclick="showPrimeScreen()">
                         <span class="matchmaking-text">
                             <span class="mm-large">MM</span>
-                            <span class="mm-small">ATCHMAKING PRIME</span>
+                            <span class="mm-small">ATCHMAKING</span>
                         </span>
                     </button>
                     <button class="mode-btn public" onclick="showPublicScreen()">
                         <span class="matchmaking-text">
                             <span class="mm-large">MM</span>
-                            <span class="mm-small">ATCHMAKING PUBLIC</span>
+                            <span class="mm-small">ATCHMAKING</span>
                         </span>
                     </button>
                 </div>
@@ -1235,7 +1248,7 @@
                         <div class="section-title">Магазин</div>
                     </div>
                     <div class="coins-header">
-                        Pingcoins: <span id="coinsAmount">100</span>
+                        Pingcoins: <span id="coinsAmount">1000</span>
                     </div>
                 </div>
                 <div class="section-subtitle">Зарабатывайте и покупайте</div>
@@ -1326,11 +1339,11 @@
                     </div>
                 </div>
 
-                <!-- Верхние плашки: рейтинг и возраст -->
-                <div class="top-stats-grid">
-                    <div class="top-stat-card" id="ratingCard">
-                        <div class="top-stat-label">Ваш рейтинг</div>
-                        <div class="top-stat-value">
+                <!-- Плашки рейтинг и возраст -->
+                <div class="stats-row">
+                    <div class="stat-card" id="ratingCard">
+                        <div class="stat-label">Ваш рейтинг</div>
+                        <div class="stat-value">
                             0
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
@@ -1340,9 +1353,9 @@
                             </span>
                         </div>
                     </div>
-                    <div class="top-stat-card" id="ageCard" onclick="editAge()">
-                        <div class="top-stat-label">Возраст</div>
-                        <div class="top-stat-value" id="ageValue">21</div>
+                    <div class="stat-card" id="ageCard" onclick="editAge()">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value" id="ageValue">21</div>
                     </div>
                 </div>
 
@@ -1409,13 +1422,13 @@
             <div id="settingsScreen" class="screen screen-settings">
                 <div class="section-title">Настройки</div>
 
-                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:16px; margin-bottom:12px;">
-                    <h3 style="font-size:15px; margin-bottom:8px;">Тема</h3>
+                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
+                    <h3 style="font-size:14px; margin-bottom:8px;">Тема</h3>
                     <p style="color:#9BA1B0; font-size:13px;">Тёмная / Светлая</p>
                 </div>
 
-                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:16px; margin-bottom:12px;">
-                    <h3 style="font-size:15px; margin-bottom:8px;">Модерация</h3>
+                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
+                    <h3 style="font-size:14px; margin-bottom:8px;">Модерация</h3>
                     <p style="color:#9BA1B0; font-size:13px;">Люди мы будем</p>
                 </div>
 
@@ -1461,10 +1474,10 @@
                 <div class="input-label">Faceit ELO</div>
                 <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="4000" min="0" max="5000">
                 
-                <div class="top-stats-grid">
-                    <div class="top-stat-card">
-                        <div class="top-stat-label">Ваш рейтинг</div>
-                        <div class="top-stat-value">
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Ваш рейтинг</div>
+                        <div class="stat-value">
                             0
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
@@ -1474,9 +1487,9 @@
                             </span>
                         </div>
                     </div>
-                    <div class="top-stat-card">
-                        <div class="top-stat-label">Возраст</div>
-                        <div class="top-stat-value" id="faceitAgeValue">21</div>
+                    <div class="stat-card">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value" id="faceitAgeValue">21</div>
                     </div>
                 </div>
                 
@@ -1510,10 +1523,10 @@
                 <div class="input-label">CS Rating</div>
                 <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="12500" min="0" max="35000">
                 
-                <div class="top-stats-grid">
-                    <div class="top-stat-card">
-                        <div class="top-stat-label">Ваш рейтинг</div>
-                        <div class="top-stat-value">
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Ваш рейтинг</div>
+                        <div class="stat-value">
                             0
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
@@ -1523,9 +1536,9 @@
                             </span>
                         </div>
                     </div>
-                    <div class="top-stat-card">
-                        <div class="top-stat-label">Возраст</div>
-                        <div class="top-stat-value" id="premierAgeValue">21</div>
+                    <div class="stat-card">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value" id="premierAgeValue">21</div>
                     </div>
                 </div>
                 
@@ -1552,7 +1565,7 @@
                     <div class="mode-title prime">
                         <span class="matchmaking-text">
                             <span class="mm-large">MM</span>
-                            <span class="mm-small">ATCHMAKING PRIME</span>
+                            <span class="mm-small">ATCHMAKING</span>
                         </span>
                     </div>
                 </div>
@@ -1579,10 +1592,10 @@
                     <option>Global Elite</option>
                 </select>
                 
-                <div class="top-stats-grid">
-                    <div class="top-stat-card">
-                        <div class="top-stat-label">Ваш рейтинг</div>
-                        <div class="top-stat-value">
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Ваш рейтинг</div>
+                        <div class="stat-value">
                             0
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
@@ -1592,9 +1605,9 @@
                             </span>
                         </div>
                     </div>
-                    <div class="top-stat-card">
-                        <div class="top-stat-label">Возраст</div>
-                        <div class="top-stat-value" id="primeAgeValue">21</div>
+                    <div class="stat-card">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value" id="primeAgeValue">21</div>
                     </div>
                 </div>
                 
@@ -1621,7 +1634,7 @@
                     <div class="mode-title public">
                         <span class="matchmaking-text">
                             <span class="mm-large">MM</span>
-                            <span class="mm-small">ATCHMAKING PUBLIC</span>
+                            <span class="mm-small">ATCHMAKING</span>
                         </span>
                     </div>
                 </div>
@@ -1648,10 +1661,10 @@
                     <option>Global Elite</option>
                 </select>
                 
-                <div class="top-stats-grid">
-                    <div class="top-stat-card">
-                        <div class="top-stat-label">Ваш рейтинг</div>
-                        <div class="top-stat-value">
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Ваш рейтинг</div>
+                        <div class="stat-value">
                             0
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
@@ -1661,9 +1674,9 @@
                             </span>
                         </div>
                     </div>
-                    <div class="top-stat-card">
-                        <div class="top-stat-label">Возраст</div>
-                        <div class="top-stat-value" id="publicAgeValue">21</div>
+                    <div class="stat-card">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value" id="publicAgeValue">21</div>
                     </div>
                 </div>
                 
@@ -1703,7 +1716,7 @@
         let savedFaceitLink = '—';
 
         // Данные магазина
-        let coins = 100;
+        let coins = 1000;
         let ownedNicks = [];
         let ownedFrames = [];
 
@@ -1835,41 +1848,47 @@
             const coinsSpan = document.getElementById('coinsAmount');
             
             if (nicksGrid) {
-                nicksGrid.innerHTML = nicks.map(nick => `
-                    <div class="shop-item">
-                        <div class="item-info">
-                            <div class="color-dot ${nick.class}"></div>
-                            <span class="item-name">${nick.name}</span>
+                nicksGrid.innerHTML = nicks.map(nick => {
+                    const owned = ownedNicks.includes(nick.id);
+                    return `
+                        <div class="shop-item">
+                            <div class="item-info">
+                                <div class="color-dot ${nick.class}"></div>
+                                <span class="item-name">${nick.name}</span>
+                            </div>
+                            <div class="item-right">
+                                <span class="price-value">${nick.price}</span>
+                                <button class="buy-btn ${owned ? 'owned' : ''}" 
+                                        onclick="buyNick('${nick.id}')"
+                                        ${owned ? 'disabled' : ''}>
+                                    ${owned ? 'Куплено' : 'Купить'}
+                                </button>
+                            </div>
                         </div>
-                        <div class="item-right">
-                            <span class="price-value">${nick.price}</span>
-                            <button class="buy-btn ${ownedNicks.includes(nick.id) ? 'owned' : ''}" 
-                                    onclick="buyNick('${nick.id}')"
-                                    ${ownedNicks.includes(nick.id) ? 'disabled' : ''}>
-                                ${ownedNicks.includes(nick.id) ? '✓' : 'Купить'}
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
 
             if (framesGrid) {
-                framesGrid.innerHTML = frames.map(frame => `
-                    <div class="shop-item">
-                        <div class="item-info">
-                            <div class="frame-dot ${frame.class}"></div>
-                            <span class="item-name">${frame.name}</span>
+                framesGrid.innerHTML = frames.map(frame => {
+                    const owned = ownedFrames.includes(frame.id);
+                    return `
+                        <div class="shop-item">
+                            <div class="item-info">
+                                <div class="frame-dot ${frame.class}"></div>
+                                <span class="item-name">${frame.name}</span>
+                            </div>
+                            <div class="item-right">
+                                <span class="price-value">${frame.price}</span>
+                                <button class="buy-btn ${owned ? 'owned' : ''}" 
+                                        onclick="buyFrame('${frame.id}')"
+                                        ${owned ? 'disabled' : ''}>
+                                    ${owned ? 'Куплено' : 'Купить'}
+                                </button>
+                            </div>
                         </div>
-                        <div class="item-right">
-                            <span class="price-value">${frame.price}</span>
-                            <button class="buy-btn ${ownedFrames.includes(frame.id) ? 'owned' : ''}" 
-                                    onclick="buyFrame('${frame.id}')"
-                                    ${ownedFrames.includes(frame.id) ? 'disabled' : ''}>
-                                ${ownedFrames.includes(frame.id) ? '✓' : 'Купить'}
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
 
             if (coinsSpan) coinsSpan.textContent = coins;
@@ -1880,6 +1899,7 @@
             if (!nick) return;
             
             if (ownedNicks.includes(nickId)) {
+                alert('У вас уже есть этот ник!');
                 return;
             }
             
@@ -1887,13 +1907,18 @@
                 coins -= nick.price;
                 ownedNicks.push(nickId);
                 
+                // Применяем ник к профилю
                 const profileName = document.getElementById('profileName');
                 if (profileName) {
+                    // Убираем все предыдущие классы цвета
                     profileName.className = 'profile-name';
                     profileName.classList.add(nick.class);
                 }
                 
                 renderShop();
+                alert(`Вы купили ${nick.name} ник!`);
+            } else {
+                alert('Недостаточно Pingcoins!');
             }
         }
 
@@ -1902,6 +1927,7 @@
             if (!frame) return;
             
             if (ownedFrames.includes(frameId)) {
+                alert('У вас уже есть эта рамка!');
                 return;
             }
             
@@ -1909,13 +1935,18 @@
                 coins -= frame.price;
                 ownedFrames.push(frameId);
                 
+                // Применяем рамку к аватарке
                 const profileAvatar = document.getElementById('profileAvatar');
                 if (profileAvatar) {
+                    // Убираем все предыдущие классы рамок
                     profileAvatar.className = 'profile-avatar';
                     profileAvatar.classList.add(frame.class);
                 }
                 
                 renderShop();
+                alert(`Вы купили ${frame.name}!`);
+            } else {
+                alert('Недостаточно Pingcoins!');
             }
         }
 
@@ -1925,6 +1956,21 @@
             document.getElementById('ageValue').textContent = savedAge;
             document.getElementById('steamDisplay').textContent = savedSteam;
             document.getElementById('faceitLinkDisplay').textContent = savedFaceitLink;
+            
+            // Восстанавливаем классы ника и рамки
+            const profileName = document.getElementById('profileName');
+            profileName.className = 'profile-name';
+            ownedNicks.forEach(nickId => {
+                const nick = nicks.find(n => n.id === nickId);
+                if (nick) profileName.classList.add(nick.class);
+            });
+            
+            const profileAvatar = document.getElementById('profileAvatar');
+            profileAvatar.className = 'profile-avatar';
+            ownedFrames.forEach(frameId => {
+                const frame = frames.find(f => f.id === frameId);
+                if (frame) profileAvatar.classList.add(frame.class);
+            });
             
             // Обновляем ссылки и возраст во всех экранах
             const steamInputs = [
