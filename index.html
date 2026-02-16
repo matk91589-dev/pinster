@@ -199,7 +199,7 @@
             font-weight: 700;
             color: #FFFFFF;
             letter-spacing: -0.5px;
-            margin: 20px 0 8px 0;
+            margin: 40px 0 8px 0;
             text-align: center;
         }
 
@@ -385,10 +385,12 @@
 
         .mode-btn.prime {
             border-left: 4px solid #FFFFFF;
+            text-transform: none;
         }
 
         .mode-btn.public {
             border-left: 4px solid #FFFFFF;
+            text-transform: none;
         }
 
         .mode-btn::after {
@@ -399,24 +401,6 @@
             transform: translateY(-50%);
             font-size: 20px;
             color: #5D6472;
-        }
-
-        /* Стиль для MatchMaking */
-        .matchmaking-text {
-            display: flex;
-            align-items: center;
-            gap: 0;
-            text-transform: none;
-        }
-        .mm-large {
-            font-size: 22px;
-            font-weight: 700;
-        }
-        .mm-small {
-            font-size: 14px;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            opacity: 0.9;
         }
 
         /* Профиль */
@@ -961,8 +945,8 @@
 
         .mode-title.faceit { color: #FF6B4A; }
         .mode-title.premier { color: #FF6B4A; }
-        .mode-title.prime { color: #FFFFFF; }
-        .mode-title.public { color: #FFFFFF; }
+        .mode-title.prime { color: #FFFFFF; text-transform: none; }
+        .mode-title.public { color: #FFFFFF; text-transform: none; }
 
         .mode-subtitle {
             font-size: 12px;
@@ -1200,16 +1184,8 @@
                 <div class="mode-container">
                     <button class="mode-btn faceit" onclick="showFaceitScreen()">FACEIT</button>
                     <button class="mode-btn premier" onclick="showPremierScreen()">PREMIER</button>
-                    <button class="mode-btn prime" onclick="showPrimeScreen()">
-                        <span class="matchmaking-text">
-                            <span class="mm-large">Match</span><span class="mm-small">Making PRIME</span>
-                        </span>
-                    </button>
-                    <button class="mode-btn public" onclick="showPublicScreen()">
-                        <span class="matchmaking-text">
-                            <span class="mm-large">Match</span><span class="mm-small">Making PUBLIC</span>
-                        </span>
-                    </button>
+                    <button class="mode-btn prime" onclick="showPrimeScreen()">MatchMaking PRIME</button>
+                    <button class="mode-btn public" onclick="showPublicScreen()">MatchMaking PUBLIC</button>
                 </div>
 
                 <div class="bottom-nav">
@@ -1564,11 +1540,7 @@
             <div id="primeScreen" class="screen screen-prime">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
-                    <div class="mode-title prime">
-                        <span class="matchmaking-text">
-                            <span class="mm-large">Match</span><span class="mm-small">Making PRIME</span>
-                        </span>
-                    </div>
+                    <div class="mode-title prime">MatchMaking PRIME</div>
                 </div>
                 <div class="mode-subtitle">введите текущие данные</div>
                 
@@ -1632,11 +1604,7 @@
             <div id="publicScreen" class="screen screen-public">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
-                    <div class="mode-title public">
-                        <span class="matchmaking-text">
-                            <span class="mm-large">Match</span><span class="mm-small">Making PUBLIC</span>
-                        </span>
-                    </div>
+                    <div class="mode-title public">MatchMaking PUBLIC</div>
                 </div>
                 <div class="mode-subtitle">введите текущие данные</div>
                 
