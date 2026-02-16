@@ -136,7 +136,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.1s; /* Ускорено */
+            transition: all 0.1s;
         }
 
         .edit-title-icon svg {
@@ -145,7 +145,7 @@
             stroke: #9BA1B0;
             stroke-width: 2;
             fill: none;
-            transition: stroke 0.1s; /* Ускорено */
+            transition: stroke 0.1s;
         }
 
         .edit-title-icon.active svg {
@@ -161,7 +161,7 @@
             font-size: 12px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.1s; /* Ускорено */
+            transition: all 0.1s;
             opacity: 0;
             pointer-events: none;
         }
@@ -186,17 +186,18 @@
         }
 
         .section-title {
-            font-size: 20px;
-            font-weight: 600;
+            font-size: 24px;
+            font-weight: 700;
             color: #FFFFFF;
-            letter-spacing: -0.3px;
-            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
         }
 
         .section-subtitle {
             font-size: 14px;
             color: #9BA1B0;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            font-weight: 400;
         }
 
         /* Стартовый экран */
@@ -346,7 +347,7 @@
             border-radius: 12px;
             color: #E5E7EB;
             font-size: 18px;
-            font-weight: 500;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             cursor: pointer;
@@ -409,7 +410,7 @@
             justify-content: center;
             font-size: 32px;
             color: #9BA1B0;
-            transition: border 0.1s ease, border-width 0.1s ease; /* Ускорено и плавно */
+            transition: border 0.1s ease, border-width 0.1s ease;
             cursor: pointer;
         }
 
@@ -436,7 +437,7 @@
             font-size: 22px;
             font-weight: 600;
             color: #FFFFFF;
-            transition: color 0.1s ease; /* Ускорено и плавно */
+            transition: color 0.1s ease;
             cursor: pointer;
         }
 
@@ -472,13 +473,19 @@
             margin-bottom: 16px;
         }
 
+        .profile-row {
+            display: flex;
+            gap: 8px;
+        }
+
         .profile-stat-card {
+            flex: 1;
             background: #1A1D24;
             border: 1px solid #2A2F3A;
             border-radius: 8px;
             padding: 12px 14px;
             cursor: pointer;
-            transition: border 0.1s ease, border-width 0.1s ease; /* Ускорено и плавно */
+            transition: border 0.1s ease, border-width 0.1s ease;
         }
 
         .profile-stat-card.editable {
@@ -496,6 +503,23 @@
             font-size: 14px;
             font-weight: 500;
             color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .heart-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .heart-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: #FF6B4A;
+            stroke-width: 2;
+            fill: none;
         }
 
         .input-field {
@@ -508,7 +532,7 @@
             font-size: 13px;
             margin: 8px 0;
             cursor: pointer;
-            transition: border 0.1s ease, border-width 0.1s ease; /* Ускорено и плавно */
+            transition: border 0.1s ease, border-width 0.1s ease;
         }
 
         .input-field.editable {
@@ -985,6 +1009,10 @@
             height: 80px;
         }
 
+        .comment-input::placeholder {
+            color: #5D6472;
+        }
+
         .home-bar {
             width: 130px;
             height: 5px;
@@ -1182,7 +1210,7 @@
                     <div class="profile-info">
                         <div class="profile-name-label">
                             ваш никнейм
-                            <span class="profile-status">новичок</span>
+                            <span class="profile-status">НОВИЧОК</span>
                         </div>
                         <div class="profile-name-row">
                             <span id="profileName" class="profile-name" onclick="editName()">Pingster</span>
@@ -1190,11 +1218,25 @@
                     </div>
                 </div>
 
-                <!-- Только возраст и ссылки -->
+                <!-- Плашки в профиле -->
                 <div class="profile-stats">
-                    <div class="profile-stat-card" id="ageCard" onclick="editAge()">
-                        <div class="profile-stat-label">Возраст</div>
-                        <div class="profile-stat-value" id="ageValue">21</div>
+                    <div class="profile-row">
+                        <div class="profile-stat-card" id="ageCard" onclick="editAge()">
+                            <div class="profile-stat-label">Возраст</div>
+                            <div class="profile-stat-value" id="ageValue">21</div>
+                        </div>
+                        <div class="profile-stat-card" id="ratingCard">
+                            <div class="profile-stat-label">Ваш рейтинг</div>
+                            <div class="profile-stat-value">
+                                0
+                                <span class="heart-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
+                                              stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="profile-stat-card" id="steamCard" onclick="editSteam()">
@@ -1300,7 +1342,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН FACEIT (с вводом ELO) -->
+            <!-- ЭКРАН FACEIT (с вводом ELO и ссылками) -->
             <div id="faceitScreen" class="screen screen-faceit">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
@@ -1308,7 +1350,11 @@
                 <div class="mode-title faceit">FACEIT</div>
                 <div class="mode-subtitle">введите текущие данные</div>
                 
-                <input type="text" class="search-input-field" id="faceitELOInput" placeholder="Ваш ELO (0-5000)" value="1500">
+                <input type="text" class="search-input-field" id="faceitELOInput" placeholder="Ваш ELO (0-5000)" value="4000">
+                
+                <input type="text" class="input-field" id="faceitSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
+                
+                <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="—" readonly>
                 
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
@@ -1317,13 +1363,13 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" placeholder="Введите информацию о себе..."></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите"></textarea>
                 </div>
 
                 <button class="primary-btn" onclick="startSearch('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН PREMIER (с вводом рейтинга) -->
+            <!-- ЭКРАН PREMIER (с вводом рейтинга и ссылками) -->
             <div id="premierScreen" class="screen screen-premier">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
@@ -1333,6 +1379,10 @@
                 
                 <input type="text" class="search-input-field" id="premierRatingInput" placeholder="CS Rating (0-35000)" value="12500">
                 
+                <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
+                
+                <input type="text" class="input-field" id="premierLinkInput" placeholder="Ссылка на Faceit" value="—" readonly>
+                
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
                     <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
@@ -1340,13 +1390,13 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" placeholder="Введите информацию о себе..."></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите"></textarea>
                 </div>
 
                 <button class="primary-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MM PRIME (с выбором звания) -->
+            <!-- ЭКРАН MM PRIME (с выбором звания и ссылками) -->
             <div id="primeScreen" class="screen screen-prime">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
@@ -1374,6 +1424,10 @@
                     <option>Global Elite</option>
                 </select>
                 
+                <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
+                
+                <input type="text" class="input-field" id="primeLinkInput" placeholder="Ссылка на Faceit" value="—" readonly>
+                
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
                     <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
@@ -1381,13 +1435,13 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" placeholder="Введите информацию о себе..."></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите"></textarea>
                 </div>
 
                 <button class="primary-btn" onclick="startSearch('MM PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MM PUBLIC (с выбором звания) -->
+            <!-- ЭКРАН MM PUBLIC (с выбором звания и ссылками) -->
             <div id="publicScreen" class="screen screen-public">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
@@ -1415,6 +1469,10 @@
                     <option>Global Elite</option>
                 </select>
                 
+                <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
+                
+                <input type="text" class="input-field" id="publicLinkInput" placeholder="Ссылка на Faceit" value="—" readonly>
+                
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
                     <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
@@ -1422,7 +1480,7 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" placeholder="Введите информацию о себе..."></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите"></textarea>
                 </div>
 
                 <button class="primary-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
@@ -1671,6 +1729,27 @@
             document.getElementById('steamDisplay').textContent = savedSteam;
             document.getElementById('faceitLinkDisplay').textContent = savedFaceitLink;
             
+            // Обновляем ссылки во всех экранах
+            const steamInputs = [
+                document.getElementById('faceitSteamInput'),
+                document.getElementById('premierSteamInput'),
+                document.getElementById('primeSteamInput'),
+                document.getElementById('publicSteamInput')
+            ];
+            steamInputs.forEach(input => {
+                if (input) input.value = savedSteam;
+            });
+            
+            const faceitInputs = [
+                document.getElementById('faceitLinkInput'),
+                document.getElementById('premierLinkInput'),
+                document.getElementById('primeLinkInput'),
+                document.getElementById('publicLinkInput')
+            ];
+            faceitInputs.forEach(input => {
+                if (input) input.value = savedFaceitLink;
+            });
+            
             tempName = savedName;
             tempAvatar = savedAvatar;
             tempAge = savedAge;
@@ -1814,24 +1893,28 @@
             hideAllScreens();
             document.getElementById('faceitScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues(); // Обновляем ссылки
         }
 
         function showPremierScreen() {
             hideAllScreens();
             document.getElementById('premierScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues(); // Обновляем ссылки
         }
 
         function showPrimeScreen() {
             hideAllScreens();
             document.getElementById('primeScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues(); // Обновляем ссылки
         }
 
         function showPublicScreen() {
             hideAllScreens();
             document.getElementById('publicScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues(); // Обновляем ссылки
         }
 
         function showShopTab(tab) {
