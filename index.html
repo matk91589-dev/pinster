@@ -62,6 +62,11 @@
             letter-spacing: -0.5px;
             color: #FFFFFF;
             cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .logo:active {
+            transform: scale(1.05);
         }
 
         .logo .ping {
@@ -191,14 +196,14 @@
             font-weight: 700;
             color: #FFFFFF;
             letter-spacing: -0.5px;
-            margin-bottom: 8px;
+            margin: 0 0 8px 0;
             text-align: center;
         }
 
         .section-subtitle {
             font-size: 14px;
             color: #9BA1B0;
-            margin-bottom: 20px;
+            margin: 0 0 20px 0;
             font-weight: 400;
             text-align: center;
         }
@@ -339,7 +344,7 @@
             flex-direction: column;
             justify-content: center;
             gap: 16px;
-            margin: 4px 0;
+            margin: 0;
         }
 
         .mode-btn {
@@ -393,6 +398,23 @@
             color: #5D6472;
         }
 
+        /* Стиль для MATCHMAKING с выделенными MM */
+        .matchmaking-text {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+        .mm-large {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .mm-small {
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            opacity: 0.9;
+        }
+
         /* Профиль */
         .profile-header {
             display: flex;
@@ -426,7 +448,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 8px;
         }
 
         .profile-name-row {
@@ -454,7 +476,6 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 2px;
         }
 
         .profile-status {
@@ -534,13 +555,13 @@
             color: white;
             font-size: 13px;
             margin: 8px 0;
-            cursor: pointer;
+            cursor: text;
             transition: border 0.1s ease, border-width 0.1s ease;
         }
 
-        .input-field.editable {
+        .input-field:focus {
+            outline: none;
             border-color: #FF6B4A;
-            border-width: 2px;
         }
 
         /* Поиск друзей */
@@ -873,7 +894,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 8px;
+            margin-bottom: 16px;
         }
 
         .back-btn {
@@ -881,13 +902,20 @@
             height: 36px;
             border-radius: 50%;
             background: transparent;
-            border: 1px solid #2A2F3A;
+            border: 2px solid #2A2F3A;
             color: #9BA1B0;
-            font-size: 20px;
+            font-size: 22px;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            border-color: #FF6B4A;
+            color: #FFFFFF;
         }
 
         .mode-title {
@@ -906,7 +934,7 @@
             font-size: 12px;
             color: #9BA1B0;
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
         .search-input-field {
@@ -935,42 +963,69 @@
             margin: 0;
         }
 
-        .stats-grid {
+        /* Верхние плашки для рейтинга/ELO и возраста */
+        .top-stats-grid {
             display: flex;
             gap: 8px;
-            margin: 0 0 12px 0;
+            margin: 0 0 16px 0;
         }
 
-        .stat-card {
+        .top-stat-card {
             flex: 1;
             background: #1A1D24;
             border: 1px solid #2A2F3A;
             border-radius: 8px;
-            padding: 12px 4px;
+            padding: 12px 8px;
             text-align: center;
         }
 
-        .stat-label {
+        .top-stat-label {
             font-size: 11px;
             color: #9BA1B0;
             margin-bottom: 4px;
         }
 
-        .stat-value {
-            font-size: 16px;
+        .top-stat-value {
+            font-size: 18px;
             font-weight: 600;
             color: #FFFFFF;
         }
 
+        .top-stat-value.orange {
+            color: #FF6B4A;
+        }
+
+        /* Стильный выбор звания */
         .rank-select {
             width: 100%;
             background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 8px;
+            border: 2px solid #2A2F3A;
+            border-radius: 12px;
             color: white;
             font-size: 15px;
             padding: 14px;
             margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF6B4A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+        }
+
+        .rank-select:hover {
+            border-color: #FF6B4A;
+        }
+
+        .rank-select:focus {
+            outline: none;
+            border-color: #FF6B4A;
+            box-shadow: 0 0 0 2px rgba(255, 107, 74, 0.2);
+        }
+
+        .rank-select option {
+            background: #1A1D24;
+            color: white;
         }
 
         .play-style {
@@ -1020,7 +1075,6 @@
             font-size: 13px;
             resize: none;
             height: 70px;
-            max-length: 100;
         }
 
         .comment-input::placeholder {
@@ -1106,8 +1160,18 @@
                 <div class="mode-container">
                     <button class="mode-btn faceit" onclick="showFaceitScreen()">FACEIT</button>
                     <button class="mode-btn premier" onclick="showPremierScreen()">PREMIER</button>
-                    <button class="mode-btn prime" onclick="showPrimeScreen()">MATCHMAKING PRIME</button>
-                    <button class="mode-btn public" onclick="showPublicScreen()">MATCHMAKING PUBLIC</button>
+                    <button class="mode-btn prime" onclick="showPrimeScreen()">
+                        <span class="matchmaking-text">
+                            <span class="mm-large">MM</span>
+                            <span class="mm-small">ATCHMAKING PRIME</span>
+                        </span>
+                    </button>
+                    <button class="mode-btn public" onclick="showPublicScreen()">
+                        <span class="matchmaking-text">
+                            <span class="mm-large">MM</span>
+                            <span class="mm-small">ATCHMAKING PUBLIC</span>
+                        </span>
+                    </button>
                 </div>
 
                 <div class="bottom-nav">
@@ -1148,7 +1212,7 @@
                         <div class="section-title">Магазин</div>
                     </div>
                     <div class="coins-header">
-                        Pingcoins: <span id="coinsAmount">0</span>
+                        Pingcoins: <span id="coinsAmount">100</span>
                     </div>
                 </div>
                 <div class="section-subtitle">Зарабатывайте и покупайте</div>
@@ -1231,35 +1295,35 @@
                     <div class="profile-info">
                         <div class="profile-name-label">
                             ваш никнейм
-                            <span class="profile-status">НОВИЧОК</span>
                         </div>
                         <div class="profile-name-row">
                             <span id="profileName" class="profile-name" onclick="editName()">Pingster</span>
+                            <span class="profile-status">НОВИЧОК</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Плашки в профиле -->
-                <div class="profile-stats">
-                    <div class="profile-row">
-                        <div class="profile-stat-card" id="ageCard" onclick="editAge()">
-                            <div class="profile-stat-label">Возраст</div>
-                            <div class="profile-stat-value" id="ageValue">21</div>
-                        </div>
-                        <div class="profile-stat-card" id="ratingCard">
-                            <div class="profile-stat-label">Ваш рейтинг</div>
-                            <div class="profile-stat-value">
-                                0
-                                <span class="heart-icon">
-                                    <svg viewBox="0 0 24 24">
-                                        <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
-                                              stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </span>
-                            </div>
+                <!-- Верхние плашки: рейтинг и возраст -->
+                <div class="top-stats-grid">
+                    <div class="top-stat-card" id="ratingCard">
+                        <div class="top-stat-label">Ваш рейтинг</div>
+                        <div class="top-stat-value">
+                            0
+                            <span class="heart-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
+                                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
                         </div>
                     </div>
+                    <div class="top-stat-card" id="ageCard" onclick="editAge()">
+                        <div class="top-stat-label">Возраст</div>
+                        <div class="top-stat-value" id="ageValue">21</div>
+                    </div>
+                </div>
 
+                <div class="profile-stats">
                     <div class="profile-stat-card" id="steamCard" onclick="editSteam()">
                         <div class="profile-stat-label">Steam</div>
                         <div class="profile-stat-value" id="steamDisplay">steamcommunity.com/id/pingster</div>
@@ -1363,7 +1427,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН FACEIT (с возрастом) -->
+            <!-- ЭКРАН FACEIT -->
             <div id="faceitScreen" class="screen screen-faceit">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
@@ -1374,14 +1438,30 @@
                 <div class="input-label">Faceit ELO</div>
                 <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="4000" min="0" max="5000">
                 
+                <div class="top-stats-grid" style="margin: 8px 0;">
+                    <div class="top-stat-card">
+                        <div class="top-stat-label">Ваш рейтинг</div>
+                        <div class="top-stat-value">
+                            0
+                            <span class="heart-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
+                                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="top-stat-card">
+                        <div class="top-stat-label">Возраст</div>
+                        <div class="top-stat-value" id="faceitAgeValue">21</div>
+                    </div>
+                </div>
+                
                 <div class="input-label">Steam</div>
-                <input type="text" class="input-field" id="faceitSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
+                <input type="text" class="input-field" id="faceitSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
                 
                 <div class="input-label">Faceit</div>
-                <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="—" readonly>
-                
-                <div class="input-label">Возраст</div>
-                <input type="text" class="input-field" id="faceitAgeInput" value="21" readonly>
+                <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="—">
                 
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
@@ -1396,7 +1476,7 @@
                 <button class="primary-btn" onclick="startSearch('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН PREMIER (с возрастом) -->
+            <!-- ЭКРАН PREMIER -->
             <div id="premierScreen" class="screen screen-premier">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
@@ -1407,11 +1487,27 @@
                 <div class="input-label">CS Rating</div>
                 <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="12500" min="0" max="35000">
                 
-                <div class="input-label">Steam</div>
-                <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
+                <div class="top-stats-grid" style="margin: 8px 0;">
+                    <div class="top-stat-card">
+                        <div class="top-stat-label">Ваш рейтинг</div>
+                        <div class="top-stat-value">
+                            0
+                            <span class="heart-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
+                                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="top-stat-card">
+                        <div class="top-stat-label">Возраст</div>
+                        <div class="top-stat-value" id="premierAgeValue">21</div>
+                    </div>
+                </div>
                 
-                <div class="input-label">Возраст</div>
-                <input type="text" class="input-field" id="premierAgeInput" value="21" readonly>
+                <div class="input-label">Steam</div>
+                <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
                 
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
@@ -1426,12 +1522,17 @@
                 <button class="primary-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MATCHMAKING PRIME (с возрастом) -->
+            <!-- ЭКРАН MATCHMAKING PRIME -->
             <div id="primeScreen" class="screen screen-prime">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                 </div>
-                <div class="mode-title prime">MATCHMAKING PRIME</div>
+                <div class="mode-title prime">
+                    <span class="matchmaking-text">
+                        <span class="mm-large">MM</span>
+                        <span class="mm-small">ATCHMAKING PRIME</span>
+                    </span>
+                </div>
                 <div class="mode-subtitle">введите текущие данные</div>
                 
                 <div class="input-label">Звание</div>
@@ -1455,11 +1556,27 @@
                     <option>Global Elite</option>
                 </select>
                 
-                <div class="input-label">Steam</div>
-                <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
+                <div class="top-stats-grid" style="margin: 8px 0;">
+                    <div class="top-stat-card">
+                        <div class="top-stat-label">Ваш рейтинг</div>
+                        <div class="top-stat-value">
+                            0
+                            <span class="heart-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
+                                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="top-stat-card">
+                        <div class="top-stat-label">Возраст</div>
+                        <div class="top-stat-value" id="primeAgeValue">21</div>
+                    </div>
+                </div>
                 
-                <div class="input-label">Возраст</div>
-                <input type="text" class="input-field" id="primeAgeInput" value="21" readonly>
+                <div class="input-label">Steam</div>
+                <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
                 
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
@@ -1474,12 +1591,17 @@
                 <button class="primary-btn" onclick="startSearch('MATCHMAKING PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MATCHMAKING PUBLIC (с возрастом) -->
+            <!-- ЭКРАН MATCHMAKING PUBLIC -->
             <div id="publicScreen" class="screen screen-public">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                 </div>
-                <div class="mode-title public">MATCHMAKING PUBLIC</div>
+                <div class="mode-title public">
+                    <span class="matchmaking-text">
+                        <span class="mm-large">MM</span>
+                        <span class="mm-small">ATCHMAKING PUBLIC</span>
+                    </span>
+                </div>
                 <div class="mode-subtitle">введите текущие данные</div>
                 
                 <div class="input-label">Звание</div>
@@ -1503,11 +1625,27 @@
                     <option>Global Elite</option>
                 </select>
                 
-                <div class="input-label">Steam</div>
-                <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
+                <div class="top-stats-grid" style="margin: 8px 0;">
+                    <div class="top-stat-card">
+                        <div class="top-stat-label">Ваш рейтинг</div>
+                        <div class="top-stat-value">
+                            0
+                            <span class="heart-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
+                                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="top-stat-card">
+                        <div class="top-stat-label">Возраст</div>
+                        <div class="top-stat-value" id="publicAgeValue">21</div>
+                    </div>
+                </div>
                 
-                <div class="input-label">Возраст</div>
-                <input type="text" class="input-field" id="publicAgeInput" value="21" readonly>
+                <div class="input-label">Steam</div>
+                <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
                 
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
@@ -1542,7 +1680,7 @@
         let savedFaceitLink = '—';
 
         // Данные магазина
-        let coins = 0;
+        let coins = 100;
         let ownedNicks = [];
         let ownedFrames = [];
 
@@ -1765,7 +1903,7 @@
             document.getElementById('steamDisplay').textContent = savedSteam;
             document.getElementById('faceitLinkDisplay').textContent = savedFaceitLink;
             
-            // Обновляем ссылки во всех экранах
+            // Обновляем ссылки и возраст во всех экранах
             const steamInputs = [
                 document.getElementById('faceitSteamInput'),
                 document.getElementById('premierSteamInput'),
@@ -1783,15 +1921,14 @@
                 if (input) input.value = savedFaceitLink;
             });
             
-            // Обновляем возраст во всех экранах
-            const ageInputs = [
-                document.getElementById('faceitAgeInput'),
-                document.getElementById('premierAgeInput'),
-                document.getElementById('primeAgeInput'),
-                document.getElementById('publicAgeInput')
+            const ageValues = [
+                document.getElementById('faceitAgeValue'),
+                document.getElementById('premierAgeValue'),
+                document.getElementById('primeAgeValue'),
+                document.getElementById('publicAgeValue')
             ];
-            ageInputs.forEach(input => {
-                if (input) input.value = savedAge;
+            ageValues.forEach(el => {
+                if (el) el.textContent = savedAge;
             });
             
             tempName = savedName;
