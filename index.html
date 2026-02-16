@@ -124,21 +124,26 @@
         .edit-title-icon {
             width: 28px;
             height: 28px;
-            background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 50%;
+            background: transparent;
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 14px;
-            color: #9BA1B0;
             transition: all 0.2s;
         }
 
-        .edit-title-icon:hover {
-            border-color: #F6465D;
-            color: #FFFFFF;
+        .edit-title-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: #9BA1B0;
+            stroke-width: 2;
+            fill: none;
+            transition: stroke 0.2s;
+        }
+
+        .edit-title-icon.active svg {
+            stroke: #F6465D;
         }
 
         .coins-header {
@@ -292,23 +297,24 @@
             color: #FFFFFF;
         }
 
-        /* Кнопки режимов */
+        /* Кнопки режимов - растянуты */
         .mode-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            justify-content: center;
+            gap: 12px;
             margin: 12px 0;
         }
 
         .mode-btn {
             width: 100%;
-            padding: 18px;
+            padding: 22px;
             background: #1A1D24;
             border: 1px solid #2A2F3A;
             border-radius: 12px;
             color: #E5E7EB;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -316,6 +322,12 @@
             text-align: left;
             position: relative;
             transition: all 0.2s;
+        }
+
+        .mode-btn:hover {
+            border-color: #F6465D;
+            background: #1E2128;
+            transform: translateY(-1px);
         }
 
         .mode-btn.faceit {
@@ -333,10 +345,10 @@
         .mode-btn::after {
             content: '→';
             position: absolute;
-            right: 18px;
+            right: 22px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 18px;
+            font-size: 20px;
             color: #5D6472;
         }
 
@@ -366,6 +378,11 @@
 
         .profile-avatar:hover {
             border-color: #F6465D;
+        }
+
+        .profile-avatar.editable {
+            border-color: #F6465D;
+            border-width: 3px;
         }
 
         .profile-avatar.frame-red { border-color: #F6465D; border-width: 3px; }
@@ -406,6 +423,10 @@
             color: #F6465D;
         }
 
+        .profile-name.editable {
+            color: #F6465D;
+        }
+
         .profile-name.red { color: #F6465D; }
         .profile-name.green { color: #4CAF50; }
         .profile-name.blue { color: #2196F3; }
@@ -428,11 +449,6 @@
             border: 1px solid #2A2F3A;
             font-size: 13px;
             color: #FFFFFF;
-            cursor: pointer;
-        }
-
-        .profile-rating:hover {
-            border-color: #F6465D;
         }
 
         .rating-star {
@@ -455,11 +471,6 @@
             padding: 2px 8px;
             border-radius: 12px;
             border: 1px solid rgba(76, 175, 80, 0.3);
-            cursor: pointer;
-        }
-
-        .profile-status:hover {
-            border-color: #4CAF50;
         }
 
         .stats-grid {
@@ -481,6 +492,11 @@
 
         .stat-card:hover {
             border-color: #F6465D;
+        }
+
+        .stat-card.editable {
+            border-color: #F6465D;
+            border-width: 2px;
         }
 
         .stat-label {
@@ -509,6 +525,11 @@
 
         .input-field:hover {
             border-color: #F6465D;
+        }
+
+        .input-field.editable {
+            border-color: #F6465D;
+            border-width: 2px;
         }
 
         /* Ваши друзья */
@@ -1026,7 +1047,14 @@
                 <div class="title-row">
                     <div class="title-left">
                         <div class="section-title">Профиль</div>
-                        <div class="edit-title-icon" onclick="editProfile()">✏️</div>
+                        <div id="editToggle" class="edit-title-icon" onclick="toggleEditMode()">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 20h9" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"
+                                      stroke="white" stroke-width="2"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
                     </div>
                 </div>
 
@@ -1035,11 +1063,11 @@
                     <div class="profile-info">
                         <div class="profile-name-label">
                             ваш никнейм
-                            <span class="profile-status" onclick="editStatus()">новичок</span>
+                            <span class="profile-status">новичок</span>
                         </div>
                         <div class="profile-name-row">
                             <span id="profileName" class="profile-name" onclick="editName()">Pingster</span>
-                            <span class="profile-rating" onclick="editRating()">
+                            <span class="profile-rating">
                                 <span id="ratingValue">5</span>
                                 <span class="rating-star">⭐</span>
                             </span>
@@ -1048,21 +1076,21 @@
                 </div>
 
                 <div class="stats-grid">
-                    <div class="stat-card" onclick="editELO()">
+                    <div class="stat-card" id="eloCard" onclick="editELO()">
                         <div class="stat-label">ELO</div>
                         <div class="stat-value" id="eloValue">1 500</div>
                     </div>
-                    <div class="stat-card" onclick="editPremier()">
+                    <div class="stat-card" id="premierCard" onclick="editPremier()">
                         <div class="stat-label">Premier</div>
                         <div class="stat-value" id="premierValue">12 500</div>
                     </div>
-                    <div class="stat-card" onclick="editAge()">
+                    <div class="stat-card" id="ageCard" onclick="editAge()">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value" id="ageValue">21</div>
                     </div>
                 </div>
 
-                <input type="text" class="input-field" value="https://steamcommunity.com/id/pingster" readonly onclick="editSteam()">
+                <input type="text" class="input-field" id="steamInput" value="https://steamcommunity.com/id/pingster" readonly onclick="editSteam()">
 
                 <div class="friends-section">
                     <div class="friends-header">
@@ -1253,6 +1281,8 @@
     </div>
 
     <script>
+        let editMode = false;
+
         // Данные магазина
         let coins = 0;
         let ownedNicks = [];
@@ -1386,64 +1416,115 @@
             }
         }
 
-        // Функции редактирования профиля
-        function editProfile() {
-            editName();
+        function toggleEditMode() {
+            editMode = !editMode;
+            const editIcon = document.getElementById('editToggle');
+            const elements = [
+                document.getElementById('profileName'),
+                document.getElementById('profileAvatar'),
+                document.getElementById('eloCard'),
+                document.getElementById('premierCard'),
+                document.getElementById('ageCard'),
+                document.getElementById('steamInput')
+            ];
+            
+            if (editMode) {
+                editIcon.classList.add('active');
+                elements.forEach(el => el.classList.add('editable'));
+            } else {
+                editIcon.classList.remove('active');
+                elements.forEach(el => el.classList.remove('editable'));
+            }
+        }
+
+        function validateName(name) {
+            return name.length >= 3 && name.length <= 10;
+        }
+
+        function validateELO(elo) {
+            const num = parseInt(elo);
+            return !isNaN(num) && num >= 0 && num <= 5000;
+        }
+
+        function validatePremier(premier) {
+            const num = parseInt(premier);
+            return !isNaN(num) && num >= 0 && num <= 30000;
+        }
+
+        function validateAge(age) {
+            const num = parseInt(age);
+            return !isNaN(num) && num >= 0 && num <= 100;
         }
 
         function editName() {
-            const newName = prompt('Введите новый никнейм:', 'Pingster');
-            if (newName && newName.trim()) {
+            if (!editMode) return;
+            
+            const currentName = document.getElementById('profileName').textContent;
+            const newName = prompt('Введите новый никнейм (3-10 символов):', currentName);
+            
+            if (newName && validateName(newName.trim())) {
                 document.getElementById('profileName').textContent = newName;
-            }
-        }
-
-        function editStatus() {
-            const newStatus = prompt('Введите новый статус (новичок/любитель/профи):', 'новичок');
-            if (newStatus && newStatus.trim()) {
-                document.querySelector('.profile-status').textContent = newStatus;
-            }
-        }
-
-        function editRating() {
-            const newRating = prompt('Введите новый рейтинг (1-5):', '5');
-            if (newRating && newRating.trim()) {
-                document.getElementById('ratingValue').textContent = newRating;
+            } else if (newName) {
+                alert('Никнейм должен содержать от 3 до 10 символов!');
             }
         }
 
         function editELO() {
-            const newELO = prompt('Введите новый ELO:', '1500');
-            if (newELO && newELO.trim()) {
+            if (!editMode) return;
+            
+            const currentELO = document.getElementById('eloValue').textContent.replace(/\s/g, '');
+            const newELO = prompt('Введите новый ELO (0-5000):', currentELO);
+            
+            if (newELO && validateELO(newELO)) {
                 document.getElementById('eloValue').textContent = newELO;
+            } else if (newELO) {
+                alert('ELO должен быть от 0 до 5000!');
             }
         }
 
         function editPremier() {
-            const newPremier = prompt('Введите новый Premier рейтинг:', '12500');
-            if (newPremier && newPremier.trim()) {
+            if (!editMode) return;
+            
+            const currentPremier = document.getElementById('premierValue').textContent.replace(/\s/g, '');
+            const newPremier = prompt('Введите новый Premier рейтинг (0-30000):', currentPremier);
+            
+            if (newPremier && validatePremier(newPremier)) {
                 document.getElementById('premierValue').textContent = newPremier;
+            } else if (newPremier) {
+                alert('Premier рейтинг должен быть от 0 до 30000!');
             }
         }
 
         function editAge() {
-            const newAge = prompt('Введите новый возраст:', '21');
-            if (newAge && newAge.trim()) {
+            if (!editMode) return;
+            
+            const currentAge = document.getElementById('ageValue').textContent;
+            const newAge = prompt('Введите новый возраст:', currentAge);
+            
+            if (newAge && validateAge(newAge)) {
                 document.getElementById('ageValue').textContent = newAge;
+            } else if (newAge) {
+                alert('Введите корректный возраст!');
             }
         }
 
         function editSteam() {
-            const newSteam = prompt('Введите новую ссылку на Steam:', 'https://steamcommunity.com/id/pingster');
+            if (!editMode) return;
+            
+            const currentSteam = document.getElementById('steamInput').value;
+            const newSteam = prompt('Введите новую ссылку на Steam:', currentSteam);
+            
             if (newSteam && newSteam.trim()) {
-                document.querySelector('.input-field').value = newSteam;
+                document.getElementById('steamInput').value = newSteam;
             }
         }
 
         function editAvatar() {
-            const emojis = ['😎', '😼', '🤖', '👾', '🎮', '👻', '💀', '😱', '🤠', '🥷'];
+            if (!editMode) return;
+            
             const currentAvatar = document.getElementById('profileAvatar').textContent;
             const newAvatar = prompt('Выберите аватарку (можно вставить эмодзи):', currentAvatar);
+            
             if (newAvatar && newAvatar.trim()) {
                 document.getElementById('profileAvatar').textContent = newAvatar;
             }
@@ -1472,6 +1553,18 @@
             hideAllScreens();
             document.getElementById('profileScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
+            // Сбрасываем режим редактирования при входе в профиль
+            editMode = false;
+            document.getElementById('editToggle').classList.remove('active');
+            const elements = [
+                document.getElementById('profileName'),
+                document.getElementById('profileAvatar'),
+                document.getElementById('eloCard'),
+                document.getElementById('premierCard'),
+                document.getElementById('ageCard'),
+                document.getElementById('steamInput')
+            ];
+            elements.forEach(el => el.classList.remove('editable'));
         }
 
         function showSettingsScreen() {
