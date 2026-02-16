@@ -45,7 +45,7 @@
             position: relative;
         }
 
-        /* Хедер с кликабельным логотипом */
+        /* Хедер */
         .header {
             display: flex;
             align-items: center;
@@ -199,7 +199,7 @@
             font-weight: 700;
             color: #FFFFFF;
             letter-spacing: -0.5px;
-            margin: 40px 0 8px 0;
+            margin: 70px 0 8px 0;
             text-align: center;
         }
 
@@ -692,22 +692,22 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 8px 10px;
+            padding: 10px;
             background: #1A1D24;
             border: 1px solid #2A2F3A;
             border-radius: 8px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .friend-avatar {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: #2A2F3A;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 18px;
             color: #9BA1B0;
         }
 
@@ -718,27 +718,27 @@
         .friend-name-row {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             margin-bottom: 2px;
         }
 
         .friend-name {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 500;
             color: #FFFFFF;
         }
 
         .friend-id {
-            font-size: 9px;
+            font-size: 10px;
             color: #FF6B4A;
             background: rgba(255, 107, 74, 0.1);
-            padding: 2px 5px;
+            padding: 2px 6px;
             border-radius: 4px;
             font-family: monospace;
         }
 
         .friend-steam {
-            font-size: 9px;
+            font-size: 10px;
             color: #9BA1B0;
         }
 
@@ -994,6 +994,13 @@
             border: 1px solid #2A2F3A;
             border-radius: 8px;
             padding: 10px 12px;
+            cursor: pointer;
+            transition: border 0.1s ease, border-width 0.1s ease;
+        }
+
+        .stat-card.editable {
+            border-color: #FF6B4A;
+            border-width: 2px;
         }
 
         .stat-label {
@@ -1317,7 +1324,7 @@
                     </div>
                 </div>
 
-                <!-- Плашки рейтинг и возраст -->
+                <!-- Плашки рейтинг и возраст (возраст теперь подсвечивается) -->
                 <div class="stats-row">
                     <div class="stat-card" id="ratingCard">
                         <div class="stat-label">Ваш рейтинг</div>
@@ -1916,4 +1923,257 @@
 
         function loadSavedValues() {
             document.getElementById('profileName').textContent = savedName;
-            document.getElementById('profileAvatar').textContent = saved
+            document.getElementById('profileAvatar').textContent = savedAvatar;
+            document.getElementById('ageValue').textContent = savedAge;
+            document.getElementById('steamDisplay').textContent = savedSteam;
+            document.getElementById('faceitLinkDisplay').textContent = savedFaceitLink;
+            
+            // Восстанавливаем классы ника и рамки
+            const profileName = document.getElementById('profileName');
+            profileName.className = 'profile-name';
+            ownedNicks.forEach(nickId => {
+                const nick = nicks.find(n => n.id === nickId);
+                if (nick) profileName.classList.add(nick.class);
+            });
+            
+            const profileAvatar = document.getElementById('profileAvatar');
+            profileAvatar.className = 'profile-avatar';
+            ownedFrames.forEach(frameId => {
+                const frame = frames.find(f => f.id === frameId);
+                if (frame) profileAvatar.classList.add(frame.class);
+            });
+            
+            // Обновляем ссылки и возраст во всех экранах
+            const steamInputs = [
+                document.getElementById('faceitSteamInput'),
+                document.getElementById('premierSteamInput'),
+                document.getElementById('primeSteamInput'),
+                document.getElementById('publicSteamInput')
+            ];
+            steamInputs.forEach(input => {
+                if (input) input.value = savedSteam;
+            });
+            
+            const faceitInputs = [
+                document.getElementById('faceitLinkInput')
+            ];
+            faceitInputs.forEach(input => {
+                if (input) input.value = savedFaceitLink;
+            });
+            
+            const ageValues = [
+                document.getElementById('faceitAgeValue'),
+                document.getElementById('premierAgeValue'),
+                document.getElementById('primeAgeValue'),
+                document.getElementById('publicAgeValue')
+            ];
+            ageValues.forEach(el => {
+                if (el) el.textContent = savedAge;
+            });
+            
+            tempName = savedName;
+            tempAvatar = savedAvatar;
+            tempAge = savedAge;
+            tempSteam = savedSteam;
+            tempFaceitLink = savedFaceitLink;
+        }
+
+        function toggleEditMode() {
+            editMode = !editMode;
+            
+            const elements = [
+                document.getElementById('profileName'),
+                document.getElementById('profileAvatar'),
+                document.getElementById('ageCard'),
+                document.getElementById('steamCard'),
+                document.getElementById('faceitLinkCard')
+            ];
+            
+            if (editMode) {
+                document.getElementById('editToggle').classList.add('active');
+                document.getElementById('applyBtn').classList.add('visible');
+                elements.forEach(el => el.classList.add('editable'));
+            } else {
+                document.getElementById('editToggle').classList.remove('active');
+                document.getElementById('applyBtn').classList.remove('visible');
+                elements.forEach(el => el.classList.remove('editable'));
+            }
+        }
+
+        function applyChanges() {
+            savedName = tempName;
+            savedAvatar = tempAvatar;
+            savedAge = tempAge;
+            savedSteam = tempSteam;
+            savedFaceitLink = tempFaceitLink;
+            
+            loadSavedValues();
+            toggleEditMode();
+        }
+
+        function editName() {
+            if (!editMode) return;
+            const newName = prompt('Введите новый никнейм (3-10 символов):', tempName);
+            if (newName && newName.length >= 3 && newName.length <= 10) {
+                tempName = newName;
+                document.getElementById('profileName').textContent = newName;
+            } else if (newName) {
+                alert('Никнейм должен содержать от 3 до 10 символов!');
+            }
+        }
+
+        function editAge() {
+            if (!editMode) return;
+            const newAge = prompt('Введите возраст:', tempAge);
+            if (newAge && !isNaN(parseInt(newAge)) && parseInt(newAge) >= 0 && parseInt(newAge) <= 100) {
+                tempAge = newAge;
+                document.getElementById('ageValue').textContent = newAge;
+            } else if (newAge) {
+                alert('Введите корректный возраст!');
+            }
+        }
+
+        function editSteam() {
+            if (!editMode) return;
+            const newSteam = prompt('Введите ссылку на Steam:', tempSteam);
+            if (newSteam && newSteam.trim()) {
+                tempSteam = newSteam;
+                document.getElementById('steamDisplay').textContent = newSteam;
+            }
+        }
+
+        function editFaceitLink() {
+            if (!editMode) return;
+            const newLink = prompt('Введите ссылку на Faceit (или оставьте пустым):', tempFaceitLink === '—' ? '' : tempFaceitLink);
+            if (newLink !== null) {
+                tempFaceitLink = newLink.trim() || '—';
+                document.getElementById('faceitLinkDisplay').textContent = tempFaceitLink;
+            }
+        }
+
+        function editAvatar() {
+            if (!editMode) return;
+            const newAvatar = prompt('Выберите аватарку (можно вставить эмодзи):', tempAvatar);
+            if (newAvatar && newAvatar.trim()) {
+                tempAvatar = newAvatar;
+                document.getElementById('profileAvatar').textContent = newAvatar;
+            }
+        }
+
+        function setStyle(style, element) {
+            const parent = element.parentElement;
+            const options = parent.querySelectorAll('.style-option');
+            options.forEach(opt => opt.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        function startSearch(mode, value) {
+            alert(`Поиск в режиме ${mode} с данными: ${value} начат! 🔍`);
+        }
+
+        function startApp() {
+            hideAllScreens();
+            document.getElementById('mainScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+        }
+
+        function showMainScreen() {
+            hideAllScreens();
+            document.getElementById('mainScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+        }
+
+        function showProfileScreen() {
+            hideAllScreens();
+            document.getElementById('profileScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            
+            if (isSearchMode) {
+                exitSearchMode();
+            } else {
+                updateSearchUI();
+            }
+            
+            loadSavedValues();
+        }
+
+        function showSettingsScreen() {
+            hideAllScreens();
+            document.getElementById('settingsScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.add('active');
+        }
+
+        function showShopScreen() {
+            hideAllScreens();
+            document.getElementById('shopScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            renderShop();
+        }
+
+        function showFaceitScreen() {
+            hideAllScreens();
+            document.getElementById('faceitScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+        }
+
+        function showPremierScreen() {
+            hideAllScreens();
+            document.getElementById('premierScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+        }
+
+        function showPrimeScreen() {
+            hideAllScreens();
+            document.getElementById('primeScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+        }
+
+        function showPublicScreen() {
+            hideAllScreens();
+            document.getElementById('publicScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+        }
+
+        function showShopTab(tab) {
+            const tabs = document.querySelectorAll('.shop-tab');
+            const shopContent = document.getElementById('shopTabContent');
+            const tasksContent = document.getElementById('tasksTabContent');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'shop') {
+                tabs[0].classList.add('active');
+                shopContent.style.display = 'block';
+                tasksContent.style.display = 'none';
+            } else {
+                tabs[1].classList.add('active');
+                shopContent.style.display = 'none';
+                tasksContent.style.display = 'flex';
+            }
+        }
+
+        function hideAllScreens() {
+            const screens = ['startScreen', 'mainScreen', 'profileScreen', 'settingsScreen', 'shopScreen',
+                           'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+        }
+
+        window.onload = function() {
+            generateFriends();
+            renderShop();
+            hideAllScreens();
+            document.getElementById('startScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+            updateSearchUI();
+        };
+    </script>
+</body>
+</html>
