@@ -374,7 +374,7 @@
             border-left: 4px solid #FFFFFF;
         }
 
-        .mode-btn.nonprime {
+        .mode-btn.public {
             border-left: 4px solid #FFFFFF;
         }
 
@@ -566,12 +566,6 @@
 
         .stat-value.white {
             color: #FFFFFF;
-        }
-
-        .stat-rank {
-            font-size: 12px;
-            color: #9BA1B0;
-            margin-top: 2px;
         }
 
         .input-field {
@@ -948,7 +942,7 @@
         .mode-title.faceit { color: #F6465D; }
         .mode-title.premier { color: #F6465D; }
         .mode-title.prime { color: #FFFFFF; }
-        .mode-title.nonprime { color: #FFFFFF; }
+        .mode-title.public { color: #FFFFFF; }
 
         .mode-subtitle {
             font-size: 12px;
@@ -1060,7 +1054,7 @@
         }
 
         .screen-start, .screen-main, .screen-profile, .screen-settings, .screen-shop,
-        .screen-faceit, .screen-premier, .screen-prime, .screen-nonprime {
+        .screen-faceit, .screen-premier, .screen-prime, .screen-public {
             display: none;
             flex-direction: column;
             height: 100%;
@@ -1113,10 +1107,10 @@
                 <div class="section-subtitle">Найдите подходящий для вас режим игры</div>
 
                 <div class="mode-container">
-                    <button class="mode-btn faceit" onclick="showFaceitScreen()">🏆 FACEIT</button>
-                    <button class="mode-btn premier" onclick="showPremierScreen()">⭐ PREMIER</button>
-                    <button class="mode-btn prime" onclick="showPrimeScreen()">🎮 COMPETITIVE PRIME</button>
-                    <button class="mode-btn nonprime" onclick="showNonPrimeScreen()">🆓 COMPETITIVE FREE</button>
+                    <button class="mode-btn faceit" onclick="showFaceitScreen()">FACEIT</button>
+                    <button class="mode-btn premier" onclick="showPremierScreen()">PREMIER</button>
+                    <button class="mode-btn prime" onclick="showPrimeScreen()">Соревновательный PRIME</button>
+                    <button class="mode-btn public" onclick="showPublicScreen()">Соревновательный PUBLIC</button>
                 </div>
 
                 <div class="bottom-nav">
@@ -1263,19 +1257,18 @@
                     <div class="stat-card" id="faceitCard" onclick="editFaceitELO()">
                         <div class="stat-label">FACEIT ELO</div>
                         <div class="stat-value orange" id="faceitELO">1500</div>
-                        <div class="stat-rank" id="faceitLevel">Уровень 3</div>
                     </div>
                     <div class="stat-card" id="premierCard" onclick="editPremier()">
                         <div class="stat-label">PREMIER</div>
                         <div class="stat-value red" id="premierValue">12500</div>
                     </div>
                     <div class="stat-card" id="primeCard" onclick="editPrimeRank()">
-                        <div class="stat-label">MM PRIME</div>
+                        <div class="stat-label">Соревновательный PRIME</div>
                         <div class="stat-value white" id="primeRank">Gold Nova 3</div>
                     </div>
-                    <div class="stat-card" id="nonprimeCard" onclick="editNonPrimeRank()">
-                        <div class="stat-label">MM NON-PRIME</div>
-                        <div class="stat-value white" id="nonprimeRank">Silver 4</div>
+                    <div class="stat-card" id="publicCard" onclick="editPublicRank()">
+                        <div class="stat-label">Соревновательный PUBLIC</div>
+                        <div class="stat-value white" id="publicRank">Silver 4</div>
                     </div>
                 </div>
 
@@ -1385,10 +1378,6 @@
                         <div class="stat-label">ELO</div>
                         <div class="stat-value" id="faceitScreenELO">1500</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Уровень</div>
-                        <div class="stat-value" id="faceitScreenLevel">3</div>
-                    </div>
                 </div>
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
@@ -1427,12 +1416,12 @@
                 <button class="primary-btn" onclick="startSearch('PREMIER')">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН COMPETITIVE PRIME -->
+            <!-- ЭКРАН СОРЕВНОВАТЕЛЬНЫЙ PRIME -->
             <div id="primeScreen" class="screen screen-prime">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                 </div>
-                <div class="mode-title prime">COMPETITIVE PRIME</div>
+                <div class="mode-title prime">Соревновательный PRIME</div>
                 <div class="mode-subtitle">ваши данные</div>
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -1449,32 +1438,32 @@
                     <div class="comment-label">Комментарий к поиску</div>
                     <textarea class="comment-input" placeholder="Введите информацию о себе..."></textarea>
                 </div>
-                <button class="primary-btn" onclick="startSearch('COMPETITIVE PRIME')">Начать поиск</button>
+                <button class="primary-btn" onclick="startSearch('Соревновательный PRIME')">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН COMPETITIVE NON-PRIME -->
-            <div id="nonprimeScreen" class="screen screen-nonprime">
+            <!-- ЭКРАН СОРЕВНОВАТЕЛЬНЫЙ PUBLIC -->
+            <div id="publicScreen" class="screen screen-public">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                 </div>
-                <div class="mode-title nonprime">COMPETITIVE FREE</div>
+                <div class="mode-title public">Соревновательный PUBLIC</div>
                 <div class="mode-subtitle">ваши данные</div>
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-label">Звание</div>
-                        <div class="stat-value" id="nonprimeScreenRank">Silver 4</div>
+                        <div class="stat-value" id="publicScreenRank">Silver 4</div>
                     </div>
                 </div>
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
                     <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
                 </div>
-                <input type="text" class="input-field" id="nonprimeSteam" value="https://steamcommunity.com/id/pingster" readonly>
+                <input type="text" class="input-field" id="publicSteam" value="https://steamcommunity.com/id/pingster" readonly>
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
                     <textarea class="comment-input" placeholder="Введите информацию о себе..."></textarea>
                 </div>
-                <button class="primary-btn" onclick="startSearch('COMPETITIVE FREE')">Начать поиск</button>
+                <button class="primary-btn" onclick="startSearch('Соревновательный PUBLIC')">Начать поиск</button>
             </div>
         </div>
 
@@ -1487,7 +1476,7 @@
         let tempFaceitELO = '1500';
         let tempPremier = '12500';
         let tempPrimeRank = 'Gold Nova 3';
-        let tempNonPrimeRank = 'Silver 4';
+        let tempPublicRank = 'Silver 4';
         let tempSteam = 'https://steamcommunity.com/id/pingster';
         let tempAvatar = '👤';
         let tempRating = '0';
@@ -1497,7 +1486,7 @@
         let savedFaceitELO = '1500';
         let savedPremier = '12500';
         let savedPrimeRank = 'Gold Nova 3';
-        let savedNonPrimeRank = 'Silver 4';
+        let savedPublicRank = 'Silver 4';
         let savedSteam = 'https://steamcommunity.com/id/pingster';
         let savedAvatar = '👤';
         let savedRating = '0';
@@ -1538,21 +1527,6 @@
             { id: 'purple', name: 'Фиолетовая рамка', class: 'frame-purple', price: 200 },
             { id: 'rainbow', name: 'Радужная рамка', class: 'frame-rainbow', price: 300 }
         ];
-
-        // Функция для расчета уровня Faceit по ELO
-        function getFaceitLevel(elo) {
-            const num = parseInt(elo);
-            if (num < 1000) return 1;
-            if (num < 1500) return 2;
-            if (num < 2000) return 3;
-            if (num < 2500) return 4;
-            if (num < 3000) return 5;
-            if (num < 3500) return 6;
-            if (num < 4000) return 7;
-            if (num < 4500) return 8;
-            if (num < 5000) return 9;
-            return 10;
-        }
 
         function generateFriends() {
             friendsData = [];
@@ -1748,20 +1722,16 @@
             document.getElementById('faceitELO').textContent = savedFaceitELO;
             document.getElementById('premierValue').textContent = savedPremier;
             document.getElementById('primeRank').textContent = savedPrimeRank;
-            document.getElementById('nonprimeRank').textContent = savedNonPrimeRank;
+            document.getElementById('publicRank').textContent = savedPublicRank;
             document.getElementById('steamInput').value = savedSteam;
             document.getElementById('profileAvatar').textContent = savedAvatar;
             document.getElementById('ratingValue').textContent = savedRating;
-            
-            // Обновляем уровень Faceit
-            const level = getFaceitLevel(savedFaceitELO);
-            document.getElementById('faceitLevel').textContent = `Уровень ${level}`;
             
             tempName = savedName;
             tempFaceitELO = savedFaceitELO;
             tempPremier = savedPremier;
             tempPrimeRank = savedPrimeRank;
-            tempNonPrimeRank = savedNonPrimeRank;
+            tempPublicRank = savedPublicRank;
             tempSteam = savedSteam;
             tempAvatar = savedAvatar;
             tempRating = savedRating;
@@ -1770,9 +1740,7 @@
         }
 
         function updateModeScreens() {
-            const level = getFaceitLevel(savedFaceitELO);
             document.getElementById('faceitScreenELO').textContent = savedFaceitELO;
-            document.getElementById('faceitScreenLevel').textContent = level;
             document.getElementById('faceitSteam').value = savedSteam;
             
             document.getElementById('premierScreenRank').textContent = savedPremier;
@@ -1781,8 +1749,8 @@
             document.getElementById('primeScreenRank').textContent = savedPrimeRank;
             document.getElementById('primeSteam').value = savedSteam;
             
-            document.getElementById('nonprimeScreenRank').textContent = savedNonPrimeRank;
-            document.getElementById('nonprimeSteam').value = savedSteam;
+            document.getElementById('publicScreenRank').textContent = savedPublicRank;
+            document.getElementById('publicSteam').value = savedSteam;
         }
 
         function toggleEditMode() {
@@ -1795,7 +1763,7 @@
                 tempFaceitELO = savedFaceitELO;
                 tempPremier = savedPremier;
                 tempPrimeRank = savedPrimeRank;
-                tempNonPrimeRank = savedNonPrimeRank;
+                tempPublicRank = savedPublicRank;
                 tempSteam = savedSteam;
                 tempAvatar = savedAvatar;
                 tempRating = savedRating;
@@ -1804,13 +1772,10 @@
                 document.getElementById('faceitELO').textContent = tempFaceitELO;
                 document.getElementById('premierValue').textContent = tempPremier;
                 document.getElementById('primeRank').textContent = tempPrimeRank;
-                document.getElementById('nonprimeRank').textContent = tempNonPrimeRank;
+                document.getElementById('publicRank').textContent = tempPublicRank;
                 document.getElementById('steamInput').value = tempSteam;
                 document.getElementById('profileAvatar').textContent = tempAvatar;
                 document.getElementById('ratingValue').textContent = tempRating;
-                
-                const level = getFaceitLevel(tempFaceitELO);
-                document.getElementById('faceitLevel').textContent = `Уровень ${level}`;
                 
                 const elements = [
                     document.getElementById('profileName'),
@@ -1818,7 +1783,7 @@
                     document.getElementById('faceitCard'),
                     document.getElementById('premierCard'),
                     document.getElementById('primeCard'),
-                    document.getElementById('nonprimeCard'),
+                    document.getElementById('publicCard'),
                     document.getElementById('steamInput')
                 ];
                 elements.forEach(el => el.classList.add('editable'));
@@ -1831,7 +1796,7 @@
                 savedFaceitELO = tempFaceitELO;
                 savedPremier = tempPremier;
                 savedPrimeRank = tempPrimeRank;
-                savedNonPrimeRank = tempNonPrimeRank;
+                savedPublicRank = tempPublicRank;
                 savedSteam = tempSteam;
                 savedAvatar = tempAvatar;
                 savedRating = tempRating;
@@ -1848,7 +1813,7 @@
                     document.getElementById('faceitCard'),
                     document.getElementById('premierCard'),
                     document.getElementById('primeCard'),
-                    document.getElementById('nonprimeCard'),
+                    document.getElementById('publicCard'),
                     document.getElementById('steamInput')
                 ];
                 elements.forEach(el => el.classList.remove('editable'));
@@ -1872,8 +1837,6 @@
             if (newELO && !isNaN(parseInt(newELO)) && parseInt(newELO) >= 0 && parseInt(newELO) <= 5000) {
                 tempFaceitELO = newELO;
                 document.getElementById('faceitELO').textContent = newELO;
-                const level = getFaceitLevel(newELO);
-                document.getElementById('faceitLevel').textContent = `Уровень ${level}`;
             } else if (newELO) {
                 alert('ELO должен быть от 0 до 5000!');
             }
@@ -1893,7 +1856,7 @@
         function editPrimeRank() {
             if (!editMode) return;
             let rankList = csRanks.map((rank, index) => `${index + 1}. ${rank}`).join('\n');
-            const newRank = prompt(`Выберите звание (введите номер):\n${rankList}`, '7');
+            const newRank = prompt(`Выберите звание для PRIME (введите номер):\n${rankList}`, '7');
             if (newRank && !isNaN(parseInt(newRank)) && parseInt(newRank) >= 1 && parseInt(newRank) <= csRanks.length) {
                 tempPrimeRank = csRanks[parseInt(newRank) - 1];
                 document.getElementById('primeRank').textContent = tempPrimeRank;
@@ -1902,13 +1865,13 @@
             }
         }
 
-        function editNonPrimeRank() {
+        function editPublicRank() {
             if (!editMode) return;
             let rankList = csRanks.map((rank, index) => `${index + 1}. ${rank}`).join('\n');
-            const newRank = prompt(`Выберите звание (введите номер):\n${rankList}`, '3');
+            const newRank = prompt(`Выберите звание для PUBLIC (введите номер):\n${rankList}`, '3');
             if (newRank && !isNaN(parseInt(newRank)) && parseInt(newRank) >= 1 && parseInt(newRank) <= csRanks.length) {
-                tempNonPrimeRank = csRanks[parseInt(newRank) - 1];
-                document.getElementById('nonprimeRank').textContent = tempNonPrimeRank;
+                tempPublicRank = csRanks[parseInt(newRank) - 1];
+                document.getElementById('publicRank').textContent = tempPublicRank;
             } else if (newRank) {
                 alert('Введите корректный номер звания!');
             }
@@ -1974,7 +1937,7 @@
                 document.getElementById('faceitCard'),
                 document.getElementById('premierCard'),
                 document.getElementById('primeCard'),
-                document.getElementById('nonprimeCard'),
+                document.getElementById('publicCard'),
                 document.getElementById('steamInput')
             ];
             elements.forEach(el => el?.classList.remove('editable'));
@@ -2011,9 +1974,9 @@
             document.getElementById('settingsIcon').classList.remove('active');
         }
 
-        function showNonPrimeScreen() {
+        function showPublicScreen() {
             hideAllScreens();
-            document.getElementById('nonprimeScreen').style.display = 'flex';
+            document.getElementById('publicScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
         }
 
@@ -2041,7 +2004,7 @@
 
         function hideAllScreens() {
             const screens = ['startScreen', 'mainScreen', 'profileScreen', 'settingsScreen', 'shopScreen',
-                           'faceitScreen', 'premierScreen', 'primeScreen', 'nonprimeScreen'];
+                           'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen'];
             screens.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
