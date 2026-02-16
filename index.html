@@ -115,6 +115,7 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 16px;
+            min-height: 36px;
         }
 
         .title-left {
@@ -125,12 +126,14 @@
 
         .title-left .section-title {
             margin-bottom: 0;
+            line-height: 36px;
         }
 
         .edit-controls {
             display: flex;
             align-items: center;
             gap: 8px;
+            height: 36px;
         }
 
         .edit-title-icon {
@@ -403,6 +406,7 @@
             display: flex;
             align-items: center;
             gap: 0;
+            text-transform: none;
         }
         .mm-large {
             font-size: 22px;
@@ -1198,14 +1202,12 @@
                     <button class="mode-btn premier" onclick="showPremierScreen()">PREMIER</button>
                     <button class="mode-btn prime" onclick="showPrimeScreen()">
                         <span class="matchmaking-text">
-                            <span class="mm-large">MM</span>
-                            <span class="mm-small">atchMaking PRIME</span>
+                            <span class="mm-large">Match</span><span class="mm-small">Making PRIME</span>
                         </span>
                     </button>
                     <button class="mode-btn public" onclick="showPublicScreen()">
                         <span class="matchmaking-text">
-                            <span class="mm-large">MM</span>
-                            <span class="mm-small">atchMaking PUBLIC</span>
+                            <span class="mm-large">Match</span><span class="mm-small">Making PUBLIC</span>
                         </span>
                     </button>
                 </div>
@@ -1564,8 +1566,7 @@
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                     <div class="mode-title prime">
                         <span class="matchmaking-text">
-                            <span class="mm-large">MM</span>
-                            <span class="mm-small">atchMaking PRIME</span>
+                            <span class="mm-large">Match</span><span class="mm-small">Making PRIME</span>
                         </span>
                     </div>
                 </div>
@@ -1633,8 +1634,7 @@
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                     <div class="mode-title public">
                         <span class="matchmaking-text">
-                            <span class="mm-large">MM</span>
-                            <span class="mm-small">atchMaking PUBLIC</span>
+                            <span class="mm-large">Match</span><span class="mm-small">Making PUBLIC</span>
                         </span>
                     </div>
                 </div>
@@ -1907,10 +1907,8 @@
                 coins -= nick.price;
                 ownedNicks.push(nickId);
                 
-                // Применяем ник к профилю
                 const profileName = document.getElementById('profileName');
                 if (profileName) {
-                    // Убираем все предыдущие классы цвета
                     profileName.className = 'profile-name';
                     profileName.classList.add(nick.class);
                 }
@@ -1935,10 +1933,8 @@
                 coins -= frame.price;
                 ownedFrames.push(frameId);
                 
-                // Применяем рамку к аватарке
                 const profileAvatar = document.getElementById('profileAvatar');
                 if (profileAvatar) {
-                    // Убираем все предыдущие классы рамок
                     profileAvatar.className = 'profile-avatar';
                     profileAvatar.classList.add(frame.class);
                 }
@@ -1957,7 +1953,6 @@
             document.getElementById('steamDisplay').textContent = savedSteam;
             document.getElementById('faceitLinkDisplay').textContent = savedFaceitLink;
             
-            // Восстанавливаем классы ника и рамки
             const profileName = document.getElementById('profileName');
             profileName.className = 'profile-name';
             ownedNicks.forEach(nickId => {
@@ -1972,7 +1967,6 @@
                 if (frame) profileAvatar.classList.add(frame.class);
             });
             
-            // Обновляем ссылки и возраст во всех экранах
             const steamInputs = [
                 document.getElementById('faceitSteamInput'),
                 document.getElementById('premierSteamInput'),
