@@ -390,7 +390,7 @@
             color: #5D6472;
         }
 
-        /* Профиль (упрощенный) */
+        /* Профиль */
         .profile-header {
             display: flex;
             align-items: center;
@@ -483,7 +483,7 @@
             background: #1A1D24;
             border: 1px solid #2A2F3A;
             border-radius: 8px;
-            padding: 12px 14px;
+            padding: 8px 12px;
             cursor: pointer;
             transition: border 0.1s ease, border-width 0.1s ease;
         }
@@ -654,23 +654,23 @@
         .friend-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px;
+            gap: 12px;
+            padding: 10px;
             background: #1A1D24;
             border: 1px solid #2A2F3A;
             border-radius: 8px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .friend-avatar {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: #2A2F3A;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 18px;
             color: #9BA1B0;
         }
 
@@ -681,27 +681,27 @@
         .friend-name-row {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             margin-bottom: 2px;
         }
 
         .friend-name {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 500;
             color: #FFFFFF;
         }
 
         .friend-id {
-            font-size: 9px;
+            font-size: 10px;
             color: #FF6B4A;
             background: rgba(255, 107, 74, 0.1);
-            padding: 2px 5px;
+            padding: 2px 6px;
             border-radius: 4px;
             font-family: monospace;
         }
 
         .friend-steam {
-            font-size: 9px;
+            font-size: 10px;
             color: #9BA1B0;
         }
 
@@ -870,7 +870,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
         }
 
         .back-btn {
@@ -903,7 +903,7 @@
             font-size: 12px;
             color: #9BA1B0;
             text-align: center;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .search-input-field {
@@ -914,7 +914,7 @@
             padding: 14px;
             color: white;
             font-size: 15px;
-            margin: 10px 0;
+            margin: 8px 0;
         }
 
         .search-input-field:focus {
@@ -957,7 +957,7 @@
             color: white;
             font-size: 15px;
             padding: 14px;
-            margin: 10px 0;
+            margin: 8px 0;
         }
 
         .play-style {
@@ -1193,7 +1193,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН ПРОФИЛЯ (упрощенный) -->
+            <!-- ЭКРАН ПРОФИЛЯ -->
             <div id="profileScreen" class="screen screen-profile">
                 <div class="title-row">
                     <div class="title-left">
@@ -1225,7 +1225,7 @@
                     </div>
                 </div>
 
-                <!-- Плашки в профиле -->
+                <!-- Плашки в профиле (уменьшенные) -->
                 <div class="profile-stats">
                     <div class="profile-row">
                         <div class="profile-stat-card" id="ageCard" onclick="editAge()">
@@ -1349,7 +1349,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН FACEIT (с вводом ELO и ссылками) -->
+            <!-- ЭКРАН FACEIT (всё наверху) -->
             <div id="faceitScreen" class="screen screen-faceit">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
@@ -1379,7 +1379,7 @@
                 <button class="primary-btn" onclick="startSearch('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН PREMIER (с вводом рейтинга и ссылками) -->
+            <!-- ЭКРАН PREMIER -->
             <div id="premierScreen" class="screen screen-premier">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
@@ -1406,7 +1406,7 @@
                 <button class="primary-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MATCHMAKING PRIME (с выбором звания) -->
+            <!-- ЭКРАН MATCHMAKING PRIME -->
             <div id="primeScreen" class="screen screen-prime">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
@@ -1451,7 +1451,7 @@
                 <button class="primary-btn" onclick="startSearch('MATCHMAKING PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MATCHMAKING PUBLIC (с выбором звания) -->
+            <!-- ЭКРАН MATCHMAKING PUBLIC -->
             <div id="publicScreen" class="screen screen-public">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
