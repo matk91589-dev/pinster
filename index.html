@@ -950,14 +950,14 @@
         }
 
         .rank-select {
+            width: 100%;
             background: #1A1D24;
             border: 1px solid #2A2F3A;
-            border-radius: 6px;
+            border-radius: 8px;
             color: white;
-            font-size: 14px;
-            padding: 4px;
-            margin-top: 4px;
-            width: 100%;
+            font-size: 15px;
+            padding: 14px;
+            margin: 10px 0;
         }
 
         .play-style {
@@ -1037,6 +1037,13 @@
             width: 100%;
             min-height: 0;
         }
+
+        .input-label {
+            font-size: 12px;
+            color: #9BA1B0;
+            margin-bottom: 2px;
+            margin-left: 4px;
+        }
     </style>
 </head>
 <body>
@@ -1085,8 +1092,8 @@
                 <div class="mode-container">
                     <button class="mode-btn faceit" onclick="showFaceitScreen()">FACEIT</button>
                     <button class="mode-btn premier" onclick="showPremierScreen()">PREMIER</button>
-                    <button class="mode-btn prime" onclick="showPrimeScreen()">MM PRIME</button>
-                    <button class="mode-btn public" onclick="showPublicScreen()">MM PUBLIC</button>
+                    <button class="mode-btn prime" onclick="showPrimeScreen()">MATCHMAKING PRIME</button>
+                    <button class="mode-btn public" onclick="showPublicScreen()">MATCHMAKING PUBLIC</button>
                 </div>
 
                 <div class="bottom-nav">
@@ -1350,10 +1357,13 @@
                 <div class="mode-title faceit">FACEIT</div>
                 <div class="mode-subtitle">введите текущие данные</div>
                 
-                <input type="text" class="search-input-field" id="faceitELOInput" placeholder="Ваш ELO (0-5000)" value="4000">
+                <div class="input-label">Faceit ELO</div>
+                <input type="text" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="4000">
                 
+                <div class="input-label">Steam</div>
                 <input type="text" class="input-field" id="faceitSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
                 
+                <div class="input-label">Faceit</div>
                 <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="—" readonly>
                 
                 <div class="play-style">
@@ -1377,11 +1387,11 @@
                 <div class="mode-title premier">PREMIER</div>
                 <div class="mode-subtitle">введите текущие данные</div>
                 
-                <input type="text" class="search-input-field" id="premierRatingInput" placeholder="CS Rating (0-35000)" value="12500">
+                <div class="input-label">CS Rating</div>
+                <input type="text" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="12500">
                 
+                <div class="input-label">Steam</div>
                 <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
-                
-                <input type="text" class="input-field" id="premierLinkInput" placeholder="Ссылка на Faceit" value="—" readonly>
                 
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
@@ -1396,14 +1406,15 @@
                 <button class="primary-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MM PRIME (с выбором звания и ссылками) -->
+            <!-- ЭКРАН MATCHMAKING PRIME (с выбором звания) -->
             <div id="primeScreen" class="screen screen-prime">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                 </div>
-                <div class="mode-title prime">MM PRIME</div>
+                <div class="mode-title prime">MATCHMAKING PRIME</div>
                 <div class="mode-subtitle">введите текущие данные</div>
                 
+                <div class="input-label">Звание</div>
                 <select class="rank-select" id="primeRankSelect">
                     <option>Silver 1</option>
                     <option>Silver 2</option>
@@ -1424,9 +1435,8 @@
                     <option>Global Elite</option>
                 </select>
                 
+                <div class="input-label">Steam</div>
                 <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
-                
-                <input type="text" class="input-field" id="primeLinkInput" placeholder="Ссылка на Faceit" value="—" readonly>
                 
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
@@ -1438,17 +1448,18 @@
                     <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите"></textarea>
                 </div>
 
-                <button class="primary-btn" onclick="startSearch('MM PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
+                <button class="primary-btn" onclick="startSearch('MATCHMAKING PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MM PUBLIC (с выбором звания и ссылками) -->
+            <!-- ЭКРАН MATCHMAKING PUBLIC (с выбором звания) -->
             <div id="publicScreen" class="screen screen-public">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                 </div>
-                <div class="mode-title public">MM PUBLIC</div>
+                <div class="mode-title public">MATCHMAKING PUBLIC</div>
                 <div class="mode-subtitle">введите текущие данные</div>
                 
+                <div class="input-label">Звание</div>
                 <select class="rank-select" id="publicRankSelect">
                     <option>Silver 1</option>
                     <option>Silver 2</option>
@@ -1469,9 +1480,8 @@
                     <option>Global Elite</option>
                 </select>
                 
+                <div class="input-label">Steam</div>
                 <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
-                
-                <input type="text" class="input-field" id="publicLinkInput" placeholder="Ссылка на Faceit" value="—" readonly>
                 
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
@@ -1483,7 +1493,7 @@
                     <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите"></textarea>
                 </div>
 
-                <button class="primary-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
+                <button class="primary-btn" onclick="startSearch('MATCHMAKING PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
             </div>
         </div>
 
@@ -1741,10 +1751,7 @@
             });
             
             const faceitInputs = [
-                document.getElementById('faceitLinkInput'),
-                document.getElementById('premierLinkInput'),
-                document.getElementById('primeLinkInput'),
-                document.getElementById('publicLinkInput')
+                document.getElementById('faceitLinkInput')
             ];
             faceitInputs.forEach(input => {
                 if (input) input.value = savedFaceitLink;
@@ -1893,28 +1900,28 @@
             hideAllScreens();
             document.getElementById('faceitScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues(); // Обновляем ссылки
+            loadSavedValues();
         }
 
         function showPremierScreen() {
             hideAllScreens();
             document.getElementById('premierScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues(); // Обновляем ссылки
+            loadSavedValues();
         }
 
         function showPrimeScreen() {
             hideAllScreens();
             document.getElementById('primeScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues(); // Обновляем ссылки
+            loadSavedValues();
         }
 
         function showPublicScreen() {
             hideAllScreens();
             document.getElementById('publicScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues(); // Обновляем ссылки
+            loadSavedValues();
         }
 
         function showShopTab(tab) {
