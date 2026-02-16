@@ -196,7 +196,7 @@
             font-weight: 700;
             color: #FFFFFF;
             letter-spacing: -0.5px;
-            margin: 0 0 8px 0;
+            margin: 20px 0 8px 0;
             text-align: center;
         }
 
@@ -536,6 +536,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            line-height: 1;
         }
 
         .heart-icon svg {
@@ -544,6 +545,7 @@
             stroke: #FF6B4A;
             stroke-width: 2;
             fill: none;
+            display: block;
         }
 
         .input-field {
@@ -893,8 +895,10 @@
         .mode-header {
             display: flex;
             align-items: center;
+            justify-content: flex-start;
             gap: 12px;
             margin-bottom: 16px;
+            position: relative;
         }
 
         .back-btn {
@@ -921,8 +925,9 @@
         .mode-title {
             font-size: 28px;
             font-weight: 700;
-            text-align: center;
-            margin: 0 0 4px 0;
+            text-align: left;
+            margin: 0;
+            line-height: 36px;
         }
 
         .mode-title.faceit { color: #FF6B4A; }
@@ -963,11 +968,11 @@
             margin: 0;
         }
 
-        /* Верхние плашки для рейтинга/ELO и возраста */
+        /* Верхние плашки для рейтинга и возраста */
         .top-stats-grid {
             display: flex;
             gap: 8px;
-            margin: 0 0 16px 0;
+            margin: 8px 0;
         }
 
         .top-stat-card {
@@ -989,6 +994,23 @@
             font-size: 18px;
             font-weight: 600;
             color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            line-height: 1;
+        }
+
+        .top-stat-value .heart-icon {
+            display: flex;
+            align-items: center;
+            line-height: 1;
+        }
+
+        .top-stat-value .heart-icon svg {
+            width: 20px;
+            height: 20px;
+            display: block;
         }
 
         .top-stat-value.orange {
@@ -1431,8 +1453,8 @@
             <div id="faceitScreen" class="screen screen-faceit">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
+                    <div class="mode-title faceit">FACEIT</div>
                 </div>
-                <div class="mode-title faceit">FACEIT</div>
                 <div class="mode-subtitle">введите текущие данные</div>
                 
                 <div class="input-label">Faceit ELO</div>
@@ -1470,7 +1492,7 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите" maxlength="100"></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь изменить или проигнорировать" maxlength="100"></textarea>
                 </div>
 
                 <button class="primary-btn" onclick="startSearch('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
@@ -1480,8 +1502,8 @@
             <div id="premierScreen" class="screen screen-premier">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
+                    <div class="mode-title premier">PREMIER</div>
                 </div>
-                <div class="mode-title premier">PREMIER</div>
                 <div class="mode-subtitle">введите текущие данные</div>
                 
                 <div class="input-label">CS Rating</div>
@@ -1516,7 +1538,7 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите" maxlength="100"></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь изменить или проигнорировать" maxlength="100"></textarea>
                 </div>
 
                 <button class="primary-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
@@ -1526,12 +1548,12 @@
             <div id="primeScreen" class="screen screen-prime">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
-                </div>
-                <div class="mode-title prime">
-                    <span class="matchmaking-text">
-                        <span class="mm-large">MM</span>
-                        <span class="mm-small">ATCHMAKING PRIME</span>
-                    </span>
+                    <div class="mode-title prime">
+                        <span class="matchmaking-text">
+                            <span class="mm-large">MM</span>
+                            <span class="mm-small">ATCHMAKING PRIME</span>
+                        </span>
+                    </div>
                 </div>
                 <div class="mode-subtitle">введите текущие данные</div>
                 
@@ -1585,7 +1607,7 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите" maxlength="100"></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь изменить или проигнорировать" maxlength="100"></textarea>
                 </div>
 
                 <button class="primary-btn" onclick="startSearch('MATCHMAKING PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
@@ -1595,12 +1617,12 @@
             <div id="publicScreen" class="screen screen-public">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
-                </div>
-                <div class="mode-title public">
-                    <span class="matchmaking-text">
-                        <span class="mm-large">MM</span>
-                        <span class="mm-small">ATCHMAKING PUBLIC</span>
-                    </span>
+                    <div class="mode-title public">
+                        <span class="matchmaking-text">
+                            <span class="mm-large">MM</span>
+                            <span class="mm-small">ATCHMAKING PUBLIC</span>
+                        </span>
+                    </div>
                 </div>
                 <div class="mode-subtitle">введите текущие данные</div>
                 
@@ -1654,7 +1676,7 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите" maxlength="100"></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь изменить или проигнорировать" maxlength="100"></textarea>
                 </div>
 
                 <button class="primary-btn" onclick="startSearch('MATCHMAKING PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
