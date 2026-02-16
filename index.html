@@ -103,16 +103,50 @@
             stroke: #F6465D;
         }
 
-        /* Плашка Pingcoins в стиле Telegram */
-        .coins-badge {
+        /* Заголовок с карандашом и Pingcoins */
+        .title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .title-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .title-left .section-title {
+            margin-bottom: 0;
+        }
+
+        .edit-title-icon {
+            width: 28px;
+            height: 28px;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #9BA1B0;
+            transition: all 0.2s;
+        }
+
+        .edit-title-icon:hover {
+            border-color: #F6465D;
+            color: #FFFFFF;
+        }
+
+        .coins-header {
             background: #1A1D24;
             border-radius: 8px;
-            padding: 8px 12px;
+            padding: 6px 12px;
             font-size: 13px;
             color: #FFFFFF;
-            display: inline-block;
-            margin-bottom: 16px;
-            align-self: flex-start;
             border: none;
         }
 
@@ -120,7 +154,6 @@
             font-size: 20px;
             font-weight: 600;
             color: #FFFFFF;
-            margin-bottom: 8px;
             letter-spacing: -0.3px;
         }
 
@@ -307,14 +340,13 @@
             color: #5D6472;
         }
 
-        /* Профиль с карандашом как в Telegram */
+        /* Профиль */
         .profile-header {
             display: flex;
             align-items: center;
             gap: 16px;
             margin-bottom: 20px;
             padding: 4px 0;
-            position: relative;
         }
 
         .profile-avatar {
@@ -367,6 +399,11 @@
             font-weight: 600;
             color: #FFFFFF;
             transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .profile-name:hover {
+            color: #F6465D;
         }
 
         .profile-name.red { color: #F6465D; }
@@ -391,6 +428,11 @@
             border: 1px solid #2A2F3A;
             font-size: 13px;
             color: #FFFFFF;
+            cursor: pointer;
+        }
+
+        .profile-rating:hover {
+            border-color: #F6465D;
         }
 
         .rating-star {
@@ -413,29 +455,11 @@
             padding: 2px 8px;
             border-radius: 12px;
             border: 1px solid rgba(76, 175, 80, 0.3);
-        }
-
-        .edit-icon {
-            position: absolute;
-            bottom: 4px;
-            right: 0;
-            width: 28px;
-            height: 28px;
-            background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             cursor: pointer;
-            font-size: 14px;
-            color: #9BA1B0;
-            transition: all 0.2s;
         }
 
-        .edit-icon:hover {
-            border-color: #F6465D;
-            color: #FFFFFF;
+        .profile-status:hover {
+            border-color: #4CAF50;
         }
 
         .stats-grid {
@@ -451,6 +475,12 @@
             border-radius: 8px;
             padding: 12px 4px;
             text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            border-color: #F6465D;
         }
 
         .stat-label {
@@ -474,6 +504,11 @@
             color: white;
             font-size: 13px;
             margin: 8px 0;
+            cursor: pointer;
+        }
+
+        .input-field:hover {
+            border-color: #F6465D;
         }
 
         /* Ваши друзья */
@@ -920,13 +955,15 @@
 
             <!-- ЭКРАН МАГАЗИНА -->
             <div id="shopScreen" class="screen screen-shop">
-                <div class="section-title">Магазин</div>
-                <div class="section-subtitle">Зарабатывайте и покупайте</div>
-
-                <!-- Плашка Pingcoins -->
-                <div class="coins-badge">
-                    Pingcoins: <span id="coinsAmount">50</span>
+                <div class="title-row">
+                    <div class="title-left">
+                        <div class="section-title">Магазин</div>
+                    </div>
+                    <div class="coins-header">
+                        Pingcoins: <span id="coinsAmount">0</span>
+                    </div>
                 </div>
+                <div class="section-subtitle">Зарабатывайте и покупайте</div>
 
                 <div class="shop-tabs">
                     <div class="shop-tab active" onclick="showShopTab('shop')">Магазин</div>
@@ -986,42 +1023,46 @@
 
             <!-- ЭКРАН ПРОФИЛЯ -->
             <div id="profileScreen" class="screen screen-profile">
-                <div class="section-title">Профиль</div>
+                <div class="title-row">
+                    <div class="title-left">
+                        <div class="section-title">Профиль</div>
+                        <div class="edit-title-icon" onclick="editProfile()">✏️</div>
+                    </div>
+                </div>
 
                 <div class="profile-header">
                     <div id="profileAvatar" class="profile-avatar" onclick="editAvatar()">👤</div>
                     <div class="profile-info">
                         <div class="profile-name-label">
                             ваш никнейм
-                            <span class="profile-status">новичок</span>
+                            <span class="profile-status" onclick="editStatus()">новичок</span>
                         </div>
                         <div class="profile-name-row">
-                            <span id="profileName" class="profile-name">Pingster</span>
-                            <span class="profile-rating">
-                                <span>5</span>
+                            <span id="profileName" class="profile-name" onclick="editName()">Pingster</span>
+                            <span class="profile-rating" onclick="editRating()">
+                                <span id="ratingValue">5</span>
                                 <span class="rating-star">⭐</span>
                             </span>
                         </div>
                     </div>
-                    <div class="edit-icon" onclick="editProfile()">✏️</div>
                 </div>
 
                 <div class="stats-grid">
-                    <div class="stat-card">
+                    <div class="stat-card" onclick="editELO()">
                         <div class="stat-label">ELO</div>
-                        <div class="stat-value">1 500</div>
+                        <div class="stat-value" id="eloValue">1 500</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" onclick="editPremier()">
                         <div class="stat-label">Premier</div>
-                        <div class="stat-value">12 500</div>
+                        <div class="stat-value" id="premierValue">12 500</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" onclick="editAge()">
                         <div class="stat-label">Возраст</div>
-                        <div class="stat-value">21</div>
+                        <div class="stat-value" id="ageValue">21</div>
                     </div>
                 </div>
 
-                <input type="text" class="input-field" value="https://steamcommunity.com/id/pingster" readonly>
+                <input type="text" class="input-field" value="https://steamcommunity.com/id/pingster" readonly onclick="editSteam()">
 
                 <div class="friends-section">
                     <div class="friends-header">
@@ -1213,7 +1254,7 @@
 
     <script>
         // Данные магазина
-        let coins = 50;
+        let coins = 0;
         let ownedNicks = [];
         let ownedFrames = [];
 
@@ -1345,10 +1386,57 @@
             }
         }
 
+        // Функции редактирования профиля
         function editProfile() {
+            editName();
+        }
+
+        function editName() {
             const newName = prompt('Введите новый никнейм:', 'Pingster');
             if (newName && newName.trim()) {
                 document.getElementById('profileName').textContent = newName;
+            }
+        }
+
+        function editStatus() {
+            const newStatus = prompt('Введите новый статус (новичок/любитель/профи):', 'новичок');
+            if (newStatus && newStatus.trim()) {
+                document.querySelector('.profile-status').textContent = newStatus;
+            }
+        }
+
+        function editRating() {
+            const newRating = prompt('Введите новый рейтинг (1-5):', '5');
+            if (newRating && newRating.trim()) {
+                document.getElementById('ratingValue').textContent = newRating;
+            }
+        }
+
+        function editELO() {
+            const newELO = prompt('Введите новый ELO:', '1500');
+            if (newELO && newELO.trim()) {
+                document.getElementById('eloValue').textContent = newELO;
+            }
+        }
+
+        function editPremier() {
+            const newPremier = prompt('Введите новый Premier рейтинг:', '12500');
+            if (newPremier && newPremier.trim()) {
+                document.getElementById('premierValue').textContent = newPremier;
+            }
+        }
+
+        function editAge() {
+            const newAge = prompt('Введите новый возраст:', '21');
+            if (newAge && newAge.trim()) {
+                document.getElementById('ageValue').textContent = newAge;
+            }
+        }
+
+        function editSteam() {
+            const newSteam = prompt('Введите новую ссылку на Steam:', 'https://steamcommunity.com/id/pingster');
+            if (newSteam && newSteam.trim()) {
+                document.querySelector('.input-field').value = newSteam;
             }
         }
 
