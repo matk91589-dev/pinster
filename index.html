@@ -478,28 +478,19 @@
             color: #FFFFFF;
         }
 
-        .heart-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
+        .heart-icon {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0;
             margin-left: 4px;
         }
 
-        .heart-btn svg {
+        .heart-icon svg {
             width: 28px;
             height: 28px;
             stroke: #F6465D;
             stroke-width: 2;
             fill: none;
-            transition: all 0.2s;
-        }
-
-        .heart-btn:hover svg {
-            fill: #F6465D;
         }
 
         .profile-rating {
@@ -587,7 +578,7 @@
             border-width: 2px;
         }
 
-        /* Ваши друзья с лупой */
+        /* Поиск друзей */
         .friends-header {
             display: flex;
             align-items: center;
@@ -614,6 +605,26 @@
             fill: none;
         }
 
+        .back-icon {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 4px;
+        }
+
+        .back-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .back-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: #F6465D;
+            stroke-width: 2;
+            fill: none;
+        }
+
         .friends-title {
             font-size: 16px;
             font-weight: 600;
@@ -624,6 +635,29 @@
         .friends-count {
             color: #9BA1B0;
             font-size: 12px;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: white;
+            font-size: 13px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #F6465D;
         }
 
         .friends-section {
@@ -1190,12 +1224,12 @@
                             <div class="rating-container">
                                 <span class="rating-text">рейтинг:</span>
                                 <span class="rating-value" id="ratingValue">0</span>
-                                <button class="heart-btn" onclick="likeProfile()">
+                                <span class="heart-icon">
                                     <svg viewBox="0 0 24 24">
                                         <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
                                               stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
-                                </button>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -1218,9 +1252,10 @@
 
                 <input type="text" class="input-field" id="steamInput" value="https://steamcommunity.com/id/pingster" readonly onclick="editSteam()">
 
-                <div class="friends-section">
-                    <div class="friends-header">
-                        <div class="search-icon" onclick="searchFriends()">
+                <div class="friends-section" id="friendsSection">
+                    <!-- Шапка с поиском (будет меняться) -->
+                    <div id="friendsHeader" class="friends-header">
+                        <div class="search-icon" onclick="enterSearchMode()">
                             <svg viewBox="0 0 24 24">
                                 <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
                                 <circle cx="11" cy="11" r="4" stroke="white" stroke-width="2"/>
@@ -1228,9 +1263,10 @@
                             </svg>
                         </div>
                         <span class="friends-title">Ваши друзья</span>
-                        <span class="friends-count">10 друзей</span>
+                        <span class="friends-count" id="friendsCount">10 друзей</span>
                     </div>
                     
+                    <!-- Список друзей -->
                     <div class="friends-list" id="friendsList"></div>
                 </div>
 
@@ -1439,6 +1475,11 @@
         let ownedNicks = [];
         let ownedFrames = [];
 
+        // Данные друзей
+        let friendsData = [];
+        let isSearchMode = false;
+        let searchQuery = '';
+
         const nicks = [
             { id: 'red', name: 'Красный', class: 'red', price: 50 },
             { id: 'green', name: 'Зеленый', class: 'green', price: 50 },
@@ -1458,29 +1499,102 @@
         ];
 
         function generateFriends() {
-            const friendsList = document.getElementById('friendsList');
-            if (!friendsList) return;
-            friendsList.innerHTML = '';
-            
+            friendsData = [];
             for (let i = 7; i < 17; i++) {
                 const num = i.toString().padStart(3, '0');
                 // Генерируем случайный ID в 16-ричной системе (5-10 символов)
                 const idLength = Math.floor(Math.random() * 6) + 5; // от 5 до 10
                 const friendId = Math.random().toString(16).substring(2, 2 + idLength);
                 
-                const friendItem = document.createElement('div');
-                friendItem.className = 'friend-item';
-                friendItem.innerHTML = `
-                    <div class="friend-avatar">${['😼','🤖','👾','🎮','😎','👻','💀','😱','🤠','🥷'][i-7]}</div>
+                friendsData.push({
+                    avatar: ['😼','🤖','👾','🎮','😎','👻','💀','😱','🤠','🥷'][i-7],
+                    name: `abs${num}`,
+                    id: friendId,
+                    steam: `steamcommunity.com/id/abs${num}`
+                });
+            }
+            renderFriendsList();
+        }
+
+        function renderFriendsList() {
+            const friendsList = document.getElementById('friendsList');
+            const friendsCount = document.getElementById('friendsCount');
+            if (!friendsList) return;
+            
+            let filteredFriends = friendsData;
+            if (isSearchMode && searchQuery) {
+                const query = searchQuery.toLowerCase();
+                filteredFriends = friendsData.filter(friend => 
+                    friend.name.toLowerCase().includes(query) || 
+                    friend.id.toLowerCase().includes(query)
+                );
+            }
+            
+            friendsList.innerHTML = filteredFriends.map(friend => `
+                <div class="friend-item">
+                    <div class="friend-avatar">${friend.avatar}</div>
                     <div class="friend-info">
                         <div class="friend-name-row">
-                            <div class="friend-name">abs${num}</div>
-                            <div class="friend-id">${friendId}</div>
+                            <div class="friend-name">${friend.name}</div>
+                            <div class="friend-id">${friend.id}</div>
                         </div>
-                        <div class="friend-steam">steamcommunity.com/id/abs${num}</div>
+                        <div class="friend-steam">${friend.steam}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            if (friendsCount) {
+                friendsCount.textContent = `${filteredFriends.length} ${filteredFriends.length === 1 ? 'друг' : 'друзей'}`;
+            }
+        }
+
+        function enterSearchMode() {
+            isSearchMode = true;
+            searchQuery = '';
+            updateSearchUI();
+        }
+
+        function exitSearchMode() {
+            isSearchMode = false;
+            searchQuery = '';
+            updateSearchUI();
+            renderFriendsList();
+        }
+
+        function handleSearchInput(value) {
+            searchQuery = value;
+            renderFriendsList();
+        }
+
+        function updateSearchUI() {
+            const header = document.getElementById('friendsHeader');
+            if (!header) return;
+            
+            if (isSearchMode) {
+                header.innerHTML = `
+                    <div class="search-container">
+                        <div class="back-icon" onclick="exitSearchMode()">
+                            <svg viewBox="0 0 24 24">
+                                <line x1="19" y1="12" x2="5" y2="12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                <polyline points="12 19 5 12 12 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <input type="text" class="search-input" placeholder="Поиск..." value="${searchQuery}" 
+                               oninput="handleSearchInput(this.value)" autofocus>
                     </div>
                 `;
-                friendsList.appendChild(friendItem);
+            } else {
+                header.innerHTML = `
+                    <div class="search-icon" onclick="enterSearchMode()">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
+                            <circle cx="11" cy="11" r="4" stroke="white" stroke-width="2"/>
+                            <line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <span class="friends-title">Ваши друзья</span>
+                    <span class="friends-count" id="friendsCount">${friendsData.length} друзей</span>
+                `;
             }
         }
 
@@ -1815,21 +1929,6 @@
             }
         }
 
-        function likeProfile() {
-            // Увеличиваем рейтинг при нажатии на сердечко
-            const currentRating = parseInt(document.getElementById('ratingValue').textContent);
-            document.getElementById('ratingValue').textContent = currentRating + 1;
-            if (editMode) {
-                tempRating = (currentRating + 1).toString();
-            } else {
-                savedRating = (currentRating + 1).toString();
-            }
-        }
-
-        function searchFriends() {
-            alert('Поиск друзей будет доступен в следующем обновлении! 🔍');
-        }
-
         function setStyle(style, element) {
             const parent = element.parentElement;
             const options = parent.querySelectorAll('.style-option');
@@ -1858,6 +1957,13 @@
             editMode = false;
             document.getElementById('editToggle')?.classList.remove('active');
             document.getElementById('applyBtn')?.classList.remove('visible');
+            
+            // Сбрасываем режим поиска
+            if (isSearchMode) {
+                exitSearchMode();
+            } else {
+                updateSearchUI();
+            }
             
             // Загружаем сохраненные значения в профиль
             loadSavedValues();
@@ -1945,6 +2051,7 @@
             
             // Инициализируем сохраненные значения
             loadSavedValues();
+            updateSearchUI();
         };
     </script>
 </body>
