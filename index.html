@@ -64,7 +64,7 @@
         }
 
         .logo .ping {
-            color: #F6465D;
+            color: #FF6B4A; /* Оранжевый */
         }
 
         .logo .ster {
@@ -100,7 +100,7 @@
         }
 
         .icon-settings.active svg {
-            stroke: #F6465D;
+            stroke: #FF6B4A;
         }
 
         /* Заголовок с карандашом и Pingcoins */
@@ -149,15 +149,15 @@
         }
 
         .edit-title-icon.active svg {
-            stroke: #F6465D;
+            stroke: #FF6B4A;
         }
 
         .apply-btn {
             background: transparent;
-            border: 1px solid #F6465D;
+            border: 1px solid #FF6B4A;
             border-radius: 6px;
             padding: 4px 10px;
-            color: #F6465D;
+            color: #FF6B4A;
             font-size: 12px;
             font-weight: 500;
             cursor: pointer;
@@ -172,7 +172,7 @@
         }
 
         .apply-btn:hover {
-            background: #F6465D;
+            background: #FF6B4A;
             color: white;
         }
 
@@ -218,7 +218,7 @@
         }
 
         .start-title .ping {
-            color: #F6465D;
+            color: #FF6B4A;
         }
 
         .start-image-container {
@@ -253,14 +253,14 @@
         }
 
         .info-text span {
-            color: #F6465D;
+            color: #FF6B4A;
             font-weight: 500;
         }
 
         .primary-btn {
             width: 100%;
             padding: 16px;
-            background: #F6465D;
+            background: #FF6B4A;
             border: none;
             border-radius: 8px;
             font-size: 16px;
@@ -311,7 +311,7 @@
         }
 
         .nav-item.active svg {
-            stroke: #F6465D;
+            stroke: #FF6B4A;
         }
 
         .nav-icon svg {
@@ -356,19 +356,19 @@
         }
 
         .mode-btn:hover {
-            border-color: #F6465D;
+            border-color: #FF6B4A;
             background: #1E2128;
             transform: translateY(-1px);
         }
 
         .mode-btn.faceit {
-            border-left: 4px solid #F6465D;
-            color: #F6465D;
+            border-left: 4px solid #FF6B4A;
+            color: #FF6B4A;
         }
 
         .mode-btn.premier {
-            border-left: 4px solid #F6465D;
-            color: #F6465D;
+            border-left: 4px solid #FF6B4A;
+            color: #FF6B4A;
         }
 
         .mode-btn.prime {
@@ -389,7 +389,7 @@
             color: #5D6472;
         }
 
-        /* Профиль с 4 статистиками */
+        /* Профиль */
         .profile-header {
             display: flex;
             align-items: center;
@@ -414,18 +414,18 @@
         }
 
         .profile-avatar.editable {
-            border-color: #F6465D;
+            border-color: #FF6B4A;
             border-width: 3px;
         }
 
-        .profile-avatar.frame-red { border-color: #F6465D; border-width: 3px; }
+        .profile-avatar.frame-red { border-color: #FF6B4A; border-width: 3px; }
         .profile-avatar.frame-gold { border-color: #FFD700; border-width: 3px; }
         .profile-avatar.frame-blue { border-color: #2196F3; border-width: 3px; }
         .profile-avatar.frame-green { border-color: #4CAF50; border-width: 3px; }
         .profile-avatar.frame-purple { border-color: #9C27B0; border-width: 3px; }
         .profile-avatar.frame-rainbow { 
             border: 3px solid transparent;
-            background: linear-gradient(45deg, #F6465D, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
+            background: linear-gradient(45deg, #FF6B4A, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
             -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
             mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
         }
@@ -453,51 +453,19 @@
         }
 
         .profile-name.editable {
-            color: #F6465D;
+            color: #FF6B4A;
         }
 
-        .profile-name.red { color: #F6465D; }
+        .profile-name.red { color: #FF6B4A; }
         .profile-name.green { color: #4CAF50; }
         .profile-name.blue { color: #2196F3; }
         .profile-name.purple { color: #9C27B0; }
         .profile-name.orange { color: #FF9800; }
         .profile-name.multicolor { 
-            background: linear-gradient(45deg, #F6465D, #4CAF50, #2196F3, #9C27B0, #FF9800);
+            background: linear-gradient(45deg, #FF6B4A, #4CAF50, #2196F3, #9C27B0, #FF9800);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 700;
-        }
-
-        .rating-container {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .rating-text {
-            font-size: 14px;
-            color: #9BA1B0;
-        }
-
-        .rating-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: #FFFFFF;
-        }
-
-        .heart-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 4px;
-        }
-
-        .heart-icon svg {
-            width: 28px;
-            height: 28px;
-            stroke: #F6465D;
-            stroke-width: 2;
-            fill: none;
         }
 
         .profile-name-label {
@@ -520,6 +488,41 @@
             letter-spacing: 0.3px;
         }
 
+        /* Верхние плашки (возраст и рейтинг) */
+        .top-stats {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .top-stat-card {
+            flex: 1;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 8px;
+            padding: 10px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .top-stat-card.editable {
+            border-color: #FF6B4A;
+            border-width: 2px;
+        }
+
+        .top-stat-label {
+            font-size: 11px;
+            color: #9BA1B0;
+            margin-bottom: 4px;
+        }
+
+        .top-stat-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
         /* Статистика - 4 карточки одинакового размера */
         .stats-grid {
             display: grid;
@@ -532,41 +535,41 @@
             background: #1A1D24;
             border: 1px solid #2A2F3A;
             border-radius: 8px;
-            padding: 12px 8px;
+            padding: 10px 6px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
-            min-height: 80px;
+            min-height: 70px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
         .stat-card.editable {
-            border-color: #F6465D;
+            border-color: #FF6B4A;
             border-width: 2px;
         }
 
         .stat-label {
-            font-size: 11px;
+            font-size: 10px;
             color: #9BA1B0;
-            margin-bottom: 6px;
-            line-height: 1.3;
+            margin-bottom: 4px;
+            line-height: 1.2;
         }
 
         .stat-value {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             color: #FFFFFF;
             line-height: 1.2;
         }
 
         .stat-value.orange {
-            color: #F6465D;
+            color: #FF6B4A;
         }
 
         .stat-value.red {
-            color: #F6465D;
+            color: #FF6B4A;
         }
 
         .stat-value.white {
@@ -586,7 +589,7 @@
         }
 
         .input-field.editable {
-            border-color: #F6465D;
+            border-color: #FF6B4A;
             border-width: 2px;
         }
 
@@ -632,7 +635,7 @@
         .back-icon svg {
             width: 20px;
             height: 20px;
-            stroke: #F6465D;
+            stroke: #FF6B4A;
             stroke-width: 2;
             fill: none;
         }
@@ -669,7 +672,7 @@
 
         .search-input:focus {
             outline: none;
-            border-color: #F6465D;
+            border-color: #FF6B4A;
         }
 
         .friends-section {
@@ -697,7 +700,7 @@
         }
 
         .friends-list::-webkit-scrollbar-thumb {
-            background: #F6465D;
+            background: #FF6B4A;
             border-radius: 10px;
         }
 
@@ -743,8 +746,8 @@
 
         .friend-id {
             font-size: 10px;
-            color: #F6465D;
-            background: rgba(246, 70, 93, 0.1);
+            color: #FF6B4A;
+            background: rgba(255, 107, 74, 0.1);
             padding: 2px 6px;
             border-radius: 4px;
             font-family: monospace;
@@ -774,7 +777,7 @@
         }
 
         .shop-content::-webkit-scrollbar-thumb {
-            background: #F6465D;
+            background: #FF6B4A;
             border-radius: 10px;
         }
 
@@ -796,8 +799,8 @@
         }
 
         .shop-tab.active {
-            color: #F6465D;
-            border-bottom-color: #F6465D;
+            color: #FF6B4A;
+            border-bottom-color: #FF6B4A;
         }
 
         .nicks-section, .frames-section {
@@ -839,13 +842,13 @@
             border-radius: 50%;
         }
 
-        .color-dot.red { background: #F6465D; }
+        .color-dot.red { background: #FF6B4A; }
         .color-dot.green { background: #4CAF50; }
         .color-dot.blue { background: #2196F3; }
         .color-dot.purple { background: #9C27B0; }
         .color-dot.orange { background: #FF9800; }
         .color-dot.multicolor { 
-            background: linear-gradient(45deg, #F6465D, #4CAF50, #2196F3, #9C27B0, #FF9800);
+            background: linear-gradient(45deg, #FF6B4A, #4CAF50, #2196F3, #9C27B0, #FF9800);
         }
 
         .frame-dot {
@@ -856,14 +859,14 @@
             border: 2px solid;
         }
 
-        .frame-dot.red { border-color: #F6465D; }
+        .frame-dot.red { border-color: #FF6B4A; }
         .frame-dot.gold { border-color: #FFD700; }
         .frame-dot.blue { border-color: #2196F3; }
         .frame-dot.green { border-color: #4CAF50; }
         .frame-dot.purple { border-color: #9C27B0; }
         .frame-dot.rainbow { 
             border-color: transparent;
-            background: linear-gradient(45deg, #F6465D, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
+            background: linear-gradient(45deg, #FF6B4A, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
         }
 
         .item-name {
@@ -895,8 +898,8 @@
         }
 
         .buy-btn:hover {
-            border-color: #F6465D;
-            color: #F6465D;
+            border-color: #FF6B4A;
+            color: #FF6B4A;
         }
 
         .buy-btn.owned {
@@ -944,8 +947,8 @@
             margin: 0 0 4px 0;
         }
 
-        .mode-title.faceit { color: #F6465D; }
-        .mode-title.premier { color: #F6465D; }
+        .mode-title.faceit { color: #FF6B4A; }
+        .mode-title.premier { color: #FF6B4A; }
         .mode-title.prime { color: #FFFFFF; }
         .mode-title.public { color: #FFFFFF; }
 
@@ -1015,7 +1018,7 @@
         }
 
         .style-option.active {
-            background: #F6465D;
+            background: #FF6B4A;
             color: white;
         }
 
@@ -1215,7 +1218,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН ПРОФИЛЯ с 4 статистиками -->
+            <!-- ЭКРАН ПРОФИЛЯ -->
             <div id="profileScreen" class="screen screen-profile">
                 <div class="title-row">
                     <div class="title-left">
@@ -1243,17 +1246,19 @@
                         </div>
                         <div class="profile-name-row">
                             <span id="profileName" class="profile-name" onclick="editName()">Pingster</span>
-                            <div class="rating-container">
-                                <span class="rating-text">рейтинг:</span>
-                                <span class="rating-value" id="ratingValue">0</span>
-                                <span class="heart-icon">
-                                    <svg viewBox="0 0 24 24">
-                                        <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
-                                              stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </span>
-                            </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Верхние плашки: возраст и рейтинг -->
+                <div class="top-stats">
+                    <div class="top-stat-card" id="ageCard" onclick="editAge()">
+                        <div class="top-stat-label">Возраст</div>
+                        <div class="top-stat-value" id="ageValue">21</div>
+                    </div>
+                    <div class="top-stat-card" id="ratingCard" onclick="editRating()">
+                        <div class="top-stat-label">Рейтинг</div>
+                        <div class="top-stat-value" id="ratingValue">0</div>
                     </div>
                 </div>
 
@@ -1265,7 +1270,7 @@
                     </div>
                     <div class="stat-card" id="premierCard" onclick="editPremier()">
                         <div class="stat-label">PREMIER</div>
-                        <div class="stat-value red" id="premierValue">12500</div>
+                        <div class="stat-value orange" id="premierValue">12500</div>
                     </div>
                     <div class="stat-card" id="primeCard" onclick="editPrimeRank()">
                         <div class="stat-label">MM PRIME</div>
@@ -1484,6 +1489,7 @@
         let tempPublicRank = 'Silver 4';
         let tempSteam = 'https://steamcommunity.com/id/pingster';
         let tempAvatar = '👤';
+        let tempAge = '21';
         let tempRating = '0';
 
         // Сохраненные значения
@@ -1494,6 +1500,7 @@
         let savedPublicRank = 'Silver 4';
         let savedSteam = 'https://steamcommunity.com/id/pingster';
         let savedAvatar = '👤';
+        let savedAge = '21';
         let savedRating = '0';
 
         // Данные магазина
@@ -1730,6 +1737,7 @@
             document.getElementById('publicRank').textContent = savedPublicRank;
             document.getElementById('steamInput').value = savedSteam;
             document.getElementById('profileAvatar').textContent = savedAvatar;
+            document.getElementById('ageValue').textContent = savedAge;
             document.getElementById('ratingValue').textContent = savedRating;
             
             tempName = savedName;
@@ -1739,6 +1747,7 @@
             tempPublicRank = savedPublicRank;
             tempSteam = savedSteam;
             tempAvatar = savedAvatar;
+            tempAge = savedAge;
             tempRating = savedRating;
             
             updateModeScreens();
@@ -1771,6 +1780,7 @@
                 tempPublicRank = savedPublicRank;
                 tempSteam = savedSteam;
                 tempAvatar = savedAvatar;
+                tempAge = savedAge;
                 tempRating = savedRating;
                 
                 document.getElementById('profileName').textContent = tempName;
@@ -1780,6 +1790,7 @@
                 document.getElementById('publicRank').textContent = tempPublicRank;
                 document.getElementById('steamInput').value = tempSteam;
                 document.getElementById('profileAvatar').textContent = tempAvatar;
+                document.getElementById('ageValue').textContent = tempAge;
                 document.getElementById('ratingValue').textContent = tempRating;
                 
                 const elements = [
@@ -1789,6 +1800,8 @@
                     document.getElementById('premierCard'),
                     document.getElementById('primeCard'),
                     document.getElementById('publicCard'),
+                    document.getElementById('ageCard'),
+                    document.getElementById('ratingCard'),
                     document.getElementById('steamInput')
                 ];
                 elements.forEach(el => el.classList.add('editable'));
@@ -1804,6 +1817,7 @@
                 savedPublicRank = tempPublicRank;
                 savedSteam = tempSteam;
                 savedAvatar = tempAvatar;
+                savedAge = tempAge;
                 savedRating = tempRating;
                 
                 updateModeScreens();
@@ -1819,6 +1833,8 @@
                     document.getElementById('premierCard'),
                     document.getElementById('primeCard'),
                     document.getElementById('publicCard'),
+                    document.getElementById('ageCard'),
+                    document.getElementById('ratingCard'),
                     document.getElementById('steamInput')
                 ];
                 elements.forEach(el => el.classList.remove('editable'));
@@ -1833,6 +1849,28 @@
                 document.getElementById('profileName').textContent = newName;
             } else if (newName) {
                 alert('Никнейм должен содержать от 3 до 10 символов!');
+            }
+        }
+
+        function editAge() {
+            if (!editMode) return;
+            const newAge = prompt('Введите возраст:', tempAge);
+            if (newAge && !isNaN(parseInt(newAge)) && parseInt(newAge) >= 0 && parseInt(newAge) <= 100) {
+                tempAge = newAge;
+                document.getElementById('ageValue').textContent = newAge;
+            } else if (newAge) {
+                alert('Введите корректный возраст!');
+            }
+        }
+
+        function editRating() {
+            if (!editMode) return;
+            const newRating = prompt('Введите рейтинг (0-100):', tempRating);
+            if (newRating && !isNaN(parseInt(newRating)) && parseInt(newRating) >= 0 && parseInt(newRating) <= 100) {
+                tempRating = newRating;
+                document.getElementById('ratingValue').textContent = newRating;
+            } else if (newRating) {
+                alert('Введите корректный рейтинг!');
             }
         }
 
@@ -1943,6 +1981,8 @@
                 document.getElementById('premierCard'),
                 document.getElementById('primeCard'),
                 document.getElementById('publicCard'),
+                document.getElementById('ageCard'),
+                document.getElementById('ratingCard'),
                 document.getElementById('steamInput')
             ];
             elements.forEach(el => el?.classList.remove('editable'));
