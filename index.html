@@ -398,7 +398,7 @@
             color: #5D6472;
         }
 
-        /* Стиль для MATCHMAKING с выделенными MM */
+        /* Стиль для MatchMaking */
         .matchmaking-text {
             display: flex;
             align-items: center;
@@ -997,7 +997,7 @@
         .stats-row {
             display: flex;
             gap: 8px;
-            margin: 12px 0;
+            margin: 8px 0;
         }
 
         .stat-card {
@@ -1199,13 +1199,13 @@
                     <button class="mode-btn prime" onclick="showPrimeScreen()">
                         <span class="matchmaking-text">
                             <span class="mm-large">MM</span>
-                            <span class="mm-small">ATCHMAKING</span>
+                            <span class="mm-small">atchMaking PRIME</span>
                         </span>
                     </button>
                     <button class="mode-btn public" onclick="showPublicScreen()">
                         <span class="matchmaking-text">
                             <span class="mm-large">MM</span>
-                            <span class="mm-small">ATCHMAKING</span>
+                            <span class="mm-small">atchMaking PUBLIC</span>
                         </span>
                     </button>
                 </div>
@@ -1361,12 +1361,12 @@
 
                 <div class="profile-stats">
                     <div class="profile-stat-card" id="steamCard" onclick="editSteam()">
-                        <div class="profile-stat-label">Steam</div>
+                        <div class="profile-stat-label">Ссылка Steam</div>
                         <div class="profile-stat-value" id="steamDisplay">steamcommunity.com/id/pingster</div>
                     </div>
 
                     <div class="profile-stat-card" id="faceitLinkCard" onclick="editFaceitLink()">
-                        <div class="profile-stat-label">Faceit (если есть)</div>
+                        <div class="profile-stat-label">Ссылка Faceit</div>
                         <div class="profile-stat-value" id="faceitLinkDisplay">—</div>
                     </div>
                 </div>
@@ -1493,10 +1493,10 @@
                     </div>
                 </div>
                 
-                <div class="input-label">Steam</div>
+                <div class="input-label">Ссылка Steam</div>
                 <input type="text" class="input-field" id="faceitSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
                 
-                <div class="input-label">Faceit</div>
+                <div class="input-label">Ссылка Faceit</div>
                 <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="—">
                 
                 <div class="play-style">
@@ -1542,7 +1542,7 @@
                     </div>
                 </div>
                 
-                <div class="input-label">Steam</div>
+                <div class="input-label">Ссылка Steam</div>
                 <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
                 
                 <div class="play-style">
@@ -1558,14 +1558,14 @@
                 <button class="primary-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MATCHMAKING PRIME -->
+            <!-- ЭКРАН MatchMaking PRIME -->
             <div id="primeScreen" class="screen screen-prime">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                     <div class="mode-title prime">
                         <span class="matchmaking-text">
                             <span class="mm-large">MM</span>
-                            <span class="mm-small">ATCHMAKING</span>
+                            <span class="mm-small">atchMaking PRIME</span>
                         </span>
                     </div>
                 </div>
@@ -1611,7 +1611,7 @@
                     </div>
                 </div>
                 
-                <div class="input-label">Steam</div>
+                <div class="input-label">Ссылка Steam</div>
                 <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
                 
                 <div class="play-style">
@@ -1627,14 +1627,14 @@
                 <button class="primary-btn" onclick="startSearch('MATCHMAKING PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MATCHMAKING PUBLIC -->
+            <!-- ЭКРАН MatchMaking PUBLIC -->
             <div id="publicScreen" class="screen screen-public">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                     <div class="mode-title public">
                         <span class="matchmaking-text">
                             <span class="mm-large">MM</span>
-                            <span class="mm-small">ATCHMAKING</span>
+                            <span class="mm-small">atchMaking PUBLIC</span>
                         </span>
                     </div>
                 </div>
@@ -1680,7 +1680,7 @@
                     </div>
                 </div>
                 
-                <div class="input-label">Steam</div>
+                <div class="input-label">Ссылка Steam</div>
                 <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
                 
                 <div class="play-style">
