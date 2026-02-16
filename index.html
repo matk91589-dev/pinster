@@ -190,12 +190,13 @@
             font-weight: 600;
             color: #FFFFFF;
             letter-spacing: -0.3px;
+            margin-bottom: 4px;
         }
 
         .section-subtitle {
             font-size: 14px;
             color: #9BA1B0;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         /* Стартовый экран */
@@ -334,7 +335,7 @@
             flex-direction: column;
             justify-content: center;
             gap: 16px;
-            margin: 12px 0;
+            margin: 4px 0;
         }
 
         .mode-btn {
@@ -505,38 +506,40 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            margin-bottom: 2px;
         }
 
         .profile-status {
             color: #4CAF50;
-            font-size: 11px;
-            background: rgba(76, 175, 80, 0.1);
-            padding: 2px 8px;
-            border-radius: 12px;
-            border: 1px solid rgba(76, 175, 80, 0.3);
+            font-size: 12px;
+            font-weight: 500;
+            background: rgba(76, 175, 80, 0.15);
+            padding: 3px 10px;
+            border-radius: 14px;
+            border: 1px solid rgba(76, 175, 80, 0.4);
+            letter-spacing: 0.3px;
         }
 
-        /* Статистика - 4 карточки */
+        /* Статистика - 4 карточки одинакового размера */
         .stats-grid {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 8px;
             margin: 0 0 12px 0;
         }
 
         .stat-card {
-            flex: 1 1 calc(50% - 4px);
             background: #1A1D24;
             border: 1px solid #2A2F3A;
             border-radius: 8px;
-            padding: 12px 4px;
+            padding: 12px 8px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
-        }
-
-        .stat-card:hover {
-            border-color: #F6465D;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .stat-card.editable {
@@ -547,13 +550,15 @@
         .stat-label {
             font-size: 11px;
             color: #9BA1B0;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            line-height: 1.3;
         }
 
         .stat-value {
             font-size: 16px;
             font-weight: 600;
             color: #FFFFFF;
+            line-height: 1.2;
         }
 
         .stat-value.orange {
@@ -1109,8 +1114,8 @@
                 <div class="mode-container">
                     <button class="mode-btn faceit" onclick="showFaceitScreen()">FACEIT</button>
                     <button class="mode-btn premier" onclick="showPremierScreen()">PREMIER</button>
-                    <button class="mode-btn prime" onclick="showPrimeScreen()">Соревновательный PRIME</button>
-                    <button class="mode-btn public" onclick="showPublicScreen()">Соревновательный PUBLIC</button>
+                    <button class="mode-btn prime" onclick="showPrimeScreen()">MM PRIME</button>
+                    <button class="mode-btn public" onclick="showPublicScreen()">MM PUBLIC</button>
                 </div>
 
                 <div class="bottom-nav">
@@ -1263,11 +1268,11 @@
                         <div class="stat-value red" id="premierValue">12500</div>
                     </div>
                     <div class="stat-card" id="primeCard" onclick="editPrimeRank()">
-                        <div class="stat-label">Соревновательный PRIME</div>
+                        <div class="stat-label">MM PRIME</div>
                         <div class="stat-value white" id="primeRank">Gold Nova 3</div>
                     </div>
                     <div class="stat-card" id="publicCard" onclick="editPublicRank()">
-                        <div class="stat-label">Соревновательный PUBLIC</div>
+                        <div class="stat-label">MM PUBLIC</div>
                         <div class="stat-value white" id="publicRank">Silver 4</div>
                     </div>
                 </div>
@@ -1416,12 +1421,12 @@
                 <button class="primary-btn" onclick="startSearch('PREMIER')">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН СОРЕВНОВАТЕЛЬНЫЙ PRIME -->
+            <!-- ЭКРАН MM PRIME -->
             <div id="primeScreen" class="screen screen-prime">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                 </div>
-                <div class="mode-title prime">Соревновательный PRIME</div>
+                <div class="mode-title prime">MM PRIME</div>
                 <div class="mode-subtitle">ваши данные</div>
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -1438,15 +1443,15 @@
                     <div class="comment-label">Комментарий к поиску</div>
                     <textarea class="comment-input" placeholder="Введите информацию о себе..."></textarea>
                 </div>
-                <button class="primary-btn" onclick="startSearch('Соревновательный PRIME')">Начать поиск</button>
+                <button class="primary-btn" onclick="startSearch('MM PRIME')">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН СОРЕВНОВАТЕЛЬНЫЙ PUBLIC -->
+            <!-- ЭКРАН MM PUBLIC -->
             <div id="publicScreen" class="screen screen-public">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                 </div>
-                <div class="mode-title public">Соревновательный PUBLIC</div>
+                <div class="mode-title public">MM PUBLIC</div>
                 <div class="mode-subtitle">ваши данные</div>
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -1463,7 +1468,7 @@
                     <div class="comment-label">Комментарий к поиску</div>
                     <textarea class="comment-input" placeholder="Введите информацию о себе..."></textarea>
                 </div>
-                <button class="primary-btn" onclick="startSearch('Соревновательный PUBLIC')">Начать поиск</button>
+                <button class="primary-btn" onclick="startSearch('MM PUBLIC')">Начать поиск</button>
             </div>
         </div>
 
@@ -1856,7 +1861,7 @@
         function editPrimeRank() {
             if (!editMode) return;
             let rankList = csRanks.map((rank, index) => `${index + 1}. ${rank}`).join('\n');
-            const newRank = prompt(`Выберите звание для PRIME (введите номер):\n${rankList}`, '7');
+            const newRank = prompt(`Выберите звание для MM PRIME (введите номер):\n${rankList}`, '7');
             if (newRank && !isNaN(parseInt(newRank)) && parseInt(newRank) >= 1 && parseInt(newRank) <= csRanks.length) {
                 tempPrimeRank = csRanks[parseInt(newRank) - 1];
                 document.getElementById('primeRank').textContent = tempPrimeRank;
@@ -1868,7 +1873,7 @@
         function editPublicRank() {
             if (!editMode) return;
             let rankList = csRanks.map((rank, index) => `${index + 1}. ${rank}`).join('\n');
-            const newRank = prompt(`Выберите звание для PUBLIC (введите номер):\n${rankList}`, '3');
+            const newRank = prompt(`Выберите звание для MM PUBLIC (введите номер):\n${rankList}`, '3');
             if (newRank && !isNaN(parseInt(newRank)) && parseInt(newRank) >= 1 && parseInt(newRank) <= csRanks.length) {
                 tempPublicRank = csRanks[parseInt(newRank) - 1];
                 document.getElementById('publicRank').textContent = tempPublicRank;
