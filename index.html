@@ -199,7 +199,7 @@
             font-weight: 700;
             color: #FFFFFF;
             letter-spacing: -0.5px;
-            margin: 70px 0 8px 0;
+            margin: 0 0 8px 0;
             text-align: center;
         }
 
@@ -403,12 +403,19 @@
             color: #5D6472;
         }
 
-        /* Профиль */
+        /* Профиль - теперь на всю высоту */
+        .screen-profile {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
         .profile-header {
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             padding: 4px 0;
         }
 
@@ -742,7 +749,14 @@
             color: #9BA1B0;
         }
 
-        /* Магазин */
+        /* Магазин - на всю высоту */
+        .screen-shop {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
         .shop-content {
             flex: 1;
             display: flex;
@@ -1720,13 +1734,14 @@
 
         function generateFriends() {
             friendsData = [];
-            for (let i = 7; i < 17; i++) {
+            // Создаем ровно 10 друзей для примера
+            for (let i = 1; i <= 10; i++) {
                 const num = i.toString().padStart(3, '0');
                 const idLength = Math.floor(Math.random() * 6) + 5;
                 const friendId = Math.random().toString(16).substring(2, 2 + idLength);
                 
                 friendsData.push({
-                    avatar: ['😼','🤖','👾','🎮','😎','👻','💀','😱','🤠','🥷'][i-7],
+                    avatar: ['😼','🤖','👾','🎮','😎','👻','💀','😱','🤠','🥷'][i-1],
                     name: `abs${num}`,
                     id: friendId,
                     steam: `steamcommunity.com/id/abs${num}`
