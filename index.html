@@ -103,17 +103,17 @@
             stroke: #F6465D;
         }
 
-        /* Плашка Pingcoins */
+        /* Плашка Pingcoins в стиле Telegram */
         .coins-badge {
             background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 20px;
-            padding: 6px 14px;
+            border-radius: 8px;
+            padding: 8px 12px;
             font-size: 13px;
             color: #FFFFFF;
             display: inline-block;
             margin-bottom: 16px;
             align-self: flex-start;
+            border: none;
         }
 
         .section-title {
@@ -307,13 +307,14 @@
             color: #5D6472;
         }
 
-        /* Профиль */
+        /* Профиль с карандашом как в Telegram */
         .profile-header {
             display: flex;
             align-items: center;
             gap: 16px;
             margin-bottom: 20px;
             padding: 4px 0;
+            position: relative;
         }
 
         .profile-avatar {
@@ -328,6 +329,11 @@
             font-size: 32px;
             color: #9BA1B0;
             transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .profile-avatar:hover {
+            border-color: #F6465D;
         }
 
         .profile-avatar.frame-red { border-color: #F6465D; border-width: 3px; }
@@ -407,6 +413,29 @@
             padding: 2px 8px;
             border-radius: 12px;
             border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .edit-icon {
+            position: absolute;
+            bottom: 4px;
+            right: 0;
+            width: 28px;
+            height: 28px;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #9BA1B0;
+            transition: all 0.2s;
+        }
+
+        .edit-icon:hover {
+            border-color: #F6465D;
+            color: #FFFFFF;
         }
 
         .stats-grid {
@@ -534,7 +563,7 @@
             color: #9BA1B0;
         }
 
-        /* Магазин */
+        /* Магазин в стиле Telegram */
         .shop-content {
             flex: 1;
             display: flex;
@@ -561,36 +590,31 @@
             display: flex;
             gap: 12px;
             margin: 16px 0;
-            padding: 4px;
-            background: #1A1D24;
-            border-radius: 8px;
-            border: 1px solid #2A2F3A;
+            background: transparent;
         }
 
         .shop-tab {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            font-size: 14px;
+            padding: 8px 0;
+            font-size: 15px;
             font-weight: 500;
             color: #9BA1B0;
             cursor: pointer;
-            border-radius: 6px;
+            border-bottom: 2px solid transparent;
             transition: all 0.2s;
         }
 
         .shop-tab.active {
-            background: #F6465D;
-            color: white;
+            color: #F6465D;
+            border-bottom-color: #F6465D;
         }
 
-        /* Цветные ники */
+        /* Цветные ники и рамки */
         .nicks-section, .frames-section {
             margin-bottom: 24px;
         }
 
         .section-header {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             color: #FFFFFF;
             margin-bottom: 12px;
@@ -599,80 +623,67 @@
         .items-grid {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
         }
 
         .shop-item {
-            background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .item-preview {
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .color-strip {
-            width: 100%;
-            height: 100%;
-        }
-
-        .color-strip.red { background: #F6465D; }
-        .color-strip.green { background: #4CAF50; }
-        .color-strip.blue { background: #2196F3; }
-        .color-strip.purple { background: #9C27B0; }
-        .color-strip.orange { background: #FF9800; }
-        .color-strip.multicolor { 
-            background: linear-gradient(90deg, #F6465D, #4CAF50, #2196F3, #9C27B0, #FF9800);
-        }
-
-        .frame-preview {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .frame-circle {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #2A2F3A;
-        }
-
-        .frame-circle.red { border: 3px solid #F6465D; }
-        .frame-circle.gold { border: 3px solid #FFD700; }
-        .frame-circle.blue { border: 3px solid #2196F3; }
-        .frame-circle.green { border: 3px solid #4CAF50; }
-        .frame-circle.purple { border: 3px solid #9C27B0; }
-        .frame-circle.rainbow { 
-            border: 3px solid transparent;
-            background: linear-gradient(45deg, #F6465D, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
-        }
-
-        .item-info {
-            padding: 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-top: 1px solid #2A2F3A;
+            background: #1A1D24;
+            border-radius: 8px;
+            padding: 12px;
+            border: none;
+        }
+
+        .item-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .color-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+
+        .color-dot.red { background: #F6465D; }
+        .color-dot.green { background: #4CAF50; }
+        .color-dot.blue { background: #2196F3; }
+        .color-dot.purple { background: #9C27B0; }
+        .color-dot.orange { background: #FF9800; }
+        .color-dot.multicolor { 
+            background: linear-gradient(45deg, #F6465D, #4CAF50, #2196F3, #9C27B0, #FF9800);
+        }
+
+        .frame-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #2A2F3A;
+            border: 2px solid;
+        }
+
+        .frame-dot.red { border-color: #F6465D; }
+        .frame-dot.gold { border-color: #FFD700; }
+        .frame-dot.blue { border-color: #2196F3; }
+        .frame-dot.green { border-color: #4CAF50; }
+        .frame-dot.purple { border-color: #9C27B0; }
+        .frame-dot.rainbow { 
+            border-color: transparent;
+            background: linear-gradient(45deg, #F6465D, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
         }
 
         .item-name {
             font-size: 15px;
-            font-weight: 500;
             color: #FFFFFF;
         }
 
-        .item-price {
+        .item-right {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
 
         .price-value {
@@ -681,11 +692,11 @@
         }
 
         .buy-btn {
-            background: #F6465D;
-            border: none;
+            background: transparent;
+            border: 1px solid #2A2F3A;
             border-radius: 6px;
-            padding: 6px 12px;
-            color: white;
+            padding: 4px 10px;
+            color: #FFFFFF;
             font-size: 12px;
             font-weight: 500;
             cursor: pointer;
@@ -693,16 +704,14 @@
         }
 
         .buy-btn:hover {
-            background: #ff5a6e;
-        }
-
-        .buy-btn:active {
-            transform: scale(0.95);
+            border-color: #F6465D;
+            color: #F6465D;
         }
 
         .buy-btn.owned {
-            background: #2A2F3A;
-            color: #9BA1B0;
+            background: transparent;
+            border-color: #4CAF50;
+            color: #4CAF50;
             cursor: default;
         }
 
@@ -711,17 +720,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 12px;
-            margin: 16px 0;
-            padding: 40px 20px;
-            text-align: center;
-        }
-
-        .tasks-text {
-            font-size: 14px;
             color: #9BA1B0;
+            font-size: 14px;
         }
 
         /* Экраны режимов */
@@ -925,7 +925,7 @@
 
                 <!-- Плашка Pingcoins -->
                 <div class="coins-badge">
-                    Pingcoins: <span id="coinsAmount">500</span>
+                    Pingcoins: <span id="coinsAmount">50</span>
                 </div>
 
                 <div class="shop-tabs">
@@ -949,9 +949,7 @@
 
                 <div id="tasksTabContent" class="shop-content" style="display: none;">
                     <div class="tasks-section">
-                        <div class="tasks-text">
-                            Задания пока в разработке 🔧
-                        </div>
+                        Задания пока в разработке
                     </div>
                 </div>
 
@@ -991,7 +989,7 @@
                 <div class="section-title">Профиль</div>
 
                 <div class="profile-header">
-                    <div id="profileAvatar" class="profile-avatar">👤</div>
+                    <div id="profileAvatar" class="profile-avatar" onclick="editAvatar()">👤</div>
                     <div class="profile-info">
                         <div class="profile-name-label">
                             ваш никнейм
@@ -1005,6 +1003,7 @@
                             </span>
                         </div>
                     </div>
+                    <div class="edit-icon" onclick="editProfile()">✏️</div>
                 </div>
 
                 <div class="stats-grid">
@@ -1214,18 +1213,16 @@
 
     <script>
         // Данные магазина
-        let coins = 500;
+        let coins = 50;
         let ownedNicks = [];
         let ownedFrames = [];
-        let currentNick = null;
-        let currentFrame = null;
 
         const nicks = [
-            { id: 'red', name: 'Красный', color: '#F6465D', class: 'red', price: 50 },
-            { id: 'green', name: 'Зеленый', color: '#4CAF50', class: 'green', price: 50 },
-            { id: 'blue', name: 'Синий', color: '#2196F3', class: 'blue', price: 50 },
-            { id: 'purple', name: 'Фиолетовый', color: '#9C27B0', class: 'purple', price: 100 },
-            { id: 'orange', name: 'Оранжевый', color: '#FF9800', class: 'orange', price: 100 },
+            { id: 'red', name: 'Красный', class: 'red', price: 50 },
+            { id: 'green', name: 'Зеленый', class: 'green', price: 50 },
+            { id: 'blue', name: 'Синий', class: 'blue', price: 50 },
+            { id: 'purple', name: 'Фиолетовый', class: 'purple', price: 100 },
+            { id: 'orange', name: 'Оранжевый', class: 'orange', price: 100 },
             { id: 'multicolor', name: 'Мультицвет', class: 'multicolor', price: 200 }
         ];
 
@@ -1266,19 +1263,17 @@
             if (nicksGrid) {
                 nicksGrid.innerHTML = nicks.map(nick => `
                     <div class="shop-item">
-                        <div class="item-preview">
-                            <div class="color-strip ${nick.class}"></div>
-                        </div>
                         <div class="item-info">
+                            <div class="color-dot ${nick.class}"></div>
                             <span class="item-name">${nick.name}</span>
-                            <div class="item-price">
-                                <span class="price-value">${nick.price} 🪙</span>
-                                <button class="buy-btn ${ownedNicks.includes(nick.id) ? 'owned' : ''}" 
-                                        onclick="buyNick('${nick.id}')"
-                                        ${ownedNicks.includes(nick.id) ? 'disabled' : ''}>
-                                    ${ownedNicks.includes(nick.id) ? 'Куплено' : 'Купить'}
-                                </button>
-                            </div>
+                        </div>
+                        <div class="item-right">
+                            <span class="price-value">${nick.price}</span>
+                            <button class="buy-btn ${ownedNicks.includes(nick.id) ? 'owned' : ''}" 
+                                    onclick="buyNick('${nick.id}')"
+                                    ${ownedNicks.includes(nick.id) ? 'disabled' : ''}>
+                                ${ownedNicks.includes(nick.id) ? '✓' : 'Купить'}
+                            </button>
                         </div>
                     </div>
                 `).join('');
@@ -1287,21 +1282,17 @@
             if (framesGrid) {
                 framesGrid.innerHTML = frames.map(frame => `
                     <div class="shop-item">
-                        <div class="item-preview">
-                            <div class="frame-preview">
-                                <div class="frame-circle ${frame.class}"></div>
-                            </div>
-                        </div>
                         <div class="item-info">
+                            <div class="frame-dot ${frame.class}"></div>
                             <span class="item-name">${frame.name}</span>
-                            <div class="item-price">
-                                <span class="price-value">${frame.price} 🪙</span>
-                                <button class="buy-btn ${ownedFrames.includes(frame.id) ? 'owned' : ''}" 
-                                        onclick="buyFrame('${frame.id}')"
-                                        ${ownedFrames.includes(frame.id) ? 'disabled' : ''}>
-                                    ${ownedFrames.includes(frame.id) ? 'Куплено' : 'Купить'}
-                                </button>
-                            </div>
+                        </div>
+                        <div class="item-right">
+                            <span class="price-value">${frame.price}</span>
+                            <button class="buy-btn ${ownedFrames.includes(frame.id) ? 'owned' : ''}" 
+                                    onclick="buyFrame('${frame.id}')"
+                                    ${ownedFrames.includes(frame.id) ? 'disabled' : ''}>
+                                ${ownedFrames.includes(frame.id) ? '✓' : 'Купить'}
+                            </button>
                         </div>
                     </div>
                 `).join('');
@@ -1315,7 +1306,6 @@
             if (!nick) return;
             
             if (ownedNicks.includes(nickId)) {
-                alert('У вас уже есть этот ник!');
                 return;
             }
             
@@ -1323,7 +1313,6 @@
                 coins -= nick.price;
                 ownedNicks.push(nickId);
                 
-                // Применяем ник к профилю
                 const profileName = document.getElementById('profileName');
                 if (profileName) {
                     profileName.className = 'profile-name';
@@ -1331,9 +1320,6 @@
                 }
                 
                 renderShop();
-                alert(`Вы купили ${nick.name} ник!`);
-            } else {
-                alert('Недостаточно Pingcoins!');
             }
         }
 
@@ -1342,7 +1328,6 @@
             if (!frame) return;
             
             if (ownedFrames.includes(frameId)) {
-                alert('У вас уже есть эта рамка!');
                 return;
             }
             
@@ -1350,7 +1335,6 @@
                 coins -= frame.price;
                 ownedFrames.push(frameId);
                 
-                // Применяем рамку к профилю
                 const profileAvatar = document.getElementById('profileAvatar');
                 if (profileAvatar) {
                     profileAvatar.className = 'profile-avatar';
@@ -1358,9 +1342,22 @@
                 }
                 
                 renderShop();
-                alert(`Вы купили ${frame.name}!`);
-            } else {
-                alert('Недостаточно Pingcoins!');
+            }
+        }
+
+        function editProfile() {
+            const newName = prompt('Введите новый никнейм:', 'Pingster');
+            if (newName && newName.trim()) {
+                document.getElementById('profileName').textContent = newName;
+            }
+        }
+
+        function editAvatar() {
+            const emojis = ['😎', '😼', '🤖', '👾', '🎮', '👻', '💀', '😱', '🤠', '🥷'];
+            const currentAvatar = document.getElementById('profileAvatar').textContent;
+            const newAvatar = prompt('Выберите аватарку (можно вставить эмодзи):', currentAvatar);
+            if (newAvatar && newAvatar.trim()) {
+                document.getElementById('profileAvatar').textContent = newAvatar;
             }
         }
 
@@ -1433,12 +1430,12 @@
             
             if (tab === 'shop') {
                 tabs[0].classList.add('active');
-                if (shopContent) shopContent.style.display = 'block';
-                if (tasksContent) tasksContent.style.display = 'none';
+                shopContent.style.display = 'block';
+                tasksContent.style.display = 'none';
             } else {
                 tabs[1].classList.add('active');
-                if (shopContent) shopContent.style.display = 'none';
-                if (tasksContent) tasksContent.style.display = 'flex';
+                shopContent.style.display = 'none';
+                tasksContent.style.display = 'flex';
             }
         }
 
