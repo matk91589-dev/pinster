@@ -433,7 +433,7 @@
         .profile-name-row {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
@@ -459,6 +459,47 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 700;
+        }
+
+        .rating-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .rating-text {
+            font-size: 14px;
+            color: #9BA1B0;
+        }
+
+        .rating-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .heart-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin-left: 4px;
+        }
+
+        .heart-btn svg {
+            width: 28px;
+            height: 28px;
+            stroke: #F6465D;
+            stroke-width: 2;
+            fill: none;
+            transition: all 0.2s;
+        }
+
+        .heart-btn:hover svg {
+            fill: #F6465D;
         }
 
         .profile-rating {
@@ -546,7 +587,45 @@
             border-width: 2px;
         }
 
-        /* Ваши друзья */
+        /* Ваши друзья с лупой */
+        .friends-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .search-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .search-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: #9BA1B0;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .friends-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFFFFF;
+            flex: 1;
+        }
+
+        .friends-count {
+            color: #9BA1B0;
+            font-size: 12px;
+        }
+
         .friends-section {
             width: 100%;
             flex: 1;
@@ -554,24 +633,6 @@
             flex-direction: column;
             min-height: 0;
             margin: 12px 0 4px 0;
-        }
-
-        .friends-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .friends-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #FFFFFF;
-        }
-
-        .friends-count {
-            color: #9BA1B0;
-            font-size: 12px;
         }
 
         .friends-list {
@@ -621,11 +682,26 @@
             flex: 1;
         }
 
+        .friend-name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2px;
+        }
+
         .friend-name {
             font-size: 14px;
             font-weight: 500;
-            margin-bottom: 2px;
             color: #FFFFFF;
+        }
+
+        .friend-id {
+            font-size: 10px;
+            color: #F6465D;
+            background: rgba(246, 70, 93, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
         }
 
         .friend-steam {
@@ -1111,10 +1187,16 @@
                         </div>
                         <div class="profile-name-row">
                             <span id="profileName" class="profile-name" onclick="editName()">Pingster</span>
-                            <span class="profile-rating">
-                                <span id="ratingValue">5</span>
-                                <span class="rating-star">⭐</span>
-                            </span>
+                            <div class="rating-container">
+                                <span class="rating-text">рейтинг:</span>
+                                <span class="rating-value" id="ratingValue">0</span>
+                                <button class="heart-btn" onclick="likeProfile()">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
+                                              stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1138,6 +1220,13 @@
 
                 <div class="friends-section">
                     <div class="friends-header">
+                        <div class="search-icon" onclick="searchFriends()">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
+                                <circle cx="11" cy="11" r="4" stroke="white" stroke-width="2"/>
+                                <line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
                         <span class="friends-title">Ваши друзья</span>
                         <span class="friends-count">10 друзей</span>
                     </div>
@@ -1334,6 +1423,7 @@
         let tempAge = '21';
         let tempSteam = 'https://steamcommunity.com/id/pingster';
         let tempAvatar = '👤';
+        let tempRating = '0';
 
         // Сохраненные значения (после применения)
         let savedName = 'Pingster';
@@ -1342,6 +1432,7 @@
         let savedAge = '21';
         let savedSteam = 'https://steamcommunity.com/id/pingster';
         let savedAvatar = '👤';
+        let savedRating = '0';
 
         // Данные магазина
         let coins = 0;
@@ -1373,12 +1464,19 @@
             
             for (let i = 7; i < 17; i++) {
                 const num = i.toString().padStart(3, '0');
+                // Генерируем случайный ID в 16-ричной системе (5-10 символов)
+                const idLength = Math.floor(Math.random() * 6) + 5; // от 5 до 10
+                const friendId = Math.random().toString(16).substring(2, 2 + idLength);
+                
                 const friendItem = document.createElement('div');
                 friendItem.className = 'friend-item';
                 friendItem.innerHTML = `
                     <div class="friend-avatar">${['😼','🤖','👾','🎮','😎','👻','💀','😱','🤠','🥷'][i-7]}</div>
                     <div class="friend-info">
-                        <div class="friend-name">abs${num}</div>
+                        <div class="friend-name-row">
+                            <div class="friend-name">abs${num}</div>
+                            <div class="friend-id">${friendId}</div>
+                        </div>
                         <div class="friend-steam">steamcommunity.com/id/abs${num}</div>
                     </div>
                 `;
@@ -1483,6 +1581,7 @@
             document.getElementById('ageValue').textContent = savedAge;
             document.getElementById('steamInput').value = savedSteam;
             document.getElementById('profileAvatar').textContent = savedAvatar;
+            document.getElementById('ratingValue').textContent = savedRating;
             
             // Загружаем во временные переменные
             tempName = savedName;
@@ -1491,6 +1590,7 @@
             tempAge = savedAge;
             tempSteam = savedSteam;
             tempAvatar = savedAvatar;
+            tempRating = savedRating;
             
             // Обновляем экраны режимов
             updateModeScreens();
@@ -1523,6 +1623,7 @@
                 tempAge = savedAge;
                 tempSteam = savedSteam;
                 tempAvatar = savedAvatar;
+                tempRating = savedRating;
                 
                 // Отображаем временные значения
                 document.getElementById('profileName').textContent = tempName;
@@ -1531,6 +1632,7 @@
                 document.getElementById('ageValue').textContent = tempAge;
                 document.getElementById('steamInput').value = tempSteam;
                 document.getElementById('profileAvatar').textContent = tempAvatar;
+                document.getElementById('ratingValue').textContent = tempRating;
                 
                 // Подсвечиваем редактируемые элементы
                 const elements = [
@@ -1554,6 +1656,7 @@
                 savedAge = tempAge;
                 savedSteam = tempSteam;
                 savedAvatar = tempAvatar;
+                savedRating = tempRating;
                 
                 // Обновляем экраны режимов
                 updateModeScreens();
@@ -1585,6 +1688,7 @@
                 tempAge = savedAge;
                 tempSteam = savedSteam;
                 tempAvatar = savedAvatar;
+                tempRating = savedRating;
                 
                 document.getElementById('profileName').textContent = savedName;
                 document.getElementById('eloValue').textContent = savedELO;
@@ -1592,6 +1696,7 @@
                 document.getElementById('ageValue').textContent = savedAge;
                 document.getElementById('steamInput').value = savedSteam;
                 document.getElementById('profileAvatar').textContent = savedAvatar;
+                document.getElementById('ratingValue').textContent = savedRating;
                 
                 // Выходим из режима редактирования
                 editMode = false;
@@ -1708,6 +1813,21 @@
                 tempAvatar = newAvatar;
                 document.getElementById('profileAvatar').textContent = newAvatar;
             }
+        }
+
+        function likeProfile() {
+            // Увеличиваем рейтинг при нажатии на сердечко
+            const currentRating = parseInt(document.getElementById('ratingValue').textContent);
+            document.getElementById('ratingValue').textContent = currentRating + 1;
+            if (editMode) {
+                tempRating = (currentRating + 1).toString();
+            } else {
+                savedRating = (currentRating + 1).toString();
+            }
+        }
+
+        function searchFriends() {
+            alert('Поиск друзей будет доступен в следующем обновлении! 🔍');
         }
 
         function setStyle(style, element) {
