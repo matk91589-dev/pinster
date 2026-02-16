@@ -895,7 +895,7 @@
         .mode-header {
             display: flex;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: center;
             gap: 12px;
             margin-bottom: 16px;
             position: relative;
@@ -915,6 +915,8 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
+            position: absolute;
+            left: 0;
         }
 
         .back-btn:hover {
@@ -925,7 +927,7 @@
         .mode-title {
             font-size: 28px;
             font-weight: 700;
-            text-align: left;
+            text-align: center;
             margin: 0;
             line-height: 36px;
         }
@@ -947,10 +949,10 @@
             background: #1A1D24;
             border: 1px solid #2A2F3A;
             border-radius: 8px;
-            padding: 14px;
+            padding: 12px 14px;
             color: white;
-            font-size: 15px;
-            margin: 8px 0;
+            font-size: 14px;
+            margin: 4px 0 12px 0;
         }
 
         .search-input-field:focus {
@@ -972,7 +974,7 @@
         .top-stats-grid {
             display: flex;
             gap: 8px;
-            margin: 8px 0;
+            margin: 4px 0;
         }
 
         .top-stat-card {
@@ -981,22 +983,21 @@
             border: 1px solid #2A2F3A;
             border-radius: 8px;
             padding: 12px 8px;
-            text-align: center;
         }
 
         .top-stat-label {
             font-size: 11px;
             color: #9BA1B0;
             margin-bottom: 4px;
+            margin-left: 0;
         }
 
         .top-stat-value {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: #FFFFFF;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 4px;
             line-height: 1;
         }
@@ -1008,8 +1009,8 @@
         }
 
         .top-stat-value .heart-icon svg {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             display: block;
         }
 
@@ -1021,12 +1022,12 @@
         .rank-select {
             width: 100%;
             background: #1A1D24;
-            border: 2px solid #2A2F3A;
-            border-radius: 12px;
+            border: 1px solid #2A2F3A;
+            border-radius: 8px;
             color: white;
-            font-size: 15px;
-            padding: 14px;
-            margin: 8px 0;
+            font-size: 14px;
+            padding: 12px 14px;
+            margin: 4px 0 12px 0;
             cursor: pointer;
             transition: all 0.2s;
             appearance: none;
@@ -1042,7 +1043,6 @@
         .rank-select:focus {
             outline: none;
             border-color: #FF6B4A;
-            box-shadow: 0 0 0 2px rgba(255, 107, 74, 0.2);
         }
 
         .rank-select option {
@@ -1082,9 +1082,10 @@
         }
 
         .comment-label {
-            font-size: 13px;
+            font-size: 12px;
             color: #9BA1B0;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
+            margin-left: 0;
         }
 
         .comment-input {
@@ -1131,8 +1132,8 @@
         .input-label {
             font-size: 12px;
             color: #9BA1B0;
-            margin-bottom: 2px;
-            margin-left: 4px;
+            margin-bottom: 4px;
+            margin-left: 0;
         }
     </style>
 </head>
@@ -1460,7 +1461,7 @@
                 <div class="input-label">Faceit ELO</div>
                 <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="4000" min="0" max="5000">
                 
-                <div class="top-stats-grid" style="margin: 8px 0;">
+                <div class="top-stats-grid">
                     <div class="top-stat-card">
                         <div class="top-stat-label">Ваш рейтинг</div>
                         <div class="top-stat-value">
@@ -1509,7 +1510,7 @@
                 <div class="input-label">CS Rating</div>
                 <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="12500" min="0" max="35000">
                 
-                <div class="top-stats-grid" style="margin: 8px 0;">
+                <div class="top-stats-grid">
                     <div class="top-stat-card">
                         <div class="top-stat-label">Ваш рейтинг</div>
                         <div class="top-stat-value">
@@ -1578,7 +1579,7 @@
                     <option>Global Elite</option>
                 </select>
                 
-                <div class="top-stats-grid" style="margin: 8px 0;">
+                <div class="top-stats-grid">
                     <div class="top-stat-card">
                         <div class="top-stat-label">Ваш рейтинг</div>
                         <div class="top-stat-value">
@@ -1647,7 +1648,7 @@
                     <option>Global Elite</option>
                 </select>
                 
-                <div class="top-stats-grid" style="margin: 8px 0;">
+                <div class="top-stats-grid">
                     <div class="top-stat-card">
                         <div class="top-stat-label">Ваш рейтинг</div>
                         <div class="top-stat-value">
