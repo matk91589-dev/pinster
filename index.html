@@ -45,7 +45,7 @@
             position: relative;
         }
 
-        /* Хедер */
+        /* Хедер с кликабельным логотипом */
         .header {
             display: flex;
             align-items: center;
@@ -61,6 +61,7 @@
             font-weight: 600;
             letter-spacing: -0.5px;
             color: #FFFFFF;
+            cursor: pointer;
         }
 
         .logo .ping {
@@ -191,6 +192,7 @@
             color: #FFFFFF;
             letter-spacing: -0.5px;
             margin-bottom: 8px;
+            text-align: center;
         }
 
         .section-subtitle {
@@ -198,6 +200,7 @@
             color: #9BA1B0;
             margin-bottom: 20px;
             font-weight: 400;
+            text-align: center;
         }
 
         /* Стартовый экран */
@@ -450,7 +453,7 @@
             color: #9BA1B0;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
             margin-bottom: 2px;
         }
 
@@ -922,6 +925,16 @@
             border-color: #FF6B4A;
         }
 
+        /* Ограничение ввода чисел */
+        .search-input-field[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .search-input-field[type="number"]::-webkit-outer-spin-button,
+        .search-input-field[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
         .stats-grid {
             display: flex;
             gap: 8px;
@@ -1007,6 +1020,7 @@
             font-size: 13px;
             resize: none;
             height: 70px;
+            max-length: 100;
         }
 
         .comment-input::placeholder {
@@ -1049,9 +1063,9 @@
 <body>
     <div class="phone-frame">
         <div class="content">
-            <!-- Хедер -->
+            <!-- Хедер с кликабельным логотипом -->
             <div class="header">
-                <div class="logo">
+                <div class="logo" onclick="showMainScreen()">
                     <span class="ping">Ping</span><span class="ster">ster</span>
                 </div>
                 <div id="settingsIcon" class="icon-settings" onclick="showSettingsScreen()">
@@ -1087,7 +1101,7 @@
             <!-- ГЛАВНЫЙ ЭКРАН с 4 режимами -->
             <div id="mainScreen" class="screen screen-main">
                 <div class="section-title">Выбор режима</div>
-                <div class="section-subtitle">Найдите подходящий для вас режим игры</div>
+                <div class="section-subtitle">Выберите для вас подходящий режим</div>
 
                 <div class="mode-container">
                     <button class="mode-btn faceit" onclick="showFaceitScreen()">FACEIT</button>
@@ -1225,7 +1239,7 @@
                     </div>
                 </div>
 
-                <!-- Плашки в профиле (уменьшенные) -->
+                <!-- Плашки в профиле -->
                 <div class="profile-stats">
                     <div class="profile-row">
                         <div class="profile-stat-card" id="ageCard" onclick="editAge()">
@@ -1349,7 +1363,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН FACEIT (всё наверху) -->
+            <!-- ЭКРАН FACEIT (с возрастом) -->
             <div id="faceitScreen" class="screen screen-faceit">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
@@ -1358,13 +1372,16 @@
                 <div class="mode-subtitle">введите текущие данные</div>
                 
                 <div class="input-label">Faceit ELO</div>
-                <input type="text" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="4000">
+                <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="4000" min="0" max="5000">
                 
                 <div class="input-label">Steam</div>
                 <input type="text" class="input-field" id="faceitSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
                 
                 <div class="input-label">Faceit</div>
                 <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="—" readonly>
+                
+                <div class="input-label">Возраст</div>
+                <input type="text" class="input-field" id="faceitAgeInput" value="21" readonly>
                 
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
@@ -1373,13 +1390,13 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите"></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите" maxlength="100"></textarea>
                 </div>
 
                 <button class="primary-btn" onclick="startSearch('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН PREMIER -->
+            <!-- ЭКРАН PREMIER (с возрастом) -->
             <div id="premierScreen" class="screen screen-premier">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
@@ -1388,10 +1405,13 @@
                 <div class="mode-subtitle">введите текущие данные</div>
                 
                 <div class="input-label">CS Rating</div>
-                <input type="text" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="12500">
+                <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="12500" min="0" max="35000">
                 
                 <div class="input-label">Steam</div>
                 <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
+                
+                <div class="input-label">Возраст</div>
+                <input type="text" class="input-field" id="premierAgeInput" value="21" readonly>
                 
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
@@ -1400,13 +1420,13 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите"></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите" maxlength="100"></textarea>
                 </div>
 
                 <button class="primary-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MATCHMAKING PRIME -->
+            <!-- ЭКРАН MATCHMAKING PRIME (с возрастом) -->
             <div id="primeScreen" class="screen screen-prime">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
@@ -1438,6 +1458,9 @@
                 <div class="input-label">Steam</div>
                 <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
                 
+                <div class="input-label">Возраст</div>
+                <input type="text" class="input-field" id="primeAgeInput" value="21" readonly>
+                
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
                     <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
@@ -1445,13 +1468,13 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите"></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите" maxlength="100"></textarea>
                 </div>
 
                 <button class="primary-btn" onclick="startSearch('MATCHMAKING PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MATCHMAKING PUBLIC -->
+            <!-- ЭКРАН MATCHMAKING PUBLIC (с возрастом) -->
             <div id="publicScreen" class="screen screen-public">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
@@ -1483,6 +1506,9 @@
                 <div class="input-label">Steam</div>
                 <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster" readonly>
                 
+                <div class="input-label">Возраст</div>
+                <input type="text" class="input-field" id="publicAgeInput" value="21" readonly>
+                
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
                     <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
@@ -1490,7 +1516,7 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите"></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить или пропустите" maxlength="100"></textarea>
                 </div>
 
                 <button class="primary-btn" onclick="startSearch('MATCHMAKING PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
@@ -1755,6 +1781,17 @@
             ];
             faceitInputs.forEach(input => {
                 if (input) input.value = savedFaceitLink;
+            });
+            
+            // Обновляем возраст во всех экранах
+            const ageInputs = [
+                document.getElementById('faceitAgeInput'),
+                document.getElementById('premierAgeInput'),
+                document.getElementById('primeAgeInput'),
+                document.getElementById('publicAgeInput')
+            ];
+            ageInputs.forEach(input => {
+                if (input) input.value = savedAge;
             });
             
             tempName = savedName;
