@@ -1683,18 +1683,18 @@
     </div>
 
     <script>
-        // ==============================================
-        // SUPABASE КОНФИГУРАЦИЯ (ВСТАВЬ СВОИ ДАННЫЕ!)
-        // ==============================================
-        const supabaseUrl = 'https://foeacrrojoeymtvwbkqe.supabase.co';  // url
-        const supabaseKey = 'sb_publishable__rPXE3FM5T9SZIKlagR6lA_WvjiAhJT';  // key
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        // ============================================
+        // SUPABASE КОНФИГУРАЦИЯ
+        // ============================================
+        const supabaseUrl = 'https://foeacrrojoeymtvwbkqe.supabase.co';
+        const supabaseKey = 'sb_publishable__rPXE3FM5T9SZIKlagR6lA_WvjiAhJT';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // ==============================================
+        // ============================================
         // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
-        // ==============================================
+        // ============================================
         let editMode = false;
-        let currentUserId = null;  // Будет хранить ID пользователя из БД
+        let currentUserId = null;
         
         // Временные значения для редактирования
         let tempName = 'Pingster';
@@ -1741,122 +1741,366 @@
             { id: 'rainbow', name: 'Радужная рамка', class: 'frame-rainbow', price: 300 }
         ];
 
-        // ==============================================
-        // ФУНКЦИИ ДЛЯ РАБОТЫ С SUPABASE
-        // ==============================================
-
-        // Создать или получить пользователя
-        async function getOrCreateUser() {
-            // Пока используем тестовый ID (потом заменим на Telegram ID)
-            const testUserId = 'test_user_1';
-            
-            // Ищем пользователя
-            let { data: user, error } = await supabase
-                .from('users')
-                .select('*')
-                .eq('username', testUserId)
-                .maybeSingle();
-            
-            if (error) {
-                console.error('Ошибка поиска пользователя:', error);
-                return null;
-            }
-            
-            // Если пользователь не найден, создаем нового
-            if (!user) {
-                const { data: newUser, error: createError } = await supabase
-                    .from('users')
-                    .insert({
-                        username: testUserId,
-                        avatar: '👤',
-                        age: 21,
-                        steam_link: 'steamcommunity.com/id/pingster',
-                        faceit_link: '—',
-                        coins: 1000,
-                        owned_nicks: [],
-                        owned_frames: []
-                    })
-                    .select()
-                    .single();
-                
-                if (createError) {
-                    console.error('Ошибка создания пользователя:', createError);
-                    return null;
-                }
-                
-                user = newUser;
-            }
-            
-            return user;
+        // ============================================
+        // ФУНКЦИИ НАВИГАЦИИ
+        // ============================================
+        function startApp() {
+            console.log('startApp работает!');
+            hideAllScreens();
+            document.getElementById('mainScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
         }
 
-        // Сохранить пользователя в БД
-        async function saveUserToDB() {
-            if (!currentUserId) return;
+        function showMainScreen() {
+            console.log('showMainScreen работает!');
+            hideAllScreens();
+            document.getElementById('mainScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+        }
+
+        function showProfileScreen() {
+            console.log('showProfileScreen работает!');
+            hideAllScreens();
+            document.getElementById('profileScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
             
-            const { error } = await supabase
-                .from('users')
-                .update({
-                    username: savedName,
-                    avatar: savedAvatar,
-                    age: parseInt(savedAge),
-                    steam_link: savedSteam,
-                    faceit_link: savedFaceitLink,
-                    coins: coins,
-                    owned_nicks: ownedNicks,
-                    owned_frames: ownedFrames
-                })
-                .eq('id', currentUserId);
-            
-            if (error) {
-                console.error('Ошибка сохранения:', error);
-                alert('Ошибка при сохранении в базу данных');
+            if (isSearchMode) {
+                exitSearchMode();
             } else {
-                console.log('Профиль сохранен в БД');
+                updateSearchUI();
+            }
+            
+            loadSavedValues();
+        }
+
+        function showSettingsScreen() {
+            console.log('showSettingsScreen работает!');
+            hideAllScreens();
+            document.getElementById('settingsScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.add('active');
+        }
+
+        function showShopScreen() {
+            console.log('showShopScreen работает!');
+            hideAllScreens();
+            document.getElementById('shopScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            renderShop();
+        }
+
+        function showFaceitScreen() {
+            console.log('showFaceitScreen работает!');
+            hideAllScreens();
+            document.getElementById('faceitScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+        }
+
+        function showPremierScreen() {
+            console.log('showPremierScreen работает!');
+            hideAllScreens();
+            document.getElementById('premierScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+        }
+
+        function showPrimeScreen() {
+            console.log('showPrimeScreen работает!');
+            hideAllScreens();
+            document.getElementById('primeScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+        }
+
+        function showPublicScreen() {
+            console.log('showPublicScreen работает!');
+            hideAllScreens();
+            document.getElementById('publicScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+        }
+
+        function hideAllScreens() {
+            const screens = ['startScreen', 'mainScreen', 'profileScreen', 'settingsScreen', 'shopScreen',
+                           'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+        }
+
+        function showShopTab(tab) {
+            const tabs = document.querySelectorAll('.shop-tab');
+            const shopContent = document.getElementById('shopTabContent');
+            const tasksContent = document.getElementById('tasksTabContent');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'shop') {
+                tabs[0].classList.add('active');
+                shopContent.style.display = 'block';
+                tasksContent.style.display = 'none';
+            } else {
+                tabs[1].classList.add('active');
+                shopContent.style.display = 'none';
+                tasksContent.style.display = 'flex';
             }
         }
 
-        // Загрузить данные пользователя из БД
-        async function loadUserFromDB() {
-            const user = await getOrCreateUser();
-            if (!user) return;
+        // ============================================
+        // ФУНКЦИИ ПРОФИЛЯ
+        // ============================================
+        function toggleEditMode() {
+            editMode = !editMode;
             
-            currentUserId = user.id;
+            const elements = [
+                document.getElementById('profileName'),
+                document.getElementById('profileAvatar'),
+                document.getElementById('ageCard'),
+                document.getElementById('steamCard'),
+                document.getElementById('faceitLinkCard')
+            ];
             
-            // Загружаем данные
-            savedName = user.username || 'Pingster';
-            savedAvatar = user.avatar || '👤';
-            savedAge = user.age?.toString() || '21';
-            savedSteam = user.steam_link || 'steamcommunity.com/id/pingster';
-            savedFaceitLink = user.faceit_link || '—';
-            coins = user.coins || 1000;
-            ownedNicks = user.owned_nicks || [];
-            ownedFrames = user.owned_frames || [];
+            if (editMode) {
+                document.getElementById('editToggle').classList.add('active');
+                document.getElementById('applyBtn').classList.add('visible');
+                elements.forEach(el => el.classList.add('editable'));
+            } else {
+                document.getElementById('editToggle').classList.remove('active');
+                document.getElementById('applyBtn').classList.remove('visible');
+                elements.forEach(el => el.classList.remove('editable'));
+            }
+        }
+
+        function applyChanges() {
+            savedName = tempName;
+            savedAvatar = tempAvatar;
+            savedAge = tempAge;
+            savedSteam = tempSteam;
+            savedFaceitLink = tempFaceitLink;
             
-            // Обновляем переменные
-            savedCoins = coins;
-            savedOwnedNicks = [...ownedNicks];
-            savedOwnedFrames = [...ownedFrames];
+            loadSavedValues();
+            toggleEditMode();
+        }
+
+        function editName() {
+            if (!editMode) return;
+            const newName = prompt('Введите новый никнейм (3-10 символов):', tempName);
+            if (newName && newName.length >= 3 && newName.length <= 10) {
+                tempName = newName;
+                document.getElementById('profileName').textContent = newName;
+            } else if (newName) {
+                alert('Никнейм должен содержать от 3 до 10 символов!');
+            }
+        }
+
+        function editAge() {
+            if (!editMode) return;
+            const newAge = prompt('Введите возраст:', tempAge);
+            if (newAge && !isNaN(parseInt(newAge)) && parseInt(newAge) >= 0 && parseInt(newAge) <= 100) {
+                tempAge = newAge;
+                document.getElementById('ageValue').textContent = newAge;
+            } else if (newAge) {
+                alert('Введите корректный возраст!');
+            }
+        }
+
+        function editSteam() {
+            if (!editMode) return;
+            const newSteam = prompt('Введите ссылку на Steam:', tempSteam);
+            if (newSteam && newSteam.trim()) {
+                tempSteam = newSteam;
+                document.getElementById('steamDisplay').textContent = newSteam;
+            }
+        }
+
+        function editFaceitLink() {
+            if (!editMode) return;
+            const newLink = prompt('Введите ссылку на Faceit (или оставьте пустым):', tempFaceitLink === '—' ? '' : tempFaceitLink);
+            if (newLink !== null) {
+                tempFaceitLink = newLink.trim() || '—';
+                document.getElementById('faceitLinkDisplay').textContent = tempFaceitLink;
+            }
+        }
+
+        function editAvatar() {
+            if (!editMode) return;
+            const newAvatar = prompt('Выберите аватарку (можно вставить эмодзи):', tempAvatar);
+            if (newAvatar && newAvatar.trim()) {
+                tempAvatar = newAvatar;
+                document.getElementById('profileAvatar').textContent = newAvatar;
+            }
+        }
+
+        function loadSavedValues() {
+            document.getElementById('profileName').textContent = savedName;
+            document.getElementById('profileAvatar').textContent = savedAvatar;
+            document.getElementById('ageValue').textContent = savedAge;
+            document.getElementById('steamDisplay').textContent = savedSteam;
+            document.getElementById('faceitLinkDisplay').textContent = savedFaceitLink;
+            document.getElementById('coinsAmount').textContent = coins;
+            
+            // Восстанавливаем классы ника и рамки
+            const profileName = document.getElementById('profileName');
+            profileName.className = 'profile-name';
+            ownedNicks.forEach(nickId => {
+                const nick = nicks.find(n => n.id === nickId);
+                if (nick) profileName.classList.add(nick.class);
+            });
+            
+            const profileAvatar = document.getElementById('profileAvatar');
+            profileAvatar.className = 'profile-avatar';
+            ownedFrames.forEach(frameId => {
+                const frame = frames.find(f => f.id === frameId);
+                if (frame) profileAvatar.classList.add(frame.class);
+            });
+            
+            // Обновляем ссылки и возраст во всех экранах
+            const steamInputs = [
+                document.getElementById('faceitSteamInput'),
+                document.getElementById('premierSteamInput'),
+                document.getElementById('primeSteamInput'),
+                document.getElementById('publicSteamInput')
+            ];
+            steamInputs.forEach(input => {
+                if (input) input.value = savedSteam;
+            });
+            
+            const faceitInputs = [
+                document.getElementById('faceitLinkInput')
+            ];
+            faceitInputs.forEach(input => {
+                if (input) input.value = savedFaceitLink;
+            });
+            
+            const ageValues = [
+                document.getElementById('faceitAgeValue'),
+                document.getElementById('premierAgeValue'),
+                document.getElementById('primeAgeValue'),
+                document.getElementById('publicAgeValue')
+            ];
+            ageValues.forEach(el => {
+                if (el) el.textContent = savedAge;
+            });
             
             tempName = savedName;
             tempAvatar = savedAvatar;
             tempAge = savedAge;
             tempSteam = savedSteam;
             tempFaceitLink = savedFaceitLink;
-            
-            // Обновляем интерфейс
-            loadSavedValues();
-            renderShop();
-            
-            // Загружаем друзей
-            await loadFriendsFromDB();
         }
 
-        // Загрузить друзей из БД
-        async function loadFriendsFromDB() {
-            if (!currentUserId) return;
+        // ============================================
+        // ФУНКЦИИ МАГАЗИНА
+        // ============================================
+        function renderShop() {
+            const nicksGrid = document.getElementById('nicksGrid');
+            const framesGrid = document.getElementById('framesGrid');
+            const coinsSpan = document.getElementById('coinsAmount');
             
-            // Пока генерируем тестовых друзей, потом будем брать из таблицы friends
+            if (nicksGrid) {
+                nicksGrid.innerHTML = nicks.map(nick => {
+                    const owned = ownedNicks.includes(nick.id);
+                    return `
+                        <div class="shop-item">
+                            <div class="item-info">
+                                <div class="color-dot ${nick.class}"></div>
+                                <span class="item-name">${nick.name}</span>
+                            </div>
+                            <div class="item-right">
+                                <span class="price-value">${nick.price}</span>
+                                <button class="buy-btn ${owned ? 'owned' : ''}" 
+                                        onclick="buyNick('${nick.id}')"
+                                        ${owned ? 'disabled' : ''}>
+                                    ${owned ? 'Куплено' : 'Купить'}
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            if (framesGrid) {
+                framesGrid.innerHTML = frames.map(frame => {
+                    const owned = ownedFrames.includes(frame.id);
+                    return `
+                        <div class="shop-item">
+                            <div class="item-info">
+                                <div class="frame-dot ${frame.class}"></div>
+                                <span class="item-name">${frame.name}</span>
+                            </div>
+                            <div class="item-right">
+                                <span class="price-value">${frame.price}</span>
+                                <button class="buy-btn ${owned ? 'owned' : ''}" 
+                                        onclick="buyFrame('${frame.id}')"
+                                        ${owned ? 'disabled' : ''}>
+                                    ${owned ? 'Куплено' : 'Купить'}
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            if (coinsSpan) coinsSpan.textContent = coins;
+        }
+
+        function buyNick(nickId) {
+            const nick = nicks.find(n => n.id === nickId);
+            if (!nick) return;
+            
+            if (ownedNicks.includes(nickId)) {
+                alert('У вас уже есть этот ник!');
+                return;
+            }
+            
+            if (coins >= nick.price) {
+                coins -= nick.price;
+                ownedNicks.push(nickId);
+                
+                const profileName = document.getElementById('profileName');
+                if (profileName) {
+                    profileName.className = 'profile-name';
+                    profileName.classList.add(nick.class);
+                }
+                
+                renderShop();
+                alert(`Вы купили ${nick.name} ник!`);
+            } else {
+                alert('Недостаточно Pingcoins!');
+            }
+        }
+
+        function buyFrame(frameId) {
+            const frame = frames.find(f => f.id === frameId);
+            if (!frame) return;
+            
+            if (ownedFrames.includes(frameId)) {
+                alert('У вас уже есть эта рамка!');
+                return;
+            }
+            
+            if (coins >= frame.price) {
+                coins -= frame.price;
+                ownedFrames.push(frameId);
+                
+                const profileAvatar = document.getElementById('profileAvatar');
+                if (profileAvatar) {
+                    profileAvatar.className = 'profile-avatar';
+                    profileAvatar.classList.add(frame.class);
+                }
+                
+                renderShop();
+                alert(`Вы купили ${frame.name}!`);
+            } else {
+                alert('Недостаточно Pingcoins!');
+            }
+        }
+
+        // ============================================
+        // ФУНКЦИИ ДРУЗЕЙ
+        // ============================================
+        function generateFriends() {
             friendsData = [];
             for (let i = 0; i < 10; i++) {
                 const num = (i + 7).toString().padStart(3, '0');
@@ -1869,39 +2113,6 @@
             }
             renderFriendsList();
         }
-
-        // Создать поиск в БД
-        async function createSearchInDB(mode, rankValue, playStyle, comment) {
-            if (!currentUserId) {
-                alert('Сначала загрузите профиль');
-                return null;
-            }
-            
-            const { data, error } = await supabase
-                .from('searches')
-                .insert({
-                    user_id: currentUserId,
-                    mode: mode,
-                    rank_value: rankValue,
-                    play_style: playStyle,
-                    comment: comment,
-                    status: 'searching'
-                })
-                .select()
-                .single();
-            
-            if (error) {
-                console.error('Ошибка создания поиска:', error);
-                alert('Ошибка при создании поиска');
-                return null;
-            }
-            
-            return data;
-        }
-
-        // ==============================================
-        // ФУНКЦИИ ИНТЕРФЕЙСА (ТВОИ, НО ДОПОЛНЕННЫЕ)
-        // ==============================================
 
         function renderFriendsList() {
             const friendsList = document.getElementById('friendsList');
@@ -1985,253 +2196,9 @@
             }
         }
 
-        function renderShop() {
-            const nicksGrid = document.getElementById('nicksGrid');
-            const framesGrid = document.getElementById('framesGrid');
-            const coinsSpan = document.getElementById('coinsAmount');
-            
-            if (nicksGrid) {
-                nicksGrid.innerHTML = nicks.map(nick => {
-                    const owned = ownedNicks.includes(nick.id);
-                    return `
-                        <div class="shop-item">
-                            <div class="item-info">
-                                <div class="color-dot ${nick.class}"></div>
-                                <span class="item-name">${nick.name}</span>
-                            </div>
-                            <div class="item-right">
-                                <span class="price-value">${nick.price}</span>
-                                <button class="buy-btn ${owned ? 'owned' : ''}" 
-                                        onclick="buyNick('${nick.id}')"
-                                        ${owned ? 'disabled' : ''}>
-                                    ${owned ? 'Куплено' : 'Купить'}
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            if (framesGrid) {
-                framesGrid.innerHTML = frames.map(frame => {
-                    const owned = ownedFrames.includes(frame.id);
-                    return `
-                        <div class="shop-item">
-                            <div class="item-info">
-                                <div class="frame-dot ${frame.class}"></div>
-                                <span class="item-name">${frame.name}</span>
-                            </div>
-                            <div class="item-right">
-                                <span class="price-value">${frame.price}</span>
-                                <button class="buy-btn ${owned ? 'owned' : ''}" 
-                                        onclick="buyFrame('${frame.id}')"
-                                        ${owned ? 'disabled' : ''}>
-                                    ${owned ? 'Куплено' : 'Купить'}
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            if (coinsSpan) coinsSpan.textContent = coins;
-        }
-
-        function buyNick(nickId) {
-            const nick = nicks.find(n => n.id === nickId);
-            if (!nick) return;
-            
-            if (ownedNicks.includes(nickId)) {
-                alert('У вас уже есть этот ник!');
-                return;
-            }
-            
-            if (coins >= nick.price) {
-                coins -= nick.price;
-                ownedNicks.push(nickId);
-                
-                const profileName = document.getElementById('profileName');
-                if (profileName) {
-                    profileName.className = 'profile-name';
-                    profileName.classList.add(nick.class);
-                }
-                
-                renderShop();
-                saveUserToDB(); // Сохраняем в БД
-                alert(`Вы купили ${nick.name} ник!`);
-            } else {
-                alert('Недостаточно Pingcoins!');
-            }
-        }
-
-        function buyFrame(frameId) {
-            const frame = frames.find(f => f.id === frameId);
-            if (!frame) return;
-            
-            if (ownedFrames.includes(frameId)) {
-                alert('У вас уже есть эта рамка!');
-                return;
-            }
-            
-            if (coins >= frame.price) {
-                coins -= frame.price;
-                ownedFrames.push(frameId);
-                
-                const profileAvatar = document.getElementById('profileAvatar');
-                if (profileAvatar) {
-                    profileAvatar.className = 'profile-avatar';
-                    profileAvatar.classList.add(frame.class);
-                }
-                
-                renderShop();
-                saveUserToDB(); // Сохраняем в БД
-                alert(`Вы купили ${frame.name}!`);
-            } else {
-                alert('Недостаточно Pingcoins!');
-            }
-        }
-
-        function loadSavedValues() {
-            document.getElementById('profileName').textContent = savedName;
-            document.getElementById('profileAvatar').textContent = savedAvatar;
-            document.getElementById('ageValue').textContent = savedAge;
-            document.getElementById('steamDisplay').textContent = savedSteam;
-            document.getElementById('faceitLinkDisplay').textContent = savedFaceitLink;
-            document.getElementById('coinsAmount').textContent = coins;
-            
-            // Восстанавливаем классы ника и рамки
-            const profileName = document.getElementById('profileName');
-            profileName.className = 'profile-name';
-            ownedNicks.forEach(nickId => {
-                const nick = nicks.find(n => n.id === nickId);
-                if (nick) profileName.classList.add(nick.class);
-            });
-            
-            const profileAvatar = document.getElementById('profileAvatar');
-            profileAvatar.className = 'profile-avatar';
-            ownedFrames.forEach(frameId => {
-                const frame = frames.find(f => f.id === frameId);
-                if (frame) profileAvatar.classList.add(frame.class);
-            });
-            
-            // Обновляем ссылки и возраст во всех экранах
-            const steamInputs = [
-                document.getElementById('faceitSteamInput'),
-                document.getElementById('premierSteamInput'),
-                document.getElementById('primeSteamInput'),
-                document.getElementById('publicSteamInput')
-            ];
-            steamInputs.forEach(input => {
-                if (input) input.value = savedSteam;
-            });
-            
-            const faceitInputs = [
-                document.getElementById('faceitLinkInput')
-            ];
-            faceitInputs.forEach(input => {
-                if (input) input.value = savedFaceitLink;
-            });
-            
-            const ageValues = [
-                document.getElementById('faceitAgeValue'),
-                document.getElementById('premierAgeValue'),
-                document.getElementById('primeAgeValue'),
-                document.getElementById('publicAgeValue')
-            ];
-            ageValues.forEach(el => {
-                if (el) el.textContent = savedAge;
-            });
-            
-            tempName = savedName;
-            tempAvatar = savedAvatar;
-            tempAge = savedAge;
-            tempSteam = savedSteam;
-            tempFaceitLink = savedFaceitLink;
-        }
-
-        function toggleEditMode() {
-            editMode = !editMode;
-            
-            const elements = [
-                document.getElementById('profileName'),
-                document.getElementById('profileAvatar'),
-                document.getElementById('ageCard'),
-                document.getElementById('steamCard'),
-                document.getElementById('faceitLinkCard')
-            ];
-            
-            if (editMode) {
-                document.getElementById('editToggle').classList.add('active');
-                document.getElementById('applyBtn').classList.add('visible');
-                elements.forEach(el => el.classList.add('editable'));
-            } else {
-                document.getElementById('editToggle').classList.remove('active');
-                document.getElementById('applyBtn').classList.remove('visible');
-                elements.forEach(el => el.classList.remove('editable'));
-            }
-        }
-
-        function applyChanges() {
-            savedName = tempName;
-            savedAvatar = tempAvatar;
-            savedAge = tempAge;
-            savedSteam = tempSteam;
-            savedFaceitLink = tempFaceitLink;
-            
-            loadSavedValues();
-            saveUserToDB(); // Сохраняем в БД
-            toggleEditMode();
-        }
-
-        function editName() {
-            if (!editMode) return;
-            const newName = prompt('Введите новый никнейм (3-10 символов):', tempName);
-            if (newName && newName.length >= 3 && newName.length <= 10) {
-                tempName = newName;
-                document.getElementById('profileName').textContent = newName;
-            } else if (newName) {
-                alert('Никнейм должен содержать от 3 до 10 символов!');
-            }
-        }
-
-        function editAge() {
-            if (!editMode) return;
-            const newAge = prompt('Введите возраст:', tempAge);
-            if (newAge && !isNaN(parseInt(newAge)) && parseInt(newAge) >= 0 && parseInt(newAge) <= 100) {
-                tempAge = newAge;
-                document.getElementById('ageValue').textContent = newAge;
-            } else if (newAge) {
-                alert('Введите корректный возраст!');
-            }
-        }
-
-        function editSteam() {
-            if (!editMode) return;
-            const newSteam = prompt('Введите ссылку на Steam:', tempSteam);
-            if (newSteam && newSteam.trim()) {
-                tempSteam = newSteam;
-                document.getElementById('steamDisplay').textContent = newSteam;
-            }
-        }
-
-        function editFaceitLink() {
-            if (!editMode) return;
-            const newLink = prompt('Введите ссылку на Faceit (или оставьте пустым):', tempFaceitLink === '—' ? '' : tempFaceitLink);
-            if (newLink !== null) {
-                tempFaceitLink = newLink.trim() || '—';
-                document.getElementById('faceitLinkDisplay').textContent = tempFaceitLink;
-            }
-        }
-
-        function editAvatar() {
-            if (!editMode) return;
-            const newAvatar = prompt('Выберите аватарку (можно вставить эмодзи):', tempAvatar);
-            if (newAvatar && newAvatar.trim()) {
-                tempAvatar = newAvatar;
-                document.getElementById('profileAvatar').textContent = newAvatar;
-            }
-        }
-
+        // ============================================
+        // ФУНКЦИИ ПОИСКА
+        // ============================================
         function setStyle(style, element) {
             const parent = element.parentElement;
             const options = parent.querySelectorAll('.style-option');
@@ -2239,125 +2206,23 @@
             element.classList.add('active');
         }
 
-        async function startSearch(mode, value) {
-            if (!currentUserId) {
-                alert('Сначала загрузите профиль');
-                return;
-            }
+        function startSearch(mode, value) {
+            alert(`Поиск в режиме ${mode} с данными: ${value} начат! 🔍`);
+        }
+
+        // ============================================
+        // ИНИЦИАЛИЗАЦИЯ
+        // ============================================
+        window.onload = function() {
+            console.log('Страница загружена!');
             
-            const style = document.querySelector('.style-option.active')?.classList.contains('fan') ? 'fan' : 'tryhard';
-            const comment = document.querySelector('.comment-input')?.value || '';
-            
-            const search = await createSearchInDB(mode, value, style, comment);
-            
-            if (search) {
-                alert(`✅ Поиск в режиме ${mode} начат! ID: ${search.id.substring(0, 8)}...`);
-            }
-        }
-
-        function startApp() {
-            hideAllScreens();
-            document.getElementById('mainScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-        }
-
-        function showMainScreen() {
-            hideAllScreens();
-            document.getElementById('mainScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-        }
-
-        function showProfileScreen() {
-            hideAllScreens();
-            document.getElementById('profileScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            
-            if (isSearchMode) {
-                exitSearchMode();
-            } else {
-                updateSearchUI();
-            }
-            
-            loadSavedValues();
-        }
-
-        function showSettingsScreen() {
-            hideAllScreens();
-            document.getElementById('settingsScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.add('active');
-        }
-
-        function showShopScreen() {
-            hideAllScreens();
-            document.getElementById('shopScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            renderShop();
-        }
-
-        function showFaceitScreen() {
-            hideAllScreens();
-            document.getElementById('faceitScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues();
-        }
-
-        function showPremierScreen() {
-            hideAllScreens();
-            document.getElementById('premierScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues();
-        }
-
-        function showPrimeScreen() {
-            hideAllScreens();
-            document.getElementById('primeScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues();
-        }
-
-        function showPublicScreen() {
-            hideAllScreens();
-            document.getElementById('publicScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues();
-        }
-
-        function showShopTab(tab) {
-            const tabs = document.querySelectorAll('.shop-tab');
-            const shopContent = document.getElementById('shopTabContent');
-            const tasksContent = document.getElementById('tasksTabContent');
-            
-            tabs.forEach(t => t.classList.remove('active'));
-            
-            if (tab === 'shop') {
-                tabs[0].classList.add('active');
-                shopContent.style.display = 'block';
-                tasksContent.style.display = 'none';
-            } else {
-                tabs[1].classList.add('active');
-                shopContent.style.display = 'none';
-                tasksContent.style.display = 'flex';
-            }
-        }
-
-        function hideAllScreens() {
-            const screens = ['startScreen', 'mainScreen', 'profileScreen', 'settingsScreen', 'shopScreen',
-                           'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen'];
-            screens.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
-            });
-        }
-
-        // Инициализация при загрузке
-        window.onload = async function() {
-            // Загружаем пользователя из БД
-            await loadUserFromDB();
+            // Генерируем тестовых друзей
+            generateFriends();
             
             // Рендерим магазин
             renderShop();
             
-            // Показываем стартовый экран
+            // Прячем все экраны и показываем стартовый
             hideAllScreens();
             document.getElementById('startScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
@@ -2368,4 +2233,3 @@
     </script>
 </body>
 </html>
-
