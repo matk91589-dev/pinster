@@ -45,7 +45,7 @@
             position: relative;
         }
 
-        /* Хедер */
+        /* Хедер с кликабельным логотипом */
         .header {
             display: flex;
             align-items: center;
@@ -199,7 +199,7 @@
             font-weight: 700;
             color: #FFFFFF;
             letter-spacing: -0.5px;
-            margin: 0 0 8px 0;
+            margin: 60px 0 8px 0;
             text-align: center;
         }
 
@@ -386,11 +386,13 @@
         .mode-btn.prime {
             border-left: 4px solid #FFFFFF;
             text-transform: none;
+            font-size: 16px;
         }
 
         .mode-btn.public {
             border-left: 4px solid #FFFFFF;
             text-transform: none;
+            font-size: 16px;
         }
 
         .mode-btn::after {
@@ -403,19 +405,12 @@
             color: #5D6472;
         }
 
-        /* Профиль - теперь на всю высоту */
-        .screen-profile {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-        }
-
+        /* Профиль */
         .profile-header {
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             padding: 4px 0;
         }
 
@@ -749,14 +744,7 @@
             color: #9BA1B0;
         }
 
-        /* Магазин - на всю высоту */
-        .screen-shop {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-        }
-
+        /* Магазин */
         .shop-content {
             flex: 1;
             display: flex;
@@ -1205,8 +1193,8 @@
                 <div class="mode-container">
                     <button class="mode-btn faceit" onclick="showFaceitScreen()">FACEIT</button>
                     <button class="mode-btn premier" onclick="showPremierScreen()">PREMIER</button>
-                    <button class="mode-btn prime" onclick="showPrimeScreen()">MatchMaking PRIME</button>
-                    <button class="mode-btn public" onclick="showPublicScreen()">MatchMaking PUBLIC</button>
+                    <button class="mode-btn prime" onclick="showPrimeScreen()">MM PRIME</button>
+                    <button class="mode-btn public" onclick="showPublicScreen()">MM PUBLIC</button>
                 </div>
 
                 <div class="bottom-nav">
@@ -1557,11 +1545,11 @@
                 <button class="primary-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MatchMaking PRIME -->
+            <!-- ЭКРАН MM PRIME -->
             <div id="primeScreen" class="screen screen-prime">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
-                    <div class="mode-title prime">MatchMaking PRIME</div>
+                    <div class="mode-title prime">MM PRIME</div>
                 </div>
                 <div class="mode-subtitle">введите текущие данные</div>
                 
@@ -1618,14 +1606,14 @@
                     <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь изменить или проигнорировать" maxlength="100"></textarea>
                 </div>
 
-                <button class="primary-btn" onclick="startSearch('MATCHMAKING PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
+                <button class="primary-btn" onclick="startSearch('MM PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MatchMaking PUBLIC -->
+            <!-- ЭКРАН MM PUBLIC -->
             <div id="publicScreen" class="screen screen-public">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
-                    <div class="mode-title public">MatchMaking PUBLIC</div>
+                    <div class="mode-title public">MM PUBLIC</div>
                 </div>
                 <div class="mode-subtitle">введите текущие данные</div>
                 
@@ -1682,7 +1670,7 @@
                     <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь изменить или проигнорировать" maxlength="100"></textarea>
                 </div>
 
-                <button class="primary-btn" onclick="startSearch('MATCHMAKING PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
+                <button class="primary-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
             </div>
         </div>
 
@@ -1734,14 +1722,13 @@
 
         function generateFriends() {
             friendsData = [];
-            // Создаем ровно 10 друзей для примера
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 7; i < 17; i++) {
                 const num = i.toString().padStart(3, '0');
                 const idLength = Math.floor(Math.random() * 6) + 5;
                 const friendId = Math.random().toString(16).substring(2, 2 + idLength);
                 
                 friendsData.push({
-                    avatar: ['😼','🤖','👾','🎮','😎','👻','💀','😱','🤠','🥷'][i-1],
+                    avatar: ['😼','🤖','👾','🎮','😎','👻','💀','😱','🤠','🥷'][i-7],
                     name: `abs${num}`,
                     id: friendId,
                     steam: `steamcommunity.com/id/abs${num}`
