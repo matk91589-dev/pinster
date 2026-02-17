@@ -1742,6 +1742,30 @@
         ];
 
         // ============================================
+        // ФУНКЦИИ ДЛЯ РАБОТЫ С БАЗОЙ ДАННЫХ (ДОБАВЛЕНО!)
+        // ============================================
+        
+        // Функция для создания тестового пользователя (без реальной БД)
+        async function saveUserToDB() {
+            console.log('🟢 Сохраняем данные в БД:', {
+                savedName,
+                savedAvatar,
+                savedAge,
+                savedSteam,
+                savedFaceitLink,
+                coins,
+                ownedNicks,
+                ownedFrames
+            });
+            
+            // Здесь будет реальный код для Supabase
+            // Пока просто показываем сообщение
+            alert('✅ Данные сохранены (тестовый режим)');
+            
+            return true;
+        }
+
+        // ============================================
         // ФУНКЦИИ НАВИГАЦИИ
         // ============================================
         function startApp() {
@@ -1852,6 +1876,7 @@
         // ============================================
         function toggleEditMode() {
             editMode = !editMode;
+            console.log('editMode =', editMode);
             
             const elements = [
                 document.getElementById('profileName'),
@@ -1861,18 +1886,27 @@
                 document.getElementById('faceitLinkCard')
             ];
             
+            const editToggle = document.getElementById('editToggle');
+            const applyBtn = document.getElementById('applyBtn');
+            
             if (editMode) {
-                document.getElementById('editToggle').classList.add('active');
-                document.getElementById('applyBtn').classList.add('visible');
-                elements.forEach(el => el.classList.add('editable'));
+                if (editToggle) editToggle.classList.add('active');
+                if (applyBtn) applyBtn.classList.add('visible');
+                elements.forEach(el => {
+                    if (el) el.classList.add('editable');
+                });
             } else {
-                document.getElementById('editToggle').classList.remove('active');
-                document.getElementById('applyBtn').classList.remove('visible');
-                elements.forEach(el => el.classList.remove('editable'));
+                if (editToggle) editToggle.classList.remove('active');
+                if (applyBtn) applyBtn.classList.remove('visible');
+                elements.forEach(el => {
+                    if (el) el.classList.remove('editable');
+                });
             }
         }
 
         function applyChanges() {
+            console.log('applyChanges started');
+            
             savedName = tempName;
             savedAvatar = tempAvatar;
             savedAge = tempAge;
@@ -1880,8 +1914,10 @@
             savedFaceitLink = tempFaceitLink;
             
             loadSavedValues();
-            saveUserToDB();
+            saveUserToDB();  // ← ТЕПЕРЬ ЭТА ФУНКЦИЯ СУЩЕСТВУЕТ!
             toggleEditMode();
+            
+            console.log('applyChanges finished');
         }
 
         function editName() {
@@ -2234,4 +2270,3 @@
     </script>
 </body>
 </html>
-
