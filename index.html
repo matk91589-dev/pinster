@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pingster</title>
     <style>
-        /* ---- ТВОЙ СТИЛЬ БЕЗ ИЗМЕНЕНИЙ ---- */
         * {
             margin: 0;
             padding: 0;
@@ -46,7 +45,6 @@
             position: relative;
         }
 
-        /* Хедер с кликабельным логотипом */
         .header {
             display: flex;
             align-items: center;
@@ -80,7 +78,6 @@
             opacity: 0.9;
         }
 
-        /* SVG иконки */
         .icon-settings {
             width: 36px;
             height: 36px;
@@ -110,7 +107,6 @@
             stroke: #FF6B4A;
         }
 
-        /* Заголовок с карандашом и Pingcoins */
         .title-row {
             display: flex;
             align-items: center;
@@ -212,7 +208,6 @@
             text-align: center;
         }
 
-        /* Стартовый экран */
         .start-screen {
             display: flex;
             flex-direction: column;
@@ -293,7 +288,6 @@
             margin-top: 8px;
         }
 
-        /* Нижняя навигация с SVG */
         .bottom-nav {
             display: flex;
             justify-content: space-around;
@@ -341,7 +335,6 @@
             color: #FFFFFF;
         }
 
-        /* Кнопки режимов - 4 штуки */
         .mode-container {
             flex: 1;
             display: flex;
@@ -407,13 +400,13 @@
             color: #5D6472;
         }
 
-        /* Профиль */
         .profile-header {
             display: flex;
             align-items: center;
             gap: 12px;
             margin: 4px 0 8px 0;
             padding: 0;
+            position: relative;
         }
 
         .profile-avatar {
@@ -429,6 +422,13 @@
             color: #9BA1B0;
             transition: border 0.1s ease, border-width 0.1s ease;
             cursor: pointer;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .profile-avatar.editable {
@@ -505,7 +505,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* Плашки в профиле */
         .profile-stats {
             display: flex;
             flex-direction: column;
@@ -581,7 +580,6 @@
             border-width: 2px;
         }
 
-        /* Поиск друзей */
         .friends-header {
             display: flex;
             align-items: center;
@@ -746,7 +744,6 @@
             color: #9BA1B0;
         }
 
-        /* Магазин */
         .shop-content {
             flex: 1;
             display: flex;
@@ -906,7 +903,6 @@
             font-size: 14px;
         }
 
-        /* Экраны режимов */
         .mode-header {
             display: flex;
             align-items: center;
@@ -975,7 +971,6 @@
             border-color: #FF6B4A;
         }
 
-        /* Ограничение ввода чисел */
         .search-input-field[type="number"] {
             -moz-appearance: textfield;
         }
@@ -985,7 +980,6 @@
             margin: 0;
         }
 
-        /* Плашки рейтинга и возраста */
         .stats-row {
             display: flex;
             gap: 6px;
@@ -1032,7 +1026,6 @@
             height: 16px;
         }
 
-        /* Стильный выбор звания */
         .rank-select {
             width: 100%;
             background: #1A1D24;
@@ -1319,7 +1312,9 @@
                 </div>
 
                 <div class="profile-header">
-                    <div id="profileAvatar" class="profile-avatar" onclick="editAvatar()">👤</div>
+                    <div id="profileAvatar" class="profile-avatar" onclick="selectAvatar()">
+                        👤
+                    </div>
                     <div class="profile-info">
                         <div class="profile-name-label">
                             ваш никнейм
@@ -1684,7 +1679,7 @@
 
     <script>
         // ============================================
-        // SUPABASE КОНФИГУРАЦИЯ - ТВОИ ДАННЫЕ!
+        // SUPABASE КОНФИГУРАЦИЯ
         // ============================================
         const supabaseUrl = 'https://foeacrrojoeymtvwbkqe.supabase.co';
         const supabaseKey = 'sb_publishable__rPXE3FM5T9SZIKlagR6lA_WvjiAhJT';
@@ -1694,16 +1689,14 @@
         // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
         // ============================================
         let editMode = false;
-        let currentUserId = null;
+        let currentUserId = 'pingster_' + Date.now();
         
-        // Временные значения для редактирования
         let tempName = 'Pingster';
         let tempAvatar = '👤';
         let tempAge = '21';
         let tempSteam = 'steamcommunity.com/id/pingster';
         let tempFaceitLink = '—';
 
-        // Сохраненные значения
         let savedName = 'Pingster';
         let savedAvatar = '👤';
         let savedAge = '21';
@@ -1713,12 +1706,9 @@
         let savedOwnedNicks = [];
         let savedOwnedFrames = [];
 
-        // Данные магазина
         let coins = 1000;
         let ownedNicks = [];
         let ownedFrames = [];
-
-        // Данные друзей
         let friendsData = [];
         let isSearchMode = false;
         let searchQuery = '';
@@ -1742,110 +1732,201 @@
         ];
 
         // ============================================
-        // ФУНКЦИИ ДЛЯ РАБОТЫ С БАЗОЙ ДАННЫХ
+        // ЗАГРУЗКА АВАТАРКИ
         // ============================================
         
-        // Сохранить данные в Supabase
-        async function saveUserToDB() {
-            console.log('🟢 Сохраняем данные в БД...');
+        function selectAvatar() {
+            if (!editMode) {
+                alert('Сначала включите режим редактирования (карандаш)');
+                return;
+            }
             
-            // Используем username как уникальный идентификатор
-            const userId = savedName || 'pingster_user';
+            const action = confirm('Выберите действие:\nОК - выбрать из галереи\nОтмена - вставить из буфера (Ctrl+V)');
             
-            try {
-                // Проверяем, есть ли пользователь в базе
-                let { data: user, error: selectError } = await supabaseClient
-                    .from('users')
-                    .select('*')
-                    .eq('username', userId)
-                    .maybeSingle();
-                
-                if (selectError) {
-                    console.error('Ошибка при поиске пользователя:', selectError);
-                    alert('Ошибка при поиске пользователя: ' + selectError.message);
-                    return false;
-                }
-                
-                let result;
-                
-                if (user) {
-                    // Обновляем существующего пользователя
-                    console.log('Обновляем пользователя:', user.id);
-                    const { data, error } = await supabaseClient
-                        .from('users')
-                        .update({
-                            username: savedName,
-                            avatar: savedAvatar,
-                            age: parseInt(savedAge),
-                            steam_link: savedSteam,
-                            faceit_link: savedFaceitLink,
-                            coins: coins,
-                            owned_nicks: ownedNicks,
-                            owned_frames: ownedFrames
-                        })
-                        .eq('id', user.id)
-                        .select();
-                    
-                    if (error) throw error;
-                    result = data;
-                    console.log('✅ Пользователь обновлён');
-                    alert('✅ Профиль обновлён в базе данных!');
-                } else {
-                    // Создаём нового пользователя
-                    console.log('Создаём нового пользователя');
-                    const { data, error } = await supabaseClient
-                        .from('users')
-                        .insert({
-                            username: savedName,
-                            avatar: savedAvatar,
-                            age: parseInt(savedAge),
-                            steam_link: savedSteam,
-                            faceit_link: savedFaceitLink,
-                            coins: coins,
-                            owned_nicks: ownedNicks,
-                            owned_frames: ownedFrames
-                        })
-                        .select();
-                    
-                    if (error) throw error;
-                    result = data;
-                    console.log('✅ Новый пользователь создан');
-                    alert('✅ Новый профиль создан в базе данных!');
-                }
-                
-                return true;
-                
-            } catch (error) {
-                console.error('❌ Ошибка сохранения:', error);
-                alert('Ошибка при сохранении: ' + error.message);
-                return false;
+            if (action) {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                input.capture = 'environment';
+                input.onchange = (e) => handleFileSelect(e.target.files[0]);
+                input.click();
+            } else {
+                alert('Теперь нажмите Ctrl+V для вставки изображения');
+                document.addEventListener('paste', handlePaste, { once: true });
             }
         }
 
-        // Загрузить данные из Supabase
-        async function loadUserFromDB() {
-            console.log('Загружаем данные из БД...');
+        function handleFileSelect(file) {
+            if (!file) return;
             
-            const userId = 'Pingster'; // Для теста используем имя
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Файл слишком большой! Максимум 5MB');
+                return;
+            }
+            
+            if (!file.type.startsWith('image/')) {
+                alert('Можно загружать только изображения!');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const avatarDiv = document.getElementById('profileAvatar');
+                avatarDiv.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                uploadAvatar(file);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handlePaste(event) {
+            const items = event.clipboardData.items;
+            for (let item of items) {
+                if (item.type.indexOf('image') !== -1) {
+                    const file = item.getAsFile();
+                    handleFileSelect(file);
+                    break;
+                }
+            }
+        }
+
+        function setupDragAndDrop() {
+            const avatarDiv = document.getElementById('profileAvatar');
+            
+            avatarDiv.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                avatarDiv.style.border = '3px dashed #FF6B4A';
+            });
+            
+            avatarDiv.addEventListener('dragleave', () => {
+                avatarDiv.style.border = '';
+            });
+            
+            avatarDiv.addEventListener('drop', (e) => {
+                e.preventDefault();
+                avatarDiv.style.border = '';
+                
+                if (!editMode) {
+                    alert('Сначала включите режим редактирования');
+                    return;
+                }
+                
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    handleFileSelect(file);
+                }
+            });
+        }
+
+        async function uploadAvatar(file) {
+            if (!file) return;
+            
+            console.log('Загружаем аватарку...');
+            
+            const fileExt = file.name.split('.').pop() || 'jpg';
+            const fileName = `${currentUserId}-${Date.now()}.${fileExt}`;
+            const filePath = `avatars/${fileName}`;
+            
+            try {
+                const { error: uploadError } = await supabaseClient
+                    .storage
+                    .from('avatars')
+                    .upload(filePath, file);
+                
+                if (uploadError) throw uploadError;
+                
+                const { data: { publicUrl } } = supabaseClient
+                    .storage
+                    .from('avatars')
+                    .getPublicUrl(filePath);
+                
+                console.log('Аватарка загружена:', publicUrl);
+                
+                savedAvatar = publicUrl;
+                tempAvatar = publicUrl;
+                
+                await saveUserToDB();
+                alert('✅ Аватарка загружена!');
+                
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                alert('❌ Ошибка при загрузке: ' + error.message);
+                loadSavedValues();
+            }
+        }
+
+        // ============================================
+        // РАБОТА С БАЗОЙ ДАННЫХ
+        // ============================================
+        
+        async function saveUserToDB() {
+            console.log('Сохраняем данные...');
+            
+            try {
+                let { data: user, error: selectError } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('username', savedName)
+                    .maybeSingle();
+                
+                if (selectError) throw selectError;
+                
+                if (user) {
+                    const { error } = await supabaseClient
+                        .from('users')
+                        .update({
+                            username: savedName,
+                            avatar: savedAvatar.startsWith('http') ? null : savedAvatar,
+                            avatar_url: savedAvatar.startsWith('http') ? savedAvatar : null,
+                            age: parseInt(savedAge),
+                            steam_link: savedSteam,
+                            faceit_link: savedFaceitLink,
+                            coins: coins,
+                            owned_nicks: ownedNicks,
+                            owned_frames: ownedFrames
+                        })
+                        .eq('id', user.id);
+                    
+                    if (error) throw error;
+                    console.log('Данные обновлены');
+                } else {
+                    const { error } = await supabaseClient
+                        .from('users')
+                        .insert({
+                            username: savedName,
+                            avatar: savedAvatar.startsWith('http') ? null : savedAvatar,
+                            avatar_url: savedAvatar.startsWith('http') ? savedAvatar : null,
+                            age: parseInt(savedAge),
+                            steam_link: savedSteam,
+                            faceit_link: savedFaceitLink,
+                            coins: coins,
+                            owned_nicks: ownedNicks,
+                            owned_frames: ownedFrames
+                        });
+                    
+                    if (error) throw error;
+                    console.log('Новый пользователь создан');
+                }
+                
+            } catch (error) {
+                console.error('Ошибка сохранения:', error);
+                alert('Ошибка: ' + error.message);
+            }
+        }
+
+        async function loadUserFromDB() {
+            console.log('Загружаем данные...');
             
             try {
                 const { data: user, error } = await supabaseClient
                     .from('users')
                     .select('*')
-                    .eq('username', userId)
+                    .eq('username', savedName)
                     .maybeSingle();
                 
-                if (error) {
-                    console.error('Ошибка загрузки:', error);
-                    return;
-                }
+                if (error) throw error;
                 
                 if (user) {
-                    console.log('Пользователь найден:', user);
-                    
-                    // Загружаем данные
                     savedName = user.username || 'Pingster';
-                    savedAvatar = user.avatar || '👤';
                     savedAge = user.age?.toString() || '21';
                     savedSteam = user.steam_link || 'steamcommunity.com/id/pingster';
                     savedFaceitLink = user.faceit_link || '—';
@@ -1853,128 +1934,61 @@
                     ownedNicks = user.owned_nicks || [];
                     ownedFrames = user.owned_frames || [];
                     
-                    // Обновляем интерфейс
+                    if (user.avatar_url) {
+                        savedAvatar = user.avatar_url;
+                    } else if (user.avatar) {
+                        savedAvatar = user.avatar;
+                    } else {
+                        savedAvatar = '👤';
+                    }
+                    
                     loadSavedValues();
                     renderShop();
-                    
-                    console.log('✅ Данные загружены');
-                } else {
-                    console.log('Пользователь не найден, будет создан при сохранении');
                 }
+                
             } catch (error) {
-                console.error('❌ Ошибка:', error);
+                console.error('Ошибка загрузки:', error);
             }
         }
 
         // ============================================
-        // ФУНКЦИИ НАВИГАЦИИ
+        // ФУНКЦИИ ИНТЕРФЕЙСА
         // ============================================
-        function startApp() {
-            console.log('startApp работает!');
-            hideAllScreens();
-            document.getElementById('mainScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-        }
-
-        function showMainScreen() {
-            console.log('showMainScreen работает!');
-            hideAllScreens();
-            document.getElementById('mainScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-        }
-
-        function showProfileScreen() {
-            console.log('showProfileScreen работает!');
-            hideAllScreens();
-            document.getElementById('profileScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
+        
+        function loadSavedValues() {
+            document.getElementById('profileName').textContent = savedName;
+            document.getElementById('ageValue').textContent = savedAge;
+            document.getElementById('steamDisplay').textContent = savedSteam;
+            document.getElementById('faceitLinkDisplay').textContent = savedFaceitLink;
+            document.getElementById('coinsAmount').textContent = coins;
             
-            if (isSearchMode) {
-                exitSearchMode();
+            const avatarDiv = document.getElementById('profileAvatar');
+            if (savedAvatar && savedAvatar.startsWith('http')) {
+                avatarDiv.innerHTML = `<img src="${savedAvatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                avatarDiv.className = 'profile-avatar';
             } else {
-                updateSearchUI();
+                avatarDiv.innerHTML = savedAvatar;
+                avatarDiv.className = 'profile-avatar';
+                ownedFrames.forEach(frameId => {
+                    const frame = frames.find(f => f.id === frameId);
+                    if (frame) avatarDiv.classList.add(frame.class);
+                });
             }
             
-            loadSavedValues();
-        }
-
-        function showSettingsScreen() {
-            console.log('showSettingsScreen работает!');
-            hideAllScreens();
-            document.getElementById('settingsScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.add('active');
-        }
-
-        function showShopScreen() {
-            console.log('showShopScreen работает!');
-            hideAllScreens();
-            document.getElementById('shopScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            renderShop();
-        }
-
-        function showFaceitScreen() {
-            console.log('showFaceitScreen работает!');
-            hideAllScreens();
-            document.getElementById('faceitScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues();
-        }
-
-        function showPremierScreen() {
-            console.log('showPremierScreen работает!');
-            hideAllScreens();
-            document.getElementById('premierScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues();
-        }
-
-        function showPrimeScreen() {
-            console.log('showPrimeScreen работает!');
-            hideAllScreens();
-            document.getElementById('primeScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues();
-        }
-
-        function showPublicScreen() {
-            console.log('showPublicScreen работает!');
-            hideAllScreens();
-            document.getElementById('publicScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues();
-        }
-
-        function hideAllScreens() {
-            const screens = ['startScreen', 'mainScreen', 'profileScreen', 'settingsScreen', 'shopScreen',
-                           'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen'];
-            screens.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
+            const profileName = document.getElementById('profileName');
+            profileName.className = 'profile-name';
+            ownedNicks.forEach(nickId => {
+                const nick = nicks.find(n => n.id === nickId);
+                if (nick) profileName.classList.add(nick.class);
             });
+            
+            tempName = savedName;
+            tempAvatar = savedAvatar;
+            tempAge = savedAge;
+            tempSteam = savedSteam;
+            tempFaceitLink = savedFaceitLink;
         }
 
-        function showShopTab(tab) {
-            const tabs = document.querySelectorAll('.shop-tab');
-            const shopContent = document.getElementById('shopTabContent');
-            const tasksContent = document.getElementById('tasksTabContent');
-            
-            tabs.forEach(t => t.classList.remove('active'));
-            
-            if (tab === 'shop') {
-                tabs[0].classList.add('active');
-                shopContent.style.display = 'block';
-                tasksContent.style.display = 'none';
-            } else {
-                tabs[1].classList.add('active');
-                shopContent.style.display = 'none';
-                tasksContent.style.display = 'flex';
-            }
-        }
-
-        // ============================================
-        // ФУНКЦИИ ПРОФИЛЯ
-        // ============================================
         function toggleEditMode() {
             editMode = !editMode;
             console.log('editMode =', editMode);
@@ -2006,8 +2020,6 @@
         }
 
         function applyChanges() {
-            console.log('applyChanges started');
-            
             savedName = tempName;
             savedAvatar = tempAvatar;
             savedAge = tempAge;
@@ -2015,10 +2027,8 @@
             savedFaceitLink = tempFaceitLink;
             
             loadSavedValues();
-            saveUserToDB();  // Сохраняем в Supabase
+            saveUserToDB();
             toggleEditMode();
-            
-            console.log('applyChanges finished');
         }
 
         function editName() {
@@ -2027,26 +2037,22 @@
             if (newName && newName.length >= 3 && newName.length <= 10) {
                 tempName = newName;
                 document.getElementById('profileName').textContent = newName;
-            } else if (newName) {
-                alert('Никнейм должен содержать от 3 до 10 символов!');
             }
         }
 
         function editAge() {
             if (!editMode) return;
             const newAge = prompt('Введите возраст:', tempAge);
-            if (newAge && !isNaN(parseInt(newAge)) && parseInt(newAge) >= 0 && parseInt(newAge) <= 100) {
+            if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= 100) {
                 tempAge = newAge;
                 document.getElementById('ageValue').textContent = newAge;
-            } else if (newAge) {
-                alert('Введите корректный возраст!');
             }
         }
 
         function editSteam() {
             if (!editMode) return;
             const newSteam = prompt('Введите ссылку на Steam:', tempSteam);
-            if (newSteam && newSteam.trim()) {
+            if (newSteam) {
                 tempSteam = newSteam;
                 document.getElementById('steamDisplay').textContent = newSteam;
             }
@@ -2054,78 +2060,108 @@
 
         function editFaceitLink() {
             if (!editMode) return;
-            const newLink = prompt('Введите ссылку на Faceit (или оставьте пустым):', tempFaceitLink === '—' ? '' : tempFaceitLink);
+            const newLink = prompt('Введите ссылку на Faceit:', tempFaceitLink === '—' ? '' : tempFaceitLink);
             if (newLink !== null) {
-                tempFaceitLink = newLink.trim() || '—';
+                tempFaceitLink = newLink || '—';
                 document.getElementById('faceitLinkDisplay').textContent = tempFaceitLink;
             }
         }
 
-        function editAvatar() {
-            if (!editMode) return;
-            const newAvatar = prompt('Выберите аватарку (можно вставить эмодзи):', tempAvatar);
-            if (newAvatar && newAvatar.trim()) {
-                tempAvatar = newAvatar;
-                document.getElementById('profileAvatar').textContent = newAvatar;
-            }
+        // ============================================
+        // ФУНКЦИИ НАВИГАЦИИ
+        // ============================================
+        function startApp() {
+            hideAllScreens();
+            document.getElementById('mainScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
         }
 
-        function loadSavedValues() {
-            document.getElementById('profileName').textContent = savedName;
-            document.getElementById('profileAvatar').textContent = savedAvatar;
-            document.getElementById('ageValue').textContent = savedAge;
-            document.getElementById('steamDisplay').textContent = savedSteam;
-            document.getElementById('faceitLinkDisplay').textContent = savedFaceitLink;
-            document.getElementById('coinsAmount').textContent = coins;
+        function showMainScreen() {
+            hideAllScreens();
+            document.getElementById('mainScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+        }
+
+        function showProfileScreen() {
+            hideAllScreens();
+            document.getElementById('profileScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
             
-            // Восстанавливаем классы ника и рамки
-            const profileName = document.getElementById('profileName');
-            profileName.className = 'profile-name';
-            ownedNicks.forEach(nickId => {
-                const nick = nicks.find(n => n.id === nickId);
-                if (nick) profileName.classList.add(nick.class);
+            if (isSearchMode) {
+                exitSearchMode();
+            } else {
+                updateSearchUI();
+            }
+            
+            loadSavedValues();
+        }
+
+        function showSettingsScreen() {
+            hideAllScreens();
+            document.getElementById('settingsScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.add('active');
+        }
+
+        function showShopScreen() {
+            hideAllScreens();
+            document.getElementById('shopScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            renderShop();
+        }
+
+        function showFaceitScreen() {
+            hideAllScreens();
+            document.getElementById('faceitScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+        }
+
+        function showPremierScreen() {
+            hideAllScreens();
+            document.getElementById('premierScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+        }
+
+        function showPrimeScreen() {
+            hideAllScreens();
+            document.getElementById('primeScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+        }
+
+        function showPublicScreen() {
+            hideAllScreens();
+            document.getElementById('publicScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+        }
+
+        function hideAllScreens() {
+            const screens = ['startScreen', 'mainScreen', 'profileScreen', 'settingsScreen', 'shopScreen',
+                           'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
             });
+        }
+
+        function showShopTab(tab) {
+            const tabs = document.querySelectorAll('.shop-tab');
+            const shopContent = document.getElementById('shopTabContent');
+            const tasksContent = document.getElementById('tasksTabContent');
             
-            const profileAvatar = document.getElementById('profileAvatar');
-            profileAvatar.className = 'profile-avatar';
-            ownedFrames.forEach(frameId => {
-                const frame = frames.find(f => f.id === frameId);
-                if (frame) profileAvatar.classList.add(frame.class);
-            });
+            tabs.forEach(t => t.classList.remove('active'));
             
-            // Обновляем ссылки и возраст во всех экранах
-            const steamInputs = [
-                document.getElementById('faceitSteamInput'),
-                document.getElementById('premierSteamInput'),
-                document.getElementById('primeSteamInput'),
-                document.getElementById('publicSteamInput')
-            ];
-            steamInputs.forEach(input => {
-                if (input) input.value = savedSteam;
-            });
-            
-            const faceitInputs = [
-                document.getElementById('faceitLinkInput')
-            ];
-            faceitInputs.forEach(input => {
-                if (input) input.value = savedFaceitLink;
-            });
-            
-            const ageValues = [
-                document.getElementById('faceitAgeValue'),
-                document.getElementById('premierAgeValue'),
-                document.getElementById('primeAgeValue'),
-                document.getElementById('publicAgeValue')
-            ];
-            ageValues.forEach(el => {
-                if (el) el.textContent = savedAge;
-            });
-            
-            tempName = savedName;
-            tempAvatar = savedAvatar;
-            tempAge = savedAge;
-            tempSteam = savedSteam;
-            tempFaceitLink = savedFaceitLink;
+            if (tab === 'shop') {
+                tabs[0].classList.add('active');
+                shopContent.style.display = 'block';
+                tasksContent.style.display = 'none';
+            } else {
+                tabs[1].classList.add('active');
+                shopContent.style.display = 'none';
+                tasksContent.style.display = 'flex';
+            }
         }
 
         // ============================================
@@ -2203,7 +2239,7 @@
                 }
                 
                 renderShop();
-                saveUserToDB(); // Сохраняем после покупки
+                saveUserToDB();
                 alert(`Вы купили ${nick.name} ник!`);
             } else {
                 alert('Недостаточно Pingcoins!');
@@ -2230,7 +2266,7 @@
                 }
                 
                 renderShop();
-                saveUserToDB(); // Сохраняем после покупки
+                saveUserToDB();
                 alert(`Вы купили ${frame.name}!`);
             } else {
                 alert('Недостаточно Pingcoins!');
@@ -2354,24 +2390,17 @@
         // ИНИЦИАЛИЗАЦИЯ
         // ============================================
         window.onload = async function() {
-            console.log('Страница загружена!');
+            console.log('Запуск...');
             
-            // Загружаем данные из БД
+            setupDragAndDrop();
             await loadUserFromDB();
-            
-            // Генерируем тестовых друзей
             generateFriends();
-            
-            // Рендерим магазин
             renderShop();
             
-            // Прячем все экраны и показываем стартовый
             hideAllScreens();
             document.getElementById('startScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
             
-            // Обновляем UI поиска
-            updateSearchUI();
+            console.log('Готово!');
         };
     </script>
 </body>
