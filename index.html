@@ -1684,7 +1684,7 @@
 
     <script>
         // ============================================
-        // SUPABASE КОНФИГУРАЦИЯ
+        // SUPABASE КОНФИГУРАЦИЯ - ТВОИ ДАННЫЕ!
         // ============================================
         const supabaseUrl = 'https://foeacrrojoeymtvwbkqe.supabase.co';
         const supabaseKey = 'sb_publishable__rPXE3FM5T9SZIKlagR6lA_WvjiAhJT';
@@ -1742,86 +1742,129 @@
         ];
 
         // ============================================
-        // ФУНКЦИИ ДЛЯ РАБОТЫ С БАЗОЙ ДАННЫХ (ДОБАВЛЕНО!)
+        // ФУНКЦИИ ДЛЯ РАБОТЫ С БАЗОЙ ДАННЫХ
         // ============================================
         
-        // Функция для создания тестового пользователя (без реальной БД)
-async function saveUserToDB() {
-    console.log('🟢 Сохраняем данные в БД...');
-    
-    // Если нет пользователя - создаём тестовый ID
-    if (!currentUserId) {
-        currentUserId = 'test_user_1';
-    }
-    
-    try {
-        // Проверяем, есть ли пользователь в базе
-        let { data: user, error: selectError } = await supabaseClient
-            .from('users')
-            .select('*')
-            .eq('username', currentUserId)
-            .maybeSingle();
-        
-        if (selectError) {
-            console.error('Ошибка при поиске пользователя:', selectError);
-            alert('Ошибка при поиске пользователя: ' + selectError.message);
-            return false;
-        }
-        
-        let result;
-        
-        if (user) {
-            // Обновляем существующего пользователя
-            console.log('Обновляем пользователя:', user.id);
-            const { data, error } = await supabaseClient
-                .from('users')
-                .update({
-                    username: savedName,
-                    avatar: savedAvatar,
-                    age: parseInt(savedAge),
-                    steam_link: savedSteam,
-                    faceit_link: savedFaceitLink,
-                    coins: coins,
-                    owned_nicks: ownedNicks,
-                    owned_frames: ownedFrames
-                })
-                .eq('id', user.id)
-                .select();
+        // Сохранить данные в Supabase
+        async function saveUserToDB() {
+            console.log('🟢 Сохраняем данные в БД...');
             
-            if (error) throw error;
-            result = data;
-            console.log('✅ Пользователь обновлён');
-        } else {
-            // Создаём нового пользователя
-            console.log('Создаём нового пользователя');
-            const { data, error } = await supabaseClient
-                .from('users')
-                .insert({
-                    username: savedName,
-                    avatar: savedAvatar,
-                    age: parseInt(savedAge),
-                    steam_link: savedSteam,
-                    faceit_link: savedFaceitLink,
-                    coins: coins,
-                    owned_nicks: ownedNicks,
-                    owned_frames: ownedFrames
-                })
-                .select();
+            // Используем username как уникальный идентификатор
+            const userId = savedName || 'pingster_user';
             
-            if (error) throw error;
-            result = data;
-            console.log('✅ Новый пользователь создан');
+            try {
+                // Проверяем, есть ли пользователь в базе
+                let { data: user, error: selectError } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('username', userId)
+                    .maybeSingle();
+                
+                if (selectError) {
+                    console.error('Ошибка при поиске пользователя:', selectError);
+                    alert('Ошибка при поиске пользователя: ' + selectError.message);
+                    return false;
+                }
+                
+                let result;
+                
+                if (user) {
+                    // Обновляем существующего пользователя
+                    console.log('Обновляем пользователя:', user.id);
+                    const { data, error } = await supabaseClient
+                        .from('users')
+                        .update({
+                            username: savedName,
+                            avatar: savedAvatar,
+                            age: parseInt(savedAge),
+                            steam_link: savedSteam,
+                            faceit_link: savedFaceitLink,
+                            coins: coins,
+                            owned_nicks: ownedNicks,
+                            owned_frames: ownedFrames
+                        })
+                        .eq('id', user.id)
+                        .select();
+                    
+                    if (error) throw error;
+                    result = data;
+                    console.log('✅ Пользователь обновлён');
+                    alert('✅ Профиль обновлён в базе данных!');
+                } else {
+                    // Создаём нового пользователя
+                    console.log('Создаём нового пользователя');
+                    const { data, error } = await supabaseClient
+                        .from('users')
+                        .insert({
+                            username: savedName,
+                            avatar: savedAvatar,
+                            age: parseInt(savedAge),
+                            steam_link: savedSteam,
+                            faceit_link: savedFaceitLink,
+                            coins: coins,
+                            owned_nicks: ownedNicks,
+                            owned_frames: ownedFrames
+                        })
+                        .select();
+                    
+                    if (error) throw error;
+                    result = data;
+                    console.log('✅ Новый пользователь создан');
+                    alert('✅ Новый профиль создан в базе данных!');
+                }
+                
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Ошибка сохранения:', error);
+                alert('Ошибка при сохранении: ' + error.message);
+                return false;
+            }
         }
-        
-        alert('✅ Профиль сохранён в базу данных!');
-        return true;
-        
-    } catch (error) {
-        console.error('❌ Ошибка сохранения:', error);
-        alert('Ошибка при сохранении: ' + error.message);
-        return false;
-    }
-}
+
+        // Загрузить данные из Supabase
+        async function loadUserFromDB() {
+            console.log('Загружаем данные из БД...');
+            
+            const userId = 'Pingster'; // Для теста используем имя
+            
+            try {
+                const { data: user, error } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('username', userId)
+                    .maybeSingle();
+                
+                if (error) {
+                    console.error('Ошибка загрузки:', error);
+                    return;
+                }
+                
+                if (user) {
+                    console.log('Пользователь найден:', user);
+                    
+                    // Загружаем данные
+                    savedName = user.username || 'Pingster';
+                    savedAvatar = user.avatar || '👤';
+                    savedAge = user.age?.toString() || '21';
+                    savedSteam = user.steam_link || 'steamcommunity.com/id/pingster';
+                    savedFaceitLink = user.faceit_link || '—';
+                    coins = user.coins || 1000;
+                    ownedNicks = user.owned_nicks || [];
+                    ownedFrames = user.owned_frames || [];
+                    
+                    // Обновляем интерфейс
+                    loadSavedValues();
+                    renderShop();
+                    
+                    console.log('✅ Данные загружены');
+                } else {
+                    console.log('Пользователь не найден, будет создан при сохранении');
+                }
+            } catch (error) {
+                console.error('❌ Ошибка:', error);
+            }
+        }
 
         // ============================================
         // ФУНКЦИИ НАВИГАЦИИ
@@ -1972,7 +2015,7 @@ async function saveUserToDB() {
             savedFaceitLink = tempFaceitLink;
             
             loadSavedValues();
-            saveUserToDB();  // ← ТЕПЕРЬ ЭТА ФУНКЦИЯ СУЩЕСТВУЕТ!
+            saveUserToDB();  // Сохраняем в Supabase
             toggleEditMode();
             
             console.log('applyChanges finished');
@@ -2160,6 +2203,7 @@ async function saveUserToDB() {
                 }
                 
                 renderShop();
+                saveUserToDB(); // Сохраняем после покупки
                 alert(`Вы купили ${nick.name} ник!`);
             } else {
                 alert('Недостаточно Pingcoins!');
@@ -2186,6 +2230,7 @@ async function saveUserToDB() {
                 }
                 
                 renderShop();
+                saveUserToDB(); // Сохраняем после покупки
                 alert(`Вы купили ${frame.name}!`);
             } else {
                 alert('Недостаточно Pingcoins!');
@@ -2308,8 +2353,11 @@ async function saveUserToDB() {
         // ============================================
         // ИНИЦИАЛИЗАЦИЯ
         // ============================================
-        window.onload = function() {
+        window.onload = async function() {
             console.log('Страница загружена!');
+            
+            // Загружаем данные из БД
+            await loadUserFromDB();
             
             // Генерируем тестовых друзей
             generateFriends();
@@ -2328,4 +2376,3 @@ async function saveUserToDB() {
     </script>
 </body>
 </html>
-
