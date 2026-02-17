@@ -208,67 +208,84 @@
             text-align: center;
         }
 
-        /* Главная - опускаем заголовки на 20px */
-        .main-screen .section-title,
+        /* Главный экран */
+        .main-screen {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .main-screen .section-title {
+            margin: 0 0 8px 0;
+        }
+
         .main-screen .section-subtitle {
-            margin-top: 20px;
+            margin: 0 0 16px 0;
+        }
+
+        .mode-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 12px;
+            margin: 0 0 20px 0;
+        }
+
+        .bottom-nav {
+            margin-top: auto;
+            padding: 12px 0 4px 0;
         }
 
         .start-screen {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100%;
+            justify-content: flex-start;
+            padding-top: 40px;
         }
 
-        .start-title {
-            font-size: 32px;
+        .start-logo {
+            font-size: 42px;
             font-weight: 700;
-            text-align: center;
-            margin-bottom: 20px;
             color: #FFFFFF;
             letter-spacing: -0.5px;
+            margin-bottom: 30px;
         }
 
-        .start-title .ping {
+        .start-logo .ping {
             color: #FF6B4A;
         }
 
-        .start-image-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 15px 0 25px 0;
-        }
-
-        .start-image {
-            width: 180px;
-            height: auto;
-            border-radius: 16px;
-            border: 1px solid #2A2F3A;
-        }
-
-        .info-card {
+        .start-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
             background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-
-        .info-text {
-            font-size: 14px;
+            border: 3px solid #2A2F3A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
             color: #9BA1B0;
-            text-align: center;
-            line-height: 1.5;
+            margin-bottom: 30px;
+            overflow: hidden;
         }
 
-        .info-text span {
-            color: #FF6B4A;
-            font-weight: 500;
+        .start-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .start-description {
+            text-align: center;
+            color: #9BA1B0;
+            font-size: 14px;
+            line-height: 1.6;
+            max-width: 300px;
+            margin-bottom: 40px;
+            padding: 0 10px;
         }
 
         .primary-btn {
@@ -294,14 +311,159 @@
             margin-top: 8px;
         }
 
-        .bottom-nav {
+        /* Экран поиска */
+        .screen-search {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .search-header {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
-            padding: 8px 0 4px 0;
+            padding: 16px 0 20px 0;
+            border-bottom: 1px solid #1E2128;
+            margin-bottom: 20px;
+        }
+
+        .search-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FF6B4A;
+        }
+
+        .search-timer {
+            font-size: 24px;
+            font-weight: 600;
+            color: #FFFFFF;
             background: transparent;
-            margin-top: 4px;
-            border-top: 1px solid #1E2128;
+            padding: 0;
+            border: none;
+        }
+
+        .search-status {
+            text-align: center;
+            font-size: 16px;
+            color: #9BA1B0;
+            margin: 20px 0 40px 0;
+        }
+
+        .search-loading {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #2A2F3A;
+            border-top: 4px solid #FF6B4A;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .info-comment {
+            position: relative;
+            margin: 20px 0 30px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .comment-connector {
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(180deg, #FF6B4A 0%, rgba(255, 107, 74, 0.3) 100%);
+            margin-bottom: 5px;
+        }
+
+        .comment-box {
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 12px;
+            padding: 16px;
+            position: relative;
+            max-width: 280px;
+        }
+
+        .comment-text {
+            color: #9BA1B0;
+            font-size: 13px;
+            line-height: 1.5;
+            text-align: center;
+            margin-right: 20px;
+        }
+
+        .comment-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: transparent;
+            color: #5D6472;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+        .comment-close:hover {
+            background: #2A2F3A;
+            color: #FFFFFF;
+        }
+
+        .cancel-search-btn {
+            width: 100%;
+            padding: 18px;
+            background: transparent;
+            border: 2px solid #FF6B4A;
+            border-radius: 12px;
+            color: #FF6B4A;
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 20px 0 10px 0;
+        }
+
+        .cancel-search-btn:hover {
+            background: #FF6B4A;
+            color: white;
+        }
+
+        .cancel-search-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Скрываем шестерёнку на экране поиска */
+        .screen-search ~ .header .icon-settings,
+        .screen-search .icon-settings {
+            display: none !important;
+        }
+
+        /* Скрываем верхний логотип на стартовом экране */
+        .screen-start ~ .header .logo,
+        .screen-start .logo {
+            display: none !important;
+        }
+
+        .screen-start ~ .header,
+        .screen-start .header {
+            border-bottom: none !important;
         }
 
         .nav-item {
@@ -341,572 +503,27 @@
             color: #FFFFFF;
         }
 
-        .mode-container {
+        .screen {
             flex: 1;
-            display: flex;
+            display: none;
             flex-direction: column;
-            justify-content: center;
-            gap: 16px;
-            margin: 0;
-            margin-top: -20px;
-        }
-
-        .mode-btn {
             width: 100%;
-            padding: 20px;
-            background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 12px;
-            color: #E5E7EB;
-            font-size: 18px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            text-align: left;
-            position: relative;
-            transition: all 0.2s;
-        }
-
-        .mode-btn:hover {
-            border-color: #FF6B4A;
-            background: #1E2128;
-            transform: translateY(-1px);
-        }
-
-        .mode-btn.faceit {
-            border-left: 4px solid #FF6B4A;
-            color: #FF6B4A;
-        }
-
-        .mode-btn.premier {
-            border-left: 4px solid #FF6B4A;
-            color: #FF6B4A;
-        }
-
-        .mode-btn.prime {
-            border-left: 4px solid #FFFFFF;
-            text-transform: none;
-            font-size: 16px;
-        }
-
-        .mode-btn.public {
-            border-left: 4px solid #FFFFFF;
-            text-transform: none;
-            font-size: 16px;
-        }
-
-        .mode-btn::after {
-            content: '→';
-            position: absolute;
-            right: 22px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 20px;
-            color: #5D6472;
-        }
-
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 4px 0 8px 0;
-            padding: 0;
-            position: relative;
-        }
-
-        .profile-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #1A1D24;
-            border: 2px solid #2A2F3A;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            color: #9BA1B0;
-            transition: border 0.1s ease, border-width 0.1s ease;
-            cursor: pointer;
-            overflow: hidden;
-        }
-
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-avatar.editable {
-            border-color: #FF6B4A;
-            border-width: 3px;
-        }
-
-        .profile-avatar.frame-red { border-color: #FF6B4A; border-width: 3px; }
-        .profile-avatar.frame-gold { border-color: #FFD700; border-width: 3px; }
-        .profile-avatar.frame-blue { border-color: #2196F3; border-width: 3px; }
-        .profile-avatar.frame-green { border-color: #4CAF50; border-width: 3px; }
-        .profile-avatar.frame-purple { border-color: #9C27B0; border-width: 3px; }
-        .profile-avatar.frame-rainbow { 
-            border: 3px solid transparent;
-            background: linear-gradient(45deg, #FF6B4A, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
-            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-        }
-
-        .profile-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .profile-name-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
-        .profile-name {
-            font-size: 20px;
-            font-weight: 600;
-            color: #FFFFFF;
-            transition: color 0.1s ease;
-            cursor: pointer;
-        }
-
-        .profile-name.editable {
-            color: #FF6B4A;
-        }
-
-        .profile-name.red { color: #FF6B4A; }
-        .profile-name.green { color: #4CAF50; }
-        .profile-name.blue { color: #2196F3; }
-        .profile-name.purple { color: #9C27B0; }
-        .profile-name.orange { color: #FF9800; }
-        .profile-name.multicolor { 
-            background: linear-gradient(45deg, #FF6B4A, #4CAF50, #2196F3, #9C27B0, #FF9800);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-        }
-
-        .profile-name-label {
-            font-size: 11px;
-            color: #9BA1B0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .profile-status {
-            color: #4CAF50;
-            font-size: 11px;
-            font-weight: 500;
-            background: rgba(76, 175, 80, 0.15);
-            padding: 2px 8px;
-            border-radius: 12px;
-            border: 1px solid rgba(76, 175, 80, 0.4);
-            letter-spacing: 0.3px;
-        }
-
-        .profile-stats {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-
-        .profile-stat-card {
-            background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 6px;
-            padding: 8px 10px;
-            cursor: pointer;
-            transition: border 0.1s ease, border-width 0.1s ease;
-        }
-
-        .profile-stat-card.editable {
-            border-color: #FF6B4A;
-            border-width: 2px;
-        }
-
-        .profile-stat-label {
-            font-size: 10px;
-            color: #9BA1B0;
-            margin-bottom: 2px;
-        }
-
-        .profile-stat-value {
-            font-size: 13px;
-            font-weight: 500;
-            color: #FFFFFF;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .heart-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-        }
-
-        .heart-icon svg {
-            width: 16px;
-            height: 16px;
-            stroke: #FF6B4A;
-            stroke-width: 2;
-            fill: none;
-            display: block;
-        }
-
-        .input-field {
-            width: 100%;
-            background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 8px;
-            padding: 10px 12px;
-            color: white;
-            font-size: 13px;
-            margin: 4px 0;
-            cursor: text;
-            transition: border 0.1s ease, border-width 0.1s ease;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: #FF6B4A;
-        }
-
-        .input-field.editable {
-            border-color: #FF6B4A;
-            border-width: 2px;
-        }
-
-        .friends-header {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 6px;
-        }
-
-        .search-icon {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .search-icon:hover {
-            transform: scale(1.1);
-        }
-
-        .search-icon svg {
-            width: 18px;
-            height: 18px;
-            stroke: #9BA1B0;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .back-icon {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-right: 4px;
-        }
-
-        .back-icon:hover {
-            transform: scale(1.1);
-        }
-
-        .back-icon svg {
-            width: 18px;
-            height: 18px;
-            stroke: #FF6B4A;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .friends-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: #FFFFFF;
-            flex: 1;
-        }
-
-        .friends-count {
-            color: #9BA1B0;
-            font-size: 11px;
-        }
-
-        .search-container {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            width: 100%;
-            margin-bottom: 6px;
-        }
-
-        .search-input {
-            flex: 1;
-            background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 6px;
-            padding: 6px 10px;
-            color: white;
-            font-size: 12px;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #FF6B4A;
-        }
-
-        .friends-section {
-            width: 100%;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
             min-height: 0;
-            margin: 8px 0 4px 0;
         }
 
-        .friends-list {
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 4px;
-        }
-
-        .friends-list::-webkit-scrollbar {
-            width: 3px;
-        }
-
-        .friends-list::-webkit-scrollbar-track {
-            background: #1A1D24;
-            border-radius: 10px;
-        }
-
-        .friends-list::-webkit-scrollbar-thumb {
-            background: #FF6B4A;
-            border-radius: 10px;
-        }
-
-        .friend-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px;
-            background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 6px;
-            margin-bottom: 6px;
-        }
-
-        .friend-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #2A2F3A;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: #9BA1B0;
-        }
-
-        .friend-info {
-            flex: 1;
-        }
-
-        .friend-name-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 2px;
-        }
-
-        .friend-name {
-            font-size: 13px;
-            font-weight: 500;
-            color: #FFFFFF;
-        }
-
-        .friend-id {
-            font-size: 9px;
-            color: #FF6B4A;
-            background: rgba(255, 107, 74, 0.1);
-            padding: 1px 5px;
-            border-radius: 4px;
-            font-family: monospace;
-        }
-
-        .friend-steam {
-            font-size: 9px;
-            color: #9BA1B0;
-        }
-
-        .shop-content {
-            flex: 1;
-            display: flex;
+        .screen-start, .screen-main, .screen-profile, .screen-settings, .screen-shop,
+        .screen-faceit, .screen-premier, .screen-prime, .screen-public, .screen-search {
+            display: none;
             flex-direction: column;
-            overflow-y: auto;
-            padding-right: 4px;
+            height: 100%;
+            width: 100%;
+            min-height: 0;
         }
 
-        .shop-content::-webkit-scrollbar {
-            width: 3px;
-        }
-
-        .shop-content::-webkit-scrollbar-track {
-            background: #1A1D24;
-            border-radius: 10px;
-        }
-
-        .shop-content::-webkit-scrollbar-thumb {
-            background: #FF6B4A;
-            border-radius: 10px;
-        }
-
-        .shop-tabs {
-            display: flex;
-            gap: 12px;
-            margin: 12px 0;
-            background: transparent;
-        }
-
-        .shop-tab {
-            padding: 6px 0;
-            font-size: 14px;
-            font-weight: 500;
-            color: #9BA1B0;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .shop-tab.active {
-            color: #FF6B4A;
-            border-bottom-color: #FF6B4A;
-        }
-
-        .nicks-section, .frames-section {
-            margin-bottom: 20px;
-        }
-
-        .section-header {
-            font-size: 14px;
-            font-weight: 600;
-            color: #FFFFFF;
-            margin-bottom: 10px;
-        }
-
-        .items-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .shop-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #1A1D24;
-            border-radius: 6px;
-            padding: 8px 10px;
-            border: 1px solid #2A2F3A;
-        }
-
-        .item-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .color-dot {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-        }
-
-        .color-dot.red { background: #FF6B4A; }
-        .color-dot.green { background: #4CAF50; }
-        .color-dot.blue { background: #2196F3; }
-        .color-dot.purple { background: #9C27B0; }
-        .color-dot.orange { background: #FF9800; }
-        .color-dot.multicolor { 
-            background: linear-gradient(45deg, #FF6B4A, #4CAF50, #2196F3, #9C27B0, #FF9800);
-        }
-
-        .frame-dot {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: #2A2F3A;
-            border: 2px solid;
-        }
-
-        .frame-dot.red { border-color: #FF6B4A; }
-        .frame-dot.gold { border-color: #FFD700; }
-        .frame-dot.blue { border-color: #2196F3; }
-        .frame-dot.green { border-color: #4CAF50; }
-        .frame-dot.purple { border-color: #9C27B0; }
-        .frame-dot.rainbow { 
-            border-color: transparent;
-            background: linear-gradient(45deg, #FF6B4A, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
-        }
-
-        .item-name {
-            font-size: 13px;
-            color: #FFFFFF;
-        }
-
-        .item-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .price-value {
-            color: #9BA1B0;
+        .input-label {
             font-size: 12px;
-        }
-
-        .buy-btn {
-            background: transparent;
-            border: 1px solid #2A2F3A;
-            border-radius: 5px;
-            padding: 3px 8px;
-            color: #FFFFFF;
-            font-size: 11px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .buy-btn:hover {
-            border-color: #FF6B4A;
-            color: #FF6B4A;
-        }
-
-        .buy-btn.owned {
-            background: #FF6B4A;
-            border-color: #FF6B4A;
-            color: white;
-            cursor: default;
-        }
-
-        .tasks-section {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             color: #9BA1B0;
-            font-size: 14px;
+            margin-bottom: 4px;
         }
 
         .mode-header {
@@ -972,20 +589,6 @@
             margin: 4px 0 12px 0;
         }
 
-        .search-input-field:focus {
-            outline: none;
-            border-color: #FF6B4A;
-        }
-
-        .search-input-field[type="number"] {
-            -moz-appearance: textfield;
-        }
-        .search-input-field[type="number"]::-webkit-outer-spin-button,
-        .search-input-field[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
         .stats-row {
             display: flex;
             gap: 6px;
@@ -1000,11 +603,6 @@
             padding: 8px 10px;
             cursor: pointer;
             transition: border 0.1s ease, border-width 0.1s ease;
-        }
-
-        .stat-card.editable {
-            border-color: #FF6B4A;
-            border-width: 2px;
         }
 
         .stat-label {
@@ -1022,14 +620,13 @@
             gap: 4px;
         }
 
-        .stat-value .heart-icon {
-            display: flex;
-            align-items: center;
-        }
-
-        .stat-value .heart-icon svg {
+        .heart-icon svg {
             width: 16px;
             height: 16px;
+            stroke: #FF6B4A;
+            stroke-width: 2;
+            fill: none;
+            display: block;
         }
 
         .rank-select {
@@ -1042,25 +639,6 @@
             padding: 10px 12px;
             margin: 4px 0 12px 0;
             cursor: pointer;
-            transition: all 0.2s;
-            appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF6B4A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-        }
-
-        .rank-select:hover {
-            border-color: #FF6B4A;
-        }
-
-        .rank-select:focus {
-            outline: none;
-            border-color: #FF6B4A;
-        }
-
-        .rank-select option {
-            background: #1A1D24;
-            color: white;
         }
 
         .play-style {
@@ -1094,12 +672,6 @@
             margin: 10px 0;
         }
 
-        .comment-label {
-            font-size: 12px;
-            color: #9BA1B0;
-            margin-bottom: 4px;
-        }
-
         .comment-input {
             width: 100%;
             background: #1A1D24;
@@ -1112,8 +684,15 @@
             height: 70px;
         }
 
-        .comment-input::placeholder {
-            color: #5D6472;
+        .input-field {
+            width: 100%;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: white;
+            font-size: 13px;
+            margin: 4px 0;
         }
 
         .home-bar {
@@ -1124,117 +703,167 @@
             margin: 6px auto 0;
         }
 
-        .screen {
-            flex: 1;
+        .profile-header {
             display: flex;
-            flex-direction: column;
-            width: 100%;
-            min-height: 0;
-        }
-
-        .screen-start, .screen-main, .screen-profile, .screen-settings, .screen-shop,
-        .screen-faceit, .screen-premier, .screen-prime, .screen-public, .screen-search {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-            min-height: 0;
-        }
-
-        .input-label {
-            font-size: 12px;
-            color: #9BA1B0;
-            margin-bottom: 4px;
-        }
-
-        /* НОВЫЙ ЭКРАН ПОИСКА */
-        .search-header {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 16px 0 20px 0;
-            border-bottom: 1px solid #1E2128;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin: 4px 0 8px 0;
         }
-        
-        .search-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #FF6B4A;
-        }
-        
-        .search-timer {
-            font-size: 20px;
-            font-weight: 600;
-            color: #FFFFFF;
+
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
             background: #1A1D24;
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: 1px solid #2A2F3A;
-        }
-        
-        .search-status {
-            text-align: center;
-            font-size: 16px;
-            color: #9BA1B0;
-            margin: 20px 0 40px 0;
-        }
-        
-        .search-loading {
-            flex: 1;
+            border: 2px solid #2A2F3A;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #2A2F3A;
-            border-top: 4px solid #FF6B4A;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .cancel-search-btn {
-            width: 100%;
-            padding: 18px;
-            background: transparent;
-            border: 2px solid #FF6B4A;
-            border-radius: 12px;
-            color: #FF6B4A;
-            font-size: 18px;
-            font-weight: 600;
-            text-transform: uppercase;
+            font-size: 28px;
+            color: #9BA1B0;
             cursor: pointer;
-            transition: all 0.2s;
-            margin: 20px 0 10px 0;
+            overflow: hidden;
         }
-        
-        .cancel-search-btn:hover {
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #FFFFFF;
+            cursor: pointer;
+        }
+
+        .profile-name-label {
+            font-size: 11px;
+            color: #9BA1B0;
+        }
+
+        .profile-status {
+            color: #4CAF50;
+            font-size: 11px;
+            font-weight: 500;
+            background: rgba(76, 175, 80, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(76, 175, 80, 0.4);
+        }
+
+        .profile-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .profile-stat-card {
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 6px;
+            padding: 8px 10px;
+            cursor: pointer;
+        }
+
+        .friends-section {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin: 8px 0 4px 0;
+        }
+
+        .friends-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .friend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 6px;
+            margin-bottom: 6px;
+        }
+
+        .shop-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .shop-tabs {
+            display: flex;
+            gap: 12px;
+            margin: 12px 0;
+        }
+
+        .shop-tab {
+            padding: 6px 0;
+            font-size: 14px;
+            font-weight: 500;
+            color: #9BA1B0;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .shop-tab.active {
+            color: #FF6B4A;
+            border-bottom-color: #FF6B4A;
+        }
+
+        .items-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .shop-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1A1D24;
+            border-radius: 6px;
+            padding: 8px 10px;
+            border: 1px solid #2A2F3A;
+        }
+
+        .buy-btn {
+            background: transparent;
+            border: 1px solid #2A2F3A;
+            border-radius: 5px;
+            padding: 3px 8px;
+            color: #FFFFFF;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .buy-btn.owned {
             background: #FF6B4A;
+            border-color: #FF6B4A;
             color: white;
-        }
-        
-        .cancel-search-btn:active {
-            transform: scale(0.98);
+            cursor: default;
         }
     </style>
     
-    <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="phone-frame">
         <div class="content">
-            <!-- Хедер с кликабельным логотипом -->
+            <!-- Хедер -->
             <div class="header">
-                <div class="logo" onclick="showMainScreen()">
+                <div class="logo" onclick="handleLogoClick()">
                     <span class="ping">Ping</span><span class="ster">ster</span>
                 </div>
                 <div id="settingsIcon" class="icon-settings" onclick="showSettingsScreen()">
@@ -1247,30 +876,29 @@
 
             <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
-                <div class="start-title">
+                <div class="start-logo">
                     <span class="ping">Ping</span><span class="ster">ster</span>
                 </div>
                 
-                <div class="start-image-container">
-                    <img src=".....jpg" alt="Pingster Logo" class="start-image">
+                <div class="start-avatar" id="startAvatar">👤</div>
+                
+                <div class="start-description">
+                    Pingster — площадка, где вы можете найти тиммейта за 30 секунд.<br>
+                    Быстро, просто, без смс.<br>
+                    Здесь можно находить друзей и просто тиммейта на одну катку.<br>
+                    Фаниться или апать звания.
                 </div>
-
-                <div class="info-card">
-                    <div class="info-text">
-                        Найдите тиммейтов для <span>CS2</span> за 20 секунд
-                    </div>
-                </div>
-
+                
                 <button class="primary-btn" onclick="startApp()">Начать</button>
                 <div class="online-counter">
                     более 1000+ игроков онлайн
                 </div>
             </div>
 
-            <!-- ГЛАВНЫЙ ЭКРАН с 4 режимами -->
+            <!-- ГЛАВНЫЙ ЭКРАН -->
             <div id="mainScreen" class="screen screen-main main-screen">
                 <div class="section-title">Выбор режима</div>
-                <div class="section-subtitle">Выберите для вас подходящий режим</div>
+                <div class="section-subtitle">Подберите подходящий</div>
 
                 <div class="mode-container">
                     <button class="mode-btn faceit" onclick="showFaceitScreen()">FACEIT</button>
@@ -1281,230 +909,6 @@
 
                 <div class="bottom-nav">
                     <div class="nav-item active" onclick="showMainScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M6 6h15l-1.5 9h-12z"/>
-                                <circle cx="9" cy="21" r="1"/>
-                                <circle cx="18" cy="21" r="1"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="12" cy="8" r="4"/>
-                                <path d="M4 21c2-4 14-4 16 0"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ЭКРАН МАГАЗИНА -->
-            <div id="shopScreen" class="screen screen-shop">
-                <div class="title-row">
-                    <div class="title-left">
-                        <div class="section-title">Магазин</div>
-                    </div>
-                    <div class="coins-header">
-                        Pingcoins: <span id="coinsAmount">1000</span>
-                    </div>
-                </div>
-                <div class="section-subtitle">Зарабатывайте и покупайте</div>
-
-                <div class="shop-tabs">
-                    <div class="shop-tab active" onclick="showShopTab('shop')">Магазин</div>
-                    <div class="shop-tab" onclick="showShopTab('tasks')">Задания</div>
-                </div>
-
-                <div id="shopTabContent" class="shop-content">
-                    <div class="nicks-section">
-                        <div class="section-header">Цветные ники</div>
-                        <div class="items-grid" id="nicksGrid"></div>
-                    </div>
-
-                    <div class="frames-section">
-                        <div class="section-header">Рамки для аватарки</div>
-                        <div class="items-grid" id="framesGrid"></div>
-                    </div>
-                </div>
-
-                <div id="tasksTabContent" class="shop-content" style="display: none;">
-                    <div class="tasks-section">
-                        Задания пока в разработке
-                    </div>
-                </div>
-
-                <div class="bottom-nav">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item active" onclick="showShopScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M6 6h15l-1.5 9h-12z"/>
-                                <circle cx="9" cy="21" r="1"/>
-                                <circle cx="18" cy="21" r="1"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="12" cy="8" r="4"/>
-                                <path d="M4 21c2-4 14-4 16 0"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ЭКРАН ПРОФИЛЯ -->
-            <div id="profileScreen" class="screen screen-profile">
-                <div class="title-row">
-                    <div class="title-left">
-                        <div class="section-title">Ваш профиль</div>
-                        <div class="edit-controls">
-                            <div id="editToggle" class="edit-title-icon" onclick="toggleEditMode()">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M12 20h9" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                                    <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"
-                                          stroke="white" stroke-width="2"
-                                          stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <div id="applyBtn" class="apply-btn" onclick="applyChanges()">Применить</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="profile-header">
-                    <div id="profileAvatar" class="profile-avatar" onclick="selectAvatar()">
-                        👤
-                    </div>
-                    <div class="profile-info">
-                        <div class="profile-name-label">
-                            ваш никнейм
-                        </div>
-                        <div class="profile-name-row">
-                            <span id="profileName" class="profile-name" onclick="editName()">-</span>
-                            <span class="profile-status">НОВИЧОК</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Плашки рейтинг и возраст -->
-                <div class="stats-row">
-                    <div class="stat-card" id="ratingCard">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            0
-                            <span class="heart-icon">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
-                                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="stat-card" id="ageCard" onclick="editAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="ageValue">-</div>
-                    </div>
-                </div>
-
-                <div class="profile-stats">
-                    <div class="profile-stat-card" id="steamCard" onclick="editSteam()">
-                        <div class="profile-stat-label">Ссылка Steam</div>
-                        <div class="profile-stat-value" id="steamDisplay">-</div>
-                    </div>
-
-                    <div class="profile-stat-card" id="faceitLinkCard" onclick="editFaceitLink()">
-                        <div class="profile-stat-label">Ссылка Faceit</div>
-                        <div class="profile-stat-value" id="faceitLinkDisplay">-</div>
-                    </div>
-                </div>
-
-                <div class="friends-section" id="friendsSection">
-                    <div id="friendsHeader" class="friends-header">
-                        <div class="search-icon" onclick="enterSearchMode()">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
-                                <circle cx="11" cy="11" r="4" stroke="white" stroke-width="2"/>
-                                <line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </div>
-                        <span class="friends-title">Ваши друзья</span>
-                        <span class="friends-count" id="friendsCount">0 друзей</span>
-                    </div>
-                    
-                    <div class="friends-list" id="friendsList"></div>
-                </div>
-
-                <div class="bottom-nav">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M6 6h15l-1.5 9h-12z"/>
-                                <circle cx="9" cy="21" r="1"/>
-                                <circle cx="18" cy="21" r="1"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item active" onclick="showProfileScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="12" cy="8" r="4"/>
-                                <path d="M4 21c2-4 14-4 16 0"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ЭКРАН НАСТРОЕК -->
-            <div id="settingsScreen" class="screen screen-settings">
-                <div class="section-title">Настройки</div>
-
-                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
-                    <h3 style="font-size:14px; margin-bottom:8px;">Тема</h3>
-                    <p style="color:#9BA1B0; font-size:13px;">Тёмная / Светлая</p>
-                </div>
-
-                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
-                    <h3 style="font-size:14px; margin-bottom:8px;">Модерация</h3>
-                    <p style="color:#9BA1B0; font-size:13px;">Люди мы будем</p>
-                </div>
-
-                <div class="bottom-nav" style="margin-top: auto;">
-                    <div class="nav-item" onclick="showMainScreen()">
                         <span class="nav-icon">
                             <svg viewBox="0 0 24 24">
                                 <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
@@ -1757,7 +1161,227 @@
                 <button class="primary-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН ПОИСКА (НОВЫЙ) -->
+            <!-- ЭКРАН ПРОФИЛЯ -->
+            <div id="profileScreen" class="screen screen-profile">
+                <div class="title-row">
+                    <div class="title-left">
+                        <div class="section-title">Ваш профиль</div>
+                        <div class="edit-controls">
+                            <div id="editToggle" class="edit-title-icon" onclick="toggleEditMode()">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 20h9" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"
+                                          stroke="white" stroke-width="2"
+                                          stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div id="applyBtn" class="apply-btn" onclick="applyChanges()">Применить</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-header">
+                    <div id="profileAvatar" class="profile-avatar" onclick="selectAvatar()">
+                        👤
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name-label">
+                            ваш никнейм
+                        </div>
+                        <div class="profile-name-row">
+                            <span id="profileName" class="profile-name" onclick="editName()">-</span>
+                            <span class="profile-status">НОВИЧОК</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-card" id="ratingCard">
+                        <div class="stat-label">Рейтинг</div>
+                        <div class="stat-value">
+                            0
+                            <span class="heart-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
+                                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="ageCard" onclick="editAge()">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value" id="ageValue">-</div>
+                    </div>
+                </div>
+
+                <div class="profile-stats">
+                    <div class="profile-stat-card" id="steamCard" onclick="editSteam()">
+                        <div class="profile-stat-label">Ссылка Steam</div>
+                        <div class="profile-stat-value" id="steamDisplay">-</div>
+                    </div>
+                    <div class="profile-stat-card" id="faceitLinkCard" onclick="editFaceitLink()">
+                        <div class="profile-stat-label">Ссылка Faceit</div>
+                        <div class="profile-stat-value" id="faceitLinkDisplay">-</div>
+                    </div>
+                </div>
+
+                <div class="friends-section">
+                    <div id="friendsHeader" class="friends-header">
+                        <div class="search-icon" onclick="enterSearchMode()">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
+                                <circle cx="11" cy="11" r="4" stroke="white" stroke-width="2"/>
+                                <line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <span class="friends-title">Ваши друзья</span>
+                        <span class="friends-count" id="friendsCount">0 друзей</span>
+                    </div>
+                    <div class="friends-list" id="friendsList"></div>
+                </div>
+
+                <div class="bottom-nav">
+                    <div class="nav-item" onclick="showMainScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Главная</span>
+                    </div>
+                    <div class="nav-item" onclick="showShopScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M6 6h15l-1.5 9h-12z"/>
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="18" cy="21" r="1"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Магазин</span>
+                    </div>
+                    <div class="nav-item active" onclick="showProfileScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4"/>
+                                <path d="M4 21c2-4 14-4 16 0"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Профиль</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ЭКРАН МАГАЗИНА -->
+            <div id="shopScreen" class="screen screen-shop">
+                <div class="title-row">
+                    <div class="title-left">
+                        <div class="section-title">Магазин</div>
+                    </div>
+                    <div class="coins-header">
+                        Pingcoins: <span id="coinsAmount">1000</span>
+                    </div>
+                </div>
+                <div class="section-subtitle">Зарабатывайте и покупайте</div>
+
+                <div class="shop-tabs">
+                    <div class="shop-tab active" onclick="showShopTab('shop')">Магазин</div>
+                    <div class="shop-tab" onclick="showShopTab('tasks')">Задания</div>
+                </div>
+
+                <div id="shopTabContent" class="shop-content">
+                    <div class="nicks-section">
+                        <div class="section-header">Цветные ники</div>
+                        <div class="items-grid" id="nicksGrid"></div>
+                    </div>
+                    <div class="frames-section">
+                        <div class="section-header">Рамки для аватарки</div>
+                        <div class="items-grid" id="framesGrid"></div>
+                    </div>
+                </div>
+
+                <div id="tasksTabContent" class="shop-content" style="display: none;">
+                    <div class="tasks-section">
+                        Задания пока в разработке
+                    </div>
+                </div>
+
+                <div class="bottom-nav">
+                    <div class="nav-item" onclick="showMainScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Главная</span>
+                    </div>
+                    <div class="nav-item active" onclick="showShopScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M6 6h15l-1.5 9h-12z"/>
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="18" cy="21" r="1"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Магазин</span>
+                    </div>
+                    <div class="nav-item" onclick="showProfileScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4"/>
+                                <path d="M4 21c2-4 14-4 16 0"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Профиль</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ЭКРАН НАСТРОЕК -->
+            <div id="settingsScreen" class="screen screen-settings">
+                <div class="section-title">Настройки</div>
+
+                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
+                    <h3 style="font-size:14px; margin-bottom:8px;">Тема</h3>
+                    <p style="color:#9BA1B0; font-size:13px;">Тёмная / Светлая</p>
+                </div>
+
+                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
+                    <h3 style="font-size:14px; margin-bottom:8px;">Модерация</h3>
+                    <p style="color:#9BA1B0; font-size:13px;">Люди мы будем</p>
+                </div>
+
+                <div class="bottom-nav" style="margin-top: auto;">
+                    <div class="nav-item" onclick="showMainScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Главная</span>
+                    </div>
+                    <div class="nav-item" onclick="showShopScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M6 6h15l-1.5 9h-12z"/>
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="18" cy="21" r="1"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Магазин</span>
+                    </div>
+                    <div class="nav-item" onclick="showProfileScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4"/>
+                                <path d="M4 21c2-4 14-4 16 0"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Профиль</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ЭКРАН ПОИСКА -->
             <div id="searchScreen" class="screen screen-search">
                 <div class="search-header">
                     <div class="search-title" id="searchModeTitle">FACEIT</div>
@@ -1770,6 +1394,17 @@
                     <div class="spinner"></div>
                 </div>
                 
+                <div class="info-comment" id="infoComment">
+                    <div class="comment-connector"></div>
+                    <div class="comment-box">
+                        <div class="comment-text">
+                            Поиск начат. Мы подбираем для вас лучших тиммейтов, 
+                            чтобы вы могли насладиться игрой максимально быстро и просто.
+                        </div>
+                        <button class="comment-close" onclick="closeComment()">✖</button>
+                    </div>
+                </div>
+                
                 <button class="cancel-search-btn" onclick="cancelSearch()">Отменить поиск</button>
             </div>
         </div>
@@ -1779,7 +1414,7 @@
 
     <script>
         // ============================================
-        // SUPABASE КОНФИГУРАЦИЯ
+        // SUPABASE
         // ============================================
         const supabaseUrl = 'https://foeacrrojoeymtvwbkqe.supabase.co';
         const supabaseKey = 'sb_publishable__rPXE3FM5T9SZIKlagR6lA_WvjiAhJT';
@@ -1788,6 +1423,7 @@
         // ============================================
         // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
         // ============================================
+        let lastModeScreen = 'faceitScreen';
         let editMode = false;
         let currentUserId = 'pingster_' + Date.now();
         
@@ -1832,9 +1468,8 @@
         ];
 
         // ============================================
-        // ЗАГРУЗКА АВАТАРКИ
+        // АВАТАРКА
         // ============================================
-        
         function selectAvatar() {
             if (!editMode) {
                 alert('Сначала включите режим редактирования (карандаш)');
@@ -1865,44 +1500,29 @@
             const reader = new FileReader();
             reader.onload = (e) => {
                 const avatarDiv = document.getElementById('profileAvatar');
-                avatarDiv.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                if (avatarDiv) avatarDiv.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                const startAvatar = document.getElementById('startAvatar');
+                if (startAvatar) startAvatar.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
                 uploadAvatar(file);
             };
             reader.readAsDataURL(file);
-        }
-
-        function setupDragAndDrop() {
-            const avatarDiv = document.getElementById('profileAvatar');
-            
-            avatarDiv.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                avatarDiv.style.border = '3px dashed #FF6B4A';
-            });
-            
-            avatarDiv.addEventListener('dragleave', () => {
-                avatarDiv.style.border = '';
-            });
-            
-            avatarDiv.addEventListener('drop', (e) => {
-                e.preventDefault();
-                avatarDiv.style.border = '';
-                
-                if (!editMode) {
-                    alert('Сначала включите режим редактирования');
-                    return;
-                }
-                
-                const file = e.dataTransfer.files[0];
-                if (file && file.type.startsWith('image/')) {
-                    handleFileSelect(file);
-                }
-            });
         }
 
         async function uploadAvatar(file) {
             if (!file) return;
             
             console.log('Загружаем аватарку...');
+            
+            if (savedAvatar && savedAvatar.includes('supabase')) {
+                try {
+                    const oldFilePath = savedAvatar.split('/avatars/')[1];
+                    if (oldFilePath) {
+                        await supabaseClient.storage.from('avatars').remove([oldFilePath]);
+                    }
+                } catch (e) {
+                    console.log('Не удалось удалить старую аватарку', e);
+                }
+            }
             
             const fileExt = file.name.split('.').pop() || 'jpg';
             const fileName = `${currentUserId}-${Date.now()}.${fileExt}`;
@@ -1921,8 +1541,6 @@
                     .from('avatars')
                     .getPublicUrl(filePath);
                 
-                console.log('Аватарка загружена:', publicUrl);
-                
                 savedAvatar = publicUrl;
                 tempAvatar = publicUrl;
                 
@@ -1937,98 +1555,180 @@
         }
 
         // ============================================
-        // РАБОТА С БАЗОЙ ДАННЫХ
+        // НАВИГАЦИЯ
         // ============================================
-        
-        async function saveUserToDB() {
-            console.log('Сохраняем данные...');
+        function startApp() {
+            hideAllScreens();
+            document.getElementById('mainScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+        }
+
+        function handleLogoClick() {
+            if (document.getElementById('searchScreen').style.display === 'flex') {
+                alert('Сначала отмените поиск');
+                return;
+            }
+            if (document.getElementById('startScreen').style.display === 'flex') return;
             
-            try {
-                let { data: user, error: selectError } = await supabaseClient
-                    .from('users')
-                    .select('*')
-                    .eq('username', savedName === '-' ? 'pingster_user' : savedName)
-                    .maybeSingle();
-                
-                if (selectError) throw selectError;
-                
-                const userData = {
-                    username: savedName === '-' ? 'pingster_user' : savedName,
-                    avatar: savedAvatar.startsWith('http') ? null : savedAvatar,
-                    avatar_url: savedAvatar.startsWith('http') ? savedAvatar : null,
-                    age: savedAge === '-' ? null : parseInt(savedAge),
-                    steam_link: savedSteam === '-' ? null : savedSteam,
-                    faceit_link: savedFaceitLink === '-' ? null : savedFaceitLink,
-                    coins: coins,
-                    owned_nicks: ownedNicks,
-                    owned_frames: ownedFrames
-                };
-                
-                if (user) {
-                    const { error } = await supabaseClient
-                        .from('users')
-                        .update(userData)
-                        .eq('id', user.id);
-                    
-                    if (error) throw error;
-                    console.log('Данные обновлены');
-                } else {
-                    const { error } = await supabaseClient
-                        .from('users')
-                        .insert(userData);
-                    
-                    if (error) throw error;
-                    console.log('Новый пользователь создан');
-                }
-                
-            } catch (error) {
-                console.error('Ошибка сохранения:', error);
-                alert('Ошибка: ' + error.message);
+            hideAllScreens();
+            document.getElementById('mainScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+        }
+
+        function showMainScreen() {
+            hideAllScreens();
+            document.getElementById('mainScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+        }
+
+        function showProfileScreen() {
+            hideAllScreens();
+            document.getElementById('profileScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+        }
+
+        function showSettingsScreen() {
+            hideAllScreens();
+            document.getElementById('settingsScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.add('active');
+        }
+
+        function showShopScreen() {
+            hideAllScreens();
+            document.getElementById('shopScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            renderShop();
+        }
+
+        function showFaceitScreen() {
+            lastModeScreen = 'faceitScreen';
+            hideAllScreens();
+            document.getElementById('faceitScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+            document.getElementById('faceitAgeValue').textContent = savedAge;
+            document.getElementById('faceitSteamInput').value = savedSteam;
+            document.getElementById('faceitLinkInput').value = savedFaceitLink;
+        }
+
+        function showPremierScreen() {
+            lastModeScreen = 'premierScreen';
+            hideAllScreens();
+            document.getElementById('premierScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+            document.getElementById('premierAgeValue').textContent = savedAge;
+            document.getElementById('premierSteamInput').value = savedSteam;
+        }
+
+        function showPrimeScreen() {
+            lastModeScreen = 'primeScreen';
+            hideAllScreens();
+            document.getElementById('primeScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+            document.getElementById('primeAgeValue').textContent = savedAge;
+            document.getElementById('primeSteamInput').value = savedSteam;
+        }
+
+        function showPublicScreen() {
+            lastModeScreen = 'publicScreen';
+            hideAllScreens();
+            document.getElementById('publicScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            loadSavedValues();
+            document.getElementById('publicAgeValue').textContent = savedAge;
+            document.getElementById('publicSteamInput').value = savedSteam;
+        }
+
+        function hideAllScreens() {
+            const screens = [
+                'startScreen', 'mainScreen', 'profileScreen', 'settingsScreen', 'shopScreen',
+                'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen', 'searchScreen'
+            ];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+        }
+
+        function showShopTab(tab) {
+            const tabs = document.querySelectorAll('.shop-tab');
+            const shopContent = document.getElementById('shopTabContent');
+            const tasksContent = document.getElementById('tasksTabContent');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'shop') {
+                tabs[0].classList.add('active');
+                shopContent.style.display = 'block';
+                tasksContent.style.display = 'none';
+            } else {
+                tabs[1].classList.add('active');
+                shopContent.style.display = 'none';
+                tasksContent.style.display = 'flex';
             }
         }
 
-        async function loadUserFromDB() {
-            console.log('Загружаем данные...');
-            
-            try {
-                const { data: user, error } = await supabaseClient
-                    .from('users')
-                    .select('*')
-                    .eq('username', 'pingster_user')
-                    .maybeSingle();
-                
-                if (error) throw error;
-                
-                if (user) {
-                    savedName = user.username || '-';
-                    savedAge = user.age?.toString() || '-';
-                    savedSteam = user.steam_link || '-';
-                    savedFaceitLink = user.faceit_link || '-';
-                    coins = user.coins || 1000;
-                    ownedNicks = user.owned_nicks || [];
-                    ownedFrames = user.owned_frames || [];
-                    
-                    if (user.avatar_url) {
-                        savedAvatar = user.avatar_url;
-                    } else if (user.avatar) {
-                        savedAvatar = user.avatar;
-                    } else {
-                        savedAvatar = '👤';
-                    }
-                    
-                    loadSavedValues();
-                    renderShop();
-                }
-                
-            } catch (error) {
-                console.error('Ошибка загрузки:', error);
+        // ============================================
+        // ПОИСК
+        // ============================================
+        let searchTimerInterval = null;
+        let searchSeconds = 0;
+        
+        function startSearch(mode, value) {
+            showSearchScreen(mode);
+            console.log(`Поиск в режиме ${mode} с данными: ${value}`);
+        }
+        
+        function showSearchScreen(mode) {
+            hideAllScreens();
+            document.getElementById('searchModeTitle').textContent = mode;
+            document.getElementById('searchScreen').style.display = 'flex';
+            resetTimer();
+            startTimer();
+        }
+        
+        function startTimer() {
+            searchSeconds = 0;
+            updateTimerDisplay();
+            if (searchTimerInterval) clearInterval(searchTimerInterval);
+            searchTimerInterval = setInterval(() => {
+                searchSeconds++;
+                updateTimerDisplay();
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(searchSeconds / 60);
+            const seconds = searchSeconds % 60;
+            document.getElementById('searchTimer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function resetTimer() {
+            if (searchTimerInterval) {
+                clearInterval(searchTimerInterval);
+                searchTimerInterval = null;
             }
+            searchSeconds = 0;
+            updateTimerDisplay();
+        }
+        
+        function cancelSearch() {
+            resetTimer();
+            hideAllScreens();
+            document.getElementById(lastModeScreen).style.display = 'flex';
+        }
+        
+        function closeComment() {
+            document.getElementById('infoComment').style.display = 'none';
         }
 
         // ============================================
-        // ФУНКЦИИ ИНТЕРФЕЙСА
+        // ПРОФИЛЬ
         // ============================================
-        
         function loadSavedValues() {
             document.getElementById('profileName').textContent = savedName;
             document.getElementById('ageValue').textContent = savedAge;
@@ -2065,8 +1765,6 @@
 
         function toggleEditMode() {
             editMode = !editMode;
-            console.log('editMode =', editMode);
-            
             const elements = [
                 document.getElementById('profileName'),
                 document.getElementById('profileAvatar'),
@@ -2074,7 +1772,6 @@
                 document.getElementById('steamCard'),
                 document.getElementById('faceitLinkCard')
             ];
-            
             const editToggle = document.getElementById('editToggle');
             const applyBtn = document.getElementById('applyBtn');
             
@@ -2099,7 +1796,6 @@
             savedAge = tempAge;
             savedSteam = tempSteam;
             savedFaceitLink = tempFaceitLink;
-            
             loadSavedValues();
             saveUserToDB();
             toggleEditMode();
@@ -2174,168 +1870,7 @@
         }
 
         // ============================================
-        // НОВЫЙ ЭКРАН ПОИСКА И ТАЙМЕР
-        // ============================================
-        let searchTimerInterval = null;
-        let searchSeconds = 0;
-        
-        function showSearchScreen(mode) {
-            hideAllScreens();
-            
-            document.getElementById('searchModeTitle').textContent = mode;
-            document.getElementById('searchScreen').style.display = 'flex';
-            
-            resetTimer();
-            startTimer();
-        }
-        
-        function startTimer() {
-            searchSeconds = 0;
-            updateTimerDisplay();
-            
-            if (searchTimerInterval) clearInterval(searchTimerInterval);
-            
-            searchTimerInterval = setInterval(() => {
-                searchSeconds++;
-                updateTimerDisplay();
-            }, 1000);
-        }
-        
-        function updateTimerDisplay() {
-            const minutes = Math.floor(searchSeconds / 60);
-            const seconds = searchSeconds % 60;
-            document.getElementById('searchTimer').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-        
-        function resetTimer() {
-            if (searchTimerInterval) {
-                clearInterval(searchTimerInterval);
-                searchTimerInterval = null;
-            }
-            searchSeconds = 0;
-            updateTimerDisplay();
-        }
-        
-        function cancelSearch() {
-            resetTimer();
-            showMainScreen();
-        }
-
-        // ============================================
-        // ФУНКЦИИ НАВИГАЦИИ
-        // ============================================
-        function startApp() {
-            hideAllScreens();
-            document.getElementById('mainScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-        }
-
-        function showMainScreen() {
-            hideAllScreens();
-            document.getElementById('mainScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-        }
-
-        function showProfileScreen() {
-            hideAllScreens();
-            document.getElementById('profileScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            
-            if (isSearchMode) {
-                exitSearchMode();
-            } else {
-                updateSearchUI();
-            }
-            
-            loadSavedValues();
-        }
-
-        function showSettingsScreen() {
-            hideAllScreens();
-            document.getElementById('settingsScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.add('active');
-        }
-
-        function showShopScreen() {
-            hideAllScreens();
-            document.getElementById('shopScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            renderShop();
-        }
-
-        function showFaceitScreen() {
-            hideAllScreens();
-            document.getElementById('faceitScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues();
-            
-            document.getElementById('faceitAgeValue').textContent = savedAge;
-            document.getElementById('faceitSteamInput').value = savedSteam;
-            document.getElementById('faceitLinkInput').value = savedFaceitLink;
-        }
-
-        function showPremierScreen() {
-            hideAllScreens();
-            document.getElementById('premierScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues();
-            
-            document.getElementById('premierAgeValue').textContent = savedAge;
-            document.getElementById('premierSteamInput').value = savedSteam;
-        }
-
-        function showPrimeScreen() {
-            hideAllScreens();
-            document.getElementById('primeScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues();
-            
-            document.getElementById('primeAgeValue').textContent = savedAge;
-            document.getElementById('primeSteamInput').value = savedSteam;
-        }
-
-        function showPublicScreen() {
-            hideAllScreens();
-            document.getElementById('publicScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues();
-            
-            document.getElementById('publicAgeValue').textContent = savedAge;
-            document.getElementById('publicSteamInput').value = savedSteam;
-        }
-
-        function hideAllScreens() {
-            const screens = [
-                'startScreen', 'mainScreen', 'profileScreen', 'settingsScreen', 'shopScreen',
-                'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen', 'searchScreen'
-            ];
-            screens.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
-            });
-        }
-
-        function showShopTab(tab) {
-            const tabs = document.querySelectorAll('.shop-tab');
-            const shopContent = document.getElementById('shopTabContent');
-            const tasksContent = document.getElementById('tasksTabContent');
-            
-            tabs.forEach(t => t.classList.remove('active'));
-            
-            if (tab === 'shop') {
-                tabs[0].classList.add('active');
-                shopContent.style.display = 'block';
-                tasksContent.style.display = 'none';
-            } else {
-                tabs[1].classList.add('active');
-                shopContent.style.display = 'none';
-                tasksContent.style.display = 'flex';
-            }
-        }
-
-        // ============================================
-        // ФУНКЦИИ МАГАЗИНА
+        // МАГАЗИН
         // ============================================
         function renderShop() {
             const nicksGrid = document.getElementById('nicksGrid');
@@ -2392,22 +1927,18 @@
         function buyNick(nickId) {
             const nick = nicks.find(n => n.id === nickId);
             if (!nick) return;
-            
             if (ownedNicks.includes(nickId)) {
                 alert('У вас уже есть этот ник!');
                 return;
             }
-            
             if (coins >= nick.price) {
                 coins -= nick.price;
                 ownedNicks.push(nickId);
-                
                 const profileName = document.getElementById('profileName');
                 if (profileName) {
                     profileName.className = 'profile-name';
                     profileName.classList.add(nick.class);
                 }
-                
                 renderShop();
                 saveUserToDB();
                 alert(`Вы купили ${nick.name} ник!`);
@@ -2419,22 +1950,18 @@
         function buyFrame(frameId) {
             const frame = frames.find(f => f.id === frameId);
             if (!frame) return;
-            
             if (ownedFrames.includes(frameId)) {
                 alert('У вас уже есть эта рамка!');
                 return;
             }
-            
             if (coins >= frame.price) {
                 coins -= frame.price;
                 ownedFrames.push(frameId);
-                
                 const profileAvatar = document.getElementById('profileAvatar');
                 if (profileAvatar) {
                     profileAvatar.className = 'profile-avatar';
                     profileAvatar.classList.add(frame.class);
                 }
-                
                 renderShop();
                 saveUserToDB();
                 alert(`Вы купили ${frame.name}!`);
@@ -2444,7 +1971,7 @@
         }
 
         // ============================================
-        // ФУНКЦИИ ДРУЗЕЙ
+        // ДРУЗЬЯ
         // ============================================
         function generateFriends() {
             friendsData = [];
@@ -2543,7 +2070,7 @@
         }
 
         // ============================================
-        // ФУНКЦИИ ПОИСКА
+        // СТИЛЬ
         // ============================================
         function setStyle(style, element) {
             const parent = element.parentElement;
@@ -2552,29 +2079,96 @@
             element.classList.add('active');
         }
 
-        function startSearch(mode, value) {
-            // Вместо alert показываем экран поиска
-            showSearchScreen(mode);
-            console.log(`Поиск в режиме ${mode} с данными: ${value}`);
+        // ============================================
+        // БД
+        // ============================================
+        async function saveUserToDB() {
+            console.log('Сохраняем данные...');
+            try {
+                let { data: user, error: selectError } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('username', savedName === '-' ? 'pingster_user' : savedName)
+                    .maybeSingle();
+                
+                if (selectError) throw selectError;
+                
+                const userData = {
+                    username: savedName === '-' ? 'pingster_user' : savedName,
+                    avatar: savedAvatar.startsWith('http') ? null : savedAvatar,
+                    avatar_url: savedAvatar.startsWith('http') ? savedAvatar : null,
+                    age: savedAge === '-' ? null : parseInt(savedAge),
+                    steam_link: savedSteam === '-' ? null : savedSteam,
+                    faceit_link: savedFaceitLink === '-' ? null : savedFaceitLink,
+                    coins: coins,
+                    owned_nicks: ownedNicks,
+                    owned_frames: ownedFrames
+                };
+                
+                if (user) {
+                    const { error } = await supabaseClient
+                        .from('users')
+                        .update(userData)
+                        .eq('id', user.id);
+                    if (error) throw error;
+                } else {
+                    const { error } = await supabaseClient
+                        .from('users')
+                        .insert(userData);
+                    if (error) throw error;
+                }
+            } catch (error) {
+                console.error('Ошибка сохранения:', error);
+            }
+        }
+
+        async function loadUserFromDB() {
+            console.log('Загружаем данные...');
+            try {
+                const { data: user, error } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('username', 'pingster_user')
+                    .maybeSingle();
+                if (error) throw error;
+                if (user) {
+                    savedName = user.username || '-';
+                    savedAge = user.age?.toString() || '-';
+                    savedSteam = user.steam_link || '-';
+                    savedFaceitLink = user.faceit_link || '-';
+                    coins = user.coins || 1000;
+                    ownedNicks = user.owned_nicks || [];
+                    ownedFrames = user.owned_frames || [];
+                    if (user.avatar_url) {
+                        savedAvatar = user.avatar_url;
+                    } else if (user.avatar) {
+                        savedAvatar = user.avatar;
+                    } else {
+                        savedAvatar = '👤';
+                    }
+                    loadSavedValues();
+                    renderShop();
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+            }
         }
 
         // ============================================
         // ИНИЦИАЛИЗАЦИЯ
         // ============================================
-        window.onload = async function() {
+        window.onload = function() {
             console.log('Запуск...');
-            
-            setupDragAndDrop();
-            await loadUserFromDB();
-            generateFriends();
-            renderShop();
             
             hideAllScreens();
             document.getElementById('startScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+            
+            generateFriends();
+            renderShop();
             
             console.log('Готово!');
         };
     </script>
 </body>
 </html>
-
