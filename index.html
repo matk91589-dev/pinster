@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pingster</title>
     <style>
+        /* ---- ТВОЙ СТИЛЬ БЕЗ ИЗМЕНЕНИЙ ---- */
         * {
             margin: 0;
             padding: 0;
@@ -1147,6 +1148,9 @@
             margin-bottom: 4px;
         }
     </style>
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="phone-frame">
@@ -1369,7 +1373,7 @@
                             </svg>
                         </div>
                         <span class="friends-title">Ваши друзья</span>
-                        <span class="friends-count" id="friendsCount">10 друзей</span>
+                        <span class="friends-count" id="friendsCount">0 друзей</span>
                     </div>
                     
                     <div class="friends-list" id="friendsList"></div>
@@ -1679,7 +1683,20 @@
     </div>
 
     <script>
+        // ==============================================
+        // SUPABASE КОНФИГУРАЦИЯ (ВСТАВЬ СВОИ ДАННЫЕ!)
+        // ==============================================
+        const supabaseUrl = 'https://foeacrrojoeymtvwbkqe.supabase.co';  // url
+        const supabaseKey = 'sb_publishable__rPXE3FM5T9SZIKlagR6lA_WvjiAhJT';  // key
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // ==============================================
+        // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+        // ==============================================
         let editMode = false;
+        let currentUserId = null;  // Будет хранить ID пользователя из БД
+        
+        // Временные значения для редактирования
         let tempName = 'Pingster';
         let tempAvatar = '👤';
         let tempAge = '21';
@@ -1692,6 +1709,9 @@
         let savedAge = '21';
         let savedSteam = 'steamcommunity.com/id/pingster';
         let savedFaceitLink = '—';
+        let savedCoins = 1000;
+        let savedOwnedNicks = [];
+        let savedOwnedFrames = [];
 
         // Данные магазина
         let coins = 1000;
@@ -1721,22 +1741,167 @@
             { id: 'rainbow', name: 'Радужная рамка', class: 'frame-rainbow', price: 300 }
         ];
 
-        function generateFriends() {
-            friendsData = [];
-            for (let i = 7; i < 17; i++) {
-                const num = i.toString().padStart(3, '0');
-                const idLength = Math.floor(Math.random() * 6) + 5;
-                const friendId = Math.random().toString(16).substring(2, 2 + idLength);
+        // ==============================================
+        // ФУНКЦИИ ДЛЯ РАБОТЫ С SUPABASE
+        // ==============================================
+
+        // Создать или получить пользователя
+        async function getOrCreateUser() {
+            // Пока используем тестовый ID (потом заменим на Telegram ID)
+            const testUserId = 'test_user_1';
+            
+            // Ищем пользователя
+            let { data: user, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('username', testUserId)
+                .maybeSingle();
+            
+            if (error) {
+                console.error('Ошибка поиска пользователя:', error);
+                return null;
+            }
+            
+            // Если пользователь не найден, создаем нового
+            if (!user) {
+                const { data: newUser, error: createError } = await supabase
+                    .from('users')
+                    .insert({
+                        username: testUserId,
+                        avatar: '👤',
+                        age: 21,
+                        steam_link: 'steamcommunity.com/id/pingster',
+                        faceit_link: '—',
+                        coins: 1000,
+                        owned_nicks: [],
+                        owned_frames: []
+                    })
+                    .select()
+                    .single();
                 
+                if (createError) {
+                    console.error('Ошибка создания пользователя:', createError);
+                    return null;
+                }
+                
+                user = newUser;
+            }
+            
+            return user;
+        }
+
+        // Сохранить пользователя в БД
+        async function saveUserToDB() {
+            if (!currentUserId) return;
+            
+            const { error } = await supabase
+                .from('users')
+                .update({
+                    username: savedName,
+                    avatar: savedAvatar,
+                    age: parseInt(savedAge),
+                    steam_link: savedSteam,
+                    faceit_link: savedFaceitLink,
+                    coins: coins,
+                    owned_nicks: ownedNicks,
+                    owned_frames: ownedFrames
+                })
+                .eq('id', currentUserId);
+            
+            if (error) {
+                console.error('Ошибка сохранения:', error);
+                alert('Ошибка при сохранении в базу данных');
+            } else {
+                console.log('Профиль сохранен в БД');
+            }
+        }
+
+        // Загрузить данные пользователя из БД
+        async function loadUserFromDB() {
+            const user = await getOrCreateUser();
+            if (!user) return;
+            
+            currentUserId = user.id;
+            
+            // Загружаем данные
+            savedName = user.username || 'Pingster';
+            savedAvatar = user.avatar || '👤';
+            savedAge = user.age?.toString() || '21';
+            savedSteam = user.steam_link || 'steamcommunity.com/id/pingster';
+            savedFaceitLink = user.faceit_link || '—';
+            coins = user.coins || 1000;
+            ownedNicks = user.owned_nicks || [];
+            ownedFrames = user.owned_frames || [];
+            
+            // Обновляем переменные
+            savedCoins = coins;
+            savedOwnedNicks = [...ownedNicks];
+            savedOwnedFrames = [...ownedFrames];
+            
+            tempName = savedName;
+            tempAvatar = savedAvatar;
+            tempAge = savedAge;
+            tempSteam = savedSteam;
+            tempFaceitLink = savedFaceitLink;
+            
+            // Обновляем интерфейс
+            loadSavedValues();
+            renderShop();
+            
+            // Загружаем друзей
+            await loadFriendsFromDB();
+        }
+
+        // Загрузить друзей из БД
+        async function loadFriendsFromDB() {
+            if (!currentUserId) return;
+            
+            // Пока генерируем тестовых друзей, потом будем брать из таблицы friends
+            friendsData = [];
+            for (let i = 0; i < 10; i++) {
+                const num = (i + 7).toString().padStart(3, '0');
                 friendsData.push({
-                    avatar: ['😼','🤖','👾','🎮','😎','👻','💀','😱','🤠','🥷'][i-7],
+                    avatar: ['😼','🤖','👾','🎮','😎','👻','💀','😱','🤠','🥷'][i],
                     name: `abs${num}`,
-                    id: friendId,
+                    id: Math.random().toString(16).substring(2, 10),
                     steam: `steamcommunity.com/id/abs${num}`
                 });
             }
             renderFriendsList();
         }
+
+        // Создать поиск в БД
+        async function createSearchInDB(mode, rankValue, playStyle, comment) {
+            if (!currentUserId) {
+                alert('Сначала загрузите профиль');
+                return null;
+            }
+            
+            const { data, error } = await supabase
+                .from('searches')
+                .insert({
+                    user_id: currentUserId,
+                    mode: mode,
+                    rank_value: rankValue,
+                    play_style: playStyle,
+                    comment: comment,
+                    status: 'searching'
+                })
+                .select()
+                .single();
+            
+            if (error) {
+                console.error('Ошибка создания поиска:', error);
+                alert('Ошибка при создании поиска');
+                return null;
+            }
+            
+            return data;
+        }
+
+        // ==============================================
+        // ФУНКЦИИ ИНТЕРФЕЙСА (ТВОИ, НО ДОПОЛНЕННЫЕ)
+        // ==============================================
 
         function renderFriendsList() {
             const friendsList = document.getElementById('friendsList');
@@ -1758,7 +1923,7 @@
                     <div class="friend-info">
                         <div class="friend-name-row">
                             <div class="friend-name">${friend.name}</div>
-                            <div class="friend-id">${friend.id}</div>
+                            <div class="friend-id">${friend.id.substring(0, 6)}</div>
                         </div>
                         <div class="friend-steam">${friend.steam}</div>
                     </div>
@@ -1892,6 +2057,7 @@
                 }
                 
                 renderShop();
+                saveUserToDB(); // Сохраняем в БД
                 alert(`Вы купили ${nick.name} ник!`);
             } else {
                 alert('Недостаточно Pingcoins!');
@@ -1918,6 +2084,7 @@
                 }
                 
                 renderShop();
+                saveUserToDB(); // Сохраняем в БД
                 alert(`Вы купили ${frame.name}!`);
             } else {
                 alert('Недостаточно Pingcoins!');
@@ -1930,6 +2097,7 @@
             document.getElementById('ageValue').textContent = savedAge;
             document.getElementById('steamDisplay').textContent = savedSteam;
             document.getElementById('faceitLinkDisplay').textContent = savedFaceitLink;
+            document.getElementById('coinsAmount').textContent = coins;
             
             // Восстанавливаем классы ника и рамки
             const profileName = document.getElementById('profileName');
@@ -2011,6 +2179,7 @@
             savedFaceitLink = tempFaceitLink;
             
             loadSavedValues();
+            saveUserToDB(); // Сохраняем в БД
             toggleEditMode();
         }
 
@@ -2070,8 +2239,20 @@
             element.classList.add('active');
         }
 
-        function startSearch(mode, value) {
-            alert(`Поиск в режиме ${mode} с данными: ${value} начат! 🔍`);
+        async function startSearch(mode, value) {
+            if (!currentUserId) {
+                alert('Сначала загрузите профиль');
+                return;
+            }
+            
+            const style = document.querySelector('.style-option.active')?.classList.contains('fan') ? 'fan' : 'tryhard';
+            const comment = document.querySelector('.comment-input')?.value || '';
+            
+            const search = await createSearchInDB(mode, value, style, comment);
+            
+            if (search) {
+                alert(`✅ Поиск в режиме ${mode} начат! ID: ${search.id.substring(0, 8)}...`);
+            }
         }
 
         function startApp() {
@@ -2168,13 +2349,20 @@
             });
         }
 
-        window.onload = function() {
-            generateFriends();
+        // Инициализация при загрузке
+        window.onload = async function() {
+            // Загружаем пользователя из БД
+            await loadUserFromDB();
+            
+            // Рендерим магазин
             renderShop();
+            
+            // Показываем стартовый экран
             hideAllScreens();
             document.getElementById('startScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
-            loadSavedValues();
+            
+            // Обновляем UI поиска
             updateSearchUI();
         };
     </script>
