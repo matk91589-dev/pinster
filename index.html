@@ -1133,7 +1133,7 @@
         }
 
         .screen-start, .screen-main, .screen-profile, .screen-settings, .screen-shop,
-        .screen-faceit, .screen-premier, .screen-prime, .screen-public {
+        .screen-faceit, .screen-premier, .screen-prime, .screen-public, .screen-search {
             display: none;
             flex-direction: column;
             height: 100%;
@@ -1145,6 +1145,84 @@
             font-size: 12px;
             color: #9BA1B0;
             margin-bottom: 4px;
+        }
+
+        /* НОВЫЙ ЭКРАН ПОИСКА */
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0 20px 0;
+            border-bottom: 1px solid #1E2128;
+            margin-bottom: 20px;
+        }
+        
+        .search-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FF6B4A;
+        }
+        
+        .search-timer {
+            font-size: 20px;
+            font-weight: 600;
+            color: #FFFFFF;
+            background: #1A1D24;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #2A2F3A;
+        }
+        
+        .search-status {
+            text-align: center;
+            font-size: 16px;
+            color: #9BA1B0;
+            margin: 20px 0 40px 0;
+        }
+        
+        .search-loading {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #2A2F3A;
+            border-top: 4px solid #FF6B4A;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .cancel-search-btn {
+            width: 100%;
+            padding: 18px;
+            background: transparent;
+            border: 2px solid #FF6B4A;
+            border-radius: 12px;
+            color: #FF6B4A;
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 20px 0 10px 0;
+        }
+        
+        .cancel-search-btn:hover {
+            background: #FF6B4A;
+            color: white;
+        }
+        
+        .cancel-search-btn:active {
+            transform: scale(0.98);
         }
     </style>
     
@@ -1678,6 +1756,22 @@
 
                 <button class="primary-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
             </div>
+
+            <!-- ЭКРАН ПОИСКА (НОВЫЙ) -->
+            <div id="searchScreen" class="screen screen-search">
+                <div class="search-header">
+                    <div class="search-title" id="searchModeTitle">FACEIT</div>
+                    <div class="search-timer" id="searchTimer">00:00</div>
+                </div>
+                
+                <div class="search-status">Поиск тиммейта начат</div>
+                
+                <div class="search-loading">
+                    <div class="spinner"></div>
+                </div>
+                
+                <button class="cancel-search-btn" onclick="cancelSearch()">Отменить поиск</button>
+            </div>
         </div>
 
         <div class="home-bar"></div>
@@ -1747,7 +1841,6 @@
                 return;
             }
             
-            // Сразу открываем галерею без лишних вопросов
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
@@ -2048,7 +2141,6 @@
             }
         }
 
-        // Функции для изменения возраста на страницах поиска
         function editFaceitAge() {
             const newAge = prompt('Введите возраст:', tempAge === '-' ? '' : tempAge);
             if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= 100) {
@@ -2079,6 +2171,55 @@
                 document.getElementById('publicAgeValue').textContent = newAge;
                 tempAge = newAge;
             }
+        }
+
+        // ============================================
+        // НОВЫЙ ЭКРАН ПОИСКА И ТАЙМЕР
+        // ============================================
+        let searchTimerInterval = null;
+        let searchSeconds = 0;
+        
+        function showSearchScreen(mode) {
+            hideAllScreens();
+            
+            document.getElementById('searchModeTitle').textContent = mode;
+            document.getElementById('searchScreen').style.display = 'flex';
+            
+            resetTimer();
+            startTimer();
+        }
+        
+        function startTimer() {
+            searchSeconds = 0;
+            updateTimerDisplay();
+            
+            if (searchTimerInterval) clearInterval(searchTimerInterval);
+            
+            searchTimerInterval = setInterval(() => {
+                searchSeconds++;
+                updateTimerDisplay();
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(searchSeconds / 60);
+            const seconds = searchSeconds % 60;
+            document.getElementById('searchTimer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function resetTimer() {
+            if (searchTimerInterval) {
+                clearInterval(searchTimerInterval);
+                searchTimerInterval = null;
+            }
+            searchSeconds = 0;
+            updateTimerDisplay();
+        }
+        
+        function cancelSearch() {
+            resetTimer();
+            showMainScreen();
         }
 
         // ============================================
@@ -2129,7 +2270,6 @@
             document.getElementById('settingsIcon').classList.remove('active');
             loadSavedValues();
             
-            // Обновляем возраст на странице
             document.getElementById('faceitAgeValue').textContent = savedAge;
             document.getElementById('faceitSteamInput').value = savedSteam;
             document.getElementById('faceitLinkInput').value = savedFaceitLink;
@@ -2166,8 +2306,10 @@
         }
 
         function hideAllScreens() {
-            const screens = ['startScreen', 'mainScreen', 'profileScreen', 'settingsScreen', 'shopScreen',
-                           'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen'];
+            const screens = [
+                'startScreen', 'mainScreen', 'profileScreen', 'settingsScreen', 'shopScreen',
+                'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen', 'searchScreen'
+            ];
             screens.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
@@ -2411,7 +2553,9 @@
         }
 
         function startSearch(mode, value) {
-            alert(`Поиск в режиме ${mode} с данными: ${value} начат! 🔍`);
+            // Вместо alert показываем экран поиска
+            showSearchScreen(mode);
+            console.log(`Поиск в режиме ${mode} с данными: ${value}`);
         }
 
         // ============================================
