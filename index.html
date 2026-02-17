@@ -208,6 +208,12 @@
             text-align: center;
         }
 
+        /* Главная - опускаем заголовки на 20px */
+        .main-screen .section-title,
+        .main-screen .section-subtitle {
+            margin-top: 20px;
+        }
+
         .start-screen {
             display: flex;
             flex-direction: column;
@@ -1184,7 +1190,7 @@
             </div>
 
             <!-- ГЛАВНЫЙ ЭКРАН с 4 режимами -->
-            <div id="mainScreen" class="screen screen-main">
+            <div id="mainScreen" class="screen screen-main main-screen">
                 <div class="section-title">Выбор режима</div>
                 <div class="section-subtitle">Выберите для вас подходящий режим</div>
 
@@ -1296,7 +1302,7 @@
             <div id="profileScreen" class="screen screen-profile">
                 <div class="title-row">
                     <div class="title-left">
-                        <div class="section-title">Профиль</div>
+                        <div class="section-title">Ваш профиль</div>
                         <div class="edit-controls">
                             <div id="editToggle" class="edit-title-icon" onclick="toggleEditMode()">
                                 <svg viewBox="0 0 24 24">
@@ -1320,7 +1326,7 @@
                             ваш никнейм
                         </div>
                         <div class="profile-name-row">
-                            <span id="profileName" class="profile-name" onclick="editName()">Pingster</span>
+                            <span id="profileName" class="profile-name" onclick="editName()">-</span>
                             <span class="profile-status">НОВИЧОК</span>
                         </div>
                     </div>
@@ -1342,19 +1348,19 @@
                     </div>
                     <div class="stat-card" id="ageCard" onclick="editAge()">
                         <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="ageValue">21</div>
+                        <div class="stat-value" id="ageValue">-</div>
                     </div>
                 </div>
 
                 <div class="profile-stats">
                     <div class="profile-stat-card" id="steamCard" onclick="editSteam()">
                         <div class="profile-stat-label">Ссылка Steam</div>
-                        <div class="profile-stat-value" id="steamDisplay">steamcommunity.com/id/pingster</div>
+                        <div class="profile-stat-value" id="steamDisplay">-</div>
                     </div>
 
                     <div class="profile-stat-card" id="faceitLinkCard" onclick="editFaceitLink()">
                         <div class="profile-stat-label">Ссылка Faceit</div>
-                        <div class="profile-stat-value" id="faceitLinkDisplay">—</div>
+                        <div class="profile-stat-value" id="faceitLinkDisplay">-</div>
                     </div>
                 </div>
 
@@ -1456,14 +1462,14 @@
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                     <div class="mode-title faceit">FACEIT</div>
                 </div>
-                <div class="mode-subtitle">введите текущие данные</div>
+                <div class="mode-subtitle">введите ваши актуальные данные</div>
                 
                 <div class="input-label">Faceit ELO</div>
                 <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="4000" min="0" max="5000">
                 
                 <div class="stats-row">
                     <div class="stat-card">
-                        <div class="stat-label">Ваш рейтинг</div>
+                        <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">
                             0
                             <span class="heart-icon">
@@ -1474,7 +1480,7 @@
                             </span>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" onclick="editFaceitAge()">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value" id="faceitAgeValue">21</div>
                     </div>
@@ -1505,14 +1511,14 @@
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                     <div class="mode-title premier">PREMIER</div>
                 </div>
-                <div class="mode-subtitle">введите текущие данные</div>
+                <div class="mode-subtitle">введите ваши актуальные данные</div>
                 
                 <div class="input-label">CS Rating</div>
                 <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="12500" min="0" max="35000">
                 
                 <div class="stats-row">
                     <div class="stat-card">
-                        <div class="stat-label">Ваш рейтинг</div>
+                        <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">
                             0
                             <span class="heart-icon">
@@ -1523,7 +1529,7 @@
                             </span>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" onclick="editPremierAge()">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value" id="premierAgeValue">21</div>
                     </div>
@@ -1551,7 +1557,7 @@
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                     <div class="mode-title prime">MM PRIME</div>
                 </div>
-                <div class="mode-subtitle">введите текущие данные</div>
+                <div class="mode-subtitle">введите ваши актуальные данные</div>
                 
                 <div class="input-label">Звание</div>
                 <select class="rank-select" id="primeRankSelect">
@@ -1576,7 +1582,7 @@
                 
                 <div class="stats-row">
                     <div class="stat-card">
-                        <div class="stat-label">Ваш рейтинг</div>
+                        <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">
                             0
                             <span class="heart-icon">
@@ -1587,7 +1593,7 @@
                             </span>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" onclick="editPrimeAge()">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value" id="primeAgeValue">21</div>
                     </div>
@@ -1615,7 +1621,7 @@
                     <button class="back-btn" onclick="showMainScreen()">←</button>
                     <div class="mode-title public">MM PUBLIC</div>
                 </div>
-                <div class="mode-subtitle">введите текущие данные</div>
+                <div class="mode-subtitle">введите ваши актуальные данные</div>
                 
                 <div class="input-label">Звание</div>
                 <select class="rank-select" id="publicRankSelect">
@@ -1640,7 +1646,7 @@
                 
                 <div class="stats-row">
                     <div class="stat-card">
-                        <div class="stat-label">Ваш рейтинг</div>
+                        <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">
                             0
                             <span class="heart-icon">
@@ -1651,7 +1657,7 @@
                             </span>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" onclick="editPublicAge()">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value" id="publicAgeValue">21</div>
                     </div>
@@ -1691,17 +1697,17 @@
         let editMode = false;
         let currentUserId = 'pingster_' + Date.now();
         
-        let tempName = 'Pingster';
+        let tempName = '-';
         let tempAvatar = '👤';
-        let tempAge = '21';
-        let tempSteam = 'steamcommunity.com/id/pingster';
-        let tempFaceitLink = '—';
+        let tempAge = '-';
+        let tempSteam = '-';
+        let tempFaceitLink = '-';
 
-        let savedName = 'Pingster';
+        let savedName = '-';
         let savedAvatar = '👤';
-        let savedAge = '21';
-        let savedSteam = 'steamcommunity.com/id/pingster';
-        let savedFaceitLink = '—';
+        let savedAge = '-';
+        let savedSteam = '-';
+        let savedFaceitLink = '-';
         let savedCoins = 1000;
         let savedOwnedNicks = [];
         let savedOwnedFrames = [];
@@ -1741,19 +1747,13 @@
                 return;
             }
             
-            const action = confirm('Выберите действие:\nОК - выбрать из галереи\nОтмена - вставить из буфера (Ctrl+V)');
-            
-            if (action) {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
-                input.capture = 'environment';
-                input.onchange = (e) => handleFileSelect(e.target.files[0]);
-                input.click();
-            } else {
-                alert('Теперь нажмите Ctrl+V для вставки изображения');
-                document.addEventListener('paste', handlePaste, { once: true });
-            }
+            // Сразу открываем галерею без лишних вопросов
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.capture = 'environment';
+            input.onchange = (e) => handleFileSelect(e.target.files[0]);
+            input.click();
         }
 
         function handleFileSelect(file) {
@@ -1776,17 +1776,6 @@
                 uploadAvatar(file);
             };
             reader.readAsDataURL(file);
-        }
-
-        function handlePaste(event) {
-            const items = event.clipboardData.items;
-            for (let item of items) {
-                if (item.type.indexOf('image') !== -1) {
-                    const file = item.getAsFile();
-                    handleFileSelect(file);
-                    break;
-                }
-            }
         }
 
         function setupDragAndDrop() {
@@ -1865,25 +1854,27 @@
                 let { data: user, error: selectError } = await supabaseClient
                     .from('users')
                     .select('*')
-                    .eq('username', savedName)
+                    .eq('username', savedName === '-' ? 'pingster_user' : savedName)
                     .maybeSingle();
                 
                 if (selectError) throw selectError;
                 
+                const userData = {
+                    username: savedName === '-' ? 'pingster_user' : savedName,
+                    avatar: savedAvatar.startsWith('http') ? null : savedAvatar,
+                    avatar_url: savedAvatar.startsWith('http') ? savedAvatar : null,
+                    age: savedAge === '-' ? null : parseInt(savedAge),
+                    steam_link: savedSteam === '-' ? null : savedSteam,
+                    faceit_link: savedFaceitLink === '-' ? null : savedFaceitLink,
+                    coins: coins,
+                    owned_nicks: ownedNicks,
+                    owned_frames: ownedFrames
+                };
+                
                 if (user) {
                     const { error } = await supabaseClient
                         .from('users')
-                        .update({
-                            username: savedName,
-                            avatar: savedAvatar.startsWith('http') ? null : savedAvatar,
-                            avatar_url: savedAvatar.startsWith('http') ? savedAvatar : null,
-                            age: parseInt(savedAge),
-                            steam_link: savedSteam,
-                            faceit_link: savedFaceitLink,
-                            coins: coins,
-                            owned_nicks: ownedNicks,
-                            owned_frames: ownedFrames
-                        })
+                        .update(userData)
                         .eq('id', user.id);
                     
                     if (error) throw error;
@@ -1891,17 +1882,7 @@
                 } else {
                     const { error } = await supabaseClient
                         .from('users')
-                        .insert({
-                            username: savedName,
-                            avatar: savedAvatar.startsWith('http') ? null : savedAvatar,
-                            avatar_url: savedAvatar.startsWith('http') ? savedAvatar : null,
-                            age: parseInt(savedAge),
-                            steam_link: savedSteam,
-                            faceit_link: savedFaceitLink,
-                            coins: coins,
-                            owned_nicks: ownedNicks,
-                            owned_frames: ownedFrames
-                        });
+                        .insert(userData);
                     
                     if (error) throw error;
                     console.log('Новый пользователь создан');
@@ -1920,16 +1901,16 @@
                 const { data: user, error } = await supabaseClient
                     .from('users')
                     .select('*')
-                    .eq('username', savedName)
+                    .eq('username', 'pingster_user')
                     .maybeSingle();
                 
                 if (error) throw error;
                 
                 if (user) {
-                    savedName = user.username || 'Pingster';
-                    savedAge = user.age?.toString() || '21';
-                    savedSteam = user.steam_link || 'steamcommunity.com/id/pingster';
-                    savedFaceitLink = user.faceit_link || '—';
+                    savedName = user.username || '-';
+                    savedAge = user.age?.toString() || '-';
+                    savedSteam = user.steam_link || '-';
+                    savedFaceitLink = user.faceit_link || '-';
                     coins = user.coins || 1000;
                     ownedNicks = user.owned_nicks || [];
                     ownedFrames = user.owned_frames || [];
@@ -2033,7 +2014,7 @@
 
         function editName() {
             if (!editMode) return;
-            const newName = prompt('Введите новый никнейм (3-10 символов):', tempName);
+            const newName = prompt('Введите новый никнейм (3-10 символов):', tempName === '-' ? '' : tempName);
             if (newName && newName.length >= 3 && newName.length <= 10) {
                 tempName = newName;
                 document.getElementById('profileName').textContent = newName;
@@ -2042,7 +2023,7 @@
 
         function editAge() {
             if (!editMode) return;
-            const newAge = prompt('Введите возраст:', tempAge);
+            const newAge = prompt('Введите возраст:', tempAge === '-' ? '' : tempAge);
             if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= 100) {
                 tempAge = newAge;
                 document.getElementById('ageValue').textContent = newAge;
@@ -2051,7 +2032,7 @@
 
         function editSteam() {
             if (!editMode) return;
-            const newSteam = prompt('Введите ссылку на Steam:', tempSteam);
+            const newSteam = prompt('Введите ссылку на Steam:', tempSteam === '-' ? '' : tempSteam);
             if (newSteam) {
                 tempSteam = newSteam;
                 document.getElementById('steamDisplay').textContent = newSteam;
@@ -2060,10 +2041,43 @@
 
         function editFaceitLink() {
             if (!editMode) return;
-            const newLink = prompt('Введите ссылку на Faceit:', tempFaceitLink === '—' ? '' : tempFaceitLink);
+            const newLink = prompt('Введите ссылку на Faceit:', tempFaceitLink === '-' ? '' : tempFaceitLink);
             if (newLink !== null) {
-                tempFaceitLink = newLink || '—';
+                tempFaceitLink = newLink || '-';
                 document.getElementById('faceitLinkDisplay').textContent = tempFaceitLink;
+            }
+        }
+
+        // Функции для изменения возраста на страницах поиска
+        function editFaceitAge() {
+            const newAge = prompt('Введите возраст:', tempAge === '-' ? '' : tempAge);
+            if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= 100) {
+                document.getElementById('faceitAgeValue').textContent = newAge;
+                tempAge = newAge;
+            }
+        }
+
+        function editPremierAge() {
+            const newAge = prompt('Введите возраст:', tempAge === '-' ? '' : tempAge);
+            if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= 100) {
+                document.getElementById('premierAgeValue').textContent = newAge;
+                tempAge = newAge;
+            }
+        }
+
+        function editPrimeAge() {
+            const newAge = prompt('Введите возраст:', tempAge === '-' ? '' : tempAge);
+            if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= 100) {
+                document.getElementById('primeAgeValue').textContent = newAge;
+                tempAge = newAge;
+            }
+        }
+
+        function editPublicAge() {
+            const newAge = prompt('Введите возраст:', tempAge === '-' ? '' : tempAge);
+            if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= 100) {
+                document.getElementById('publicAgeValue').textContent = newAge;
+                tempAge = newAge;
             }
         }
 
@@ -2114,6 +2128,11 @@
             document.getElementById('faceitScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
             loadSavedValues();
+            
+            // Обновляем возраст на странице
+            document.getElementById('faceitAgeValue').textContent = savedAge;
+            document.getElementById('faceitSteamInput').value = savedSteam;
+            document.getElementById('faceitLinkInput').value = savedFaceitLink;
         }
 
         function showPremierScreen() {
@@ -2121,6 +2140,9 @@
             document.getElementById('premierScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
             loadSavedValues();
+            
+            document.getElementById('premierAgeValue').textContent = savedAge;
+            document.getElementById('premierSteamInput').value = savedSteam;
         }
 
         function showPrimeScreen() {
@@ -2128,6 +2150,9 @@
             document.getElementById('primeScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
             loadSavedValues();
+            
+            document.getElementById('primeAgeValue').textContent = savedAge;
+            document.getElementById('primeSteamInput').value = savedSteam;
         }
 
         function showPublicScreen() {
@@ -2135,6 +2160,9 @@
             document.getElementById('publicScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
             loadSavedValues();
+            
+            document.getElementById('publicAgeValue').textContent = savedAge;
+            document.getElementById('publicSteamInput').value = savedSteam;
         }
 
         function hideAllScreens() {
@@ -2405,5 +2433,3 @@
     </script>
 </body>
 </html>
-
-
