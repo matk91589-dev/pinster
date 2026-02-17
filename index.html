@@ -1746,24 +1746,82 @@
         // ============================================
         
         // Функция для создания тестового пользователя (без реальной БД)
-        async function saveUserToDB() {
-            console.log('🟢 Сохраняем данные в БД:', {
-                savedName,
-                savedAvatar,
-                savedAge,
-                savedSteam,
-                savedFaceitLink,
-                coins,
-                ownedNicks,
-                ownedFrames
-            });
-            
-            // Здесь будет реальный код для Supabase
-            // Пока просто показываем сообщение
-            alert('✅ Данные сохранены (тестовый режим)');
-            
-            return true;
+async function saveUserToDB() {
+    console.log('🟢 Сохраняем данные в БД...');
+    
+    // Если нет пользователя - создаём тестовый ID
+    if (!currentUserId) {
+        currentUserId = 'test_user_1';
+    }
+    
+    try {
+        // Проверяем, есть ли пользователь в базе
+        let { data: user, error: selectError } = await supabaseClient
+            .from('users')
+            .select('*')
+            .eq('username', currentUserId)
+            .maybeSingle();
+        
+        if (selectError) {
+            console.error('Ошибка при поиске пользователя:', selectError);
+            alert('Ошибка при поиске пользователя: ' + selectError.message);
+            return false;
         }
+        
+        let result;
+        
+        if (user) {
+            // Обновляем существующего пользователя
+            console.log('Обновляем пользователя:', user.id);
+            const { data, error } = await supabaseClient
+                .from('users')
+                .update({
+                    username: savedName,
+                    avatar: savedAvatar,
+                    age: parseInt(savedAge),
+                    steam_link: savedSteam,
+                    faceit_link: savedFaceitLink,
+                    coins: coins,
+                    owned_nicks: ownedNicks,
+                    owned_frames: ownedFrames
+                })
+                .eq('id', user.id)
+                .select();
+            
+            if (error) throw error;
+            result = data;
+            console.log('✅ Пользователь обновлён');
+        } else {
+            // Создаём нового пользователя
+            console.log('Создаём нового пользователя');
+            const { data, error } = await supabaseClient
+                .from('users')
+                .insert({
+                    username: savedName,
+                    avatar: savedAvatar,
+                    age: parseInt(savedAge),
+                    steam_link: savedSteam,
+                    faceit_link: savedFaceitLink,
+                    coins: coins,
+                    owned_nicks: ownedNicks,
+                    owned_frames: ownedFrames
+                })
+                .select();
+            
+            if (error) throw error;
+            result = data;
+            console.log('✅ Новый пользователь создан');
+        }
+        
+        alert('✅ Профиль сохранён в базу данных!');
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Ошибка сохранения:', error);
+        alert('Ошибка при сохранении: ' + error.message);
+        return false;
+    }
+}
 
         // ============================================
         // ФУНКЦИИ НАВИГАЦИИ
@@ -2270,3 +2328,4 @@
     </script>
 </body>
 </html>
+
