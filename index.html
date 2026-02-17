@@ -208,67 +208,61 @@
             text-align: center;
         }
 
-        /* Главная - опускаем заголовки на 20px */
-        .main-screen .section-title,
-        .main-screen .section-subtitle {
-            margin-top: 20px;
-        }
-
         .start-screen {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
+            padding-top: 30px;
             height: 100%;
         }
 
-        .start-title {
-            font-size: 32px;
+        .start-logo {
+            font-size: 42px;
             font-weight: 700;
-            text-align: center;
-            margin-bottom: 20px;
             color: #FFFFFF;
             letter-spacing: -0.5px;
+            margin-bottom: 30px;
         }
 
-        .start-title .ping {
+        .start-logo .ping {
             color: #FF6B4A;
         }
 
-        .start-image-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 15px 0 25px 0;
-        }
-
-        .start-image {
-            width: 180px;
-            height: auto;
-            border-radius: 16px;
-            border: 1px solid #2A2F3A;
-        }
-
-        .info-card {
+        .start-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
             background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-
-        .info-text {
-            font-size: 14px;
+            border: 3px solid #2A2F3A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
             color: #9BA1B0;
-            text-align: center;
-            line-height: 1.5;
+            margin-bottom: 40px;
+            overflow: hidden;
         }
 
-        .info-text span {
-            color: #FF6B4A;
-            font-weight: 500;
+        .start-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .start-description-box {
+            border: 2px solid #FF6B4A;
+            border-radius: 16px;
+            padding: 20px 16px;
+            margin: 0 10px 30px 10px;
+            background: #1A1D24;
+        }
+
+        .start-description {
+            color: #FFFFFF;
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: center;
         }
 
         .primary-btn {
@@ -361,7 +355,6 @@
             font-size: 18px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
             cursor: pointer;
             text-align: left;
             position: relative;
@@ -1234,7 +1227,7 @@
         <div class="content">
             <!-- Хедер с кликабельным логотипом -->
             <div class="header">
-                <div class="logo" onclick="showMainScreen()">
+                <div class="logo" onclick="handleLogoClick()">
                     <span class="ping">Ping</span><span class="ster">ster</span>
                 </div>
                 <div id="settingsIcon" class="icon-settings" onclick="showSettingsScreen()">
@@ -1244,23 +1237,23 @@
                     </svg>
                 </div>
             </div>
-
-            <!-- СТАРТОВЫЙ ЭКРАН -->
+                        <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
-                <div class="start-title">
+                <div class="start-logo">
                     <span class="ping">Ping</span><span class="ster">ster</span>
                 </div>
                 
-                <div class="start-image-container">
-                    <img src=".....jpg" alt="Pingster Logo" class="start-image">
-                </div>
-
-                <div class="info-card">
-                    <div class="info-text">
-                        Найдите тиммейтов для <span>CS2</span> за 20 секунд
+                <div class="start-avatar" id="startAvatar">👤</div>
+                
+                <div class="start-description-box">
+                    <div class="start-description">
+                        Pingster — площадка, где вы можете найти тиммейта за 30 секунд.<br>
+                        Быстро, просто, без смс.<br>
+                        Здесь можно находить друзей и просто тиммейта на одну катку.<br>
+                        Фаниться или апать звания.
                     </div>
                 </div>
-
+                
                 <button class="primary-btn" onclick="startApp()">Начать</button>
                 <div class="online-counter">
                     более 1000+ игроков онлайн
@@ -1268,9 +1261,9 @@
             </div>
 
             <!-- ГЛАВНЫЙ ЭКРАН с 4 режимами -->
-            <div id="mainScreen" class="screen screen-main main-screen">
+            <div id="mainScreen" class="screen screen-main">
                 <div class="section-title">Выбор режима</div>
-                <div class="section-subtitle">Выберите для вас подходящий режим</div>
+                <div class="section-subtitle">Подберите подходящий</div>
 
                 <div class="mode-container">
                     <button class="mode-btn faceit" onclick="showFaceitScreen()">FACEIT</button>
@@ -1788,6 +1781,7 @@
         // ============================================
         // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
         // ============================================
+        let lastModeScreen = 'faceitScreen';
         let editMode = false;
         let currentUserId = 'pingster_' + Date.now();
         
@@ -1832,6 +1826,21 @@
         ];
 
         // ============================================
+        // ФУНКЦИИ ДЛЯ ЛОГОТИПА
+        // ============================================
+        function handleLogoClick() {
+            if (document.getElementById('searchScreen').style.display === 'flex') {
+                alert('Сначала отмените поиск');
+                return;
+            }
+            if (document.getElementById('startScreen').style.display === 'flex') return;
+            
+            hideAllScreens();
+            document.getElementById('mainScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.remove('active');
+        }
+
+        // ============================================
         // ЗАГРУЗКА АВАТАРКИ
         // ============================================
         
@@ -1866,6 +1875,8 @@
             reader.onload = (e) => {
                 const avatarDiv = document.getElementById('profileAvatar');
                 avatarDiv.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                const startAvatar = document.getElementById('startAvatar');
+                if (startAvatar) startAvatar.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
                 uploadAvatar(file);
             };
             reader.readAsDataURL(file);
@@ -1903,6 +1914,17 @@
             if (!file) return;
             
             console.log('Загружаем аватарку...');
+            
+            if (savedAvatar && savedAvatar.includes('supabase')) {
+                try {
+                    const oldFilePath = savedAvatar.split('/avatars/')[1];
+                    if (oldFilePath) {
+                        await supabaseClient.storage.from('avatars').remove([oldFilePath]);
+                    }
+                } catch (e) {
+                    console.log('Не удалось удалить старую аватарку', e);
+                }
+            }
             
             const fileExt = file.name.split('.').pop() || 'jpg';
             const fileName = `${currentUserId}-${Date.now()}.${fileExt}`;
@@ -2174,55 +2196,6 @@
         }
 
         // ============================================
-        // НОВЫЙ ЭКРАН ПОИСКА И ТАЙМЕР
-        // ============================================
-        let searchTimerInterval = null;
-        let searchSeconds = 0;
-        
-        function showSearchScreen(mode) {
-            hideAllScreens();
-            
-            document.getElementById('searchModeTitle').textContent = mode;
-            document.getElementById('searchScreen').style.display = 'flex';
-            
-            resetTimer();
-            startTimer();
-        }
-        
-        function startTimer() {
-            searchSeconds = 0;
-            updateTimerDisplay();
-            
-            if (searchTimerInterval) clearInterval(searchTimerInterval);
-            
-            searchTimerInterval = setInterval(() => {
-                searchSeconds++;
-                updateTimerDisplay();
-            }, 1000);
-        }
-        
-        function updateTimerDisplay() {
-            const minutes = Math.floor(searchSeconds / 60);
-            const seconds = searchSeconds % 60;
-            document.getElementById('searchTimer').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-        
-        function resetTimer() {
-            if (searchTimerInterval) {
-                clearInterval(searchTimerInterval);
-                searchTimerInterval = null;
-            }
-            searchSeconds = 0;
-            updateTimerDisplay();
-        }
-        
-        function cancelSearch() {
-            resetTimer();
-            showMainScreen();
-        }
-
-        // ============================================
         // ФУНКЦИИ НАВИГАЦИИ
         // ============================================
         function startApp() {
@@ -2265,6 +2238,7 @@
         }
 
         function showFaceitScreen() {
+            lastModeScreen = 'faceitScreen';
             hideAllScreens();
             document.getElementById('faceitScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
@@ -2276,6 +2250,7 @@
         }
 
         function showPremierScreen() {
+            lastModeScreen = 'premierScreen';
             hideAllScreens();
             document.getElementById('premierScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
@@ -2286,6 +2261,7 @@
         }
 
         function showPrimeScreen() {
+            lastModeScreen = 'primeScreen';
             hideAllScreens();
             document.getElementById('primeScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
@@ -2296,6 +2272,7 @@
         }
 
         function showPublicScreen() {
+            lastModeScreen = 'publicScreen';
             hideAllScreens();
             document.getElementById('publicScreen').style.display = 'flex';
             document.getElementById('settingsIcon').classList.remove('active');
@@ -2552,8 +2529,59 @@
             element.classList.add('active');
         }
 
+        // ============================================
+        // НОВЫЙ ЭКРАН ПОИСКА И ТАЙМЕР
+        // ============================================
+        let searchTimerInterval = null;
+        let searchSeconds = 0;
+        let currentSearchMode = '';
+        
+        function showSearchScreen(mode) {
+            currentSearchMode = mode;
+            hideAllScreens();
+            
+            document.getElementById('searchModeTitle').textContent = mode;
+            document.getElementById('searchScreen').style.display = 'flex';
+            
+            resetTimer();
+            startTimer();
+        }
+        
+        function startTimer() {
+            searchSeconds = 0;
+            updateTimerDisplay();
+            
+            if (searchTimerInterval) clearInterval(searchTimerInterval);
+            
+            searchTimerInterval = setInterval(() => {
+                searchSeconds++;
+                updateTimerDisplay();
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(searchSeconds / 60);
+            const seconds = searchSeconds % 60;
+            document.getElementById('searchTimer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function resetTimer() {
+            if (searchTimerInterval) {
+                clearInterval(searchTimerInterval);
+                searchTimerInterval = null;
+            }
+            searchSeconds = 0;
+            updateTimerDisplay();
+        }
+        
+        function cancelSearch() {
+            resetTimer();
+            hideAllScreens();
+            document.getElementById(lastModeScreen).style.display = 'flex';
+        }
+
         function startSearch(mode, value) {
-            // Вместо alert показываем экран поиска
             showSearchScreen(mode);
             console.log(`Поиск в режиме ${mode} с данными: ${value}`);
         }
@@ -2569,6 +2597,12 @@
             generateFriends();
             renderShop();
             
+            // Скрываем верхний логотип на стартовом экране
+            if (document.getElementById('startScreen').style.display === 'flex') {
+                document.querySelector('.header .logo').style.display = 'none';
+                document.querySelector('.header').style.borderBottom = 'none';
+            }
+            
             hideAllScreens();
             document.getElementById('startScreen').style.display = 'flex';
             
@@ -2577,5 +2611,3 @@
     </script>
 </body>
 </html>
-
-
