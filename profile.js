@@ -115,11 +115,27 @@ async function uploadAvatar(file) {
     }
 }
 
+// ============================================
+// ФУНКЦИЯ ДЛЯ ГЕНЕРАЦИИ СЛУЧАЙНОГО НИКА
+// ============================================
+function generateRandomName() {
+    const letters = 'abcdefghijklmnopqrstuvwxyz';
+    const length = Math.floor(Math.random() * 3) + 5; // 5-7 букв
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += letters.charAt(Math.floor(Math.random() * letters.length));
+    }
+    return result;
+}
+
+// ============================================
+// ЗАГРУЗКА ЗНАЧЕНИЙ В ПРОФИЛЬ
+// ============================================
 function loadSavedValues() {
     document.getElementById('profileName').textContent = savedName;
-    document.getElementById('ageValue').textContent = savedAge;
-    document.getElementById('steamDisplay').textContent = savedSteam;
-    document.getElementById('faceitLinkDisplay').textContent = savedFaceitLink;
+    document.getElementById('ageValue').textContent = savedAge === '-' ? '' : savedAge;
+    document.getElementById('steamDisplay').textContent = savedSteam === '-' ? '' : savedSteam;
+    document.getElementById('faceitLinkDisplay').textContent = savedFaceitLink === '-' ? '' : savedFaceitLink;
     document.getElementById('coinsAmount').textContent = coins;
     
     const avatarDiv = document.getElementById('profileAvatar');
@@ -149,6 +165,9 @@ function loadSavedValues() {
     tempFaceitLink = savedFaceitLink;
 }
 
+// ============================================
+// РЕЖИМ РЕДАКТИРОВАНИЯ
+// ============================================
 function toggleEditMode() {
     editMode = !editMode;
     console.log('editMode =', editMode);
@@ -179,6 +198,9 @@ function toggleEditMode() {
     }
 }
 
+// ============================================
+// ПРИМЕНЕНИЕ ИЗМЕНЕНИЙ
+// ============================================
 function applyChanges() {
     savedName = tempName;
     savedAvatar = tempAvatar;
@@ -191,6 +213,9 @@ function applyChanges() {
     toggleEditMode();
 }
 
+// ============================================
+// РЕДАКТИРОВАНИЕ ПОЛЕЙ
+// ============================================
 function editName() {
     if (!editMode) return;
     const newName = prompt('Введите новый никнейм (3-10 символов):', tempName === '-' ? '' : tempName);
@@ -225,4 +250,18 @@ function editFaceitLink() {
         tempFaceitLink = newLink || '-';
         document.getElementById('faceitLinkDisplay').textContent = tempFaceitLink;
     }
+}
+
+// ============================================
+// ИНИЦИАЛИЗАЦИЯ ПРОФИЛЯ (вызывать при старте)
+// ============================================
+function initProfile() {
+    // Если имя не задано (стоит прочерк) - генерируем случайное
+    if (savedName === '-') {
+        savedName = generateRandomName();
+        tempName = savedName;
+    }
+    
+    // Загружаем значения
+    if (typeof loadSavedValues === 'function') loadSavedValues();
 }
