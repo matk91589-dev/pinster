@@ -1218,9 +1218,17 @@ body {
 }
 
 .main-screen .section-title {
-    margin: 20px 0 8px 0;  /* 20px сверху */
+    margin: 25px 0 8px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-align: center;
 }
 
 .main-screen .section-subtitle {
-    margin: 0 0 16px 0;    /* без отступа сверху */
+    margin: 0 0 18px 0;
+    font-size: 14px;
+    color: #9BA1B0;
+    text-align: center;
+    font-weight: 400;
 }
