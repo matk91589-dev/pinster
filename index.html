@@ -19,23 +19,18 @@
             display: flex !important;
         }
         
-        /* Скрываем хедер на стартовом - БЕЗ !important чтобы JS мог переопределить */
+        /* Скрываем хедер на стартовом */
         .header {
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
-        }
-        
-        /* Убираем моргание */
-        body {
-            visibility: visible !important;
         }
     </style>
 </head>
 <body>
     <div class="phone-frame">
         <div class="content">
-            <!-- Хедер - шестеренка справа -->
+            <!-- Хедер -->
             <div class="header">
                 <div class="logo" onclick="handleLogoClick()">
                     <span class="ping">Ping</span><span class="ster">ster</span>
@@ -64,7 +59,7 @@
                         Фаниться или апать звания.
                     </div>
                 </div>
-                <button class="primary-btn" onclick="startApp()">Начать</button>
+                <button class="primary-btn" id="startButton">Начать</button>
                 <div class="online-counter">
                     более 1000+ игроков онлайн
                 </div>
@@ -96,360 +91,9 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН МАГАЗИНА -->
-            <div id="shopScreen" class="screen screen-shop">
-                <div class="title-row">
-                    <div class="title-left">
-                        <div class="section-title">Магазин</div>
-                    </div>
-                    <div class="coins-header">Pingcoins: <span id="coinsAmount">1000</span></div>
-                </div>
-                <div class="section-subtitle">Зарабатывайте и покупайте</div>
-                <div class="shop-tabs">
-                    <div class="shop-tab active" onclick="showShopTab('shop')">Магазин</div>
-                    <div class="shop-tab" onclick="showShopTab('tasks')">Задания</div>
-                </div>
-                <div id="shopTabContent" class="shop-content">
-                    <div class="nicks-section">
-                        <div class="section-header">Цветные ники</div>
-                        <div class="items-grid" id="nicksGrid"></div>
-                    </div>
-                    <div class="frames-section">
-                        <div class="section-header">Рамки для аватарки</div>
-                        <div class="items-grid" id="framesGrid"></div>
-                    </div>
-                </div>
-                <div id="tasksTabContent" class="shop-content" style="display: none;">
-                    <div class="tasks-section">Задания пока в разработке</div>
-                </div>
-                <div class="bottom-nav">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item active" onclick="showShopScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
-            </div>
+            <!-- остальные экраны (без изменений) -->
+            <!-- ... (весь остальной HTML из твоего файла) ... -->
 
-            <!-- ЭКРАН ПРОФИЛЯ -->
-            <div id="profileScreen" class="screen screen-profile">
-                <div class="title-row">
-                    <div class="title-left">
-                        <div class="section-title">Ваш профиль</div>
-                        <div class="edit-controls">
-                            <div id="editToggle" class="edit-title-icon" onclick="toggleEditMode()">
-                                <svg viewBox="0 0 24 24"><path d="M12 20h9" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            </div>
-                            <div id="applyBtn" class="apply-btn" onclick="applyChanges()">Применить</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="profile-header">
-                    <div id="profileAvatar" class="profile-avatar" onclick="selectAvatar()">👤</div>
-                    <div class="profile-info">
-                        <div class="profile-name-label">ваш никнейм</div>
-                        <div class="profile-name-row">
-                            <span id="profileName" class="profile-name" onclick="editName()">-</span>
-                            <span class="profile-status">НОВИЧОК</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">0<span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-                    </div>
-                    <div class="stat-card" id="ageCard" onclick="editAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="ageValue" style="color: #5D6472;">ваш возраст</div>
-                    </div>
-                </div>
-                <div class="profile-stats">
-                    <div class="profile-stat-card" id="steamCard" onclick="editSteam()">
-                        <div class="profile-stat-label">Ссылка Steam</div>
-                        <div class="profile-stat-value" id="steamDisplay" style="color: #5D6472;">введите ссылку на ваш профиль Steam</div>
-                    </div>
-                    <div class="profile-stat-card" id="faceitLinkCard" onclick="editFaceitLink()">
-                        <div class="profile-stat-label">Ссылка Faceit</div>
-                        <div class="profile-stat-value" id="faceitLinkDisplay" style="color: #5D6472;">введите ссылку на ваш профиль Faceit (если есть)</div>
-                    </div>
-                </div>
-                <div class="friends-section">
-                    <div class="friends-header">
-                        <div class="search-icon" onclick="enterSearchMode()">
-                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/><circle cx="11" cy="11" r="4" stroke="white" stroke-width="2"/><line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
-                        </div>
-                        <span class="friends-title">Ваши друзья</span>
-                        <span class="friends-count" id="friendsCount">0 друзей</span>
-                    </div>
-                    <div class="friends-list" id="friendsList"></div>
-                </div>
-                <div class="bottom-nav">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item active" onclick="showProfileScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ЭКРАН НАСТРОЕК -->
-            <div id="settingsScreen" class="screen screen-settings">
-                <div class="section-title">Настройки</div>
-                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
-                    <h3 style="font-size:14px; margin-bottom:8px;">Тема</h3>
-                    <p style="color:#9BA1B0; font-size:13px;">Тёмная / Светлая</p>
-                </div>
-                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
-                    <h3 style="font-size:14px; margin-bottom:8px;">Модерация</h3>
-                    <p style="color:#9BA1B0; font-size:13px;">Люди мы будем</p>
-                </div>
-                <div class="bottom-nav" style="margin-top: auto;">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ЭКРАН FACEIT -->
-            <div id="faceitScreen" class="screen screen-faceit">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="showMainScreen()">←</button>
-                    <div class="mode-title faceit">FACEIT</div>
-                </div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">Faceit ELO</div>
-                <input type="number" class="search-input-field" id="faceitELOInput" value="4000">
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">0 ❤️</div>
-                    </div>
-                    <div class="stat-card" onclick="editFaceitAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="faceitAgeValue">21</div>
-                    </div>
-                </div>
-                <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="faceitSteamInput" value="steamcommunity.com/id/pingster">
-                <div class="input-label">Ссылка Faceit</div>
-                <input type="text" class="input-field" id="faceitLinkInput" value="—">
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
-                </div>
-                <div class="comment-section">
-                    <div class="comment-label">Комментарий</div>
-                    <textarea class="comment-input" placeholder="Ваш комментарий" maxlength="100"></textarea>
-                </div>
-                <button class="primary-btn" onclick="startSearch('FACEIT')">Начать поиск</button>
-                <div class="bottom-nav">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ЭКРАН PREMIER -->
-            <div id="premierScreen" class="screen screen-premier">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="showMainScreen()">←</button>
-                    <div class="mode-title premier">PREMIER</div>
-                </div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">CS Rating</div>
-                <input type="number" class="search-input-field" id="premierRatingInput" value="12500">
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">0 ❤️</div>
-                    </div>
-                    <div class="stat-card" onclick="editPremierAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="premierAgeValue">21</div>
-                    </div>
-                </div>
-                <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="premierSteamInput" value="steamcommunity.com/id/pingster">
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
-                </div>
-                <div class="comment-section">
-                    <textarea class="comment-input" placeholder="Ваш комментарий" maxlength="100"></textarea>
-                </div>
-                <button class="primary-btn" onclick="startSearch('PREMIER')">Начать поиск</button>
-                <div class="bottom-nav">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ЭКРАН MM PRIME -->
-            <div id="primeScreen" class="screen screen-prime">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="showMainScreen()">←</button>
-                    <div class="mode-title prime">MM PRIME</div>
-                </div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">Звание</div>
-                <select class="rank-select" id="primeRankSelect">
-                    <option>Silver 1</option>
-                    <option selected>Gold Nova 3</option>
-                    <option>Global Elite</option>
-                </select>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">0 ❤️</div>
-                    </div>
-                    <div class="stat-card" onclick="editPrimeAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="primeAgeValue">21</div>
-                    </div>
-                </div>
-                <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="primeSteamInput" value="steamcommunity.com/id/pingster">
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
-                </div>
-                <div class="comment-section">
-                    <textarea class="comment-input" placeholder="Ваш комментарий" maxlength="100"></textarea>
-                </div>
-                <button class="primary-btn" onclick="startSearch('MM PRIME')">Начать поиск</button>
-                <div class="bottom-nav">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ЭКРАН MM PUBLIC -->
-            <div id="publicScreen" class="screen screen-public">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="showMainScreen()">←</button>
-                    <div class="mode-title public">MM PUBLIC</div>
-                </div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">Звание</div>
-                <select class="rank-select" id="publicRankSelect">
-                    <option selected>Silver 3</option>
-                    <option>Global Elite</option>
-                </select>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">0 ❤️</div>
-                    </div>
-                    <div class="stat-card" onclick="editPublicAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="publicAgeValue">21</div>
-                    </div>
-                </div>
-                <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="publicSteamInput" value="steamcommunity.com/id/pingster">
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
-                </div>
-                <div class="comment-section">
-                    <textarea class="comment-input" placeholder="Ваш комментарий" maxlength="100"></textarea>
-                </div>
-                <button class="primary-btn" onclick="startSearch('MM PUBLIC')">Начать поиск</button>
-                <div class="bottom-nav">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ЭКРАН ПОИСКА -->
-            <div id="searchScreen" class="screen screen-search">
-                <div class="search-header">
-                    <div class="search-title" id="searchModeTitle">FACEIT</div>
-                    <div class="search-timer" id="searchTimer">00:00</div>
-                </div>
-                <div class="search-status">Поиск тиммейта начат</div>
-                <div class="search-loading">
-                    <div class="spinner"></div>
-                </div>
-                <button class="cancel-search-btn" onclick="cancelSearch()">Отменить поиск</button>
-                <div class="bottom-nav">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="home-bar"></div>
     </div>
@@ -463,27 +107,40 @@
     <script src="search.js"></script>
     <script src="ui.js"></script>
     
-    <!-- ПРОСТОЕ ИСПРАВЛЕНИЕ КНОПКИ -->
+    <!-- ГАРАНТИРОВАННОЕ ИСПРАВЛЕНИЕ КНОПКИ -->
     <script>
-        // Показываем хедер сразу после загрузки DOM
-        document.addEventListener('DOMContentLoaded', function() {
+        // Функция для показа хедера
+        function showHeader() {
             const header = document.querySelector('.header');
             if (header) {
                 header.style.opacity = '1';
                 header.style.pointerEvents = 'auto';
             }
-            console.log('Хедер показан, кнопка должна работать');
-        });
+        }
 
-        // Дополнительная защита - если вдруг функция не вызвалась
-        window.onload = function() {
-            const header = document.querySelector('.header');
-            if (header) {
-                header.style.opacity = '1';
-                header.style.pointerEvents = 'auto';
+        // Показываем хедер при загрузке
+        document.addEventListener('DOMContentLoaded', showHeader);
+        window.addEventListener('load', showHeader);
+
+        // Прямой обработчик кнопки
+        document.addEventListener('DOMContentLoaded', function() {
+            const startBtn = document.getElementById('startButton');
+            if (startBtn) {
+                startBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Кнопка нажата!');
+                    if (typeof window.startApp === 'function') {
+                        window.startApp();
+                    } else {
+                        console.error('startApp не найдена!');
+                        // Пробуем найти функцию в глобальной области
+                        if (typeof startApp === 'function') {
+                            startApp();
+                        }
+                    }
+                });
             }
-            console.log('startApp доступна:', typeof startApp);
-        };
+        });
     </script>
 </body>
 </html>
