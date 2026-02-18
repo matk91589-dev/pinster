@@ -102,11 +102,6 @@
             stroke: #FF6B4A;
         }
 
-        /* ===== СТАРТОВЫЙ ЭКРАН (хедер скрыт) ===== */
-        .start-screen .header {
-            display: none !important;
-        }
-
         .title-row {
             display: flex;
             align-items: center;
@@ -761,13 +756,14 @@
             min-height: 0;
         }
 
-        .screen-start, .screen-main, .screen-profile, .screen-shop,
-        .screen-faceit, .screen-premier, .screen-prime, .screen-public, .screen-search {
+        /* По умолчанию все экраны скрыты */
+        .screen {
             display: none;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-            min-height: 0;
+        }
+
+        /* Стартовый экран показываем по умолчанию */
+        #startScreen {
+            display: flex;
         }
 
         .input-label {
@@ -1083,27 +1079,14 @@
         .nicks-section, .frames-section {
             display: none;
         }
-    </style>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- ===== ЗАЩИТА ОТ FOUC ===== -->
-    <style>
-        /* Скрываем всё до загрузки */
-        .screen {
-            display: none !important;
-        }
-        
-        /* Показываем только стартовый экран */
-        #startScreen {
-            display: flex !important;
-        }
-        
-        /* Гарантированно скрываем хедер на стартовом */
+
+        /* Скрываем хедер на стартовом экране через CSS */
         .start-screen .header {
             display: none !important;
         }
     </style>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="phone-frame">
@@ -2077,6 +2060,7 @@
         // ФУНКЦИИ НАВИГАЦИИ
         // ============================================
         function startApp() {
+            console.log('startApp вызвана');
             hideAllScreens();
             document.getElementById('mainScreen').style.display = 'flex';
         }
@@ -2346,12 +2330,11 @@
             await loadUserFromDB();
             generateFriends();
             
-            // Скрываем все экраны и показываем стартовый
-            hideAllScreens();
-            document.getElementById('startScreen').style.display = 'flex';
-            
             // Сбрасываем иконку настроек при загрузке
-            document.getElementById('settingsIcon').classList.remove('active');
+            const settingsIcon = document.getElementById('settingsIcon');
+            if (settingsIcon) {
+                settingsIcon.classList.remove('active');
+            }
             
             console.log('Готово!');
         };
