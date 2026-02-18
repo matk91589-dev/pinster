@@ -67,138 +67,45 @@
     gap: 8px;
 }
 
-/* ===== CS:GO КЕЙСЫ ===== */
+/* CS:GO стиль для кейсов */
 .case-item {
-    background: #1A1D24;
-    border: 2px solid #2A2F3A;
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
+    background: linear-gradient(145deg, #2a2f3a, #1e2128);
+    border: 2px solid #5d6472;
+    border-radius: 8px;
+    box-shadow: 0 4px 0 #2a2f3a;
 }
 
 .case-item.common-case {
-    background: linear-gradient(145deg, #2a2f3a, #1a1d24);
     border-color: #5d6472;
+    background: linear-gradient(145deg, #2a2f3a, #1e2128);
 }
 
-.case-item.rare-case {
-    background: linear-gradient(145deg, #1e3a5f, #0f2a44);
-    border-color: #2196f3;
-}
-
-.case-item.epic-case {
-    background: linear-gradient(145deg, #4a1e5f, #2f1340);
-    border-color: #9c27b0;
-}
-
-.case-item.legendary-case {
-    background: linear-gradient(145deg, #5f3a1e, #402710);
-    border-color: #ff9800;
-}
-
-.case-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-}
-
-.case-item.common-case:hover {
-    border-color: #ff6b4a;
-    box-shadow: 0 10px 20px rgba(255, 107, 74, 0.3);
-}
-
-.case-item.rare-case:hover {
-    border-color: #2196f3;
-    box-shadow: 0 10px 20px rgba(33, 150, 243, 0.3);
-}
-
-.case-item.epic-case:hover {
-    border-color: #9c27b0;
-    box-shadow: 0 10px 20px rgba(156, 39, 176, 0.3);
-}
-
-.case-item.legendary-case:hover {
-    border-color: #ff9800;
-    box-shadow: 0 10px 20px rgba(255, 152, 0, 0.3);
-}
-
-.case-icon {
-    width: 80px;
-    height: 80px;
-    background: #2A2F3A;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-    animation: caseGlow 3s infinite;
-}
-
-.case-info {
-    flex: 1;
-}
-
-.case-name {
-    font-size: 18px;
-    font-weight: 600;
-    color: #FFFFFF;
-    margin-bottom: 4px;
-}
-
-.case-description {
-    font-size: 12px;
-    color: #9BA1B0;
-    margin-bottom: 8px;
-}
-
-.case-price {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.price-value {
-    font-size: 18px;
-    font-weight: 700;
-    color: #FF6B4A;
+.case-item .case-icon {
+    font-size: 40px;
+    filter: drop-shadow(0 4px 2px rgba(0,0,0,0.5));
 }
 
 .buy-btn {
-    background: #4CAF50;
+    background: #4caf50;
     border: none;
-    border-radius: 6px;
-    padding: 8px 20px;
-    color: white;
+    border-radius: 4px;
+    padding: 8px 16px;
     font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
     text-transform: uppercase;
+    font-size: 12px;
     letter-spacing: 1px;
-    box-shadow: 0 4px 0 #2E7D32;
+    box-shadow: 0 4px 0 #2e7d32;
 }
 
-.buy-btn:hover:not(.disabled) {
-    background: #66BB6A;
+.buy-btn:hover {
+    background: #66bb6a;
     transform: translateY(-2px);
-    box-shadow: 0 6px 0 #2E7D32;
+    box-shadow: 0 6px 0 #2e7d32;
 }
 
-.buy-btn:active:not(.disabled) {
+.buy-btn:active {
     transform: translateY(2px);
-    box-shadow: 0 2px 0 #2E7D32;
-}
-
-.buy-btn.disabled {
-    background: #9BA1B0;
-    box-shadow: 0 4px 0 #5D6472;
-    pointer-events: none;
-    opacity: 0.6;
+    box-shadow: 0 2px 0 #2e7d32;
 }
 
 /* ===== ОТКРЫТИЕ КЕЙСА ===== */
@@ -601,3 +508,4 @@
     font-size: 13px;
     color: #9BA1B0;
 }
+
