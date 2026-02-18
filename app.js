@@ -185,6 +185,8 @@ function showShopTab(tab) {
 // ============================================
 window.onload = async function() {
     console.log('Запуск...');
+
+    if (typeof initProfile === 'function') initProfile();
     
     if (typeof setupDragAndDrop === 'function') setupDragAndDrop();
     if (typeof loadUserFromDB === 'function') await loadUserFromDB();
@@ -202,3 +204,4 @@ window.onload = async function() {
     
     console.log('Готово!');
 };
+
