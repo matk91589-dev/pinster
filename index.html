@@ -6,26 +6,6 @@
     <title>Pingster</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- ===== ЗАЩИТА ОТ FOUC (исправленная) ===== -->
-    <style>
-        /* Скрываем ВСЕ экраны по умолчанию */
-        .screen {
-            display: none;
-        }
-        
-        /* Показываем только стартовый экран */
-        #startScreen {
-            display: flex;
-        }
-        
-        /* Скрываем хедер на стартовом */
-        .header {
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-    </style>
 </head>
 <body>
     <div class="phone-frame">
@@ -59,7 +39,7 @@
                         Фаниться или апать звания.
                     </div>
                 </div>
-                <button class="primary-btn" id="startButton" onclick="startApp()">Начать</button>
+                <button class="primary-btn" onclick="startApp()">Начать</button>
                 <div class="online-counter">
                     более 1000+ игроков онлайн
                 </div>
@@ -91,14 +71,11 @@
                 </div>
             </div>
 
-            <!-- остальные экраны (без изменений) -->
-            <!-- ... (весь остальной HTML из твоего файла) ... -->
-
+            <!-- остальные экраны... (добавь их сюда) -->
         </div>
         <div class="home-bar"></div>
     </div>
 
-    <!-- Подключаем скрипты -->
     <script src="app.js"></script>
     <script src="api.js"></script>
     <script src="profile.js"></script>
@@ -106,16 +83,5 @@
     <script src="friends.js"></script>
     <script src="search.js"></script>
     <script src="ui.js"></script>
-    
-    <!-- Показываем хедер после загрузки -->
-    <script>
-        setTimeout(function() {
-            const header = document.querySelector('.header');
-            if (header) {
-                header.style.opacity = '1';
-                header.style.pointerEvents = 'auto';
-            }
-        }, 100);
-    </script>
 </body>
 </html>
