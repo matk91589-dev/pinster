@@ -1231,23 +1231,34 @@ body {
     text-align: center;
     font-weight: 400;
 }
-/* Квадратная аватарка как рамка текста */
-.start-avatar-square {
-    width: calc(100%);  /* такая же ширина как у рамки */
-    max-width: 300px;           /* ограничение */
-    aspect-ratio: 1/1;          /* квадрат */
-    margin: 0 auto 30px auto;
-    border: 2px solid #FF6B4A; 
-    overflow: hidden;
-    background: #1A1D24;
+/* Аватарка с эффектом наложения рамки */
+.start-avatar-overlap {
+    width: calc(100% - 20px);
+    max-width: 280px;
+    margin: 0 auto 20px auto;
+    position: relative;
+    z-index: 1;
 }
 
-.start-avatar-square img {
+.start-avatar-overlap img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
     display: block;
+    border: 3px solid #FF6B4A;
+    border-radius: 0;  /* квадратная */
 }
+
+/* Рамка текста */
+.start-description-box {
+    border: 2px solid #FF6B4A;
+    border-radius: 16px;
+    padding: 25px 16px 20px 16px;  /* увеличена padding-top */
+    margin: -15px 10px 30px 10px;    /* отрицательный margin */
+    background: #1A1D24;
+    position: relative;
+    z-index: 0;
+}
+
 
 
 
