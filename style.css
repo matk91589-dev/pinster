@@ -1210,3 +1210,17 @@ body {
 .cancel-search-btn:active {
     transform: scale(0.98);
 }
+/* ===== ГЛАВНЫЙ ЭКРАН ===== */
+.main-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.main-screen .section-title {
+    margin: 20px 0 8px 0;  /* 20px сверху */
+}
+
+.main-screen .section-subtitle {
+    margin: 0 0 16px 0;    /* без отступа сверху */
+}
