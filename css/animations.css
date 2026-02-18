@@ -1,4 +1,5 @@
-/* Анимации для всего приложения */
+/* ===== ОСНОВНЫЕ АНИМАЦИИ ===== */
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -9,9 +10,31 @@
     to { opacity: 1; }
 }
 
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
 @keyframes slideUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from { 
+        transform: translateY(20px); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateY(0); 
+        opacity: 1; 
+    }
+}
+
+@keyframes slideDown {
+    from { 
+        transform: translateY(-20px); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateY(0); 
+        opacity: 1; 
+    }
 }
 
 @keyframes pulse {
@@ -40,8 +63,16 @@
     animation: fadeIn 0.3s ease;
 }
 
+.fade-out {
+    animation: fadeOut 0.3s ease;
+}
+
 .slide-up {
     animation: slideUp 0.3s ease;
+}
+
+.slide-down {
+    animation: slideDown 0.3s ease;
 }
 
 .pulse {
@@ -50,6 +81,85 @@
 
 .shake {
     animation: shake 0.5s ease;
+}
+
+/* ===== CS:GO КЕЙС АНИМАЦИИ ===== */
+
+@keyframes caseGlow {
+    0%, 100% { 
+        filter: drop-shadow(0 0 5px #FF6B4A);
+        transform: scale(1);
+    }
+    50% { 
+        filter: drop-shadow(0 0 20px #FF6B4A);
+        transform: scale(1.1);
+    }
+}
+
+@keyframes winPulse {
+    0%, 100% { 
+        box-shadow: 0 0 20px #FF6B4A;
+        border-color: #FF6B4A;
+    }
+    50% { 
+        box-shadow: 0 0 50px #FF6B4A;
+        border-color: #FFD700;
+    }
+}
+
+@keyframes caseOpenAnimation {
+    0% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.2) rotate(10deg); }
+    50% { transform: scale(1.3) rotate(-10deg); }
+    75% { transform: scale(1.2) rotate(5deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes flashEffect {
+    0% { opacity: 0; }
+    50% { opacity: 0.9; }
+    100% { opacity: 0; }
+}
+
+@keyframes itemDrop {
+    0% { 
+        transform: translateY(-100px) scale(0); 
+        opacity: 0; 
+    }
+    50% { 
+        transform: translateY(20px) scale(1.2); 
+        opacity: 1; 
+    }
+    100% { 
+        transform: translateY(0) scale(1); 
+        opacity: 1; 
+    }
+}
+
+@keyframes spinWheel {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-5000px); }
+}
+
+/* Классы для анимаций */
+.case-glow {
+    animation: caseGlow 3s infinite;
+}
+
+.case-opening {
+    animation: caseOpenAnimation 0.5s ease;
+}
+
+.flash-effect {
+    animation: flashEffect 0.3s ease;
+}
+
+.item-appear {
+    animation: itemDrop 0.5s ease;
+}
+
+.spin-wheel {
+    animation: spinWheel 4s cubic-bezier(0.08, 0.6, 0.1, 1);
 }
 
 /* Транзакции переходов */
@@ -63,7 +173,10 @@
 .back-btn,
 .search-icon,
 .back-icon,
-.friend-item {
+.friend-item,
+.case-item,
+.buy-btn,
+.close-btn {
     transition: all 0.2s ease;
 }
 
@@ -92,26 +205,7 @@
 /* Active состояния */
 .primary-btn:active,
 .mode-search-btn:active,
-.cancel-search-btn:active {
+.cancel-search-btn:active,
+.buy-btn:active {
     transform: scale(0.98);
-}
-
-/* Анимация загрузки для кнопок */
-.btn-loading {
-    position: relative;
-    color: transparent !important;
-}
-
-.btn-loading::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border: 2px solid #FFFFFF;
-    border-top: 2px solid transparent;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
 }
