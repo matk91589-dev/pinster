@@ -503,3 +503,101 @@
 .item-appear {
     animation: itemDrop 0.5s ease;
 }
+
+/* ===== ИНВЕНТАРЬ ===== */
+.inventory-section {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.inventory-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.inventory-item {
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.inventory-item:hover {
+    border-color: #FF6B4A;
+    transform: translateY(-2px);
+}
+
+.inventory-item.rarity-common { border-left: 4px solid #5D6472; }
+.inventory-item.rarity-rare { border-left: 4px solid #2196F3; }
+.inventory-item.rarity-epic { border-left: 4px solid #9C27B0; }
+.inventory-item.rarity-legendary { border-left: 4px solid #FF9800; }
+
+.inventory-item .item-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.inventory-item .item-info {
+    flex: 1;
+}
+
+.inventory-item .item-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.inventory-item .item-type {
+    font-size: 11px;
+    color: #9BA1B0;
+}
+
+.use-btn {
+    background: transparent;
+    border: 1px solid #4CAF50;
+    border-radius: 4px;
+    padding: 4px 8px;
+    color: #4CAF50;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.use-btn:hover {
+    background: #4CAF50;
+    color: white;
+}
+
+.empty-inventory {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-text {
+    font-size: 18px;
+    color: #FFFFFF;
+    margin-bottom: 8px;
+}
+
+.empty-subtext {
+    font-size: 13px;
+    color: #9BA1B0;
+}
