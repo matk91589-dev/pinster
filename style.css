@@ -1235,14 +1235,9 @@ body {
     text-align: center;
     font-weight: 400;
 }
-
-
-
-
-
-
-
-
+.phone-frame {
+    opacity: 1 !important;
+}
 
 
 
