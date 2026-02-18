@@ -54,7 +54,7 @@
                     <span class="ping">Ping</span><span class="ster">ster</span>
                 </div>
                 <div class="start-avatar-square" id="startAvatar">
-                    <img src="https://via.placeholder.com/280x280/1A1D24/FF6B4A?text=Pingster" alt="avatar">
+                    <img src=".....jpg" alt="avatar">
                 </div>
                 <div class="start-description-box">
                     <div class="start-description">
@@ -454,6 +454,7 @@
         <div class="home-bar"></div>
     </div>
 
+    <!-- Подключаем скрипты в правильном порядке -->
     <script src="app.js"></script>
     <script src="api.js"></script>
     <script src="profile.js"></script>
@@ -462,5 +463,18 @@
     <script src="search.js"></script>
     <script src="ui.js"></script>
     
+    <!-- Добавляем скрытое поле для отслеживания загрузки -->
+    <script>
+        // Показываем хедер после полной загрузки всех скриптов
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const header = document.querySelector('.header');
+                if (header) {
+                    header.style.opacity = '1';
+                    header.style.pointerEvents = 'auto';
+                }
+            }, 100); // Небольшая задержка для гарантии
+        });
+    </script>
 </body>
 </html>
