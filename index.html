@@ -6,6 +6,31 @@
     <title>Pingster</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- ===== ЗАЩИТА ОТ FOUC ===== -->
+    <style>
+        /* Скрываем всё до загрузки стилей */
+        .screen {
+            display: none !important;
+        }
+        
+        /* Показываем только стартовый экран */
+        #startScreen {
+            display: flex !important;
+        }
+        
+        /* Скрываем хедер на стартовом */
+        .header {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* Убираем моргание */
+        body {
+            visibility: visible !important;
+        }
+    </style>
 </head>
 <body>
     <div class="phone-frame">
@@ -29,7 +54,7 @@
                     <span class="ping">Ping</span><span class="ster">ster</span>
                 </div>
                 <div class="start-avatar-square" id="startAvatar">
-                    <img src=".....jpg" alt="avatar">
+                    <img src="https://via.placeholder.com/280x280/1A1D24/FF6B4A?text=Pingster" alt="avatar">
                 </div>
                 <div class="start-description-box">
                     <div class="start-description">
@@ -429,16 +454,13 @@
         <div class="home-bar"></div>
     </div>
 
-    <script src="app.js"></script>      <!-- сначала глобальные переменные -->
-    <script src="api.js"></script>      <!-- потом работа с БД -->
-    <script src="profile.js"></script>  <!-- потом функции профиля -->
-    <script src="shop.js"></script>     <!-- потом магазин -->
-    <script src="friends.js"></script>  <!-- потом друзья -->
-    <script src="search.js"></script>   <!-- потом поиск -->
-    <script src="ui.js"></script>       <!-- потом ui (можно пустой) -->
+    <script src="app.js"></script>
+    <script src="api.js"></script>
+    <script src="profile.js"></script>
+    <script src="shop.js"></script>
+    <script src="friends.js"></script>
+    <script src="search.js"></script>
+    <script src="ui.js"></script>
     
 </body>
 </html>
-
-
-
