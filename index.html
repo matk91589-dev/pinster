@@ -49,28 +49,14 @@
         .header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-end; /* Прижимаем шестеренку вправо */
             padding: 4px 0 12px 0;
             border-bottom: 1px solid #1E2128;
             margin-bottom: 12px;
         }
 
         .logo {
-            font-size: 24px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            color: #FFFFFF;
-            cursor: pointer;
-        }
-
-        .logo .ping {
-            color: #FF6B4A;
-        }
-
-        .logo .ster {
-            color: #FFFFFF;
-            font-weight: 400;
-            opacity: 0.9;
+            display: none; /* Скрываем логотип на всех экранах */
         }
 
         .icon-settings {
@@ -208,9 +194,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100%;
-            padding: 0;
+            padding-top: 20px;
         }
 
         .start-logo {
@@ -218,7 +204,7 @@
             font-weight: 700;
             color: #FFFFFF;
             letter-spacing: -0.5px;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
             text-align: center;
         }
 
@@ -226,11 +212,11 @@
             color: #FF6B4A;
         }
 
-        /* Аватарка квадратная с закругленными верхними углами */
+        /* Аватарка 4:3 (соотношение сторон 4:3) */
         .start-avatar-square {
             width: 280px;
-            height: 280px;
-            margin: 0 auto -30px auto;
+            height: 210px; /* 280 * 0.75 = 210 (соотношение 4:3) */
+            margin: 0 auto 10px auto;
             border: none;
             border-radius: 30px 30px 0 0;
             overflow: hidden;
@@ -252,8 +238,8 @@
             width: 280px;
             border: 3px solid #FF6B4A;
             border-radius: 0 0 30px 30px;
-            padding: 50px 16px 20px 16px;
-            margin: 0 auto 30px auto;
+            padding: 40px 16px 20px 16px;
+            margin: 0 auto 15px auto;
             background: #1A1D24;
             position: relative;
             z-index: 1;
@@ -267,18 +253,19 @@
         }
 
         .primary-btn {
-            width: 280px;
-            padding: 16px;
+            width: 300px; /* Увеличили ширину */
+            padding: 20px; /* Увеличили отступы */
             background: #FF6B4A;
             border: none;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 40px; /* Увеличили скругление */
+            font-size: 20px; /* Увеличили шрифт */
+            font-weight: 700;
             color: white;
             text-transform: uppercase;
             cursor: pointer;
-            margin: 10px auto;
+            margin: 20px auto 10px auto; /* Увеличили отступ сверху */
             transition: all 0.2s;
+            letter-spacing: 1px;
         }
 
         .primary-btn:active {
@@ -1079,11 +1066,6 @@
         .nicks-section, .frames-section {
             display: none;
         }
-
-        /* Скрываем хедер на стартовом экране через CSS */
-        .start-screen .header {
-            display: none !important;
-        }
     </style>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1091,11 +1073,9 @@
 <body>
     <div class="phone-frame">
         <div class="content">
-            <!-- Хедер (будет показан на всех экранах кроме стартового) -->
+            <!-- Хедер (только шестеренка, логотип скрыт) -->
             <div class="header">
-                <div class="logo" onclick="handleLogoClick()">
-                    <span class="ping">Ping</span><span class="ster">ster</span>
-                </div>
+                <div class="logo"></div> <!-- Пустой div для отступа -->
                 <div id="settingsIcon" class="icon-settings" onclick="showSettingsScreen()">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="3"/>
@@ -1678,14 +1658,7 @@
         // ФУНКЦИИ ДЛЯ ЛОГОТИПА
         // ============================================
         function handleLogoClick() {
-            if (document.getElementById('searchScreen') && document.getElementById('searchScreen').style.display === 'flex') {
-                alert('Сначала отмените поиск');
-                return;
-            }
-            if (document.getElementById('startScreen') && document.getElementById('startScreen').style.display === 'flex') return;
-            
-            hideAllScreens();
-            document.getElementById('mainScreen').style.display = 'flex';
+            // Логотип скрыт, функция не используется
         }
 
         // ============================================
@@ -1724,7 +1697,7 @@
                 const avatarDiv = document.getElementById('profileAvatar');
                 avatarDiv.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
                 const startAvatar = document.getElementById('startAvatar');
-                if (startAvatar) startAvatar.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                if (startAvatar) startAvatar.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
                 uploadAvatar(file);
             };
             reader.readAsDataURL(file);
