@@ -9,12 +9,12 @@
     
     <!-- ===== ЗАЩИТА ОТ FOUC ===== -->
     <style>
-        /* Скрываем всё до загрузки стилей */
-        .screen {
+        /* Скрываем все экраны КРОМЕ стартового */
+        .screen:not(#startScreen) {
             display: none !important;
         }
         
-        /* Показываем только стартовый экран */
+        /* Показываем стартовый экран */
         #startScreen {
             display: flex !important;
         }
@@ -113,6 +113,11 @@
         window.startApp = function() {
             console.log('startApp вызвана');
             
+            // Убираем !important из CSS временно
+            const style = document.createElement('style');
+            style.textContent = '.screen { display: flex !important; }';
+            document.head.appendChild(style);
+            
             // Прячем все экраны
             document.querySelectorAll('.screen').forEach(screen => {
                 screen.style.display = 'none';
@@ -129,6 +134,9 @@
             if (settingsIcon) {
                 settingsIcon.classList.remove('active');
             }
+            
+            // Удаляем временный стиль
+            document.head.removeChild(style);
         };
 
         // Показываем хедер
