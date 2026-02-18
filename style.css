@@ -511,7 +511,7 @@ body {
     padding: 14px 16px;           /* больше внутренних отступов */
     cursor: pointer;
     transition: border 0.1s ease;
-    min-height: 30px;             /* фиксированная высота */
+    min-height: 20px;             /* фиксированная высота */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1233,6 +1233,7 @@ body {
     text-align: center;
     font-weight: 400;
 }
+
 
 
 
