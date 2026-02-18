@@ -44,77 +44,178 @@
 }
 
 /* Секции магазина */
-.nicks-section,
-.frames-section,
-.cases-section {
+.cases-section,
+.inventory-section {
     flex: 1;
     overflow-y: auto;
     padding-right: 4px;
     display: block;
 }
 
-.nicks-section.hidden,
-.frames-section.hidden,
-.cases-section.hidden {
+.cases-section.hidden,
+.inventory-section.hidden {
     display: none;
 }
 
-.nicks-grid,
-.frames-grid,
-.cases-grid {
+.cases-grid,
+.inventory-grid {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-/* CS:GO стиль для кейсов */
+/* ===== КЕЙСЫ ===== */
 .case-item {
-    background: linear-gradient(145deg, #2a2f3a, #1e2128);
-    border: 2px solid #5d6472;
-    border-radius: 8px;
-    box-shadow: 0 4px 0 #2a2f3a;
+    background: transparent;
+    border: none;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 12px;
+    margin-bottom: 10px;
 }
 
-.case-item.common-case {
-    border-color: #5d6472;
-    background: linear-gradient(145deg, #2a2f3a, #1e2128);
+.case-item:hover {
+    background: rgba(255, 107, 74, 0.05);
 }
 
-.case-item .case-icon {
-    width: 80px;
-    height: 80px;
+.case-icon {
+    width: 100px;
+    height: 90px;
     display: flex;
     align-items: center;
     justify-content: center;
-    filter: drop-shadow(0 4px 2px rgba(0,0,0,0.5));
 }
 
-.case-item .case-icon svg {
+.case-icon svg {
     width: 100%;
     height: 100%;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+    transition: transform 0.2s;
 }
 
-.buy-btn {
-    background: #4caf50;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 16px;
+.case-item:hover .case-icon svg {
+    transform: scale(1.05);
+}
+
+.case-info {
+    flex: 1;
+}
+
+.case-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.case-price-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.price-value {
+    font-size: 16px;
     font-weight: 600;
-    text-transform: uppercase;
-    font-size: 12px;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 0 #2e7d32;
+    color: #FF6B4A;
 }
 
-.buy-btn:hover {
-    background: #66bb6a;
+.buy-btn-simple {
+    background: #FF6B4A;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 16px;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.buy-btn-simple:hover:not(.disabled) {
+    background: #ff8a6a;
     transform: translateY(-2px);
-    box-shadow: 0 6px 0 #2e7d32;
+    box-shadow: 0 4px 8px rgba(255, 107, 74, 0.3);
 }
 
-.buy-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #2e7d32;
+.buy-btn-simple:active:not(.disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.buy-btn-simple.disabled {
+    background: #9BA1B0;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* ===== ИНВЕНТАРЬ ===== */
+.inventory-section {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+}
+
+.inventory-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.inventory-item {
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+}
+
+.inventory-item:hover {
+    border-color: #FF6B4A;
+}
+
+.inventory-item .item-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.inventory-item .item-info {
+    flex: 1;
+}
+
+.inventory-item .item-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #FFFFFF;
+}
+
+.use-btn {
+    background: transparent;
+    border: 1px solid #4CAF50;
+    border-radius: 4px;
+    padding: 4px 10px;
+    color: #4CAF50;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.use-btn:hover {
+    background: #4CAF50;
+    color: white;
 }
 
 /* ===== ОТКРЫТИЕ КЕЙСА ===== */
@@ -356,17 +457,6 @@
 }
 
 /* Анимации */
-@keyframes caseGlow {
-    0%, 100% { 
-        filter: drop-shadow(0 0 5px #FF6B4A);
-        transform: scale(1);
-    }
-    50% { 
-        filter: drop-shadow(0 0 20px #FF6B4A);
-        transform: scale(1.1);
-    }
-}
-
 @keyframes winPulse {
     0%, 100% { 
         box-shadow: 0 0 20px #FF6B4A;
@@ -392,21 +482,6 @@
     100% { opacity: 0; }
 }
 
-@keyframes itemDrop {
-    0% { 
-        transform: translateY(-100px) scale(0); 
-        opacity: 0; 
-    }
-    50% { 
-        transform: translateY(20px) scale(1.2); 
-        opacity: 1; 
-    }
-    100% { 
-        transform: translateY(0) scale(1); 
-        opacity: 1; 
-    }
-}
-
 /* Классы для анимаций */
 .case-opening {
     animation: caseOpenAnimation 0.5s ease;
@@ -415,89 +490,3 @@
 .flash-effect {
     animation: flashEffect 0.3s ease;
 }
-
-.item-appear {
-    animation: itemDrop 0.5s ease;
-}
-
-/* ===== ИНВЕНТАРЬ ===== */
-.inventory-section {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 4px;
-}
-
-.inventory-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.inventory-item {
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.2s;
-}
-
-.inventory-item:hover {
-    border-color: #FF6B4A;
-}
-
-.inventory-item .item-icon {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-}
-
-.inventory-item .item-info {
-    flex: 1;
-}
-
-.inventory-item .item-name {
-    font-size: 14px;
-    font-weight: 500;
-    color: #FFFFFF;
-}
-
-.use-btn {
-    background: transparent;
-    border: 1px solid #4CAF50;
-    border-radius: 4px;
-    padding: 4px 10px;
-    color: #4CAF50;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.use-btn:hover {
-    background: #4CAF50;
-    color: white;
-}
-
-.empty-inventory {
-    text-align: center;
-    padding: 30px 20px;
-}
-
-.empty-text {
-    font-size: 16px;
-    color: #FFFFFF;
-    margin-bottom: 8px;
-}
-
-.empty-subtext {
-    font-size: 13px;
-    color: #9BA1B0;
-}
-
-
-
