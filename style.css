@@ -500,8 +500,8 @@ body {
 .profile-stats {
     display: flex;
     flex-direction: column;
-    gap: 8px;        /* ОДИНАКОВЫЙ отступ между всеми плашками */
-    margin-bottom: 12px;
+    gap: 6px;                    /* одинаковый отступ везде */
+    margin: 12px 0;
 }
 
 .profile-stat-card {
@@ -511,7 +511,7 @@ body {
     padding: 14px 16px;           /* больше внутренних отступов */
     cursor: pointer;
     transition: border 0.1s ease;
-    min-height: 70px;             /* фиксированная высота */
+    min-height: 40px;             /* фиксированная высота */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -531,13 +531,6 @@ body {
     color: #FFFFFF;
     word-break: break-word;
     line-height: 1.4;
-}
-
-.profile-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;                    /* одинаковый отступ везде */
-    margin: 12px 0;
 }
 
 .heart-icon {
@@ -1240,6 +1233,7 @@ body {
     text-align: center;
     font-weight: 400;
 }
+
 
 
 
