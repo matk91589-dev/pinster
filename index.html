@@ -7,16 +7,16 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- ===== ЗАЩИТА ОТ FOUC ===== -->
+    <!-- ===== ЗАЩИТА ОТ FOUC (исправленная) ===== -->
     <style>
-        /* Скрываем все экраны КРОМЕ стартового */
-        .screen:not(#startScreen) {
-            display: none !important;
+        /* Скрываем ВСЕ экраны по умолчанию */
+        .screen {
+            display: none;
         }
         
-        /* Показываем стартовый экран */
+        /* Показываем только стартовый экран */
         #startScreen {
-            display: flex !important;
+            display: flex;
         }
         
         /* Скрываем хедер на стартовом */
@@ -59,7 +59,7 @@
                         Фаниться или апать звания.
                     </div>
                 </div>
-                <button class="primary-btn" id="startButton" onclick="window.startApp ? window.startApp() : alert('Функция не загружена')">Начать</button>
+                <button class="primary-btn" id="startButton" onclick="startApp()">Начать</button>
                 <div class="online-counter">
                     более 1000+ игроков онлайн
                 </div>
@@ -107,39 +107,8 @@
     <script src="search.js"></script>
     <script src="ui.js"></script>
     
-    <!-- ПРОСТОЕ ИСПРАВЛЕНИЕ КНОПКИ -->
+    <!-- Показываем хедер после загрузки -->
     <script>
-        // Делаем функцию startApp глобальной
-        window.startApp = function() {
-            console.log('startApp вызвана');
-            
-            // Убираем !important из CSS временно
-            const style = document.createElement('style');
-            style.textContent = '.screen { display: flex !important; }';
-            document.head.appendChild(style);
-            
-            // Прячем все экраны
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.style.display = 'none';
-            });
-            
-            // Показываем главный экран
-            const mainScreen = document.getElementById('mainScreen');
-            if (mainScreen) {
-                mainScreen.style.display = 'flex';
-            }
-            
-            // Убираем активность с шестеренки
-            const settingsIcon = document.getElementById('settingsIcon');
-            if (settingsIcon) {
-                settingsIcon.classList.remove('active');
-            }
-            
-            // Удаляем временный стиль
-            document.head.removeChild(style);
-        };
-
-        // Показываем хедер
         setTimeout(function() {
             const header = document.querySelector('.header');
             if (header) {
