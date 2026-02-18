@@ -184,6 +184,13 @@ function showShopTab(tab) {
 window.onload = async function() {
     console.log('Запуск...');
 
+    // ===== ПОКАЗЫВАЕМ ХЕДЕР ПОСЛЕ ЗАГРУЗКИ =====
+    const header = document.querySelector('.header');
+    if (header) {
+        header.style.opacity = '1';
+        header.style.pointerEvents = 'auto';
+    }
+
     // Сначала прячем всё
     hideAllScreens();
     
@@ -194,8 +201,8 @@ window.onload = async function() {
     const headerLogo = document.querySelector('.header .logo');
     if (headerLogo) headerLogo.style.display = 'none';
     
-    const header = document.querySelector('.header');
-    if (header) header.style.borderBottom = 'none';
+    const header2 = document.querySelector('.header');
+    if (header2) header2.style.borderBottom = 'none';
     
     // Загружаем всё остальное
     if (typeof initProfile === 'function') initProfile();
