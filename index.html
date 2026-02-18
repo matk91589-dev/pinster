@@ -45,8 +45,65 @@
             position: relative;
         }
 
-        /* Хедер скрыт на стартовом экране */
+        /* ===== ХЕДЕР ===== */
         .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 0 12px 0;
+            border-bottom: 1px solid #1E2128;
+            margin-bottom: 12px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #FFFFFF;
+            cursor: pointer;
+        }
+
+        .logo .ping {
+            color: #FF6B4A;
+        }
+
+        .logo .ster {
+            color: #FFFFFF;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        .icon-settings {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: transparent;
+        }
+
+        .icon-settings:hover {
+            background: #1E2128;
+        }
+
+        .icon-settings svg {
+            width: 22px;
+            height: 22px;
+            stroke: #FFFFFF;
+            stroke-width: 2;
+            fill: none;
+            transition: stroke 0.2s;
+        }
+
+        .icon-settings.active svg {
+            stroke: #FF6B4A;
+        }
+
+        /* ===== СТАРТОВЫЙ ЭКРАН (хедер скрыт) ===== */
+        .start-screen .header {
             display: none;
         }
 
@@ -712,7 +769,7 @@
         }
 
         .screen-start, .screen-main, .screen-profile, .screen-shop,
-        .screen-faceit, .screen-premier, .screen-prime, .screen-public {
+        .screen-faceit, .screen-premier, .screen-prime, .screen-public, .screen-search {
             display: none;
             flex-direction: column;
             height: 100%;
@@ -933,6 +990,84 @@
             color: #5D6472;
         }
 
+        /* ЭКРАН ПОИСКА */
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0 20px 0;
+            border-bottom: 1px solid #1E2128;
+            margin-bottom: 20px;
+        }
+        
+        .search-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FF6B4A;
+        }
+        
+        .search-timer {
+            font-size: 20px;
+            font-weight: 600;
+            color: #FFFFFF;
+            background: #1A1D24;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #2A2F3A;
+        }
+        
+        .search-status {
+            text-align: center;
+            font-size: 16px;
+            color: #9BA1B0;
+            margin: 20px 0 40px 0;
+        }
+        
+        .search-loading {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #2A2F3A;
+            border-top: 4px solid #FF6B4A;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .cancel-search-btn {
+            width: 100%;
+            padding: 18px;
+            background: transparent;
+            border: 2px solid #FF6B4A;
+            border-radius: 12px;
+            color: #FF6B4A;
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 20px 0 10px 0;
+        }
+        
+        .cancel-search-btn:hover {
+            background: #FF6B4A;
+            color: white;
+        }
+        
+        .cancel-search-btn:active {
+            transform: scale(0.98);
+        }
+
         /* Магазин в разработке */
         .shop-content {
             flex: 1;
@@ -947,6 +1082,14 @@
             text-align: center;
             padding: 20px;
         }
+
+        .shop-tabs {
+            display: none;
+        }
+
+        .nicks-section, .frames-section {
+            display: none;
+        }
     </style>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -954,7 +1097,18 @@
 <body>
     <div class="phone-frame">
         <div class="content">
-            <!-- Хедер полностью скрыт -->
+            <!-- Хедер (будет показан на всех экранах кроме стартового) -->
+            <div class="header">
+                <div class="logo" onclick="handleLogoClick()">
+                    <span class="ping">Ping</span><span class="ster">ster</span>
+                </div>
+                <div id="settingsIcon" class="icon-settings" onclick="showSettingsScreen()">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/>
+                    </svg>
+                </div>
+            </div>
 
             <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
@@ -1175,6 +1329,51 @@
                         <span class="nav-label">Магазин</span>
                     </div>
                     <div class="nav-item active" onclick="showProfileScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4"/>
+                                <path d="M4 21c2-4 14-4 16 0"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Профиль</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ЭКРАН НАСТРОЕК -->
+            <div id="settingsScreen" class="screen screen-settings">
+                <div class="section-title">Настройки</div>
+
+                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
+                    <h3 style="font-size:14px; margin-bottom:8px;">Тема</h3>
+                    <p style="color:#9BA1B0; font-size:13px;">Тёмная / Светлая</p>
+                </div>
+
+                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
+                    <h3 style="font-size:14px; margin-bottom:8px;">Модерация</h3>
+                    <p style="color:#9BA1B0; font-size:13px;">Люди мы будем</p>
+                </div>
+
+                <div class="bottom-nav" style="margin-top: auto;">
+                    <div class="nav-item" onclick="showMainScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Главная</span>
+                    </div>
+                    <div class="nav-item" onclick="showShopScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M6 6h15l-1.5 9h-12z"/>
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="18" cy="21" r="1"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Магазин</span>
+                    </div>
+                    <div class="nav-item" onclick="showProfileScreen()">
                         <span class="nav-icon">
                             <svg viewBox="0 0 24 24">
                                 <circle cx="12" cy="8" r="4"/>
@@ -1407,6 +1606,22 @@
                 </div>
 
                 <button class="primary-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
+            </div>
+
+            <!-- ЭКРАН ПОИСКА -->
+            <div id="searchScreen" class="screen screen-search">
+                <div class="search-header">
+                    <div class="search-title" id="searchModeTitle">FACEIT</div>
+                    <div class="search-timer" id="searchTimer">00:00</div>
+                </div>
+                
+                <div class="search-status">Поиск тиммейта начат</div>
+                
+                <div class="search-loading">
+                    <div class="spinner"></div>
+                </div>
+                
+                <button class="cancel-search-btn" onclick="cancelSearch()">Отменить поиск</button>
             </div>
         </div>
 
@@ -1881,6 +2096,12 @@
             document.getElementById('shopScreen').style.display = 'flex';
         }
 
+        function showSettingsScreen() {
+            hideAllScreens();
+            document.getElementById('settingsScreen').style.display = 'flex';
+            document.getElementById('settingsIcon').classList.add('active');
+        }
+
         function showFaceitScreen() {
             lastModeScreen = 'faceitScreen';
             hideAllScreens();
@@ -1924,13 +2145,17 @@
 
         function hideAllScreens() {
             const screens = [
-                'startScreen', 'mainScreen', 'profileScreen', 'shopScreen',
-                'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen'
+                'startScreen', 'mainScreen', 'profileScreen', 'shopScreen', 'settingsScreen',
+                'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen', 'searchScreen'
             ];
             screens.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
+        }
+
+        function showShopTab(tab) {
+            // Магазин в разработке
         }
 
         // ============================================
@@ -2099,25 +2324,6 @@
         }
 
         function startSearch(mode, value) {
-            // Создаем экран поиска если его нет
-            if (!document.getElementById('searchScreen')) {
-                const searchScreen = document.createElement('div');
-                searchScreen.id = 'searchScreen';
-                searchScreen.className = 'screen screen-search';
-                searchScreen.innerHTML = `
-                    <div class="search-header">
-                        <div class="search-title" id="searchModeTitle">${mode}</div>
-                        <div class="search-timer" id="searchTimer">00:00</div>
-                    </div>
-                    <div class="search-status">Поиск тиммейта начат</div>
-                    <div class="search-loading">
-                        <div class="spinner"></div>
-                    </div>
-                    <button class="cancel-search-btn" onclick="cancelSearch()">Отменить поиск</button>
-                `;
-                document.querySelector('.content').appendChild(searchScreen);
-            }
-            
             showSearchScreen(mode);
             console.log(`Поиск в режиме ${mode} с данными: ${value}`);
         }
