@@ -4,36 +4,50 @@
 
 let currentShopTab = 'cases'; // 'cases' или 'inventory'
 
-// Данные кейсов
 const cases = [
     { 
         id: 'common_case', 
         name: 'Common Case', 
-        description: 'Обычный кейс с базовыми предметами',
+        description: '', // можно оставить пустым или удалить
         price: 1000, 
         class: 'common-case',
-        icon: `<svg viewBox="0 0 200 200" width="80" height="80">
-            <!-- Основа кейса -->
-            <rect x="20" y="50" width="160" height="100" rx="12" ry="12" fill="#8b7d7d" stroke="#5a4f4f" stroke-width="4"/>
-            <!-- Верхняя крышка -->
-            <rect x="20" y="40" width="160" height="20" rx="10" ry="10" fill="#a49b9b" stroke="#5a4f4f" stroke-width="3"/>
-            <!-- Тень от крышки -->
-            <rect x="22" y="42" width="156" height="2" fill="rgba(0,0,0,0.3)"/>
-            <!-- Ручки и детали -->
-            <circle cx="35" cy="100" r="6" fill="#555"/>
-            <circle cx="165" cy="100" r="6" fill="#555"/>
-            <!-- Символ Common (звезда) -->
-            <polygon points="100,65 106,80 122,80 108,90 114,105 100,95 86,105 92,90 78,80 94,80" fill="#e0c07b" stroke="#cfa850" stroke-width="1"/>
-            <!-- Слоты внутри кейса -->
+        icon: `<svg viewBox="0 0 200 200" width="100" height="90">
+            <defs>
+                <linearGradient id="rustGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#7a4a3c"/>
+                    <stop offset="50%" stop-color="#9e6b52"/>
+                    <stop offset="100%" stop-color="#5c3f33"/>
+                </linearGradient>
+                <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#4a4a4a"/>
+                    <stop offset="50%" stop-color="#2f2f2f"/>
+                    <stop offset="100%" stop-color="#1a1a1a"/>
+                </linearGradient>
+                <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="rgba(255,255,255,0.2)"/>
+                    <stop offset="50%" stop-color="rgba(255,255,255,0.05)"/>
+                    <stop offset="100%" stop-color="rgba(255,255,255,0.2)"/>
+                </linearGradient>
+            </defs>
+            <!-- Основание кейса -->
+            <polygon points="30,80 170,80 160,150 40,150" fill="url(#rustGrad)" stroke="#222" stroke-width="3"/>
+            <!-- Крышка -->
+            <polygon points="30,80 100,40 170,80" fill="url(#metalGrad)" stroke="#111" stroke-width="3"/>
+            <path d="M35,85 L165,85" stroke="url(#shine)" stroke-width="3"/>
+            <!-- Замок -->
+            <rect x="90" y="100" width="20" height="30" rx="3" ry="3" fill="#222" stroke="#000" stroke-width="2"/>
+            <circle cx="100" cy="115" r="4" fill="#555"/>
+            <!-- Болты -->
+            <circle cx="40" cy="90" r="4" fill="#666"/>
+            <circle cx="160" cy="90" r="4" fill="#666"/>
+            <circle cx="35" cy="140" r="3" fill="#555"/>
+            <circle cx="165" cy="140" r="3" fill="#555"/>
+            <!-- Слоты внутри -->
             <g>
-                <rect x="40" y="80" width="24" height="24" rx="4" ry="4" fill="#dcdcdc" stroke="#999" stroke-width="2"/>
-                <rect x="70" y="80" width="24" height="24" rx="4" ry="4" fill="#dcdcdc" stroke="#999" stroke-width="2"/>
-                <rect x="100" y="80" width="24" height="24" rx="4" ry="4" fill="#dcdcdc" stroke="#999" stroke-width="2"/>
-                <rect x="130" y="80" width="24" height="24" rx="4" ry="4" fill="#dcdcdc" stroke="#999" stroke-width="2"/>
+                <rect x="50" y="110" width="24" height="24" rx="4" ry="4" fill="#aaa" stroke="#777" stroke-width="2"/>
+                <rect x="80" y="110" width="24" height="24" rx="4" ry="4" fill="#bbb" stroke="#888" stroke-width="2"/>
+                <rect x="110" y="110" width="24" height="24" rx="4" ry="4" fill="#ccc" stroke="#999" stroke-width="2"/>
             </g>
-            <!-- Бликующие элементы для эффекта металла -->
-            <path d="M25 55 L175 55" stroke="rgba(255,255,255,0.2)" stroke-width="4"/>
-            <path d="M25 145 L175 145" stroke="rgba(255,255,255,0.2)" stroke-width="4"/>
         </svg>`,
         items: [
             // Ники
@@ -426,4 +440,5 @@ function closeCase() {
     isOpening = false;
     currentCase = null;
 }
+
 
