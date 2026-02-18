@@ -45,66 +45,9 @@
             position: relative;
         }
 
+        /* Хедер скрыт на стартовом экране */
         .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 4px 0 12px 0;
-            border-bottom: 1px solid #1E2128;
-            margin-bottom: 12px;
-            position: relative;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            color: #FFFFFF;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-
-        .logo:active {
-            transform: scale(1.05);
-        }
-
-        .logo .ping {
-            color: #FF6B4A;
-        }
-
-        .logo .ster {
-            color: #FFFFFF;
-            font-weight: 400;
-            opacity: 0.9;
-        }
-
-        .icon-settings {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: transparent;
-        }
-
-        .icon-settings:hover {
-            background: #1E2128;
-        }
-
-        .icon-settings svg {
-            width: 22px;
-            height: 22px;
-            stroke: #FFFFFF;
-            stroke-width: 2;
-            fill: none;
-            transition: stroke 0.2s;
-        }
-
-        .icon-settings.active svg {
-            stroke: #FF6B4A;
+            display: none;
         }
 
         .title-row {
@@ -208,13 +151,14 @@
             text-align: center;
         }
 
+        /* ===== СТАРТОВЫЙ ЭКРАН ===== */
         .start-screen {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding-top: 30px;
+            justify-content: center;
             height: 100%;
+            padding: 0;
         }
 
         .start-logo {
@@ -223,39 +167,44 @@
             color: #FFFFFF;
             letter-spacing: -0.5px;
             margin-bottom: 30px;
+            text-align: center;
         }
 
         .start-logo .ping {
             color: #FF6B4A;
         }
 
-        .start-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: #1A1D24;
-            border: 3px solid #2A2F3A;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            color: #9BA1B0;
-            margin-bottom: 40px;
+        /* Аватарка квадратная с закругленными верхними углами */
+        .start-avatar-square {
+            width: 280px;
+            height: 280px;
+            margin: 0 auto -30px auto;
+            border: none;
+            border-radius: 30px 30px 0 0;
             overflow: hidden;
+            background: #1A1D24;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
         }
 
-        .start-avatar img {
+        .start-avatar-square img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
 
+        /* Рамка текста с закругленными нижними углами */
         .start-description-box {
-            border: 2px solid #FF6B4A;
-            border-radius: 16px;
-            padding: 20px 16px;
-            margin: 0 10px 30px 10px;
+            width: 280px;
+            border: 3px solid #FF6B4A;
+            border-radius: 0 0 30px 30px;
+            padding: 50px 16px 20px 16px;
+            margin: 0 auto 30px auto;
             background: #1A1D24;
+            position: relative;
+            z-index: 1;
         }
 
         .start-description {
@@ -266,26 +215,29 @@
         }
 
         .primary-btn {
-            width: 100%;
+            width: 280px;
             padding: 16px;
             background: #FF6B4A;
             border: none;
-            border-radius: 8px;
+            border-radius: 30px;
             font-size: 16px;
             font-weight: 600;
             color: white;
             text-transform: uppercase;
             cursor: pointer;
+            margin: 10px auto;
             transition: all 0.2s;
-            letter-spacing: 0.5px;
-            margin: 8px 0;
+        }
+
+        .primary-btn:active {
+            transform: scale(0.98);
         }
 
         .online-counter {
             color: #5D6472;
             font-size: 12px;
             text-align: center;
-            margin-top: 8px;
+            margin-top: 5px;
         }
 
         .bottom-nav {
@@ -435,6 +387,18 @@
             border-width: 3px;
         }
 
+        .profile-avatar.frame-red { border-color: #FF6B4A; border-width: 3px; }
+        .profile-avatar.frame-gold { border-color: #FFD700; border-width: 3px; }
+        .profile-avatar.frame-blue { border-color: #2196F3; border-width: 3px; }
+        .profile-avatar.frame-green { border-color: #4CAF50; border-width: 3px; }
+        .profile-avatar.frame-purple { border-color: #9C27B0; border-width: 3px; }
+        .profile-avatar.frame-rainbow { 
+            border: 3px solid transparent;
+            background: linear-gradient(45deg, #FF6B4A, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+        }
+
         .profile-info {
             flex: 1;
             display: flex;
@@ -459,6 +423,18 @@
 
         .profile-name.editable {
             color: #FF6B4A;
+        }
+
+        .profile-name.red { color: #FF6B4A; }
+        .profile-name.green { color: #4CAF50; }
+        .profile-name.blue { color: #2196F3; }
+        .profile-name.purple { color: #9C27B0; }
+        .profile-name.orange { color: #FF9800; }
+        .profile-name.multicolor { 
+            background: linear-gradient(45deg, #FF6B4A, #4CAF50, #2196F3, #9C27B0, #FF9800);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
         }
 
         .profile-name-label {
@@ -735,8 +711,8 @@
             min-height: 0;
         }
 
-        .screen-start, .screen-main, .screen-profile, .screen-settings, .screen-shop,
-        .screen-faceit, .screen-premier, .screen-prime, .screen-public, .screen-search {
+        .screen-start, .screen-main, .screen-profile, .screen-shop,
+        .screen-faceit, .screen-premier, .screen-prime, .screen-public {
             display: none;
             flex-direction: column;
             height: 100%;
@@ -957,82 +933,19 @@
             color: #5D6472;
         }
 
-        /* НОВЫЙ ЭКРАН ПОИСКА */
-        .search-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0 20px 0;
-            border-bottom: 1px solid #1E2128;
-            margin-bottom: 20px;
-        }
-        
-        .search-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #FF6B4A;
-        }
-        
-        .search-timer {
-            font-size: 20px;
-            font-weight: 600;
-            color: #FFFFFF;
-            background: #1A1D24;
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: 1px solid #2A2F3A;
-        }
-        
-        .search-status {
-            text-align: center;
-            font-size: 16px;
-            color: #9BA1B0;
-            margin: 20px 0 40px 0;
-        }
-        
-        .search-loading {
+        /* Магазин в разработке */
+        .shop-content {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #2A2F3A;
-            border-top: 4px solid #FF6B4A;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .cancel-search-btn {
-            width: 100%;
-            padding: 18px;
-            background: transparent;
-            border: 2px solid #FF6B4A;
-            border-radius: 12px;
-            color: #FF6B4A;
-            font-size: 18px;
-            font-weight: 600;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin: 20px 0 10px 0;
-        }
-        
-        .cancel-search-btn:hover {
-            background: #FF6B4A;
-            color: white;
-        }
-        
-        .cancel-search-btn:active {
-            transform: scale(0.98);
+
+        .development-message {
+            color: #9BA1B0;
+            font-size: 16px;
+            text-align: center;
+            padding: 20px;
         }
     </style>
     
@@ -1041,18 +954,7 @@
 <body>
     <div class="phone-frame">
         <div class="content">
-            <!-- Хедер -->
-            <div class="header">
-                <div class="logo" onclick="handleLogoClick()">
-                    <span class="ping">Ping</span><span class="ster">ster</span>
-                </div>
-                <div id="settingsIcon" class="icon-settings" onclick="showSettingsScreen()">
-                    <svg viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="3"/>
-                        <path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/>
-                    </svg>
-                </div>
-            </div>
+            <!-- Хедер полностью скрыт -->
 
             <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
@@ -1060,7 +962,9 @@
                     <span class="ping">Ping</span><span class="ster">ster</span>
                 </div>
                 
-                <div class="start-avatar" id="startAvatar">👤</div>
+                <div class="start-avatar-square" id="startAvatar">
+                    <img src=".....jpg" alt="avatar">
+                </div>
                 
                 <div class="start-description-box">
                     <div class="start-description">
@@ -1120,7 +1024,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН МАГАЗИНА -->
+            <!-- ЭКРАН МАГАЗИНА (В РАЗРАБОТКЕ) -->
             <div id="shopScreen" class="screen screen-shop">
                 <div class="title-row">
                     <div class="title-left">
@@ -1130,28 +1034,11 @@
                         Pingcoins: <span id="coinsAmount">1000</span>
                     </div>
                 </div>
-                <div class="section-subtitle">Зарабатывайте и покупайте</div>
-
-                <div class="shop-tabs">
-                    <div class="shop-tab active" onclick="showShopTab('shop')">Магазин</div>
-                    <div class="shop-tab" onclick="showShopTab('tasks')">Задания</div>
-                </div>
-
-                <div id="shopTabContent" class="shop-content">
-                    <div class="nicks-section">
-                        <div class="section-header">Цветные ники</div>
-                        <div class="items-grid" id="nicksGrid"></div>
-                    </div>
-
-                    <div class="frames-section">
-                        <div class="section-header">Рамки для аватарки</div>
-                        <div class="items-grid" id="framesGrid"></div>
-                    </div>
-                </div>
-
-                <div id="tasksTabContent" class="shop-content" style="display: none;">
-                    <div class="tasks-section">
-                        Задания пока в разработке
+                
+                <div class="shop-content">
+                    <div class="development-message">
+                        Магазин временно не работает<br>
+                        Ведутся технические работы
                     </div>
                 </div>
 
@@ -1288,51 +1175,6 @@
                         <span class="nav-label">Магазин</span>
                     </div>
                     <div class="nav-item active" onclick="showProfileScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="12" cy="8" r="4"/>
-                                <path d="M4 21c2-4 14-4 16 0"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ЭКРАН НАСТРОЕК -->
-            <div id="settingsScreen" class="screen screen-settings">
-                <div class="section-title">Настройки</div>
-
-                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
-                    <h3 style="font-size:14px; margin-bottom:8px;">Тема</h3>
-                    <p style="color:#9BA1B0; font-size:13px;">Тёмная / Светлая</p>
-                </div>
-
-                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
-                    <h3 style="font-size:14px; margin-bottom:8px;">Модерация</h3>
-                    <p style="color:#9BA1B0; font-size:13px;">Люди мы будем</p>
-                </div>
-
-                <div class="bottom-nav" style="margin-top: auto;">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M6 6h15l-1.5 9h-12z"/>
-                                <circle cx="9" cy="21" r="1"/>
-                                <circle cx="18" cy="21" r="1"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item" onclick="showProfileScreen()">
                         <span class="nav-icon">
                             <svg viewBox="0 0 24 24">
                                 <circle cx="12" cy="8" r="4"/>
@@ -1566,22 +1408,6 @@
 
                 <button class="primary-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
             </div>
-
-            <!-- ЭКРАН ПОИСКА -->
-            <div id="searchScreen" class="screen screen-search">
-                <div class="search-header">
-                    <div class="search-title" id="searchModeTitle">FACEIT</div>
-                    <div class="search-timer" id="searchTimer">00:00</div>
-                </div>
-                
-                <div class="search-status">Поиск тиммейта начат</div>
-                
-                <div class="search-loading">
-                    <div class="spinner"></div>
-                </div>
-                
-                <button class="cancel-search-btn" onclick="cancelSearch()">Отменить поиск</button>
-            </div>
         </div>
 
         <div class="home-bar"></div>
@@ -1646,15 +1472,14 @@
         // ФУНКЦИИ ДЛЯ ЛОГОТИПА
         // ============================================
         function handleLogoClick() {
-            if (document.getElementById('searchScreen').style.display === 'flex') {
+            if (document.getElementById('searchScreen') && document.getElementById('searchScreen').style.display === 'flex') {
                 alert('Сначала отмените поиск');
                 return;
             }
-            if (document.getElementById('startScreen').style.display === 'flex') return;
+            if (document.getElementById('startScreen') && document.getElementById('startScreen').style.display === 'flex') return;
             
             hideAllScreens();
             document.getElementById('mainScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
         }
 
         // ============================================
@@ -1701,6 +1526,7 @@
 
         function setupDragAndDrop() {
             const avatarDiv = document.getElementById('profileAvatar');
+            if (!avatarDiv) return;
             
             avatarDiv.addEventListener('dragover', (e) => {
                 e.preventDefault();
@@ -1856,7 +1682,6 @@
                     }
                     
                     loadSavedValues();
-                    renderShop();
                 }
                 
             } catch (error) {
@@ -1869,31 +1694,44 @@
         // ============================================
         
         function loadSavedValues() {
-            document.getElementById('profileName').textContent = savedName;
-            document.getElementById('ageValue').textContent = savedAge;
-            document.getElementById('steamDisplay').textContent = savedSteam;
-            document.getElementById('faceitLinkDisplay').textContent = savedFaceitLink;
-            document.getElementById('coinsAmount').textContent = coins;
+            const profileNameEl = document.getElementById('profileName');
+            if (profileNameEl) profileNameEl.textContent = savedName;
+            
+            const ageValueEl = document.getElementById('ageValue');
+            if (ageValueEl) ageValueEl.textContent = savedAge;
+            
+            const steamDisplayEl = document.getElementById('steamDisplay');
+            if (steamDisplayEl) steamDisplayEl.textContent = savedSteam;
+            
+            const faceitLinkDisplayEl = document.getElementById('faceitLinkDisplay');
+            if (faceitLinkDisplayEl) faceitLinkDisplayEl.textContent = savedFaceitLink;
+            
+            const coinsAmountEl = document.getElementById('coinsAmount');
+            if (coinsAmountEl) coinsAmountEl.textContent = coins;
             
             const avatarDiv = document.getElementById('profileAvatar');
-            if (savedAvatar && savedAvatar.startsWith('http')) {
-                avatarDiv.innerHTML = `<img src="${savedAvatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
-                avatarDiv.className = 'profile-avatar';
-            } else {
-                avatarDiv.innerHTML = savedAvatar;
-                avatarDiv.className = 'profile-avatar';
-                ownedFrames.forEach(frameId => {
-                    const frame = frames.find(f => f.id === frameId);
-                    if (frame) avatarDiv.classList.add(frame.class);
-                });
+            if (avatarDiv) {
+                if (savedAvatar && savedAvatar.startsWith('http')) {
+                    avatarDiv.innerHTML = `<img src="${savedAvatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                    avatarDiv.className = 'profile-avatar';
+                } else {
+                    avatarDiv.innerHTML = savedAvatar;
+                    avatarDiv.className = 'profile-avatar';
+                    ownedFrames.forEach(frameId => {
+                        const frame = frames.find(f => f.id === frameId);
+                        if (frame) avatarDiv.classList.add(frame.class);
+                    });
+                }
             }
             
             const profileName = document.getElementById('profileName');
-            profileName.className = 'profile-name';
-            ownedNicks.forEach(nickId => {
-                const nick = nicks.find(n => n.id === nickId);
-                if (nick) profileName.classList.add(nick.class);
-            });
+            if (profileName) {
+                profileName.className = 'profile-name';
+                ownedNicks.forEach(nickId => {
+                    const nick = nicks.find(n => n.id === nickId);
+                    if (nick) profileName.classList.add(nick.class);
+                });
+            }
             
             tempName = savedName;
             tempAvatar = savedAvatar;
@@ -2018,19 +1856,16 @@
         function startApp() {
             hideAllScreens();
             document.getElementById('mainScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
         }
 
         function showMainScreen() {
             hideAllScreens();
             document.getElementById('mainScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
         }
 
         function showProfileScreen() {
             hideAllScreens();
             document.getElementById('profileScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
             
             if (isSearchMode) {
                 exitSearchMode();
@@ -2041,24 +1876,15 @@
             loadSavedValues();
         }
 
-        function showSettingsScreen() {
-            hideAllScreens();
-            document.getElementById('settingsScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.add('active');
-        }
-
         function showShopScreen() {
             hideAllScreens();
             document.getElementById('shopScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
-            renderShop();
         }
 
         function showFaceitScreen() {
             lastModeScreen = 'faceitScreen';
             hideAllScreens();
             document.getElementById('faceitScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
             loadSavedValues();
             
             document.getElementById('faceitAgeValue').textContent = savedAge;
@@ -2070,7 +1896,6 @@
             lastModeScreen = 'premierScreen';
             hideAllScreens();
             document.getElementById('premierScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
             loadSavedValues();
             
             document.getElementById('premierAgeValue').textContent = savedAge;
@@ -2081,7 +1906,6 @@
             lastModeScreen = 'primeScreen';
             hideAllScreens();
             document.getElementById('primeScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
             loadSavedValues();
             
             document.getElementById('primeAgeValue').textContent = savedAge;
@@ -2092,7 +1916,6 @@
             lastModeScreen = 'publicScreen';
             hideAllScreens();
             document.getElementById('publicScreen').style.display = 'flex';
-            document.getElementById('settingsIcon').classList.remove('active');
             loadSavedValues();
             
             document.getElementById('publicAgeValue').textContent = savedAge;
@@ -2101,8 +1924,8 @@
 
         function hideAllScreens() {
             const screens = [
-                'startScreen', 'mainScreen', 'profileScreen', 'settingsScreen', 'shopScreen',
-                'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen', 'searchScreen'
+                'startScreen', 'mainScreen', 'profileScreen', 'shopScreen',
+                'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen'
             ];
             screens.forEach(id => {
                 const el = document.getElementById(id);
@@ -2110,131 +1933,11 @@
             });
         }
 
-        function showShopTab(tab) {
-            const tabs = document.querySelectorAll('.shop-tab');
-            const shopContent = document.getElementById('shopTabContent');
-            const tasksContent = document.getElementById('tasksTabContent');
-            
-            tabs.forEach(t => t.classList.remove('active'));
-            
-            if (tab === 'shop') {
-                tabs[0].classList.add('active');
-                shopContent.style.display = 'block';
-                tasksContent.style.display = 'none';
-            } else {
-                tabs[1].classList.add('active');
-                shopContent.style.display = 'none';
-                tasksContent.style.display = 'flex';
-            }
-        }
-
         // ============================================
-        // ФУНКЦИИ МАГАЗИНА
+        // ФУНКЦИИ МАГАЗИНА (упрощенные)
         // ============================================
         function renderShop() {
-            const nicksGrid = document.getElementById('nicksGrid');
-            const framesGrid = document.getElementById('framesGrid');
-            const coinsSpan = document.getElementById('coinsAmount');
-            
-            if (nicksGrid) {
-                nicksGrid.innerHTML = nicks.map(nick => {
-                    const owned = ownedNicks.includes(nick.id);
-                    return `
-                        <div class="shop-item">
-                            <div class="item-info">
-                                <div class="color-dot ${nick.class}"></div>
-                                <span class="item-name">${nick.name}</span>
-                            </div>
-                            <div class="item-right">
-                                <span class="price-value">${nick.price}</span>
-                                <button class="buy-btn ${owned ? 'owned' : ''}" 
-                                        onclick="buyNick('${nick.id}')"
-                                        ${owned ? 'disabled' : ''}>
-                                    ${owned ? 'Куплено' : 'Купить'}
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            if (framesGrid) {
-                framesGrid.innerHTML = frames.map(frame => {
-                    const owned = ownedFrames.includes(frame.id);
-                    return `
-                        <div class="shop-item">
-                            <div class="item-info">
-                                <div class="frame-dot ${frame.class}"></div>
-                                <span class="item-name">${frame.name}</span>
-                            </div>
-                            <div class="item-right">
-                                <span class="price-value">${frame.price}</span>
-                                <button class="buy-btn ${owned ? 'owned' : ''}" 
-                                        onclick="buyFrame('${frame.id}')"
-                                        ${owned ? 'disabled' : ''}>
-                                    ${owned ? 'Куплено' : 'Купить'}
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            if (coinsSpan) coinsSpan.textContent = coins;
-        }
-
-        function buyNick(nickId) {
-            const nick = nicks.find(n => n.id === nickId);
-            if (!nick) return;
-            
-            if (ownedNicks.includes(nickId)) {
-                alert('У вас уже есть этот ник!');
-                return;
-            }
-            
-            if (coins >= nick.price) {
-                coins -= nick.price;
-                ownedNicks.push(nickId);
-                
-                const profileName = document.getElementById('profileName');
-                if (profileName) {
-                    profileName.className = 'profile-name';
-                    profileName.classList.add(nick.class);
-                }
-                
-                renderShop();
-                saveUserToDB();
-                alert(`Вы купили ${nick.name} ник!`);
-            } else {
-                alert('Недостаточно Pingcoins!');
-            }
-        }
-
-        function buyFrame(frameId) {
-            const frame = frames.find(f => f.id === frameId);
-            if (!frame) return;
-            
-            if (ownedFrames.includes(frameId)) {
-                alert('У вас уже есть эта рамка!');
-                return;
-            }
-            
-            if (coins >= frame.price) {
-                coins -= frame.price;
-                ownedFrames.push(frameId);
-                
-                const profileAvatar = document.getElementById('profileAvatar');
-                if (profileAvatar) {
-                    profileAvatar.className = 'profile-avatar';
-                    profileAvatar.classList.add(frame.class);
-                }
-                
-                renderShop();
-                saveUserToDB();
-                alert(`Вы купили ${frame.name}!`);
-            } else {
-                alert('Недостаточно Pingcoins!');
-            }
+            // Магазин в разработке, ничего не делаем
         }
 
         // ============================================
@@ -2346,9 +2049,6 @@
             element.classList.add('active');
         }
 
-        // ============================================
-        // НОВЫЙ ЭКРАН ПОИСКА И ТАЙМЕР
-        // ============================================
         let searchTimerInterval = null;
         let searchSeconds = 0;
         let currentSearchMode = '';
@@ -2399,6 +2099,25 @@
         }
 
         function startSearch(mode, value) {
+            // Создаем экран поиска если его нет
+            if (!document.getElementById('searchScreen')) {
+                const searchScreen = document.createElement('div');
+                searchScreen.id = 'searchScreen';
+                searchScreen.className = 'screen screen-search';
+                searchScreen.innerHTML = `
+                    <div class="search-header">
+                        <div class="search-title" id="searchModeTitle">${mode}</div>
+                        <div class="search-timer" id="searchTimer">00:00</div>
+                    </div>
+                    <div class="search-status">Поиск тиммейта начат</div>
+                    <div class="search-loading">
+                        <div class="spinner"></div>
+                    </div>
+                    <button class="cancel-search-btn" onclick="cancelSearch()">Отменить поиск</button>
+                `;
+                document.querySelector('.content').appendChild(searchScreen);
+            }
+            
             showSearchScreen(mode);
             console.log(`Поиск в режиме ${mode} с данными: ${value}`);
         }
@@ -2412,14 +2131,8 @@
             setupDragAndDrop();
             await loadUserFromDB();
             generateFriends();
-            renderShop();
             
-            // Скрываем верхний логотип на стартовом экране
-            if (document.getElementById('startScreen').style.display === 'flex') {
-                document.querySelector('.header .logo').style.display = 'none';
-                document.querySelector('.header').style.borderBottom = 'none';
-            }
-            
+            // Скрываем все экраны и показываем стартовый
             hideAllScreens();
             document.getElementById('startScreen').style.display = 'flex';
             
