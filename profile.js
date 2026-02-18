@@ -31,9 +31,14 @@ function handleFileSelect(file) {
     const reader = new FileReader();
     reader.onload = (e) => {
         const avatarDiv = document.getElementById('profileAvatar');
-        avatarDiv.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+        if (avatarDiv) {
+            avatarDiv.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+        }
+        
         const startAvatar = document.getElementById('startAvatar');
-        if (startAvatar) startAvatar.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+        if (startAvatar) {
+            startAvatar.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+        }
         uploadAvatar(file);
     };
     reader.readAsDataURL(file);
@@ -41,6 +46,7 @@ function handleFileSelect(file) {
 
 function setupDragAndDrop() {
     const avatarDiv = document.getElementById('profileAvatar');
+    if (!avatarDiv) return; // Важно: проверяем существование элемента
     
     avatarDiv.addEventListener('dragover', (e) => {
         e.preventDefault();
@@ -120,7 +126,7 @@ async function uploadAvatar(file) {
 // ============================================
 function generateRandomName() {
     const letters = 'abcdefghijklmnopqrstuvwxyz';
-    const length = Math.floor(Math.random() * 3) + 5; // 5-7 букв
+    const length = Math.floor(Math.random() * 3) + 5;
     let result = '';
     for (let i = 0; i < length; i++) {
         result += letters.charAt(Math.floor(Math.random() * letters.length));
@@ -132,31 +138,49 @@ function generateRandomName() {
 // ЗАГРУЗКА ЗНАЧЕНИЙ В ПРОФИЛЬ
 // ============================================
 function loadSavedValues() {
-    document.getElementById('profileName').textContent = savedName;
-    document.getElementById('ageValue').textContent = savedAge === '-' ? '' : savedAge;
-    document.getElementById('steamDisplay').textContent = savedSteam === '-' ? '' : savedSteam;
-    document.getElementById('faceitLinkDisplay').textContent = savedFaceitLink === '-' ? '' : savedFaceitLink;
-    document.getElementById('coinsAmount').textContent = coins;
+    // Проверяем существование всех элементов перед обращением
+    const profileNameEl = document.getElementById('profileName');
+    if (profileNameEl) profileNameEl.textContent = savedName;
+    
+    const ageValueEl = document.getElementById('ageValue');
+    if (ageValueEl) ageValueEl.textContent = savedAge === '-' ? '' : savedAge;
+    
+    const steamDisplayEl = document.getElementById('steamDisplay');
+    if (steamDisplayEl) steamDisplayEl.textContent = savedSteam === '-' ? '' : savedSteam;
+    
+    const faceitLinkDisplayEl = document.getElementById('faceitLinkDisplay');
+    if (faceitLinkDisplayEl) faceitLinkDisplayEl.textContent = savedFaceitLink === '-' ? '' : savedFaceitLink;
+    
+    const coinsAmountEl = document.getElementById('coinsAmount');
+    if (coinsAmountEl) coinsAmountEl.textContent = coins;
     
     const avatarDiv = document.getElementById('profileAvatar');
-    if (savedAvatar && savedAvatar.startsWith('http')) {
-        avatarDiv.innerHTML = `<img src="${savedAvatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
-        avatarDiv.className = 'profile-avatar';
-    } else {
-        avatarDiv.innerHTML = savedAvatar;
-        avatarDiv.className = 'profile-avatar';
-        ownedFrames.forEach(frameId => {
-            const frame = frames.find(f => f.id === frameId);
-            if (frame) avatarDiv.classList.add(frame.class);
-        });
+    if (avatarDiv) {
+        if (savedAvatar && savedAvatar.startsWith('http')) {
+            avatarDiv.innerHTML = `<img src="${savedAvatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+            avatarDiv.className = 'profile-avatar';
+        } else {
+            avatarDiv.innerHTML = savedAvatar;
+            avatarDiv.className = 'profile-avatar';
+            if (ownedFrames && ownedFrames.length) {
+                ownedFrames.forEach(frameId => {
+                    const frame = frames.find(f => f.id === frameId);
+                    if (frame) avatarDiv.classList.add(frame.class);
+                });
+            }
+        }
     }
     
     const profileName = document.getElementById('profileName');
-    profileName.className = 'profile-name';
-    ownedNicks.forEach(nickId => {
-        const nick = nicks.find(n => n.id === nickId);
-        if (nick) profileName.classList.add(nick.class);
-    });
+    if (profileName) {
+        profileName.className = 'profile-name';
+        if (ownedNicks && ownedNicks.length) {
+            ownedNicks.forEach(nickId => {
+                const nick = nicks.find(n => n.id === nickId);
+                if (nick) profileName.classList.add(nick.class);
+            });
+        }
+    }
     
     tempName = savedName;
     tempAvatar = savedAvatar;
@@ -178,7 +202,7 @@ function toggleEditMode() {
         document.getElementById('ageCard'),
         document.getElementById('steamCard'),
         document.getElementById('faceitLinkCard')
-    ];
+    ].filter(el => el !== null); // Убираем null элементы
     
     const editToggle = document.getElementById('editToggle');
     const applyBtn = document.getElementById('applyBtn');
@@ -221,7 +245,8 @@ function editName() {
     const newName = prompt('Введите новый никнейм (3-10 символов):', tempName === '-' ? '' : tempName);
     if (newName && newName.length >= 3 && newName.length <= 10) {
         tempName = newName;
-        document.getElementById('profileName').textContent = newName;
+        const profileName = document.getElementById('profileName');
+        if (profileName) profileName.textContent = newName;
     }
 }
 
@@ -230,7 +255,8 @@ function editAge() {
     const newAge = prompt('Введите возраст:', tempAge === '-' ? '' : tempAge);
     if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= 100) {
         tempAge = newAge;
-        document.getElementById('ageValue').textContent = newAge;
+        const ageValue = document.getElementById('ageValue');
+        if (ageValue) ageValue.textContent = newAge;
     }
 }
 
@@ -239,7 +265,8 @@ function editSteam() {
     const newSteam = prompt('Введите ссылку на Steam:', tempSteam === '-' ? '' : tempSteam);
     if (newSteam) {
         tempSteam = newSteam;
-        document.getElementById('steamDisplay').textContent = newSteam;
+        const steamDisplay = document.getElementById('steamDisplay');
+        if (steamDisplay) steamDisplay.textContent = newSteam;
     }
 }
 
@@ -248,20 +275,24 @@ function editFaceitLink() {
     const newLink = prompt('Введите ссылку на Faceit:', tempFaceitLink === '-' ? '' : tempFaceitLink);
     if (newLink !== null) {
         tempFaceitLink = newLink || '-';
-        document.getElementById('faceitLinkDisplay').textContent = tempFaceitLink;
+        const faceitLinkDisplay = document.getElementById('faceitLinkDisplay');
+        if (faceitLinkDisplay) faceitLinkDisplay.textContent = tempFaceitLink;
     }
 }
 
 // ============================================
-// ИНИЦИАЛИЗАЦИЯ ПРОФИЛЯ (вызывать при старте)
+// ИНИЦИАЛИЗАЦИЯ ПРОФИЛЯ
 // ============================================
 function initProfile() {
-    // Если имя не задано (стоит прочерк) - генерируем случайное
+    // Проверяем что элементы существуют перед инициализацией
     if (savedName === '-') {
         savedName = generateRandomName();
         tempName = savedName;
     }
     
-    // Загружаем значения
-    if (typeof loadSavedValues === 'function') loadSavedValues();
+    // Загружаем значения с проверкой
+    if (typeof loadSavedValues === 'function') {
+        // Добавляем небольшую задержку чтобы DOM точно загрузился
+        setTimeout(loadSavedValues, 50);
+    }
 }
