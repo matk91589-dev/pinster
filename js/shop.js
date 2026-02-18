@@ -5,6 +5,7 @@
 let currentShopTab = 'cases'; // 'cases' или 'inventory'
 
 // Данные кейсов
+// Данные кейсов
 const cases = [
     { 
         id: 'common_case', 
@@ -12,28 +13,31 @@ const cases = [
         description: 'Обычный кейс с базовыми предметами',
         price: 1000, 
         class: 'common-case',
-        icon: '📦',
+        icon: '📦', // Это оставляем, норм
         items: [
-            // Ники (для ника)
-            { type: 'nick', id: 'red', name: 'Красный ник', icon: '🔴', rarity: 'common', rarityName: 'Common' },
-            { type: 'nick', id: 'green', name: 'Зеленый ник', icon: '🟢', rarity: 'common', rarityName: 'Common' },
-            { type: 'nick', id: 'blue', name: 'Синий ник', icon: '🔵', rarity: 'common', rarityName: 'Common' },
-            { type: 'nick', id: 'purple', name: 'Фиолетовый ник', icon: '🟣', rarity: 'rare', rarityName: 'Rare' },
-            { type: 'nick', id: 'orange', name: 'Оранжевый ник', icon: '🟠', rarity: 'rare', rarityName: 'Rare' },
+            // Ники
+            { type: 'nick', id: 'red', name: 'Красный ник', icon: '🎨', rarity: 'common', rarityName: 'Common' },
+            { type: 'nick', id: 'green', name: 'Зеленый ник', icon: '🎨', rarity: 'common', rarityName: 'Common' },
+            { type: 'nick', id: 'blue', name: 'Синий ник', icon: '🎨', rarity: 'common', rarityName: 'Common' },
+            { type: 'nick', id: 'purple', name: 'Фиолетовый ник', icon: '🎨', rarity: 'rare', rarityName: 'Rare' },
+            { type: 'nick', id: 'orange', name: 'Оранжевый ник', icon: '🎨', rarity: 'rare', rarityName: 'Rare' },
             { type: 'nick', id: 'multicolor', name: 'Радужный ник', icon: '🌈', rarity: 'epic', rarityName: 'Epic' },
             
-            // Рамки (для аватарки)
-            { type: 'frame', id: 'red', name: 'Красная рамка', icon: '🔴', rarity: 'common', rarityName: 'Common' },
-            { type: 'frame', id: 'blue', name: 'Синяя рамка', icon: '🔵', rarity: 'common', rarityName: 'Common' },
-            { type: 'frame', id: 'green', name: 'Зеленая рамка', icon: '🟢', rarity: 'common', rarityName: 'Common' },
-            { type: 'frame', id: 'gold', name: 'Золотая рамка', icon: '⭐', rarity: 'rare', rarityName: 'Rare' },
-            { type: 'frame', id: 'purple', name: 'Фиолетовая рамка', icon: '🟣', rarity: 'rare', rarityName: 'Rare' },
-            { type: 'frame', id: 'rainbow', name: 'Радужная рамка', icon: '🌈', rarity: 'legendary', rarityName: 'Legendary' },
+            // Рамки
+            { type: 'frame', id: 'red', name: 'Красная рамка', icon: '🖼️', rarity: 'common', rarityName: 'Common' },
+            { type: 'frame', id: 'blue', name: 'Синяя рамка', icon: '🖼️', rarity: 'common', rarityName: 'Common' },
+            { type: 'frame', id: 'green', name: 'Зеленая рамка', icon: '🖼️', rarity: 'common', rarityName: 'Common' },
+            { type: 'frame', id: 'gold', name: 'Золотая рамка', icon: '🖼️', rarity: 'rare', rarityName: 'Rare' },
+            { type: 'frame', id: 'purple', name: 'Фиолетовая рамка', icon: '🖼️', rarity: 'rare', rarityName: 'Rare' },
+            { type: 'frame', id: 'rainbow', name: 'Радужная рамка', icon: '🖼️', rarity: 'legendary', rarityName: 'Legendary' },
             
-            // Скины (для примера, можно добавить потом)
+            // Скины CS:GO (нормальные)
             { type: 'skin', name: 'AK-47 | Redline', icon: '🔫', rarity: 'rare', rarityName: 'Rare' },
-            { type: 'skin', name: 'AWP | Dragon Lore', icon: '🐉', rarity: 'legendary', rarityName: 'Legendary' },
-            { type: 'skin', name: '★ Karambit | Fade', icon: '🔪', rarity: 'legendary', rarityName: 'Legendary' }
+            { type: 'skin', name: 'AWP | Dragon Lore', icon: '🔫', rarity: 'legendary', rarityName: 'Legendary' },
+            { type: 'skin', name: '★ Karambit | Fade', icon: '🔪', rarity: 'legendary', rarityName: 'Legendary' },
+            { type: 'skin', name: 'M4A4 | Howl', icon: '🔫', rarity: 'legendary', rarityName: 'Legendary' },
+            { type: 'skin', name: 'Desert Eagle | Blaze', icon: '🔫', rarity: 'rare', rarityName: 'Rare' },
+            { type: 'skin', name: '★ Glove Case', icon: '🧤', rarity: 'epic', rarityName: 'Epic' }
         ]
     }
 ];
@@ -386,3 +390,4 @@ function closeCase() {
     isOpening = false;
     currentCase = null;
 }
+
