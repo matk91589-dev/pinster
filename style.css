@@ -520,6 +520,7 @@ body {
     color: #FFFFFF;
     word-break: break-word;
     line-height: 1.4;
+    text-transform: none;
 }
 
 /* Расстояние между плашками */
@@ -1230,6 +1231,7 @@ body {
     text-align: center;
     font-weight: 400;
 }
+
 
 
 
