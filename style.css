@@ -207,7 +207,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding-top: 20px;
+    padding-top: 10px; /* Уменьшил отступ сверху */
     height: 100%;
 }
 
@@ -216,20 +216,20 @@ body {
     font-weight: 700;
     color: #FFFFFF;
     letter-spacing: -0.5px;
-    margin-bottom: 30px;
+    margin-bottom: 20px; /* Уменьшил отступ снизу */
 }
 
 .start-logo .ping {
     color: #FF6B4A;
 }
 
-/* ===== КВАДРАТНАЯ АВАТАРКА БЕЗ ЗАКРУГЛЕНИЙ ===== */
+/* ===== АВАТАРКА С ЗАКРУГЛЕНИЕМ ТОЛЬКО СВЕРХУ ===== */
 .start-avatar-square {
     width: 280px;        /* Ширина как у рамки текста */
     height: 280px;       /* Квадрат */
     margin: 0 auto -30px auto; /* Наезжает на рамку */
     border: none;
-    border-radius: 0;    /* Без закруглений - острые углы */
+    border-radius: 30px 30px 0 0; /* Закруглены только верхние углы */
     overflow: hidden;
     background: #1A1D24;
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
@@ -244,11 +244,11 @@ body {
     display: block;
 }
 
-/* ===== РАМКА ТЕКСТА - ПРЯМОУГОЛЬНАЯ ===== */
+/* ===== РАМКА ТЕКСТА С ЗАКРУГЛЕНИЕМ ТОЛЬКО СНИЗУ ===== */
 .start-description-box {
     width: 280px;        /* Одинаковая ширина с аватаркой */
     border: 3px solid #FF6B4A;
-    border-radius: 0;    /* Без закруглений - острые углы */
+    border-radius: 0 0 30px 30px; /* Закруглены только нижние углы */
     padding: 50px 16px 20px 16px; /* Большой отступ сверху для наезда аватарки */
     margin: 0 auto 30px auto;
     background: #1A1D24;
