@@ -1066,26 +1066,3 @@ body {
 .cancel-search-btn:active {
     transform: scale(0.98);
 }
-
-/* Магазин в разработке */
-.shop-content {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.development-message {
-    color: #9BA1B0;
-    font-size: 16px;
-    text-align: center;
-    padding: 20px;
-}
-
-.shop-tabs {
-    display: none;
-}
-
-.nicks-section, .frames-section {
-    display: none;
-}
