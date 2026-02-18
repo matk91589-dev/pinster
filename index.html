@@ -111,7 +111,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН ПРОФИЛЯ -->
+            <!-- ЭКРАН ПРОФИЛЯ (ИСПРАВЛЕННЫЙ) -->
             <div id="profileScreen" class="screen screen-profile">
                 <div class="title-row">
                     <div class="title-left">
@@ -139,19 +139,19 @@
                         <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">0<span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
                     </div>
-                    <div class="stat-card" onclick="editAge()">
+                    <div class="stat-card" id="ageCard" onclick="editAge()">
                         <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="ageValue">-</div>
+                        <div class="stat-value" id="ageValue" style="color: #5D6472;">ваш возраст</div>
                     </div>
                 </div>
                 <div class="profile-stats">
-                    <div class="profile-stat-card" onclick="editSteam()">
+                    <div class="profile-stat-card" id="steamCard" onclick="editSteam()">
                         <div class="profile-stat-label">Ссылка Steam</div>
-                        <div class="profile-stat-value" id="steamDisplay">-</div>
+                        <div class="profile-stat-value" id="steamDisplay" style="color: #5D6472;">введите ссылку на ваш профиль Steam</div>
                     </div>
-                    <div class="profile-stat-card" onclick="editFaceitLink()">
+                    <div class="profile-stat-card" id="faceitLinkCard" onclick="editFaceitLink()">
                         <div class="profile-stat-label">Ссылка Faceit</div>
-                        <div class="profile-stat-value" id="faceitLinkDisplay">-</div>
+                        <div class="profile-stat-value" id="faceitLinkDisplay" style="color: #5D6472;">введите ссылку на ваш профиль Faceit (если есть)</div>
                     </div>
                 </div>
                 <div class="friends-section">
