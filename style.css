@@ -511,7 +511,6 @@ body {
     font-size: 10px;              /* как в поиске */
     color: #9BA1B0;
     margin-bottom: 2px;
-    text-transform: uppercase;    /* как в поиске */
     letter-spacing: 0.3px;
 }
 
@@ -1231,6 +1230,7 @@ body {
     text-align: center;
     font-weight: 400;
 }
+
 
 
 
