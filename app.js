@@ -49,15 +49,22 @@ const frames = [
 // ФУНКЦИИ ДЛЯ ЛОГОТИПА
 // ============================================
 function handleLogoClick() {
-    if (document.getElementById('searchScreen').style.display === 'flex') {
+    const searchScreen = document.getElementById('searchScreen');
+    const startScreen = document.getElementById('startScreen');
+    
+    if (searchScreen && searchScreen.style.display === 'flex') {
         alert('Сначала отмените поиск');
         return;
     }
-    if (document.getElementById('startScreen').style.display === 'flex') return;
+    if (startScreen && startScreen.style.display === 'flex') return;
     
     hideAllScreens();
-    document.getElementById('mainScreen').style.display = 'flex';
-    document.getElementById('settingsIcon').classList.remove('active');
+    
+    const mainScreen = document.getElementById('mainScreen');
+    if (mainScreen) mainScreen.style.display = 'flex';
+    
+    const settingsIcon = document.getElementById('settingsIcon');
+    if (settingsIcon) settingsIcon.classList.remove('active');
 }
 
 // ============================================
@@ -65,20 +72,32 @@ function handleLogoClick() {
 // ============================================
 function startApp() {
     hideAllScreens();
-    document.getElementById('mainScreen').style.display = 'flex';
-    document.getElementById('settingsIcon').classList.remove('active');
+    
+    const mainScreen = document.getElementById('mainScreen');
+    if (mainScreen) mainScreen.style.display = 'flex';
+    
+    const settingsIcon = document.getElementById('settingsIcon');
+    if (settingsIcon) settingsIcon.classList.remove('active');
 }
 
 function showMainScreen() {
     hideAllScreens();
-    document.getElementById('mainScreen').style.display = 'flex';
-    document.getElementById('settingsIcon').classList.remove('active');
+    
+    const mainScreen = document.getElementById('mainScreen');
+    if (mainScreen) mainScreen.style.display = 'flex';
+    
+    const settingsIcon = document.getElementById('settingsIcon');
+    if (settingsIcon) settingsIcon.classList.remove('active');
 }
 
 function showProfileScreen() {
     hideAllScreens();
-    document.getElementById('profileScreen').style.display = 'flex';
-    document.getElementById('settingsIcon').classList.remove('active');
+    
+    const profileScreen = document.getElementById('profileScreen');
+    if (profileScreen) profileScreen.style.display = 'flex';
+    
+    const settingsIcon = document.getElementById('settingsIcon');
+    if (settingsIcon) settingsIcon.classList.remove('active');
     
     if (isSearchMode) {
         if (typeof exitSearchMode === 'function') exitSearchMode();
@@ -88,65 +107,110 @@ function showProfileScreen() {
 }
 
 function showSettingsScreen() {
-    if (document.getElementById('searchScreen').style.display === 'flex') {
+    const searchScreen = document.getElementById('searchScreen');
+    if (searchScreen && searchScreen.style.display === 'flex') {
         alert('Для просмотра настроек сначала отмените поиск');
         return;
     }
+    
     hideAllScreens();
-    document.getElementById('settingsScreen').style.display = 'flex';
-    document.getElementById('settingsIcon').classList.add('active');
+    
+    const settingsScreen = document.getElementById('settingsScreen');
+    if (settingsScreen) settingsScreen.style.display = 'flex';
+    
+    const settingsIcon = document.getElementById('settingsIcon');
+    if (settingsIcon) settingsIcon.classList.add('active');
 }
 
 function showShopScreen() {
     hideAllScreens();
-    document.getElementById('shopScreen').style.display = 'flex';
-    document.getElementById('settingsIcon').classList.remove('active');
+    
+    const shopScreen = document.getElementById('shopScreen');
+    if (shopScreen) shopScreen.style.display = 'flex';
+    
+    const settingsIcon = document.getElementById('settingsIcon');
+    if (settingsIcon) settingsIcon.classList.remove('active');
+    
     if (typeof renderShop === 'function') renderShop();
 }
 
 function showFaceitScreen() {
     lastModeScreen = 'faceitScreen';
     hideAllScreens();
-    document.getElementById('faceitScreen').style.display = 'flex';
-    document.getElementById('settingsIcon').classList.remove('active');
+    
+    const faceitScreen = document.getElementById('faceitScreen');
+    if (faceitScreen) faceitScreen.style.display = 'flex';
+    
+    const settingsIcon = document.getElementById('settingsIcon');
+    if (settingsIcon) settingsIcon.classList.remove('active');
+    
     if (typeof loadSavedValues === 'function') loadSavedValues();
     
-    document.getElementById('faceitAgeValue').textContent = savedAge;
-    document.getElementById('faceitSteamInput').value = savedSteam;
-    document.getElementById('faceitLinkInput').value = savedFaceitLink;
+    const faceitAgeValue = document.getElementById('faceitAgeValue');
+    if (faceitAgeValue) faceitAgeValue.textContent = savedAge;
+    
+    const faceitSteamInput = document.getElementById('faceitSteamInput');
+    if (faceitSteamInput) faceitSteamInput.value = savedSteam;
+    
+    const faceitLinkInput = document.getElementById('faceitLinkInput');
+    if (faceitLinkInput) faceitLinkInput.value = savedFaceitLink;
 }
 
 function showPremierScreen() {
     lastModeScreen = 'premierScreen';
     hideAllScreens();
-    document.getElementById('premierScreen').style.display = 'flex';
-    document.getElementById('settingsIcon').classList.remove('active');
+    
+    const premierScreen = document.getElementById('premierScreen');
+    if (premierScreen) premierScreen.style.display = 'flex';
+    
+    const settingsIcon = document.getElementById('settingsIcon');
+    if (settingsIcon) settingsIcon.classList.remove('active');
+    
     if (typeof loadSavedValues === 'function') loadSavedValues();
     
-    document.getElementById('premierAgeValue').textContent = savedAge;
-    document.getElementById('premierSteamInput').value = savedSteam;
+    const premierAgeValue = document.getElementById('premierAgeValue');
+    if (premierAgeValue) premierAgeValue.textContent = savedAge;
+    
+    const premierSteamInput = document.getElementById('premierSteamInput');
+    if (premierSteamInput) premierSteamInput.value = savedSteam;
 }
 
 function showPrimeScreen() {
     lastModeScreen = 'primeScreen';
     hideAllScreens();
-    document.getElementById('primeScreen').style.display = 'flex';
-    document.getElementById('settingsIcon').classList.remove('active');
+    
+    const primeScreen = document.getElementById('primeScreen');
+    if (primeScreen) primeScreen.style.display = 'flex';
+    
+    const settingsIcon = document.getElementById('settingsIcon');
+    if (settingsIcon) settingsIcon.classList.remove('active');
+    
     if (typeof loadSavedValues === 'function') loadSavedValues();
     
-    document.getElementById('primeAgeValue').textContent = savedAge;
-    document.getElementById('primeSteamInput').value = savedSteam;
+    const primeAgeValue = document.getElementById('primeAgeValue');
+    if (primeAgeValue) primeAgeValue.textContent = savedAge;
+    
+    const primeSteamInput = document.getElementById('primeSteamInput');
+    if (primeSteamInput) primeSteamInput.value = savedSteam;
 }
 
 function showPublicScreen() {
     lastModeScreen = 'publicScreen';
     hideAllScreens();
-    document.getElementById('publicScreen').style.display = 'flex';
-    document.getElementById('settingsIcon').classList.remove('active');
+    
+    const publicScreen = document.getElementById('publicScreen');
+    if (publicScreen) publicScreen.style.display = 'flex';
+    
+    const settingsIcon = document.getElementById('settingsIcon');
+    if (settingsIcon) settingsIcon.classList.remove('active');
+    
     if (typeof loadSavedValues === 'function') loadSavedValues();
     
-    document.getElementById('publicAgeValue').textContent = savedAge;
-    document.getElementById('publicSteamInput').value = savedSteam;
+    const publicAgeValue = document.getElementById('publicAgeValue');
+    if (publicAgeValue) publicAgeValue.textContent = savedAge;
+    
+    const publicSteamInput = document.getElementById('publicSteamInput');
+    if (publicSteamInput) publicSteamInput.value = savedSteam;
 }
 
 function hideAllScreens() {
@@ -165,16 +229,18 @@ function showShopTab(tab) {
     const shopContent = document.getElementById('shopTabContent');
     const tasksContent = document.getElementById('tasksTabContent');
     
-    tabs.forEach(t => t.classList.remove('active'));
+    if (tabs.length) {
+        tabs.forEach(t => t.classList.remove('active'));
+    }
     
     if (tab === 'shop') {
-        tabs[0].classList.add('active');
-        shopContent.style.display = 'block';
-        tasksContent.style.display = 'none';
+        if (tabs[0]) tabs[0].classList.add('active');
+        if (shopContent) shopContent.style.display = 'block';
+        if (tasksContent) tasksContent.style.display = 'none';
     } else {
-        tabs[1].classList.add('active');
-        shopContent.style.display = 'none';
-        tasksContent.style.display = 'flex';
+        if (tabs[1]) tabs[1].classList.add('active');
+        if (shopContent) shopContent.style.display = 'none';
+        if (tasksContent) tasksContent.style.display = 'flex';
     }
 }
 
@@ -184,32 +250,62 @@ function showShopTab(tab) {
 window.onload = async function() {
     console.log('Запуск...');
 
-    // ===== ПОКАЗЫВАЕМ ХЕДЕР ПОСЛЕ ЗАГРУЗКИ =====
-    const header = document.querySelector('.header');
-    if (header) {
-        header.style.opacity = '1';
-        header.style.pointerEvents = 'auto';
-    }
+    // Ждем немного чтобы DOM точно загрузился
+    setTimeout(async function() {
+        // ===== ПОКАЗЫВАЕМ ХЕДЕР =====
+        const header = document.querySelector('.header');
+        if (header) {
+            header.style.opacity = '1';
+            header.style.pointerEvents = 'auto';
+        }
 
-    // Сначала прячем всё
-    hideAllScreens();
-    
-    // Показываем стартовый экран
-    document.getElementById('startScreen').style.display = 'flex';
-    
-    // Скрываем верхний логотип
-    const headerLogo = document.querySelector('.header .logo');
-    if (headerLogo) headerLogo.style.display = 'none';
-    
-    const header2 = document.querySelector('.header');
-    if (header2) header2.style.borderBottom = 'none';
-    
-    // Загружаем всё остальное
-    if (typeof initProfile === 'function') initProfile();
-    if (typeof setupDragAndDrop === 'function') setupDragAndDrop();
-    if (typeof loadUserFromDB === 'function') await loadUserFromDB();
-    if (typeof generateFriends === 'function') generateFriends();
-    if (typeof renderShop === 'function') renderShop();
-    
-    console.log('Готово!');
+        // Сначала прячем всё
+        hideAllScreens();
+        
+        // Показываем стартовый экран
+        const startScreen = document.getElementById('startScreen');
+        if (startScreen) {
+            startScreen.style.display = 'flex';
+        }
+        
+        // Скрываем верхний логотип
+        const headerLogo = document.querySelector('.header .logo');
+        if (headerLogo) headerLogo.style.display = 'none';
+        
+        const header2 = document.querySelector('.header');
+        if (header2) header2.style.borderBottom = 'none';
+        
+        // Загружаем всё остальное с проверками
+        try {
+            if (typeof initProfile === 'function') initProfile();
+        } catch (e) {
+            console.error('Ошибка в initProfile:', e);
+        }
+        
+        try {
+            if (typeof setupDragAndDrop === 'function') setupDragAndDrop();
+        } catch (e) {
+            console.error('Ошибка в setupDragAndDrop:', e);
+        }
+        
+        try {
+            if (typeof loadUserFromDB === 'function') await loadUserFromDB();
+        } catch (e) {
+            console.error('Ошибка в loadUserFromDB:', e);
+        }
+        
+        try {
+            if (typeof generateFriends === 'function') generateFriends();
+        } catch (e) {
+            console.error('Ошибка в generateFriends:', e);
+        }
+        
+        try {
+            if (typeof renderShop === 'function') renderShop();
+        } catch (e) {
+            console.error('Ошибка в renderShop:', e);
+        }
+        
+        console.log('Готово!');
+    }, 100); // Небольшая задержка для гарантии
 };
