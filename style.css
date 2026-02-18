@@ -1,5 +1,6 @@
-.content {
-    opacity: 1 !important;
+.phone-frame {
+    opacity: 0;
+    transition: opacity 0.2s ease;
 }
 
 * {
@@ -1238,6 +1239,7 @@ body {
 .phone-frame {
     opacity: 1 !important;
 }
+
 
 
 
