@@ -13,7 +13,29 @@ const cases = [
         description: 'Обычный кейс с базовыми предметами',
         price: 1000, 
         class: 'common-case',
-        icon: '📦', // Это оставляем, норм
+        icon: `<svg viewBox="0 0 200 200" width="80" height="80">
+            <!-- Основа кейса -->
+            <rect x="20" y="50" width="160" height="100" rx="12" ry="12" fill="#8b7d7d" stroke="#5a4f4f" stroke-width="4"/>
+            <!-- Верхняя крышка -->
+            <rect x="20" y="40" width="160" height="20" rx="10" ry="10" fill="#a49b9b" stroke="#5a4f4f" stroke-width="3"/>
+            <!-- Тень от крышки -->
+            <rect x="22" y="42" width="156" height="2" fill="rgba(0,0,0,0.3)"/>
+            <!-- Ручки и детали -->
+            <circle cx="35" cy="100" r="6" fill="#555"/>
+            <circle cx="165" cy="100" r="6" fill="#555"/>
+            <!-- Символ Common (звезда) -->
+            <polygon points="100,65 106,80 122,80 108,90 114,105 100,95 86,105 92,90 78,80 94,80" fill="#e0c07b" stroke="#cfa850" stroke-width="1"/>
+            <!-- Слоты внутри кейса -->
+            <g>
+                <rect x="40" y="80" width="24" height="24" rx="4" ry="4" fill="#dcdcdc" stroke="#999" stroke-width="2"/>
+                <rect x="70" y="80" width="24" height="24" rx="4" ry="4" fill="#dcdcdc" stroke="#999" stroke-width="2"/>
+                <rect x="100" y="80" width="24" height="24" rx="4" ry="4" fill="#dcdcdc" stroke="#999" stroke-width="2"/>
+                <rect x="130" y="80" width="24" height="24" rx="4" ry="4" fill="#dcdcdc" stroke="#999" stroke-width="2"/>
+            </g>
+            <!-- Бликующие элементы для эффекта металла -->
+            <path d="M25 55 L175 55" stroke="rgba(255,255,255,0.2)" stroke-width="4"/>
+            <path d="M25 145 L175 145" stroke="rgba(255,255,255,0.2)" stroke-width="4"/>
+        </svg>`,
         items: [
             // Ники
             { type: 'nick', id: 'red', name: 'Красный ник', icon: '🎨', rarity: 'common', rarityName: 'Common' },
@@ -390,4 +412,5 @@ function closeCase() {
     isOpening = false;
     currentCase = null;
 }
+
 
