@@ -9,6 +9,7 @@ window.onload = async function() {
     setupDragAndDrop();
     await loadUserFromDB();
     generateFriends();
+    renderShop();
     
     // Сбрасываем иконку настроек при загрузке
     const settingsIcon = document.getElementById('settingsIcon');
@@ -17,4 +18,5 @@ window.onload = async function() {
     }
     
     console.log('Pingster готов к работе!');
+
 };
