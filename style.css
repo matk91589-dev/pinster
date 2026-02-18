@@ -531,6 +531,9 @@ body {
     display: flex;
     align-items: center;
     gap: 4px;
+    word-break: break-word;  /* ← это важно */
+    white-space: normal;      /* ← разрешаем перенос */
+    line-height: 1.4;         /* ← немного больше высота строки */
 }
 
 .heart-icon {
@@ -1233,3 +1236,4 @@ body {
     text-align: center;
     font-weight: 400;
 }
+
