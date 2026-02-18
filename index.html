@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pingster</title>
+    <title>Pingster - CS:GO Кейсы</title>
     
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
@@ -92,7 +92,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН МАГАЗИНА -->
+            <!-- ЭКРАН МАГАЗИНА С КЕЙСАМИ -->
             <div id="shopScreen" class="screen screen-shop">
                 <div class="title-row">
                     <div class="title-left">
@@ -103,11 +103,26 @@
                     </div>
                 </div>
                 
-                <div class="shop-content">
-                    <div class="development-message">
-                        Магазин временно не работает<br>
-                        Ведутся технические работы
-                    </div>
+                <!-- Табы магазина -->
+                <div class="shop-tabs">
+                    <div class="shop-tab active" onclick="showShopTab('cases')">Кейсы</div>
+                    <div class="shop-tab" onclick="showShopTab('nicks')">Ники</div>
+                    <div class="shop-tab" onclick="showShopTab('frames')">Рамки</div>
+                </div>
+                
+                <!-- Секция кейсов -->
+                <div class="cases-section">
+                    <div class="cases-grid"></div>
+                </div>
+                
+                <!-- Секция ников (скрыта по умолчанию) -->
+                <div class="nicks-section hidden">
+                    <div class="nicks-grid"></div>
+                </div>
+                
+                <!-- Секция рамок (скрыта по умолчанию) -->
+                <div class="frames-section hidden">
+                    <div class="frames-grid"></div>
                 </div>
 
                 <div class="bottom-nav">
@@ -545,6 +560,7 @@
     <script src="js/globals.js"></script>
     <script src="js/navigation.js"></script>
     <script src="js/profile.js"></script>
+    <script src="js/avatar.js"></script>
     <script src="js/shop.js"></script>
     <script src="js/friends.js"></script>
     <script src="js/search.js"></script>
