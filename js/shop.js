@@ -98,14 +98,13 @@ function renderCasesShop() {
     container.innerHTML = cases.map(caseItem => {
         const canAfford = coins >= caseItem.price;
         return `
-            <div class="case-item ${caseItem.class}" onclick="openCase('${caseItem.id}')">
+            <div class="case-item" onclick="openCase('${caseItem.id}')">
                 <div class="case-icon">${caseItem.icon}</div>
                 <div class="case-info">
                     <div class="case-name">${caseItem.name}</div>
-                    <div class="case-description">${caseItem.description}</div>
-                    <div class="case-price">
+                    <div class="case-price-row">
                         <span class="price-value">${caseItem.price} Pingcoins</span>
-                        <button class="buy-btn ${!canAfford ? 'disabled' : ''}" 
+                        <button class="buy-btn-simple ${!canAfford ? 'disabled' : ''}" 
                                 onclick="event.stopPropagation(); buyCase('${caseItem.id}')">
                             Купить
                         </button>
@@ -136,6 +135,38 @@ function renderInventory() {
             });
         }
     });
+    
+    // Добавляем рамки
+    ownedFrames.forEach(frameId => {
+        const frame = frames.find(f => f.id === frameId);
+        if (frame) {
+            ownedItems.push({
+                type: 'frame',
+                id: frame.id,
+                name: frame.name,
+                icon: '🖼️',
+                class: frame.class
+            });
+        }
+    });
+    
+    if (ownedItems.length === 0) {
+        container.innerHTML = ''; // ПРОСТО НИЧЕГО НЕ ПОКАЗЫВАЕМ
+        return;
+    }
+    
+    container.innerHTML = ownedItems.map(item => `
+        <div class="inventory-item" onclick="useInventoryItem('${item.type}', '${item.id}')">
+            <div class="item-icon">${item.icon}</div>
+            <div class="item-info">
+                <div class="item-name">${item.name}</div>
+            </div>
+            <button class="use-btn" onclick="event.stopPropagation(); useInventoryItem('${item.type}', '${item.id}')">
+                Использовать
+            </button>
+        </div>
+    `).join('');
+}
     
     // Добавляем рамки
     ownedFrames.forEach(frameId => {
@@ -395,3 +426,4 @@ function closeCase() {
     isOpening = false;
     currentCase = null;
 }
+
