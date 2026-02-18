@@ -59,7 +59,7 @@
                         Фаниться или апать звания.
                     </div>
                 </div>
-                <button class="primary-btn" id="startButton">Начать</button>
+                <button class="primary-btn" id="startButton" onclick="window.startApp ? window.startApp() : alert('Функция не загружена')">Начать</button>
                 <div class="online-counter">
                     более 1000+ игроков онлайн
                 </div>
@@ -107,40 +107,38 @@
     <script src="search.js"></script>
     <script src="ui.js"></script>
     
-    <!-- ГАРАНТИРОВАННОЕ ИСПРАВЛЕНИЕ КНОПКИ -->
+    <!-- ПРОСТОЕ ИСПРАВЛЕНИЕ КНОПКИ -->
     <script>
-        // Функция для показа хедера
-        function showHeader() {
+        // Делаем функцию startApp глобальной
+        window.startApp = function() {
+            console.log('startApp вызвана');
+            
+            // Прячем все экраны
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.style.display = 'none';
+            });
+            
+            // Показываем главный экран
+            const mainScreen = document.getElementById('mainScreen');
+            if (mainScreen) {
+                mainScreen.style.display = 'flex';
+            }
+            
+            // Убираем активность с шестеренки
+            const settingsIcon = document.getElementById('settingsIcon');
+            if (settingsIcon) {
+                settingsIcon.classList.remove('active');
+            }
+        };
+
+        // Показываем хедер
+        setTimeout(function() {
             const header = document.querySelector('.header');
             if (header) {
                 header.style.opacity = '1';
                 header.style.pointerEvents = 'auto';
             }
-        }
-
-        // Показываем хедер при загрузке
-        document.addEventListener('DOMContentLoaded', showHeader);
-        window.addEventListener('load', showHeader);
-
-        // Прямой обработчик кнопки
-        document.addEventListener('DOMContentLoaded', function() {
-            const startBtn = document.getElementById('startButton');
-            if (startBtn) {
-                startBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('Кнопка нажата!');
-                    if (typeof window.startApp === 'function') {
-                        window.startApp();
-                    } else {
-                        console.error('startApp не найдена!');
-                        // Пробуем найти функцию в глобальной области
-                        if (typeof startApp === 'function') {
-                            startApp();
-                        }
-                    }
-                });
-            }
-        });
+        }, 100);
     </script>
 </body>
 </html>
