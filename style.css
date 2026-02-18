@@ -208,9 +208,9 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between; /* Равномерное распределение */
+    justify-content: flex-start; /* Меняем с space-between на flex-start */
     height: 100%;
-    padding: 40px 0 20px 0; /* Отступы сверху и снизу */
+    padding-top: 20px; /* Отступ сверху */
 }
 
 .start-logo {
@@ -218,14 +218,14 @@ body {
     font-weight: 700;
     color: #FFFFFF;
     letter-spacing: -0.5px;
-    margin: 0; /* Убираем отступы */
+    margin-bottom: 20px; /* Отступ после логотипа */
 }
 
 .start-logo .ping {
     color: #FF6B4A;
 }
 
-/* ===== АВАТАРКА С ЗАКРУГЛЕНИЕМ ТОЛЬКО СВЕРХУ ===== */
+/* ===== АВАТАРКА ===== */
 .start-avatar-square {
     width: 280px;
     height: 280px;
@@ -246,13 +246,13 @@ body {
     display: block;
 }
 
-/* ===== РАМКА ТЕКСТА С ЗАКРУГЛЕНИЕМ ТОЛЬКО СНИЗУ ===== */
+/* ===== РАМКА ТЕКСТА ===== */
 .start-description-box {
     width: 280px;
     border: 3px solid #FF6B4A;
     border-radius: 0 0 30px 30px;
     padding: 50px 16px 20px 16px;
-    margin: 0 auto;
+    margin: 0 auto 20px auto; /* Уменьшил нижний отступ */
     background: #1A1D24;
     position: relative;
     z-index: 1;
@@ -265,19 +265,19 @@ body {
     text-align: center;
 }
 
-/* ===== ИСПРАВЛЕНО: Кнопка с закруглениями ===== */
+/* ===== КНОПКА ===== */
 .primary-btn {
     width: 280px;
     padding: 16px;
     background: #FF6B4A;
     border: none;
-    border-radius: 30px; /* Закругленные края */
+    border-radius: 30px;
     font-size: 16px;
     font-weight: 600;
     color: white;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 20px auto 0 auto;
+    margin: 10px auto 10px auto; /* Отступы вокруг кнопки */
     transition: all 0.2s;
 }
 
@@ -289,7 +289,8 @@ body {
     color: #5D6472;
     font-size: 12px;
     text-align: center;
-    margin-top: 10px;
+    margin-top: 5px; /* Небольшой отступ сверху */
+    margin-bottom: 10px;
 }
 
 .bottom-nav {
@@ -1244,3 +1245,4 @@ body {
 .phone-frame {
     opacity: 1 !important;
 }
+
