@@ -191,21 +191,65 @@
             border: none;
         }
 
+        /* Глобальные стили для заголовков (базовые) */
         .section-title {
             font-size: 24px;
             font-weight: 700;
             color: #FFFFFF;
             letter-spacing: -0.5px;
-            margin: 40px 0 4px 0;
             text-align: center;
         }
 
         .section-subtitle {
             font-size: 14px;
             color: #9BA1B0;
-            margin: 0 0 12px 0;
             font-weight: 400;
             text-align: center;
+        }
+
+        /* Специфичные стили для главного экрана */
+        .main-screen .section-title {
+            margin: 40px 0 4px 0;  /* Отступы для "Выбор режима" */
+        }
+
+        .main-screen .section-subtitle {
+            margin: 0 0 12px 0;  /* Отступы для "Подберите подходящий" */
+        }
+
+        /* Стили для магазина */
+        .shop-screen .section-title {
+            margin: 0;  /* Сброс отступов для магазина */
+        }
+
+        /* Стили для профиля */
+        .profile-screen .section-title {
+            margin: 0;  /* Сброс отступов для профиля */
+        }
+
+        /* Стили для настроек */
+        .settings-screen .section-title {
+            margin: 0 0 20px 0;  /* Отступы для настроек */
+        }
+
+        /* Стили для кнопки поиска в режимах */
+        .mode-search-btn {
+            width: 280px;  /* Уменьшил ширину */
+            padding: 14px;  /* Уменьшил отступы */
+            background: #FF6B4A;
+            border: none;
+            border-radius: 30px;  /* Уменьшил скругление */
+            font-size: 16px;  /* Уменьшил шрифт */
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin: 10px auto;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .mode-search-btn:active {
+            transform: scale(0.98);
         }
 
         /* ===== СТАРТОВЫЙ ЭКРАН ===== */
@@ -215,27 +259,18 @@
             align-items: center;
             justify-content: flex-start;
             height: 100%;
-            padding-top: 20px;
+            padding-top: 0;  /* Убрал отступ сверху */
         }
 
         .start-logo {
-            font-size: 42px;
-            font-weight: 700;
-            color: #FFFFFF;
-            letter-spacing: -0.5px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .start-logo .ping {
-            color: #FF6B4A;
+            display: none;  /* Скрываем надпись Pingster на стартовом экране */
         }
 
         /* Аватарка 4:3 */
         .start-avatar-square {
             width: 280px;
             height: 210px;
-            margin: 0 auto -20px auto; /* Уменьшил наложение */
+            margin: 0 auto -20px auto;
             border: none;
             border-radius: 30px 30px 0 0;
             overflow: hidden;
@@ -243,6 +278,7 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
             position: relative;
             z-index: 2;
+            margin-top: 20px;  /* Поднял аватарку */
         }
 
         .start-avatar-square img {
@@ -257,11 +293,12 @@
             width: 280px;
             border: 3px solid #FF6B4A;
             border-radius: 0 0 30px 30px;
-            padding: 35px 16px 20px 16px; /* Уменьшил верхний отступ */
-            margin: 0 auto 25px auto; /* Увеличил нижний отступ */
+            padding: 35px 16px 20px 16px;
+            margin: 0 auto 25px auto;
             background: #1A1D24;
             position: relative;
             z-index: 1;
+            margin-top: -10px;  /* Поднял текст */
         }
 
         .start-description {
@@ -277,12 +314,12 @@
             background: #FF6B4A;
             border: none;
             border-radius: 40px;
-            font-size: 22px; /* Увеличил шрифт */
-            font-weight: 800; /* Сделал жирнее */
+            font-size: 22px;
+            font-weight: 800;
             color: white;
             text-transform: uppercase;
             cursor: pointer;
-            margin: 30px auto 10px auto; /* Увеличил отступ сверху */
+            margin: 40px auto 10px auto;  /* Увеличил отступ сверху (поднял кнопку) */
             transition: all 0.2s;
             letter-spacing: 1px;
         }
@@ -1107,9 +1144,7 @@
 
             <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
-                <div class="start-logo">
-                    <span class="ping">Ping</span><span class="ster">ster</span>
-                </div>
+                <div class="start-logo"></div> <!-- Пустой div вместо надписи -->
                 
                 <div class="start-avatar-square" id="startAvatar">
                     <img src=".....jpg" alt="avatar">
@@ -1128,7 +1163,7 @@
             </div>
 
             <!-- ГЛАВНЫЙ ЭКРАН -->
-            <div id="mainScreen" class="screen screen-main">
+            <div id="mainScreen" class="screen screen-main main-screen">
                 <div class="section-title">Выбор режима</div>
                 <div class="section-subtitle">Подберите подходящий</div>
 
@@ -1423,7 +1458,7 @@
                     <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
                 </div>
 
-                <button class="primary-btn" onclick="startSearch('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
+                <button class="mode-search-btn" onclick="startSearch('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
             </div>
 
             <!-- ЭКРАН PREMIER -->
@@ -1469,7 +1504,7 @@
                     <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
                 </div>
 
-                <button class="primary-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
+                <button class="mode-search-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
             </div>
 
             <!-- ЭКРАН MM PRIME -->
@@ -1533,7 +1568,7 @@
                     <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
                 </div>
 
-                <button class="primary-btn" onclick="startSearch('MM PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
+                <button class="mode-search-btn" onclick="startSearch('MM PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
             </div>
 
             <!-- ЭКРАН MM PUBLIC -->
@@ -1597,7 +1632,7 @@
                     <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
                 </div>
 
-                <button class="primary-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
+                <button class="mode-search-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
             </div>
 
             <!-- ЭКРАН ПОИСКА -->
@@ -2369,7 +2404,3 @@
     </script>
 </body>
 </html>
-
-
-
-
