@@ -4,11 +4,30 @@
 
 let currentShopTab = 'cases'; // 'cases' или 'inventory'
 
+// Данные для ников и рамок (если нет в globals.js)
+const nicks = [
+    { id: 'red', name: 'Красный', class: 'red', price: 50 },
+    { id: 'green', name: 'Зеленый', class: 'green', price: 50 },
+    { id: 'blue', name: 'Синий', class: 'blue', price: 50 },
+    { id: 'purple', name: 'Фиолетовый', class: 'purple', price: 100 },
+    { id: 'orange', name: 'Оранжевый', class: 'orange', price: 100 },
+    { id: 'multicolor', name: 'Мультицвет', class: 'multicolor', price: 200 }
+];
+
+const frames = [
+    { id: 'red', name: 'Красная рамка', class: 'frame-red', price: 100 },
+    { id: 'gold', name: 'Золотая рамка', class: 'frame-gold', price: 150 },
+    { id: 'blue', name: 'Синяя рамка', class: 'frame-blue', price: 100 },
+    { id: 'green', name: 'Зеленая рамка', class: 'frame-green', price: 100 },
+    { id: 'purple', name: 'Фиолетовая рамка', class: 'frame-purple', price: 200 },
+    { id: 'rainbow', name: 'Радужная рамка', class: 'frame-rainbow', price: 300 }
+];
+
 const cases = [
     { 
         id: 'common_case', 
         name: 'Common Case', 
-        description: '', // можно оставить пустым или удалить
+        description: '', 
         price: 1000, 
         class: 'common-case',
         icon: `<svg viewBox="0 0 200 200" width="100" height="90">
@@ -29,20 +48,15 @@ const cases = [
                     <stop offset="100%" stop-color="rgba(255,255,255,0.2)"/>
                 </linearGradient>
             </defs>
-            <!-- Основание кейса -->
             <polygon points="30,80 170,80 160,150 40,150" fill="url(#rustGrad)" stroke="#222" stroke-width="3"/>
-            <!-- Крышка -->
             <polygon points="30,80 100,40 170,80" fill="url(#metalGrad)" stroke="#111" stroke-width="3"/>
             <path d="M35,85 L165,85" stroke="url(#shine)" stroke-width="3"/>
-            <!-- Замок -->
             <rect x="90" y="100" width="20" height="30" rx="3" ry="3" fill="#222" stroke="#000" stroke-width="2"/>
             <circle cx="100" cy="115" r="4" fill="#555"/>
-            <!-- Болты -->
             <circle cx="40" cy="90" r="4" fill="#666"/>
             <circle cx="160" cy="90" r="4" fill="#666"/>
             <circle cx="35" cy="140" r="3" fill="#555"/>
             <circle cx="165" cy="140" r="3" fill="#555"/>
-            <!-- Слоты внутри -->
             <g>
                 <rect x="50" y="110" width="24" height="24" rx="4" ry="4" fill="#aaa" stroke="#777" stroke-width="2"/>
                 <rect x="80" y="110" width="24" height="24" rx="4" ry="4" fill="#bbb" stroke="#888" stroke-width="2"/>
@@ -50,23 +64,18 @@ const cases = [
             </g>
         </svg>`,
         items: [
-            // Ники
             { type: 'nick', id: 'red', name: 'Красный ник', icon: '🎨', rarity: 'common', rarityName: 'Common' },
             { type: 'nick', id: 'green', name: 'Зеленый ник', icon: '🎨', rarity: 'common', rarityName: 'Common' },
             { type: 'nick', id: 'blue', name: 'Синий ник', icon: '🎨', rarity: 'common', rarityName: 'Common' },
             { type: 'nick', id: 'purple', name: 'Фиолетовый ник', icon: '🎨', rarity: 'rare', rarityName: 'Rare' },
             { type: 'nick', id: 'orange', name: 'Оранжевый ник', icon: '🎨', rarity: 'rare', rarityName: 'Rare' },
             { type: 'nick', id: 'multicolor', name: 'Радужный ник', icon: '🌈', rarity: 'epic', rarityName: 'Epic' },
-            
-            // Рамки
             { type: 'frame', id: 'red', name: 'Красная рамка', icon: '🖼️', rarity: 'common', rarityName: 'Common' },
             { type: 'frame', id: 'blue', name: 'Синяя рамка', icon: '🖼️', rarity: 'common', rarityName: 'Common' },
             { type: 'frame', id: 'green', name: 'Зеленая рамка', icon: '🖼️', rarity: 'common', rarityName: 'Common' },
             { type: 'frame', id: 'gold', name: 'Золотая рамка', icon: '🖼️', rarity: 'rare', rarityName: 'Rare' },
             { type: 'frame', id: 'purple', name: 'Фиолетовая рамка', icon: '🖼️', rarity: 'rare', rarityName: 'Rare' },
             { type: 'frame', id: 'rainbow', name: 'Радужная рамка', icon: '🖼️', rarity: 'legendary', rarityName: 'Legendary' },
-            
-            // Скины CS:GO
             { type: 'skin', name: 'AK-47 | Redline', icon: '🔫', rarity: 'rare', rarityName: 'Rare' },
             { type: 'skin', name: 'AWP | Dragon Lore', icon: '🔫', rarity: 'legendary', rarityName: 'Legendary' },
             { type: 'skin', name: '★ Karambit | Fade', icon: '🔪', rarity: 'legendary', rarityName: 'Legendary' },
@@ -84,11 +93,9 @@ let isOpening = false;
 function showShopTab(tab) {
     currentShopTab = tab;
     
-    // Обновляем активный таб
     document.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
     document.querySelector(`.shop-tab[onclick="showShopTab('${tab}')"]`).classList.add('active');
     
-    // Показываем нужную секцию
     if (tab === 'cases') {
         document.querySelector('.cases-section').classList.remove('hidden');
         document.querySelector('.inventory-section').classList.add('hidden');
@@ -133,10 +140,8 @@ function renderInventory() {
     const container = document.querySelector('.inventory-grid');
     if (!container) return;
     
-    // Собираем все предметы из инвентаря
     const ownedItems = [];
     
-    // Добавляем ники
     ownedNicks.forEach(nickId => {
         const nick = nicks.find(n => n.id === nickId);
         if (nick) {
@@ -150,7 +155,6 @@ function renderInventory() {
         }
     });
     
-    // Добавляем рамки
     ownedFrames.forEach(frameId => {
         const frame = frames.find(f => f.id === frameId);
         if (frame) {
@@ -165,44 +169,7 @@ function renderInventory() {
     });
     
     if (ownedItems.length === 0) {
-        container.innerHTML = ''; // ПРОСТО НИЧЕГО НЕ ПОКАЗЫВАЕМ
-        return;
-    }
-    
-    container.innerHTML = ownedItems.map(item => `
-        <div class="inventory-item" onclick="useInventoryItem('${item.type}', '${item.id}')">
-            <div class="item-icon">${item.icon}</div>
-            <div class="item-info">
-                <div class="item-name">${item.name}</div>
-            </div>
-            <button class="use-btn" onclick="event.stopPropagation(); useInventoryItem('${item.type}', '${item.id}')">
-                Использовать
-            </button>
-        </div>
-    `).join('');
-}
-    
-    // Добавляем рамки
-    ownedFrames.forEach(frameId => {
-        const frame = frames.find(f => f.id === frameId);
-        if (frame) {
-            ownedItems.push({
-                type: 'frame',
-                id: frame.id,
-                name: frame.name,
-                icon: '🖼️',
-                class: frame.class
-            });
-        }
-    });
-    
-    if (ownedItems.length === 0) {
-        container.innerHTML = `
-            <div class="empty-inventory">
-                <div class="empty-text">Инвентарь пуст</div>
-                <div class="empty-subtext">Купите кейсы и открывайте их!</div>
-            </div>
-        `;
+        container.innerHTML = '';
         return;
     }
     
@@ -228,27 +195,21 @@ function getRarityFromPrice(price) {
 
 function useInventoryItem(type, id) {
     if (type === 'nick') {
-        // Применяем цвет ника
         if (!ownedNicks.includes(id)) return;
         
-        // Убираем старые классы
         document.getElementById('profileName').className = 'profile-name';
         
-        // Добавляем новый класс
         const nick = nicks.find(n => n.id === id);
         if (nick) {
             document.getElementById('profileName').classList.add(nick.class);
             alert(`✅ Ник теперь ${nick.name}`);
         }
     } else if (type === 'frame') {
-        // Применяем рамку
         if (!ownedFrames.includes(id)) return;
         
-        // Убираем старые классы рамок
         const avatar = document.getElementById('profileAvatar');
         avatar.className = 'profile-avatar';
         
-        // Добавляем новую рамку
         const frame = frames.find(f => f.id === id);
         if (frame) {
             avatar.classList.add(frame.class);
@@ -271,7 +232,6 @@ function buyCase(caseId) {
         document.getElementById('coinsAmount').textContent = coins;
         saveUserToDB();
         
-        // Открываем кейс после покупки
         setTimeout(() => openCase(caseId), 500);
     }
 }
@@ -288,7 +248,6 @@ function openCase(caseId) {
     currentCase = caseItem;
     isOpening = true;
     
-    // Показываем оверлей
     const overlay = document.createElement('div');
     overlay.className = 'case-overlay';
     overlay.id = 'caseOverlay';
@@ -311,7 +270,6 @@ function openCase(caseId) {
     
     document.body.appendChild(overlay);
     
-    // Активируем оверлей
     setTimeout(() => {
         overlay.classList.add('active');
         generateCaseSlots(caseItem);
@@ -325,7 +283,6 @@ function generateCaseSlots(caseItem) {
     
     track.innerHTML = '';
     
-    // Создаем много слотов для прокрутки
     for (let i = 0; i < 50; i++) {
         const item = caseItem.items[Math.floor(Math.random() * caseItem.items.length)];
         const slot = document.createElement('div');
@@ -351,30 +308,23 @@ function startCaseSpin() {
     const slotWidth = 130;
     const totalSlots = track.children.length;
     
-    // Выбираем случайный выигрышный предмет
     const winningItem = currentCase.items[Math.floor(Math.random() * currentCase.items.length)];
-    
-    // Выбираем слот, на котором остановимся
     const winningSlotIndex = Math.floor(totalSlots / 2) + Math.floor(Math.random() * 10) - 5;
     
-    // Считаем смещение
     const wrapperWidth = 600;
     const centerOffset = wrapperWidth / 2 - slotWidth / 2;
     const offset = (winningSlotIndex * slotWidth) - centerOffset;
     
-    // Анимация открытия
     document.querySelector('.case-container').classList.add('case-opening');
     
     setTimeout(() => {
         document.querySelector('.case-container').classList.remove('case-opening');
         
-        // Вспышка
         flash.classList.add('active');
         
         setTimeout(() => {
             flash.classList.remove('active');
             
-            // Прокрутка
             track.style.transition = 'none';
             track.style.transform = 'translateX(0px)';
             
@@ -382,7 +332,6 @@ function startCaseSpin() {
                 track.style.transition = 'transform 4s cubic-bezier(0.08, 0.6, 0.1, 1)';
                 track.style.transform = `translateX(-${offset}px)`;
                 
-                // Подсвечиваем выигрышный слот после остановки
                 setTimeout(() => {
                     Array.from(track.children).forEach((slot, index) => {
                         slot.classList.remove('win');
@@ -391,10 +340,8 @@ function startCaseSpin() {
                         }
                     });
                     
-                    // Добавляем предмет в инвентарь
                     addItemToInventory(winningItem);
                     
-                    // Показываем результат
                     resultPopup.style.display = 'block';
                     document.getElementById('resultItem').textContent = winningItem.name;
                     document.getElementById('resultRarity').textContent = winningItem.rarityName;
@@ -423,7 +370,6 @@ function addItemToInventory(item) {
     
     saveUserToDB();
     
-    // Если открыт инвентарь - обновляем его
     if (currentShopTab === 'inventory') {
         renderInventory();
     }
@@ -440,5 +386,3 @@ function closeCase() {
     isOpening = false;
     currentCase = null;
 }
-
-
