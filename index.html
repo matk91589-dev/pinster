@@ -35,7 +35,7 @@
 <body>
     <div class="phone-frame">
         <div class="content">
-            <!-- Хедер - шестеренка справа (уже так и есть) -->
+            <!-- Хедер - шестеренка справа -->
             <div class="header">
                 <div class="logo" onclick="handleLogoClick()">
                     <span class="ping">Ping</span><span class="ster">ster</span>
@@ -463,32 +463,27 @@
     <script src="search.js"></script>
     <script src="ui.js"></script>
     
-    <!-- Исправляем кнопку и показываем хедер -->
+    <!-- ПРОСТОЕ ИСПРАВЛЕНИЕ КНОПКИ -->
     <script>
-        // Функция для гарантированного показа хедера
-        function showHeader() {
+        // Показываем хедер сразу после загрузки DOM
+        document.addEventListener('DOMContentLoaded', function() {
             const header = document.querySelector('.header');
             if (header) {
                 header.style.opacity = '1';
                 header.style.pointerEvents = 'auto';
             }
-        }
-
-        // Показываем хедер после загрузки страницы
-        window.addEventListener('load', function() {
-            // Небольшая задержка для гарантии
-            setTimeout(showHeader, 50);
+            console.log('Хедер показан, кнопка должна работать');
         });
 
-        // Дополнительно - если скрипты загрузились раньше
-        if (document.readyState === 'complete') {
-            showHeader();
-        } else {
-            document.addEventListener('DOMContentLoaded', showHeader);
-        }
-
-        // Проверяем что функция startApp существует
-        console.log('startApp доступна:', typeof startApp);
+        // Дополнительная защита - если вдруг функция не вызвалась
+        window.onload = function() {
+            const header = document.querySelector('.header');
+            if (header) {
+                header.style.opacity = '1';
+                header.style.pointerEvents = 'auto';
+            }
+            console.log('startApp доступна:', typeof startApp);
+        };
     </script>
 </body>
 </html>
