@@ -2,7 +2,7 @@
 // ФУНКЦИИ МАГАЗИНА
 // ============================================
 
-let currentShopTab = 'cases';
+let currentShopTab = 'cases'; // 'cases' или 'inventory'
 
 // Данные кейсов
 const cases = [
@@ -14,18 +14,26 @@ const cases = [
         class: 'common-case',
         icon: '📦',
         items: [
-            { name: 'P250 | Sand Dune', icon: '🔫', rarity: 'common', rarityName: 'Common' },
-            { name: 'Five-SeveN | Forest Night', icon: '🔫', rarity: 'common', rarityName: 'Common' },
-            { name: 'MP9 | Storm', icon: '🔫', rarity: 'common', rarityName: 'Common' },
-            { name: 'Glock-18 | Night', icon: '🔫', rarity: 'common', rarityName: 'Common' },
-            { name: 'USP-S | Forest Leaves', icon: '🔫', rarity: 'common', rarityName: 'Common' },
-            { name: 'AWP | Safari Mesh', icon: '🔫', rarity: 'rare', rarityName: 'Rare' },
-            { name: 'AK-47 | Elite Build', icon: '🔫', rarity: 'rare', rarityName: 'Rare' },
-            { name: 'M4A4 | Faded Zebra', icon: '🔫', rarity: 'rare', rarityName: 'Rare' },
-            { name: 'SSG 08 | Abyss', icon: '🔫', rarity: 'epic', rarityName: 'Epic' },
-            { name: 'Desert Eagle | Corinthian', icon: '🔫', rarity: 'epic', rarityName: 'Epic' },
-            { name: '★ Gut Knife | Scorched', icon: '🔪', rarity: 'legendary', rarityName: 'Legendary' },
-            { name: '★ Glove Case', icon: '🧤', rarity: 'legendary', rarityName: 'Legendary' }
+            // Ники (для ника)
+            { type: 'nick', id: 'red', name: 'Красный ник', icon: '🔴', rarity: 'common', rarityName: 'Common' },
+            { type: 'nick', id: 'green', name: 'Зеленый ник', icon: '🟢', rarity: 'common', rarityName: 'Common' },
+            { type: 'nick', id: 'blue', name: 'Синий ник', icon: '🔵', rarity: 'common', rarityName: 'Common' },
+            { type: 'nick', id: 'purple', name: 'Фиолетовый ник', icon: '🟣', rarity: 'rare', rarityName: 'Rare' },
+            { type: 'nick', id: 'orange', name: 'Оранжевый ник', icon: '🟠', rarity: 'rare', rarityName: 'Rare' },
+            { type: 'nick', id: 'multicolor', name: 'Радужный ник', icon: '🌈', rarity: 'epic', rarityName: 'Epic' },
+            
+            // Рамки (для аватарки)
+            { type: 'frame', id: 'red', name: 'Красная рамка', icon: '🔴', rarity: 'common', rarityName: 'Common' },
+            { type: 'frame', id: 'blue', name: 'Синяя рамка', icon: '🔵', rarity: 'common', rarityName: 'Common' },
+            { type: 'frame', id: 'green', name: 'Зеленая рамка', icon: '🟢', rarity: 'common', rarityName: 'Common' },
+            { type: 'frame', id: 'gold', name: 'Золотая рамка', icon: '⭐', rarity: 'rare', rarityName: 'Rare' },
+            { type: 'frame', id: 'purple', name: 'Фиолетовая рамка', icon: '🟣', rarity: 'rare', rarityName: 'Rare' },
+            { type: 'frame', id: 'rainbow', name: 'Радужная рамка', icon: '🌈', rarity: 'legendary', rarityName: 'Legendary' },
+            
+            // Скины (для примера, можно добавить потом)
+            { type: 'skin', name: 'AK-47 | Redline', icon: '🔫', rarity: 'rare', rarityName: 'Rare' },
+            { type: 'skin', name: 'AWP | Dragon Lore', icon: '🐉', rarity: 'legendary', rarityName: 'Legendary' },
+            { type: 'skin', name: '★ Karambit | Fade', icon: '🔪', rarity: 'legendary', rarityName: 'Legendary' }
         ]
     }
 ];
@@ -42,55 +50,20 @@ function showShopTab(tab) {
     document.querySelector(`.shop-tab[onclick="showShopTab('${tab}')"]`).classList.add('active');
     
     // Показываем нужную секцию
-    document.querySelector('.nicks-section').classList.add('hidden');
-    document.querySelector('.frames-section').classList.add('hidden');
-    document.querySelector('.cases-section').classList.add('hidden');
-    
-    document.querySelector(`.${tab}-section`).classList.remove('hidden');
+    if (tab === 'cases') {
+        document.querySelector('.cases-section').classList.remove('hidden');
+        document.querySelector('.inventory-section').classList.add('hidden');
+        renderCasesShop();
+    } else {
+        document.querySelector('.cases-section').classList.add('hidden');
+        document.querySelector('.inventory-section').classList.remove('hidden');
+        renderInventory();
+    }
 }
 
 function renderShop() {
-    renderNicksShop();
-    renderFramesShop();
     renderCasesShop();
-}
-
-function renderNicksShop() {
-    const container = document.querySelector('.nicks-grid');
-    if (!container) return;
-    
-    container.innerHTML = nicks.map(nick => {
-        const isOwned = ownedNicks.includes(nick.id);
-        return `
-            <div class="nick-item" onclick="${isOwned ? '' : `buyItem('nick', '${nick.id}')`}">
-                <div class="nick-preview ${nick.class}">Ник</div>
-                <div class="item-info">
-                    <div class="item-name">${nick.name}</div>
-                    <div class="item-price">${nick.price} Pingcoins</div>
-                </div>
-                ${isOwned ? '<span class="owned-badge">Куплено</span>' : ''}
-            </div>
-        `;
-    }).join('');
-}
-
-function renderFramesShop() {
-    const container = document.querySelector('.frames-grid');
-    if (!container) return;
-    
-    container.innerHTML = frames.map(frame => {
-        const isOwned = ownedFrames.includes(frame.id);
-        return `
-            <div class="frame-item" onclick="${isOwned ? '' : `buyItem('frame', '${frame.id}')`}">
-                <div class="frame-preview ${frame.class}">👤</div>
-                <div class="item-info">
-                    <div class="item-name">${frame.name}</div>
-                    <div class="item-price">${frame.price} Pingcoins</div>
-                </div>
-                ${isOwned ? '<span class="owned-badge">Куплено</span>' : ''}
-            </div>
-        `;
-    }).join('');
+    renderInventory();
 }
 
 function renderCasesShop() {
@@ -116,6 +89,118 @@ function renderCasesShop() {
             </div>
         `;
     }).join('');
+}
+
+function renderInventory() {
+    const container = document.querySelector('.inventory-grid');
+    if (!container) return;
+    
+    // Собираем все предметы из инвентаря
+    const ownedItems = [];
+    
+    // Добавляем ники
+    ownedNicks.forEach(nickId => {
+        const nick = nicks.find(n => n.id === nickId);
+        if (nick) {
+            ownedItems.push({
+                type: 'nick',
+                id: nick.id,
+                name: nick.name,
+                icon: getNickIcon(nick.class),
+                class: nick.class,
+                rarity: getRarityFromPrice(nick.price)
+            });
+        }
+    });
+    
+    // Добавляем рамки
+    ownedFrames.forEach(frameId => {
+        const frame = frames.find(f => f.id === frameId);
+        if (frame) {
+            ownedItems.push({
+                type: 'frame',
+                id: frame.id,
+                name: frame.name,
+                icon: '🖼️',
+                class: frame.class,
+                rarity: getRarityFromPrice(frame.price)
+            });
+        }
+    });
+    
+    if (ownedItems.length === 0) {
+        container.innerHTML = `
+            <div class="empty-inventory">
+                <div class="empty-icon">🎒</div>
+                <div class="empty-text">Инвентарь пуст</div>
+                <div class="empty-subtext">Купите кейсы и открывайте их!</div>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = ownedItems.map(item => `
+        <div class="inventory-item rarity-${item.rarity}" onclick="useInventoryItem('${item.type}', '${item.id}')">
+            <div class="item-icon ${item.class}">${item.icon}</div>
+            <div class="item-info">
+                <div class="item-name">${item.name}</div>
+                <div class="item-type">${item.type === 'nick' ? 'Цвет ника' : 'Рамка'}</div>
+            </div>
+            <button class="use-btn" onclick="event.stopPropagation(); useInventoryItem('${item.type}', '${item.id}')">
+                Использовать
+            </button>
+        </div>
+    `).join('');
+}
+
+function getNickIcon(colorClass) {
+    const icons = {
+        'red': '🔴',
+        'green': '🟢',
+        'blue': '🔵',
+        'purple': '🟣',
+        'orange': '🟠',
+        'multicolor': '🌈'
+    };
+    return icons[colorClass] || '🎨';
+}
+
+function getRarityFromPrice(price) {
+    if (price <= 50) return 'common';
+    if (price <= 100) return 'rare';
+    if (price <= 200) return 'epic';
+    return 'legendary';
+}
+
+function useInventoryItem(type, id) {
+    if (type === 'nick') {
+        // Применяем цвет ника
+        if (!ownedNicks.includes(id)) return;
+        
+        // Убираем старые классы
+        document.getElementById('profileName').className = 'profile-name';
+        
+        // Добавляем новый класс
+        const nick = nicks.find(n => n.id === id);
+        if (nick) {
+            document.getElementById('profileName').classList.add(nick.class);
+            alert(`✅ Ник теперь ${nick.name}`);
+        }
+    } else if (type === 'frame') {
+        // Применяем рамку
+        if (!ownedFrames.includes(id)) return;
+        
+        // Убираем старые классы рамок
+        const avatar = document.getElementById('profileAvatar');
+        avatar.className = 'profile-avatar';
+        
+        // Добавляем новую рамку
+        const frame = frames.find(f => f.id === id);
+        if (frame) {
+            avatar.classList.add(frame.class);
+            alert(`✅ Рамка ${frame.name} применена`);
+        }
+    }
 }
 
 function buyCase(caseId) {
@@ -176,6 +261,7 @@ function openCase(caseId) {
     setTimeout(() => {
         overlay.classList.add('active');
         generateCaseSlots(caseItem);
+        setTimeout(() => startCaseSpin(), 500);
     }, 50);
 }
 
@@ -208,13 +294,13 @@ function startCaseSpin() {
     
     if (!track || !flash || !resultPopup) return;
     
-    const slotWidth = 130; // 120 + 10 margin
+    const slotWidth = 130;
     const totalSlots = track.children.length;
     
     // Выбираем случайный выигрышный предмет
     const winningItem = currentCase.items[Math.floor(Math.random() * currentCase.items.length)];
     
-    // Выбираем слот, на котором остановимся (ближе к середине)
+    // Выбираем слот, на котором остановимся
     const winningSlotIndex = Math.floor(totalSlots / 2) + Math.floor(Math.random() * 10) - 5;
     
     // Считаем смещение
@@ -251,23 +337,42 @@ function startCaseSpin() {
                         }
                     });
                     
+                    // Добавляем предмет в инвентарь
+                    addItemToInventory(winningItem);
+                    
                     // Показываем результат
                     resultPopup.style.display = 'block';
                     document.getElementById('resultItem').textContent = winningItem.name;
                     document.getElementById('resultRarity').textContent = winningItem.rarityName;
                     
-                    // Добавляем предмет в инвентарь (для примера)
-                    alert(`🎉 Поздравляем! Вы выиграли: ${winningItem.name} (${winningItem.rarityName})`);
-                    
                     isOpening = false;
                     
-                }, 4000); // Ждем окончания анимации
+                }, 4000);
                 
             }, 50);
             
         }, 100);
         
     }, 500);
+}
+
+function addItemToInventory(item) {
+    if (item.type === 'nick') {
+        if (!ownedNicks.includes(item.id)) {
+            ownedNicks.push(item.id);
+        }
+    } else if (item.type === 'frame') {
+        if (!ownedFrames.includes(item.id)) {
+            ownedFrames.push(item.id);
+        }
+    }
+    
+    saveUserToDB();
+    
+    // Если открыт инвентарь - обновляем его
+    if (currentShopTab === 'inventory') {
+        renderInventory();
+    }
 }
 
 function closeCase() {
@@ -280,39 +385,4 @@ function closeCase() {
     }
     isOpening = false;
     currentCase = null;
-}
-
-function buyItem(type, id) {
-    const items = type === 'nick' ? nicks : frames;
-    const item = items.find(i => i.id === id);
-    const owned = type === 'nick' ? ownedNicks : ownedFrames;
-    
-    if (!item) return;
-    
-    if (coins < item.price) {
-        alert('❌ Недостаточно Pingcoins!');
-        return;
-    }
-    
-    if (owned.includes(id)) {
-        alert('❌ Этот предмет уже куплен!');
-        return;
-    }
-    
-    if (confirm(`Купить ${item.name} за ${item.price} Pingcoins?`)) {
-        coins -= item.price;
-        
-        if (type === 'nick') {
-            ownedNicks.push(id);
-        } else {
-            ownedFrames.push(id);
-        }
-        
-        document.getElementById('coinsAmount').textContent = coins;
-        saveUserToDB();
-        renderShop();
-        loadSavedValues();
-        
-        alert(`✅ ${item.name} успешно куплен!`);
-    }
 }
