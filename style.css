@@ -500,17 +500,21 @@ body {
 .profile-stats {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 8px;        /* ОДИНАКОВЫЙ отступ между всеми плашками */
+    margin-bottom: 12px;
 }
 
 .profile-stat-card {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 6px;
-    padding: 8px 10px;
+    padding: 12px 12px;        /* чуть больше отступов */
     cursor: pointer;
     transition: border 0.1s ease, border-width 0.1s ease;
+    min-height: 60px;           /* фиксированная высота */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .profile-stat-card.editable {
@@ -1236,4 +1240,5 @@ body {
     text-align: center;
     font-weight: 400;
 }
+
 
