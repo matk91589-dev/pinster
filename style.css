@@ -1219,7 +1219,7 @@ body {
 }
 
 .main-screen .section-title {
-    margin: 20px 0 8px 0 !important;
+    margin: 0px 0 8px 0 !important;
     font-size: 28px;
     font-weight: 700;
     color: #FFFFFF;
@@ -1233,5 +1233,3 @@ body {
     text-align: center;
     font-weight: 400;
 }
-
-
