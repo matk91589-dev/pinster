@@ -132,12 +132,50 @@ function renderInventory() {
                 type: 'nick',
                 id: nick.id,
                 name: nick.name,
-                icon: getNickIcon(nick.class),
+                icon: '🎨',
                 class: nick.class,
                 rarity: getRarityFromPrice(nick.price)
             });
         }
     });
+    
+    // Добавляем рамки
+    ownedFrames.forEach(frameId => {
+        const frame = frames.find(f => f.id === frameId);
+        if (frame) {
+            ownedItems.push({
+                type: 'frame',
+                id: frame.id,
+                name: frame.name,
+                icon: '🖼️',
+                class: frame.class,
+                rarity: getRarityFromPrice(frame.price)
+            });
+        }
+    });
+    
+    if (ownedItems.length === 0) {
+        container.innerHTML = `
+            <div class="empty-inventory">
+                <div class="empty-text">Инвентарь пуст</div>
+                <div class="empty-subtext">Купите кейсы и открывайте их!</div>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = ownedItems.map(item => `
+        <div class="inventory-item" onclick="useInventoryItem('${item.type}', '${item.id}')">
+            <div class="item-icon">${item.icon}</div>
+            <div class="item-info">
+                <div class="item-name">${item.name}</div>
+            </div>
+            <button class="use-btn" onclick="event.stopPropagation(); useInventoryItem('${item.type}', '${item.id}')">
+                Использовать
+            </button>
+        </div>
+    `).join('');
+}
     
     // Добавляем рамки
     ownedFrames.forEach(frameId => {
@@ -412,5 +450,6 @@ function closeCase() {
     isOpening = false;
     currentCase = null;
 }
+
 
 
