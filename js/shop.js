@@ -5,7 +5,6 @@
 let currentShopTab = 'cases'; // 'cases' или 'inventory'
 
 // Данные кейсов
-// Данные кейсов
 const cases = [
     { 
         id: 'common_case', 
@@ -53,7 +52,7 @@ const cases = [
             { type: 'frame', id: 'purple', name: 'Фиолетовая рамка', icon: '🖼️', rarity: 'rare', rarityName: 'Rare' },
             { type: 'frame', id: 'rainbow', name: 'Радужная рамка', icon: '🖼️', rarity: 'legendary', rarityName: 'Legendary' },
             
-            // Скины CS:GO (нормальные)
+            // Скины CS:GO
             { type: 'skin', name: 'AK-47 | Redline', icon: '🔫', rarity: 'rare', rarityName: 'Rare' },
             { type: 'skin', name: 'AWP | Dragon Lore', icon: '🔫', rarity: 'legendary', rarityName: 'Legendary' },
             { type: 'skin', name: '★ Karambit | Fade', icon: '🔪', rarity: 'legendary', rarityName: 'Legendary' },
@@ -133,8 +132,7 @@ function renderInventory() {
                 id: nick.id,
                 name: nick.name,
                 icon: '🎨',
-                class: nick.class,
-                rarity: getRarityFromPrice(nick.price)
+                class: nick.class
             });
         }
     });
@@ -148,8 +146,7 @@ function renderInventory() {
                 id: frame.id,
                 name: frame.name,
                 icon: '🖼️',
-                class: frame.class,
-                rarity: getRarityFromPrice(frame.price)
+                class: frame.class
             });
         }
     });
@@ -175,58 +172,6 @@ function renderInventory() {
             </button>
         </div>
     `).join('');
-}
-    
-    // Добавляем рамки
-    ownedFrames.forEach(frameId => {
-        const frame = frames.find(f => f.id === frameId);
-        if (frame) {
-            ownedItems.push({
-                type: 'frame',
-                id: frame.id,
-                name: frame.name,
-                icon: '🖼️',
-                class: frame.class,
-                rarity: getRarityFromPrice(frame.price)
-            });
-        }
-    });
-    
-    if (ownedItems.length === 0) {
-        container.innerHTML = `
-            <div class="empty-inventory">
-                <div class="empty-icon">🎒</div>
-                <div class="empty-text">Инвентарь пуст</div>
-                <div class="empty-subtext">Купите кейсы и открывайте их!</div>
-            </div>
-        `;
-        return;
-    }
-    
-    container.innerHTML = ownedItems.map(item => `
-        <div class="inventory-item rarity-${item.rarity}" onclick="useInventoryItem('${item.type}', '${item.id}')">
-            <div class="item-icon ${item.class}">${item.icon}</div>
-            <div class="item-info">
-                <div class="item-name">${item.name}</div>
-                <div class="item-type">${item.type === 'nick' ? 'Цвет ника' : 'Рамка'}</div>
-            </div>
-            <button class="use-btn" onclick="event.stopPropagation(); useInventoryItem('${item.type}', '${item.id}')">
-                Использовать
-            </button>
-        </div>
-    `).join('');
-}
-
-function getNickIcon(colorClass) {
-    const icons = {
-        'red': '🔴',
-        'green': '🟢',
-        'blue': '🔵',
-        'purple': '🟣',
-        'orange': '🟠',
-        'multicolor': '🌈'
-    };
-    return icons[colorClass] || '🎨';
 }
 
 function getRarityFromPrice(price) {
@@ -450,6 +395,3 @@ function closeCase() {
     isOpening = false;
     currentCase = null;
 }
-
-
-
