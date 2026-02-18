@@ -19,10 +19,10 @@
             display: flex !important;
         }
         
-        /* Скрываем хедер на стартовом */
+        /* Скрываем хедер на стартовом - БЕЗ !important чтобы JS мог переопределить */
         .header {
-            opacity: 0 !important;
-            pointer-events: none !important;
+            opacity: 0;
+            pointer-events: none;
             transition: opacity 0.3s ease;
         }
         
@@ -35,7 +35,7 @@
 <body>
     <div class="phone-frame">
         <div class="content">
-            <!-- Хедер -->
+            <!-- Хедер - шестеренка справа (уже так и есть) -->
             <div class="header">
                 <div class="logo" onclick="handleLogoClick()">
                     <span class="ping">Ping</span><span class="ster">ster</span>
@@ -454,7 +454,7 @@
         <div class="home-bar"></div>
     </div>
 
-    <!-- Подключаем скрипты в правильном порядке -->
+    <!-- Подключаем скрипты -->
     <script src="app.js"></script>
     <script src="api.js"></script>
     <script src="profile.js"></script>
@@ -463,18 +463,32 @@
     <script src="search.js"></script>
     <script src="ui.js"></script>
     
-    <!-- Добавляем скрытое поле для отслеживания загрузки -->
+    <!-- Исправляем кнопку и показываем хедер -->
     <script>
-        // Показываем хедер после полной загрузки всех скриптов
+        // Функция для гарантированного показа хедера
+        function showHeader() {
+            const header = document.querySelector('.header');
+            if (header) {
+                header.style.opacity = '1';
+                header.style.pointerEvents = 'auto';
+            }
+        }
+
+        // Показываем хедер после загрузки страницы
         window.addEventListener('load', function() {
-            setTimeout(function() {
-                const header = document.querySelector('.header');
-                if (header) {
-                    header.style.opacity = '1';
-                    header.style.pointerEvents = 'auto';
-                }
-            }, 100); // Небольшая задержка для гарантии
+            // Небольшая задержка для гарантии
+            setTimeout(showHeader, 50);
         });
+
+        // Дополнительно - если скрипты загрузились раньше
+        if (document.readyState === 'complete') {
+            showHeader();
+        } else {
+            document.addEventListener('DOMContentLoaded', showHeader);
+        }
+
+        // Проверяем что функция startApp существует
+        console.log('startApp доступна:', typeof startApp);
     </script>
 </body>
 </html>
