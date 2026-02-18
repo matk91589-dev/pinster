@@ -1,59 +1,19 @@
-/* Стили для будущих кейсов в магазине */
-.shop-cases-container {
+/* ===== СТИЛИ МАГАЗИНА ===== */
+
+/* Контент магазина */
+.shop-content {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 16px 0;
+    overflow-y: auto;
+    padding: 10px 0;
 }
 
-.case-item {
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    transition: all 0.2s;
-    cursor: pointer;
-}
-
-.case-item:hover {
-    border-color: #FF6B4A;
-    transform: translateY(-2px);
-}
-
-.case-icon {
-    width: 60px;
-    height: 60px;
-    background: #2A2F3A;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-}
-
-.case-info {
-    flex: 1;
-}
-
-.case-name {
-    font-size: 16px;
-    font-weight: 600;
-    color: #FFFFFF;
-    margin-bottom: 4px;
-}
-
-.case-description {
-    font-size: 12px;
+.development-message {
     color: #9BA1B0;
-}
-
-.case-price {
-    font-size: 18px;
-    font-weight: 700;
-    color: #FF6B4A;
+    font-size: 16px;
+    text-align: center;
+    padding: 20px;
 }
 
 /* Табы магазина */
@@ -85,7 +45,8 @@
 
 /* Секции магазина */
 .nicks-section,
-.frames-section {
+.frames-section,
+.cases-section {
     flex: 1;
     overflow-y: auto;
     padding-right: 4px;
@@ -93,94 +54,452 @@
 }
 
 .nicks-section.hidden,
-.frames-section.hidden {
+.frames-section.hidden,
+.cases-section.hidden {
     display: none;
 }
 
 .nicks-grid,
-.frames-grid {
+.frames-grid,
+.cases-grid {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.nick-item,
-.frame-item {
+/* ===== CS:GO КЕЙСЫ ===== */
+.case-item {
     background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 12px;
+    border: 2px solid #2A2F3A;
+    border-radius: 12px;
+    padding: 16px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.case-item.common-case {
+    background: linear-gradient(145deg, #2a2f3a, #1a1d24);
+    border-color: #5d6472;
+}
+
+.case-item.rare-case {
+    background: linear-gradient(145deg, #1e3a5f, #0f2a44);
+    border-color: #2196f3;
+}
+
+.case-item.epic-case {
+    background: linear-gradient(145deg, #4a1e5f, #2f1340);
+    border-color: #9c27b0;
+}
+
+.case-item.legendary-case {
+    background: linear-gradient(145deg, #5f3a1e, #402710);
+    border-color: #ff9800;
+}
+
+.case-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.case-item.common-case:hover {
+    border-color: #ff6b4a;
+    box-shadow: 0 10px 20px rgba(255, 107, 74, 0.3);
+}
+
+.case-item.rare-case:hover {
+    border-color: #2196f3;
+    box-shadow: 0 10px 20px rgba(33, 150, 243, 0.3);
+}
+
+.case-item.epic-case:hover {
+    border-color: #9c27b0;
+    box-shadow: 0 10px 20px rgba(156, 39, 176, 0.3);
+}
+
+.case-item.legendary-case:hover {
+    border-color: #ff9800;
+    box-shadow: 0 10px 20px rgba(255, 152, 0, 0.3);
+}
+
+.case-icon {
+    width: 80px;
+    height: 80px;
+    background: #2A2F3A;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    animation: caseGlow 3s infinite;
+}
+
+.case-info {
+    flex: 1;
+}
+
+.case-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin-bottom: 4px;
+}
+
+.case-description {
+    font-size: 12px;
+    color: #9BA1B0;
+    margin-bottom: 8px;
+}
+
+.case-price {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.price-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #FF6B4A;
+}
+
+.buy-btn {
+    background: #4CAF50;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 0 #2E7D32;
+}
+
+.buy-btn:hover:not(.disabled) {
+    background: #66BB6A;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #2E7D32;
+}
+
+.buy-btn:active:not(.disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #2E7D32;
+}
+
+.buy-btn.disabled {
+    background: #9BA1B0;
+    box-shadow: 0 4px 0 #5D6472;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* ===== ОТКРЫТИЕ КЕЙСА ===== */
+
+/* Затемнение фона */
+.case-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.case-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Контейнер рулетки */
+.case-container {
+    background: #0f172a;
+    padding: 30px;
+    border-radius: 20px;
+    border: 3px solid #FF6B4A;
+    box-shadow: 0 0 50px rgba(255, 107, 74, 0.5);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+    max-width: 800px;
+    width: 90%;
+}
+
+.case-overlay.active .case-container {
+    transform: scale(1);
+}
+
+/* Заголовок кейса */
+.case-header {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #FF6B4A;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 107, 74, 0.5);
+}
+
+/* Рулетка */
+.roulette-wrapper {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+    border: 4px solid #2A2F3A;
+    background: #0b1120;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* Маркер (линия выбора) */
+.marker {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 100%;
+    background: #FF6B4A;
+    z-index: 10;
+    box-shadow: 0 0 10px #FF6B4A;
+}
+
+.marker::before,
+.marker::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+}
+
+.marker::before {
+    top: -10px;
+    border-bottom: 10px solid #FF6B4A;
+}
+
+.marker::after {
+    bottom: -10px;
+    border-top: 10px solid #FF6B4A;
+}
+
+/* Лента с предметами */
+.roulette-track {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    transition: transform 4s cubic-bezier(0.08, 0.6, 0.1, 1);
+    will-change: transform;
+}
+
+/* Слот с предметом */
+.item-slot {
+    min-width: 120px;
+    height: 120px;
+    margin: 0 5px;
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+    border: 3px solid #334155;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.6);
+    transition: all 0.3s ease;
+}
+
+.item-slot.win {
+    border-color: #FF6B4A;
+    box-shadow: 0 0 30px #FF6B4A;
+    animation: winPulse 1s infinite;
+    transform: scale(1.05);
+}
+
+.item-icon {
+    font-size: 36px;
+    margin-bottom: 5px;
+}
+
+.item-name {
+    font-weight: 600;
+    text-align: center;
+    padding: 0 5px;
+    font-size: 12px;
+}
+
+.item-rarity {
+    font-size: 10px;
+    margin-top: 5px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.rarity-common { 
+    background: #5D6472; 
+    color: #E5E7EB;
+}
+.rarity-rare { 
+    background: #2196F3; 
+    color: white;
+}
+.rarity-epic { 
+    background: #9C27B0; 
+    color: white;
+}
+.rarity-legendary { 
+    background: #FF9800; 
+    color: white;
+}
+
+/* Вспышка */
+.flash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2001;
+    transition: opacity 0.1s;
+}
+
+.flash.active {
+    opacity: 1;
+}
+
+/* Результат открытия */
+.result-popup {
+    text-align: center;
+    margin-top: 20px;
+    padding: 20px;
+    background: #1A1D24;
+    border-radius: 10px;
+    border: 2px solid #FF6B4A;
+}
+
+.result-title {
+    font-size: 18px;
+    color: #9BA1B0;
+    margin-bottom: 10px;
+}
+
+.result-item {
+    font-size: 32px;
+    font-weight: 700;
+    color: #FF6B4A;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.result-rarity {
+    font-size: 14px;
+    color: #9BA1B0;
+}
+
+.close-btn {
+    margin-top: 20px;
+    padding: 12px 30px;
+    background: transparent;
+    border: 2px solid #FF6B4A;
+    border-radius: 8px;
+    color: #FF6B4A;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
 }
 
-.nick-item:hover,
-.frame-item:hover {
-    border-color: #FF6B4A;
-}
-
-.nick-preview {
-    font-size: 18px;
-    font-weight: 600;
-    min-width: 100px;
-}
-
-.nick-preview.red { color: #FF6B4A; }
-.nick-preview.green { color: #4CAF50; }
-.nick-preview.blue { color: #2196F3; }
-.nick-preview.purple { color: #9C27B0; }
-.nick-preview.orange { color: #FF9800; }
-.nick-preview.multicolor { 
-    background: linear-gradient(45deg, #FF6B4A, #4CAF50, #2196F3, #9C27B0, #FF9800);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.frame-preview {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    background: #2A2F3A;
-}
-
-.frame-preview.frame-red { border: 3px solid #FF6B4A; }
-.frame-preview.frame-gold { border: 3px solid #FFD700; }
-.frame-preview.frame-blue { border: 3px solid #2196F3; }
-.frame-preview.frame-green { border: 3px solid #4CAF50; }
-.frame-preview.frame-purple { border: 3px solid #9C27B0; }
-.frame-preview.frame-rainbow { 
-    border: 3px solid transparent;
-    background: linear-gradient(45deg, #FF6B4A, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
-}
-
-.item-info {
-    flex: 1;
-}
-
-.item-name {
-    font-size: 14px;
-    font-weight: 600;
-    color: #FFFFFF;
-    margin-bottom: 2px;
-}
-
-.item-price {
-    font-size: 12px;
-    color: #FF6B4A;
-}
-
-.owned-badge {
-    background: #4CAF50;
+.close-btn:hover {
+    background: #FF6B4A;
     color: white;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    margin-left: 8px;
+}
+
+/* Анимации */
+@keyframes caseGlow {
+    0%, 100% { 
+        filter: drop-shadow(0 0 5px #FF6B4A);
+        transform: scale(1);
+    }
+    50% { 
+        filter: drop-shadow(0 0 20px #FF6B4A);
+        transform: scale(1.1);
+    }
+}
+
+@keyframes winPulse {
+    0%, 100% { 
+        box-shadow: 0 0 20px #FF6B4A;
+        border-color: #FF6B4A;
+    }
+    50% { 
+        box-shadow: 0 0 50px #FF6B4A;
+        border-color: #FFD700;
+    }
+}
+
+@keyframes caseOpenAnimation {
+    0% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.2) rotate(10deg); }
+    50% { transform: scale(1.3) rotate(-10deg); }
+    75% { transform: scale(1.2) rotate(5deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes flashEffect {
+    0% { opacity: 0; }
+    50% { opacity: 0.9; }
+    100% { opacity: 0; }
+}
+
+@keyframes itemDrop {
+    0% { 
+        transform: translateY(-100px) scale(0); 
+        opacity: 0; 
+    }
+    50% { 
+        transform: translateY(20px) scale(1.2); 
+        opacity: 1; 
+    }
+    100% { 
+        transform: translateY(0) scale(1); 
+        opacity: 1; 
+    }
+}
+
+/* Классы для анимаций */
+.case-opening {
+    animation: caseOpenAnimation 0.5s ease;
+}
+
+.flash-effect {
+    animation: flashEffect 0.3s ease;
+}
+
+.item-appear {
+    animation: itemDrop 0.5s ease;
 }
