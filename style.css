@@ -222,33 +222,32 @@ body {
     color: #FF6B4A;
 }
 
-.start-avatar {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: #1A1D24;
-    border: 3px solid #2A2F3A;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-    color: #9BA1B0;
-    margin-bottom: 40px;
-    overflow: hidden;
+/* Квадратная аватарка с эффектом наложения */
+.start-avatar-overlap {
+    width: calc(100% - 20px);
+    max-width: 280px;
+    margin: 0 auto 20px auto;
+    position: relative;
+    z-index: 1;
 }
 
-.start-avatar img {
+.start-avatar-overlap img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    display: block;
+    border: 3px solid #FF6B4A;
+    border-radius: 0;
 }
 
+/* Рамка текста (единственный блок) */
 .start-description-box {
     border: 2px solid #FF6B4A;
     border-radius: 16px;
-    padding: 20px 16px;
-    margin: 0 10px 30px 10px;
+    padding: 25px 16px 20px 16px;
+    margin: -15px 10px 30px 10px;
     background: #1A1D24;
+    position: relative;
+    z-index: 0;
 }
 
 .start-description {
@@ -500,22 +499,22 @@ body {
 .profile-stat-card {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: 6px;           /* как в поиске */
-    padding: 8px 10px;            /* как в поиске */
+    border-radius: 6px;
+    padding: 8px 10px;
     cursor: pointer;
     transition: border 0.1s ease;
-    min-height: auto;             /* убираем фикс высоту */
+    min-height: auto;
 }
 
 .profile-stat-label {
-    font-size: 10px;              /* как в поиске */
+    font-size: 10px;
     color: #9BA1B0;
     margin-bottom: 2px;
     letter-spacing: 0.3px;
 }
 
 .profile-stat-value {
-    font-size: 13px;              /* как в поиске */
+    font-size: 13px;
     font-weight: 500;
     color: #FFFFFF;
     word-break: break-word;
@@ -523,11 +522,10 @@ body {
     text-transform: none;
 }
 
-/* Расстояние между плашками */
 .profile-stats {
     display: flex;
     flex-direction: column;
-    gap: 6px;                     /* как в поиске */
+    gap: 6px;
     margin: 8px 0;
 }
 
@@ -1131,7 +1129,6 @@ body {
     margin-bottom: 4px;
 }
 
-/* НОВЫЙ ЭКРАН ПОИСКА */
 .search-header {
     display: flex;
     justify-content: space-between;
@@ -1231,35 +1228,7 @@ body {
     text-align: center;
     font-weight: 400;
 }
-/* Аватарка с эффектом наложения рамки */
-.start-avatar-overlap {
-    width: calc(100% - 20px);
-    max-width: 280px;
-    margin: 0 auto 20px auto;
-    position: relative;
-    z-index: 1;
+
+.phone-frame {
+    opacity: 1 !important;
 }
-
-.start-avatar-overlap img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border: 3px solid #FF6B4A;
-    border-radius: 0;  /* квадратная */
-}
-
-/* Рамка текста */
-.start-description-box {
-    border: 2px solid #FF6B4A;
-    border-radius: 16px;
-    padding: 25px 16px 20px 16px;  /* увеличена padding-top */
-    margin: -15px 10px 30px 10px;    /* отрицательный margin */
-    background: #1A1D24;
-    position: relative;
-    z-index: 0;
-}
-
-
-
-
-
