@@ -224,8 +224,8 @@ body {
 
 /* ===== ИСПРАВЛЕНО: Квадратная аватарка с закруглениями ===== */
 .start-avatar-square {
-    width: 140px;
-    height: 140px;
+    width: 300px;
+    height: 300px;
     margin: 0 auto -15px auto; /* Отрицательный margin для наложения */
     border: none; /* Убираем обводку */
     border-radius: 20px; /* Закругленные углы */
@@ -1240,4 +1240,5 @@ body {
 .phone-frame {
     opacity: 1 !important;
 }
+
 
