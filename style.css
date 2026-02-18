@@ -38,10 +38,11 @@ body {
     position: relative;
 }
 
+/* ===== ИСПРАВЛЕНО: Шестеренка в правом углу ===== */
 .header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end; /* Прижимаем содержимое к правому краю */
     padding: 4px 0 12px 0;
     border-bottom: 1px solid #1E2128;
     margin-bottom: 12px;
@@ -55,6 +56,7 @@ body {
     color: #FFFFFF;
     cursor: pointer;
     transition: transform 0.2s ease;
+    margin-right: auto; /* Логотип слева */
 }
 
 .logo:active {
@@ -206,9 +208,9 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    padding-top: 10px; /* Уменьшил отступ сверху */
+    justify-content: space-between; /* Равномерное распределение */
     height: 100%;
+    padding: 40px 0 20px 0; /* Отступы сверху и снизу */
 }
 
 .start-logo {
@@ -216,7 +218,7 @@ body {
     font-weight: 700;
     color: #FFFFFF;
     letter-spacing: -0.5px;
-    margin-bottom: 20px; /* Уменьшил отступ снизу */
+    margin: 0; /* Убираем отступы */
 }
 
 .start-logo .ping {
@@ -225,11 +227,11 @@ body {
 
 /* ===== АВАТАРКА С ЗАКРУГЛЕНИЕМ ТОЛЬКО СВЕРХУ ===== */
 .start-avatar-square {
-    width: 280px;        /* Ширина как у рамки текста */
-    height: 280px;       /* Квадрат */
-    margin: 0 auto -30px auto; /* Наезжает на рамку */
+    width: 280px;
+    height: 280px;
+    margin: 0 auto -30px auto;
     border: none;
-    border-radius: 30px 30px 0 0; /* Закруглены только верхние углы */
+    border-radius: 30px 30px 0 0;
     overflow: hidden;
     background: #1A1D24;
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
@@ -246,11 +248,11 @@ body {
 
 /* ===== РАМКА ТЕКСТА С ЗАКРУГЛЕНИЕМ ТОЛЬКО СНИЗУ ===== */
 .start-description-box {
-    width: 280px;        /* Одинаковая ширина с аватаркой */
+    width: 280px;
     border: 3px solid #FF6B4A;
-    border-radius: 0 0 30px 30px; /* Закруглены только нижние углы */
-    padding: 50px 16px 20px 16px; /* Большой отступ сверху для наезда аватарки */
-    margin: 0 auto 30px auto;
+    border-radius: 0 0 30px 30px;
+    padding: 50px 16px 20px 16px;
+    margin: 0 auto;
     background: #1A1D24;
     position: relative;
     z-index: 1;
@@ -263,18 +265,19 @@ body {
     text-align: center;
 }
 
+/* ===== ИСПРАВЛЕНО: Кнопка с закруглениями ===== */
 .primary-btn {
-    width: 280px;        /* Такая же ширина как у всего блока */
+    width: 280px;
     padding: 16px;
     background: #FF6B4A;
     border: none;
-    border-radius: 0;    /* Без закруглений */
+    border-radius: 30px; /* Закругленные края */
     font-size: 16px;
     font-weight: 600;
     color: white;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 8px auto;
+    margin: 20px auto 0 auto;
     transition: all 0.2s;
 }
 
@@ -286,7 +289,7 @@ body {
     color: #5D6472;
     font-size: 12px;
     text-align: center;
-    margin-top: 8px;
+    margin-top: 10px;
 }
 
 .bottom-nav {
