@@ -6,66 +6,22 @@ const supabaseKey = 'sb_publishable__rPXE3FM5T9SZIKlagR6lA_WvjiAhJT';
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 // ============================================
-// РАБОТА С БАЗОЙ ДАННЫХ (только avatars)
+// РАБОТА ТОЛЬКО С АВАТАРКАМИ (таблица avatars)
 // ============================================
 
-// Сохраняем данные пользователя в localStorage (временное решение)
-function saveUserToLocalStorage() {
-    const userData = {
-        savedName,
-        savedAvatar,
-        savedAge,
-        savedSteam,
-        savedFaceitLink,
-        coins,
-        ownedNicks,
-        ownedFrames
-    };
-    localStorage.setItem('pingster_user', JSON.stringify(userData));
-    console.log('Данные сохранены в localStorage');
-}
-
-// Загружаем данные пользователя из localStorage
-function loadUserFromLocalStorage() {
-    const savedData = localStorage.getItem('pingster_user');
-    if (savedData) {
-        try {
-            const user = JSON.parse(savedData);
-            savedName = user.savedName || '-';
-            savedAvatar = user.savedAvatar || '👤';
-            savedAge = user.savedAge || '-';
-            savedSteam = user.savedSteam || '-';
-            savedFaceitLink = user.savedFaceitLink || '-';
-            coins = user.coins || 1000;
-            ownedNicks = user.ownedNicks || [];
-            ownedFrames = user.ownedFrames || [];
-            
-            console.log('Данные загружены из localStorage');
-        } catch (e) {
-            console.error('Ошибка загрузки из localStorage:', e);
-        }
-    }
-}
-
-// Загрузка аватарки в Supabase (работает с таблицей avatars)
-async function uploadAvatarToSupabase(file, telegramId) {
-    if (!file || !telegramId) return null;
+// Загрузка аватарки в Supabase
+async function uploadAvatar(file, userId) {
+    if (!file || !userId) return null;
     
     try {
-        // Сначала проверяем, есть ли уже запись для этого telegram_id
-        const { data: existing, error: selectError } = await supabaseClient
-            .from('avatars')
-            .select('*')
-            .eq('telegram_id', telegramId)
-            .maybeSingle();
+        console.log('Загружаем аватарку для пользователя:', userId);
         
-        if (selectError) throw selectError;
-        
-        // Загружаем файл в storage
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${telegramId}_${Date.now()}.${fileExt}`;
+        // Создаем уникальное имя файла
+        const fileExt = file.name.split('.').pop() || 'jpg';
+        const fileName = `${userId}_${Date.now()}.${fileExt}`;
         const filePath = `avatars/${fileName}`;
         
+        // Загружаем в Storage
         const { error: uploadError } = await supabaseClient
             .storage
             .from('avatars')
@@ -79,71 +35,79 @@ async function uploadAvatarToSupabase(file, telegramId) {
             .from('avatars')
             .getPublicUrl(filePath);
         
+        console.log('✅ Аватарка загружена в Storage');
+        
         // Сохраняем ссылку в таблицу avatars
-        if (existing) {
-            // Обновляем существующую запись
-            const { error: updateError } = await supabaseClient
-                .from('avatars')
-                .update({ avatar_url: publicUrl })
-                .eq('telegram_id', telegramId);
-            
-            if (updateError) throw updateError;
+        const { error: dbError } = await supabaseClient
+            .from('avatars')
+            .insert([
+                { 
+                    telegram_id: userId, 
+                    avatar_url: publicUrl 
+                }
+            ]);
+        
+        if (dbError) {
+            // Если запись уже существует - обновляем
+            if (dbError.code === '23505') { // unique violation
+                const { error: updateError } = await supabaseClient
+                    .from('avatars')
+                    .update({ avatar_url: publicUrl })
+                    .eq('telegram_id', userId);
+                
+                if (updateError) throw updateError;
+                console.log('✅ Ссылка обновлена в таблице avatars');
+            } else {
+                throw dbError;
+            }
         } else {
-            // Создаем новую запись
-            const { error: insertError } = await supabaseClient
-                .from('avatars')
-                .insert({ telegram_id: telegramId, avatar_url: publicUrl });
-            
-            if (insertError) throw insertError;
+            console.log('✅ Ссылка сохранена в таблице avatars');
         }
         
-        console.log('Аватарка загружена в Supabase');
         return publicUrl;
         
     } catch (error) {
-        console.error('Ошибка загрузки в Supabase:', error);
+        console.error('❌ Ошибка загрузки аватарки:', error);
         return null;
     }
 }
 
 // Получение аватарки из Supabase
-async function getAvatarFromSupabase(telegramId) {
-    if (!telegramId) return null;
+async function getAvatar(userId) {
+    if (!userId) return null;
     
     try {
         const { data, error } = await supabaseClient
             .from('avatars')
             .select('avatar_url')
-            .eq('telegram_id', telegramId)
+            .eq('telegram_id', userId)
             .maybeSingle();
         
         if (error) throw error;
         
-        return data?.avatar_url || null;
+        if (data) {
+            console.log('✅ Аватарка найдена в таблице avatars');
+            return data.avatar_url;
+        } else {
+            console.log('ℹ️ Аватарка не найдена');
+            return null;
+        }
         
     } catch (error) {
-        console.error('Ошибка получения аватарки:', error);
+        console.error('❌ Ошибка получения аватарки:', error);
         return null;
     }
 }
 
 // ============================================
-// ВРЕМЕННЫЕ ФУНКЦИИ ДЛЯ СОВМЕСТИМОСТИ
+// ПУСТЫЕ ФУНКЦИИ ДЛЯ СОВМЕСТИМОСТИ (ничего не делают)
 // ============================================
 async function saveUserToDB() {
-    saveUserToLocalStorage();
+    // Ничего не сохраняем
+    console.log('ℹ️ Сохранение в БД отключено');
 }
 
 async function loadUserFromDB() {
-    loadUserFromLocalStorage();
-    
-    // Пробуем загрузить аватарку из Supabase если есть telegramId
-    if (typeof currentUserId !== 'undefined' && currentUserId) {
-        const avatarUrl = await getAvatarFromSupabase(currentUserId);
-        if (avatarUrl) {
-            savedAvatar = avatarUrl;
-            tempAvatar = avatarUrl;
-            if (typeof loadSavedValues === 'function') loadSavedValues();
-        }
-    }
+    // Ничего не загружаем
+    console.log('ℹ️ Загрузка из БД отключена');
 }
