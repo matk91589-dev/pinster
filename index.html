@@ -49,14 +49,28 @@
         .header {
             display: flex;
             align-items: center;
-            justify-content: flex-end; /* Прижимаем шестеренку вправо */
+            justify-content: space-between;
             padding: 4px 0 12px 0;
             border-bottom: 1px solid #1E2128;
             margin-bottom: 12px;
         }
 
         .logo {
-            display: none; /* Скрываем логотип на всех экранах */
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #FFFFFF;
+            cursor: pointer;
+        }
+
+        .logo .ping {
+            color: #FF6B4A;
+        }
+
+        .logo .ster {
+            color: #FFFFFF;
+            font-weight: 400;
+            opacity: 0.9;
         }
 
         .icon-settings {
@@ -86,6 +100,11 @@
 
         .icon-settings.active svg {
             stroke: #FF6B4A;
+        }
+
+        /* Скрываем логотип только на стартовом экране */
+        .start-screen .logo {
+            display: none;
         }
 
         .title-row {
@@ -212,11 +231,11 @@
             color: #FF6B4A;
         }
 
-        /* Аватарка 4:3 (соотношение сторон 4:3) */
+        /* Аватарка 4:3 */
         .start-avatar-square {
             width: 280px;
-            height: 210px; /* 280 * 0.75 = 210 (соотношение 4:3) */
-            margin: 0 auto 10px auto;
+            height: 210px;
+            margin: 0 auto -20px auto; /* Уменьшил наложение */
             border: none;
             border-radius: 30px 30px 0 0;
             overflow: hidden;
@@ -238,8 +257,8 @@
             width: 280px;
             border: 3px solid #FF6B4A;
             border-radius: 0 0 30px 30px;
-            padding: 40px 16px 20px 16px;
-            margin: 0 auto 15px auto;
+            padding: 35px 16px 20px 16px; /* Уменьшил верхний отступ */
+            margin: 0 auto 25px auto; /* Увеличил нижний отступ */
             background: #1A1D24;
             position: relative;
             z-index: 1;
@@ -253,17 +272,17 @@
         }
 
         .primary-btn {
-            width: 300px; /* Увеличили ширину */
-            padding: 20px; /* Увеличили отступы */
+            width: 300px;
+            padding: 20px;
             background: #FF6B4A;
             border: none;
-            border-radius: 40px; /* Увеличили скругление */
-            font-size: 20px; /* Увеличили шрифт */
-            font-weight: 700;
+            border-radius: 40px;
+            font-size: 22px; /* Увеличил шрифт */
+            font-weight: 800; /* Сделал жирнее */
             color: white;
             text-transform: uppercase;
             cursor: pointer;
-            margin: 20px auto 10px auto; /* Увеличили отступ сверху */
+            margin: 30px auto 10px auto; /* Увеличил отступ сверху */
             transition: all 0.2s;
             letter-spacing: 1px;
         }
@@ -1073,9 +1092,11 @@
 <body>
     <div class="phone-frame">
         <div class="content">
-            <!-- Хедер (только шестеренка, логотип скрыт) -->
+            <!-- Хедер (на всех экранах кроме стартового) -->
             <div class="header">
-                <div class="logo"></div> <!-- Пустой div для отступа -->
+                <div class="logo" onclick="handleLogoClick()">
+                    <span class="ping">Ping</span><span class="ster">ster</span>
+                </div>
                 <div id="settingsIcon" class="icon-settings" onclick="showSettingsScreen()">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="3"/>
@@ -1658,7 +1679,17 @@
         // ФУНКЦИИ ДЛЯ ЛОГОТИПА
         // ============================================
         function handleLogoClick() {
-            // Логотип скрыт, функция не используется
+            if (document.getElementById('searchScreen') && document.getElementById('searchScreen').style.display === 'flex') {
+                alert('Сначала отмените поиск');
+                return;
+            }
+            
+            // Возвращаемся на главный экран
+            hideAllScreens();
+            document.getElementById('mainScreen').style.display = 'flex';
+            
+            // Сбрасываем иконку настроек
+            document.getElementById('settingsIcon').classList.remove('active');
         }
 
         // ============================================
@@ -2041,6 +2072,9 @@
         function showMainScreen() {
             hideAllScreens();
             document.getElementById('mainScreen').style.display = 'flex';
+            
+            // Сбрасываем иконку настроек
+            document.getElementById('settingsIcon').classList.remove('active');
         }
 
         function showProfileScreen() {
@@ -2054,11 +2088,17 @@
             }
             
             loadSavedValues();
+            
+            // Сбрасываем иконку настроек
+            document.getElementById('settingsIcon').classList.remove('active');
         }
 
         function showShopScreen() {
             hideAllScreens();
             document.getElementById('shopScreen').style.display = 'flex';
+            
+            // Сбрасываем иконку настроек
+            document.getElementById('settingsIcon').classList.remove('active');
         }
 
         function showSettingsScreen() {
@@ -2076,6 +2116,9 @@
             document.getElementById('faceitAgeValue').textContent = savedAge;
             document.getElementById('faceitSteamInput').value = savedSteam;
             document.getElementById('faceitLinkInput').value = savedFaceitLink;
+            
+            // Сбрасываем иконку настроек
+            document.getElementById('settingsIcon').classList.remove('active');
         }
 
         function showPremierScreen() {
@@ -2086,6 +2129,9 @@
             
             document.getElementById('premierAgeValue').textContent = savedAge;
             document.getElementById('premierSteamInput').value = savedSteam;
+            
+            // Сбрасываем иконку настроек
+            document.getElementById('settingsIcon').classList.remove('active');
         }
 
         function showPrimeScreen() {
@@ -2096,6 +2142,9 @@
             
             document.getElementById('primeAgeValue').textContent = savedAge;
             document.getElementById('primeSteamInput').value = savedSteam;
+            
+            // Сбрасываем иконку настроек
+            document.getElementById('settingsIcon').classList.remove('active');
         }
 
         function showPublicScreen() {
@@ -2106,6 +2155,9 @@
             
             document.getElementById('publicAgeValue').textContent = savedAge;
             document.getElementById('publicSteamInput').value = savedSteam;
+            
+            // Сбрасываем иконку настроек
+            document.getElementById('settingsIcon').classList.remove('active');
         }
 
         function hideAllScreens() {
@@ -2286,6 +2338,9 @@
             resetTimer();
             hideAllScreens();
             document.getElementById(lastModeScreen).style.display = 'flex';
+            
+            // Сбрасываем иконку настроек
+            document.getElementById('settingsIcon').classList.remove('active');
         }
 
         function startSearch(mode, value) {
