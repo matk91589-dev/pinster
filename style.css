@@ -201,12 +201,13 @@ body {
     text-align: center;
 }
 
+/* ===== СТАРТОВЫЙ ЭКРАН ===== */
 .start-screen {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding-top: 30px;
+    padding-top: 20px;
     height: 100%;
 }
 
@@ -222,18 +223,18 @@ body {
     color: #FF6B4A;
 }
 
-/* ===== ИСПРАВЛЕНО: Квадратная аватарка с закруглениями ===== */
+/* ===== КВАДРАТНАЯ АВАТАРКА БЕЗ ЗАКРУГЛЕНИЙ ===== */
 .start-avatar-square {
-    width: 140px;
-    height: 140px;
-    margin: 0 auto -15px auto; /* Отрицательный margin для наложения */
-    border: none; /* Убираем обводку */
-    border-radius: 20px; /* Закругленные углы */
+    width: 280px;        /* Ширина как у рамки текста */
+    height: 280px;       /* Квадрат */
+    margin: 0 auto -30px auto; /* Наезжает на рамку */
+    border: none;
+    border-radius: 0;    /* Без закруглений - острые углы */
     overflow: hidden;
     background: #1A1D24;
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
     position: relative;
-    z-index: 2; /* Аватарка выше рамки */
+    z-index: 2;
 }
 
 .start-avatar-square img {
@@ -243,15 +244,16 @@ body {
     display: block;
 }
 
-/* Рамка текста (выходит из-под аватарки) */
+/* ===== РАМКА ТЕКСТА - ПРЯМОУГОЛЬНАЯ ===== */
 .start-description-box {
-    border: 3px solid #FF6B4A; /* Толщина обводки */
-    border-radius: 20px; /* Такое же закругление как у аватарки */
-    padding: 35px 16px 20px 16px; /* Увеличен верхний padding для наложения */
-    margin: 0 10px 30px 10px;
+    width: 280px;        /* Одинаковая ширина с аватаркой */
+    border: 3px solid #FF6B4A;
+    border-radius: 0;    /* Без закруглений - острые углы */
+    padding: 50px 16px 20px 16px; /* Большой отступ сверху для наезда аватарки */
+    margin: 0 auto 30px auto;
     background: #1A1D24;
     position: relative;
-    z-index: 1; /* Рамка ниже аватарки */
+    z-index: 1;
 }
 
 .start-description {
@@ -262,19 +264,18 @@ body {
 }
 
 .primary-btn {
-    width: 100%;
+    width: 280px;        /* Такая же ширина как у всего блока */
     padding: 16px;
     background: #FF6B4A;
     border: none;
-    border-radius: 8px;
+    border-radius: 0;    /* Без закруглений */
     font-size: 16px;
     font-weight: 600;
     color: white;
     text-transform: uppercase;
     cursor: pointer;
+    margin: 8px auto;
     transition: all 0.2s;
-    letter-spacing: 0.5px;
-    margin: 8px 0;
 }
 
 .primary-btn:active {
@@ -1240,6 +1241,3 @@ body {
 .phone-frame {
     opacity: 1 !important;
 }
-
-
-
