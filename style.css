@@ -507,24 +507,37 @@ body {
 .profile-stat-card {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: 6px;
-    padding: 8px 10px;           /* как в поиске */
+    border-radius: 8px;           /* чуть скруглённее */
+    padding: 14px 16px;           /* больше внутренних отступов */
     cursor: pointer;
-    transition: border 0.1s ease, border-width 0.1s ease;
+    transition: border 0.1s ease;
+    min-height: 70px;             /* фиксированная высота */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .profile-stat-label {
-    font-size: 10px;              /* как в поиске */
+    font-size: 11px;
     color: #9BA1B0;
-    margin-bottom: 2px;
+    margin-bottom: 6px;
+    text-transform: uppercase;    /* как в поиске */
+    letter-spacing: 0.3px;
 }
 
 .profile-stat-value {
-    font-size: 13px;              /* как в поиске */
+    font-size: 15px;              /* чуть крупнее */
     font-weight: 500;
     color: #FFFFFF;
     word-break: break-word;
     line-height: 1.4;
+}
+
+.profile-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;                    /* одинаковый отступ везде */
+    margin: 12px 0;
 }
 
 .heart-icon {
@@ -1227,6 +1240,7 @@ body {
     text-align: center;
     font-weight: 400;
 }
+
 
 
 
