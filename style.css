@@ -1233,12 +1233,11 @@ body {
 }
 /* Квадратная аватарка как рамка текста */
 .start-avatar-square {
-    width: calc(100% - 20px);  /* такая же ширина как у рамки */
+    width: calc(100%);  /* такая же ширина как у рамки */
     max-width: 300px;           /* ограничение */
     aspect-ratio: 1/1;          /* квадрат */
     margin: 0 auto 30px auto;
-    border: 2px solid #FF6B4A;
-    border-radius: 0;           /* убираем скругление */
+    border: 2px solid #FF6B4A; 
     overflow: hidden;
     background: #1A1D24;
 }
@@ -1249,6 +1248,7 @@ body {
     object-fit: cover;
     display: block;
 }
+
 
 
 
