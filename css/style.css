@@ -264,18 +264,27 @@ body {
     padding-top: 0;
 }
 
+/* ===== ИСПРАВЛЕНИЕ ЛОГОТИПА ===== */
 .start-logo {
     display: block;
     width: 280px;
     margin: 20px auto 10px auto;
+    background-color: #0D0F15; /* фон как у сайта */
+    border-radius: 8px;
+    padding: 5px;
+    box-shadow: 0 0 0 2px #0D0F15; /* дополнительная защита */
 }
 
 .start-logo img {
     width: 100%;
     height: auto;
     display: block;
-    image-rendering: auto;
-    background-color: #0D0F15; /* цвет фона сайта для прозрачных участков */
+    background-color: #0D0F15; /* фон для прозрачных участков */
+    mix-blend-mode: normal; /* отключаем лишние эффекты */
+    image-rendering: crisp-edges; /* четкие края */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0); /* аппаратное ускорение */
 }
 
 .start-avatar-square {
