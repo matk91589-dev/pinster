@@ -227,7 +227,7 @@ function openCase(caseId) {
 }
 
 function startExplosionAnimation() {
-    let frame = 1;
+    let frame = 0;  // Начинаем с 0
     const totalFrames = 9;
     const explosionImg = document.getElementById('explosionFrame');
     const flash = document.getElementById('flash');
@@ -238,43 +238,55 @@ function startExplosionAnimation() {
     
     console.log('Запуск анимации на 1.2 секунды');
     
+    // Предзагружаем все кадры перед анимацией
+    const frames = [];
+    for (let i = 1; i <= totalFrames; i++) {
+        const img = new Image();
+        img.src = `cases/common case/common_cadr${i}.png`;
+        frames.push(img);
+    }
+    
     // Добавляем тряску
     caseContainer.style.animation = 'shake 0.7s infinite';
     
-    // Анимация 1.2 секунды (133ms * 9 = 1.197 сек)
-    const interval = setInterval(() => {
-        if (frame <= totalFrames) {
-            explosionImg.src = `cases/common case/common_cadr${frame}.png`;
-            frame++;
-        } else {
-            clearInterval(interval);
-            
-            // Убираем тряску
-            caseContainer.style.animation = '';
-            
-            // Вспышка
-            flash.classList.add('active');
-            
-            setTimeout(() => {
-                flash.classList.remove('active');
+    // Ждем немного чтобы кадры загрузились
+    setTimeout(() => {
+        // Анимация 1.2 секунды
+        const interval = setInterval(() => {
+            if (frame < totalFrames) {
+                frame++;
+                explosionImg.src = `cases/common case/common_cadr${frame}.png`;
+                console.log(`Кадр ${frame}`);
+            } else {
+                clearInterval(interval);
                 
-                // Выбираем случайный предмет
-                const winningItem = currentCase.items[Math.floor(Math.random() * currentCase.items.length)];
+                // Убираем тряску
+                caseContainer.style.animation = '';
                 
-                // Добавляем в инвентарь
-                addItemToInventory(winningItem);
+                // Вспышка
+                flash.classList.add('active');
                 
-                // Показываем результат
-                explosionImg.style.display = 'none';
-                resultPopup.style.display = 'block';
-                document.getElementById('resultItem').textContent = winningItem.name;
-                document.getElementById('resultRarity').textContent = winningItem.rarityName;
-                
-                isOpening = false;
-                
-            }, 200); // Вспышка 0.2 сек
-        }
-    }, 133); // 133ms * 9 = 1.2 секунды
+                setTimeout(() => {
+                    flash.classList.remove('active');
+                    
+                    // Выбираем случайный предмет
+                    const winningItem = currentCase.items[Math.floor(Math.random() * currentCase.items.length)];
+                    
+                    // Добавляем в инвентарь
+                    addItemToInventory(winningItem);
+                    
+                    // Показываем результат
+                    explosionImg.style.display = 'none';
+                    resultPopup.style.display = 'block';
+                    document.getElementById('resultItem').textContent = winningItem.name;
+                    document.getElementById('resultRarity').textContent = winningItem.rarityName;
+                    
+                    isOpening = false;
+                    
+                }, 200);
+            }
+        }, 133); // 133ms * 9 = 1.2 секунды
+    }, 100); // Даем время на предзагрузку
 }
 
 function addItemToInventory(item) {
@@ -306,4 +318,5 @@ function closeCase() {
     isOpening = false;
     currentCase = null;
 }
+
 
