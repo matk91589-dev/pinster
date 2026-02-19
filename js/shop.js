@@ -4,6 +4,7 @@
 
 let currentShopTab = 'cases'; // 'cases' или 'inventory'
 
+// Данные кейсов
 const cases = [
     { 
         id: 'common_case', 
@@ -11,52 +12,26 @@ const cases = [
         description: '', 
         price: 1000, 
         class: 'common-case',
-        icon: `<svg viewBox="0 0 200 200" width="100" height="90">
-            <defs>
-                <linearGradient id="rustGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#7a4a3c"/>
-                    <stop offset="50%" stop-color="#9e6b52"/>
-                    <stop offset="100%" stop-color="#5c3f33"/>
-                </linearGradient>
-                <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#4a4a4a"/>
-                    <stop offset="50%" stop-color="#2f2f2f"/>
-                    <stop offset="100%" stop-color="#1a1a1a"/>
-                </linearGradient>
-                <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="rgba(255,255,255,0.2)"/>
-                    <stop offset="50%" stop-color="rgba(255,255,255,0.05)"/>
-                    <stop offset="100%" stop-color="rgba(255,255,255,0.2)"/>
-                </linearGradient>
-            </defs>
-            <polygon points="30,80 170,80 160,150 40,150" fill="url(#rustGrad)" stroke="#222" stroke-width="3"/>
-            <polygon points="30,80 100,40 170,80" fill="url(#metalGrad)" stroke="#111" stroke-width="3"/>
-            <path d="M35,85 L165,85" stroke="url(#shine)" stroke-width="3"/>
-            <rect x="90" y="100" width="20" height="30" rx="3" ry="3" fill="#222" stroke="#000" stroke-width="2"/>
-            <circle cx="100" cy="115" r="4" fill="#555"/>
-            <circle cx="40" cy="90" r="4" fill="#666"/>
-            <circle cx="160" cy="90" r="4" fill="#666"/>
-            <circle cx="35" cy="140" r="3" fill="#555"/>
-            <circle cx="165" cy="140" r="3" fill="#555"/>
-            <g>
-                <rect x="50" y="110" width="24" height="24" rx="4" ry="4" fill="#aaa" stroke="#777" stroke-width="2"/>
-                <rect x="80" y="110" width="24" height="24" rx="4" ry="4" fill="#bbb" stroke="#888" stroke-width="2"/>
-                <rect x="110" y="110" width="24" height="24" rx="4" ry="4" fill="#ccc" stroke="#999" stroke-width="2"/>
-            </g>
-        </svg>`,
+        // 1 кадр - обычный ящик (для магазина)
+        icon: `<img src="cases/common/common_cadr1.png" class="case-image" width="100" height="90">`,
         items: [
+            // Ники
             { type: 'nick', id: 'red', name: 'Красный ник', icon: '🎨', rarity: 'common', rarityName: 'Common' },
             { type: 'nick', id: 'green', name: 'Зеленый ник', icon: '🎨', rarity: 'common', rarityName: 'Common' },
             { type: 'nick', id: 'blue', name: 'Синий ник', icon: '🎨', rarity: 'common', rarityName: 'Common' },
             { type: 'nick', id: 'purple', name: 'Фиолетовый ник', icon: '🎨', rarity: 'rare', rarityName: 'Rare' },
             { type: 'nick', id: 'orange', name: 'Оранжевый ник', icon: '🎨', rarity: 'rare', rarityName: 'Rare' },
             { type: 'nick', id: 'multicolor', name: 'Радужный ник', icon: '🌈', rarity: 'epic', rarityName: 'Epic' },
+            
+            // Рамки
             { type: 'frame', id: 'red', name: 'Красная рамка', icon: '🖼️', rarity: 'common', rarityName: 'Common' },
             { type: 'frame', id: 'blue', name: 'Синяя рамка', icon: '🖼️', rarity: 'common', rarityName: 'Common' },
             { type: 'frame', id: 'green', name: 'Зеленая рамка', icon: '🖼️', rarity: 'common', rarityName: 'Common' },
             { type: 'frame', id: 'gold', name: 'Золотая рамка', icon: '🖼️', rarity: 'rare', rarityName: 'Rare' },
             { type: 'frame', id: 'purple', name: 'Фиолетовая рамка', icon: '🖼️', rarity: 'rare', rarityName: 'Rare' },
             { type: 'frame', id: 'rainbow', name: 'Радужная рамка', icon: '🖼️', rarity: 'legendary', rarityName: 'Legendary' },
+            
+            // Скины CS:GO
             { type: 'skin', name: 'AK-47 | Redline', icon: '🔫', rarity: 'rare', rarityName: 'Rare' },
             { type: 'skin', name: 'AWP | Dragon Lore', icon: '🔫', rarity: 'legendary', rarityName: 'Legendary' },
             { type: 'skin', name: '★ Karambit | Fade', icon: '🔪', rarity: 'legendary', rarityName: 'Legendary' },
@@ -167,13 +142,6 @@ function renderInventory() {
     `).join('');
 }
 
-function getRarityFromPrice(price) {
-    if (price <= 50) return 'common';
-    if (price <= 100) return 'rare';
-    if (price <= 200) return 'epic';
-    return 'legendary';
-}
-
 function useInventoryItem(type, id) {
     if (type === 'nick') {
         if (!ownedNicks.includes(id)) return;
@@ -213,6 +181,7 @@ function buyCase(caseId) {
         document.getElementById('coinsAmount').textContent = coins;
         saveUserToDB();
         
+        // Открываем кейс после покупки
         setTimeout(() => openCase(caseId), 500);
     }
 }
@@ -229,15 +198,15 @@ function openCase(caseId) {
     currentCase = caseItem;
     isOpening = true;
     
+    // Показываем оверлей
     const overlay = document.createElement('div');
     overlay.className = 'case-overlay';
     overlay.id = 'caseOverlay';
     overlay.innerHTML = `
         <div class="case-container">
             <div class="case-header">${caseItem.name}</div>
-            <div class="roulette-wrapper">
-                <div class="marker"></div>
-                <div class="roulette-track" id="rouletteTrack"></div>
+            <div class="explosion-container">
+                <img id="explosionFrame" src="cases/common/common_cadr1.png" class="explosion-image">
             </div>
             <div class="result-popup" style="display: none;">
                 <div class="result-title">Вам выпало:</div>
@@ -251,91 +220,53 @@ function openCase(caseId) {
     
     document.body.appendChild(overlay);
     
+    // Активируем оверлей
     setTimeout(() => {
         overlay.classList.add('active');
-        generateCaseSlots(caseItem);
-        setTimeout(() => startCaseSpin(), 500);
+        startExplosionAnimation();
     }, 50);
 }
 
-function generateCaseSlots(caseItem) {
-    const track = document.getElementById('rouletteTrack');
-    if (!track) return;
-    
-    track.innerHTML = '';
-    
-    for (let i = 0; i < 50; i++) {
-        const item = caseItem.items[Math.floor(Math.random() * caseItem.items.length)];
-        const slot = document.createElement('div');
-        slot.className = 'item-slot';
-        slot.innerHTML = `
-            <div class="item-icon">${item.icon}</div>
-            <div class="item-name">${item.name}</div>
-            <div class="item-rarity rarity-${item.rarity}">${item.rarityName}</div>
-        `;
-        track.appendChild(slot);
-    }
-}
-
-function startCaseSpin() {
-    if (!currentCase) return;
-    
-    const track = document.getElementById('rouletteTrack');
+function startExplosionAnimation() {
+    let frame = 1;
+    const totalFrames = 9;
+    const explosionImg = document.getElementById('explosionFrame');
     const flash = document.getElementById('flash');
     const resultPopup = document.querySelector('.result-popup');
     
-    if (!track || !flash || !resultPopup) return;
+    if (!explosionImg) return;
     
-    const slotWidth = 130;
-    const totalSlots = track.children.length;
-    
-    const winningItem = currentCase.items[Math.floor(Math.random() * currentCase.items.length)];
-    const winningSlotIndex = Math.floor(totalSlots / 2) + Math.floor(Math.random() * 10) - 5;
-    
-    const wrapperWidth = 600;
-    const centerOffset = wrapperWidth / 2 - slotWidth / 2;
-    const offset = (winningSlotIndex * slotWidth) - centerOffset;
-    
-    document.querySelector('.case-container').classList.add('case-opening');
-    
-    setTimeout(() => {
-        document.querySelector('.case-container').classList.remove('case-opening');
-        
-        flash.classList.add('active');
-        
-        setTimeout(() => {
-            flash.classList.remove('active');
+    // Анимация взрыва (9 кадров)
+    const interval = setInterval(() => {
+        if (frame <= totalFrames) {
+            explosionImg.src = `cases/common/common_cadr${frame}.png`;
+            frame++;
+        } else {
+            clearInterval(interval);
             
-            track.style.transition = 'none';
-            track.style.transform = 'translateX(0px)';
+            // Вспышка
+            flash.classList.add('active');
             
             setTimeout(() => {
-                track.style.transition = 'transform 4s cubic-bezier(0.08, 0.6, 0.1, 1)';
-                track.style.transform = `translateX(-${offset}px)`;
+                flash.classList.remove('active');
                 
-                setTimeout(() => {
-                    Array.from(track.children).forEach((slot, index) => {
-                        slot.classList.remove('win');
-                        if (index === winningSlotIndex) {
-                            slot.classList.add('win');
-                        }
-                    });
-                    
-                    addItemToInventory(winningItem);
-                    
-                    resultPopup.style.display = 'block';
-                    document.getElementById('resultItem').textContent = winningItem.name;
-                    document.getElementById('resultRarity').textContent = winningItem.rarityName;
-                    
-                    isOpening = false;
-                    
-                }, 4000);
+                // Выбираем случайный предмет
+                const winningItem = currentCase.items[Math.floor(Math.random() * currentCase.items.length)];
                 
-            }, 50);
-            
-        }, 100);
-        
-    }, 500);
+                // Добавляем в инвентарь
+                addItemToInventory(winningItem);
+                
+                // Показываем результат
+                explosionImg.style.display = 'none';
+                resultPopup.style.display = 'block';
+                document.getElementById('resultItem').textContent = winningItem.name;
+                document.getElementById('resultRarity').textContent = winningItem.rarityName;
+                
+                isOpening = false;
+                
+            }, 200); // Вспышка
+        }
+    }, 100); // Скорость кадров (100ms = 0.9 сек на всю анимацию)
 }
 
 function addItemToInventory(item) {
@@ -367,4 +298,3 @@ function closeCase() {
     isOpening = false;
     currentCase = null;
 }
-
