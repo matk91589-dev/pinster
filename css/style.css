@@ -323,7 +323,7 @@ body {
 .primary-btn {
     width: 300px;
     padding: 20px;
-    background: #FF5500; /* Новый оранжевый */
+    background: #B00000; /* Новый оранжевый */
     border: none;
     border-radius: 20px;
     font-size: 22px;
@@ -1124,4 +1124,5 @@ body {
 .cancel-search-btn:active {
     transform: scale(0.95);
 }
+
 
