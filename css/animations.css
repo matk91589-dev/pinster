@@ -57,7 +57,7 @@
     width: 50px;
     height: 50px;
     border: 4px solid #2A2F3A;
-    border-top: 4px solid #FF7F32; /* Новый оранжевый */
+    border-top: 4px solid #FF5500; /* Новый оранжевый */
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -90,22 +90,22 @@
 
 @keyframes caseGlow {
     0%, 100% { 
-        filter: drop-shadow(0 0 5px #FF7F32); /* Новый оранжевый */
+        filter: drop-shadow(0 0 5px #FF5500); /* Новый оранжевый */
         transform: scale(1);
     }
     50% { 
-        filter: drop-shadow(0 0 20px #FF7F32); /* Новый оранжевый */
+        filter: drop-shadow(0 0 20px #FF5500); /* Новый оранжевый */
         transform: scale(1.1);
     }
 }
 
 @keyframes winPulse {
     0%, 100% { 
-        box-shadow: 0 0 20px #FF7F32; /* Новый оранжевый */
-        border-color: #FF7F32; /* Новый оранжевый */
+        box-shadow: 0 0 20px #FF5500; /* Новый оранжевый */
+        border-color: #FF5500; /* Новый оранжевый */
     }
     50% { 
-        box-shadow: 0 0 50px #FF7F32; /* Новый оранжевый */
+        box-shadow: 0 0 50px #FF5500; /* Новый оранжевый */
         border-color: #FFD700;
     }
 }
@@ -210,18 +210,18 @@
 .mode-search-btn:active,
 .cancel-search-btn:active,
 .buy-btn:active {
-    transform: scale(0.95); /* Усилил эффект нажатия для единообразия */
+    transform: scale(0.95);
 }
 
 /* Добавляем анимацию для нового оранжевого цвета */
 @keyframes orangePulse {
     0%, 100% { 
-        background-color: #FF7F32;
-        box-shadow: 0 0 10px rgba(255, 127, 50, 0.5);
+        background-color: #FF5500;
+        box-shadow: 0 0 10px rgba(255, 85, 0, 0.5);
     }
     50% { 
-        background-color: #E66A2B;
-        box-shadow: 0 0 20px rgba(255, 127, 50, 0.8);
+        background-color: #CC4400;
+        box-shadow: 0 0 20px rgba(255, 85, 0, 0.8);
     }
 }
 
