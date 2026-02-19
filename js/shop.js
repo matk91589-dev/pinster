@@ -13,7 +13,7 @@ const cases = [
         price: 1000, 
         class: 'common-case',
         // 1 кадр - обычный ящик (для магазина)
-        icon: `<img src="cases/common/common_cadr1.png" class="case-image" width="100" height="90">`,
+        icon: `<img src="cases/common case/common_cadr1.png" class="case-image" width="100" height="90">`,
         items: [
             // Ники
             { type: 'nick', id: 'red', name: 'Красный ник', icon: '🎨', rarity: 'common', rarityName: 'Common' },
@@ -198,18 +198,17 @@ function openCase(caseId) {
     currentCase = caseItem;
     isOpening = true;
     
-    // Показываем оверлей
+    // Показываем оверлей (без заголовка и обводок)
     const overlay = document.createElement('div');
     overlay.className = 'case-overlay';
     overlay.id = 'caseOverlay';
     overlay.innerHTML = `
         <div class="case-container">
-            <div class="case-header">${caseItem.name}</div>
             <div class="explosion-container">
-                <img id="explosionFrame" src="cases/common/common_cadr1.png" class="explosion-image">
+                <img id="explosionFrame" src="cases/common case/common_cadr1.png" class="explosion-image">
             </div>
             <div class="result-popup" style="display: none;">
-                <div class="result-title">Вам выпало:</div>
+                <div class="result-title">ВЫБИТО</div>
                 <div class="result-item" id="resultItem"></div>
                 <div class="result-rarity" id="resultRarity"></div>
             </div>
@@ -239,7 +238,7 @@ function startExplosionAnimation() {
     // Анимация взрыва (9 кадров)
     const interval = setInterval(() => {
         if (frame <= totalFrames) {
-            explosionImg.src = `cases/common/common_cadr${frame}.png`;
+            explosionImg.src = `cases/common case/common_cadr${frame}.png`;
             frame++;
         } else {
             clearInterval(interval);
@@ -264,9 +263,9 @@ function startExplosionAnimation() {
                 
                 isOpening = false;
                 
-            }, 200); // Вспышка
+            }, 200);
         }
-    }, 100); // Скорость кадров (100ms = 0.9 сек на всю анимацию)
+    }, 100);
 }
 
 function addItemToInventory(item) {
