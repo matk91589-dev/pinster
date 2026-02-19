@@ -236,12 +236,12 @@ function startExplosionAnimation() {
     
     if (!explosionImg) return;
     
-    console.log('Запуск анимации');
+    console.log('Запуск анимации на 1.2 секунды');
     
     // Добавляем тряску
-    caseContainer.style.animation = 'shake 0.5s infinite';
+    caseContainer.style.animation = 'shake 0.7s infinite';
     
-    // Быстрая анимация (0.9 секунды)
+    // Анимация 1.2 секунды (133ms * 9 = 1.197 сек)
     const interval = setInterval(() => {
         if (frame <= totalFrames) {
             explosionImg.src = `cases/common case/common_cadr${frame}.png`;
@@ -252,7 +252,7 @@ function startExplosionAnimation() {
             // Убираем тряску
             caseContainer.style.animation = '';
             
-            // Короткая вспышка
+            // Вспышка
             flash.classList.add('active');
             
             setTimeout(() => {
@@ -272,9 +272,9 @@ function startExplosionAnimation() {
                 
                 isOpening = false;
                 
-            }, 150); // Вспышка 0.15 сек
+            }, 200); // Вспышка 0.2 сек
         }
-    }, 100); // 100ms * 9 = 0.9 секунды
+    }, 133); // 133ms * 9 = 1.2 секунды
 }
 
 function addItemToInventory(item) {
@@ -306,3 +306,4 @@ function closeCase() {
     isOpening = false;
     currentCase = null;
 }
+
