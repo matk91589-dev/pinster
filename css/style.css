@@ -325,7 +325,7 @@ body {
     padding: 20px;
     background: #B00000; /* Новый оранжевый */
     border: none;
-    border-radius: 20px;
+    border-radius: 40px;
     font-size: 22px;
     font-weight: 800;
     color: #F5F5F5;
@@ -1124,5 +1124,6 @@ body {
 .cancel-search-btn:active {
     transform: scale(0.95);
 }
+
 
 
