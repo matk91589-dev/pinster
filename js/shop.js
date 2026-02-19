@@ -46,9 +46,6 @@ const cases = [
 let currentCase = null;
 let isOpening = false;
 
-// Кэш для предзагруженных кадров
-let frameCache = [];
-
 function showShopTab(tab) {
     currentShopTab = tab;
     
@@ -189,20 +186,6 @@ function buyCase(caseId) {
     }
 }
 
-// Функция предзагрузки всех кадров
-function preloadFrames() {
-    frameCache = [];
-    for (let i = 1; i <= 9; i++) {
-        const img = new Image();
-        img.src = `cases/common case/common_cadr${i}.png`;
-        frameCache.push(img);
-    }
-    console.log('Кадры предзагружены');
-}
-
-// Вызываем предзагрузку при загрузке страницы
-preloadFrames();
-
 function openCase(caseId) {
     if (isOpening) {
         alert('Кейс уже открывается!');
@@ -215,7 +198,7 @@ function openCase(caseId) {
     currentCase = caseItem;
     isOpening = true;
     
-    // Показываем оверлей (без заголовка и обводок)
+    // Показываем оверлей
     const overlay = document.createElement('div');
     overlay.className = 'case-overlay';
     overlay.id = 'caseOverlay';
@@ -248,24 +231,28 @@ function startExplosionAnimation() {
     const totalFrames = 9;
     const explosionImg = document.getElementById('explosionFrame');
     const flash = document.getElementById('flash');
+    const caseContainer = document.querySelector('.case-container');
     const resultPopup = document.querySelector('.result-popup');
     
     if (!explosionImg) return;
     
-    console.log('Запуск анимации взрыва на 2 секунды');
+    console.log('Запуск анимации');
     
-    // Используем requestAnimationFrame для более плавной анимации
-    function showFrame() {
+    // Добавляем тряску
+    caseContainer.style.animation = 'shake 0.5s infinite';
+    
+    // Быстрая анимация (0.9 секунды)
+    const interval = setInterval(() => {
         if (frame <= totalFrames) {
-            console.log(`Кадр ${frame}`);
             explosionImg.src = `cases/common case/common_cadr${frame}.png`;
             frame++;
-            setTimeout(showFrame, 220); // 220ms между кадрами
         } else {
-            // Анимация завершена
-            console.log('Анимация завершена');
+            clearInterval(interval);
             
-            // Вспышка
+            // Убираем тряску
+            caseContainer.style.animation = '';
+            
+            // Короткая вспышка
             flash.classList.add('active');
             
             setTimeout(() => {
@@ -285,12 +272,9 @@ function startExplosionAnimation() {
                 
                 isOpening = false;
                 
-            }, 300); // Вспышка 0.3 сек
+            }, 150); // Вспышка 0.15 сек
         }
-    }
-    
-    // Запускаем анимацию
-    showFrame();
+    }, 100); // 100ms * 9 = 0.9 секунды
 }
 
 function addItemToInventory(item) {
