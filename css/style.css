@@ -1,21 +1,25 @@
 /* Подключаем шрифт Montserrat */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
+/* Глобальное сглаживание для всего текста */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 body {
     font-family: 'Montserrat', sans-serif;
-    font-weight: 500; /* Semibold для основного текста */
+    font-weight: 500;
     background: #0D0F15;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #F5F5F5; /* Новый белый */
+    color: #F5F5F5;
 }
 
 .phone-frame {
@@ -26,7 +30,7 @@ body {
     border-radius: 16px;
     padding: 12px 20px 8px 20px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-    border: 1px solid rgba(245, 245, 245, 0.05); /* Новый белый */
+    border: 1px solid rgba(245, 245, 245, 0.05);
     display: flex;
     flex-direction: column;
     position: relative;
@@ -54,18 +58,18 @@ body {
 
 .logo {
     font-size: 24px;
-    font-weight: 700; /* Bold */
+    font-weight: 700;
     letter-spacing: -0.5px;
-    color: #F5F5F5; /* Новый белый */
+    color: #F5F5F5;
     cursor: pointer;
 }
 
 .logo .ping {
-    color: #B00000; /* Новый красный */
+    color: #B00000;
 }
 
 .logo .ster {
-    color: #F5F5F5; /* Новый белый */
+    color: #F5F5F5;
     font-weight: 400;
     opacity: 0.9;
 }
@@ -89,14 +93,14 @@ body {
 .icon-settings svg {
     width: 22px;
     height: 22px;
-    stroke: #F5F5F5; /* Новый белый */
+    stroke: #F5F5F5;
     stroke-width: 2;
     fill: none;
     transition: stroke 0.2s;
 }
 
 .icon-settings.active svg {
-    stroke: #B00000; /* Новый красный */
+    stroke: #B00000;
 }
 
 /* Скрываем логотип только на стартовом экране */
@@ -152,17 +156,17 @@ body {
 }
 
 .edit-title-icon.active svg {
-    stroke: #B00000; /* Новый красный */
+    stroke: #B00000;
 }
 
 .apply-btn {
     background: transparent;
-    border: 1px solid #B00000; /* Новый красный */
+    border: 1px solid #B00000;
     border-radius: 6px;
     padding: 3px 8px;
-    color: #B00000; /* Новый красный */
+    color: #B00000;
     font-size: 11px;
-    font-weight: 600; /* Semibold */
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.1s;
     opacity: 0;
@@ -175,8 +179,8 @@ body {
 }
 
 .apply-btn:hover {
-    background: #B00000; /* Новый красный */
-    color: #F5F5F5; /* Новый белый */
+    background: #B00000;
+    color: #F5F5F5;
 }
 
 .coins-header {
@@ -184,16 +188,16 @@ body {
     border-radius: 8px;
     padding: 5px 10px;
     font-size: 12px;
-    color: #F5F5F5; /* Новый белый */
+    color: #F5F5F5;
     border: none;
-    font-weight: 600; /* Semibold */
+    font-weight: 600;
 }
 
 /* Глобальные стили для заголовков (базовые) */
 .section-title {
     font-size: 24px;
-    font-weight: 700; /* Bold */
-    color: #F5F5F5; /* Новый белый */
+    font-weight: 700;
+    color: #F5F5F5;
     letter-spacing: -0.5px;
     text-align: center;
 }
@@ -201,7 +205,7 @@ body {
 .section-subtitle {
     font-size: 14px;
     color: #9BA1B0;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
     text-align: center;
 }
 
@@ -233,12 +237,12 @@ body {
 .mode-search-btn {
     width: 280px;
     padding: 14px;
-    background: #B00000; /* Новый красный */
+    background: #B00000;
     border: none;
     border-radius: 30px;
     font-size: 16px;
-    font-weight: 700; /* Bold */
-    color: #F5F5F5; /* Новый белый */
+    font-weight: 700;
+    color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
     margin: 10px auto;
@@ -287,7 +291,7 @@ body {
 
 .start-description-box {
     width: 280px;
-    border: 3px solid #B00000; /* Новый красный */
+    border: 3px solid #B00000;
     border-radius: 0 0 30px 30px;
     padding: 35px 16px 20px 16px;
     margin: 0 auto 25px auto;
@@ -298,22 +302,22 @@ body {
 }
 
 .start-description {
-    color: #F5F5F5; /* Новый белый */
+    color: #F5F5F5;
     font-size: 14px;
     line-height: 1.6;
     text-align: center;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
 }
 
 .primary-btn {
     width: 300px;
     padding: 20px;
-    background: #B00000; /* Новый красный */
+    background: #B00000;
     border: none;
     border-radius: 40px;
     font-size: 22px;
-    font-weight: 800; /* Bold */
-    color: #F5F5F5; /* Новый белый */
+    font-weight: 800;
+    color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
     margin: 20px auto 10px auto;
@@ -355,21 +359,21 @@ body {
 }
 
 .nav-item.active svg {
-    stroke: #B00000; /* Новый красный */
+    stroke: #B00000;
 }
 
 .nav-icon svg {
     width: 20px;
     height: 20px;
-    stroke: #F5F5F5; /* Новый белый */
+    stroke: #F5F5F5;
     stroke-width: 2;
     fill: none;
 }
 
 .nav-label {
     font-size: 9px;
-    font-weight: 600; /* Semibold */
-    color: #F5F5F5; /* Новый белый */
+    font-weight: 600;
+    color: #F5F5F5;
 }
 
 .mode-container {
@@ -390,7 +394,7 @@ body {
     border-radius: 12px;
     color: #E5E7EB;
     font-size: 18px;
-    font-weight: 600; /* Semibold */
+    font-weight: 600;
     text-transform: uppercase;
     cursor: pointer;
     text-align: left;
@@ -399,29 +403,29 @@ body {
 }
 
 .mode-btn:hover {
-    border-color: #B00000; /* Новый красный */
+    border-color: #B00000;
     background: #1E2128;
     transform: translateY(-1px);
 }
 
 .mode-btn.faceit {
-    border-left: 4px solid #B00000; /* Новый красный */
-    color: #B00000; /* Новый красный */
+    border-left: 4px solid #B00000;
+    color: #B00000;
 }
 
 .mode-btn.premier {
-    border-left: 4px solid #B00000; /* Новый красный */
-    color: #B00000; /* Новый красный */
+    border-left: 4px solid #B00000;
+    color: #B00000;
 }
 
 .mode-btn.prime {
-    border-left: 4px solid #F5F5F5; /* Новый белый */
+    border-left: 4px solid #F5F5F5;
     text-transform: none;
     font-size: 16px;
 }
 
 .mode-btn.public {
-    border-left: 4px solid #F5F5F5; /* Новый белый */
+    border-left: 4px solid #F5F5F5;
     text-transform: none;
     font-size: 16px;
 }
@@ -468,7 +472,7 @@ body {
 }
 
 .profile-avatar.editable {
-    border-color: #B00000; /* Новый красный */
+    border-color: #B00000;
     border-width: 3px;
 }
 
@@ -498,16 +502,37 @@ body {
     flex-wrap: wrap;
 }
 
+/* ===== ИСПРАВЛЕНИЕ ДЛЯ ТЕКСТА ПОВЕРХ АВАТАРКИ ===== */
+.profile-name,
+.friend-name,
+.case-name,
+.result-item,
+.mode-title,
+.section-title {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: geometricPrecision;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
 .profile-name {
     font-size: 20px;
-    font-weight: 600; /* Semibold */
-    color: #F5F5F5; /* Новый белый */
+    font-weight: 600;
+    color: #F5F5F5;
     transition: color 0.1s ease;
     cursor: pointer;
+    background-color: transparent;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    display: inline-block;
 }
 
 .profile-name.editable {
-    color: #B00000; /* Новый красный */
+    color: #B00000;
 }
 
 .profile-name.red { color: #B00000; }
@@ -519,7 +544,8 @@ body {
     background: linear-gradient(45deg, #B00000, #4CAF50, #2196F3, #9C27B0, #FF9800);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-weight: 700; /* Bold */
+    font-weight: 700;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .profile-name-label {
@@ -528,18 +554,20 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .profile-status {
     color: #4CAF50;
     font-size: 11px;
-    font-weight: 600; /* Semibold */
+    font-weight: 600;
     background: rgba(76, 175, 80, 0.15);
     padding: 2px 8px;
     border-radius: 12px;
     border: 1px solid rgba(76, 175, 80, 0.4);
     letter-spacing: 0.3px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .profile-stats {
@@ -559,7 +587,7 @@ body {
 }
 
 .profile-stat-card.editable {
-    border-color: #B00000; /* Новый красный */
+    border-color: #B00000;
     border-width: 2px;
 }
 
@@ -567,13 +595,13 @@ body {
     font-size: 10px;
     color: #9BA1B0;
     margin-bottom: 2px;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
 }
 
 .profile-stat-value {
     font-size: 13px;
-    font-weight: 600; /* Semibold */
-    color: #F5F5F5; /* Новый белый */
+    font-weight: 600;
+    color: #F5F5F5;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -589,7 +617,7 @@ body {
 .heart-icon svg {
     width: 16px;
     height: 16px;
-    stroke: #B00000; /* Новый красный */
+    stroke: #B00000;
     stroke-width: 2;
     fill: none;
     display: block;
@@ -601,21 +629,21 @@ body {
     border: 1px solid #2A2F3A;
     border-radius: 8px;
     padding: 10px 12px;
-    color: #F5F5F5; /* Новый белый */
+    color: #F5F5F5;
     font-size: 13px;
     margin: 4px 0;
     cursor: text;
     transition: border 0.1s ease, border-width 0.1s ease;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
 }
 
 .input-field:focus {
     outline: none;
-    border-color: #B00000; /* Новый красный */
+    border-color: #B00000;
 }
 
 .input-field.editable {
-    border-color: #B00000; /* Новый красный */
+    border-color: #B00000;
     border-width: 2px;
 }
 
@@ -660,22 +688,22 @@ body {
 .back-icon svg {
     width: 18px;
     height: 18px;
-    stroke: #B00000; /* Новый красный */
+    stroke: #B00000;
     stroke-width: 2;
     fill: none;
 }
 
 .friends-title {
     font-size: 15px;
-    font-weight: 600; /* Semibold */
-    color: #F5F5F5; /* Новый белый */
+    font-weight: 600;
+    color: #F5F5F5;
     flex: 1;
 }
 
 .friends-count {
     color: #9BA1B0;
     font-size: 11px;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
 }
 
 .search-container {
@@ -692,14 +720,14 @@ body {
     border: 1px solid #2A2F3A;
     border-radius: 6px;
     padding: 6px 10px;
-    color: #F5F5F5; /* Новый белый */
+    color: #F5F5F5;
     font-size: 12px;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
 }
 
 .search-input:focus {
     outline: none;
-    border-color: #B00000; /* Новый красный */
+    border-color: #B00000;
 }
 
 .friends-section {
@@ -727,7 +755,7 @@ body {
 }
 
 .friends-list::-webkit-scrollbar-thumb {
-    background: #B00000; /* Новый красный */
+    background: #B00000;
     border-radius: 10px;
 }
 
@@ -767,24 +795,24 @@ body {
 
 .friend-name {
     font-size: 13px;
-    font-weight: 600; /* Semibold */
-    color: #F5F5F5; /* Новый белый */
+    font-weight: 600;
+    color: #F5F5F5;
 }
 
 .friend-id {
     font-size: 9px;
-    color: #B00000; /* Новый красный */
+    color: #B00000;
     background: rgba(176, 0, 0, 0.1);
     padding: 1px 5px;
     border-radius: 4px;
     font-family: monospace;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
 }
 
 .friend-steam {
     font-size: 9px;
     color: #9BA1B0;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
 }
 
 .screen {
@@ -807,7 +835,7 @@ body {
     font-size: 12px;
     color: #9BA1B0;
     margin-bottom: 4px;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
 }
 
 .mode-header {
@@ -827,7 +855,7 @@ body {
     border: 2px solid #2A2F3A;
     color: #9BA1B0;
     font-size: 22px;
-    font-weight: 700; /* Bold */
+    font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -838,29 +866,29 @@ body {
 }
 
 .back-btn:hover {
-    border-color: #B00000; /* Новый красный */
-    color: #F5F5F5; /* Новый белый */
+    border-color: #B00000;
+    color: #F5F5F5;
 }
 
 .mode-title {
     font-size: 24px;
-    font-weight: 700; /* Bold */
+    font-weight: 700;
     text-align: center;
     margin: 0;
     line-height: 36px;
 }
 
-.mode-title.faceit { color: #B00000; } /* Новый красный */
-.mode-title.premier { color: #B00000; } /* Новый красный */
-.mode-title.prime { color: #F5F5F5; text-transform: none; } /* Новый белый */
-.mode-title.public { color: #F5F5F5; text-transform: none; } /* Новый белый */
+.mode-title.faceit { color: #B00000; }
+.mode-title.premier { color: #B00000; }
+.mode-title.prime { color: #F5F5F5; text-transform: none; }
+.mode-title.public { color: #F5F5F5; text-transform: none; }
 
 .mode-subtitle {
     font-size: 12px;
     color: #9BA1B0;
     text-align: center;
     margin-bottom: 16px;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
 }
 
 .search-input-field {
@@ -869,15 +897,15 @@ body {
     border: 1px solid #2A2F3A;
     border-radius: 8px;
     padding: 10px 12px;
-    color: #F5F5F5; /* Новый белый */
+    color: #F5F5F5;
     font-size: 14px;
     margin: 4px 0 12px 0;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
 }
 
 .search-input-field:focus {
     outline: none;
-    border-color: #B00000; /* Новый красный */
+    border-color: #B00000;
 }
 
 .search-input-field[type="number"] {
@@ -906,7 +934,7 @@ body {
 }
 
 .stat-card.editable {
-    border-color: #B00000; /* Новый красный */
+    border-color: #B00000;
     border-width: 2px;
 }
 
@@ -914,13 +942,13 @@ body {
     font-size: 10px;
     color: #9BA1B0;
     margin-bottom: 2px;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
 }
 
 .stat-value {
     font-size: 13px;
-    font-weight: 600; /* Semibold */
-    color: #F5F5F5; /* Новый белый */
+    font-weight: 600;
+    color: #F5F5F5;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -941,7 +969,7 @@ body {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
-    color: #F5F5F5; /* Новый белый */
+    color: #F5F5F5;
     font-size: 14px;
     padding: 10px 12px;
     margin: 4px 0 12px 0;
@@ -951,21 +979,21 @@ body {
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23B00000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
     background-repeat: no-repeat;
     background-position: right 14px center;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
 }
 
 .rank-select:hover {
-    border-color: #B00000; /* Новый красный */
+    border-color: #B00000;
 }
 
 .rank-select:focus {
     outline: none;
-    border-color: #B00000; /* Новый красный */
+    border-color: #B00000;
 }
 
 .rank-select option {
     background: #1A1D24;
-    color: #F5F5F5; /* Новый белый */
+    color: #F5F5F5;
 }
 
 .play-style {
@@ -987,12 +1015,12 @@ body {
     font-size: 13px;
     color: #9BA1B0;
     transition: all 0.2s;
-    font-weight: 600; /* Semibold */
+    font-weight: 600;
 }
 
 .style-option.active {
-    background: #B00000; /* Новый красный */
-    color: #F5F5F5; /* Новый белый */
+    background: #B00000;
+    color: #F5F5F5;
 }
 
 .comment-section {
@@ -1004,7 +1032,7 @@ body {
     font-size: 12px;
     color: #9BA1B0;
     margin-bottom: 4px;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
 }
 
 .comment-input {
@@ -1013,11 +1041,11 @@ body {
     border: 1px solid #2A2F3A;
     border-radius: 8px;
     padding: 10px 12px;
-    color: #F5F5F5; /* Новый белый */
+    color: #F5F5F5;
     font-size: 13px;
     resize: none;
     height: 70px;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
 }
 
 .comment-input::placeholder {
@@ -1036,14 +1064,14 @@ body {
 
 .search-title {
     font-size: 24px;
-    font-weight: 700; /* Bold */
-    color: #B00000; /* Новый красный */
+    font-weight: 700;
+    color: #B00000;
 }
 
 .search-timer {
     font-size: 20px;
-    font-weight: 600; /* Semibold */
-    color: #F5F5F5; /* Новый белый */
+    font-weight: 600;
+    color: #F5F5F5;
     background: #1A1D24;
     padding: 8px 16px;
     border-radius: 8px;
@@ -1055,7 +1083,7 @@ body {
     font-size: 16px;
     color: #9BA1B0;
     margin: 20px 0 40px 0;
-    font-weight: 500; /* Semibold */
+    font-weight: 500;
 }
 
 .search-loading {
@@ -1069,11 +1097,11 @@ body {
     width: 100%;
     padding: 18px;
     background: transparent;
-    border: 2px solid #B00000; /* Новый красный */
+    border: 2px solid #B00000;
     border-radius: 12px;
-    color: #B00000; /* Новый красный */
+    color: #B00000;
     font-size: 18px;
-    font-weight: 700; /* Bold */
+    font-weight: 700;
     text-transform: uppercase;
     cursor: pointer;
     transition: all 0.2s;
@@ -1081,8 +1109,8 @@ body {
 }
 
 .cancel-search-btn:hover {
-    background: #B00000; /* Новый красный */
-    color: #F5F5F5; /* Новый белый */
+    background: #B00000;
+    color: #F5F5F5;
 }
 
 .cancel-search-btn:active {
