@@ -1,5 +1,8 @@
 /* ===== ОСНОВНЫЕ АНИМАЦИИ ===== */
 
+/* Подключаем шрифт Montserrat (для классов где нужен текст) */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -54,7 +57,7 @@
     width: 50px;
     height: 50px;
     border: 4px solid #2A2F3A;
-    border-top: 4px solid #FF6B4A;
+    border-top: 4px solid #B00000; /* Новый красный */
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -87,22 +90,22 @@
 
 @keyframes caseGlow {
     0%, 100% { 
-        filter: drop-shadow(0 0 5px #FF6B4A);
+        filter: drop-shadow(0 0 5px #B00000); /* Новый красный */
         transform: scale(1);
     }
     50% { 
-        filter: drop-shadow(0 0 20px #FF6B4A);
+        filter: drop-shadow(0 0 20px #B00000); /* Новый красный */
         transform: scale(1.1);
     }
 }
 
 @keyframes winPulse {
     0%, 100% { 
-        box-shadow: 0 0 20px #FF6B4A;
-        border-color: #FF6B4A;
+        box-shadow: 0 0 20px #B00000; /* Новый красный */
+        border-color: #B00000; /* Новый красный */
     }
     50% { 
-        box-shadow: 0 0 50px #FF6B4A;
+        box-shadow: 0 0 50px #B00000; /* Новый красный */
         border-color: #FFD700;
     }
 }
@@ -208,4 +211,20 @@
 .cancel-search-btn:active,
 .buy-btn:active {
     transform: scale(0.98);
+}
+
+/* Добавляем анимацию для нового красного цвета */
+@keyframes redPulse {
+    0%, 100% { 
+        background-color: #B00000;
+        box-shadow: 0 0 10px rgba(176, 0, 0, 0.5);
+    }
+    50% { 
+        background-color: #8B0000;
+        box-shadow: 0 0 20px rgba(176, 0, 0, 0.8);
+    }
+}
+
+.red-pulse {
+    animation: redPulse 1.5s ease-in-out infinite;
 }
