@@ -89,8 +89,8 @@
 }
 
 .case-icon {
-    width: 180px;
-    height: 180px;
+    width: 300px;
+    height: 300px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -411,3 +411,4 @@
         opacity: 1; 
     }
 }
+
