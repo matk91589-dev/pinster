@@ -389,3 +389,4 @@ function closeCase() {
     currentCase = null;
     caseReady = false;
 }
+
