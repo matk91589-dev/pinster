@@ -12,7 +12,6 @@ const cases = [
         description: '', 
         price: 1000, 
         class: 'common-case',
-        // 1 кадр - обычный ящик (для магазина)
         icon: `<img src="cases/common_cadr1.png" class="case-image">`,
         items: [
             // Ники
@@ -45,6 +44,7 @@ const cases = [
 // Состояние открытия кейса
 let currentCase = null;
 let isOpening = false;
+let caseReady = false; // Кейс готов к открытию
 
 function showShopTab(tab) {
     currentShopTab = tab;
@@ -197,13 +197,14 @@ function openCase(caseId) {
     
     currentCase = caseItem;
     isOpening = true;
+    caseReady = false;
     
     // Показываем оверлей
     const overlay = document.createElement('div');
     overlay.className = 'case-overlay';
     overlay.id = 'caseOverlay';
     overlay.innerHTML = `
-        <div class="case-container">
+        <div class="case-container" id="caseContainer">
             <div class="explosion-container">
                 <img id="explosionFrame" src="cases/common_cadr1.png?t=${Date.now()}" class="explosion-image">
             </div>
@@ -222,48 +223,70 @@ function openCase(caseId) {
     // Активируем оверлей
     setTimeout(() => {
         overlay.classList.add('active');
-        startCaseOpening();
+        startCaseFlyIn();
     }, 50);
 }
 
-// Новая простая анимация - вылет + вспышка
-function startCaseOpening() {
-    const caseContainer = document.querySelector('.case-container');
+// Анимация вылета кейса
+function startCaseFlyIn() {
+    const caseContainer = document.getElementById('caseContainer');
     const explosionImg = document.getElementById('explosionFrame');
-    const flash = document.getElementById('flash');
-    const resultPopup = document.querySelector('.result-popup');
     
-    if (!explosionImg) return;
-    
-    console.log('Запуск анимации открытия');
+    console.log('Кейс вылетает...');
     
     // Добавляем класс для анимации вылета
     caseContainer.classList.add('case-fly');
     
-    // Ждем окончания анимации вылета
+    // После окончания анимации кейс готов к клику
     setTimeout(() => {
-        // Вспышка
-        flash.classList.add('active');
+        caseReady = true;
+        console.log('Кейс готов! Нажми на него');
         
-        setTimeout(() => {
-            flash.classList.remove('active');
-            
-            // Выбираем случайный предмет
-            const winningItem = currentCase.items[Math.floor(Math.random() * currentCase.items.length)];
-            
-            // Добавляем в инвентарь
-            addItemToInventory(winningItem);
-            
-            // Показываем результат
-            explosionImg.style.display = 'none';
-            resultPopup.style.display = 'block';
-            document.getElementById('resultItem').textContent = winningItem.name;
-            document.getElementById('resultRarity').textContent = winningItem.rarityName;
-            
-            isOpening = false;
-            
-        }, 200); // Вспышка
-    }, 600); // 600ms = длительность анимации вылета
+        // Добавляем обработчик клика на кейс
+        explosionImg.style.cursor = 'pointer';
+        explosionImg.onclick = function() {
+            if (caseReady) {
+                openCaseClick();
+            }
+        };
+        
+    }, 500); // 500ms = анимация вылета
+}
+
+// Открытие по клику
+function openCaseClick() {
+    if (!caseReady || isOpening) return;
+    
+    console.log('Открываем кейс!');
+    
+    const explosionImg = document.getElementById('explosionFrame');
+    const flash = document.getElementById('flash');
+    const resultPopup = document.querySelector('.result-popup');
+    
+    // Убираем возможность повторного клика
+    caseReady = false;
+    explosionImg.style.cursor = 'default';
+    explosionImg.onclick = null;
+    
+    // Вспышка
+    flash.classList.add('active');
+    
+    setTimeout(() => {
+        flash.classList.remove('active');
+        
+        // Выбираем случайный предмет
+        const winningItem = currentCase.items[Math.floor(Math.random() * currentCase.items.length)];
+        
+        // Добавляем в инвентарь
+        addItemToInventory(winningItem);
+        
+        // Показываем результат
+        explosionImg.style.display = 'none';
+        resultPopup.style.display = 'block';
+        document.getElementById('resultItem').textContent = winningItem.name;
+        document.getElementById('resultRarity').textContent = winningItem.rarityName;
+        
+    }, 200);
 }
 
 function addItemToInventory(item) {
@@ -294,4 +317,5 @@ function closeCase() {
     }
     isOpening = false;
     currentCase = null;
+    caseReady = false;
 }
