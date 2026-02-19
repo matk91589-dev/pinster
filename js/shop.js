@@ -12,7 +12,7 @@ const cases = [
         description: '', 
         price: 1000, 
         class: 'common-case',
-        icon: `<img src="cases/common_cadr1.png" class="case-image">`,
+        icon: `<img src="cases/common_case.png" class="case-image">`,
         items: [
             // Ники
             { type: 'nick', id: 'red', name: 'Красный ник', icon: '🎨', rarity: 'common', rarityName: 'Common' },
@@ -45,7 +45,7 @@ const cases = [
         description: '', 
         price: 2500, 
         class: 'rare-case',
-        icon: `<img src="cases/rare_cadr1.png" class="case-image">`,
+        icon: `<img src="cases/rare_case.png" class="case-image">`,
         items: [
             // Ники (больше редких)
             { type: 'nick', id: 'purple', name: 'Фиолетовый ник', icon: '🎨', rarity: 'rare', rarityName: 'Rare' },
@@ -70,7 +70,7 @@ const cases = [
         description: '', 
         price: 5000, 
         class: 'premium-case',
-        icon: `<img src="cases/premium_cadr1.png" class="case-image">`,
+        icon: `<img src="cases/premium_case.png" class="case-image">`,
         items: [
             // Ники (только эпик и легендарные)
             { type: 'nick', id: 'multicolor', name: 'Радужный ник', icon: '🌈', rarity: 'epic', rarityName: 'Epic' },
@@ -251,16 +251,16 @@ function openCase(caseId) {
     let caseImagePath = '';
     switch(caseId) {
         case 'common_case':
-            caseImagePath = 'cases/common_cadr1.png';
+            caseImagePath = 'cases/common_case.png';
             break;
         case 'rare_case':
-            caseImagePath = 'cases/rare_cadr1.png';
+            caseImagePath = 'cases/rare_case.png';
             break;
         case 'premium_case':
-            caseImagePath = 'cases/premium_cadr1.png';
+            caseImagePath = 'cases/premium_case.png';
             break;
         default:
-            caseImagePath = 'cases/common_cadr1.png';
+            caseImagePath = 'cases/common_case.png';
     }
     
     // Показываем оверлей
