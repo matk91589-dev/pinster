@@ -1,8 +1,7 @@
 /* ===== СТИЛИ МАГАЗИНА ===== */
 
-/* Подключаем шрифт Stratum2 */
-@import url('https://fonts.cdnfonts.com/css/stratum-2');
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap');
+/* Подключаем шрифт Montserrat */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
 /* Контент магазина */
 .shop-content {
@@ -18,13 +17,15 @@
     font-size: 16px;
     text-align: center;
     padding: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500; /* Semibold */
 }
 
 /* Табы магазина */
 .shop-tabs {
     display: flex;
     gap: 8px;
-    margin: 0 0 15px 0; /* Отступ 15px от табов до первого кейса */
+    margin: 0 0 15px 0;
     background: transparent;
     border: none;
     border-radius: 0;
@@ -40,7 +41,8 @@
     font-size: 14px;
     color: #9BA1B0;
     transition: all 0.2s;
-    font-family: 'Stratum 2', 'Rajdhani', sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600; /* Semibold */
     letter-spacing: 0.5px;
     background: transparent;
     border: 1px solid transparent;
@@ -48,8 +50,8 @@
 
 .shop-tab.active {
     background: transparent;
-    color: #FF6B4A;
-    border: 1px solid #FF6B4A;
+    color: #B00000; /* Новый красный */
+    border: 1px solid #B00000; /* Новый красный */
 }
 
 /* Секции магазина */
@@ -68,7 +70,7 @@
 .cases-grid {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Отступ между кейсами 20px */
+    gap: 20px;
     padding: 0;
 }
 
@@ -86,7 +88,7 @@
     padding: 0;
     display: flex;
     align-items: flex-start;
-    gap: 15px; /* Отступ между картинкой и текстом */
+    gap: 15px;
     cursor: pointer;
     transition: transform 0.2s ease;
     margin: 0;
@@ -97,7 +99,7 @@
 }
 
 .case-icon {
-    width: 100px; /* Уменьшил размер */
+    width: 100px;
     height: 100px;
     display: flex;
     align-items: center;
@@ -120,47 +122,47 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 8px; /* Отступ между строками текста */
+    gap: 8px;
     padding-top: 5px;
 }
 
 .case-name {
     font-size: 20px;
-    font-weight: 700;
-    color: #FFFFFF;
+    font-weight: 700; /* Bold для 1-2 слов */
+    color: #F5F5F5; /* Новый белый */
     letter-spacing: 0.5px;
-    font-family: 'Stratum 2', 'Rajdhani', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     text-transform: uppercase;
     line-height: 1.2;
-    margin: 0 0 5px 0; /* Отступ снизу 5px */
+    margin: 0 0 5px 0;
 }
 
 .case-price-row {
     display: flex;
     align-items: center;
-    gap: 15px; /* Отступ между ценой и кнопкой */
+    gap: 15px;
     margin: 0;
 }
 
 .price-value {
     font-size: 16px;
-    font-weight: 600;
-    color: #FF6B4A;
-    font-family: 'Stratum 2', 'Rajdhani', sans-serif;
+    font-weight: 600; /* Semibold */
+    color: #B00000; /* Новый красный */
+    font-family: 'Montserrat', sans-serif;
     letter-spacing: 0.5px;
     margin: 0;
 }
 
 .buy-btn-simple {
-    background: #FF6B4A;
+    background: #B00000; /* Новый красный */
     border: none;
     border-radius: 6px;
     padding: 6px 16px;
-    color: white;
+    color: #F5F5F5; /* Новый белый */
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 600; /* Semibold */
     cursor: pointer;
-    font-family: 'Stratum 2', 'Rajdhani', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     border: none;
@@ -170,11 +172,11 @@
 }
 
 .buy-btn-simple:hover:not(.disabled) {
-    background: #ff8a6a;
+    background: #8B0000; /* Темнее красный для ховера */
 }
 
 .buy-btn-simple:active:not(.disabled) {
-    background: #e55a3a;
+    background: #6B0000; /* Еще темнее для клика */
 }
 
 .buy-btn-simple.disabled {
@@ -210,7 +212,7 @@
 }
 
 .inventory-item:hover {
-    border-color: #FF6B4A;
+    border-color: #B00000; /* Новый красный */
     background: transparent;
 }
 
@@ -229,9 +231,9 @@
 
 .inventory-item .item-name {
     font-size: 14px;
-    font-weight: 500;
-    color: #FFFFFF;
-    font-family: 'Stratum 2', 'Rajdhani', sans-serif;
+    font-weight: 600; /* Semibold */
+    color: #F5F5F5; /* Новый белый */
+    font-family: 'Montserrat', sans-serif;
 }
 
 .use-btn {
@@ -243,14 +245,15 @@
     font-size: 12px;
     cursor: pointer;
     transition: all 0.2s;
-    font-family: 'Stratum 2', 'Rajdhani', sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600; /* Semibold */
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .use-btn:hover {
     background: #4CAF50;
-    color: white;
+    color: #F5F5F5; /* Новый белый */
 }
 
 /* ===== ОТКРЫТИЕ КЕЙСА ===== */
@@ -342,7 +345,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: white;
+    background: #F5F5F5; /* Новый белый */
     opacity: 0;
     pointer-events: none;
     z-index: 2001;
@@ -369,23 +372,25 @@
     margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-family: 'Stratum 2', 'Rajdhani', sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600; /* Semibold */
 }
 
 .result-item {
     font-size: 28px;
-    font-weight: 600;
-    color: white;
-    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
+    font-weight: 700; /* Bold */
+    color: #F5F5F5; /* Новый белый */
+    text-shadow: 0 2px 10px rgba(245, 245, 245, 0.2);
     margin-bottom: 5px;
-    font-family: 'Stratum 2', 'Rajdhani', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     text-transform: uppercase;
 }
 
 .result-rarity {
     font-size: 12px;
     color: #9BA1B0;
-    font-family: 'Stratum 2', 'Rajdhani', sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500; /* Semibold */
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -393,23 +398,23 @@
 .close-btn {
     margin-top: 30px;
     padding: 8px 24px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(245, 245, 245, 0.1); /* Новый белый */
+    border: 1px solid rgba(245, 245, 245, 0.2); /* Новый белый */
     border-radius: 6px;
-    color: white;
+    color: #F5F5F5; /* Новый белый */
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600; /* Semibold */
     cursor: pointer;
     transition: all 0.2s;
     backdrop-filter: blur(4px);
-    font-family: 'Stratum 2', 'Rajdhani', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 .close-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(245, 245, 245, 0.2);
+    border-color: rgba(245, 245, 245, 0.3);
 }
 
 /* Анимация появления предмета */
