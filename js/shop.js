@@ -38,6 +38,54 @@ const cases = [
             { type: 'skin', name: 'Desert Eagle | Blaze', icon: '🔫', rarity: 'rare', rarityName: 'Rare' },
             { type: 'skin', name: '★ Glove Case', icon: '🧤', rarity: 'epic', rarityName: 'Epic' }
         ]
+    },
+    { 
+        id: 'rare_case', 
+        name: 'RARE CASE', 
+        description: '', 
+        price: 2500, 
+        class: 'rare-case',
+        icon: `<img src="cases/rare_cadr1.png" class="case-image">`,
+        items: [
+            // Ники (больше редких)
+            { type: 'nick', id: 'purple', name: 'Фиолетовый ник', icon: '🎨', rarity: 'rare', rarityName: 'Rare' },
+            { type: 'nick', id: 'orange', name: 'Оранжевый ник', icon: '🎨', rarity: 'rare', rarityName: 'Rare' },
+            { type: 'nick', id: 'multicolor', name: 'Радужный ник', icon: '🌈', rarity: 'epic', rarityName: 'Epic' },
+            
+            // Рамки (больше редких)
+            { type: 'frame', id: 'gold', name: 'Золотая рамка', icon: '🖼️', rarity: 'rare', rarityName: 'Rare' },
+            { type: 'frame', id: 'purple', name: 'Фиолетовая рамка', icon: '🖼️', rarity: 'rare', rarityName: 'Rare' },
+            { type: 'frame', id: 'rainbow', name: 'Радужная рамка', icon: '🖼️', rarity: 'legendary', rarityName: 'Legendary' },
+            
+            // Скины CS:GO (редкие)
+            { type: 'skin', name: 'AK-47 | Redline', icon: '🔫', rarity: 'rare', rarityName: 'Rare' },
+            { type: 'skin', name: 'AWP | Dragon Lore', icon: '🔫', rarity: 'legendary', rarityName: 'Legendary' },
+            { type: 'skin', name: '★ Karambit | Fade', icon: '🔪', rarity: 'legendary', rarityName: 'Legendary' },
+            { type: 'skin', name: 'M4A4 | Howl', icon: '🔫', rarity: 'legendary', rarityName: 'Legendary' }
+        ]
+    },
+    { 
+        id: 'premium_case', 
+        name: 'PREMIUM CASE', 
+        description: '', 
+        price: 5000, 
+        class: 'premium-case',
+        icon: `<img src="cases/premium_cadr1.png" class="case-image">`,
+        items: [
+            // Ники (только эпик и легендарные)
+            { type: 'nick', id: 'multicolor', name: 'Радужный ник', icon: '🌈', rarity: 'epic', rarityName: 'Epic' },
+            
+            // Рамки (только легендарные)
+            { type: 'frame', id: 'rainbow', name: 'Радужная рамка', icon: '🖼️', rarity: 'legendary', rarityName: 'Legendary' },
+            
+            // Скины CS:GO (легендарные)
+            { type: 'skin', name: 'AWP | Dragon Lore', icon: '🔫', rarity: 'legendary', rarityName: 'Legendary' },
+            { type: 'skin', name: '★ Karambit | Fade', icon: '🔪', rarity: 'legendary', rarityName: 'Legendary' },
+            { type: 'skin', name: 'M4A4 | Howl', icon: '🔫', rarity: 'legendary', rarityName: 'Legendary' },
+            { type: 'skin', name: '★ Glove Case', icon: '🧤', rarity: 'epic', rarityName: 'Epic' },
+            { type: 'skin', name: '★ Butterfly Knife', icon: '🔪', rarity: 'legendary', rarityName: 'Legendary' },
+            { type: 'skin', name: 'AK-47 | Fire Serpent', icon: '🔫', rarity: 'legendary', rarityName: 'Legendary' }
+        ]
     }
 ];
 
@@ -75,7 +123,7 @@ function renderCasesShop() {
     container.innerHTML = cases.map(caseItem => {
         const canAfford = coins >= caseItem.price;
         return `
-            <div class="case-item" onclick="openCase('${caseItem.id}')">
+            <div class="case-item ${caseItem.class}" onclick="openCase('${caseItem.id}')">
                 <div class="case-icon">${caseItem.icon}</div>
                 <div class="case-info">
                     <div class="case-name">${caseItem.name}</div>
@@ -199,6 +247,22 @@ function openCase(caseId) {
     isOpening = true;
     caseReady = false;
     
+    // Определяем путь к картинке в зависимости от типа кейса
+    let caseImagePath = '';
+    switch(caseId) {
+        case 'common_case':
+            caseImagePath = 'cases/common_cadr1.png';
+            break;
+        case 'rare_case':
+            caseImagePath = 'cases/rare_cadr1.png';
+            break;
+        case 'premium_case':
+            caseImagePath = 'cases/premium_cadr1.png';
+            break;
+        default:
+            caseImagePath = 'cases/common_cadr1.png';
+    }
+    
     // Показываем оверлей
     const overlay = document.createElement('div');
     overlay.className = 'case-overlay';
@@ -206,7 +270,7 @@ function openCase(caseId) {
     overlay.innerHTML = `
         <div class="case-container" id="caseContainer">
             <div class="explosion-container">
-                <img id="explosionFrame" src="cases/common_cadr1.png?t=${Date.now()}" class="explosion-image">
+                <img id="explosionFrame" src="${caseImagePath}?t=${Date.now()}" class="explosion-image">
             </div>
             <div class="result-popup" style="display: none;">
                 <div class="result-title">ВЫБИТО</div>
