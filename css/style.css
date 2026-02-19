@@ -301,7 +301,7 @@ body {
 
 .start-description-box {
     width: 280px;
-    border: 3px solid #FF5500; /* Новый оранжевый */
+    border: 3px solid #B00000;
     border-radius: 0 0 30px 30px;
     padding: 35px 16px 20px 16px;
     margin: 0 auto 25px auto;
@@ -1124,3 +1124,4 @@ body {
 .cancel-search-btn:active {
     transform: scale(0.95);
 }
+
