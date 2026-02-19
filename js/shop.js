@@ -235,13 +235,20 @@ function startExplosionAnimation() {
     
     if (!explosionImg) return;
     
-    // Анимация взрыва (9 кадров)
+    console.log('Запуск анимации взрыва на 2 секунды');
+    
+    // Анимация взрыва - 2 секунды на 9 кадров
+    // 2000ms / 9 кадров ≈ 222ms на кадр
+    const frameTime = 220; // 220ms * 9 = 1980ms ≈ 2 секунды
+    
     const interval = setInterval(() => {
         if (frame <= totalFrames) {
+            console.log(`Кадр ${frame}`);
             explosionImg.src = `cases/common case/common_cadr${frame}.png`;
             frame++;
         } else {
             clearInterval(interval);
+            console.log('Анимация завершена');
             
             // Вспышка
             flash.classList.add('active');
@@ -263,9 +270,9 @@ function startExplosionAnimation() {
                 
                 isOpening = false;
                 
-            }, 200);
+            }, 300); // Вспышка 0.3 сек
         }
-    }, 100);
+    }, frameTime); // 220ms между кадрами
 }
 
 function addItemToInventory(item) {
