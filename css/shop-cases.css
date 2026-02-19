@@ -79,7 +79,7 @@
 }
 
 .case-item:hover {
-    background: rgba(255, 107, 74, 0.05);
+    background: rgba(255, 255, 255, 0.03);
 }
 
 .case-icon {
@@ -142,7 +142,7 @@
 .buy-btn-simple:hover:not(.disabled) {
     background: #ff8a6a;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(255, 107, 74, 0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .buy-btn-simple:active:not(.disabled) {
@@ -221,14 +221,15 @@
 
 /* ===== ОТКРЫТИЕ КЕЙСА ===== */
 
-/* Затемнение фона */
+/* Затемнение фона с размытием */
 .case-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.95);
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(8px);
     z-index: 2000;
     display: flex;
     align-items: center;
@@ -243,16 +244,15 @@
     pointer-events: all;
 }
 
-/* Контейнер для взрыва */
+/* Контейнер - только кейс */
 .case-container {
-    background: #0f172a;
-    padding: 30px;
-    border-radius: 20px;
-    border: 3px solid #FF6B4A;
-    box-shadow: 0 0 50px rgba(255, 107, 74, 0.5);
+    background: transparent;
+    padding: 0;
+    border: none;
+    box-shadow: none;
     transform: scale(0.9);
     transition: transform 0.3s ease;
-    max-width: 500px;
+    max-width: 400px;
     width: 90%;
     text-align: center;
 }
@@ -261,36 +261,20 @@
     transform: scale(1);
 }
 
-/* Заголовок кейса */
-.case-header {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: 700;
-    color: #FF6B4A;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-shadow: 0 0 10px rgba(255, 107, 74, 0.5);
-}
-
 /* Контейнер для анимации взрыва */
 .explosion-container {
     width: 300px;
     height: 300px;
-    margin: 0 auto 20px;
+    margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    overflow: hidden;
 }
 
 .explosion-image {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    animation: explosionPop 0.3s ease;
 }
 
 /* Вспышка */
@@ -304,87 +288,70 @@
     opacity: 0;
     pointer-events: none;
     z-index: 2001;
-    transition: opacity 0.1s;
 }
 
 .flash.active {
     opacity: 1;
 }
 
-/* Результат открытия */
+/* Результат открытия - минимал */
 .result-popup {
     text-align: center;
-    margin-top: 20px;
-    padding: 20px;
-    background: #1A1D24;
-    border-radius: 10px;
-    border: 2px solid #FF6B4A;
-    animation: itemAppear 0.5s ease;
+    margin-top: 30px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    animation: itemFadeIn 0.4s ease;
 }
 
 .result-title {
-    font-size: 18px;
+    font-size: 14px;
     color: #9BA1B0;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .result-item {
-    font-size: 24px;
-    font-weight: 700;
-    color: #FF6B4A;
+    font-size: 28px;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
     margin-bottom: 5px;
 }
 
 .result-rarity {
-    font-size: 14px;
+    font-size: 12px;
     color: #9BA1B0;
 }
 
 .close-btn {
-    margin-top: 20px;
-    padding: 12px 30px;
-    background: transparent;
-    border: 2px solid #FF6B4A;
-    border-radius: 8px;
-    color: #FF6B4A;
-    font-size: 16px;
-    font-weight: 600;
+    margin-top: 30px;
+    padding: 8px 24px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 30px;
+    color: white;
+    font-size: 14px;
+    font-weight: 400;
     cursor: pointer;
     transition: all 0.2s;
+    backdrop-filter: blur(4px);
 }
 
 .close-btn:hover {
-    background: #FF6B4A;
-    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Анимации */
-@keyframes explosionPop {
-    0% { transform: scale(0.9); opacity: 0.8; }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-@keyframes itemAppear {
+@keyframes itemFadeIn {
     0% { 
-        transform: scale(0) rotate(-10deg); 
+        transform: translateY(20px); 
         opacity: 0; 
     }
-    50% { 
-        transform: scale(1.2) rotate(5deg); 
-    }
     100% { 
-        transform: scale(1) rotate(0); 
+        transform: translateY(0); 
         opacity: 1; 
     }
-}
-
-@keyframes flashEffect {
-    0% { opacity: 0; }
-    50% { opacity: 0.9; }
-    100% { opacity: 0; }
-}
-
-.flash-effect {
-    animation: flashEffect 0.3s ease;
 }
