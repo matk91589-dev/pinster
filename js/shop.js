@@ -46,6 +46,9 @@ const cases = [
 let currentCase = null;
 let isOpening = false;
 
+// Кэш для предзагруженных кадров
+let frameCache = [];
+
 function showShopTab(tab) {
     currentShopTab = tab;
     
@@ -186,6 +189,20 @@ function buyCase(caseId) {
     }
 }
 
+// Функция предзагрузки всех кадров
+function preloadFrames() {
+    frameCache = [];
+    for (let i = 1; i <= 9; i++) {
+        const img = new Image();
+        img.src = `cases/common case/common_cadr${i}.png`;
+        frameCache.push(img);
+    }
+    console.log('Кадры предзагружены');
+}
+
+// Вызываем предзагрузку при загрузке страницы
+preloadFrames();
+
 function openCase(caseId) {
     if (isOpening) {
         alert('Кейс уже открывается!');
@@ -237,17 +254,15 @@ function startExplosionAnimation() {
     
     console.log('Запуск анимации взрыва на 2 секунды');
     
-    // Анимация взрыва - 2 секунды на 9 кадров
-    // 2000ms / 9 кадров ≈ 222ms на кадр
-    const frameTime = 220; // 220ms * 9 = 1980ms ≈ 2 секунды
-    
-    const interval = setInterval(() => {
+    // Используем requestAnimationFrame для более плавной анимации
+    function showFrame() {
         if (frame <= totalFrames) {
             console.log(`Кадр ${frame}`);
             explosionImg.src = `cases/common case/common_cadr${frame}.png`;
             frame++;
+            setTimeout(showFrame, 220); // 220ms между кадрами
         } else {
-            clearInterval(interval);
+            // Анимация завершена
             console.log('Анимация завершена');
             
             // Вспышка
@@ -272,7 +287,10 @@ function startExplosionAnimation() {
                 
             }, 300); // Вспышка 0.3 сек
         }
-    }, frameTime); // 220ms между кадрами
+    }
+    
+    // Запускаем анимацию
+    showFrame();
 }
 
 function addItemToInventory(item) {
