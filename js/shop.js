@@ -228,11 +228,8 @@ function openCase(caseId) {
 }
 
 // Анимация вылета кейса
-// Анимация вылета кейса
 function startCaseFlyIn() {
     const caseContainer = document.getElementById('caseContainer');
-    const explosionImg = document.getElementById('explosionFrame');
-    const caseContainerDiv = document.querySelector('.case-container'); // Добавил
     
     console.log('Кейс вылетает...');
     
@@ -244,11 +241,12 @@ function startCaseFlyIn() {
         caseReady = true;
         console.log('Кейс готов! Нажми на него');
         
-        // Добавляем обработчик клика на ВЕСЬ КОНТЕЙНЕР кейса
-        if (caseContainerDiv) {
-            caseContainerDiv.style.cursor = 'pointer';
-            caseContainerDiv.onclick = function(e) {
-                e.stopPropagation(); // Чтобы не закрыть оверлей случайно
+        // Добавляем обработчик клика на контейнер
+        if (caseContainer) {
+            caseContainer.style.cursor = 'pointer';
+            caseContainer.onclick = function(e) {
+                e.stopPropagation();
+                console.log('Клик по кейсу!');
                 if (caseReady) {
                     openCaseClick();
                 }
@@ -260,18 +258,21 @@ function startCaseFlyIn() {
 
 // Открытие по клику
 function openCaseClick() {
-    if (!caseReady || isOpening) return;
+    if (!caseReady || !isOpening) return;
     
     console.log('Открываем кейс!');
     
     const explosionImg = document.getElementById('explosionFrame');
     const flash = document.getElementById('flash');
     const resultPopup = document.querySelector('.result-popup');
+    const caseContainer = document.getElementById('caseContainer');
     
     // Убираем возможность повторного клика
     caseReady = false;
-    explosionImg.style.cursor = 'default';
-    explosionImg.onclick = null;
+    if (caseContainer) {
+        caseContainer.style.cursor = 'default';
+        caseContainer.onclick = null;
+    }
     
     // Вспышка
     flash.classList.add('active');
@@ -324,4 +325,3 @@ function closeCase() {
     currentCase = null;
     caseReady = false;
 }
-
