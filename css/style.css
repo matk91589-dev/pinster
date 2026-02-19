@@ -65,7 +65,7 @@ body {
 }
 
 .logo .ping {
-    color: #B00000;
+    color: #B00000; /* Оставляем красный */
 }
 
 .logo .ster {
@@ -100,7 +100,7 @@ body {
 }
 
 .icon-settings.active svg {
-    stroke: #B00000;
+    stroke: #B00000; /* Оставляем красный для активного состояния */
 }
 
 /* Скрываем логотип только на стартовом экране */
@@ -156,15 +156,15 @@ body {
 }
 
 .edit-title-icon.active svg {
-    stroke: #B00000;
+    stroke: #B00000; /* Оставляем красный для активного состояния */
 }
 
 .apply-btn {
     background: transparent;
-    border: 1px solid #B00000;
+    border: 1px solid #FF7F32; /* Новый оранжевый */
     border-radius: 6px;
     padding: 3px 8px;
-    color: #B00000;
+    color: #FF7F32; /* Новый оранжевый */
     font-size: 11px;
     font-weight: 600;
     cursor: pointer;
@@ -179,7 +179,7 @@ body {
 }
 
 .apply-btn:hover {
-    background: #B00000;
+    background: #FF7F32; /* Новый оранжевый */
     color: #F5F5F5;
 }
 
@@ -237,7 +237,7 @@ body {
 .mode-search-btn {
     width: 280px;
     padding: 14px;
-    background: #B00000;
+    background: #FF7F32; /* Новый оранжевый */
     border: none;
     border-radius: 30px;
     font-size: 16px;
@@ -251,7 +251,7 @@ body {
 }
 
 .mode-search-btn:active {
-    transform: scale(0.98);
+    transform: scale(0.95); /* Усилил эффект нажатия */
 }
 
 /* ===== СТАРТОВЫЙ ЭКРАН ===== */
@@ -275,7 +275,7 @@ body {
     height: auto;
     display: block;
     image-rendering: auto;
-    background-color: #0D0F15; /* цвет фона сайта для прозрачных участков */
+    background-color: #0D0F15;
 }
 
 .start-avatar-square {
@@ -301,7 +301,7 @@ body {
 
 .start-description-box {
     width: 280px;
-    border: 3px solid #B00000;
+    border: 3px solid #FF7F32; /* Новый оранжевый */
     border-radius: 0 0 30px 30px;
     padding: 35px 16px 20px 16px;
     margin: 0 auto 25px auto;
@@ -319,24 +319,26 @@ body {
     font-weight: 500;
 }
 
+/* ОБНОВЛЕННАЯ КНОПКА СТАРТОВОГО ЭКРАНА */
 .primary-btn {
     width: 300px;
     padding: 20px;
-    background: #B00000;
+    background: #FF7F32; /* Новый оранжевый */
     border: none;
-    border-radius: 40px;
+    border-radius: 20px; /* Уменьшил скругление с 40px до 20px */
     font-size: 22px;
     font-weight: 800;
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
     margin: 20px auto 10px auto;
-    transition: all 0.2s;
+    transition: all 0.1s ease; /* Ускорил переход */
     letter-spacing: 1px;
 }
 
 .primary-btn:active {
-    transform: scale(0.98);
+    transform: scale(0.95); /* Усилил эффект нажатия */
+    opacity: 0.9;
 }
 
 .bottom-nav {
@@ -369,7 +371,7 @@ body {
 }
 
 .nav-item.active svg {
-    stroke: #B00000;
+    stroke: #B00000; /* Оставляем красный для активной навигации */
 }
 
 .nav-icon svg {
@@ -413,19 +415,19 @@ body {
 }
 
 .mode-btn:hover {
-    border-color: #B00000;
+    border-color: #FF7F32; /* Новый оранжевый */
     background: #1E2128;
     transform: translateY(-1px);
 }
 
 .mode-btn.faceit {
-    border-left: 4px solid #B00000;
-    color: #B00000;
+    border-left: 4px solid #FF7F32; /* Новый оранжевый */
+    color: #FF7F32; /* Новый оранжевый */
 }
 
 .mode-btn.premier {
-    border-left: 4px solid #B00000;
-    color: #B00000;
+    border-left: 4px solid #FF7F32; /* Новый оранжевый */
+    color: #FF7F32; /* Новый оранжевый */
 }
 
 .mode-btn.prime {
@@ -482,18 +484,18 @@ body {
 }
 
 .profile-avatar.editable {
-    border-color: #B00000;
+    border-color: #FF7F32; /* Новый оранжевый */
     border-width: 3px;
 }
 
-.profile-avatar.frame-red { border-color: #B00000; border-width: 3px; }
+.profile-avatar.frame-red { border-color: #FF7F32; border-width: 3px; } /* Новый оранжевый */
 .profile-avatar.frame-gold { border-color: #FFD700; border-width: 3px; }
 .profile-avatar.frame-blue { border-color: #2196F3; border-width: 3px; }
 .profile-avatar.frame-green { border-color: #4CAF50; border-width: 3px; }
 .profile-avatar.frame-purple { border-color: #9C27B0; border-width: 3px; }
 .profile-avatar.frame-rainbow { 
     border: 3px solid transparent;
-    background: linear-gradient(45deg, #B00000, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
+    background: linear-gradient(45deg, #FF7F32, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
     -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
     mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
 }
@@ -540,16 +542,16 @@ body {
 }
 
 .profile-name.editable {
-    color: #B00000;
+    color: #FF7F32; /* Новый оранжевый */
 }
 
-.profile-name.red { color: #B00000; }
+.profile-name.red { color: #FF7F32; } /* Новый оранжевый */
 .profile-name.green { color: #4CAF50; }
 .profile-name.blue { color: #2196F3; }
 .profile-name.purple { color: #9C27B0; }
 .profile-name.orange { color: #FF9800; }
 .profile-name.multicolor { 
-    background: linear-gradient(45deg, #B00000, #4CAF50, #2196F3, #9C27B0, #FF9800);
+    background: linear-gradient(45deg, #FF7F32, #4CAF50, #2196F3, #9C27B0, #FF9800);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 700;
@@ -593,7 +595,7 @@ body {
 }
 
 .profile-stat-card.editable {
-    border-color: #B00000;
+    border-color: #FF7F32; /* Новый оранжевый */
     border-width: 2px;
 }
 
@@ -623,7 +625,7 @@ body {
 .heart-icon svg {
     width: 16px;
     height: 16px;
-    stroke: #B00000;
+    stroke: #FF7F32; /* Новый оранжевый */
     stroke-width: 2;
     fill: none;
     display: block;
@@ -645,11 +647,11 @@ body {
 
 .input-field:focus {
     outline: none;
-    border-color: #B00000;
+    border-color: #FF7F32; /* Новый оранжевый */
 }
 
 .input-field.editable {
-    border-color: #B00000;
+    border-color: #FF7F32; /* Новый оранжевый */
     border-width: 2px;
 }
 
@@ -694,7 +696,7 @@ body {
 .back-icon svg {
     width: 18px;
     height: 18px;
-    stroke: #B00000;
+    stroke: #B00000; /* Оставляем красный для кнопки назад */
     stroke-width: 2;
     fill: none;
 }
@@ -733,7 +735,7 @@ body {
 
 .search-input:focus {
     outline: none;
-    border-color: #B00000;
+    border-color: #FF7F32; /* Новый оранжевый */
 }
 
 .friends-section {
@@ -761,7 +763,7 @@ body {
 }
 
 .friends-list::-webkit-scrollbar-thumb {
-    background: #B00000;
+    background: #FF7F32; /* Новый оранжевый */
     border-radius: 10px;
 }
 
@@ -807,8 +809,8 @@ body {
 
 .friend-id {
     font-size: 9px;
-    color: #B00000;
-    background: rgba(176, 0, 0, 0.1);
+    color: #FF7F32; /* Новый оранжевый */
+    background: rgba(255, 127, 50, 0.1);
     padding: 1px 5px;
     border-radius: 4px;
     font-family: monospace;
@@ -872,7 +874,7 @@ body {
 }
 
 .back-btn:hover {
-    border-color: #B00000;
+    border-color: #FF7F32; /* Новый оранжевый */
     color: #F5F5F5;
 }
 
@@ -884,8 +886,8 @@ body {
     line-height: 36px;
 }
 
-.mode-title.faceit { color: #B00000; }
-.mode-title.premier { color: #B00000; }
+.mode-title.faceit { color: #FF7F32; } /* Новый оранжевый */
+.mode-title.premier { color: #FF7F32; } /* Новый оранжевый */
 .mode-title.prime { color: #F5F5F5; text-transform: none; }
 .mode-title.public { color: #F5F5F5; text-transform: none; }
 
@@ -911,7 +913,7 @@ body {
 
 .search-input-field:focus {
     outline: none;
-    border-color: #B00000;
+    border-color: #FF7F32; /* Новый оранжевый */
 }
 
 .search-input-field[type="number"] {
@@ -940,7 +942,7 @@ body {
 }
 
 .stat-card.editable {
-    border-color: #B00000;
+    border-color: #FF7F32; /* Новый оранжевый */
     border-width: 2px;
 }
 
@@ -982,19 +984,19 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23B00000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF7F32' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
     background-repeat: no-repeat;
     background-position: right 14px center;
     font-weight: 500;
 }
 
 .rank-select:hover {
-    border-color: #B00000;
+    border-color: #FF7F32; /* Новый оранжевый */
 }
 
 .rank-select:focus {
     outline: none;
-    border-color: #B00000;
+    border-color: #FF7F32; /* Новый оранжевый */
 }
 
 .rank-select option {
@@ -1025,7 +1027,7 @@ body {
 }
 
 .style-option.active {
-    background: #B00000;
+    background: #FF7F32; /* Новый оранжевый */
     color: #F5F5F5;
 }
 
@@ -1071,7 +1073,7 @@ body {
 .search-title {
     font-size: 24px;
     font-weight: 700;
-    color: #B00000;
+    color: #FF7F32; /* Новый оранжевый */
 }
 
 .search-timer {
@@ -1103,9 +1105,9 @@ body {
     width: 100%;
     padding: 18px;
     background: transparent;
-    border: 2px solid #B00000;
+    border: 2px solid #FF7F32; /* Новый оранжевый */
     border-radius: 12px;
-    color: #B00000;
+    color: #FF7F32; /* Новый оранжевый */
     font-size: 18px;
     font-weight: 700;
     text-transform: uppercase;
@@ -1115,10 +1117,10 @@ body {
 }
 
 .cancel-search-btn:hover {
-    background: #B00000;
+    background: #FF7F32; /* Новый оранжевый */
     color: #F5F5F5;
 }
 
 .cancel-search-btn:active {
-    transform: scale(0.98);
+    transform: scale(0.95); /* Усилил эффект нажатия */
 }
