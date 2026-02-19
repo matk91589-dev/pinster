@@ -48,16 +48,30 @@ let isOpening = false;
 
 // Кэш для кадров
 let frameCache = [];
+let framesLoaded = false;
 
 // Предзагрузка кадров при загрузке страницы
 function preloadFrames() {
+    console.log('Начинаем предзагрузку кадров...');
     frameCache = [];
+    let loadedCount = 0;
+    
     for (let i = 1; i <= 9; i++) {
         const img = new Image();
-        img.src = `cases/common case/common_cadr${i}.png`;
+        img.src = `cases/common case/common_cadr${i}.png?t=${Date.now()}`;
+        img.onload = () => {
+            loadedCount++;
+            console.log(`Кадр ${i} загружен`);
+            if (loadedCount === 9) {
+                framesLoaded = true;
+                console.log('Все кадры загружены!');
+            }
+        };
+        img.onerror = () => {
+            console.error(`Ошибка загрузки кадра ${i}`);
+        };
         frameCache.push(img);
     }
-    console.log('Кадры предзагружены');
 }
 
 // Вызываем предзагрузку
@@ -222,7 +236,7 @@ function openCase(caseId) {
     overlay.innerHTML = `
         <div class="case-container">
             <div class="explosion-container">
-                <img id="explosionFrame" src="cases/common case/common_cadr1.png" class="explosion-image">
+                <img id="explosionFrame" src="cases/common case/common_cadr1.png?t=${Date.now()}" class="explosion-image">
             </div>
             <div class="result-popup" style="display: none;">
                 <div class="result-title">ВЫБИТО</div>
@@ -244,7 +258,7 @@ function openCase(caseId) {
 }
 
 function startExplosionAnimation() {
-    let frame = 1;
+    let currentFrame = 1;
     const totalFrames = 9;
     const explosionImg = document.getElementById('explosionFrame');
     const flash = document.getElementById('flash');
@@ -258,49 +272,51 @@ function startExplosionAnimation() {
     // Добавляем тряску
     caseContainer.style.animation = 'shake 0.7s infinite';
     
-    // Сбрасываем на первый кадр
-    explosionImg.src = `cases/common case/common_cadr1.png`;
+    // Убеждаемся что первый кадр загружен
+    explosionImg.src = `cases/common case/common_cadr1.png?t=${Date.now()}`;
     
-    let frameCount = 1;
-    
-    // Анимация с гарантированным показом всех кадров
-    const interval = setInterval(() => {
-        frameCount++;
-        
-        if (frameCount <= totalFrames) {
-            // Меняем кадр
-            explosionImg.src = `cases/common case/common_cadr${frameCount}.png?t=${Date.now()}`; // Добавил timestamp чтобы избежать кэширования
-            console.log(`Кадр ${frameCount}`);
-        } else {
-            clearInterval(interval);
-            console.log('Анимация завершена');
+    // Ждем немного чтобы браузер обработал первый кадр
+    setTimeout(() => {
+        // Запускаем анимацию с гарантированным показом всех кадров
+        const interval = setInterval(() => {
+            currentFrame++;
             
-            // Убираем тряску
-            caseContainer.style.animation = '';
-            
-            // Вспышка
-            flash.classList.add('active');
-            
-            setTimeout(() => {
-                flash.classList.remove('active');
+            if (currentFrame <= totalFrames) {
+                // Меняем кадр с уникальным параметром
+                const timestamp = Date.now() + currentFrame;
+                explosionImg.src = `cases/common case/common_cadr${currentFrame}.png?t=${timestamp}`;
+                console.log(`Кадр ${currentFrame}`);
+            } else {
+                clearInterval(interval);
+                console.log('Анимация завершена');
                 
-                // Выбираем случайный предмет
-                const winningItem = currentCase.items[Math.floor(Math.random() * currentCase.items.length)];
+                // Убираем тряску
+                caseContainer.style.animation = '';
                 
-                // Добавляем в инвентарь
-                addItemToInventory(winningItem);
+                // Вспышка
+                flash.classList.add('active');
                 
-                // Показываем результат
-                explosionImg.style.display = 'none';
-                resultPopup.style.display = 'block';
-                document.getElementById('resultItem').textContent = winningItem.name;
-                document.getElementById('resultRarity').textContent = winningItem.rarityName;
-                
-                isOpening = false;
-                
-            }, 200);
-        }
-    }, 150); // 150ms * 9 = 1.35 секунды
+                setTimeout(() => {
+                    flash.classList.remove('active');
+                    
+                    // Выбираем случайный предмет
+                    const winningItem = currentCase.items[Math.floor(Math.random() * currentCase.items.length)];
+                    
+                    // Добавляем в инвентарь
+                    addItemToInventory(winningItem);
+                    
+                    // Показываем результат
+                    explosionImg.style.display = 'none';
+                    resultPopup.style.display = 'block';
+                    document.getElementById('resultItem').textContent = winningItem.name;
+                    document.getElementById('resultRarity').textContent = winningItem.rarityName;
+                    
+                    isOpening = false;
+                    
+                }, 250);
+            }
+        }, 180); // 180ms * 9 = 1.62 секунды
+    }, 100);
 }
 
 function addItemToInventory(item) {
