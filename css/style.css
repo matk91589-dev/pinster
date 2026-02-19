@@ -265,7 +265,17 @@ body {
 }
 
 .start-logo {
-    display: none;
+    display: block;
+    width: 280px;
+    margin: 20px auto 10px auto;
+}
+
+.start-logo img {
+    width: 100%;
+    height: auto;
+    display: block;
+    image-rendering: auto;
+    background-color: #0D0F15; /* цвет фона сайта для прозрачных участков */
 }
 
 .start-avatar-square {
@@ -279,7 +289,7 @@ body {
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
     position: relative;
     z-index: 2;
-    margin-top: 40px;
+    margin-top: 10px;
 }
 
 .start-avatar-square img {
@@ -502,22 +512,7 @@ body {
     flex-wrap: wrap;
 }
 
-/* ===== ИСПРАВЛЕНИЕ ДЛЯ ТЕКСТА ПОВЕРХ АВАТАРКИ ===== */
-.profile-name,
-.friend-name,
-.case-name,
-.result-item,
-.mode-title,
-.section-title {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: geometricPrecision;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
-    transform: translateZ(0);
-    backface-visibility: hidden;
-}
-
-/* ===== ЖЕСТКОЕ ИСПРАВЛЕНИЕ ДЛЯ ТЕКСТА ПОВЕРХ АВАТАРКИ ===== */
+/* Стили для текста (один блок, без дублей) */
 .profile-name,
 .friend-name,
 .case-name,
@@ -526,44 +521,16 @@ body {
 .section-title,
 .nav-label,
 .price-value,
-.case-name,
 .profile-status {
-    /* Черная обводка в 2 пикселя */
-    text-shadow: 
-        -2px -2px 0 #000,
-        2px -2px 0 #000,
-        -2px 2px 0 #000,
-        2px 2px 0 #000,
-        0px -2px 0 #000,
-        0px 2px 0 #000,
-        -2px 0px 0 #000,
-        2px 0px 0 #000 !important;
-    
-    /* Дополнительное сглаживание */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: geometricPrecision;
-    
-    /* Принудительное аппаратное ускорение */
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
     transform: translateZ(0);
     backface-visibility: hidden;
     perspective: 1000;
-    
-    /* Для градиентного текста */
-    -webkit-background-clip: text !important;
-    background-clip: text !important;
 }
 
-/* Для цветного текста (чтобы обводка не перекрывала градиент) */
-.profile-name.multicolor {
-    text-shadow: 
-        -2px -2px 0 #000,
-        2px -2px 0 #000,
-        -2px 2px 0 #000,
-        2px 2px 0 #000 !important;
-}
-
-/* Специально для ника в профиле */
 .profile-name {
     font-size: 20px;
     font-weight: 600;
@@ -588,26 +555,13 @@ body {
     font-weight: 700;
 }
 
-/* Для остальных элементов */
-.nav-label,
-.price-value,
-.case-name,
-.section-title {
-    text-shadow: 
-        -1px -1px 0 #000,
-        1px -1px 0 #000,
-        -1px 1px 0 #000,
-        1px 1px 0 #000 !important;
-}
-
-/* Если все еще есть проблемы - добавим полупрозрачную подложку */
-.profile-name-label,
-.profile-status,
-.friend-id {
-    background-color: rgba(0, 0, 0, 0.3);
-    padding: 2px 6px;
-    border-radius: 4px;
-    display: inline-block;
+.profile-name-label {
+    font-size: 11px;
+    color: #9BA1B0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
 }
 
 .profile-status {
@@ -619,7 +573,7 @@ body {
     border-radius: 12px;
     border: 1px solid rgba(76, 175, 80, 0.4);
     letter-spacing: 0.3px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    display: inline-block;
 }
 
 .profile-stats {
@@ -1168,4 +1122,3 @@ body {
 .cancel-search-btn:active {
     transform: scale(0.98);
 }
-
