@@ -228,9 +228,11 @@ function openCase(caseId) {
 }
 
 // Анимация вылета кейса
+// Анимация вылета кейса
 function startCaseFlyIn() {
     const caseContainer = document.getElementById('caseContainer');
     const explosionImg = document.getElementById('explosionFrame');
+    const caseContainerDiv = document.querySelector('.case-container'); // Добавил
     
     console.log('Кейс вылетает...');
     
@@ -242,15 +244,18 @@ function startCaseFlyIn() {
         caseReady = true;
         console.log('Кейс готов! Нажми на него');
         
-        // Добавляем обработчик клика на кейс
-        explosionImg.style.cursor = 'pointer';
-        explosionImg.onclick = function() {
-            if (caseReady) {
-                openCaseClick();
-            }
-        };
+        // Добавляем обработчик клика на ВЕСЬ КОНТЕЙНЕР кейса
+        if (caseContainerDiv) {
+            caseContainerDiv.style.cursor = 'pointer';
+            caseContainerDiv.onclick = function(e) {
+                e.stopPropagation(); // Чтобы не закрыть оверлей случайно
+                if (caseReady) {
+                    openCaseClick();
+                }
+            };
+        }
         
-    }, 500); // 500ms = анимация вылета
+    }, 500);
 }
 
 // Открытие по клику
@@ -319,3 +324,4 @@ function closeCase() {
     currentCase = null;
     caseReady = false;
 }
+
