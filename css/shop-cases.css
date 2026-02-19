@@ -50,8 +50,8 @@
 
 .shop-tab.active {
     background: transparent;
-    color: #FF7F32; /* Новый оранжевый */
-    border: 1px solid #FF7F32; /* Новый оранжевый */
+    color: #FF5500; /* Новый оранжевый */
+    border: 1px solid #FF5500; /* Новый оранжевый */
 }
 
 /* Секции магазина */
@@ -147,14 +147,14 @@
 .price-value {
     font-size: 16px;
     font-weight: 600;
-    color: #FF7F32; /* Новый оранжевый */
+    color: #FF5500; /* Новый оранжевый */
     font-family: 'Montserrat', sans-serif;
     letter-spacing: 0.5px;
     margin: 0;
 }
 
 .buy-btn-simple {
-    background: #FF7F32; /* Новый оранжевый */
+    background: #FF5500; /* Новый оранжевый */
     border: none;
     border-radius: 6px;
     padding: 6px 16px;
@@ -172,11 +172,11 @@
 }
 
 .buy-btn-simple:hover:not(.disabled) {
-    background: #E66A2B; /* Темнее оранжевый для ховера */
+    background: #CC4400; /* Темнее оранжевый для ховера */
 }
 
 .buy-btn-simple:active:not(.disabled) {
-    background: #C55A24; /* Еще темнее для клика */
+    background: #AA3300; /* Еще темнее для клика */
 }
 
 .buy-btn-simple.disabled {
@@ -212,7 +212,7 @@
 }
 
 .inventory-item:hover {
-    border-color: #FF7F32; /* Новый оранжевый */
+    border-color: #FF5500; /* Новый оранжевый */
     background: transparent;
 }
 
