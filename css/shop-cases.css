@@ -344,7 +344,26 @@
     border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Анимации */
+/* Анимация тряски */
+@keyframes shake {
+    0%, 100% { 
+        transform: translateX(0); 
+    }
+    20% { 
+        transform: translateX(-8px) rotate(-2deg); 
+    }
+    40% { 
+        transform: translateX(8px) rotate(2deg); 
+    }
+    60% { 
+        transform: translateX(-5px) rotate(-1deg); 
+    }
+    80% { 
+        transform: translateX(5px) rotate(1deg); 
+    }
+}
+
+/* Анимация появления предмета */
 @keyframes itemFadeIn {
     0% { 
         transform: translateY(20px); 
