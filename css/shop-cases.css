@@ -1,6 +1,6 @@
 /* ===== СТИЛИ МАГАЗИНА ===== */
 
-/* Подключаем шрифт Stratum2 (или похожий) */
+/* Подключаем шрифт Stratum2 */
 @import url('https://fonts.cdnfonts.com/css/stratum-2');
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap');
 
@@ -77,28 +77,28 @@
     padding: 20px 15px;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 25px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+    transition: transform 0.2s ease;
     border-radius: 12px;
     margin-bottom: 10px;
 }
 
 .case-item:hover {
-    background: transparent; /* Убираем плашку */
+    background: transparent;
 }
 
 .case-icon {
-    width: 120px; /* Увеличили на 20% */
-    height: 108px; /* Увеличили на 20% */
+    width: 160px;  /* Увеличили в 2 раза (было 80px) */
+    height: 160px; /* Увеличили в 2 раза (было 80px) */
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+    transition: transform 0.2s ease;
 }
 
 .case-item:hover .case-icon {
-    transform: scale(1.08); /* Плавное приближение */
+    transform: scale(1.05);
 }
 
 .case-image {
@@ -110,42 +110,20 @@
 
 .case-info {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .case-name {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 700;
     color: #FFFFFF;
-    margin-bottom: 12px;
     letter-spacing: 1px;
     font-family: 'Stratum 2', 'Rajdhani', sans-serif;
     text-transform: uppercase;
     text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-    position: relative;
-    display: inline-block;
-}
-
-/* Декоративные элементы для названия */
-.case-name::before {
-    content: '⚡';
-    position: absolute;
-    left: -25px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #FF6B4A;
-    font-size: 18px;
-    opacity: 0.7;
-}
-
-.case-name::after {
-    content: '⚡';
-    position: absolute;
-    right: -25px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #FF6B4A;
-    font-size: 18px;
-    opacity: 0.7;
+    line-height: 1.2;
 }
 
 .case-price-row {
@@ -155,7 +133,7 @@
 }
 
 .price-value {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
     color: #FF6B4A;
     font-family: 'Stratum 2', 'Rajdhani', sans-serif;
@@ -163,42 +141,42 @@
 }
 
 .price-value::after {
-    content: 'PC';
-    margin-left: 4px;
-    font-size: 14px;
+    content: ' PC';
+    margin-left: 2px;
+    font-size: 16px;
     color: #9BA1B0;
 }
 
 .buy-btn-simple {
     background: #FF6B4A;
     border: none;
-    border-radius: 4px;
-    padding: 8px 20px;
+    border-radius: 6px;  /* Простые закругленные края */
+    padding: 8px 24px;
     color: white;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
     font-family: 'Stratum 2', 'Rajdhani', sans-serif;
     text-transform: uppercase;
     letter-spacing: 1px;
-    box-shadow: 0 2px 0 #b33e2a;
+    transition: none;  /* Убрали анимацию */
+    border: none;
+    outline: none;
 }
 
 .buy-btn-simple:hover:not(.disabled) {
-    background: #ff8a6a;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 0 #b33e2a;
+    background: #ff8a6a;  /* Только изменение цвета */
+    transform: none;  /* Убрали подпрыгивание */
+    box-shadow: none;  /* Убрали тень */
 }
 
 .buy-btn-simple:active:not(.disabled) {
-    transform: translateY(0);
-    box-shadow: 0 2px 0 #b33e2a;
+    background: #e55a3a;  /* Чуть темнее при клике */
+    transform: none;
 }
 
 .buy-btn-simple.disabled {
     background: #9BA1B0;
-    box-shadow: 0 2px 0 #5D6472;
     cursor: not-allowed;
     opacity: 0.5;
 }
@@ -303,7 +281,7 @@
     box-shadow: none;
     transform: scale(0.9);
     transition: transform 0.3s ease;
-    max-width: 400px;
+    max-width: 500px;
     width: 90%;
     text-align: center;
 }
@@ -314,8 +292,8 @@
 
 /* Контейнер для анимации взрыва */
 .explosion-container {
-    width: 360px; /* Увеличили на 20% */
-    height: 360px; /* Увеличили на 20% */
+    width: 400px;
+    height: 400px;
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -345,7 +323,7 @@
     opacity: 1;
 }
 
-/* Результат открытия - минимал */
+/* Результат открытия */
 .result-popup {
     text-align: center;
     margin-top: 30px;
@@ -387,7 +365,7 @@
     padding: 8px 24px;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
+    border-radius: 6px;
     color: white;
     font-size: 14px;
     font-weight: 500;
