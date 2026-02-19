@@ -8,12 +8,12 @@ let currentShopTab = 'cases'; // 'cases' или 'inventory'
 const cases = [
     { 
         id: 'common_case', 
-        name: 'Common Case', 
+        name: 'COMMON CASE', 
         description: '', 
         price: 1000, 
         class: 'common-case',
         // 1 кадр - обычный ящик (для магазина)
-        icon: `<img src="cases/common case/common_cadr1.png" class="case-image" width="100" height="90">`,
+        icon: `<img src="cases/common case/common_cadr1.png" class="case-image">`,
         items: [
             // Ники
             { type: 'nick', id: 'red', name: 'Красный ник', icon: '🎨', rarity: 'common', rarityName: 'Common' },
@@ -45,6 +45,23 @@ const cases = [
 // Состояние открытия кейса
 let currentCase = null;
 let isOpening = false;
+
+// Кэш для кадров
+let frameCache = [];
+
+// Предзагрузка кадров при загрузке страницы
+function preloadFrames() {
+    frameCache = [];
+    for (let i = 1; i <= 9; i++) {
+        const img = new Image();
+        img.src = `cases/common case/common_cadr${i}.png`;
+        frameCache.push(img);
+    }
+    console.log('Кадры предзагружены');
+}
+
+// Вызываем предзагрузку
+preloadFrames();
 
 function showShopTab(tab) {
     currentShopTab = tab;
@@ -83,7 +100,7 @@ function renderCasesShop() {
                         <span class="price-value">${caseItem.price} Pingcoins</span>
                         <button class="buy-btn-simple ${!canAfford ? 'disabled' : ''}" 
                                 onclick="event.stopPropagation(); buyCase('${caseItem.id}')">
-                            Купить
+                            КУПИТЬ
                         </button>
                     </div>
                 </div>
@@ -227,7 +244,7 @@ function openCase(caseId) {
 }
 
 function startExplosionAnimation() {
-    let frame = 0;  // Начинаем с 0
+    let frame = 1;
     const totalFrames = 9;
     const explosionImg = document.getElementById('explosionFrame');
     const flash = document.getElementById('flash');
@@ -236,57 +253,54 @@ function startExplosionAnimation() {
     
     if (!explosionImg) return;
     
-    console.log('Запуск анимации на 1.2 секунды');
-    
-    // Предзагружаем все кадры перед анимацией
-    const frames = [];
-    for (let i = 1; i <= totalFrames; i++) {
-        const img = new Image();
-        img.src = `cases/common case/common_cadr${i}.png`;
-        frames.push(img);
-    }
+    console.log('Запуск анимации');
     
     // Добавляем тряску
     caseContainer.style.animation = 'shake 0.7s infinite';
     
-    // Ждем немного чтобы кадры загрузились
-    setTimeout(() => {
-        // Анимация 1.2 секунды
-        const interval = setInterval(() => {
-            if (frame < totalFrames) {
-                frame++;
-                explosionImg.src = `cases/common case/common_cadr${frame}.png`;
-                console.log(`Кадр ${frame}`);
-            } else {
-                clearInterval(interval);
+    // Сбрасываем на первый кадр
+    explosionImg.src = `cases/common case/common_cadr1.png`;
+    
+    let frameCount = 1;
+    
+    // Анимация с гарантированным показом всех кадров
+    const interval = setInterval(() => {
+        frameCount++;
+        
+        if (frameCount <= totalFrames) {
+            // Меняем кадр
+            explosionImg.src = `cases/common case/common_cadr${frameCount}.png?t=${Date.now()}`; // Добавил timestamp чтобы избежать кэширования
+            console.log(`Кадр ${frameCount}`);
+        } else {
+            clearInterval(interval);
+            console.log('Анимация завершена');
+            
+            // Убираем тряску
+            caseContainer.style.animation = '';
+            
+            // Вспышка
+            flash.classList.add('active');
+            
+            setTimeout(() => {
+                flash.classList.remove('active');
                 
-                // Убираем тряску
-                caseContainer.style.animation = '';
+                // Выбираем случайный предмет
+                const winningItem = currentCase.items[Math.floor(Math.random() * currentCase.items.length)];
                 
-                // Вспышка
-                flash.classList.add('active');
+                // Добавляем в инвентарь
+                addItemToInventory(winningItem);
                 
-                setTimeout(() => {
-                    flash.classList.remove('active');
-                    
-                    // Выбираем случайный предмет
-                    const winningItem = currentCase.items[Math.floor(Math.random() * currentCase.items.length)];
-                    
-                    // Добавляем в инвентарь
-                    addItemToInventory(winningItem);
-                    
-                    // Показываем результат
-                    explosionImg.style.display = 'none';
-                    resultPopup.style.display = 'block';
-                    document.getElementById('resultItem').textContent = winningItem.name;
-                    document.getElementById('resultRarity').textContent = winningItem.rarityName;
-                    
-                    isOpening = false;
-                    
-                }, 200);
-            }
-        }, 133); // 133ms * 9 = 1.2 секунды
-    }, 100); // Даем время на предзагрузку
+                // Показываем результат
+                explosionImg.style.display = 'none';
+                resultPopup.style.display = 'block';
+                document.getElementById('resultItem').textContent = winningItem.name;
+                document.getElementById('resultRarity').textContent = winningItem.rarityName;
+                
+                isOpening = false;
+                
+            }, 200);
+        }
+    }, 150); // 150ms * 9 = 1.35 секунды
 }
 
 function addItemToInventory(item) {
@@ -318,5 +332,3 @@ function closeCase() {
     isOpening = false;
     currentCase = null;
 }
-
-
