@@ -12,6 +12,40 @@ function generateRandomNick() {
     return nick;
 }
 
+// Функция для блокировки/разблокировки полей ввода
+function setInputsReadonly(readonly) {
+    const ageInput = document.getElementById('ageValue');
+    const steamInput = document.getElementById('steamDisplay');
+    const faceitInput = document.getElementById('faceitLinkDisplay');
+    
+    if (ageInput) {
+        ageInput.readOnly = readonly;
+        if (!readonly) {
+            ageInput.classList.add('editable-input');
+        } else {
+            ageInput.classList.remove('editable-input');
+        }
+    }
+    
+    if (steamInput) {
+        steamInput.readOnly = readonly;
+        if (!readonly) {
+            steamInput.classList.add('editable-input');
+        } else {
+            steamInput.classList.remove('editable-input');
+        }
+    }
+    
+    if (faceitInput) {
+        faceitInput.readOnly = readonly;
+        if (!readonly) {
+            faceitInput.classList.add('editable-input');
+        } else {
+            faceitInput.classList.remove('editable-input');
+        }
+    }
+}
+
 function loadSavedValues() {
     // Если нет сохраненного ника, генерируем случайный
     if (savedName === '-') {
@@ -32,6 +66,7 @@ function loadSavedValues() {
             ageValueEl.value = '';
         }
         ageValueEl.maxLength = 3; // Ограничение на 3 символа
+        ageValueEl.readOnly = true; // По умолчанию заблокировано
     }
     
     const steamDisplayEl = document.getElementById('steamDisplay');
@@ -43,6 +78,7 @@ function loadSavedValues() {
             steamDisplayEl.value = '';
         }
         steamDisplayEl.maxLength = 50; // Ограничение на 50 символов
+        steamDisplayEl.readOnly = true; // По умолчанию заблокировано
     }
     
     const faceitLinkDisplayEl = document.getElementById('faceitLinkDisplay');
@@ -54,6 +90,7 @@ function loadSavedValues() {
             faceitLinkDisplayEl.value = '';
         }
         faceitLinkDisplayEl.maxLength = 50; // Ограничение на 50 символов
+        faceitLinkDisplayEl.readOnly = true; // По умолчанию заблокировано
     }
     
     const coinsAmountEl = document.getElementById('coinsAmount');
@@ -111,12 +148,16 @@ function toggleEditMode() {
         elements.forEach(el => {
             if (el) el.classList.add('editable');
         });
+        // Разблокируем поля ввода
+        setInputsReadonly(false);
     } else {
         if (editToggle) editToggle.classList.remove('active');
         if (applyBtn) applyBtn.classList.remove('visible');
         elements.forEach(el => {
             if (el) el.classList.remove('editable');
         });
+        // Блокируем поля ввода
+        setInputsReadonly(true);
     }
 }
 
@@ -150,11 +191,9 @@ function editAge() {
         alert('Сначала включите режим редактирования (карандаш)');
         return;
     }
-    const newAge = prompt('Введите возраст (0-100):', document.getElementById('ageValue').value || '');
-    if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= CONFIG.APP.MAX_AGE) {
-        document.getElementById('ageValue').value = newAge;
-        tempAge = newAge;
-    }
+    // Поле уже разблокировано, можно редактировать напрямую
+    const ageInput = document.getElementById('ageValue');
+    ageInput.focus();
 }
 
 function editSteam() {
@@ -162,15 +201,9 @@ function editSteam() {
         alert('Сначала включите режим редактирования (карандаш)');
         return;
     }
-    const newSteam = prompt('Введите ссылку на Steam:', document.getElementById('steamDisplay').value || '');
-    if (newSteam !== null) {
-        if (newSteam.length > 50) {
-            alert('Ссылка слишком длинная! Максимум 50 символов.');
-            return;
-        }
-        document.getElementById('steamDisplay').value = newSteam;
-        tempSteam = newSteam;
-    }
+    // Поле уже разблокировано, можно редактировать напрямую
+    const steamInput = document.getElementById('steamDisplay');
+    steamInput.focus();
 }
 
 function editFaceitLink() {
@@ -178,15 +211,9 @@ function editFaceitLink() {
         alert('Сначала включите режим редактирования (карандаш)');
         return;
     }
-    const newLink = prompt('Введите ссылку на Faceit:', document.getElementById('faceitLinkDisplay').value || '');
-    if (newLink !== null) {
-        if (newLink.length > 50) {
-            alert('Ссылка слишком длинная! Максимум 50 символов.');
-            return;
-        }
-        document.getElementById('faceitLinkDisplay').value = newLink;
-        tempFaceitLink = newLink;
-    }
+    // Поле уже разблокировано, можно редактировать напрямую
+    const faceitInput = document.getElementById('faceitLinkDisplay');
+    faceitInput.focus();
 }
 
 function selectAvatar() {
