@@ -203,6 +203,29 @@ function renderCasesShop() {
     }).join('');
 }
 
+// НОВАЯ ФУНКЦИЯ: Отображение статистики инвентаря
+function renderInventoryStats() {
+    const inventorySection = document.querySelector('.inventory-section');
+    if (!inventorySection) return;
+    
+    // Удаляем старую статистику если есть
+    const oldStats = inventorySection.querySelector('.inventory-stats');
+    if (oldStats) oldStats.remove();
+    
+    // Создаем блок статистики
+    const statsDiv = document.createElement('div');
+    statsDiv.className = 'inventory-stats';
+    statsDiv.innerHTML = `Кол-во предметов: <span>${ownedCases.length}</span>`;
+    
+    // Вставляем в начало секции инвентаря (перед inventory-grid)
+    const grid = inventorySection.querySelector('.inventory-grid');
+    if (grid) {
+        inventorySection.insertBefore(statsDiv, grid);
+    } else {
+        inventorySection.appendChild(statsDiv);
+    }
+}
+
 function renderInventory() {
     const container = document.querySelector('.inventory-grid');
     if (!container) return;
@@ -225,6 +248,9 @@ function renderInventory() {
         }
     });
     
+    // Обновляем статистику
+    renderInventoryStats();
+    
     if (ownedItems.length === 0) {
         container.innerHTML = '';
         return;
@@ -234,7 +260,7 @@ function renderInventory() {
         <div class="inventory-item ${item.isNew ? 'new-item' : ''}" onclick="useInventoryItem('${item.type}', '${item.id}')">
             ${item.isNew ? '<span class="item-badge">NEW</span>' : ''}
             <div class="item-icon">
-                <img src="${item.imagePath}" style="width: 100px; height: 100px; object-fit: contain;">
+                <img src="${item.imagePath}" style="width: 100%; height: 100%; object-fit: contain;">
             </div>
         </div>
     `).join('');
@@ -264,6 +290,9 @@ function buyCase(caseId) {
         addNewItem({ type: 'case', id: caseItem.id });
         
         saveUserToDB();
+        
+        // Обновляем статистику
+        renderInventoryStats();
         
         // Если открыт инвентарь - обновляем его
         if (currentShopTab === 'inventory') {
