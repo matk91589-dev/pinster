@@ -19,6 +19,7 @@ const cases = [
         price: 1000, 
         class: 'common-case',
         icon: `<img src="cases/common_case.png" class="case-image">`,
+        imagePath: 'cases/common_case.png',
         items: [
             // Ники
             { type: 'nick', id: 'red', name: 'Красный ник', icon: '🎨', rarity: 'common', rarityName: 'Common' },
@@ -52,6 +53,7 @@ const cases = [
         price: 2500, 
         class: 'rare-case',
         icon: `<img src="cases/rare_case.png" class="case-image">`,
+        imagePath: 'cases/rare_case.png',
         items: [
             // Ники (больше редких)
             { type: 'nick', id: 'purple', name: 'Фиолетовый ник', icon: '🎨', rarity: 'rare', rarityName: 'Rare' },
@@ -77,6 +79,7 @@ const cases = [
         price: 5000, 
         class: 'premium-case',
         icon: `<img src="cases/premium_case.png" class="case-image">`,
+        imagePath: 'cases/premium_case.png',
         items: [
             // Ники (только эпик и легендарные)
             { type: 'nick', id: 'multicolor', name: 'Радужный ник', icon: '🌈', rarity: 'epic', rarityName: 'Epic' },
@@ -103,9 +106,10 @@ let caseReady = false;
 // Функция обновления счетчика инвентаря
 function updateInventoryCounter() {
     const counter = document.getElementById('inventoryCounter');
-    const totalItems = ownedNicks.length + ownedFrames.length + ownedCases.length;
-    
-    if (counter) {
+    // Проверяем что это именно счетчик инвентаря, а не что-то другое
+    if (counter && counter.closest('.shop-tab')) {
+        const totalItems = ownedCases.length;
+        
         if (totalItems > 0) {
             counter.style.display = 'flex';
             counter.textContent = totalItems;
@@ -204,40 +208,8 @@ function renderInventory() {
                 type: 'case',
                 id: caseItem.id,
                 name: caseItem.name,
-                icon: '📦',
+                imagePath: caseItem.imagePath,
                 class: caseItem.class,
-                isNew: isNew
-            });
-        }
-    });
-    
-    // Добавляем ники
-    ownedNicks.forEach(nickId => {
-        const nick = nicks.find(n => n.id === nickId);
-        if (nick) {
-            const isNew = newItems.some(item => item.type === 'nick' && item.id === nick.id);
-            ownedItems.push({
-                type: 'nick',
-                id: nick.id,
-                name: nick.name,
-                icon: '🎨',
-                class: nick.class,
-                isNew: isNew
-            });
-        }
-    });
-    
-    // Добавляем рамки
-    ownedFrames.forEach(frameId => {
-        const frame = frames.find(f => f.id === frameId);
-        if (frame) {
-            const isNew = newItems.some(item => item.type === 'frame' && item.id === frame.id);
-            ownedItems.push({
-                type: 'frame',
-                id: frame.id,
-                name: frame.name,
-                icon: '🖼️',
-                class: frame.class,
                 isNew: isNew
             });
         }
@@ -251,43 +223,19 @@ function renderInventory() {
     container.innerHTML = ownedItems.map(item => `
         <div class="inventory-item ${item.isNew ? 'new-item' : ''}" onclick="useInventoryItem('${item.type}', '${item.id}')">
             ${item.isNew ? '<span class="item-badge">NEW</span>' : ''}
-            <div class="item-icon">${item.icon}</div>
-            <div class="item-info">
-                <div class="item-name">${item.name}</div>
+            <div class="item-icon">
+                <img src="${item.imagePath}" style="width: 40px; height: 40px; object-fit: contain;">
             </div>
-            ${item.type !== 'case' ? `
-                <button class="use-btn" onclick="event.stopPropagation(); useInventoryItem('${item.type}', '${item.id}')">
-                    Использовать
-                </button>
-            ` : ''}
+            <div class="item-info">
+                <div class="item-name" style="display: none;">${item.name}</div>
+            </div>
         </div>
     `).join('');
 }
 
 function useInventoryItem(type, id) {
-    if (type === 'nick') {
-        if (!ownedNicks.includes(id)) return;
-        
-        document.getElementById('profileName').className = 'profile-name';
-        
-        const nick = nicks.find(n => n.id === id);
-        if (nick) {
-            document.getElementById('profileName').classList.add(nick.class);
-            alert(`✅ Ник теперь ${nick.name}`);
-        }
-    } else if (type === 'frame') {
-        if (!ownedFrames.includes(id)) return;
-        
-        const avatar = document.getElementById('profileAvatar');
-        avatar.className = 'profile-avatar';
-        
-        const frame = frames.find(f => f.id === id);
-        if (frame) {
-            avatar.classList.add(frame.class);
-            alert(`✅ Рамка ${frame.name} применена`);
-        }
-    } else if (type === 'case') {
-        alert(`✅ Здесь будет открытие ${id}`);
+    if (type === 'case') {
+        alert(`✅ Здесь будет открытие кейса`);
     }
 }
 
@@ -320,31 +268,8 @@ function buyCase(caseId) {
     }
 }
 
-// Функции для открытия кейса (пока не используются, но оставим)
-function openCase(caseId) {
-    // Заглушка
-    console.log('Открытие кейса будет позже');
-}
-
 function addItemToInventory(item) {
-    if (item.type === 'nick') {
-        if (!ownedNicks.includes(item.id)) {
-            ownedNicks.push(item.id);
-            addNewItem(item);
-        }
-    } else if (item.type === 'frame') {
-        if (!ownedFrames.includes(item.id)) {
-            ownedFrames.push(item.id);
-            addNewItem(item);
-        }
-    }
-    
-    saveUserToDB();
-    updateInventoryCounter();
-    
-    if (currentShopTab === 'inventory') {
-        renderInventory();
-    }
+    // Заглушка для совместимости
 }
 
 function closeCase() {
