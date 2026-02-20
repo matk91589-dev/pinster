@@ -289,7 +289,7 @@ body {
     align-items: center;
     justify-content: flex-start;
     height: 100%;
-    padding: 20px 0 0 0;
+    padding: 100px 0 0 0;
 }
 
 .start-logo {
@@ -1174,5 +1174,6 @@ body {
 .cancel-search-btn:active {
     transform: scale(0.95);
 }
+
 
 
