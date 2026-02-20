@@ -4,8 +4,11 @@
 
 let currentShopTab = 'cases'; // 'cases' или 'inventory'
 
-// Массив для новых предметов (только что выбитых)
+// Массив для новых предметов (только что купленных)
 let newItems = [];
+
+// Массив для кейсов в инвентаре
+let ownedCases = [];
 
 // Данные кейсов
 const cases = [
@@ -92,15 +95,15 @@ const cases = [
     }
 ];
 
-// Состояние открытия кейса
+// Состояние открытия кейса (пока не используется)
 let currentCase = null;
 let isOpening = false;
-let caseReady = false; // Кейс готов к открытию
+let caseReady = false;
 
 // Функция обновления счетчика инвентаря
 function updateInventoryCounter() {
     const counter = document.getElementById('inventoryCounter');
-    const totalItems = ownedNicks.length + ownedFrames.length;
+    const totalItems = ownedNicks.length + ownedFrames.length + ownedCases.length;
     
     if (counter) {
         if (totalItems > 0) {
@@ -114,10 +117,6 @@ function updateInventoryCounter() {
 
 // Добавление предмета в список новых
 function addNewItem(item) {
-    // Создаем уникальный ключ для предмета
-    const itemKey = `${item.type}_${item.id}`;
-    
-    // Проверяем, нет ли уже такого предмета в новых
     const exists = newItems.some(existing => 
         existing.type === item.type && existing.id === item.id
     );
@@ -171,7 +170,7 @@ function renderCasesShop() {
     container.innerHTML = cases.map(caseItem => {
         const canAfford = coins >= caseItem.price;
         return `
-            <div class="case-item ${caseItem.class}" onclick="openCase('${caseItem.id}')">
+            <div class="case-item ${caseItem.class}">
                 <div class="case-icon">
                     ${caseItem.icon}
                 </div>
@@ -196,6 +195,23 @@ function renderInventory() {
     
     const ownedItems = [];
     
+    // Добавляем кейсы из инвентаря
+    ownedCases.forEach(caseId => {
+        const caseItem = cases.find(c => c.id === caseId);
+        if (caseItem) {
+            const isNew = newItems.some(item => item.type === 'case' && item.id === caseItem.id);
+            ownedItems.push({
+                type: 'case',
+                id: caseItem.id,
+                name: caseItem.name,
+                icon: '📦',
+                class: caseItem.class,
+                isNew: isNew
+            });
+        }
+    });
+    
+    // Добавляем ники
     ownedNicks.forEach(nickId => {
         const nick = nicks.find(n => n.id === nickId);
         if (nick) {
@@ -211,6 +227,7 @@ function renderInventory() {
         }
     });
     
+    // Добавляем рамки
     ownedFrames.forEach(frameId => {
         const frame = frames.find(f => f.id === frameId);
         if (frame) {
@@ -238,9 +255,11 @@ function renderInventory() {
             <div class="item-info">
                 <div class="item-name">${item.name}</div>
             </div>
-            <button class="use-btn" onclick="event.stopPropagation(); useInventoryItem('${item.type}', '${item.id}')">
-                Использовать
-            </button>
+            ${item.type !== 'case' ? `
+                <button class="use-btn" onclick="event.stopPropagation(); useInventoryItem('${item.type}', '${item.id}')">
+                    Использовать
+                </button>
+            ` : ''}
         </div>
     `).join('');
 }
@@ -267,6 +286,8 @@ function useInventoryItem(type, id) {
             avatar.classList.add(frame.class);
             alert(`✅ Рамка ${frame.name} применена`);
         }
+    } else if (type === 'case') {
+        alert(`✅ Здесь будет открытие ${id}`);
     }
 }
 
@@ -282,177 +303,44 @@ function buyCase(caseId) {
     if (confirm(`Купить ${caseItem.name} за ${caseItem.price} PC?`)) {
         coins -= caseItem.price;
         document.getElementById('coinsAmount').textContent = coins;
+        
+        // Добавляем кейс в инвентарь
+        ownedCases.push(caseItem.id);
+        addNewItem({ type: 'case', id: caseItem.id });
+        
         saveUserToDB();
+        updateInventoryCounter();
         
-        // Отправляем кейс в инвентарь (добавляем сам кейс как предмет)
-        addCaseToInventory(caseItem);
-        
-        // Обновляем отображение
+        // Если открыт инвентарь - обновляем его
         if (currentShopTab === 'inventory') {
             renderInventory();
         }
+        
+        alert(`✅ ${caseItem.name} добавлен в инвентарь!`);
     }
 }
 
-// Функция добавления кейса в инвентарь
-function addCaseToInventory(caseItem) {
-    // Создаем предмет "кейс" для инвентаря
-    const caseInventoryItem = {
-        type: 'case',
-        id: caseItem.id,
-        name: caseItem.name,
-        icon: '📦', // Иконка кейса
-        class: caseItem.class
-    };
-    
-    // Здесь можно добавить логику сохранения кейсов в отдельный массив
-    // Пока просто показываем уведомление
-    alert(`✅ ${caseItem.name} добавлен в инвентарь!`);
-    
-    // Обновляем счетчик инвентаря
-    updateInventoryCounter();
-}
-
+// Функции для открытия кейса (пока не используются, но оставим)
 function openCase(caseId) {
-    if (isOpening) {
-        alert('Кейс уже открывается!');
-        return;
-    }
-    
-    const caseItem = cases.find(c => c.id === caseId);
-    if (!caseItem) return;
-    
-    currentCase = caseItem;
-    isOpening = true;
-    caseReady = false;
-    
-    // Определяем путь к картинке в зависимости от типа кейса
-    let caseImagePath = '';
-    switch(caseId) {
-        case 'common_case':
-            caseImagePath = 'cases/common_case.png';
-            break;
-        case 'rare_case':
-            caseImagePath = 'cases/rare_case.png';
-            break;
-        case 'premium_case':
-            caseImagePath = 'cases/premium_case.png';
-            break;
-        default:
-            caseImagePath = 'cases/common_case.png';
-    }
-    
-    // Показываем оверлей
-    const overlay = document.createElement('div');
-    overlay.className = 'case-overlay';
-    overlay.id = 'caseOverlay';
-    overlay.innerHTML = `
-        <div class="case-container" id="caseContainer">
-            <div class="explosion-container">
-                <img id="explosionFrame" src="${caseImagePath}?t=${Date.now()}" class="explosion-image">
-            </div>
-            <div class="result-popup" style="display: none;">
-                <div class="result-title">ВЫБИТО</div>
-                <div class="result-item" id="resultItem"></div>
-                <div class="result-rarity" id="resultRarity"></div>
-            </div>
-            <button class="close-btn" onclick="closeCase()">Закрыть</button>
-        </div>
-        <div class="flash" id="flash"></div>
-    `;
-    
-    document.body.appendChild(overlay);
-    
-    // Активируем оверлей
-    setTimeout(() => {
-        overlay.classList.add('active');
-        startCaseFlyIn();
-    }, 50);
-}
-
-// Анимация вылета кейса
-function startCaseFlyIn() {
-    const caseContainer = document.getElementById('caseContainer');
-    
-    console.log('Кейс вылетает...');
-    
-    // Добавляем класс для анимации вылета
-    caseContainer.classList.add('case-fly');
-    
-    // После окончания анимации кейс готов к клику
-    setTimeout(() => {
-        caseReady = true;
-        console.log('Кейс готов! Нажми на него');
-        
-        // Добавляем обработчик клика на контейнер
-        if (caseContainer) {
-            caseContainer.style.cursor = 'pointer';
-            caseContainer.onclick = function(e) {
-                e.stopPropagation();
-                console.log('Клик по кейсу!');
-                if (caseReady) {
-                    openCaseClick();
-                }
-            };
-        }
-        
-    }, 500);
-}
-
-// Открытие по клику
-function openCaseClick() {
-    if (!caseReady || !isOpening) return;
-    
-    console.log('Открываем кейс!');
-    
-    const explosionImg = document.getElementById('explosionFrame');
-    const flash = document.getElementById('flash');
-    const resultPopup = document.querySelector('.result-popup');
-    const caseContainer = document.getElementById('caseContainer');
-    
-    // Убираем возможность повторного клика
-    caseReady = false;
-    if (caseContainer) {
-        caseContainer.style.cursor = 'default';
-        caseContainer.onclick = null;
-    }
-    
-    // Вспышка
-    flash.classList.add('active');
-    
-    setTimeout(() => {
-        flash.classList.remove('active');
-        
-        // Выбираем случайный предмет
-        const winningItem = currentCase.items[Math.floor(Math.random() * currentCase.items.length)];
-        
-        // Добавляем в инвентарь
-        addItemToInventory(winningItem);
-        
-        // Показываем результат
-        explosionImg.style.display = 'none';
-        resultPopup.style.display = 'block';
-        document.getElementById('resultItem').textContent = winningItem.name;
-        document.getElementById('resultRarity').textContent = winningItem.rarityName;
-        
-    }, 200);
+    // Заглушка
+    console.log('Открытие кейса будет позже');
 }
 
 function addItemToInventory(item) {
     if (item.type === 'nick') {
         if (!ownedNicks.includes(item.id)) {
             ownedNicks.push(item.id);
-            addNewItem(item); // Добавляем в новые
+            addNewItem(item);
         }
     } else if (item.type === 'frame') {
         if (!ownedFrames.includes(item.id)) {
             ownedFrames.push(item.id);
-            addNewItem(item); // Добавляем в новые
+            addNewItem(item);
         }
     }
     
     saveUserToDB();
-    updateInventoryCounter(); // Обновляем счетчик
+    updateInventoryCounter();
     
     if (currentShopTab === 'inventory') {
         renderInventory();
@@ -460,14 +348,5 @@ function addItemToInventory(item) {
 }
 
 function closeCase() {
-    const overlay = document.getElementById('caseOverlay');
-    if (overlay) {
-        overlay.classList.remove('active');
-        setTimeout(() => {
-            overlay.remove();
-        }, 300);
-    }
-    isOpening = false;
-    currentCase = null;
-    caseReady = false;
+    // Заглушка
 }
