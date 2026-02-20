@@ -220,6 +220,65 @@
     opacity: 0.5;
 }
 
+/* ===== СЕКРЕТНЫЙ КЕЙС ===== */
+.secret-case {
+    opacity: 0.9;
+    border: 1px solid rgba(255, 85, 0, 0.3);
+    border-radius: 8px;
+    padding: 5px;
+    background: linear-gradient(45deg, rgba(176, 0, 0, 0.1), rgba(255, 85, 0, 0.05));
+    position: relative;
+    overflow: hidden;
+}
+
+.secret-case::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 85, 0, 0.1) 50%,
+        transparent 70%
+    );
+    animation: secretShine 3s infinite;
+}
+
+@keyframes secretShine {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.secret-message {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    color: #FF5500;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 5px;
+    animation: secretGlow 2s ease infinite;
+    white-space: nowrap;
+}
+
+@keyframes secretGlow {
+    0%, 100% { 
+        text-shadow: 0 0 5px rgba(255, 85, 0, 0.5);
+        opacity: 1;
+    }
+    50% { 
+        text-shadow: 0 0 15px rgba(255, 85, 0, 0.8), 0 0 30px rgba(255, 85, 0, 0.3);
+        opacity: 0.9;
+    }
+}
+
+.secret-case .case-price-row {
+    display: none;  /* Скрываем цену и кнопку */
+}
+
 /* ===== ИНВЕНТАРЬ ===== */
 .inventory-section {
     flex: 1;
@@ -332,8 +391,8 @@
 /* Бейдж NEW на предметах - ближе к кейсу */
 .item-badge {
     position: absolute;
-    top: 0px;        /* Без отступа сверху */
-    left: 0px;        /* Без отступа слева */
+    top: 0px;
+    left: 0px;
     background: #B00000;
     color: #F5F5F5;
     font-size: 6px;
@@ -348,7 +407,7 @@
     white-space: nowrap;
     pointer-events: none;
     line-height: 1;
-    transform: translate(0, 0);  /* Убираем смещение */
+    transform: translate(0, 0);
 }
 
 @keyframes badgeGlow {
