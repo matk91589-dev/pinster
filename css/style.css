@@ -213,7 +213,6 @@ body {
     color: #F5F5F5;
     border: none;
     font-weight: 600;
-    /* Статичный элемент - без анимации */
 }
 
 /* Глобальные стили для заголовков (базовые) */
@@ -487,12 +486,8 @@ body {
 .profile-name-label,
 .profile-status,
 .profile-stats,
-.profile-stat-card,
-.profile-stat-label,
 .heart-icon,
 .stats-row,
-.stat-card,
-.stat-label,
 .friends-header,
 .friends-title,
 .friends-count,
@@ -631,31 +626,29 @@ body {
     display: inline-block;
 }
 
-/* Статистика (рейтинг, возраст) */
+/* Статистика (рейтинг, возраст) - без внешних плашек */
 .stats-row {
     display: flex;
-    gap: 6px;
+    gap: 12px;
     margin: 4px 0;
 }
 
 .stat-card {
     flex: 1;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 6px;
-    padding: 8px 10px;
+    background: transparent;
+    border: none;
+    padding: 0;
     cursor: pointer;
 }
 
 .stat-card.editable {
-    border-color: #FF5500;
-    border-width: 2px;
+    border: none;
 }
 
 .stat-label {
     font-size: 10px;
     color: #9BA1B0;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
     font-weight: 500;
 }
 
@@ -716,31 +709,29 @@ body {
     display: block;
 }
 
-/* Поля ввода (ссылки) */
+/* Поля ввода (ссылки) - без внешних плашек */
 .profile-stats {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
     margin-bottom: 8px;
 }
 
 .profile-stat-card {
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 6px;
-    padding: 8px 10px;
+    background: transparent;
+    border: none;
+    padding: 0;
     cursor: pointer;
 }
 
 .profile-stat-card.editable {
-    border-color: #FF5500;
-    border-width: 2px;
+    border: none;
 }
 
 .profile-stat-label {
     font-size: 10px;
     color: #9BA1B0;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
     font-weight: 500;
 }
 
@@ -858,7 +849,6 @@ body {
     margin-bottom: 6px;
 }
 
-/* Убираем аватарки у друзей */
 .friend-avatar {
     display: none;
 }
