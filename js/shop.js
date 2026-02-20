@@ -103,19 +103,26 @@ let currentCase = null;
 let isOpening = false;
 let caseReady = false;
 
-// Функция обновления счетчика инвентаря
-function updateInventoryCounter() {
-    const counter = document.getElementById('inventoryCounter');
-    // Проверяем что это именно счетчик инвентаря
-    if (counter) {
-        const totalItems = ownedCases.length;
-        
-        if (totalItems > 0) {
-            counter.style.display = 'flex';
-            counter.textContent = totalItems;
-        } else {
-            counter.style.display = 'none';
-        }
+// Проверка наличия новых предметов
+function hasNewItems() {
+    return newItems.length > 0;
+}
+
+// Обновление бейджа NEW на табе инвентаря
+function updateInventoryBadge() {
+    const inventoryTab = document.getElementById('inventoryTab');
+    if (!inventoryTab) return;
+    
+    // Удаляем старый бейдж если есть
+    const oldBadge = inventoryTab.querySelector('.new-badge');
+    if (oldBadge) oldBadge.remove();
+    
+    // Если есть новые предметы - добавляем бейдж
+    if (hasNewItems()) {
+        const badge = document.createElement('span');
+        badge.className = 'new-badge';
+        badge.textContent = 'NEW';
+        inventoryTab.appendChild(badge);
     }
 }
 
@@ -133,11 +140,15 @@ function addNewItem(item) {
         });
     }
     
+    // Обновляем бейдж
+    updateInventoryBadge();
+    
     // Очищаем старые новые предметы (через 30 секунд)
     setTimeout(() => {
         newItems = newItems.filter(i => 
             !(i.type === item.type && i.id === item.id)
         );
+        updateInventoryBadge();
         if (currentShopTab === 'inventory') {
             renderInventory();
         }
@@ -164,7 +175,6 @@ function showShopTab(tab) {
 function renderShop() {
     renderCasesShop();
     renderInventory();
-    updateInventoryCounter();
 }
 
 function renderCasesShop() {
@@ -254,7 +264,6 @@ function buyCase(caseId) {
         addNewItem({ type: 'case', id: caseItem.id });
         
         saveUserToDB();
-        updateInventoryCounter();
         
         // Если открыт инвентарь - обновляем его
         if (currentShopTab === 'inventory') {
