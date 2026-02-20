@@ -30,6 +30,7 @@
     border: none;
     border-radius: 0;
     padding: 0;
+    position: relative;
 }
 
 .shop-tab {
@@ -46,12 +47,32 @@
     letter-spacing: 0.5px;
     background: transparent;
     border: 1px solid transparent;
+    position: relative;
 }
 
 .shop-tab.active {
     background: transparent;
-    color: #FF5500; /* Новый оранжевый */
-    border: 1px solid #FF5500; /* Новый оранжевый */
+    color: #FF5500;
+    border: 1px solid #FF5500;
+}
+
+/* Счетчик инвентаря */
+.inventory-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #B00000;
+    color: #F5F5F5;
+    font-size: 11px;
+    font-weight: 600;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid #111317;
 }
 
 /* Секции магазина */
@@ -92,6 +113,7 @@
     cursor: pointer;
     transition: transform 0.2s ease;
     margin: 0;
+    position: relative;
 }
 
 .case-item:hover {
@@ -99,8 +121,9 @@
 }
 
 .case-icon {
-    width: 100px;
-    height: 100px;
+    position: relative;
+    width: 150px; /* Увеличил с 100px до 150px */
+    height: 150px; /* Увеличил с 100px до 150px */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -109,6 +132,22 @@
 
 .case-item:hover .case-icon {
     transform: scale(1.05);
+}
+
+/* Бейдж "NEW" на кейсах */
+.case-badge {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: #B00000;
+    color: #F5F5F5;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 10;
 }
 
 .case-image {
@@ -123,11 +162,11 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding-top: 5px;
+    padding-top: 15px; /* Увеличил для лучшего выравнивания */
 }
 
 .case-name {
-    font-size: 20px;
+    font-size: 18px; /* Уменьшил с 20px до 18px */
     font-weight: 700;
     color: #F5F5F5;
     letter-spacing: 0.5px;
@@ -147,14 +186,22 @@
 .price-value {
     font-size: 16px;
     font-weight: 600;
-    color: #FF5500; /* Новый оранжевый */
+    color: #FF5500;
     font-family: 'Montserrat', sans-serif;
     letter-spacing: 0.5px;
     margin: 0;
 }
 
+.price-value::after {
+    content: ' PC';
+    color: #F5F5F5;
+    font-size: 14px;
+    font-weight: 500;
+    margin-left: 2px;
+}
+
 .buy-btn-simple {
-    background: #FF5500; /* Новый оранжевый */
+    background: #FF5500;
     border: none;
     border-radius: 6px;
     padding: 6px 16px;
@@ -172,11 +219,11 @@
 }
 
 .buy-btn-simple:hover:not(.disabled) {
-    background: #CC4400; /* Темнее оранжевый для ховера */
+    background: #CC4400;
 }
 
 .buy-btn-simple:active:not(.disabled) {
-    background: #AA3300; /* Еще темнее для клика */
+    background: #AA3300;
 }
 
 .buy-btn-simple.disabled {
@@ -209,11 +256,39 @@
     gap: 12px;
     transition: all 0.2s;
     margin: 0;
+    position: relative;
 }
 
 .inventory-item:hover {
-    border-color: #FF5500; /* Новый оранжевый */
+    border-color: #FF5500;
     background: transparent;
+}
+
+/* Новый предмет в инвентаре */
+.new-item {
+    position: relative;
+    border-color: #FF5500;
+    animation: newPulse 2s ease;
+}
+
+.item-badge {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    background: #B00000;
+    color: #F5F5F5;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 4px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 5;
+}
+
+@keyframes newPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 85, 0, 0.4); }
+    50% { box-shadow: 0 0 0 5px rgba(255, 85, 0, 0); }
 }
 
 .inventory-item .item-icon {
@@ -428,5 +503,3 @@
         opacity: 1; 
     }
 }
-
-
