@@ -153,7 +153,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН ПРОФИЛЯ -->
+            <!-- ЭКРАН ПРОФИЛЯ (с placeholder'ами) -->
             <div id="profileScreen" class="screen screen-profile">
                 <div class="title-row">
                     <div class="title-left">
@@ -202,19 +202,22 @@
                     </div>
                     <div class="stat-card" id="ageCard" onclick="editAge()">
                         <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="ageValue">-</div>
+                        <!-- Добавлен placeholder -->
+                        <div class="stat-value" id="ageValue" data-placeholder="0-100">-</div>
                     </div>
                 </div>
 
                 <div class="profile-stats">
                     <div class="profile-stat-card" id="steamCard" onclick="editSteam()">
                         <div class="profile-stat-label">Ссылка Steam</div>
-                        <div class="profile-stat-value" id="steamDisplay">-</div>
+                        <!-- Добавлен placeholder -->
+                        <div class="profile-stat-value" id="steamDisplay" data-placeholder="ссылка на ваш профиль steam">-</div>
                     </div>
 
                     <div class="profile-stat-card" id="faceitLinkCard" onclick="editFaceitLink()">
                         <div class="profile-stat-label">Ссылка Faceit</div>
-                        <div class="profile-stat-value" id="faceitLinkDisplay">-</div>
+                        <!-- Добавлен placeholder -->
+                        <div class="profile-stat-value" id="faceitLinkDisplay" data-placeholder="ссылка на ваш профиль faceit (если есть)">-</div>
                     </div>
                 </div>
 
@@ -565,4 +568,3 @@
     <script src="js/app.js"></script>
 </body>
 </html>
-
