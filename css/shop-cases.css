@@ -81,8 +81,8 @@
     padding: 0;
 }
 
-/* Счетчик инвентаря */
-.inventory-count {
+/* Счетчик инвентаря - ТОЛЬКО внутри .shop-tab */
+.shop-tab .inventory-count {
     position: absolute;
     top: -5px;
     right: -5px;
@@ -124,7 +124,7 @@
     display: flex;
     align-items: flex-start;
     gap: 15px;
-    cursor: pointer;
+    cursor: default; /* Убрал pointer, так как клик не нужен */
     transition: transform 0.2s ease;
     margin: 0;
     position: relative;
@@ -164,7 +164,7 @@
 }
 
 .case-name {
-    font-size: 18px; /* Уменьшил с 20px до 18px */
+    font-size: 18px;
     font-weight: 700;
     color: #F5F5F5;
     letter-spacing: 0.5px;
@@ -177,7 +177,7 @@
 .case-price-row {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Цена слева, кнопка справа */
+    justify-content: space-between;
     gap: 10px;
     margin: 0;
     width: 100%;
@@ -186,7 +186,7 @@
 .price-value {
     font-size: 16px;
     font-weight: 600;
-    color: #F5F5F5; /* Белый цвет */
+    color: #F5F5F5;
     font-family: 'Montserrat', sans-serif;
     letter-spacing: 0.5px;
     margin: 0;
@@ -203,10 +203,10 @@
 
 /* НОВАЯ КНОПКА - красная, круглая, маленькая */
 .buy-btn-simple {
-    background: #B00000; /* Красный */
+    background: #B00000;
     border: none;
-    border-radius: 30px; /* Сильно закругленные края */
-    padding: 4px 14px; /* Уменьшил размер */
+    border-radius: 30px;
+    padding: 4px 14px;
     color: #F5F5F5;
     font-size: 12px;
     font-weight: 600;
@@ -218,17 +218,17 @@
     outline: none;
     transition: background 0.2s ease;
     margin: 0;
-    min-width: 70px; /* Минимальная ширина */
+    min-width: 70px;
     text-align: center;
     line-height: 1.4;
 }
 
 .buy-btn-simple:hover:not(.disabled) {
-    background: #8B0000; /* Темнее красный для ховера */
+    background: #8B0000;
 }
 
 .buy-btn-simple:active:not(.disabled) {
-    background: #6B0000; /* Еще темнее для клика */
+    background: #6B0000;
 }
 
 .buy-btn-simple.disabled {
@@ -251,44 +251,71 @@
     padding: 0;
 }
 
+/* Контейнер для кейса в инвентаре */
 .inventory-item {
     background: transparent;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 12px;
+    border: none; /* Убираем плашку */
+    padding: 0;
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: flex-start;
     transition: all 0.2s;
     margin: 0;
     position: relative;
+    width: 110px;  /* Невидимая обводка 110px */
+    height: 110px; /* Невидимая обводка 110px */
 }
 
 .inventory-item:hover {
-    border-color: #FF5500;
     background: transparent;
+    border: none;
 }
 
-/* Новый предмет в инвентаре */
-.new-item {
-    position: relative;
-    border-color: #FF5500;
-    animation: newPulse 2s ease;
+/* Контейнер для картинки кейса */
+.inventory-item .item-icon {
+    width: 100px;  /* Сам кейс 100px */
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 5px;      /* Центрируем внутри невидимой обводки */
+    left: 5px;
 }
 
+.inventory-item .item-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+    transition: transform 0.2s;
+}
+
+.inventory-item:hover .item-icon img {
+    transform: scale(1.05);
+}
+
+/* Бейдж NEW */
 .item-badge {
     position: absolute;
-    top: -5px;
-    left: -5px;
+    top: 0px;      /* В верхнем левом углу невидимой обводки */
+    left: 0px;
     background: #B00000;
     color: #F5F5F5;
-    font-size: 8px;
+    font-size: 10px;
     font-weight: 700;
-    padding: 2px 4px;
+    padding: 2px 6px;
     border-radius: 3px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    z-index: 5;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Новый предмет */
+.new-item {
+    position: relative;
+    animation: newPulse 2s ease;
 }
 
 @keyframes newPulse {
@@ -296,44 +323,9 @@
     50% { box-shadow: 0 0 0 5px rgba(255, 85, 0, 0); }
 }
 
-.inventory-item .item-icon {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-}
-
+/* Скрываем название и другие элементы */
 .inventory-item .item-info {
-    flex: 1;
-}
-
-.inventory-item .item-name {
-    font-size: 14px;
-    font-weight: 600;
-    color: #F5F5F5;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.use-btn {
-    background: transparent;
-    border: 1px solid #4CAF50;
-    border-radius: 4px;
-    padding: 4px 10px;
-    color: #4CAF50;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.use-btn:hover {
-    background: #4CAF50;
-    color: #F5F5F5;
+    display: none;
 }
 
 /* ===== ОТКРЫТИЕ КЕЙСА ===== */
