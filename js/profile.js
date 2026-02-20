@@ -20,10 +20,15 @@ function setInputsReadonly(readonly) {
     
     if (ageInput) {
         ageInput.readOnly = readonly;
+        // Находим родительский контейнер .stat-value
+        const parentStat = ageInput.closest('.stat-value');
+        
         if (!readonly) {
             ageInput.classList.add('editable-input');
+            if (parentStat) parentStat.classList.add('editable-input');
         } else {
             ageInput.classList.remove('editable-input');
+            if (parentStat) parentStat.classList.remove('editable-input');
         }
     }
     
