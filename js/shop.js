@@ -47,6 +47,21 @@ const cases = [
         items: [
             // ... твои предметы
         ]
+    },
+    { 
+        id: 'secret_case', 
+        name: 'SECRET CASE', 
+        description: '', 
+        price: 0,  // Цена 0, нельзя купить
+        class: 'secret-case',
+        icon: `<img src="cases/secret_case.png" class="case-image">`,
+        imagePath: 'cases/secret_case.png',
+        isSecret: true,  // Флаг для секретного кейса
+        items: [
+            // Можно добавить особые предметы для секретного кейса
+            { type: 'nick', id: 'secret_nick', name: 'Секретный ник', icon: '👑', rarity: 'legendary', rarityName: 'Legendary' },
+            { type: 'frame', id: 'secret_frame', name: 'Секретная рамка', icon: '👑', rarity: 'legendary', rarityName: 'Legendary' }
+        ]
     }
 ];
 
@@ -114,6 +129,23 @@ function renderCasesShop() {
     
     container.innerHTML = cases.map(caseItem => {
         const canAfford = coins >= caseItem.price;
+        
+        // Для секретного кейса показываем специальную надпись
+        if (caseItem.isSecret) {
+            return `
+                <div class="case-item ${caseItem.class} secret-case">
+                    <div class="case-icon">
+                        ${caseItem.icon}
+                    </div>
+                    <div class="case-info">
+                        <div class="case-name">${caseItem.name}</div>
+                        <div class="secret-message">выполняйте задания →</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Для обычных кейсов
         return `
             <div class="case-item ${caseItem.class}">
                 <div class="case-icon">
@@ -204,6 +236,7 @@ function renderInventory() {
     // Обновляем статистику
     renderInventoryStats();
 }
+
 // Функция использования предмета из инвентаря
 function useInventoryItem(uniqueId) {
     // Удаляем uniqueId из списка новых
@@ -224,6 +257,12 @@ function useInventoryItem(uniqueId) {
 function buyCase(caseId) {
     const caseItem = cases.find(c => c.id === caseId);
     if (!caseItem) return;
+    
+    // Запрещаем покупку секретного кейса
+    if (caseItem.isSecret) {
+        alert('❌ Этот кейс нельзя купить! Выполняйте задания чтобы получить его.');
+        return;
+    }
     
     if (coins < caseItem.price) {
         alert('❌ Недостаточно Pingcoins!');
@@ -261,6 +300,37 @@ function buyCase(caseId) {
     }
 }
 
+// Функция для добавления секретного кейса (вызывать из другого места)
+function addSecretCase() {
+    const caseId = 'secret_case';
+    const caseItem = cases.find(c => c.id === caseId);
+    
+    // Создаем уникальный ID для этого экземпляра кейса
+    const uniqueId = `${caseId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Добавляем кейс в инвентарь с уникальным ID
+    ownedCases.push({
+        caseId: caseId,
+        uniqueId: uniqueId,
+        purchaseDate: Date.now()
+    });
+    
+    // Добавляем уникальный ID в новые предметы
+    addNewItem(caseId, uniqueId);
+    
+    saveUserToDB();
+    
+    // Обновляем статистику
+    renderInventoryStats();
+    
+    // Если открыт инвентарь - обновляем его
+    if (currentShopTab === 'inventory') {
+        renderInventory();
+    }
+    
+    alert(`✅ ${caseItem.name} добавлен в инвентарь!`);
+}
+
 function addItemToInventory(item) {
     // Заглушка для совместимости
 }
@@ -268,4 +338,3 @@ function addItemToInventory(item) {
 function closeCase() {
     // Заглушка
 }
-
