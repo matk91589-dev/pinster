@@ -478,7 +478,7 @@ body {
 
 /* ===== ПРОФИЛЬ ===== */
 
-/* СТАТИЧНЫЕ ЭЛЕМЕНТЫ ПРОФИЛЯ (без анимаций) */
+/* СТАТИЧНЫЕ ЭЛЕМЕНТЫ (без анимаций) - ВСЕ ПОЛЯ И КАРТОЧКИ */
 .profile-header,
 .profile-avatar,
 .profile-info,
@@ -514,9 +514,66 @@ body {
 .section-subtitle,
 .coins-header,
 .title-row,
-.edit-controls {
+.edit-controls,
+.stat-card,
+.stat-label,
+.stat-value,
+.stat-value input,
+.profile-stat-card,
+.profile-stat-label,
+.profile-stat-value,
+.input-field,
+.search-input-field,
+.rank-select option,
+.comment-input,
+.mode-search-btn,
+.cancel-search-btn {
     transition: none !important;
     transform: none !important;
+}
+
+/* Дополнительно для всех input, select, textarea */
+input, select, textarea, button {
+    transition: none !important;
+}
+
+/* Но оставляем анимации для кликабельных кнопок */
+.primary-btn,
+.mode-search-btn,
+.cancel-search-btn,
+.nav-item,
+.logo,
+.icon-settings,
+.mode-btn,
+.edit-title-icon,
+.apply-btn,
+.back-btn {
+    transition: all 0.2s ease !important;
+}
+
+.primary-btn:hover,
+.mode-search-btn:hover,
+.cancel-search-btn:hover,
+.nav-item:hover,
+.logo:hover,
+.icon-settings:hover,
+.mode-btn:hover,
+.edit-title-icon:hover,
+.apply-btn:hover,
+.back-btn:hover {
+    transform: scale(1.05) !important;
+}
+
+.primary-btn:active,
+.mode-search-btn:active,
+.cancel-search-btn:active,
+.logo:active,
+.icon-settings:active,
+.mode-btn:active,
+.edit-title-icon:active,
+.apply-btn:active,
+.back-btn:active {
+    transform: scale(0.95) !important;
 }
 
 /* Шапка профиля (аватар + ник) */
@@ -646,7 +703,7 @@ body {
 .stat-label {
     font-size: 10px;
     color: #9BA1B0;
-    font-weight: 600;  /* Жирнее */
+    font-weight: 600;
     margin-bottom: 4px;
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -684,7 +741,7 @@ body {
 
 .stat-value input::placeholder {
     color: #5D6472;
-    font-weight: 600;  /* Жирнее placeholder */
+    font-weight: 600;
     font-size: 12px;
     opacity: 1;
 }
@@ -736,7 +793,7 @@ body {
 .profile-stat-value::placeholder,
 .input-field::placeholder {
     color: #5D6472;
-    font-weight: 600;  /* Жирнее placeholder */
+    font-weight: 600;
     font-size: 12px;
     opacity: 1;
 }
@@ -769,7 +826,7 @@ body {
 .profile-stat-label {
     font-size: 10px;
     color: #9BA1B0;
-    font-weight: 600;  /* Жирнее */
+    font-weight: 600;
     margin-bottom: 4px;
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -831,7 +888,7 @@ body {
 .friends-count {
     color: #9BA1B0;
     font-size: 11px;
-    font-weight: 600;  /* Жирнее */
+    font-weight: 600;
 }
 
 .search-container {
@@ -860,7 +917,7 @@ body {
 
 .search-input::placeholder {
     color: #5D6472;
-    font-weight: 600;  /* Жирнее */
+    font-weight: 600;
 }
 
 .friends-list {
@@ -922,13 +979,13 @@ body {
     padding: 1px 5px;
     border-radius: 4px;
     font-family: monospace;
-    font-weight: 600;  /* Жирнее */
+    font-weight: 600;
 }
 
 .friend-steam {
     font-size: 9px;
     color: #9BA1B0;
-    font-weight: 600;  /* Жирнее */
+    font-weight: 600;
 }
 
 /* ===== ОСТАЛЬНЫЕ ЭЛЕМЕНТЫ ===== */
@@ -1027,7 +1084,7 @@ body {
 
 .search-input-field::placeholder {
     color: #5D6472;
-    font-weight: 600;  /* Жирнее */
+    font-weight: 600;
     font-size: 12px;
 }
 
@@ -1129,7 +1186,7 @@ body {
 
 .comment-input::placeholder {
     color: #5D6472;
-    font-weight: 600;  /* Жирнее */
+    font-weight: 600;
 }
 
 /* ЭКРАН ПОИСКА */
@@ -1184,16 +1241,5 @@ body {
     font-weight: 700;
     text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.2s;
     margin: 20px 0 10px 0;
-}
-
-.cancel-search-btn:hover {
-    background: #FF5500;
-    color: #F5F5F5;
-    transform: scale(1.05);
-}
-
-.cancel-search-btn:active {
-    transform: scale(0.95);
 }
