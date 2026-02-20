@@ -20,7 +20,7 @@ let savedAvatar = '👤';
 let savedAge = '-';
 let savedSteam = '-';
 let savedFaceitLink = '-';
-let savedCoins = 1000;
+let savedCoins = 99999;
 let savedOwnedNicks = [];
 let savedOwnedFrames = [];
 
@@ -49,4 +49,5 @@ const frames = [
     { id: 'green', name: 'Зеленая рамка', class: 'frame-green', price: 100 },
     { id: 'purple', name: 'Фиолетовая рамка', class: 'frame-purple', price: 200 },
     { id: 'rainbow', name: 'Радужная рамка', class: 'frame-rainbow', price: 300 }
+
 ];
