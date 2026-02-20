@@ -489,15 +489,10 @@ body {
 .profile-stats,
 .profile-stat-card,
 .profile-stat-label,
-.profile-stat-value,
 .heart-icon,
 .stats-row,
 .stat-card,
 .stat-label,
-.stat-value,
-.input-field,
-.input-field:focus,
-.input-field.editable,
 .friends-header,
 .friends-title,
 .friends-count,
@@ -664,13 +659,44 @@ body {
     font-weight: 500;
 }
 
-.stat-value {
-    font-size: 13px;
-    font-weight: 600;
+/* Стили для полей ввода как в FACEIT */
+.stat-value,
+.profile-stat-value,
+.input-field {
+    width: 100%;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 8px;
+    padding: 10px 12px;
     color: #F5F5F5;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    font-size: 13px;
+    margin: 0;
+    cursor: text;
+    font-weight: 500;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.stat-value:focus,
+.profile-stat-value:focus,
+.input-field:focus {
+    border-color: #FF5500;
+}
+
+.stat-value::placeholder,
+.profile-stat-value::placeholder,
+.input-field::placeholder {
+    color: #5D6472;
+    font-weight: 400;
+    font-size: 12px;
+    opacity: 1;
+}
+
+.stat-value.editable,
+.profile-stat-value.editable,
+.input-field.editable {
+    border-color: #FF5500;
+    border-width: 2px;
 }
 
 .heart-icon {
@@ -678,6 +704,7 @@ body {
     align-items: center;
     justify-content: center;
     line-height: 1;
+    margin-left: 4px;
 }
 
 .heart-icon svg {
@@ -715,44 +742,6 @@ body {
     color: #9BA1B0;
     margin-bottom: 2px;
     font-weight: 500;
-}
-
-.profile-stat-value {
-    font-size: 13px;
-    font-weight: 600;
-    color: #F5F5F5;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.input-field {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 10px 12px;
-    color: #F5F5F5;
-    font-size: 13px;
-    margin: 4px 0;
-    cursor: text;
-    font-weight: 500;
-}
-
-.input-field::placeholder {
-    color: #5D6472;
-    font-weight: 400;
-    font-size: 12px;
-}
-
-.input-field:focus {
-    outline: none;
-    border-color: #FF5500;
-}
-
-.input-field.editable {
-    border-color: #FF5500;
-    border-width: 2px;
 }
 
 /* ===== ДРУЗЬЯ ===== */
@@ -993,11 +982,18 @@ body {
     font-size: 14px;
     margin: 4px 0 12px 0;
     font-weight: 500;
+    outline: none;
 }
 
 .search-input-field:focus {
     outline: none;
     border-color: #FF5500;
+}
+
+.search-input-field::placeholder {
+    color: #5D6472;
+    font-weight: 400;
+    font-size: 12px;
 }
 
 .search-input-field[type="number"] {
@@ -1089,6 +1085,11 @@ body {
     resize: none;
     height: 70px;
     font-weight: 500;
+    outline: none;
+}
+
+.comment-input:focus {
+    border-color: #FF5500;
 }
 
 .comment-input::placeholder {
