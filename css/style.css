@@ -347,7 +347,7 @@ body {
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 40px auto 0 auto;
+    margin: 100px auto 0 auto;
     transition: all 0.2s ease;
     letter-spacing: 0.5px;
     box-shadow: 0 4px 0 #6B0000;
@@ -1174,4 +1174,5 @@ body {
 .cancel-search-btn:active {
     transform: scale(0.95);
 }
+
 
