@@ -810,19 +810,9 @@ input, select, textarea, button {
     background: rgba(255, 85, 0, 0.05) !important;
 }
 
-/* Для контейнера .stat-value (возраст и рейтинг) */
-.stat-value.editable-input {
-    border-color: #FF5500 !important;
-    border-width: 2px !important;
-}
-
-.stat-value.editable-input input {
-    background: rgba(255, 85, 0, 0.05) !important;
-}
-
-/* Для полей ссылок */
 .profile-stat-value.editable-input,
-.input-field.editable-input {
+.input-field.editable-input,
+.stat-value input.editable-input {
     border-color: #FF5500 !important;
     border-width: 2px !important;
 }
