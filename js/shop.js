@@ -4,6 +4,9 @@
 
 let currentShopTab = 'cases'; // 'cases' или 'inventory'
 
+// Массив для новых предметов (только что выбитых)
+let newItems = [];
+
 // Данные кейсов
 const cases = [
     { 
@@ -94,6 +97,50 @@ let currentCase = null;
 let isOpening = false;
 let caseReady = false; // Кейс готов к открытию
 
+// Функция обновления счетчика инвентаря
+function updateInventoryCounter() {
+    const counter = document.getElementById('inventoryCounter');
+    const totalItems = ownedNicks.length + ownedFrames.length;
+    
+    if (counter) {
+        if (totalItems > 0) {
+            counter.style.display = 'flex';
+            counter.textContent = totalItems;
+        } else {
+            counter.style.display = 'none';
+        }
+    }
+}
+
+// Добавление предмета в список новых
+function addNewItem(item) {
+    // Создаем уникальный ключ для предмета
+    const itemKey = `${item.type}_${item.id}`;
+    
+    // Проверяем, нет ли уже такого предмета в новых
+    const exists = newItems.some(existing => 
+        existing.type === item.type && existing.id === item.id
+    );
+    
+    if (!exists) {
+        newItems.push({
+            type: item.type,
+            id: item.id,
+            timestamp: Date.now()
+        });
+    }
+    
+    // Очищаем старые новые предметы (через 30 секунд)
+    setTimeout(() => {
+        newItems = newItems.filter(i => 
+            !(i.type === item.type && i.id === item.id)
+        );
+        if (currentShopTab === 'inventory') {
+            renderInventory();
+        }
+    }, 30000);
+}
+
 function showShopTab(tab) {
     currentShopTab = tab;
     
@@ -114,6 +161,7 @@ function showShopTab(tab) {
 function renderShop() {
     renderCasesShop();
     renderInventory();
+    updateInventoryCounter();
 }
 
 function renderCasesShop() {
@@ -124,11 +172,13 @@ function renderCasesShop() {
         const canAfford = coins >= caseItem.price;
         return `
             <div class="case-item ${caseItem.class}" onclick="openCase('${caseItem.id}')">
-                <div class="case-icon">${caseItem.icon}</div>
+                <div class="case-icon">
+                    ${caseItem.icon}
+                </div>
                 <div class="case-info">
                     <div class="case-name">${caseItem.name}</div>
                     <div class="case-price-row">
-                        <span class="price-value">${caseItem.price} Pingcoins</span>
+                        <span class="price-value">${caseItem.price}</span>
                         <button class="buy-btn-simple ${!canAfford ? 'disabled' : ''}" 
                                 onclick="event.stopPropagation(); buyCase('${caseItem.id}')">
                             КУПИТЬ
@@ -149,12 +199,14 @@ function renderInventory() {
     ownedNicks.forEach(nickId => {
         const nick = nicks.find(n => n.id === nickId);
         if (nick) {
+            const isNew = newItems.some(item => item.type === 'nick' && item.id === nick.id);
             ownedItems.push({
                 type: 'nick',
                 id: nick.id,
                 name: nick.name,
                 icon: '🎨',
-                class: nick.class
+                class: nick.class,
+                isNew: isNew
             });
         }
     });
@@ -162,12 +214,14 @@ function renderInventory() {
     ownedFrames.forEach(frameId => {
         const frame = frames.find(f => f.id === frameId);
         if (frame) {
+            const isNew = newItems.some(item => item.type === 'frame' && item.id === frame.id);
             ownedItems.push({
                 type: 'frame',
                 id: frame.id,
                 name: frame.name,
                 icon: '🖼️',
-                class: frame.class
+                class: frame.class,
+                isNew: isNew
             });
         }
     });
@@ -178,7 +232,8 @@ function renderInventory() {
     }
     
     container.innerHTML = ownedItems.map(item => `
-        <div class="inventory-item" onclick="useInventoryItem('${item.type}', '${item.id}')">
+        <div class="inventory-item ${item.isNew ? 'new-item' : ''}" onclick="useInventoryItem('${item.type}', '${item.id}')">
+            ${item.isNew ? '<span class="item-badge">NEW</span>' : ''}
             <div class="item-icon">${item.icon}</div>
             <div class="item-info">
                 <div class="item-name">${item.name}</div>
@@ -224,7 +279,7 @@ function buyCase(caseId) {
         return;
     }
     
-    if (confirm(`Купить ${caseItem.name} за ${caseItem.price} Pingcoins?`)) {
+    if (confirm(`Купить ${caseItem.name} за ${caseItem.price} PC?`)) {
         coins -= caseItem.price;
         document.getElementById('coinsAmount').textContent = coins;
         saveUserToDB();
@@ -363,14 +418,17 @@ function addItemToInventory(item) {
     if (item.type === 'nick') {
         if (!ownedNicks.includes(item.id)) {
             ownedNicks.push(item.id);
+            addNewItem(item); // Добавляем в новые
         }
     } else if (item.type === 'frame') {
         if (!ownedFrames.includes(item.id)) {
             ownedFrames.push(item.id);
+            addNewItem(item); // Добавляем в новые
         }
     }
     
     saveUserToDB();
+    updateInventoryCounter(); // Обновляем счетчик
     
     if (currentShopTab === 'inventory') {
         renderInventory();
@@ -389,4 +447,3 @@ function closeCase() {
     currentCase = null;
     caseReady = false;
 }
-
