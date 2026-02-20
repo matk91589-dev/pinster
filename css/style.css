@@ -556,11 +556,18 @@ input, select, textarea, button {
 .nav-item:hover,
 .logo:hover,
 .icon-settings:hover,
-.mode-btn:hover,
 .edit-title-icon:hover,
 .apply-btn:hover,
 .back-btn:hover {
     transform: scale(1.05) !important;
+}
+
+/* У 4 кнопок режимов убираем увеличение */
+.mode-btn.faceit:hover,
+.mode-btn.premier:hover,
+.mode-btn.prime:hover,
+.mode-btn.public:hover {
+    transform: none !important;
 }
 
 .primary-btn:active,
@@ -1344,5 +1351,3 @@ input:-webkit-autofill:active {
     transition: background-color 5000s ease-in-out 0s;
     box-shadow: inset 0 0 20px 20px #1A1D24 !important;
 }
-
-
