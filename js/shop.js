@@ -284,9 +284,33 @@ function buyCase(caseId) {
         document.getElementById('coinsAmount').textContent = coins;
         saveUserToDB();
         
-        // Открываем кейс после покупки
-        setTimeout(() => openCase(caseId), 500);
+        // Отправляем кейс в инвентарь (добавляем сам кейс как предмет)
+        addCaseToInventory(caseItem);
+        
+        // Обновляем отображение
+        if (currentShopTab === 'inventory') {
+            renderInventory();
+        }
     }
+}
+
+// Функция добавления кейса в инвентарь
+function addCaseToInventory(caseItem) {
+    // Создаем предмет "кейс" для инвентаря
+    const caseInventoryItem = {
+        type: 'case',
+        id: caseItem.id,
+        name: caseItem.name,
+        icon: '📦', // Иконка кейса
+        class: caseItem.class
+    };
+    
+    // Здесь можно добавить логику сохранения кейсов в отдельный массив
+    // Пока просто показываем уведомление
+    alert(`✅ ${caseItem.name} добавлен в инвентарь!`);
+    
+    // Обновляем счетчик инвентаря
+    updateInventoryCounter();
 }
 
 function openCase(caseId) {
