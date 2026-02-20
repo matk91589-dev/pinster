@@ -126,7 +126,7 @@ function updateInventoryBadge() {
     }
 }
 
-// Добавление предмета в список новых
+// Добавление предмета в список новых (NEW будет висеть вечно)
 function addNewItem(item) {
     const exists = newItems.some(existing => 
         existing.type === item.type && existing.id === item.id
@@ -142,17 +142,6 @@ function addNewItem(item) {
     
     // Обновляем бейдж
     updateInventoryBadge();
-    
-    // Очищаем старые новые предметы (через 30 секунд)
-    setTimeout(() => {
-        newItems = newItems.filter(i => 
-            !(i.type === item.type && i.id === item.id)
-        );
-        updateInventoryBadge();
-        if (currentShopTab === 'inventory') {
-            renderInventory();
-        }
-    }, 30000);
 }
 
 function showShopTab(tab) {
@@ -203,7 +192,7 @@ function renderCasesShop() {
     }).join('');
 }
 
-// НОВАЯ ФУНКЦИЯ: Отображение статистики инвентаря
+// Функция для отображения статистики инвентаря
 function renderInventoryStats() {
     const inventorySection = document.querySelector('.inventory-section');
     if (!inventorySection) return;
@@ -266,8 +255,21 @@ function renderInventory() {
     `).join('');
 }
 
+// Функция использования предмета из инвентаря
 function useInventoryItem(type, id) {
     if (type === 'case') {
+        // Удаляем предмет из списка новых (чтобы пропал NEW)
+        const itemIndex = newItems.findIndex(item => item.type === type && item.id === id);
+        if (itemIndex !== -1) {
+            newItems.splice(itemIndex, 1);
+        }
+        
+        // Обновляем бейдж на табе
+        updateInventoryBadge();
+        
+        // Перерисовываем инвентарь
+        renderInventory();
+        
         alert(`✅ Здесь будет открытие кейса`);
     }
 }
