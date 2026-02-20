@@ -56,6 +56,29 @@
     border: 1px solid #FF5500;
 }
 
+/* Бейдж NEW для инвентаря */
+.shop-tab .new-badge {
+    position: absolute;
+    top: -8px;
+    right: 10px;
+    background: #B00000;
+    color: #F5F5F5;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    animation: badgePulse 2s ease infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
 /* Секции магазина */
 .cases-section,
 .inventory-section {
@@ -81,26 +104,6 @@
     flex-direction: column;
     gap: 8px;
     padding: 0;
-}
-
-/* Счетчик инвентаря - ТОЛЬКО на экране магазина */
-.shop-screen .shop-tab .inventory-count {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: #B00000;
-    color: #F5F5F5;
-    font-size: 11px;
-    font-weight: 600;
-    min-width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 4px;
-    border: 2px solid #111317;
-    z-index: 100;
 }
 
 /* Бейдж "NEW" на кейсах */
@@ -298,7 +301,7 @@
     transform: scale(1.05);
 }
 
-/* Бейдж NEW */
+/* Бейдж NEW на предметах */
 .item-badge {
     position: absolute;
     top: 0px;
