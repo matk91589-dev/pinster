@@ -167,7 +167,26 @@ function renderInventory() {
         return;
     }
     
-    container.innerHTML = ownedCases.map(caseItem => {
+    // Разделяем предметы на новые и старые
+    const newCases = [];
+    const oldCases = [];
+    
+    ownedCases.forEach(caseItem => {
+        const isNew = newItems.includes(caseItem.uniqueId);
+        if (isNew) {
+            newCases.push(caseItem);
+        } else {
+            oldCases.push(caseItem);
+        }
+    });
+    
+    // Сортируем новые по дате покупки (сначала самые свежие)
+    newCases.sort((a, b) => b.purchaseDate - a.purchaseDate);
+    
+    // Объединяем: сначала новые, потом старые
+    const sortedCases = [...newCases, ...oldCases];
+    
+    container.innerHTML = sortedCases.map(caseItem => {
         const isNew = newItems.includes(caseItem.uniqueId);
         const caseData = cases.find(c => c.id === caseItem.caseId);
         
@@ -185,7 +204,6 @@ function renderInventory() {
     // Обновляем статистику
     renderInventoryStats();
 }
-
 // Функция использования предмета из инвентаря
 function useInventoryItem(uniqueId) {
     // Удаляем uniqueId из списка новых
@@ -250,3 +268,4 @@ function addItemToInventory(item) {
 function closeCase() {
     // Заглушка
 }
+
