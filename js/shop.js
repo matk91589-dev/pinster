@@ -106,8 +106,8 @@ let caseReady = false;
 // Функция обновления счетчика инвентаря
 function updateInventoryCounter() {
     const counter = document.getElementById('inventoryCounter');
-    // Проверяем что это именно счетчик инвентаря, а не что-то другое
-    if (counter && counter.closest('.shop-tab')) {
+    // Проверяем что это именно счетчик инвентаря
+    if (counter) {
         const totalItems = ownedCases.length;
         
         if (totalItems > 0) {
@@ -224,10 +224,7 @@ function renderInventory() {
         <div class="inventory-item ${item.isNew ? 'new-item' : ''}" onclick="useInventoryItem('${item.type}', '${item.id}')">
             ${item.isNew ? '<span class="item-badge">NEW</span>' : ''}
             <div class="item-icon">
-                <img src="${item.imagePath}" style="width: 40px; height: 40px; object-fit: contain;">
-            </div>
-            <div class="item-info">
-                <div class="item-name" style="display: none;">${item.name}</div>
+                <img src="${item.imagePath}" style="width: 100px; height: 100px; object-fit: contain;">
             </div>
         </div>
     `).join('');
