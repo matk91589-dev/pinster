@@ -318,7 +318,7 @@ body {
 
 .start-description-box {
     width: 280px;
-    border: 3px solid #FF5500;  /* ИСПРАВЛЕНО: теперь оранжевый */
+    border: 3px solid #FF5500;
     border-radius: 0 0 20px 20px;
     padding: 30px 16px 20px 16px;
     margin: -15px auto 0 auto;
@@ -477,6 +477,8 @@ body {
     color: #5D6472;
 }
 
+/* ===== ПРОФИЛЬ ===== */
+
 /* СТАТИЧНЫЕ ЭЛЕМЕНТЫ ПРОФИЛЯ (без анимаций) */
 .profile-header,
 .profile-avatar,
@@ -500,7 +502,6 @@ body {
 .friends-title,
 .friends-count,
 .friend-item,
-.friend-avatar,
 .friend-info,
 .friend-name,
 .friend-id,
@@ -526,6 +527,16 @@ body {
 .edit-controls {
     transition: none !important;
     transform: none !important;
+}
+
+/* Шапка профиля (аватар + ник) */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 4px 0 8px 0;
+    padding: 0;
+    position: relative;
 }
 
 .profile-avatar {
@@ -580,22 +591,13 @@ body {
     flex-wrap: wrap;
 }
 
-.profile-name,
-.friend-name,
-.case-name,
-.result-item,
-.mode-title,
-.section-title,
-.nav-label,
-.price-value,
-.profile-status {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: geometricPrecision;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000;
+.profile-name-label {
+    font-size: 11px;
+    color: #9BA1B0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
 }
 
 .profile-name {
@@ -622,15 +624,6 @@ body {
     font-weight: 700;
 }
 
-.profile-name-label {
-    font-size: 11px;
-    color: #9BA1B0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 500;
-}
-
 .profile-status {
     color: #4CAF50;
     font-size: 11px;
@@ -643,6 +636,60 @@ body {
     display: inline-block;
 }
 
+/* Статистика (рейтинг, возраст) */
+.stats-row {
+    display: flex;
+    gap: 6px;
+    margin: 4px 0;
+}
+
+.stat-card {
+    flex: 1;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 6px;
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+.stat-card.editable {
+    border-color: #FF5500;
+    border-width: 2px;
+}
+
+.stat-label {
+    font-size: 10px;
+    color: #9BA1B0;
+    margin-bottom: 2px;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #F5F5F5;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.heart-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.heart-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: #FF5500;
+    stroke-width: 2;
+    fill: none;
+    display: block;
+}
+
+/* Поля ввода (ссылки) */
 .profile-stats {
     display: flex;
     flex-direction: column;
@@ -679,22 +726,6 @@ body {
     gap: 4px;
 }
 
-.heart-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-}
-
-.heart-icon svg {
-    width: 16px;
-    height: 16px;
-    stroke: #FF5500;
-    stroke-width: 2;
-    fill: none;
-    display: block;
-}
-
 .input-field {
     width: 100%;
     background: #1A1D24;
@@ -708,6 +739,12 @@ body {
     font-weight: 500;
 }
 
+.input-field::placeholder {
+    color: #5D6472;
+    font-weight: 400;
+    font-size: 12px;
+}
+
 .input-field:focus {
     outline: none;
     border-color: #FF5500;
@@ -716,6 +753,16 @@ body {
 .input-field.editable {
     border-color: #FF5500;
     border-width: 2px;
+}
+
+/* ===== ДРУЗЬЯ ===== */
+.friends-section {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    margin: 8px 0 4px 0;
 }
 
 .friends-header {
@@ -791,15 +838,6 @@ body {
     border-color: #FF5500;
 }
 
-.friends-section {
-    width: 100%;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    margin: 8px 0 4px 0;
-}
-
 .friends-list {
     flex: 1;
     overflow-y: auto;
@@ -831,16 +869,9 @@ body {
     margin-bottom: 6px;
 }
 
+/* Убираем аватарки у друзей */
 .friend-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #2A2F3A;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    color: #9BA1B0;
+    display: none;
 }
 
 .friend-info {
@@ -876,6 +907,7 @@ body {
     font-weight: 500;
 }
 
+/* ===== ОСТАЛЬНЫЕ ЭЛЕМЕНТЫ ===== */
 .screen {
     flex: 1;
     display: flex;
@@ -975,52 +1007,6 @@ body {
 .search-input-field[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
-}
-
-.stats-row {
-    display: flex;
-    gap: 6px;
-    margin: 4px 0;
-}
-
-.stat-card {
-    flex: 1;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 6px;
-    padding: 8px 10px;
-    cursor: pointer;
-}
-
-.stat-card.editable {
-    border-color: #FF5500;
-    border-width: 2px;
-}
-
-.stat-label {
-    font-size: 10px;
-    color: #9BA1B0;
-    margin-bottom: 2px;
-    font-weight: 500;
-}
-
-.stat-value {
-    font-size: 13px;
-    font-weight: 600;
-    color: #F5F5F5;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.stat-value .heart-icon {
-    display: flex;
-    align-items: center;
-}
-
-.stat-value .heart-icon svg {
-    width: 16px;
-    height: 16px;
 }
 
 .rank-select {
@@ -1174,9 +1160,3 @@ body {
 .cancel-search-btn:active {
     transform: scale(0.95);
 }
-
-
-
-
-
-
