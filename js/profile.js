@@ -31,6 +31,7 @@ function loadSavedValues() {
             ageValueEl.placeholder = '0-100';
             ageValueEl.value = '';
         }
+        ageValueEl.maxLength = 3; // Ограничение на 3 символа
     }
     
     const steamDisplayEl = document.getElementById('steamDisplay');
@@ -41,6 +42,7 @@ function loadSavedValues() {
             steamDisplayEl.placeholder = 'введите ссылку на ваш профиль steam';
             steamDisplayEl.value = '';
         }
+        steamDisplayEl.maxLength = 50; // Ограничение на 50 символов
     }
     
     const faceitLinkDisplayEl = document.getElementById('faceitLinkDisplay');
@@ -51,6 +53,7 @@ function loadSavedValues() {
             faceitLinkDisplayEl.placeholder = 'введите ссылку на ваш профиль faceit / пропустите';
             faceitLinkDisplayEl.value = '';
         }
+        faceitLinkDisplayEl.maxLength = 50; // Ограничение на 50 символов
     }
     
     const coinsAmountEl = document.getElementById('coinsAmount');
@@ -131,7 +134,10 @@ function applyChanges() {
 }
 
 function editName() {
-    if (!editMode) return;
+    if (!editMode) {
+        alert('Сначала включите режим редактирования (карандаш)');
+        return;
+    }
     const newName = prompt('Введите новый никнейм (3-10 символов):', tempName === '-' ? '' : tempName);
     if (newName && newName.length >= CONFIG.APP.MIN_NAME_LENGTH && newName.length <= CONFIG.APP.MAX_NAME_LENGTH) {
         tempName = newName;
@@ -140,7 +146,10 @@ function editName() {
 }
 
 function editAge() {
-    if (!editMode) return;
+    if (!editMode) {
+        alert('Сначала включите режим редактирования (карандаш)');
+        return;
+    }
     const newAge = prompt('Введите возраст (0-100):', document.getElementById('ageValue').value || '');
     if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= CONFIG.APP.MAX_AGE) {
         document.getElementById('ageValue').value = newAge;
@@ -149,24 +158,56 @@ function editAge() {
 }
 
 function editSteam() {
-    if (!editMode) return;
+    if (!editMode) {
+        alert('Сначала включите режим редактирования (карандаш)');
+        return;
+    }
     const newSteam = prompt('Введите ссылку на Steam:', document.getElementById('steamDisplay').value || '');
     if (newSteam !== null) {
+        if (newSteam.length > 50) {
+            alert('Ссылка слишком длинная! Максимум 50 символов.');
+            return;
+        }
         document.getElementById('steamDisplay').value = newSteam;
         tempSteam = newSteam;
     }
 }
 
 function editFaceitLink() {
-    if (!editMode) return;
+    if (!editMode) {
+        alert('Сначала включите режим редактирования (карандаш)');
+        return;
+    }
     const newLink = prompt('Введите ссылку на Faceit:', document.getElementById('faceitLinkDisplay').value || '');
     if (newLink !== null) {
+        if (newLink.length > 50) {
+            alert('Ссылка слишком длинная! Максимум 50 символов.');
+            return;
+        }
         document.getElementById('faceitLinkDisplay').value = newLink;
         tempFaceitLink = newLink;
     }
 }
 
+function selectAvatar() {
+    if (!editMode) {
+        alert('Сначала включите режим редактирования (карандаш)');
+        return;
+    }
+    
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'environment';
+    input.onchange = (e) => handleFileSelect(e.target.files[0]);
+    input.click();
+}
+
 function editFaceitAge() {
+    if (!editMode) {
+        alert('Сначала включите режим редактирования (карандаш)');
+        return;
+    }
     const newAge = prompt('Введите возраст:', document.getElementById('faceitAgeValue').value || '');
     if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= CONFIG.APP.MAX_AGE) {
         document.getElementById('faceitAgeValue').value = newAge;
@@ -175,6 +216,10 @@ function editFaceitAge() {
 }
 
 function editPremierAge() {
+    if (!editMode) {
+        alert('Сначала включите режим редактирования (карандаш)');
+        return;
+    }
     const newAge = prompt('Введите возраст:', document.getElementById('premierAgeValue').value || '');
     if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= CONFIG.APP.MAX_AGE) {
         document.getElementById('premierAgeValue').value = newAge;
@@ -183,6 +228,10 @@ function editPremierAge() {
 }
 
 function editPrimeAge() {
+    if (!editMode) {
+        alert('Сначала включите режим редактирования (карандаш)');
+        return;
+    }
     const newAge = prompt('Введите возраст:', document.getElementById('primeAgeValue').value || '');
     if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= CONFIG.APP.MAX_AGE) {
         document.getElementById('primeAgeValue').value = newAge;
@@ -191,6 +240,10 @@ function editPrimeAge() {
 }
 
 function editPublicAge() {
+    if (!editMode) {
+        alert('Сначала включите режим редактирования (карандаш)');
+        return;
+    }
     const newAge = prompt('Введите возраст:', document.getElementById('publicAgeValue').value || '');
     if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= CONFIG.APP.MAX_AGE) {
         document.getElementById('publicAgeValue').value = newAge;
