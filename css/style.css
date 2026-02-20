@@ -65,7 +65,7 @@ body {
 }
 
 .logo .ping {
-    color: #B00000; /* Оставляем красный */
+    color: #B00000;
 }
 
 .logo .ster {
@@ -100,7 +100,7 @@ body {
 }
 
 .icon-settings.active svg {
-    stroke: #B00000; /* Оставляем красный для активного состояния */
+    stroke: #B00000;
 }
 
 /* Скрываем логотип только на стартовом экране */
@@ -156,15 +156,15 @@ body {
 }
 
 .edit-title-icon.active svg {
-    stroke: #B00000; /* Оставляем красный для активного состояния */
+    stroke: #B00000;
 }
 
 .apply-btn {
     background: transparent;
-    border: 1px solid #FF5500; /* Новый оранжевый */
+    border: 1px solid #FF5500;
     border-radius: 6px;
     padding: 3px 8px;
-    color: #FF5500; /* Новый оранжевый */
+    color: #FF5500;
     font-size: 11px;
     font-weight: 600;
     cursor: pointer;
@@ -179,7 +179,7 @@ body {
 }
 
 .apply-btn:hover {
-    background: #FF5500; /* Новый оранжевый */
+    background: #FF5500;
     color: #F5F5F5;
 }
 
@@ -237,7 +237,7 @@ body {
 .mode-search-btn {
     width: 280px;
     padding: 14px;
-    background: #FF5500; /* Новый оранжевый */
+    background: #FF5500;
     border: none;
     border-radius: 30px;
     font-size: 16px;
@@ -259,15 +259,15 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     height: 100%;
-    padding-top: 0;
+    padding: 20px 0 10px 0;
 }
 
 .start-logo {
     display: block;
     width: 280px;
-    margin: 20px auto 10px auto;
+    margin: 0 auto;
 }
 
 .start-logo img {
@@ -281,7 +281,7 @@ body {
 .start-avatar-square {
     width: 280px;
     height: 210px;
-    margin: 0 auto -20px auto;
+    margin: 0 auto;
     border: none;
     border-radius: 30px 30px 0 0;
     overflow: hidden;
@@ -289,7 +289,6 @@ body {
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
     position: relative;
     z-index: 2;
-    margin-top: 10px;
 }
 
 .start-avatar-square img {
@@ -303,12 +302,11 @@ body {
     width: 280px;
     border: 3px solid #FF5500;
     border-radius: 0 0 30px 30px;
-    padding: 35px 16px 20px 16px;
-    margin: 0 auto 25px auto;
+    padding: 25px 16px 20px 16px;
+    margin: -5px auto 0 auto;
     background: #1A1D24;
     position: relative;
     z-index: 1;
-    margin-top: 10px;
 }
 
 .start-description {
@@ -319,11 +317,10 @@ body {
     font-weight: 500;
 }
 
-/* ОБНОВЛЕННАЯ КНОПКА СТАРТОВОГО ЭКРАНА */
 .primary-btn {
     width: 300px;
-    padding: 20px;
-    background: #B00000; /* Новый оранжевый */
+    padding: 18px;
+    background: #B00000;
     border: none;
     border-radius: 40px;
     font-size: 22px;
@@ -331,7 +328,7 @@ body {
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 20px auto 10px auto;
+    margin: 10px auto 0 auto;
     transition: all 0.1s ease;
     letter-spacing: 1px;
 }
@@ -371,7 +368,7 @@ body {
 }
 
 .nav-item.active svg {
-    stroke: #B00000; /* Оставляем красный для активной навигации */
+    stroke: #B00000;
 }
 
 .nav-icon svg {
@@ -415,19 +412,19 @@ body {
 }
 
 .mode-btn:hover {
-    border-color: #FF5500; /* Новый оранжевый */
+    border-color: #FF5500;
     background: #1E2128;
     transform: translateY(-1px);
 }
 
 .mode-btn.faceit {
-    border-left: 4px solid #FF5500; /* Новый оранжевый */
-    color: #FF5500; /* Новый оранжевый */
+    border-left: 4px solid #FF5500;
+    color: #FF5500;
 }
 
 .mode-btn.premier {
-    border-left: 4px solid #FF5500; /* Новый оранжевый */
-    color: #FF5500; /* Новый оранжевый */
+    border-left: 4px solid #FF5500;
+    color: #FF5500;
 }
 
 .mode-btn.prime {
@@ -484,11 +481,11 @@ body {
 }
 
 .profile-avatar.editable {
-    border-color: #FF5500; /* Новый оранжевый */
+    border-color: #FF5500;
     border-width: 3px;
 }
 
-.profile-avatar.frame-red { border-color: #FF5500; border-width: 3px; } /* Новый оранжевый */
+.profile-avatar.frame-red { border-color: #FF5500; border-width: 3px; }
 .profile-avatar.frame-gold { border-color: #FFD700; border-width: 3px; }
 .profile-avatar.frame-blue { border-color: #2196F3; border-width: 3px; }
 .profile-avatar.frame-green { border-color: #4CAF50; border-width: 3px; }
@@ -514,7 +511,6 @@ body {
     flex-wrap: wrap;
 }
 
-/* Стили для текста (один блок, без дублей) */
 .profile-name,
 .friend-name,
 .case-name,
@@ -542,10 +538,10 @@ body {
 }
 
 .profile-name.editable {
-    color: #FF5500; /* Новый оранжевый */
+    color: #FF5500;
 }
 
-.profile-name.red { color: #FF5500; } /* Новый оранжевый */
+.profile-name.red { color: #FF5500; }
 .profile-name.green { color: #4CAF50; }
 .profile-name.blue { color: #2196F3; }
 .profile-name.purple { color: #9C27B0; }
@@ -595,7 +591,7 @@ body {
 }
 
 .profile-stat-card.editable {
-    border-color: #FF5500; /* Новый оранжевый */
+    border-color: #FF5500;
     border-width: 2px;
 }
 
@@ -625,7 +621,7 @@ body {
 .heart-icon svg {
     width: 16px;
     height: 16px;
-    stroke: #FF5500; /* Новый оранжевый */
+    stroke: #FF5500;
     stroke-width: 2;
     fill: none;
     display: block;
@@ -647,11 +643,11 @@ body {
 
 .input-field:focus {
     outline: none;
-    border-color: #FF5500; /* Новый оранжевый */
+    border-color: #FF5500;
 }
 
 .input-field.editable {
-    border-color: #FF5500; /* Новый оранжевый */
+    border-color: #FF5500;
     border-width: 2px;
 }
 
@@ -696,7 +692,7 @@ body {
 .back-icon svg {
     width: 18px;
     height: 18px;
-    stroke: #B00000; /* Оставляем красный для кнопки назад */
+    stroke: #B00000;
     stroke-width: 2;
     fill: none;
 }
@@ -735,7 +731,7 @@ body {
 
 .search-input:focus {
     outline: none;
-    border-color: #FF5500; /* Новый оранжевый */
+    border-color: #FF5500;
 }
 
 .friends-section {
@@ -763,7 +759,7 @@ body {
 }
 
 .friends-list::-webkit-scrollbar-thumb {
-    background: #FF5500; /* Новый оранжевый */
+    background: #FF5500;
     border-radius: 10px;
 }
 
@@ -809,7 +805,7 @@ body {
 
 .friend-id {
     font-size: 9px;
-    color: #FF5500; /* Новый оранжевый */
+    color: #FF5500;
     background: rgba(255, 85, 0, 0.1);
     padding: 1px 5px;
     border-radius: 4px;
@@ -874,7 +870,7 @@ body {
 }
 
 .back-btn:hover {
-    border-color: #FF5500; /* Новый оранжевый */
+    border-color: #FF5500;
     color: #F5F5F5;
 }
 
@@ -886,8 +882,8 @@ body {
     line-height: 36px;
 }
 
-.mode-title.faceit { color: #FF5500; } /* Новый оранжевый */
-.mode-title.premier { color: #FF5500; } /* Новый оранжевый */
+.mode-title.faceit { color: #FF5500; }
+.mode-title.premier { color: #FF5500; }
 .mode-title.prime { color: #F5F5F5; text-transform: none; }
 .mode-title.public { color: #F5F5F5; text-transform: none; }
 
@@ -913,7 +909,7 @@ body {
 
 .search-input-field:focus {
     outline: none;
-    border-color: #FF5500; /* Новый оранжевый */
+    border-color: #FF5500;
 }
 
 .search-input-field[type="number"] {
@@ -942,7 +938,7 @@ body {
 }
 
 .stat-card.editable {
-    border-color: #FF5500; /* Новый оранжевый */
+    border-color: #FF5500;
     border-width: 2px;
 }
 
@@ -991,12 +987,12 @@ body {
 }
 
 .rank-select:hover {
-    border-color: #FF5500; /* Новый оранжевый */
+    border-color: #FF5500;
 }
 
 .rank-select:focus {
     outline: none;
-    border-color: #FF5500; /* Новый оранжевый */
+    border-color: #FF5500;
 }
 
 .rank-select option {
@@ -1027,7 +1023,7 @@ body {
 }
 
 .style-option.active {
-    background: #FF5500; /* Новый оранжевый */
+    background: #FF5500;
     color: #F5F5F5;
 }
 
@@ -1073,7 +1069,7 @@ body {
 .search-title {
     font-size: 24px;
     font-weight: 700;
-    color: #FF5500; /* Новый оранжевый */
+    color: #FF5500;
 }
 
 .search-timer {
@@ -1105,9 +1101,9 @@ body {
     width: 100%;
     padding: 18px;
     background: transparent;
-    border: 2px solid #FF5500; /* Новый оранжевый */
+    border: 2px solid #FF5500;
     border-radius: 12px;
-    color: #FF5500; /* Новый оранжевый */
+    color: #FF5500;
     font-size: 18px;
     font-weight: 700;
     text-transform: uppercase;
@@ -1117,14 +1113,10 @@ body {
 }
 
 .cancel-search-btn:hover {
-    background: #FF5500; /* Новый оранжевый */
+    background: #FF5500;
     color: #F5F5F5;
 }
 
 .cancel-search-btn:active {
     transform: scale(0.95);
 }
-
-
-
-
