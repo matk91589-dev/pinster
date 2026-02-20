@@ -188,10 +188,11 @@
                 </div>
 
                 <div class="stats-row">
+                    <!-- Рейтинг с сердечком -->
                     <div class="stat-card" id="ratingCard">
                         <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">
-                            0
+                            <input type="text" id="ratingValue" placeholder="0" value="0">
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
@@ -200,9 +201,12 @@
                             </span>
                         </div>
                     </div>
+                    <!-- Возраст -->
                     <div class="stat-card" id="ageCard" onclick="editAge()">
                         <div class="stat-label">Возраст</div>
-                        <input type="text" class="stat-value" id="ageValue" placeholder="0-100" value="">
+                        <div class="stat-value">
+                            <input type="text" id="ageValue" placeholder="0-100" value="">
+                        </div>
                     </div>
                 </div>
 
@@ -325,7 +329,7 @@
                     <div class="stat-card">
                         <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">
-                            0
+                            <input type="text" placeholder="0" value="0">
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
@@ -336,7 +340,9 @@
                     </div>
                     <div class="stat-card" onclick="editFaceitAge()">
                         <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="faceitAgeValue">21</div>
+                        <div class="stat-value">
+                            <input type="text" id="faceitAgeValue" placeholder="21" value="21">
+                        </div>
                     </div>
                 </div>
                 
@@ -374,7 +380,7 @@
                     <div class="stat-card">
                         <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">
-                            0
+                            <input type="text" placeholder="0" value="0">
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
@@ -385,7 +391,9 @@
                     </div>
                     <div class="stat-card" onclick="editPremierAge()">
                         <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="premierAgeValue">21</div>
+                        <div class="stat-value">
+                            <input type="text" id="premierAgeValue" placeholder="21" value="21">
+                        </div>
                     </div>
                 </div>
                 
@@ -438,7 +446,7 @@
                     <div class="stat-card">
                         <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">
-                            0
+                            <input type="text" placeholder="0" value="0">
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
@@ -449,7 +457,9 @@
                     </div>
                     <div class="stat-card" onclick="editPrimeAge()">
                         <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="primeAgeValue">21</div>
+                        <div class="stat-value">
+                            <input type="text" id="primeAgeValue" placeholder="21" value="21">
+                        </div>
                     </div>
                 </div>
                 
@@ -502,7 +512,7 @@
                     <div class="stat-card">
                         <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">
-                            0
+                            <input type="text" placeholder="0" value="0">
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
@@ -513,7 +523,9 @@
                     </div>
                     <div class="stat-card" onclick="editPublicAge()">
                         <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="publicAgeValue">21</div>
+                        <div class="stat-value">
+                            <input type="text" id="publicAgeValue" placeholder="21" value="21">
+                        </div>
                     </div>
                 </div>
                 
