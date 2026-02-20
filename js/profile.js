@@ -2,7 +2,53 @@
 // ФУНКЦИИ ПРОФИЛЯ
 // ============================================
 
+// Генерация случайного ника из 6 символов (буквы + цифры)
+function generateRandomNick() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let nick = '';
+    for (let i = 0; i < 6; i++) {
+        nick += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return nick;
+}
+
+// Функция для установки placeholder'ов в поля ввода
+function setInputPlaceholders() {
+    // Возраст
+    const ageCard = document.getElementById('ageCard');
+    if (ageCard) {
+        const ageValue = document.getElementById('ageValue');
+        if (ageValue && ageValue.textContent === '-') {
+            ageValue.setAttribute('placeholder', '0-100');
+        }
+    }
+    
+    // Ссылка Steam
+    const steamCard = document.getElementById('steamCard');
+    if (steamCard) {
+        const steamValue = document.getElementById('steamDisplay');
+        if (steamValue && steamValue.textContent === '-') {
+            steamValue.setAttribute('placeholder', 'ссылка на ваш профиль steam');
+        }
+    }
+    
+    // Ссылка Faceit
+    const faceitCard = document.getElementById('faceitLinkCard');
+    if (faceitCard) {
+        const faceitValue = document.getElementById('faceitLinkDisplay');
+        if (faceitValue && faceitValue.textContent === '-') {
+            faceitValue.setAttribute('placeholder', 'ссылка на ваш профиль faceit (если есть)');
+        }
+    }
+}
+
 function loadSavedValues() {
+    // Если нет сохраненного ника, генерируем случайный
+    if (savedName === '-') {
+        savedName = generateRandomNick();
+        tempName = savedName;
+    }
+    
     const profileNameEl = document.getElementById('profileName');
     if (profileNameEl) profileNameEl.textContent = savedName;
     
@@ -47,6 +93,9 @@ function loadSavedValues() {
     tempAge = savedAge;
     tempSteam = savedSteam;
     tempFaceitLink = savedFaceitLink;
+    
+    // Устанавливаем placeholder'ы для пустых полей
+    setInputPlaceholders();
 }
 
 function toggleEditMode() {
@@ -102,10 +151,12 @@ function editName() {
 
 function editAge() {
     if (!editMode) return;
-    const newAge = prompt('Введите возраст:', tempAge === '-' ? '' : tempAge);
+    const newAge = prompt('Введите возраст (0-100):', tempAge === '-' ? '' : tempAge);
     if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= CONFIG.APP.MAX_AGE) {
         tempAge = newAge;
         document.getElementById('ageValue').textContent = newAge;
+        // Убираем placeholder если он был
+        document.getElementById('ageValue').removeAttribute('placeholder');
     }
 }
 
@@ -115,6 +166,8 @@ function editSteam() {
     if (newSteam) {
         tempSteam = newSteam;
         document.getElementById('steamDisplay').textContent = newSteam;
+        // Убираем placeholder если он был
+        document.getElementById('steamDisplay').removeAttribute('placeholder');
     }
 }
 
@@ -124,6 +177,8 @@ function editFaceitLink() {
     if (newLink !== null) {
         tempFaceitLink = newLink || '-';
         document.getElementById('faceitLinkDisplay').textContent = tempFaceitLink;
+        // Убираем placeholder если он был
+        document.getElementById('faceitLinkDisplay').removeAttribute('placeholder');
     }
 }
 
