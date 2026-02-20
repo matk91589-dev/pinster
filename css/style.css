@@ -254,18 +254,18 @@ body {
     transform: scale(0.95);
 }
 
-/* ===== СТАРТОВЫЙ ЭКРАН ===== */
+/* ===== СТАРТОВЫЙ ЭКРАН (ИСПРАВЛЕН) ===== */
 .start-screen {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     height: 100%;
-    padding: 20px 0 10px 0;
+    padding: 20px 0 0 0;
 }
 
 .start-logo {
-    display: none; /* Скрываем логотип */
+    display: none;
 }
 
 .start-avatar-square {
@@ -292,8 +292,8 @@ body {
     width: 280px;
     border: 3px solid #FF5500;
     border-radius: 0 0 30px 30px;
-    padding: 40px 16px 20px 16px;  /* Еще больше верхний отступ */
-    margin: -35px auto 0 auto;      /* Еще сильнее наезд */
+    padding: 45px 16px 25px 16px;
+    margin: -30px auto 0 auto;
     background: #1A1D24;
     position: relative;
     z-index: 1;
@@ -318,7 +318,7 @@ body {
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 10px auto 0 auto;
+    margin: 20px auto 0 auto;
     transition: all 0.1s ease;
     letter-spacing: 1px;
 }
@@ -334,7 +334,7 @@ body {
     align-items: center;
     padding: 8px 0 4px 0;
     background: transparent;
-    margin-top: 4px;
+    margin-top: auto;
     border-top: 1px solid #1E2128;
 }
 
@@ -1110,4 +1110,3 @@ body {
 .cancel-search-btn:active {
     transform: scale(0.95);
 }
-
