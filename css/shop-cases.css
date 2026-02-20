@@ -224,7 +224,8 @@
 .inventory-section {
     flex: 1;
     overflow-y: auto;
-    padding: 0 5px 0 0;
+    padding: 0 10px;  /* Увеличил отступы по бокам */
+    overflow-x: visible;  /* Чтобы не обрезало по бокам */
     
     /* Стилизация скролла для Firefox */
     scrollbar-width: thin;
@@ -278,16 +279,17 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
-    padding: 5px 0;
+    padding: 10px 0;  /* Увеличил паддинги */
     justify-items: center;
     align-items: start;
+    overflow: visible;  /* Чтобы ничего не обрезалось */
 }
 
-/* Контейнер для кейса в инвентаре */
+/* Контейнер для кейса в инвентаре - с невидимой областью для бейджа */
 .inventory-item {
     background: transparent;
     border: none;
-    padding: 0;
+    padding: 10px;  /* Добавляем невидимое пространство для бейджа */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -297,6 +299,8 @@
     width: 100%;
     max-width: 170px;
     aspect-ratio: 1 / 1;
+    /* Чтобы padding не влиял на размер контейнера */
+    box-sizing: content-box;
 }
 
 .inventory-item:hover {
@@ -304,10 +308,10 @@
     border: none;
 }
 
-/* Контейнер для картинки кейса */
+/* Контейнер для картинки кейса - теперь внутри padding-области */
 .inventory-item .item-icon {
-    width: 95%;
-    height: 95%;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -326,11 +330,11 @@
     transform: scale(1.05);
 }
 
-/* Бейдж NEW на предметах */
+/* Бейдж NEW на предметах - теперь не обрезается */
 .item-badge {
     position: absolute;
-    top: -8px;
-    left: -8px;
+    top: -12px;      /* Еще выше */
+    left: -12px;      /* Еще левее */
     background: #B00000;
     color: #F5F5F5;
     font-size: 11px;
@@ -339,9 +343,11 @@
     border-radius: 4px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    z-index: 10;
+    z-index: 20;      /* Увеличил z-index */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     animation: badgeGlow 2s ease infinite;
+    white-space: nowrap;  /* Чтобы текст не переносился */
+    pointer-events: none;  /* Чтобы не мешал кликам */
 }
 
 @keyframes badgeGlow {
