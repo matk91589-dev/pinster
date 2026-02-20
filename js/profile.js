@@ -12,36 +12,6 @@ function generateRandomNick() {
     return nick;
 }
 
-// Функция для установки placeholder'ов в поля ввода
-function setInputPlaceholders() {
-    // Возраст
-    const ageCard = document.getElementById('ageCard');
-    if (ageCard) {
-        const ageValue = document.getElementById('ageValue');
-        if (ageValue && ageValue.textContent === '-') {
-            ageValue.setAttribute('placeholder', '0-100');
-        }
-    }
-    
-    // Ссылка Steam
-    const steamCard = document.getElementById('steamCard');
-    if (steamCard) {
-        const steamValue = document.getElementById('steamDisplay');
-        if (steamValue && steamValue.textContent === '-') {
-            steamValue.setAttribute('placeholder', 'ссылка на ваш профиль steam');
-        }
-    }
-    
-    // Ссылка Faceit
-    const faceitCard = document.getElementById('faceitLinkCard');
-    if (faceitCard) {
-        const faceitValue = document.getElementById('faceitLinkDisplay');
-        if (faceitValue && faceitValue.textContent === '-') {
-            faceitValue.setAttribute('placeholder', 'ссылка на ваш профиль faceit (если есть)');
-        }
-    }
-}
-
 function loadSavedValues() {
     // Если нет сохраненного ника, генерируем случайный
     if (savedName === '-') {
@@ -52,14 +22,36 @@ function loadSavedValues() {
     const profileNameEl = document.getElementById('profileName');
     if (profileNameEl) profileNameEl.textContent = savedName;
     
+    // Для input'ов используем value, а не textContent
     const ageValueEl = document.getElementById('ageValue');
-    if (ageValueEl) ageValueEl.textContent = savedAge;
+    if (ageValueEl) {
+        if (savedAge && savedAge !== '-') {
+            ageValueEl.value = savedAge;
+        } else {
+            ageValueEl.placeholder = '0-100';
+            ageValueEl.value = '';
+        }
+    }
     
     const steamDisplayEl = document.getElementById('steamDisplay');
-    if (steamDisplayEl) steamDisplayEl.textContent = savedSteam;
+    if (steamDisplayEl) {
+        if (savedSteam && savedSteam !== '-') {
+            steamDisplayEl.value = savedSteam;
+        } else {
+            steamDisplayEl.placeholder = 'введите ссылку на ваш профиль steam';
+            steamDisplayEl.value = '';
+        }
+    }
     
     const faceitLinkDisplayEl = document.getElementById('faceitLinkDisplay');
-    if (faceitLinkDisplayEl) faceitLinkDisplayEl.textContent = savedFaceitLink;
+    if (faceitLinkDisplayEl) {
+        if (savedFaceitLink && savedFaceitLink !== '-') {
+            faceitLinkDisplayEl.value = savedFaceitLink;
+        } else {
+            faceitLinkDisplayEl.placeholder = 'введите ссылку на ваш профиль faceit / пропустите';
+            faceitLinkDisplayEl.value = '';
+        }
+    }
     
     const coinsAmountEl = document.getElementById('coinsAmount');
     if (coinsAmountEl) coinsAmountEl.textContent = coins;
@@ -93,9 +85,6 @@ function loadSavedValues() {
     tempAge = savedAge;
     tempSteam = savedSteam;
     tempFaceitLink = savedFaceitLink;
-    
-    // Устанавливаем placeholder'ы для пустых полей
-    setInputPlaceholders();
 }
 
 function toggleEditMode() {
@@ -129,11 +118,12 @@ function toggleEditMode() {
 }
 
 function applyChanges() {
+    // Сохраняем значения из input'ов
     savedName = tempName;
     savedAvatar = tempAvatar;
-    savedAge = tempAge;
-    savedSteam = tempSteam;
-    savedFaceitLink = tempFaceitLink;
+    savedAge = document.getElementById('ageValue').value;
+    savedSteam = document.getElementById('steamDisplay').value;
+    savedFaceitLink = document.getElementById('faceitLinkDisplay').value;
     
     loadSavedValues();
     saveUserToDB();
@@ -151,65 +141,59 @@ function editName() {
 
 function editAge() {
     if (!editMode) return;
-    const newAge = prompt('Введите возраст (0-100):', tempAge === '-' ? '' : tempAge);
+    const newAge = prompt('Введите возраст (0-100):', document.getElementById('ageValue').value || '');
     if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= CONFIG.APP.MAX_AGE) {
+        document.getElementById('ageValue').value = newAge;
         tempAge = newAge;
-        document.getElementById('ageValue').textContent = newAge;
-        // Убираем placeholder если он был
-        document.getElementById('ageValue').removeAttribute('placeholder');
     }
 }
 
 function editSteam() {
     if (!editMode) return;
-    const newSteam = prompt('Введите ссылку на Steam:', tempSteam === '-' ? '' : tempSteam);
-    if (newSteam) {
+    const newSteam = prompt('Введите ссылку на Steam:', document.getElementById('steamDisplay').value || '');
+    if (newSteam !== null) {
+        document.getElementById('steamDisplay').value = newSteam;
         tempSteam = newSteam;
-        document.getElementById('steamDisplay').textContent = newSteam;
-        // Убираем placeholder если он был
-        document.getElementById('steamDisplay').removeAttribute('placeholder');
     }
 }
 
 function editFaceitLink() {
     if (!editMode) return;
-    const newLink = prompt('Введите ссылку на Faceit:', tempFaceitLink === '-' ? '' : tempFaceitLink);
+    const newLink = prompt('Введите ссылку на Faceit:', document.getElementById('faceitLinkDisplay').value || '');
     if (newLink !== null) {
-        tempFaceitLink = newLink || '-';
-        document.getElementById('faceitLinkDisplay').textContent = tempFaceitLink;
-        // Убираем placeholder если он был
-        document.getElementById('faceitLinkDisplay').removeAttribute('placeholder');
+        document.getElementById('faceitLinkDisplay').value = newLink;
+        tempFaceitLink = newLink;
     }
 }
 
 function editFaceitAge() {
-    const newAge = prompt('Введите возраст:', tempAge === '-' ? '' : tempAge);
+    const newAge = prompt('Введите возраст:', document.getElementById('faceitAgeValue').value || '');
     if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= CONFIG.APP.MAX_AGE) {
-        document.getElementById('faceitAgeValue').textContent = newAge;
+        document.getElementById('faceitAgeValue').value = newAge;
         tempAge = newAge;
     }
 }
 
 function editPremierAge() {
-    const newAge = prompt('Введите возраст:', tempAge === '-' ? '' : tempAge);
+    const newAge = prompt('Введите возраст:', document.getElementById('premierAgeValue').value || '');
     if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= CONFIG.APP.MAX_AGE) {
-        document.getElementById('premierAgeValue').textContent = newAge;
+        document.getElementById('premierAgeValue').value = newAge;
         tempAge = newAge;
     }
 }
 
 function editPrimeAge() {
-    const newAge = prompt('Введите возраст:', tempAge === '-' ? '' : tempAge);
+    const newAge = prompt('Введите возраст:', document.getElementById('primeAgeValue').value || '');
     if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= CONFIG.APP.MAX_AGE) {
-        document.getElementById('primeAgeValue').textContent = newAge;
+        document.getElementById('primeAgeValue').value = newAge;
         tempAge = newAge;
     }
 }
 
 function editPublicAge() {
-    const newAge = prompt('Введите возраст:', tempAge === '-' ? '' : tempAge);
+    const newAge = prompt('Введите возраст:', document.getElementById('publicAgeValue').value || '');
     if (newAge && !isNaN(newAge) && newAge >= 0 && newAge <= CONFIG.APP.MAX_AGE) {
-        document.getElementById('publicAgeValue').textContent = newAge;
+        document.getElementById('publicAgeValue').value = newAge;
         tempAge = newAge;
     }
 }
