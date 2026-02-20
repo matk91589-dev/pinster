@@ -62,16 +62,65 @@ body {
     letter-spacing: -0.5px;
     color: #F5F5F5;
     cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    display: inline-block;
+}
+
+/* Анимация при нажатии на Pingster */
+.logo:active {
+    transform: scale(0.9);
+    opacity: 0.8;
+}
+
+.logo::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(176, 0, 0, 0.3);
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
+    z-index: -1;
+}
+
+.logo:active::after {
+    width: 100px;
+    height: 100px;
+    background: rgba(176, 0, 0, 0.1);
+}
+
+/* Эффект пульсации при наведении */
+.logo:hover {
+    animation: logoPulse 1s ease infinite;
+}
+
+@keyframes logoPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
 }
 
 .logo .ping {
     color: #B00000;
+    transition: color 0.2s ease;
+}
+
+.logo:hover .ping {
+    color: #FF5500;
 }
 
 .logo .ster {
     color: #F5F5F5;
     font-weight: 400;
     opacity: 0.9;
+    transition: opacity 0.2s ease;
+}
+
+.logo:hover .ster {
+    opacity: 1;
 }
 
 .icon-settings {
@@ -254,7 +303,7 @@ body {
     transform: scale(0.95);
 }
 
-/* ===== СТАРТОВЫЙ ЭКРАН (ИСПРАВЛЕН) ===== */
+/* ===== СТАРТОВЫЙ ЭКРАН ===== */
 .start-screen {
     display: flex;
     flex-direction: column;
@@ -273,7 +322,7 @@ body {
     height: 210px;
     margin: 0 auto;
     border: none;
-    border-radius: 30px 30px 0 0;
+    border-radius: 20px 20px 0 0;  /* Уменьшил скругление сверху */
     overflow: hidden;
     background: #1A1D24;
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
@@ -290,10 +339,10 @@ body {
 
 .start-description-box {
     width: 280px;
-    border: 3px solid #FF5500;
-    border-radius: 0 0 30px 30px;
-    padding: 45px 16px 25px 16px;
-    margin: -30px auto 0 auto;
+    border: 3px solid #B00000;  /* Красный цвет */
+    border-radius: 0 0 20px 20px;  /* Уменьшил скругление снизу */
+    padding: 30px 16px 20px 16px;
+    margin: -15px auto 0 auto;  /* Наложение на аватарку */
     background: #1A1D24;
     position: relative;
     z-index: 1;
@@ -302,29 +351,38 @@ body {
 .start-description {
     color: #F5F5F5;
     font-size: 14px;
-    line-height: 1.6;
+    line-height: 1.5;
     text-align: center;
     font-weight: 500;
 }
 
+/* ОБНОВЛЕННАЯ КНОПКА */
 .primary-btn {
-    width: 300px;
-    padding: 18px;
+    width: 280px;  /* Равна ширине аватарки */
+    padding: 14px;
     background: #B00000;
     border: none;
-    border-radius: 40px;
-    font-size: 22px;
-    font-weight: 800;
+    border-radius: 12px;  /* Маленькое скругление */
+    font-size: 18px;
+    font-weight: 700;
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
     margin: 20px auto 0 auto;
-    transition: all 0.1s ease;
-    letter-spacing: 1px;
+    transition: all 0.2s ease;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 0 #6B0000;  /* Тень для объема */
+}
+
+.primary-btn:hover {
+    background: #8B0000;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #6B0000;
 }
 
 .primary-btn:active {
-    transform: scale(0.95);
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #6B0000;
     opacity: 0.9;
 }
 
