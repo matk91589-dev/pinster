@@ -441,7 +441,6 @@ body {
 .mode-btn:hover {
     border-color: #FF5500;
     background: #1E2128;
-    transform: translateY(-1px);
 }
 
 .mode-btn.faceit {
@@ -1345,4 +1344,5 @@ input:-webkit-autofill:active {
     transition: background-color 5000s ease-in-out 0s;
     box-shadow: inset 0 0 20px 20px #1A1D24 !important;
 }
+
 
