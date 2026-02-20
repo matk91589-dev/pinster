@@ -584,10 +584,8 @@ body {
 .profile-name-label {
     font-size: 11px;
     color: #9BA1B0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
     font-weight: 500;
+    margin-bottom: 2px;
 }
 
 .profile-name {
@@ -626,7 +624,7 @@ body {
     display: inline-block;
 }
 
-/* Статистика (рейтинг, возраст) - без внешних плашек */
+/* Статистика (рейтинг, возраст) - одинаковые поля */
 .stats-row {
     display: flex;
     gap: 12px;
@@ -648,12 +646,72 @@ body {
 .stat-label {
     font-size: 10px;
     color: #9BA1B0;
+    font-weight: 600;  /* Жирнее */
     margin-bottom: 4px;
-    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
 
-/* Стили для полей ввода как в FACEIT */
-.stat-value,
+/* Поля ввода как в FACEIT */
+.stat-value {
+    width: 100%;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #F5F5F5;
+    font-size: 13px;
+    margin: 0;
+    cursor: text;
+    font-weight: 500;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-value input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #F5F5F5;
+    font-size: 13px;
+    font-weight: 500;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.stat-value input::placeholder {
+    color: #5D6472;
+    font-weight: 600;  /* Жирнее placeholder */
+    font-size: 12px;
+    opacity: 1;
+}
+
+.stat-value:focus-within {
+    border-color: #FF5500;
+}
+
+.heart-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+
+.heart-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: #FF5500;
+    stroke-width: 2;
+    fill: none;
+    display: block;
+}
+
+/* Поля ввода для ссылок */
 .profile-stat-value,
 .input-field {
     width: 100%;
@@ -670,43 +728,23 @@ body {
     font-family: 'Montserrat', sans-serif;
 }
 
-.stat-value:focus,
 .profile-stat-value:focus,
 .input-field:focus {
     border-color: #FF5500;
 }
 
-.stat-value::placeholder,
 .profile-stat-value::placeholder,
 .input-field::placeholder {
     color: #5D6472;
-    font-weight: 400;
+    font-weight: 600;  /* Жирнее placeholder */
     font-size: 12px;
     opacity: 1;
 }
 
-.stat-value.editable,
 .profile-stat-value.editable,
 .input-field.editable {
     border-color: #FF5500;
     border-width: 2px;
-}
-
-.heart-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    margin-left: 4px;
-}
-
-.heart-icon svg {
-    width: 16px;
-    height: 16px;
-    stroke: #FF5500;
-    stroke-width: 2;
-    fill: none;
-    display: block;
 }
 
 /* Поля ввода (ссылки) - без внешних плашек */
@@ -731,8 +769,10 @@ body {
 .profile-stat-label {
     font-size: 10px;
     color: #9BA1B0;
+    font-weight: 600;  /* Жирнее */
     margin-bottom: 4px;
-    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
 
 /* ===== ДРУЗЬЯ ===== */
@@ -791,7 +831,7 @@ body {
 .friends-count {
     color: #9BA1B0;
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 600;  /* Жирнее */
 }
 
 .search-container {
@@ -811,11 +851,16 @@ body {
     color: #F5F5F5;
     font-size: 12px;
     font-weight: 500;
+    outline: none;
 }
 
 .search-input:focus {
-    outline: none;
     border-color: #FF5500;
+}
+
+.search-input::placeholder {
+    color: #5D6472;
+    font-weight: 600;  /* Жирнее */
 }
 
 .friends-list {
@@ -877,13 +922,13 @@ body {
     padding: 1px 5px;
     border-radius: 4px;
     font-family: monospace;
-    font-weight: 500;
+    font-weight: 600;  /* Жирнее */
 }
 
 .friend-steam {
     font-size: 9px;
     color: #9BA1B0;
-    font-weight: 500;
+    font-weight: 600;  /* Жирнее */
 }
 
 /* ===== ОСТАЛЬНЫЕ ЭЛЕМЕНТЫ ===== */
@@ -982,7 +1027,7 @@ body {
 
 .search-input-field::placeholder {
     color: #5D6472;
-    font-weight: 400;
+    font-weight: 600;  /* Жирнее */
     font-size: 12px;
 }
 
@@ -1084,6 +1129,7 @@ body {
 
 .comment-input::placeholder {
     color: #5D6472;
+    font-weight: 600;  /* Жирнее */
 }
 
 /* ЭКРАН ПОИСКА */
