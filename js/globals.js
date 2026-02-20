@@ -20,12 +20,12 @@ let savedAvatar = '👤';
 let savedAge = '-';
 let savedSteam = '-';
 let savedFaceitLink = '-';
-let savedCoins = 99999;
+let savedCoins = 99999;  // Стартовое значение для новых пользователей
 let savedOwnedNicks = [];
 let savedOwnedFrames = [];
 
-// Игровые данные
-let coins = 1000;
+// Игровые данные - ИСПРАВЛЕНО
+let coins = 99999;  // Теперь совпадает с savedCoins
 let ownedNicks = [];
 let ownedFrames = [];
 let friendsData = [];
@@ -49,5 +49,4 @@ const frames = [
     { id: 'green', name: 'Зеленая рамка', class: 'frame-green', price: 100 },
     { id: 'purple', name: 'Фиолетовая рамка', class: 'frame-purple', price: 200 },
     { id: 'rainbow', name: 'Радужная рамка', class: 'frame-rainbow', price: 300 }
-
 ];
