@@ -329,11 +329,11 @@
     transform: scale(1.05);
 }
 
-/* Бейдж NEW на предметах - УМЕНЬШЕН В 2 РАЗА */
+/* Бейдж NEW на предметах - ближе к кейсу */
 .item-badge {
     position: absolute;
-    top: -2px;
-    left: -2px;
+    top: 0px;        /* Без отступа сверху */
+    left: 0px;        /* Без отступа слева */
     background: #B00000;
     color: #F5F5F5;
     font-size: 6px;
@@ -348,6 +348,7 @@
     white-space: nowrap;
     pointer-events: none;
     line-height: 1;
+    transform: translate(0, 0);  /* Убираем смещение */
 }
 
 @keyframes badgeGlow {
