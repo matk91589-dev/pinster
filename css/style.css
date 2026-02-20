@@ -739,6 +739,10 @@ input, select, textarea, button {
     font-family: 'Montserrat', sans-serif;
 }
 
+.stat-value input:focus {
+    outline: none;
+}
+
 .stat-value input::placeholder {
     color: #5D6472;
     font-weight: 600;
@@ -788,6 +792,7 @@ input, select, textarea, button {
 .profile-stat-value:focus,
 .input-field:focus {
     border-color: #FF5500;
+    outline: none;
 }
 
 .profile-stat-value::placeholder,
@@ -798,10 +803,18 @@ input, select, textarea, button {
     opacity: 1;
 }
 
-.profile-stat-value.editable,
-.input-field.editable {
-    border-color: #FF5500;
-    border-width: 2px;
+/* Подсветка полей в режиме редактирования */
+.editable-input {
+    border-color: #FF5500 !important;
+    border-width: 2px !important;
+    background: rgba(255, 85, 0, 0.05) !important;
+}
+
+.profile-stat-value.editable-input,
+.input-field.editable-input,
+.stat-value input.editable-input {
+    border-color: #FF5500 !important;
+    border-width: 2px !important;
 }
 
 /* Поля ввода (ссылки) - без внешних плашек */
