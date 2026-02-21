@@ -126,12 +126,57 @@
                 height: 750px;
             }
         }
+
+        /* ПРИНУДИТЕЛЬНОЕ ОТОБРАЖЕНИЕ НАВИГАЦИИ */
+        .bottom-nav {
+            display: flex !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            background: #111317 !important;
+            border-top: 1px solid #1E2128 !important;
+            padding: 8px 16px 4px 16px !important;
+            margin-top: auto !important;
+            z-index: 1000 !important;
+        }
+
+        .nav-item {
+            display: flex !important;
+            opacity: 0.6 !important;
+        }
+
+        .nav-item.active {
+            opacity: 1 !important;
+        }
+
+        .nav-icon svg {
+            display: block !important;
+            width: 20px !important;
+            height: 20px !important;
+        }
+
+        .nav-label {
+            display: block !important;
+            font-size: 9px !important;
+        }
+
+        /* Хедер всегда видим */
+        .header {
+            display: flex !important;
+            padding-top: 8px !important;
+            padding-bottom: 8px !important;
+        }
+
+        /* Только на стартовом экране скрываем навигацию */
+        #startScreen ~ .bottom-nav,
+        #startScreen .bottom-nav {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
     <div class="phone-frame">
         <div class="content">
-            <!-- Хедер (на всех экранах кроме стартового) -->
+            <!-- Хедер (виден на всех экранах) -->
             <div class="header">
                 <div class="logo" onclick="handleLogoClick()">
                     <span class="ping">Ping</span><span class="ster">ster</span>
@@ -173,37 +218,6 @@
                     <button class="mode-btn prime" onclick="showPrimeScreen()">MM PRIME</button>
                     <button class="mode-btn public" onclick="showPublicScreen()">MM PUBLIC</button>
                 </div>
-
-                <!-- НИЖНЯЯ НАВИГАЦИЯ ТОЛЬКО НА ГЛАВНОМ -->
-                <div class="bottom-nav">
-                    <div class="nav-item active" onclick="showMainScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M6 6h15l-1.5 9h-12z"/>
-                                <circle cx="9" cy="21" r="1"/>
-                                <circle cx="18" cy="21" r="1"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="12" cy="8" r="4"/>
-                                <path d="M4 21c2-4 14-4 16 0"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
             </div>
 
             <!-- ЭКРАН МАГАЗИНА -->
@@ -224,37 +238,6 @@
                 
                 <div class="cases-section"><div class="cases-grid"></div></div>
                 <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
-
-                <!-- НИЖНЯЯ НАВИГАЦИЯ НА ЭКРАНЕ МАГАЗИНА -->
-                <div class="bottom-nav">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item active" onclick="showShopScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M6 6h15l-1.5 9h-12z"/>
-                                <circle cx="9" cy="21" r="1"/>
-                                <circle cx="18" cy="21" r="1"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="12" cy="8" r="4"/>
-                                <path d="M4 21c2-4 14-4 16 0"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
             </div>
 
             <!-- ЭКРАН ПРОФИЛЯ -->
@@ -333,37 +316,6 @@
                     </div>
                     <div class="friends-list" id="friendsList"></div>
                 </div>
-
-                <!-- НИЖНЯЯ НАВИГАЦИЯ НА ЭКРАНЕ ПРОФИЛЯ -->
-                <div class="bottom-nav">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M6 6h15l-1.5 9h-12z"/>
-                                <circle cx="9" cy="21" r="1"/>
-                                <circle cx="18" cy="21" r="1"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item active" onclick="showProfileScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="12" cy="8" r="4"/>
-                                <path d="M4 21c2-4 14-4 16 0"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
             </div>
 
             <!-- ЭКРАН НАСТРОЕК -->
@@ -376,37 +328,6 @@
                 <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
                     <h3 style="font-size:14px; margin-bottom:8px;">Модерация</h3>
                     <p style="color:#9BA1B0; font-size:13px;">Люди мы будем</p>
-                </div>
-                
-                <!-- НИЖНЯЯ НАВИГАЦИЯ НА ЭКРАНЕ НАСТРОЕК -->
-                <div class="bottom-nav" style="margin-top: auto;">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M6 6h15l-1.5 9h-12z"/>
-                                <circle cx="9" cy="21" r="1"/>
-                                <circle cx="18" cy="21" r="1"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="12" cy="8" r="4"/>
-                                <path d="M4 21c2-4 14-4 16 0"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
                 </div>
             </div>
 
@@ -604,6 +525,37 @@
                 <div class="search-loading"><div class="spinner"></div></div>
                 <button class="cancel-search-btn" onclick="cancelSearch()">Отменить поиск</button>
             </div>
+
+            <!-- ЕДИНАЯ НИЖНЯЯ НАВИГАЦИЯ (ОДИН РАЗ В КОНЦЕ) -->
+            <div class="bottom-nav">
+                <div class="nav-item" onclick="showMainScreen()">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Главная</span>
+                </div>
+                <div class="nav-item" onclick="showShopScreen()">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M6 6h15l-1.5 9h-12z"/>
+                            <circle cx="9" cy="21" r="1"/>
+                            <circle cx="18" cy="21" r="1"/>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Магазин</span>
+                </div>
+                <div class="nav-item" onclick="showProfileScreen()">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M4 21c2-4 14-4 16 0"/>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Профиль</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -626,26 +578,8 @@
             // Telegram Mini App
             const tg = window.Telegram?.WebApp;
             if (tg) {
-                // Expand to full height
                 tg.expand();
                 tg.ready();
-                
-                // Set CSS variables for viewport
-                document.documentElement.style.setProperty('--tg-viewport-height', tg.viewportHeight + 'px');
-                document.documentElement.style.setProperty('--tg-viewport-stable-height', tg.viewportStableHeight + 'px');
-                
-                // Update on resize
-                if (window.visualViewport) {
-                    window.visualViewport.addEventListener('resize', () => {
-                        document.documentElement.style.setProperty('--tg-viewport-height', tg.viewportHeight + 'px');
-                        document.documentElement.style.setProperty('--tg-viewport-stable-height', tg.viewportStableHeight + 'px');
-                    });
-                }
-                
-                // Prevent overscroll
-                window.addEventListener('scroll', () => {
-                    if (window.scrollY > 0) window.scrollTo(0, 0);
-                }, { passive: false });
                 
                 // Get user data
                 const tgUser = tg.initDataUnsafe?.user;
@@ -653,23 +587,8 @@
                     console.log('Telegram User:', tgUser);
                     window.TELEGRAM_ID = tgUser.id;
                     window.USERNAME = tgUser.username || tgUser.first_name || 'player';
-                    
-                    // You can dispatch an event when user data is ready
-                    window.dispatchEvent(new CustomEvent('telegram-user-ready', { 
-                        detail: { id: tgUser.id, username: window.USERNAME }
-                    }));
                 }
             }
-
-            // Скрываем навигацию на стартовом экране
-            document.addEventListener('DOMContentLoaded', function() {
-                const startScreen = document.getElementById('startScreen');
-                const bottomNavs = document.querySelectorAll('.bottom-nav');
-                
-                if (startScreen && startScreen.style.display !== 'none') {
-                    bottomNavs.forEach(nav => nav.style.display = 'none');
-                }
-            });
         })();
     </script>
 </body>
