@@ -1355,16 +1355,21 @@ input:-webkit-autofill:active {
 
 html, body {
     height: 100%;
-    width: 100%;
-    background: #0D0F15;
 }
 
-/* Контент скроллится корректно */
+.phone-frame {
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    height: 100%;        /* вместо 100vh */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
 .content {
     flex: 1;
     overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
     min-height: 0;
 }
 
@@ -1406,5 +1411,6 @@ html, body {
         overflow: hidden;
     }
 }
+
 
 
