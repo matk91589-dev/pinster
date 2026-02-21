@@ -278,10 +278,3 @@ document.addEventListener('DOMContentLoaded', function() {
         showBottomNav(false);
     }
 });
-    // Проверяем, виден ли стартовый экран
-    const startScreen = document.getElementById('startScreen');
-    if (startScreen && startScreen.style.display !== 'none') {
-        showBottomNav(false); // Скрываем навигацию
-    }
-});
-
