@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pingster</title>
     
+    <!-- Telegram Mini App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/shop-cases.css">
@@ -90,7 +93,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН МАГАЗИНА С КЕЙСАМИ И ИНВЕНТАРЕМ -->
+            <!-- ЭКРАН МАГАЗИНА -->
             <div id="shopScreen" class="screen screen-shop">
                 <div class="title-row">
                     <div class="title-left">
@@ -101,26 +104,13 @@
                     </div>
                 </div>
                 
-                <!-- Табы магазина -->
                 <div class="shop-tabs">
-                    <div class="shop-tab active" onclick="showShopTab('cases')">
-                        Кейсы
-                    </div>
-                    <div class="shop-tab" onclick="showShopTab('inventory')" id="inventoryTab">
-                        Инвентарь
-                        <span class="inventory-count" id="inventoryCounter" style="display: none;">0</span>
-                    </div>
+                    <div class="shop-tab active" onclick="showShopTab('cases')">Кейсы</div>
+                    <div class="shop-tab" onclick="showShopTab('inventory')" id="inventoryTab">Инвентарь</div>
                 </div>
                 
-                <!-- Секция кейсов -->
-                <div class="cases-section">
-                    <div class="cases-grid"></div>
-                </div>
-                
-                <!-- Секция инвентаря (скрыта по умолчанию) -->
-                <div class="inventory-section hidden">
-                    <div class="inventory-grid"></div>
-                </div>
+                <div class="cases-section"><div class="cases-grid"></div></div>
+                <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
 
                 <div class="bottom-nav">
                     <div class="nav-item" onclick="showMainScreen()">
@@ -173,13 +163,9 @@
                 </div>
 
                 <div class="profile-header">
-                    <div id="profileAvatar" class="profile-avatar" onclick="selectAvatar()">
-                        👤
-                    </div>
+                    <div id="profileAvatar" class="profile-avatar" onclick="selectAvatar()">👤</div>
                     <div class="profile-info">
-                        <div class="profile-name-label">
-                            ваш никнейм
-                        </div>
+                        <div class="profile-name-label">ваш никнейм</div>
                         <div class="profile-name-row">
                             <span id="profileName" class="profile-name" onclick="editName()">-</span>
                             <span class="profile-status">НОВИЧОК</span>
@@ -188,7 +174,6 @@
                 </div>
 
                 <div class="stats-row">
-                    <!-- Рейтинг с сердечком -->
                     <div class="stat-card" id="ratingCard">
                         <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">
@@ -201,7 +186,6 @@
                             </span>
                         </div>
                     </div>
-                    <!-- Возраст -->
                     <div class="stat-card" id="ageCard" onclick="editAge()">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value">
@@ -215,10 +199,9 @@
                         <div class="profile-stat-label">Ссылка Steam</div>
                         <input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" value="">
                     </div>
-
                     <div class="profile-stat-card" id="faceitLinkCard" onclick="editFaceitLink()">
                         <div class="profile-stat-label">Ссылка Faceit</div>
-                        <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш профиль faceit / пропустите" value="">
+                        <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit / пропустите" value="">
                     </div>
                 </div>
 
@@ -234,7 +217,6 @@
                         <span class="friends-title">Ваши друзья</span>
                         <span class="friends-count" id="friendsCount">0 друзей</span>
                     </div>
-                    
                     <div class="friends-list" id="friendsList"></div>
                 </div>
 
@@ -272,45 +254,18 @@
             <!-- ЭКРАН НАСТРОЕК -->
             <div id="settingsScreen" class="screen screen-settings">
                 <div class="section-title">Настройки</div>
-
                 <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
                     <h3 style="font-size:14px; margin-bottom:8px;">Тема</h3>
                     <p style="color:#9BA1B0; font-size:13px;">Тёмная / Светлая</p>
                 </div>
-
                 <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
                     <h3 style="font-size:14px; margin-bottom:8px;">Модерация</h3>
                     <p style="color:#9BA1B0; font-size:13px;">Люди мы будем</p>
                 </div>
-
                 <div class="bottom-nav" style="margin-top: auto;">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M6 6h15l-1.5 9h-12z"/>
-                                <circle cx="9" cy="21" r="1"/>
-                                <circle cx="18" cy="21" r="1"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="12" cy="8" r="4"/>
-                                <path d="M4 21c2-4 14-4 16 0"/>
-                            </svg>
-                        </span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
+                    <div class="nav-item" onclick="showMainScreen()"><span class="nav-icon">...</span><span class="nav-label">Главная</span></div>
+                    <div class="nav-item" onclick="showShopScreen()"><span class="nav-icon">...</span><span class="nav-label">Магазин</span></div>
+                    <div class="nav-item" onclick="showProfileScreen()"><span class="nav-icon">...</span><span class="nav-label">Профиль</span></div>
                 </div>
             </div>
 
@@ -321,10 +276,8 @@
                     <div class="mode-title faceit">FACEIT</div>
                 </div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
-                
                 <div class="input-label">Faceit ELO</div>
                 <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="-" min="0" max="5000">
-                
                 <div class="stats-row">
                     <div class="stat-card">
                         <div class="stat-label">Рейтинг</div>
@@ -345,23 +298,18 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="input-label">Ссылка Steam</div>
                 <input type="text" class="input-field" id="faceitSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
-                
                 <div class="input-label">Ссылка Faceit</div>
                 <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="—">
-                
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
                     <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
                 </div>
-
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
                     <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
                 </div>
-
                 <button class="mode-search-btn" onclick="startSearch('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
             </div>
 
@@ -372,10 +320,8 @@
                     <div class="mode-title premier">PREMIER</div>
                 </div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
-                
                 <div class="input-label">CS Rating</div>
                 <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="12500" min="0" max="35000">
-                
                 <div class="stats-row">
                     <div class="stat-card">
                         <div class="stat-label">Рейтинг</div>
@@ -396,20 +342,16 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="input-label">Ссылка Steam</div>
                 <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
-                
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
                     <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
                 </div>
-
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
                     <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
                 </div>
-
                 <button class="mode-search-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
             </div>
 
@@ -420,28 +362,15 @@
                     <div class="mode-title prime">MM PRIME</div>
                 </div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
-                
                 <div class="input-label">Звание</div>
                 <select class="rank-select" id="primeRankSelect">
-                    <option>Silver 1</option>
-                    <option>Silver 2</option>
-                    <option>Silver 3</option>
-                    <option>Silver 4</option>
-                    <option>Silver Elite</option>
-                    <option>Gold Nova 1</option>
-                    <option>Gold Nova 2</option>
-                    <option selected>Gold Nova 3</option>
-                    <option>Gold Nova Master</option>
-                    <option>Master Guardian 1</option>
-                    <option>Master Guardian 2</option>
-                    <option>Master Guardian Elite</option>
-                    <option>Distinguished Master Guardian</option>
-                    <option>Legendary Eagle</option>
-                    <option>Legendary Eagle Master</option>
-                    <option>Supreme Master First Class</option>
-                    <option>Global Elite</option>
+                    <option>Silver 1</option><option>Silver 2</option><option>Silver 3</option><option>Silver 4</option>
+                    <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option>
+                    <option selected>Gold Nova 3</option><option>Gold Nova Master</option><option>Master Guardian 1</option>
+                    <option>Master Guardian 2</option><option>Master Guardian Elite</option>
+                    <option>Distinguished Master Guardian</option><option>Legendary Eagle</option>
+                    <option>Legendary Eagle Master</option><option>Supreme Master First Class</option><option>Global Elite</option>
                 </select>
-                
                 <div class="stats-row">
                     <div class="stat-card">
                         <div class="stat-label">Рейтинг</div>
@@ -462,20 +391,16 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="input-label">Ссылка Steam</div>
                 <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
-                
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
                     <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
                 </div>
-
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
                     <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
                 </div>
-
                 <button class="mode-search-btn" onclick="startSearch('MM PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
             </div>
 
@@ -486,28 +411,15 @@
                     <div class="mode-title public">MM PUBLIC</div>
                 </div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
-                
                 <div class="input-label">Звание</div>
                 <select class="rank-select" id="publicRankSelect">
-                    <option>Silver 1</option>
-                    <option>Silver 2</option>
-                    <option selected>Silver 3</option>
-                    <option>Silver 4</option>
-                    <option>Silver Elite</option>
-                    <option>Gold Nova 1</option>
-                    <option>Gold Nova 2</option>
-                    <option>Gold Nova 3</option>
-                    <option>Gold Nova Master</option>
-                    <option>Master Guardian 1</option>
-                    <option>Master Guardian 2</option>
-                    <option>Master Guardian Elite</option>
-                    <option>Distinguished Master Guardian</option>
-                    <option>Legendary Eagle</option>
-                    <option>Legendary Eagle Master</option>
-                    <option>Supreme Master First Class</option>
-                    <option>Global Elite</option>
+                    <option>Silver 1</option><option>Silver 2</option><option selected>Silver 3</option><option>Silver 4</option>
+                    <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option>
+                    <option>Gold Nova 3</option><option>Gold Nova Master</option><option>Master Guardian 1</option>
+                    <option>Master Guardian 2</option><option>Master Guardian Elite</option>
+                    <option>Distinguished Master Guardian</option><option>Legendary Eagle</option>
+                    <option>Legendary Eagle Master</option><option>Supreme Master First Class</option><option>Global Elite</option>
                 </select>
-                
                 <div class="stats-row">
                     <div class="stat-card">
                         <div class="stat-label">Рейтинг</div>
@@ -528,20 +440,16 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="input-label">Ссылка Steam</div>
                 <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
-                
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
                     <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
                 </div>
-
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
                     <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
                 </div>
-
                 <button class="mode-search-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
             </div>
 
@@ -551,13 +459,8 @@
                     <div class="search-title" id="searchModeTitle">FACEIT</div>
                     <div class="search-timer" id="searchTimer">00:00</div>
                 </div>
-                
                 <div class="search-status">Поиск тиммейта начат</div>
-                
-                <div class="search-loading">
-                    <div class="spinner"></div>
-                </div>
-                
+                <div class="search-loading"><div class="spinner"></div></div>
                 <button class="cancel-search-btn" onclick="cancelSearch()">Отменить поиск</button>
             </div>
         </div>
@@ -575,5 +478,23 @@
     <script src="js/search.js"></script>
     <script src="js/logo.js"></script>
     <script src="js/app.js"></script>
+
+    <script>
+        // Telegram Mini App
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.expand();
+            tg.ready();
+            
+            // Получаем данные пользователя
+            const tgUser = tg.initDataUnsafe?.user;
+            if (tgUser) {
+                console.log('Telegram User:', tgUser);
+                // Сохраняем в localStorage или переменную
+                window.TELEGRAM_ID = tgUser.id;
+                window.USERNAME = tgUser.username || tgUser.first_name || 'player';
+            }
+        }
+    </script>
 </body>
 </html>
