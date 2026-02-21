@@ -1,3 +1,4 @@
+теперь html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -15,12 +16,126 @@
     
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        /* Telegram Mini App viewport fixes */
+        :root {
+            --tg-viewport-height: 100vh;
+            --tg-viewport-stable-height: 100vh;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            overscroll-behavior: none;
+            background: #0D0F15;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+            color: #F5F5F5;
+        }
+        
+        /* Основной контейнер */
+        .phone-frame {
+            width: 100%;
+            max-width: 380px;
+            min-height: 600px;
+            background: #111317;
+            border-radius: 16px;
+            padding: 12px 20px 8px 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(245, 245, 245, 0.05);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        /* Контент с правильным скроллом */
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            position: relative;
+        }
+        
+        .content::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Исправление скролла для друзей */
+        .friends-section {
+            min-height: 0;
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .friends-list {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 300px;
+            padding-right: 4px;
+        }
+        
+        /* Адаптация под разные экраны */
+        @media (max-width: 360px) {
+            .phone-frame {
+                padding: 8px 12px 4px 12px;
+            }
+            
+            .mode-btn {
+                padding: 14px;
+                font-size: 15px;
+            }
+        }
+        
+        @media (min-width: 361px) and (max-width: 480px) {
+            .phone-frame {
+                height: 700px;
+            }
+        }
+        
+        /* Для ПК и планшетов */
+        @media (min-width: 600px) {
+            body {
+                padding: 20px;
+                background: #0D0F15;
+            }
+            
+            .phone-frame {
+                margin: 0 auto;
+                box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8);
+            }
+        }
+        
+        /* Для очень больших экранов */
+        @media (min-width: 1200px) {
+            .phone-frame {
+                max-width: 400px;
+                height: 750px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="app-wrapper">
-        <div class="app">
-            <!-- Хедер (скрыт на стартовом экране через CSS) -->
-            <header class="header">
+    <div class="phone-frame">
+        <div class="content">
+            <!-- Хедер (на всех экранах кроме стартового) -->
+            <div class="header">
                 <div class="logo" onclick="handleLogoClick()">
                     <span class="ping">Ping</span><span class="ster">ster</span>
                 </div>
@@ -30,378 +145,439 @@
                         <path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/>
                     </svg>
                 </div>
-            </header>
+            </div>
 
-            <!-- Основной контент с прокруткой -->
-            <main class="content">
-                <!-- СТАРТОВЫЙ ЭКРАН -->
-                <div id="startScreen" class="screen start-screen">
-                    <div class="start-avatar-square" id="startAvatar">
-                        <img src="pingster_logo.svg" alt="Pingster">
-                    </div>
-                    
-                    <div class="start-description-box">
-                        <div class="start-description">
-                            Pingster — площадка, где вы можете найти тиммейта за 30 секунд.<br>
-                            Быстро, просто, без смс.<br>
-                            Здесь можно находить друзей и просто тиммейта на одну катку.<br>
-                            Фаниться или апать звания.
-                        </div>
-                    </div>
-                    
-                    <button class="primary-btn" onclick="startApp()">Подключиться</button>
+            <!-- СТАРТОВЫЙ ЭКРАН -->
+            <div id="startScreen" class="screen start-screen">
+                <div class="start-avatar-square" id="startAvatar">
+                    <img src="pingster_logo.svg" alt="Pingster">
                 </div>
-
-                <!-- ГЛАВНЫЙ ЭКРАН -->
-                <div id="mainScreen" class="screen screen-main main-screen">
-                    <div class="section-title">Выбор режима</div>
-                    <div class="section-subtitle">Подберите подходящий</div>
-
-                    <div class="mode-container">
-                        <button class="mode-btn faceit" onclick="showFaceitScreen()">FACEIT</button>
-                        <button class="mode-btn premier" onclick="showPremierScreen()">PREMIER</button>
-                        <button class="mode-btn prime" onclick="showPrimeScreen()">MM PRIME</button>
-                        <button class="mode-btn public" onclick="showPublicScreen()">MM PUBLIC</button>
+                
+                <div class="start-description-box">
+                    <div class="start-description">
+                        Pingster — площадка, где вы можете найти тиммейта за 30 секунд.<br>
+                        Быстро, просто, без смс.<br>
+                        Здесь можно находить друзей и просто тиммейта на одну катку.<br>
+                        Фаниться или апать звания.
                     </div>
                 </div>
+                
+                <button class="primary-btn" onclick="startApp()">Подключиться</button>
+            </div>
 
-                <!-- ЭКРАН МАГАЗИНА -->
-                <div id="shopScreen" class="screen screen-shop">
-                    <div class="title-row">
-                        <div class="title-left">
-                            <div class="section-title">Магазин</div>
-                        </div>
-                        <div class="coins-header">
-                            Pingcoins: <span id="coinsAmount">99999</span>
-                        </div>
-                    </div>
-                    
-                    <div class="shop-tabs">
-                        <div class="shop-tab active" onclick="showShopTab('cases')">Кейсы</div>
-                        <div class="shop-tab" onclick="showShopTab('inventory')" id="inventoryTab">Инвентарь</div>
-                    </div>
-                    
-                    <div class="cases-section"><div class="cases-grid"></div></div>
-                    <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
+            <!-- ГЛАВНЫЙ ЭКРАН -->
+            <div id="mainScreen" class="screen screen-main main-screen">
+                <div class="section-title">Выбор режима</div>
+                <div class="section-subtitle">Подберите подходящий</div>
+
+                <div class="mode-container">
+                    <button class="mode-btn faceit" onclick="showFaceitScreen()">FACEIT</button>
+                    <button class="mode-btn premier" onclick="showPremierScreen()">PREMIER</button>
+                    <button class="mode-btn prime" onclick="showPrimeScreen()">MM PRIME</button>
+                    <button class="mode-btn public" onclick="showPublicScreen()">MM PUBLIC</button>
                 </div>
 
-                <!-- ЭКРАН ПРОФИЛЯ -->
-                <div id="profileScreen" class="screen screen-profile">
-                    <div class="title-row">
-                        <div class="title-left">
-                            <div class="section-title">Ваш профиль</div>
-                            <div class="edit-controls">
-                                <div id="editToggle" class="edit-title-icon" onclick="toggleEditMode()">
-                                    <svg viewBox="0 0 24 24">
-                                        <path d="M12 20h9" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                                        <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"
-                                              stroke="white" stroke-width="2"
-                                              stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </div>
-                                <div id="applyBtn" class="apply-btn" onclick="applyChanges()">Применить</div>
-                            </div>
-                        </div>
+                <div class="bottom-nav">
+                    <div class="nav-item active" onclick="showMainScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Главная</span>
                     </div>
-
-                    <div class="profile-header">
-                        <div id="profileAvatar" class="profile-avatar" onclick="selectAvatar()">👤</div>
-                        <div class="profile-info">
-                            <div class="profile-name-label">ваш никнейм</div>
-                            <div class="profile-name-row">
-                                <span id="profileName" class="profile-name" onclick="editName()">-</span>
-                                <span class="profile-status">НОВИЧОК</span>
-                            </div>
-                        </div>
+                    <div class="nav-item" onclick="showShopScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M6 6h15l-1.5 9h-12z"/>
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="18" cy="21" r="1"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Магазин</span>
                     </div>
-
-                    <div class="stats-row">
-                        <div class="stat-card" id="ratingCard">
-                            <div class="stat-label">Рейтинг</div>
-                            <div class="stat-value">
-                                <input type="text" id="ratingValue" placeholder="0" value="0">
-                                <span class="heart-icon">
-                                    <svg viewBox="0 0 24 24">
-                                        <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
-                                              stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="stat-card" id="ageCard" onclick="editAge()">
-                            <div class="stat-label">Возраст</div>
-                            <div class="stat-value">
-                                <input type="text" id="ageValue" placeholder="0-100" value="">
-                            </div>
-                        </div>
+                    <div class="nav-item" onclick="showProfileScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4"/>
+                                <path d="M4 21c2-4 14-4 16 0"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Профиль</span>
                     </div>
+                </div>
+            </div>
 
-                    <div class="profile-stats">
-                        <div class="profile-stat-card" id="steamCard" onclick="editSteam()">
-                            <div class="profile-stat-label">Ссылка Steam</div>
-                            <input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" value="">
-                        </div>
-                        <div class="profile-stat-card" id="faceitLinkCard" onclick="editFaceitLink()">
-                            <div class="profile-stat-label">Ссылка Faceit</div>
-                            <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit / пропустите" value="">
-                        </div>
+            <!-- ЭКРАН МАГАЗИНА -->
+            <div id="shopScreen" class="screen screen-shop">
+                <div class="title-row">
+                    <div class="title-left">
+                        <div class="section-title">Магазин</div>
                     </div>
+                    <div class="coins-header">
+                        Pingcoins: <span id="coinsAmount">99999</span>
+                    </div>
+                </div>
+                
+                <div class="shop-tabs">
+                    <div class="shop-tab active" onclick="showShopTab('cases')">Кейсы</div>
+                    <div class="shop-tab" onclick="showShopTab('inventory')" id="inventoryTab">Инвентарь</div>
+                </div>
+                
+                <div class="cases-section"><div class="cases-grid"></div></div>
+                <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
 
-                    <div class="friends-section" id="friendsSection">
-                        <div id="friendsHeader" class="friends-header">
-                            <div class="search-icon" onclick="enterSearchMode()">
+                <div class="bottom-nav">
+                    <div class="nav-item" onclick="showMainScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Главная</span>
+                    </div>
+                    <div class="nav-item active" onclick="showShopScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M6 6h15l-1.5 9h-12z"/>
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="18" cy="21" r="1"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Магазин</span>
+                    </div>
+                    <div class="nav-item" onclick="showProfileScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4"/>
+                                <path d="M4 21c2-4 14-4 16 0"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Профиль</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ЭКРАН ПРОФИЛЯ -->
+            <div id="profileScreen" class="screen screen-profile">
+                <div class="title-row">
+                    <div class="title-left">
+                        <div class="section-title">Ваш профиль</div>
+                        <div class="edit-controls">
+                            <div id="editToggle" class="edit-title-icon" onclick="toggleEditMode()">
                                 <svg viewBox="0 0 24 24">
-                                    <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
-                                    <circle cx="11" cy="11" r="4" stroke="white" stroke-width="2"/>
-                                    <line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    <path d="M12 20h9" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"
+                                          stroke="white" stroke-width="2"
+                                          stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </div>
-                            <span class="friends-title">Ваши друзья</span>
-                            <span class="friends-count" id="friendsCount">0 друзей</span>
+                            <div id="applyBtn" class="apply-btn" onclick="applyChanges()">Применить</div>
                         </div>
-                        <div class="friends-list" id="friendsList"></div>
                     </div>
                 </div>
 
-                <!-- ЭКРАН НАСТРОЕК -->
-                <div id="settingsScreen" class="screen screen-settings">
-                    <div class="section-title">Настройки</div>
-                    <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
-                        <h3 style="font-size:14px; margin-bottom:8px;">Тема</h3>
-                        <p style="color:#9BA1B0; font-size:13px;">Тёмная / Светлая</p>
-                    </div>
-                    <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
-                        <h3 style="font-size:14px; margin-bottom:8px;">Модерация</h3>
-                        <p style="color:#9BA1B0; font-size:13px;">Люди мы будем</p>
+                <div class="profile-header">
+                    <div id="profileAvatar" class="profile-avatar" onclick="selectAvatar()">👤</div>
+                    <div class="profile-info">
+                        <div class="profile-name-label">ваш никнейм</div>
+                        <div class="profile-name-row">
+                            <span id="profileName" class="profile-name" onclick="editName()">-</span>
+                            <span class="profile-status">НОВИЧОК</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- ЭКРАН FACEIT -->
-                <div id="faceitScreen" class="screen screen-faceit">
-                    <div class="mode-header">
-                        <button class="back-btn" onclick="showMainScreen()">←</button>
-                        <div class="mode-title faceit">FACEIT</div>
-                    </div>
-                    <div class="mode-subtitle">введите ваши актуальные данные</div>
-                    <div class="input-label">Faceit ELO</div>
-                    <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="-" min="0" max="5000">
-                    <div class="stats-row">
-                        <div class="stat-card">
-                            <div class="stat-label">Рейтинг</div>
-                            <div class="stat-value">
-                                <input type="text" placeholder="0" value="0">
-                                <span class="heart-icon">
-                                    <svg viewBox="0 0 24 24">
-                                        <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
-                                              stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="stat-card" onclick="editFaceitAge()">
-                            <div class="stat-label">Возраст</div>
-                            <div class="stat-value">
-                                <input type="text" id="faceitAgeValue" placeholder="21" value="21">
-                            </div>
+                <div class="stats-row">
+                    <div class="stat-card" id="ratingCard">
+                        <div class="stat-label">Рейтинг</div>
+                        <div class="stat-value">
+                            <input type="text" id="ratingValue" placeholder="0" value="0">
+                            <span class="heart-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
+                                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
                         </div>
                     </div>
-                    <div class="input-label">Ссылка Steam</div>
-                    <input type="text" class="input-field" id="faceitSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
-                    <div class="input-label">Ссылка Faceit</div>
-                    <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="—">
-                    <div class="play-style">
-                        <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
-                        <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
+                    <div class="stat-card" id="ageCard" onclick="editAge()">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value">
+                            <input type="text" id="ageValue" placeholder="0-100" value="">
+                        </div>
                     </div>
-                    <div class="comment-section">
-                        <div class="comment-label">Комментарий к поиску</div>
-                        <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
-                    </div>
-                    <button class="mode-search-btn" onclick="startSearch('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
                 </div>
 
-                <!-- ЭКРАН PREMIER -->
-                <div id="premierScreen" class="screen screen-premier">
-                    <div class="mode-header">
-                        <button class="back-btn" onclick="showMainScreen()">←</button>
-                        <div class="mode-title premier">PREMIER</div>
+                <div class="profile-stats">
+                    <div class="profile-stat-card" id="steamCard" onclick="editSteam()">
+                        <div class="profile-stat-label">Ссылка Steam</div>
+                        <input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" value="">
                     </div>
-                    <div class="mode-subtitle">введите ваши актуальные данные</div>
-                    <div class="input-label">CS Rating</div>
-                    <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="12500" min="0" max="35000">
-                    <div class="stats-row">
-                        <div class="stat-card">
-                            <div class="stat-label">Рейтинг</div>
-                            <div class="stat-value">
-                                <input type="text" placeholder="0" value="0">
-                                <span class="heart-icon">
-                                    <svg viewBox="0 0 24 24">
-                                        <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
-                                              stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="stat-card" onclick="editPremierAge()">
-                            <div class="stat-label">Возраст</div>
-                            <div class="stat-value">
-                                <input type="text" id="premierAgeValue" placeholder="21" value="21">
-                            </div>
-                        </div>
+                    <div class="profile-stat-card" id="faceitLinkCard" onclick="editFaceitLink()">
+                        <div class="profile-stat-label">Ссылка Faceit</div>
+                        <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit / пропустите" value="">
                     </div>
-                    <div class="input-label">Ссылка Steam</div>
-                    <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
-                    <div class="play-style">
-                        <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
-                        <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
-                    </div>
-                    <div class="comment-section">
-                        <div class="comment-label">Комментарий к поиску</div>
-                        <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
-                    </div>
-                    <button class="mode-search-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
                 </div>
 
-                <!-- ЭКРАН MM PRIME -->
-                <div id="primeScreen" class="screen screen-prime">
-                    <div class="mode-header">
-                        <button class="back-btn" onclick="showMainScreen()">←</button>
-                        <div class="mode-title prime">MM PRIME</div>
-                    </div>
-                    <div class="mode-subtitle">введите ваши актуальные данные</div>
-                    <div class="input-label">Звание</div>
-                    <select class="rank-select" id="primeRankSelect">
-                        <option>Silver 1</option><option>Silver 2</option><option>Silver 3</option><option>Silver 4</option>
-                        <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option>
-                        <option selected>Gold Nova 3</option><option>Gold Nova Master</option><option>Master Guardian 1</option>
-                        <option>Master Guardian 2</option><option>Master Guardian Elite</option>
-                        <option>Distinguished Master Guardian</option><option>Legendary Eagle</option>
-                        <option>Legendary Eagle Master</option><option>Supreme Master First Class</option><option>Global Elite</option>
-                    </select>
-                    <div class="stats-row">
-                        <div class="stat-card">
-                            <div class="stat-label">Рейтинг</div>
-                            <div class="stat-value">
-                                <input type="text" placeholder="0" value="0">
-                                <span class="heart-icon">
-                                    <svg viewBox="0 0 24 24">
-                                        <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
-                                              stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </span>
-                            </div>
+                <div class="friends-section" id="friendsSection">
+                    <div id="friendsHeader" class="friends-header">
+                        <div class="search-icon" onclick="enterSearchMode()">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
+                                <circle cx="11" cy="11" r="4" stroke="white" stroke-width="2"/>
+                                <line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
                         </div>
-                        <div class="stat-card" onclick="editPrimeAge()">
-                            <div class="stat-label">Возраст</div>
-                            <div class="stat-value">
-                                <input type="text" id="primeAgeValue" placeholder="21" value="21">
-                            </div>
-                        </div>
+                        <span class="friends-title">Ваши друзья</span>
+                        <span class="friends-count" id="friendsCount">0 друзей</span>
                     </div>
-                    <div class="input-label">Ссылка Steam</div>
-                    <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
-                    <div class="play-style">
-                        <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
-                        <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
-                    </div>
-                    <div class="comment-section">
-                        <div class="comment-label">Комментарий к поиску</div>
-                        <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
-                    </div>
-                    <button class="mode-search-btn" onclick="startSearch('MM PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
+                    <div class="friends-list" id="friendsList"></div>
                 </div>
 
-                <!-- ЭКРАН MM PUBLIC -->
-                <div id="publicScreen" class="screen screen-public">
-                    <div class="mode-header">
-                        <button class="back-btn" onclick="showMainScreen()">←</button>
-                        <div class="mode-title public">MM PUBLIC</div>
+                <div class="bottom-nav">
+                    <div class="nav-item" onclick="showMainScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Главная</span>
                     </div>
-                    <div class="mode-subtitle">введите ваши актуальные данные</div>
-                    <div class="input-label">Звание</div>
-                    <select class="rank-select" id="publicRankSelect">
-                        <option>Silver 1</option><option>Silver 2</option><option selected>Silver 3</option><option>Silver 4</option>
-                        <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option>
-                        <option>Gold Nova 3</option><option>Gold Nova Master</option><option>Master Guardian 1</option>
-                        <option>Master Guardian 2</option><option>Master Guardian Elite</option>
-                        <option>Distinguished Master Guardian</option><option>Legendary Eagle</option>
-                        <option>Legendary Eagle Master</option><option>Supreme Master First Class</option><option>Global Elite</option>
-                    </select>
-                    <div class="stats-row">
-                        <div class="stat-card">
-                            <div class="stat-label">Рейтинг</div>
-                            <div class="stat-value">
-                                <input type="text" placeholder="0" value="0">
-                                <span class="heart-icon">
-                                    <svg viewBox="0 0 24 24">
-                                        <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
-                                              stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="stat-card" onclick="editPublicAge()">
-                            <div class="stat-label">Возраст</div>
-                            <div class="stat-value">
-                                <input type="text" id="publicAgeValue" placeholder="21" value="21">
-                            </div>
-                        </div>
+                    <div class="nav-item" onclick="showShopScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M6 6h15l-1.5 9h-12z"/>
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="18" cy="21" r="1"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Магазин</span>
                     </div>
-                    <div class="input-label">Ссылка Steam</div>
-                    <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
-                    <div class="play-style">
-                        <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
-                        <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
+                    <div class="nav-item active" onclick="showProfileScreen()">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4"/>
+                                <path d="M4 21c2-4 14-4 16 0"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Профиль</span>
                     </div>
-                    <div class="comment-section">
-                        <div class="comment-label">Комментарий к поиску</div>
-                        <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
-                    </div>
-                    <button class="mode-search-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
                 </div>
+            </div>
 
-                <!-- ЭКРАН ПОИСКА -->
-                <div id="searchScreen" class="screen screen-search">
-                    <div class="search-header">
-                        <div class="search-title" id="searchModeTitle">FACEIT</div>
-                        <div class="search-timer" id="searchTimer">00:00</div>
-                    </div>
-                    <div class="search-status">Поиск тиммейта начат</div>
-                    <div class="search-loading"><div class="spinner"></div></div>
-                    <button class="cancel-search-btn" onclick="cancelSearch()">Отменить поиск</button>
+            <!-- ЭКРАН НАСТРОЕК -->
+            <div id="settingsScreen" class="screen screen-settings">
+                <div class="section-title">Настройки</div>
+                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
+                    <h3 style="font-size:14px; margin-bottom:8px;">Тема</h3>
+                    <p style="color:#9BA1B0; font-size:13px;">Тёмная / Светлая</p>
                 </div>
-            </main>
+                <div style="background:#1A1D24; border:1px solid #2A2F3A; border-radius:8px; padding:12px; margin-bottom:12px;">
+                    <h3 style="font-size:14px; margin-bottom:8px;">Модерация</h3>
+                    <p style="color:#9BA1B0; font-size:13px;">Люди мы будем</p>
+                </div>
+                <div class="bottom-nav" style="margin-top: auto;">
+                    <div class="nav-item" onclick="showMainScreen()"><span class="nav-icon">...</span><span class="nav-label">Главная</span></div>
+                    <div class="nav-item" onclick="showShopScreen()"><span class="nav-icon">...</span><span class="nav-label">Магазин</span></div>
+                    <div class="nav-item" onclick="showProfileScreen()"><span class="nav-icon">...</span><span class="nav-label">Профиль</span></div>
+                </div>
+            </div>
 
-            <!-- Нижняя навигация (видна только после старта) -->
-            <nav class="bottom-nav" id="bottomNav">
-                <div class="nav-item active" onclick="showMainScreen()">
-                    <span class="nav-icon">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>
-                        </svg>
-                    </span>
-                    <span class="nav-label">Главная</span>
+            <!-- ЭКРАН FACEIT -->
+            <div id="faceitScreen" class="screen screen-faceit">
+                <div class="mode-header">
+                    <button class="back-btn" onclick="showMainScreen()">←</button>
+                    <div class="mode-title faceit">FACEIT</div>
                 </div>
-                <div class="nav-item" onclick="showShopScreen()">
-                    <span class="nav-icon">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M6 6h15l-1.5 9h-12z"/>
-                            <circle cx="9" cy="21" r="1"/>
-                            <circle cx="18" cy="21" r="1"/>
-                        </svg>
-                    </span>
-                    <span class="nav-label">Магазин</span>
+                <div class="mode-subtitle">введите ваши актуальные данные</div>
+                <div class="input-label">Faceit ELO</div>
+                <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="-" min="0" max="5000">
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Рейтинг</div>
+                        <div class="stat-value">
+                            <input type="text" placeholder="0" value="0">
+                            <span class="heart-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
+                                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="editFaceitAge()">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value">
+                            <input type="text" id="faceitAgeValue" placeholder="21" value="21">
+                        </div>
+                    </div>
                 </div>
-                <div class="nav-item" onclick="showProfileScreen()">
-                    <span class="nav-icon">
-                        <svg viewBox="0 0 24 24">
-                            <circle cx="12" cy="8" r="4"/>
-                            <path d="M4 21c2-4 14-4 16 0"/>
-                        </svg>
-                    </span>
-                    <span class="nav-label">Профиль</span>
+                <div class="input-label">Ссылка Steam</div>
+                <input type="text" class="input-field" id="faceitSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
+                <div class="input-label">Ссылка Faceit</div>
+                <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="—">
+                <div class="play-style">
+                    <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
+                    <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
                 </div>
-            </nav>
+                <div class="comment-section">
+                    <div class="comment-label">Комментарий к поиску</div>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
+                </div>
+                <button class="mode-search-btn" onclick="startSearch('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
+            </div>
+
+            <!-- ЭКРАН PREMIER -->
+            <div id="premierScreen" class="screen screen-premier">
+                <div class="mode-header">
+                    <button class="back-btn" onclick="showMainScreen()">←</button>
+                    <div class="mode-title premier">PREMIER</div>
+                </div>
+                <div class="mode-subtitle">введите ваши актуальные данные</div>
+                <div class="input-label">CS Rating</div>
+                <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="12500" min="0" max="35000">
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Рейтинг</div>
+                        <div class="stat-value">
+                            <input type="text" placeholder="0" value="0">
+                            <span class="heart-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
+                                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="editPremierAge()">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value">
+                            <input type="text" id="premierAgeValue" placeholder="21" value="21">
+                        </div>
+                    </div>
+                </div>
+                <div class="input-label">Ссылка Steam</div>
+                <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
+                <div class="play-style">
+                    <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
+                    <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
+                </div>
+                <div class="comment-section">
+                    <div class="comment-label">Комментарий к поиску</div>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
+                </div>
+                <button class="mode-search-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
+            </div>
+
+            <!-- ЭКРАН MM PRIME -->
+            <div id="primeScreen" class="screen screen-prime">
+                <div class="mode-header">
+                    <button class="back-btn" onclick="showMainScreen()">←</button>
+                    <div class="mode-title prime">MM PRIME</div>
+                </div>
+                <div class="mode-subtitle">введите ваши актуальные данные</div>
+                <div class="input-label">Звание</div>
+                <select class="rank-select" id="primeRankSelect">
+                    <option>Silver 1</option><option>Silver 2</option><option>Silver 3</option><option>Silver 4</option>
+                    <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option>
+                    <option selected>Gold Nova 3</option><option>Gold Nova Master</option><option>Master Guardian 1</option>
+                    <option>Master Guardian 2</option><option>Master Guardian Elite</option>
+                    <option>Distinguished Master Guardian</option><option>Legendary Eagle</option>
+                    <option>Legendary Eagle Master</option><option>Supreme Master First Class</option><option>Global Elite</option>
+                </select>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Рейтинг</div>
+                        <div class="stat-value">
+                            <input type="text" placeholder="0" value="0">
+                            <span class="heart-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
+                                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="editPrimeAge()">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value">
+                            <input type="text" id="primeAgeValue" placeholder="21" value="21">
+                        </div>
+                    </div>
+                </div>
+                <div class="input-label">Ссылка Steam</div>
+                <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
+                <div class="play-style">
+                    <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
+                    <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
+                </div>
+                <div class="comment-section">
+                    <div class="comment-label">Комментарий к поиску</div>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
+                </div>
+                <button class="mode-search-btn" onclick="startSearch('MM PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
+            </div>
+
+            <!-- ЭКРАН MM PUBLIC -->
+            <div id="publicScreen" class="screen screen-public">
+                <div class="mode-header">
+                    <button class="back-btn" onclick="showMainScreen()">←</button>
+                    <div class="mode-title public">MM PUBLIC</div>
+                </div>
+                <div class="mode-subtitle">введите ваши актуальные данные</div>
+                <div class="input-label">Звание</div>
+                <select class="rank-select" id="publicRankSelect">
+                    <option>Silver 1</option><option>Silver 2</option><option selected>Silver 3</option><option>Silver 4</option>
+                    <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option>
+                    <option>Gold Nova 3</option><option>Gold Nova Master</option><option>Master Guardian 1</option>
+                    <option>Master Guardian 2</option><option>Master Guardian Elite</option>
+                    <option>Distinguished Master Guardian</option><option>Legendary Eagle</option>
+                    <option>Legendary Eagle Master</option><option>Supreme Master First Class</option><option>Global Elite</option>
+                </select>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Рейтинг</div>
+                        <div class="stat-value">
+                            <input type="text" placeholder="0" value="0">
+                            <span class="heart-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
+                                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="editPublicAge()">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value">
+                            <input type="text" id="publicAgeValue" placeholder="21" value="21">
+                        </div>
+                    </div>
+                </div>
+                <div class="input-label">Ссылка Steam</div>
+                <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
+                <div class="play-style">
+                    <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
+                    <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
+                </div>
+                <div class="comment-section">
+                    <div class="comment-label">Комментарий к поиску</div>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
+                </div>
+                <button class="mode-search-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
+            </div>
+
+            <!-- ЭКРАН ПОИСКА -->
+            <div id="searchScreen" class="screen screen-search">
+                <div class="search-header">
+                    <div class="search-title" id="searchModeTitle">FACEIT</div>
+                    <div class="search-timer" id="searchTimer">00:00</div>
+                </div>
+                <div class="search-status">Поиск тиммейта начат</div>
+                <div class="search-loading"><div class="spinner"></div></div>
+                <button class="cancel-search-btn" onclick="cancelSearch()">Отменить поиск</button>
+            </div>
         </div>
     </div>
 
@@ -428,22 +604,36 @@
                 tg.expand();
                 tg.ready();
                 
+                // Set CSS variables for viewport
+                document.documentElement.style.setProperty('--tg-viewport-height', tg.viewportHeight + 'px');
+                document.documentElement.style.setProperty('--tg-viewport-stable-height', tg.viewportStableHeight + 'px');
+                
+                // Update on resize
+                if (window.visualViewport) {
+                    window.visualViewport.addEventListener('resize', () => {
+                        document.documentElement.style.setProperty('--tg-viewport-height', tg.viewportHeight + 'px');
+                        document.documentElement.style.setProperty('--tg-viewport-stable-height', tg.viewportStableHeight + 'px');
+                    });
+                }
+                
+                // Prevent overscroll
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 0) window.scrollTo(0, 0);
+                }, { passive: false });
+                
                 // Get user data
                 const tgUser = tg.initDataUnsafe?.user;
                 if (tgUser) {
                     console.log('Telegram User:', tgUser);
                     window.TELEGRAM_ID = tgUser.id;
                     window.USERNAME = tgUser.username || tgUser.first_name || 'player';
+                    
+                    // You can dispatch an event when user data is ready
+                    window.dispatchEvent(new CustomEvent('telegram-user-ready', { 
+                        detail: { id: tgUser.id, username: window.USERNAME }
+                    }));
                 }
             }
-
-            // Скрываем навигацию на стартовом экране
-            document.addEventListener('DOMContentLoaded', function() {
-                const bottomNav = document.getElementById('bottomNav');
-                if (bottomNav) {
-                    bottomNav.style.display = 'none';
-                }
-            });
         })();
     </script>
 </body>
