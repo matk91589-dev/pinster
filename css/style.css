@@ -1352,25 +1352,26 @@ input:-webkit-autofill:active {
 /* ===== TELEGRAM FIX (ЕДИНСТВЕННЫЙ) ===== */
 
 html, body {
-    height: 100%;
+    height: 100vh;
     margin: 0;
-    overflow: hidden;   /* убираем внешний микроскролл */
+    padding: 0;
+    overflow: hidden;
 }
 
 .phone-frame {
     width: 100%;
     max-width: 430px;
     margin: 0 auto;
-    height: 100%;
+    height: 100vh;   /* ВАЖНО */
     display: flex;
     flex-direction: column;
-    overflow: hidden;   /* обязательно */
+    overflow: hidden;
 }
 
 .content {
-    flex: 1 1 auto;
-    overflow-y: auto;   /* скролл только тут */
+    flex: 1;
     min-height: 0;
+    overflow-y: auto;
 }
 
 /* Друзья — нормальный скролл */
@@ -1386,29 +1387,20 @@ html, body {
     overflow-y: auto;
 }
 
-}
-
 /* ===== СТИЛИ ДЛЯ ПК ===== */
 @media (min-width: 768px) {
     body {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
-    background: #0D0F15;
-    color: #F5F5F5;
-}
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
     .phone-frame {
-        max-width: 380px;
-        width: 100%;
-        margin: 0 auto;
-    }
-
-    /* Чтобы контент не растягивался */
-    .content {
+        height: 90vh;
         border-radius: 24px;
-        overflow: hidden;
     }
 }
+
 
 
 
