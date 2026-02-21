@@ -15,6 +15,120 @@
     
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        /* Telegram Mini App viewport fixes */
+        :root {
+            --tg-viewport-height: 100vh;
+            --tg-viewport-stable-height: 100vh;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            overscroll-behavior: none;
+            background: #0D0F15;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+            color: #F5F5F5;
+        }
+        
+        /* Основной контейнер */
+        .phone-frame {
+            width: 100%;
+            max-width: 380px;
+            min-height: 600px;
+            background: #111317;
+            border-radius: 16px;
+            padding: 12px 20px 8px 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(245, 245, 245, 0.05);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        /* Контент с правильным скроллом */
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            position: relative;
+        }
+        
+        .content::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Исправление скролла для друзей */
+        .friends-section {
+            min-height: 0;
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .friends-list {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 300px;
+            padding-right: 4px;
+        }
+        
+        /* Адаптация под разные экраны */
+        @media (max-width: 360px) {
+            .phone-frame {
+                padding: 8px 12px 4px 12px;
+            }
+            
+            .mode-btn {
+                padding: 14px;
+                font-size: 15px;
+            }
+        }
+        
+        @media (min-width: 361px) and (max-width: 480px) {
+            .phone-frame {
+                height: 700px;
+            }
+        }
+        
+        /* Для ПК и планшетов */
+        @media (min-width: 600px) {
+            body {
+                padding: 20px;
+                background: #0D0F15;
+            }
+            
+            .phone-frame {
+                margin: 0 auto;
+                box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8);
+            }
+        }
+        
+        /* Для очень больших экранов */
+        @media (min-width: 1200px) {
+            .phone-frame {
+                max-width: 400px;
+                height: 750px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="phone-frame">
@@ -466,7 +580,7 @@
         </div>
     </div>
 
-    <!-- JavaScript -->
+    <!-- JavaScript файлы -->
     <script src="js/config.js"></script>
     <script src="js/supabase.js"></script>
     <script src="js/globals.js"></script>
@@ -479,22 +593,47 @@
     <script src="js/logo.js"></script>
     <script src="js/app.js"></script>
 
+    <!-- Telegram Mini App initialization -->
     <script>
-        // Telegram Mini App
-        const tg = window.Telegram?.WebApp;
-        if (tg) {
-            tg.expand();
-            tg.ready();
-            
-            // Получаем данные пользователя
-            const tgUser = tg.initDataUnsafe?.user;
-            if (tgUser) {
-                console.log('Telegram User:', tgUser);
-                // Сохраняем в localStorage или переменную
-                window.TELEGRAM_ID = tgUser.id;
-                window.USERNAME = tgUser.username || tgUser.first_name || 'player';
+        (function() {
+            // Telegram Mini App
+            const tg = window.Telegram?.WebApp;
+            if (tg) {
+                // Expand to full height
+                tg.expand();
+                tg.ready();
+                
+                // Set CSS variables for viewport
+                document.documentElement.style.setProperty('--tg-viewport-height', tg.viewportHeight + 'px');
+                document.documentElement.style.setProperty('--tg-viewport-stable-height', tg.viewportStableHeight + 'px');
+                
+                // Update on resize
+                if (window.visualViewport) {
+                    window.visualViewport.addEventListener('resize', () => {
+                        document.documentElement.style.setProperty('--tg-viewport-height', tg.viewportHeight + 'px');
+                        document.documentElement.style.setProperty('--tg-viewport-stable-height', tg.viewportStableHeight + 'px');
+                    });
+                }
+                
+                // Prevent overscroll
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 0) window.scrollTo(0, 0);
+                }, { passive: false });
+                
+                // Get user data
+                const tgUser = tg.initDataUnsafe?.user;
+                if (tgUser) {
+                    console.log('Telegram User:', tgUser);
+                    window.TELEGRAM_ID = tgUser.id;
+                    window.USERNAME = tgUser.username || tgUser.first_name || 'player';
+                    
+                    // You can dispatch an event when user data is ready
+                    window.dispatchEvent(new CustomEvent('telegram-user-ready', { 
+                        detail: { id: tgUser.id, username: window.USERNAME }
+                    }));
+                }
             }
-        }
+        })();
     </script>
 </body>
 </html>
