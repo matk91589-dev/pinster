@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pingster</title>
     
-    <!-- Telegram Mini App SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="phone-frame">
         <div class="content">
-            <!-- Хедер (будет показываться через JS) -->
-            <div class="header" id="mainHeader" style="display: none;">
+            <!-- Хедер (на всех экранах кроме стартового) -->
+            <div class="header">
                 <div class="logo" onclick="handleLogoClick()">
                     <span class="ping">Ping</span><span class="ster">ster</span>
                 </div>
@@ -29,7 +29,7 @@
                 </div>
             </div>
 
-            <!-- СТАРТОВЫЙ ЭКРАН (будет скрыт после авторизации) -->
+            <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
                 <div class="start-avatar-square" id="startAvatar">
                     <img src="pingster_logo.svg" alt="Pingster">
@@ -90,7 +90,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН МАГАЗИНА -->
+            <!-- ЭКРАН МАГАЗИНА С КЕЙСАМИ И ИНВЕНТАРЕМ -->
             <div id="shopScreen" class="screen screen-shop">
                 <div class="title-row">
                     <div class="title-left">
@@ -117,7 +117,7 @@
                     <div class="cases-grid"></div>
                 </div>
                 
-                <!-- Секция инвентаря -->
+                <!-- Секция инвентаря (скрыта по умолчанию) -->
                 <div class="inventory-section hidden">
                     <div class="inventory-grid"></div>
                 </div>
@@ -192,7 +192,7 @@
                     <div class="stat-card" id="ratingCard">
                         <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">
-                            <input type="text" id="ratingValue" placeholder="0" value="0" readonly>
+                            <input type="text" id="ratingValue" placeholder="0" value="0">
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
@@ -202,7 +202,7 @@
                         </div>
                     </div>
                     <!-- Возраст -->
-                    <div class="stat-card" id="ageCard">
+                    <div class="stat-card" id="ageCard" onclick="editAge()">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value">
                             <input type="text" id="ageValue" placeholder="0-100" value="">
@@ -211,14 +211,14 @@
                 </div>
 
                 <div class="profile-stats">
-                    <div class="profile-stat-card" id="steamCard">
+                    <div class="profile-stat-card" id="steamCard" onclick="editSteam()">
                         <div class="profile-stat-label">Ссылка Steam</div>
                         <input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" value="">
                     </div>
 
-                    <div class="profile-stat-card" id="faceitLinkCard">
+                    <div class="profile-stat-card" id="faceitLinkCard" onclick="editFaceitLink()">
                         <div class="profile-stat-label">Ссылка Faceit</div>
-                        <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit / пропустите" value="">
+                        <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш профиль faceit / пропустите" value="">
                     </div>
                 </div>
 
@@ -323,13 +323,13 @@
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
                 
                 <div class="input-label">Faceit ELO</div>
-                <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="1500" min="0" max="5000">
+                <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="-" min="0" max="5000">
                 
                 <div class="stats-row">
                     <div class="stat-card">
                         <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">
-                            <input type="text" id="faceitRatingValue" placeholder="0" value="0" readonly>
+                            <input type="text" placeholder="0" value="0">
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
@@ -338,7 +338,7 @@
                             </span>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" onclick="editFaceitAge()">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value">
                             <input type="text" id="faceitAgeValue" placeholder="21" value="21">
@@ -347,10 +347,10 @@
                 </div>
                 
                 <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="faceitSteamInput" placeholder="Ссылка на Steam" value="">
+                <input type="text" class="input-field" id="faceitSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
                 
                 <div class="input-label">Ссылка Faceit</div>
-                <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="">
+                <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="—">
                 
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
@@ -359,10 +359,10 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="faceitComment" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
                 </div>
 
-                <button class="mode-search-btn" onclick="startSearch('faceit')">Начать поиск</button>
+                <button class="mode-search-btn" onclick="startSearch('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
             </div>
 
             <!-- ЭКРАН PREMIER -->
@@ -374,13 +374,13 @@
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
                 
                 <div class="input-label">CS Rating</div>
-                <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="8000" min="0" max="35000">
+                <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="12500" min="0" max="35000">
                 
                 <div class="stats-row">
                     <div class="stat-card">
                         <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">
-                            <input type="text" id="premierRatingValue" placeholder="0" value="0" readonly>
+                            <input type="text" placeholder="0" value="0">
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
@@ -389,7 +389,7 @@
                             </span>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" onclick="editPremierAge()">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value">
                             <input type="text" id="premierAgeValue" placeholder="21" value="21">
@@ -398,7 +398,7 @@
                 </div>
                 
                 <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="">
+                <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
                 
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
@@ -407,10 +407,10 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="premierComment" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
                 </div>
 
-                <button class="mode-search-btn" onclick="startSearch('premier')">Начать поиск</button>
+                <button class="mode-search-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
             </div>
 
             <!-- ЭКРАН MM PRIME -->
@@ -423,30 +423,30 @@
                 
                 <div class="input-label">Звание</div>
                 <select class="rank-select" id="primeRankSelect">
-                    <option value="1">Silver 1</option>
-                    <option value="2">Silver 2</option>
-                    <option value="3">Silver 3</option>
-                    <option value="4">Silver 4</option>
-                    <option value="5">Silver Elite</option>
-                    <option value="6">Gold Nova 1</option>
-                    <option value="7">Gold Nova 2</option>
-                    <option value="8" selected>Gold Nova 3</option>
-                    <option value="9">Gold Nova Master</option>
-                    <option value="10">Master Guardian 1</option>
-                    <option value="11">Master Guardian 2</option>
-                    <option value="12">Master Guardian Elite</option>
-                    <option value="13">Distinguished Master Guardian</option>
-                    <option value="14">Legendary Eagle</option>
-                    <option value="15">Legendary Eagle Master</option>
-                    <option value="16">Supreme Master First Class</option>
-                    <option value="17">Global Elite</option>
+                    <option>Silver 1</option>
+                    <option>Silver 2</option>
+                    <option>Silver 3</option>
+                    <option>Silver 4</option>
+                    <option>Silver Elite</option>
+                    <option>Gold Nova 1</option>
+                    <option>Gold Nova 2</option>
+                    <option selected>Gold Nova 3</option>
+                    <option>Gold Nova Master</option>
+                    <option>Master Guardian 1</option>
+                    <option>Master Guardian 2</option>
+                    <option>Master Guardian Elite</option>
+                    <option>Distinguished Master Guardian</option>
+                    <option>Legendary Eagle</option>
+                    <option>Legendary Eagle Master</option>
+                    <option>Supreme Master First Class</option>
+                    <option>Global Elite</option>
                 </select>
                 
                 <div class="stats-row">
                     <div class="stat-card">
                         <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">
-                            <input type="text" id="primeRatingValue" placeholder="0" value="0" readonly>
+                            <input type="text" placeholder="0" value="0">
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
@@ -455,7 +455,7 @@
                             </span>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" onclick="editPrimeAge()">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value">
                             <input type="text" id="primeAgeValue" placeholder="21" value="21">
@@ -464,7 +464,7 @@
                 </div>
                 
                 <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="">
+                <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
                 
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
@@ -473,10 +473,10 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="primeComment" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
                 </div>
 
-                <button class="mode-search-btn" onclick="startSearch('prime')">Начать поиск</button>
+                <button class="mode-search-btn" onclick="startSearch('MM PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
             </div>
 
             <!-- ЭКРАН MM PUBLIC -->
@@ -489,30 +489,30 @@
                 
                 <div class="input-label">Звание</div>
                 <select class="rank-select" id="publicRankSelect">
-                    <option value="1">Silver 1</option>
-                    <option value="2">Silver 2</option>
-                    <option value="3" selected>Silver 3</option>
-                    <option value="4">Silver 4</option>
-                    <option value="5">Silver Elite</option>
-                    <option value="6">Gold Nova 1</option>
-                    <option value="7">Gold Nova 2</option>
-                    <option value="8">Gold Nova 3</option>
-                    <option value="9">Gold Nova Master</option>
-                    <option value="10">Master Guardian 1</option>
-                    <option value="11">Master Guardian 2</option>
-                    <option value="12">Master Guardian Elite</option>
-                    <option value="13">Distinguished Master Guardian</option>
-                    <option value="14">Legendary Eagle</option>
-                    <option value="15">Legendary Eagle Master</option>
-                    <option value="16">Supreme Master First Class</option>
-                    <option value="17">Global Elite</option>
+                    <option>Silver 1</option>
+                    <option>Silver 2</option>
+                    <option selected>Silver 3</option>
+                    <option>Silver 4</option>
+                    <option>Silver Elite</option>
+                    <option>Gold Nova 1</option>
+                    <option>Gold Nova 2</option>
+                    <option>Gold Nova 3</option>
+                    <option>Gold Nova Master</option>
+                    <option>Master Guardian 1</option>
+                    <option>Master Guardian 2</option>
+                    <option>Master Guardian Elite</option>
+                    <option>Distinguished Master Guardian</option>
+                    <option>Legendary Eagle</option>
+                    <option>Legendary Eagle Master</option>
+                    <option>Supreme Master First Class</option>
+                    <option>Global Elite</option>
                 </select>
                 
                 <div class="stats-row">
                     <div class="stat-card">
                         <div class="stat-label">Рейтинг</div>
                         <div class="stat-value">
-                            <input type="text" id="publicRatingValue" placeholder="0" value="0" readonly>
+                            <input type="text" placeholder="0" value="0">
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z"
@@ -521,7 +521,7 @@
                             </span>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" onclick="editPublicAge()">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value">
                             <input type="text" id="publicAgeValue" placeholder="21" value="21">
@@ -530,7 +530,7 @@
                 </div>
                 
                 <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="">
+                <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="steamcommunity.com/id/pingster">
                 
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
@@ -539,10 +539,10 @@
 
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="publicComment" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
+                    <textarea class="comment-input" placeholder="Введите комментарий если хотите что-нибудь уточнить / пропустите" maxlength="100"></textarea>
                 </div>
 
-                <button class="mode-search-btn" onclick="startSearch('public')">Начать поиск</button>
+                <button class="mode-search-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
             </div>
 
             <!-- ЭКРАН ПОИСКА -->
@@ -552,7 +552,7 @@
                     <div class="search-timer" id="searchTimer">00:00</div>
                 </div>
                 
-                <div class="search-status" id="searchStatus">Поиск тиммейта начат</div>
+                <div class="search-status">Поиск тиммейта начат</div>
                 
                 <div class="search-loading">
                     <div class="spinner"></div>
@@ -563,343 +563,7 @@
         </div>
     </div>
 
-    <script>
-        // ============================================
-        // TELEGRAM MINI APP INIT
-        // ============================================
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
-        
-        // Получаем данные пользователя
-        const tgUser = tg.initDataUnsafe?.user;
-        const TELEGRAM_ID = tgUser?.id || new URLSearchParams(window.location.search).get('tg_id');
-        const USERNAME = tgUser?.username || tgUser?.first_name || 'player';
-        
-        console.log('Telegram ID:', TELEGRAM_ID);
-        console.log('Username:', USERNAME);
-        
-        // API URL
-        const API_URL = 'https://matk91589-dev-pingster-backend-e306.twc1.net/api';
-        
-        // Глобальные переменные
-        let currentUser = null;
-        let searchTimer = null;
-        let searchInterval = null;
-        
-        // ============================================
-        // НАВИГАЦИЯ
-        // ============================================
-        function hideAllScreens() {
-            const screens = [
-                'startScreen', 'mainScreen', 'profileScreen', 'shopScreen', 'settingsScreen',
-                'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen', 'searchScreen'
-            ];
-            screens.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
-            });
-        }
-        
-        function showMainScreen() {
-            hideAllScreens();
-            document.getElementById('mainScreen').style.display = 'flex';
-            document.getElementById('mainHeader').style.display = 'flex';
-        }
-        
-        function showProfileScreen() {
-            hideAllScreens();
-            document.getElementById('profileScreen').style.display = 'flex';
-            document.getElementById('mainHeader').style.display = 'flex';
-            loadProfile();
-        }
-        
-        function showShopScreen() {
-            hideAllScreens();
-            document.getElementById('shopScreen').style.display = 'flex';
-            document.getElementById('mainHeader').style.display = 'flex';
-        }
-        
-        function showSettingsScreen() {
-            hideAllScreens();
-            document.getElementById('settingsScreen').style.display = 'flex';
-            document.getElementById('mainHeader').style.display = 'flex';
-        }
-        
-        function showFaceitScreen() {
-            hideAllScreens();
-            document.getElementById('faceitScreen').style.display = 'flex';
-            document.getElementById('mainHeader').style.display = 'flex';
-            loadUserRating('faceitRatingValue');
-        }
-        
-        function showPremierScreen() {
-            hideAllScreens();
-            document.getElementById('premierScreen').style.display = 'flex';
-            document.getElementById('mainHeader').style.display = 'flex';
-            loadUserRating('premierRatingValue');
-        }
-        
-        function showPrimeScreen() {
-            hideAllScreens();
-            document.getElementById('primeScreen').style.display = 'flex';
-            document.getElementById('mainHeader').style.display = 'flex';
-            loadUserRating('primeRatingValue');
-        }
-        
-        function showPublicScreen() {
-            hideAllScreens();
-            document.getElementById('publicScreen').style.display = 'flex';
-            document.getElementById('mainHeader').style.display = 'flex';
-            loadUserRating('publicRatingValue');
-        }
-        
-        // ============================================
-        // ЗАГРУЗКА РЕЙТИНГА
-        // ============================================
-        function loadUserRating(elementId) {
-            if (currentUser) {
-                document.getElementById(elementId).value = currentUser.rating || 0;
-            }
-        }
-        
-        // ============================================
-        // ЗАГРУЗКА ПРОФИЛЯ
-        // ============================================
-        function loadProfile() {
-            if (currentUser) {
-                document.getElementById('profileName').textContent = currentUser.username || '-';
-                document.getElementById('ratingValue').value = currentUser.rating || 0;
-                // Остальные поля будут загружаться из базы
-            }
-        }
-        
-        // ============================================
-        // ИНИЦИАЛИЗАЦИЯ
-        // ============================================
-        async function initApp() {
-            if (!TELEGRAM_ID) {
-                console.error('Нет Telegram ID');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_URL}/user/init`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        telegram_id: TELEGRAM_ID,
-                        username: USERNAME
-                    })
-                });
-                
-                const data = await response.json();
-                console.log('Init response:', data);
-                
-                if (data.status === 'ok') {
-                    currentUser = {
-                        id: data.user_id,
-                        player_id: data.player_id,
-                        telegram_id: TELEGRAM_ID,
-                        username: USERNAME,
-                        rating: 0
-                    };
-                    
-                    // Показываем стартовый экран
-                    document.getElementById('startScreen').style.display = 'flex';
-                }
-            } catch (error) {
-                console.error('Init error:', error);
-                tg.showAlert('Ошибка подключения к серверу');
-            }
-        }
-        
-        // ============================================
-        // СТАРТ ПРИЛОЖЕНИЯ
-        // ============================================
-        function startApp() {
-            hideAllScreens();
-            document.getElementById('mainScreen').style.display = 'flex';
-            document.getElementById('mainHeader').style.display = 'flex';
-        }
-        
-        // ============================================
-        // ФУНКЦИИ ПОИСКА
-        // ============================================
-        async function startSearch(mode) {
-            let rank, age, steam, faceit, comment;
-            
-            // Собираем данные в зависимости от режима
-            switch(mode) {
-                case 'faceit':
-                    rank = document.getElementById('faceitELOInput').value;
-                    age = document.getElementById('faceitAgeValue').value;
-                    steam = document.getElementById('faceitSteamInput').value;
-                    faceit = document.getElementById('faceitLinkInput').value;
-                    comment = document.getElementById('faceitComment').value;
-                    break;
-                case 'premier':
-                    rank = document.getElementById('premierRatingInput').value;
-                    age = document.getElementById('premierAgeValue').value;
-                    steam = document.getElementById('premierSteamInput').value;
-                    faceit = '';
-                    comment = document.getElementById('premierComment').value;
-                    break;
-                case 'prime':
-                    rank = document.getElementById('primeRankSelect').value;
-                    age = document.getElementById('primeAgeValue').value;
-                    steam = document.getElementById('primeSteamInput').value;
-                    faceit = '';
-                    comment = document.getElementById('primeComment').value;
-                    break;
-                case 'public':
-                    rank = document.getElementById('publicRankSelect').value;
-                    age = document.getElementById('publicAgeValue').value;
-                    steam = document.getElementById('publicSteamInput').value;
-                    faceit = '';
-                    comment = document.getElementById('publicComment').value;
-                    break;
-            }
-            
-            // Проверка обязательных полей
-            if (!age || !rank || !steam) {
-                tg.showAlert('Заполните возраст, ранг и ссылку Steam');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_URL}/search/start`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        telegram_id: TELEGRAM_ID,
-                        mode: mode,
-                        rank: parseInt(rank),
-                        age: parseInt(age),
-                        steam_link: steam,
-                        faceit_link: faceit,
-                        comment: comment
-                    })
-                });
-                
-                const data = await response.json();
-                console.log('Search start:', data);
-                
-                if (data.status === 'searching') {
-                    // Показываем экран поиска
-                    document.getElementById('searchModeTitle').textContent = mode.toUpperCase();
-                    document.getElementById('searchTimer').textContent = '00:00';
-                    document.getElementById('searchStatus').textContent = 'Поиск тиммейта начат';
-                    
-                    hideAllScreens();
-                    document.getElementById('searchScreen').style.display = 'flex';
-                    document.getElementById('mainHeader').style.display = 'flex';
-                    
-                    // Запускаем таймер
-                    startSearchTimer();
-                    
-                    // Начинаем проверять мэтчи
-                    checkMatchLoop();
-                }
-            } catch (error) {
-                console.error('Search error:', error);
-                tg.showAlert('Ошибка при поиске');
-            }
-        }
-        
-        function startSearchTimer() {
-            let seconds = 0;
-            const timerEl = document.getElementById('searchTimer');
-            
-            if (searchTimer) clearInterval(searchTimer);
-            
-            searchTimer = setInterval(() => {
-                seconds++;
-                const mins = Math.floor(seconds / 60);
-                const secs = seconds % 60;
-                timerEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-            }, 1000);
-        }
-        
-        function checkMatchLoop() {
-            if (searchInterval) clearInterval(searchInterval);
-            
-            searchInterval = setInterval(async () => {
-                try {
-                    const response = await fetch(`${API_URL}/match/check`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            telegram_id: TELEGRAM_ID
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    console.log('Match check:', data);
-                    
-                    if (data.match_found) {
-                        // Нашли мэтч!
-                        clearInterval(searchInterval);
-                        clearInterval(searchTimer);
-                        
-                        // Показываем мэтч
-                        showMatchScreen(data);
-                    }
-                } catch (error) {
-                    console.error('Match check error:', error);
-                }
-            }, 1000); // Проверяем каждыу 1 секунду 
-        }
-        
-        function showMatchScreen(matchData) {
-            // Здесь будет экран с найденным тиммейтом
-            tg.showAlert(`Найден тиммейт! Возраст: ${matchData.opponent.age}, Ранг: ${matchData.opponent.rank}`);
-            
-            // Пока возвращаемся на главную
-            cancelSearch();
-        }
-        
-        function cancelSearch() {
-            clearInterval(searchInterval);
-            clearInterval(searchTimer);
-            
-            // Отправляем запрос на остановку поиска
-            fetch(`${API_URL}/search/stop`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    telegram_id: TELEGRAM_ID
-                })
-            }).catch(console.error);
-            
-            showMainScreen();
-        }
-        
-        // ============================================
-        // ЗАПУСК
-        // ============================================
-        document.addEventListener('DOMContentLoaded', initApp);
-        
-        // ============================================
-        // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (заглушки)
-        // ============================================
-        function handleLogoClick() { showMainScreen(); }
-        function setStyle(style, element) {
-            document.querySelectorAll('.style-option').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
-        }
-        function showShopTab(tab) { console.log('Show tab:', tab); }
-        function enterSearchMode() { showFaceitScreen(); }
-        function toggleEditMode() {}
-        function applyChanges() {}
-        function selectAvatar() {}
-        function editName() {}
-        function editAge() {}
-        function editSteam() {}
-        function editFaceitLink() {}
-    </script>
-
-    <!-- JavaScript файлы (оставляем для совместимости, но основной код выше) -->
+    <!-- JavaScript -->
     <script src="js/config.js"></script>
     <script src="js/supabase.js"></script>
     <script src="js/globals.js"></script>
@@ -913,4 +577,3 @@
     <script src="js/app.js"></script>
 </body>
 </html>
-
