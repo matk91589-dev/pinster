@@ -22,21 +22,48 @@ body {
     color: #F5F5F5;
 }
 
-/* БАЗОВЫЕ СТИЛИ (ДЛЯ ПК ПО УМОЛЧАНИЮ) */
+/* Используем Telegram viewport variables */
+:root {
+    --tg-viewport-height: 100vh;
+    --tg-viewport-stable-height: 100vh;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+    background: #0D0F15;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    color: #F5F5F5;
+    margin: 0;
+    padding: 0;
+    transform: none !important;
+}
+
+/* Основной контейнер - ПОЛНОЭКРАННЫЙ для всех устройств */
 .phone-frame {
     width: 100%;
-    max-width: 380px;
-    min-height: 700px; 
+    max-width: 100%;
+    min-height: 100vh;
     background: #111317;
-    border-radius: 16px;
-    padding: 12px 20px 8px 20px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-    border: 1px solid rgba(245, 245, 245, 0.05);
+    border-radius: 0;
+    padding: 8px 16px 4px 16px;
+    box-shadow: none;
+    border: none;
     display: flex;
     flex-direction: column;
     position: relative;
+    margin: 0;
 }
 
+/* Контент с правильным скроллом */
 .content {
     flex: 1;
     display: flex;
@@ -45,7 +72,13 @@ body {
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
     position: relative;
+}
+
+.content::-webkit-scrollbar {
+    display: none;
 }
 
 /* ===== ХЕДЕР ===== */
@@ -68,7 +101,6 @@ body {
     display: inline-block;
 }
 
-/* Упрощенная анимация для Pingster */
 .logo:hover {
     transform: scale(1.05);
 }
@@ -127,6 +159,7 @@ body {
     display: none;
 }
 
+/* ===== ЗАГОЛОВКИ ===== */
 .title-row {
     display: flex;
     align-items: center;
@@ -175,7 +208,6 @@ body {
     stroke: #9BA1B0;
     stroke-width: 2;
     fill: none;
-    transition: stroke 0.1s;
 }
 
 .edit-title-icon.active svg {
@@ -217,7 +249,7 @@ body {
     font-weight: 600;
 }
 
-/* Глобальные стили для заголовков (базовые) */
+/* ===== ГЛОБАЛЬНЫЕ ЗАГОЛОВКИ ===== */
 .section-title {
     font-size: 24px;
     font-weight: 700;
@@ -233,7 +265,6 @@ body {
     text-align: center;
 }
 
-/* Специфичные стили для главного экрана */
 .main-screen .section-title {
     margin: 40px 0 4px 0;
 }
@@ -242,22 +273,13 @@ body {
     margin: 0 0 12px 0;
 }
 
-/* Стили для магазина */
-.shop-screen .section-title {
-    margin: 0;
-}
-
-/* Стили для профиля */
-.profile-screen .section-title {
-    margin: 0;
-}
-
-/* Стили для настроек */
+.shop-screen .section-title,
+.profile-screen .section-title,
 .settings-screen .section-title {
-    margin: 0 0 20px 0;
+    margin: 0;
 }
 
-/* Стили для кнопки поиска в режимах */
+/* ===== КНОПКИ ===== */
 .mode-search-btn {
     width: 280px;
     padding: 14px;
@@ -291,10 +313,6 @@ body {
     justify-content: flex-start;
     height: 100%;
     padding: 60px 0 0 0;
-}
-
-.start-logo {
-    display: none;
 }
 
 .start-avatar-square {
@@ -365,6 +383,7 @@ body {
     opacity: 0.9;
 }
 
+/* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
 .bottom-nav {
     display: flex;
     justify-content: space-around;
@@ -413,6 +432,7 @@ body {
     color: #F5F5F5;
 }
 
+/* ===== КОНТЕЙНЕР РЕЖИМОВ ===== */
 .mode-container {
     flex: 1;
     display: flex;
@@ -444,22 +464,13 @@ body {
     background: #1E2128;
 }
 
-.mode-btn.faceit {
-    border-left: 4px solid #FF5500;
-    color: #FF5500;
-}
-
+.mode-btn.faceit,
 .mode-btn.premier {
     border-left: 4px solid #FF5500;
     color: #FF5500;
 }
 
-.mode-btn.prime {
-    border-left: 4px solid #F5F5F5;
-    text-transform: none;
-    font-size: 16px;
-}
-
+.mode-btn.prime,
 .mode-btn.public {
     border-left: 4px solid #F5F5F5;
     text-transform: none;
@@ -478,7 +489,7 @@ body {
 
 /* ===== ПРОФИЛЬ ===== */
 
-/* СТАТИЧНЫЕ ЭЛЕМЕНТЫ (без анимаций) - ВСЕ ПОЛЯ И КАРТОЧКИ */
+/* СТАТИЧНЫЕ ЭЛЕМЕНТЫ (без анимаций) */
 .profile-header,
 .profile-avatar,
 .profile-info,
@@ -532,12 +543,10 @@ body {
     transform: none !important;
 }
 
-/* Дополнительно для всех input, select, textarea */
 input, select, textarea, button {
     transition: none !important;
 }
 
-/* Но оставляем анимации для кликабельных кнопок */
 .primary-btn,
 .mode-search-btn,
 .cancel-search-btn,
@@ -563,7 +572,6 @@ input, select, textarea, button {
     transform: scale(1.05) !important;
 }
 
-/* У 4 кнопок режимов убираем увеличение */
 .mode-btn.faceit:hover,
 .mode-btn.premier:hover,
 .mode-btn.prime:hover,
@@ -583,7 +591,7 @@ input, select, textarea, button {
     transform: scale(0.95) !important;
 }
 
-/* Шапка профиля (аватар + ник) */
+/* Шапка профиля */
 .profile-header {
     display: flex;
     align-items: center;
@@ -684,11 +692,10 @@ input, select, textarea, button {
     padding: 2px 8px;
     border-radius: 12px;
     border: 1px solid rgba(76, 175, 80, 0.4);
-    letter-spacing: 0.3px;
     display: inline-block;
 }
 
-/* Статистика (рейтинг, возраст) - одинаковые поля */
+/* Статистика */
 .stats-row {
     display: flex;
     gap: 12px;
@@ -716,7 +723,6 @@ input, select, textarea, button {
     letter-spacing: 0.3px;
 }
 
-/* Поля ввода как в FACEIT */
 .stat-value {
     width: 100%;
     background: #1A1D24;
@@ -1351,103 +1357,4 @@ input:-webkit-autofill:active {
     -webkit-text-fill-color: #F5F5F5 !important;
     transition: background-color 5000s ease-in-out 0s;
     box-shadow: inset 0 0 20px 20px #1A1D24 !important;
-}
-
-/* ===== ПОЛНОЭКРАННЫЙ РЕЖИМ ДЛЯ TELEGRAM MINI APP ===== */
-
-/* Используем Telegram viewport variables */
-:root {
-    --tg-viewport-height: 100vh;
-    --tg-viewport-stable-height: 100vh;
-}
-
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    overscroll-behavior: none;
-    background: #0D0F15;
-}
-
-body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Montserrat', sans-serif;
-    color: #F5F5F5;
-    margin: 0;
-    padding: 0;
-    transform: none !important;
-}
-
-/* Основной контейнер - ПОЛНОЭКРАННЫЙ (для телефонов) */
-.phone-frame {
-    width: 100%;
-    max-width: 100%;
-    min-height: 100vh;
-    background: #111317;
-    border-radius: 0;
-    padding: 8px 16px 4px 16px;
-    box-shadow: none;
-    border: none;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    margin: 0;
-}
-
-/* Контент с правильным скроллом */
-.content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    position: relative;
-}
-
-.content::-webkit-scrollbar {
-    display: none;
-}
-
-/* Исправление скролла для друзей */
-.friends-section {
-    min-height: 0;
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-}
-
-.friends-list {
-    flex: 1;
-    overflow-y: auto;
-    max-height: 300px;
-    padding-right: 4px;
-}
-
-/* Медиа-запросы для маленьких экранов */
-@media (max-width: 360px) {
-    .phone-frame {
-        padding: 8px 12px 4px 12px;
-    }
-}
-
-/* Для ПК оставляем карточку */
-@media (min-width: 600px) {
-    body {
-        padding: 20px;
-    }
-    
-    .phone-frame {
-        max-width: 380px;
-        min-height: 700px;
-        border-radius: 16px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-        border: 1px solid rgba(245, 245, 245, 0.05);
-        margin: 0 auto;
-    }
 }
