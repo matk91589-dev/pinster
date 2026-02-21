@@ -2,6 +2,14 @@
 // ФУНКЦИИ НАВИГАЦИИ
 // ============================================
 
+// Функция для управления видимостью нижней навигации
+function showBottomNav(show) {
+    const bottomNav = document.querySelector('.bottom-nav');
+    if (bottomNav) {
+        bottomNav.style.display = show ? 'flex' : 'none';
+    }
+}
+
 // Функция для обновления активной кнопки в навигации
 function setActiveNavButton(activeScreen) {
     const navItems = document.querySelectorAll('.nav-item');
@@ -35,6 +43,7 @@ function startApp() {
     if (mainScreen) {
         mainScreen.style.display = 'flex';
         setActiveNavButton('mainScreen');
+        showBottomNav(true); // Показываем навигацию на главном экране
     } else {
         console.error('mainScreen не найден!');
     }
@@ -46,6 +55,7 @@ function showMainScreen() {
     if (mainScreen) {
         mainScreen.style.display = 'flex';
         setActiveNavButton('mainScreen');
+        showBottomNav(true); // Показываем навигацию
     }
     
     const settingsIcon = document.getElementById('settingsIcon');
@@ -60,6 +70,7 @@ function showProfileScreen() {
     if (profileScreen) {
         profileScreen.style.display = 'flex';
         setActiveNavButton('profileScreen');
+        showBottomNav(true); // Показываем навигацию
     }
     
     if (typeof isSearchMode !== 'undefined' && isSearchMode) {
@@ -82,6 +93,7 @@ function showShopScreen() {
     if (shopScreen) {
         shopScreen.style.display = 'flex';
         setActiveNavButton('shopScreen');
+        showBottomNav(true); // Показываем навигацию
     }
     
     const settingsIcon = document.getElementById('settingsIcon');
@@ -95,6 +107,7 @@ function showSettingsScreen() {
     const settingsScreen = document.getElementById('settingsScreen');
     if (settingsScreen) {
         settingsScreen.style.display = 'flex';
+        showBottomNav(true); // Показываем навигацию на настройках
     } else {
         console.warn('settingsScreen не найден в HTML. Создай его или убери вызов.');
         showMainScreen();
@@ -116,6 +129,7 @@ function showFaceitScreen() {
     const faceitScreen = document.getElementById('faceitScreen');
     if (faceitScreen) {
         faceitScreen.style.display = 'flex';
+        showBottomNav(false); // Скрываем навигацию на экране FACEIT
     } else {
         console.warn('faceitScreen не найден в HTML. Создай его или убери кнопку.');
         showMainScreen();
@@ -149,6 +163,7 @@ function showPremierScreen() {
     const premierScreen = document.getElementById('premierScreen');
     if (premierScreen) {
         premierScreen.style.display = 'flex';
+        showBottomNav(false); // Скрываем навигацию на экране PREMIER
     } else {
         console.warn('premierScreen не найден в HTML. Создай его или убери кнопку.');
         showMainScreen();
@@ -177,6 +192,7 @@ function showPrimeScreen() {
     const primeScreen = document.getElementById('primeScreen');
     if (primeScreen) {
         primeScreen.style.display = 'flex';
+        showBottomNav(false); // Скрываем навигацию на экране PRIME
     } else {
         console.warn('primeScreen не найден в HTML. Создай его или убери кнопку.');
         showMainScreen();
@@ -205,6 +221,7 @@ function showPublicScreen() {
     const publicScreen = document.getElementById('publicScreen');
     if (publicScreen) {
         publicScreen.style.display = 'flex';
+        showBottomNav(false); // Скрываем навигацию на экране PUBLIC
     } else {
         console.warn('publicScreen не найден в HTML. Создай его или убери кнопку.');
         showMainScreen();
@@ -218,6 +235,23 @@ function showPublicScreen() {
     
     const steamEl = document.getElementById('publicSteamInput');
     if (steamEl && typeof savedSteam !== 'undefined') steamEl.value = savedSteam;
+    
+    const settingsIcon = document.getElementById('settingsIcon');
+    if (settingsIcon) {
+        settingsIcon.classList.remove('active');
+    }
+    
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+}
+
+// Функция для экрана поиска (если нужна)
+function showSearchScreen() {
+    hideAllScreens();
+    const searchScreen = document.getElementById('searchScreen');
+    if (searchScreen) {
+        searchScreen.style.display = 'flex';
+        showBottomNav(false); // Скрываем навигацию на экране поиска
+    }
     
     const settingsIcon = document.getElementById('settingsIcon');
     if (settingsIcon) {
