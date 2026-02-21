@@ -1354,6 +1354,7 @@ input:-webkit-autofill:active {
 html, body {
     height: 100%;
     margin: 0;
+    overflow: hidden;   /* убираем внешний микроскролл */
 }
 
 .phone-frame {
@@ -1363,12 +1364,12 @@ html, body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: hidden;   /* обязательно */
 }
 
 .content {
     flex: 1 1 auto;
-    overflow-y: auto;
+    overflow-y: auto;   /* скролл только тут */
     min-height: 0;
 }
 
@@ -1408,6 +1409,7 @@ html, body {
         overflow: hidden;
     }
 }
+
 
 
 
