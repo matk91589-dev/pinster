@@ -22,7 +22,6 @@ body {
     color: #F5F5F5;
 }
 
-/* ===== ОСНОВНЫЕ СТИЛИ (ДЛЯ ПК ПО УМОЛЧАНИЮ) ===== */
 .phone-frame {
     width: 100%;
     max-width: 380px;
@@ -68,6 +67,7 @@ body {
     display: inline-block;
 }
 
+/* Упрощенная анимация для Pingster */
 .logo:hover {
     transform: scale(1.05);
 }
@@ -126,7 +126,6 @@ body {
     display: none;
 }
 
-/* ===== ЗАГОЛОВКИ ===== */
 .title-row {
     display: flex;
     align-items: center;
@@ -175,6 +174,7 @@ body {
     stroke: #9BA1B0;
     stroke-width: 2;
     fill: none;
+    transition: stroke 0.1s;
 }
 
 .edit-title-icon.active svg {
@@ -216,7 +216,7 @@ body {
     font-weight: 600;
 }
 
-/* ===== ГЛОБАЛЬНЫЕ ЗАГОЛОВКИ ===== */
+/* Глобальные стили для заголовков (базовые) */
 .section-title {
     font-size: 24px;
     font-weight: 700;
@@ -232,6 +232,7 @@ body {
     text-align: center;
 }
 
+/* Специфичные стили для главного экрана */
 .main-screen .section-title {
     margin: 40px 0 4px 0;
 }
@@ -240,13 +241,22 @@ body {
     margin: 0 0 12px 0;
 }
 
-.shop-screen .section-title,
-.profile-screen .section-title,
-.settings-screen .section-title {
+/* Стили для магазина */
+.shop-screen .section-title {
     margin: 0;
 }
 
-/* ===== КНОПКИ ===== */
+/* Стили для профиля */
+.profile-screen .section-title {
+    margin: 0;
+}
+
+/* Стили для настроек */
+.settings-screen .section-title {
+    margin: 0 0 20px 0;
+}
+
+/* Стили для кнопки поиска в режимах */
 .mode-search-btn {
     width: 280px;
     padding: 14px;
@@ -280,6 +290,10 @@ body {
     justify-content: flex-start;
     height: 100%;
     padding: 60px 0 0 0;
+}
+
+.start-logo {
+    display: none;
 }
 
 .start-avatar-square {
@@ -321,6 +335,7 @@ body {
     font-weight: 500;
 }
 
+/* КНОПКА СТАРТОВОГО ЭКРАНА */
 .primary-btn {
     width: 280px;
     padding: 14px;
@@ -349,7 +364,6 @@ body {
     opacity: 0.9;
 }
 
-/* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
 .bottom-nav {
     display: flex;
     justify-content: space-around;
@@ -398,7 +412,6 @@ body {
     color: #F5F5F5;
 }
 
-/* ===== КОНТЕЙНЕР РЕЖИМОВ ===== */
 .mode-container {
     flex: 1;
     display: flex;
@@ -430,13 +443,22 @@ body {
     background: #1E2128;
 }
 
-.mode-btn.faceit,
+.mode-btn.faceit {
+    border-left: 4px solid #FF5500;
+    color: #FF5500;
+}
+
 .mode-btn.premier {
     border-left: 4px solid #FF5500;
     color: #FF5500;
 }
 
-.mode-btn.prime,
+.mode-btn.prime {
+    border-left: 4px solid #F5F5F5;
+    text-transform: none;
+    font-size: 16px;
+}
+
 .mode-btn.public {
     border-left: 4px solid #F5F5F5;
     text-transform: none;
@@ -455,7 +477,7 @@ body {
 
 /* ===== ПРОФИЛЬ ===== */
 
-/* СТАТИЧНЫЕ ЭЛЕМЕНТЫ (без анимаций) */
+/* СТАТИЧНЫЕ ЭЛЕМЕНТЫ (без анимаций) - ВСЕ ПОЛЯ И КАРТОЧКИ */
 .profile-header,
 .profile-avatar,
 .profile-info,
@@ -509,10 +531,12 @@ body {
     transform: none !important;
 }
 
+/* Дополнительно для всех input, select, textarea */
 input, select, textarea, button {
     transition: none !important;
 }
 
+/* Но оставляем анимации для кликабельных кнопок */
 .primary-btn,
 .mode-search-btn,
 .cancel-search-btn,
@@ -538,6 +562,7 @@ input, select, textarea, button {
     transform: scale(1.05) !important;
 }
 
+/* У 4 кнопок режимов убираем увеличение */
 .mode-btn.faceit:hover,
 .mode-btn.premier:hover,
 .mode-btn.prime:hover,
@@ -557,7 +582,7 @@ input, select, textarea, button {
     transform: scale(0.95) !important;
 }
 
-/* Шапка профиля */
+/* Шапка профиля (аватар + ник) */
 .profile-header {
     display: flex;
     align-items: center;
@@ -638,6 +663,18 @@ input, select, textarea, button {
     color: #FF5500;
 }
 
+.profile-name.red { color: #FF5500; }
+.profile-name.green { color: #4CAF50; }
+.profile-name.blue { color: #2196F3; }
+.profile-name.purple { color: #9C27B0; }
+.profile-name.orange { color: #FF9800; }
+.profile-name.multicolor { 
+    background: linear-gradient(45deg, #FF5500, #4CAF50, #2196F3, #9C27B0, #FF9800);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+}
+
 .profile-status {
     color: #4CAF50;
     font-size: 11px;
@@ -646,10 +683,11 @@ input, select, textarea, button {
     padding: 2px 8px;
     border-radius: 12px;
     border: 1px solid rgba(76, 175, 80, 0.4);
+    letter-spacing: 0.3px;
     display: inline-block;
 }
 
-/* Статистика */
+/* Статистика (рейтинг, возраст) - одинаковые поля */
 .stats-row {
     display: flex;
     gap: 12px;
@@ -664,6 +702,10 @@ input, select, textarea, button {
     cursor: pointer;
 }
 
+.stat-card.editable {
+    border: none;
+}
+
 .stat-label {
     font-size: 10px;
     color: #9BA1B0;
@@ -673,6 +715,7 @@ input, select, textarea, button {
     letter-spacing: 0.3px;
 }
 
+/* Поля ввода как в FACEIT */
 .stat-value {
     width: 100%;
     background: #1A1D24;
@@ -702,8 +745,28 @@ input, select, textarea, button {
     font-family: 'Montserrat', sans-serif;
 }
 
+.stat-value input:focus {
+    outline: none;
+}
+
+.stat-value input::placeholder {
+    color: #5D6472;
+    font-weight: 600;
+    font-size: 12px;
+    opacity: 1;
+}
+
 .stat-value:focus-within {
     border-color: #FF5500;
+}
+
+.heart-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    margin-left: 8px;
+    flex-shrink: 0;
 }
 
 .heart-icon svg {
@@ -738,6 +801,14 @@ input, select, textarea, button {
     outline: none;
 }
 
+.profile-stat-value::placeholder,
+.input-field::placeholder {
+    color: #5D6472;
+    font-weight: 600;
+    font-size: 12px;
+    opacity: 1;
+}
+
 /* Подсветка полей в режиме редактирования */
 .editable-input {
     border-color: #FF5500 !important;
@@ -752,7 +823,7 @@ input, select, textarea, button {
     border-width: 2px !important;
 }
 
-/* Поля ввода (ссылки) */
+/* Поля ввода (ссылки) - без внешних плашек */
 .profile-stats {
     display: flex;
     flex-direction: column;
@@ -765,6 +836,10 @@ input, select, textarea, button {
     border: none;
     padding: 0;
     cursor: pointer;
+}
+
+.profile-stat-card.editable {
+    border: none;
 }
 
 .profile-stat-label {
@@ -807,6 +882,21 @@ input, select, textarea, button {
     fill: none;
 }
 
+.back-icon {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin-right: 4px;
+}
+
+.back-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: #B00000;
+    stroke-width: 2;
+    fill: none;
+}
+
 .friends-title {
     font-size: 15px;
     font-weight: 600;
@@ -817,6 +907,35 @@ input, select, textarea, button {
 .friends-count {
     color: #9BA1B0;
     font-size: 11px;
+    font-weight: 600;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    margin-bottom: 6px;
+}
+
+.search-input {
+    flex: 1;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #F5F5F5;
+    font-size: 12px;
+    font-weight: 500;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #FF5500;
+}
+
+.search-input::placeholder {
+    color: #5D6472;
     font-weight: 600;
 }
 
@@ -849,6 +968,10 @@ input, select, textarea, button {
     border: 1px solid #2A2F3A;
     border-radius: 6px;
     margin-bottom: 6px;
+}
+
+.friend-avatar {
+    display: none;
 }
 
 .friend-info {
@@ -891,6 +1014,9 @@ input, select, textarea, button {
     flex-direction: column;
     width: 100%;
     min-height: 0;
+}
+
+.screen {
     display: none;
 }
 
@@ -975,6 +1101,21 @@ input, select, textarea, button {
     border-color: #FF5500;
 }
 
+.search-input-field::placeholder {
+    color: #5D6472;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.search-input-field[type="number"] {
+    -moz-appearance: textfield;
+}
+.search-input-field[type="number"]::-webkit-outer-spin-button,
+.search-input-field[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .rank-select {
     width: 100%;
     background: #1A1D24;
@@ -989,12 +1130,21 @@ input, select, textarea, button {
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF5500' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
     background-repeat: no-repeat;
     background-position: right 14px center;
+    font-weight: 500;
 }
 
-.rank-select:hover,
-.rank-select:focus {
+.rank-select:hover {
     border-color: #FF5500;
+}
+
+.rank-select:focus {
     outline: none;
+    border-color: #FF5500;
+}
+
+.rank-select option {
+    background: #1A1D24;
+    color: #F5F5F5;
 }
 
 .play-style {
@@ -1053,6 +1203,11 @@ input, select, textarea, button {
     border-color: #FF5500;
 }
 
+.comment-input::placeholder {
+    color: #5D6472;
+    font-weight: 600;
+}
+
 /* ЭКРАН ПОИСКА */
 .search-header {
     display: flex;
@@ -1108,7 +1263,80 @@ input, select, textarea, button {
     margin: 20px 0 10px 0;
 }
 
-/* ===== УБИРАЕМ БЕЛЫЙ ФОН ===== */
+/* Поля ввода как в FACEIT - ИСПРАВЛЕНО */
+.stat-value {
+    width: 100%;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #F5F5F5;
+    font-size: 13px;
+    margin: 0;
+    cursor: text;
+    font-weight: 500;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-value input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #F5F5F5;
+    font-size: 13px;
+    font-weight: 500;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+.stat-value input:focus {
+    outline: none;
+}
+
+.stat-value input::placeholder {
+    color: #5D6472;
+    font-weight: 600;
+    font-size: 12px;
+    opacity: 1;
+}
+
+.stat-value:focus-within {
+    border-color: #FF5500;
+}
+
+/* Убираем белый фон у инпута возраста */
+#ageValue {
+    background: transparent !important;
+    color: #F5F5F5 !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+}
+
+#ageValue:focus {
+    outline: none !important;
+    border: none !important;
+}
+
+/* Специфично для карточки возраста */
+#ageCard .stat-value {
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+}
+
+#ageCard .stat-value:focus-within {
+    border-color: #FF5500;
+}
+
+/* Убираем белый фон у всех инпутов */
 input {
     background: transparent;
     color: #F5F5F5;
@@ -1125,6 +1353,8 @@ input:-webkit-autofill:active {
 }
 
 /* ===== АДАПТАЦИЯ ДЛЯ TELEGRAM MINI APP ===== */
+
+/* Используем Telegram viewport variables */
 :root {
     --tg-viewport-height: 100vh;
     --tg-viewport-stable-height: 100vh;
@@ -1146,47 +1376,104 @@ body {
     color: #F5F5F5;
     margin: 0;
     padding: 0;
+    transform: none !important;
 }
 
-/* ПОЛНОЭКРАННЫЙ РЕЖИМ НА ТЕЛЕФОНАХ */
-@media (max-width: 599px) {
+/* Основной контейнер - адаптивный */
+.phone-frame {
+    width: 100%;
+    max-width: 380px;
+    width: calc(100% - 32px);
+    height: auto;
+    min-height: 600px;
+    max-height: calc(var(--tg-viewport-stable-height) - 40px);
+    background: #111317;
+    border-radius: 16px;
+    padding: 12px 20px 8px 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(245, 245, 245, 0.05);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 20px auto;
+}
+
+/* Контент с правильным скроллом */
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    position: relative;
+}
+
+.content::-webkit-scrollbar {
+    display: none;
+}
+
+/* Исправление скролла для друзей */
+.friends-section {
+    min-height: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.friends-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 300px;
+    padding-right: 4px;
+}
+
+/* Медиа-запросы для маленьких экранов */
+@media (max-width: 360px) {
     .phone-frame {
-        width: 100%;
-        max-width: 100%;
-        min-height: 100vh;
-        border-radius: 0;
-        padding: 8px 16px 4px 16px;
-        box-shadow: none;
-        border: none;
-        margin: 0;
-    }
-    
-    .content {
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    .friends-section {
-        min-height: 0;
-        flex: 1 1 auto;
-    }
-    
-    .friends-list {
-        max-height: 300px;
+        padding: 8px 12px 4px 12px;
     }
 }
 
-/* КАРТОЧКА НА ПК */
+/* Для ПК и больших экранов */
 @media (min-width: 600px) {
     body {
         padding: 20px;
     }
     
     .phone-frame {
+        margin: 0 auto;
+    }
+}
+/* ===== ПОЛНОЭКРАННЫЙ РЕЖИМ ДЛЯ TELEGRAM MINI APP ===== */
+
+/* Убираем скругления у основного контейнера */
+.phone-frame {
+    width: 100%;
+    max-width: 100%; /* На всю ширину */
+    min-height: 100vh;
+    background: #111317;
+    border-radius: 0; /* Убираем скругление */
+    padding: 8px 16px 4px 16px;
+    box-shadow: none; /* Убираем тень */
+    border: none; /* Убираем границу */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 0;
+}
+
+/* Для ПК оставляем карточку (чтобы не на весь экран) */
+@media (min-width: 600px) {
+    .phone-frame {
         max-width: 380px;
-        min-height: 700px;
         border-radius: 16px;
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
         border: 1px solid rgba(245, 245, 245, 0.05);
-        margin: 0 auto;
+        margin: 20px auto;
+        min-height: 700px;
     }
 }
