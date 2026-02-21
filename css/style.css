@@ -25,10 +25,10 @@ body {
 .phone-frame {
     width: 100%;
     max-width: 380px;
-    height: 680px; /* Было 700px, стало 680px */
+    height: 700px;
     background: #111317;
     border-radius: 16px;
-    padding: 8px 16px 4px 16px; /* Уменьшил отступы */
+    padding: 12px 20px 8px 20px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
     border: 1px solid rgba(245, 245, 245, 0.05);
     display: flex;
@@ -42,14 +42,8 @@ body {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    overflow-y: auto; /* Добавил скролл */
-    overflow-x: hidden;
+    overflow: hidden;
     position: relative;
-    scrollbar-width: none;
-}
-
-.content::-webkit-scrollbar {
-    display: none;
 }
 
 /* ===== ХЕДЕР ===== */
@@ -57,13 +51,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px 0 8px 0; /* Уменьшил нижний отступ */
+    padding: 4px 0 12px 0;
     border-bottom: 1px solid #1E2128;
-    margin-bottom: 8px; /* Уменьшил margin */
+    margin-bottom: 12px;
 }
 
 .logo {
-    font-size: 22px; /* Чуть меньше */
+    font-size: 24px;
     font-weight: 700;
     letter-spacing: -0.5px;
     color: #F5F5F5;
@@ -72,6 +66,7 @@ body {
     display: inline-block;
 }
 
+/* Упрощенная анимация для Pingster */
 .logo:hover {
     transform: scale(1.05);
 }
@@ -96,8 +91,8 @@ body {
 }
 
 .icon-settings {
-    width: 32px; /* Чуть меньше */
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -113,8 +108,8 @@ body {
 }
 
 .icon-settings svg {
-    width: 20px; /* Чуть меньше */
-    height: 20px;
+    width: 22px;
+    height: 22px;
     stroke: #F5F5F5;
     stroke-width: 2;
     fill: none;
@@ -134,31 +129,31 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 8px; /* Уменьшил */
-    min-height: 28px; /* Уменьшил */
+    margin-bottom: 12px;
+    min-height: 32px;
 }
 
 .title-left {
     display: flex;
     align-items: center;
-    gap: 4px; /* Уменьшил */
+    gap: 6px;
 }
 
 .title-left .section-title {
     margin-bottom: 0;
     line-height: 1;
-    font-size: 20px; /* Чуть меньше */
+    font-size: 22px;
 }
 
 .edit-controls {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
 }
 
 .edit-title-icon {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     background: transparent;
     border: none;
     display: flex;
@@ -173,11 +168,12 @@ body {
 }
 
 .edit-title-icon svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     stroke: #9BA1B0;
     stroke-width: 2;
     fill: none;
+    transition: stroke 0.1s;
 }
 
 .edit-title-icon.active svg {
@@ -188,9 +184,9 @@ body {
     background: transparent;
     border: 1px solid #FF5500;
     border-radius: 6px;
-    padding: 2px 6px;
+    padding: 3px 8px;
     color: #FF5500;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -211,9 +207,9 @@ body {
 
 .coins-header {
     background: #1A1D24;
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-size: 11px;
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 12px;
     color: #F5F5F5;
     border: none;
     font-weight: 600;
@@ -221,7 +217,7 @@ body {
 
 /* Глобальные стили для заголовков (базовые) */
 .section-title {
-    font-size: 22px; /* Чуть меньше */
+    font-size: 24px;
     font-weight: 700;
     color: #F5F5F5;
     letter-spacing: -0.5px;
@@ -229,7 +225,7 @@ body {
 }
 
 .section-subtitle {
-    font-size: 13px; /* Чуть меньше */
+    font-size: 14px;
     color: #9BA1B0;
     font-weight: 500;
     text-align: center;
@@ -237,11 +233,11 @@ body {
 
 /* Специфичные стили для главного экрана */
 .main-screen .section-title {
-    margin: 20px 0 2px 0; /* Уменьшил отступы */
+    margin: 40px 0 4px 0;
 }
 
 .main-screen .section-subtitle {
-    margin: 0 0 8px 0; /* Уменьшил */
+    margin: 0 0 12px 0;
 }
 
 /* Стили для магазина */
@@ -256,22 +252,22 @@ body {
 
 /* Стили для настроек */
 .settings-screen .section-title {
-    margin: 0 0 12px 0; /* Уменьшил */
+    margin: 0 0 20px 0;
 }
 
 /* Стили для кнопки поиска в режимах */
 .mode-search-btn {
-    width: 260px; /* Чуть уже */
-    padding: 12px; /* Уменьшил */
+    width: 280px;
+    padding: 14px;
     background: #FF5500;
     border: none;
     border-radius: 30px;
-    font-size: 15px; /* Чуть меньше */
+    font-size: 16px;
     font-weight: 700;
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 8px auto; /* Уменьшил */
+    margin: 10px auto;
     transition: all 0.2s;
     letter-spacing: 0.5px;
 }
@@ -292,15 +288,19 @@ body {
     align-items: center;
     justify-content: flex-start;
     height: 100%;
-    padding: 30px 0 0 0; /* Уменьшил */
+    padding: 60px 0 0 0;
+}
+
+.start-logo {
+    display: none;
 }
 
 .start-avatar-square {
-    width: 240px; /* Уменьшил */
-    height: 180px; /* Уменьшил */
+    width: 280px;
+    height: 210px;
     margin: 0 auto;
     border: none;
-    border-radius: 16px 16px 0 0; /* Чуть меньше */
+    border-radius: 20px 20px 0 0;
     overflow: hidden;
     background: #1A1D24;
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
@@ -316,11 +316,11 @@ body {
 }
 
 .start-description-box {
-    width: 240px; /* Уменьшил */
+    width: 280px;
     border: 3px solid #FF5500;
-    border-radius: 0 0 16px 16px; /* Чуть меньше */
-    padding: 20px 12px 16px 12px; /* Уменьшил */
-    margin: -12px auto 0 auto; /* Уменьшил */
+    border-radius: 0 0 20px 20px;
+    padding: 30px 16px 20px 16px;
+    margin: -15px auto 0 auto;
     background: #1A1D24;
     position: relative;
     z-index: 1;
@@ -328,34 +328,33 @@ body {
 
 .start-description {
     color: #F5F5F5;
-    font-size: 12px; /* Чуть меньше */
-    line-height: 1.4;
+    font-size: 14px;
+    line-height: 1.5;
     text-align: center;
     font-weight: 500;
 }
 
 /* КНОПКА СТАРТОВОГО ЭКРАНА */
 .primary-btn {
-    width: 240px; /* Уменьшил */
-    padding: 12px; /* Уменьшил */
+    width: 280px;
+    padding: 14px;
     background: #B00000;
     border: none;
     border-radius: 12px;
-    font-size: 16px; /* Чуть меньше */
+    font-size: 18px;
     font-weight: 700;
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 20px auto 0 auto; /* Уменьшил */
+    margin: 40px auto 0 auto;
     transition: all 0.2s ease;
     letter-spacing: 0.5px;
     box-shadow: 0 4px 0 #6B0000;
 }
 
 .primary-btn:hover {
-    background: #8B0000;
-    transform: translateY(-1px);
-    box-shadow: 0 5px 0 #6B0000;
+    transform: translateY(-0.5px);
+    box-shadow: 0 4px 0 #6B0000;
 }
 
 .primary-btn:active {
@@ -368,7 +367,7 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 6px 0 2px 0; /* Уменьшил */
+    padding: 8px 0 4px 0;
     background: transparent;
     margin-top: auto;
     border-top: 1px solid #1E2128;
@@ -378,10 +377,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px; /* Уменьшил */
+    gap: 4px;
     cursor: pointer;
     opacity: 0.6;
-    padding: 2px 8px; /* Уменьшил */
+    padding: 4px 10px;
     transition: all 0.2s;
 }
 
@@ -399,15 +398,15 @@ body {
 }
 
 .nav-icon svg {
-    width: 18px; /* Чуть меньше */
-    height: 18px;
+    width: 20px;
+    height: 20px;
     stroke: #F5F5F5;
     stroke-width: 2;
     fill: none;
 }
 
 .nav-label {
-    font-size: 8px; /* Чуть меньше */
+    font-size: 9px;
     font-weight: 600;
     color: #F5F5F5;
 }
@@ -417,19 +416,19 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 12px; /* Уменьшил */
+    gap: 16px;
     margin: 0;
-    margin-top: -10px; /* Уменьшил */
+    margin-top: -20px;
 }
 
 .mode-btn {
     width: 100%;
-    padding: 16px; /* Уменьшил */
+    padding: 20px;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: 10px; /* Чуть меньше */
+    border-radius: 12px;
     color: #E5E7EB;
-    font-size: 16px; /* Чуть меньше */
+    font-size: 18px;
     font-weight: 600;
     text-transform: uppercase;
     cursor: pointer;
@@ -456,45 +455,152 @@ body {
 .mode-btn.prime {
     border-left: 4px solid #F5F5F5;
     text-transform: none;
-    font-size: 15px;
+    font-size: 16px;
 }
 
 .mode-btn.public {
     border-left: 4px solid #F5F5F5;
     text-transform: none;
-    font-size: 15px;
+    font-size: 16px;
 }
 
 .mode-btn::after {
     content: '→';
     position: absolute;
-    right: 18px; /* Уменьшил */
+    right: 22px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 18px; /* Уменьшил */
+    font-size: 20px;
     color: #5D6472;
 }
 
 /* ===== ПРОФИЛЬ ===== */
+
+/* СТАТИЧНЫЕ ЭЛЕМЕНТЫ (без анимаций) - ВСЕ ПОЛЯ И КАРТОЧКИ */
+.profile-header,
+.profile-avatar,
+.profile-info,
+.profile-name-row,
+.profile-name-label,
+.profile-status,
+.profile-stats,
+.heart-icon,
+.stats-row,
+.friends-header,
+.friends-title,
+.friends-count,
+.friend-item,
+.friend-info,
+.friend-name,
+.friend-id,
+.friend-steam,
+.search-icon,
+.back-icon,
+.search-container,
+.search-input,
+.comment-section,
+.comment-label,
+.comment-input,
+.rank-select,
+.play-style,
+.style-option,
+.mode-subtitle,
+.input-label,
+.back-btn,
+.mode-title,
+.section-title,
+.section-subtitle,
+.coins-header,
+.title-row,
+.edit-controls,
+.stat-card,
+.stat-label,
+.stat-value,
+.stat-value input,
+.profile-stat-card,
+.profile-stat-label,
+.profile-stat-value,
+.input-field,
+.search-input-field,
+.rank-select option,
+.comment-input,
+.mode-search-btn,
+.cancel-search-btn {
+    transition: none !important;
+    transform: none !important;
+}
+
+/* Дополнительно для всех input, select, textarea */
+input, select, textarea, button {
+    transition: none !important;
+}
+
+/* Но оставляем анимации для кликабельных кнопок */
+.primary-btn,
+.mode-search-btn,
+.cancel-search-btn,
+.nav-item,
+.logo,
+.icon-settings,
+.mode-btn,
+.edit-title-icon,
+.apply-btn,
+.back-btn {
+    transition: all 0.2s ease !important;
+}
+
+.primary-btn:hover,
+.mode-search-btn:hover,
+.cancel-search-btn:hover,
+.nav-item:hover,
+.logo:hover,
+.icon-settings:hover,
+.edit-title-icon:hover,
+.apply-btn:hover,
+.back-btn:hover {
+    transform: scale(1.05) !important;
+}
+
+/* У 4 кнопок режимов убираем увеличение */
+.mode-btn.faceit:hover,
+.mode-btn.premier:hover,
+.mode-btn.prime:hover,
+.mode-btn.public:hover {
+    transform: none !important;
+}
+
+.primary-btn:active,
+.mode-search-btn:active,
+.cancel-search-btn:active,
+.logo:active,
+.icon-settings:active,
+.mode-btn:active,
+.edit-title-icon:active,
+.apply-btn:active,
+.back-btn:active {
+    transform: scale(0.95) !important;
+}
+
+/* Шапка профиля (аватар + ник) */
 .profile-header {
     display: flex;
     align-items: center;
-    gap: 10px; /* Уменьшил */
-    margin: 2px 0 4px 0; /* Уменьшил */
+    gap: 12px;
+    margin: 4px 0 8px 0;
     padding: 0;
     position: relative;
 }
 
 .profile-avatar {
-    width: 50px; /* Уменьшил */
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background: #1A1D24;
     border: 2px solid #2A2F3A;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px; /* Уменьшил */
+    font-size: 28px;
     color: #9BA1B0;
     cursor: pointer;
     overflow: hidden;
@@ -506,51 +612,85 @@ body {
     object-fit: cover;
 }
 
+.profile-avatar.editable {
+    border-color: #FF5500;
+    border-width: 3px;
+}
+
+.profile-avatar.frame-red { border-color: #FF5500; border-width: 3px; }
+.profile-avatar.frame-gold { border-color: #FFD700; border-width: 3px; }
+.profile-avatar.frame-blue { border-color: #2196F3; border-width: 3px; }
+.profile-avatar.frame-green { border-color: #4CAF50; border-width: 3px; }
+.profile-avatar.frame-purple { border-color: #9C27B0; border-width: 3px; }
+.profile-avatar.frame-rainbow { 
+    border: 3px solid transparent;
+    background: linear-gradient(45deg, #FF5500, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+}
+
 .profile-info {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 2px; /* Уменьшил */
+    gap: 4px;
 }
 
 .profile-name-row {
     display: flex;
     align-items: center;
-    gap: 4px; /* Уменьшил */
+    gap: 6px;
     flex-wrap: wrap;
 }
 
 .profile-name-label {
-    font-size: 10px; /* Уменьшил */
+    font-size: 11px;
     color: #9BA1B0;
     font-weight: 500;
-    margin-bottom: 0;
+    margin-bottom: 2px;
 }
 
 .profile-name {
-    font-size: 18px; /* Уменьшил */
+    font-size: 20px;
     font-weight: 600;
     color: #F5F5F5;
     cursor: pointer;
     display: inline-block;
 }
 
+.profile-name.editable {
+    color: #FF5500;
+}
+
+.profile-name.red { color: #FF5500; }
+.profile-name.green { color: #4CAF50; }
+.profile-name.blue { color: #2196F3; }
+.profile-name.purple { color: #9C27B0; }
+.profile-name.orange { color: #FF9800; }
+.profile-name.multicolor { 
+    background: linear-gradient(45deg, #FF5500, #4CAF50, #2196F3, #9C27B0, #FF9800);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+}
+
 .profile-status {
     color: #4CAF50;
-    font-size: 10px; /* Уменьшил */
+    font-size: 11px;
     font-weight: 600;
     background: rgba(76, 175, 80, 0.15);
-    padding: 1px 6px; /* Уменьшил */
-    border-radius: 10px;
+    padding: 2px 8px;
+    border-radius: 12px;
     border: 1px solid rgba(76, 175, 80, 0.4);
+    letter-spacing: 0.3px;
     display: inline-block;
 }
 
 /* Статистика (рейтинг, возраст) - одинаковые поля */
 .stats-row {
     display: flex;
-    gap: 8px; /* Уменьшил */
-    margin: 2px 0; /* Уменьшил */
+    gap: 12px;
+    margin: 4px 0;
 }
 
 .stat-card {
@@ -561,23 +701,28 @@ body {
     cursor: pointer;
 }
 
+.stat-card.editable {
+    border: none;
+}
+
 .stat-label {
-    font-size: 9px; /* Уменьшил */
+    font-size: 10px;
     color: #9BA1B0;
     font-weight: 600;
-    margin-bottom: 2px; /* Уменьшил */
+    margin-bottom: 4px;
     text-transform: uppercase;
     letter-spacing: 0.3px;
 }
 
+/* Поля ввода как в FACEIT */
 .stat-value {
     width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: 6px; /* Уменьшил */
-    padding: 6px 8px; /* Уменьшил */
+    border-radius: 8px;
+    padding: 10px 12px;
     color: #F5F5F5;
-    font-size: 12px; /* Уменьшил */
+    font-size: 13px;
     margin: 0;
     cursor: text;
     font-weight: 500;
@@ -593,19 +738,39 @@ body {
     background: transparent;
     border: none;
     color: #F5F5F5;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     outline: none;
     font-family: 'Montserrat', sans-serif;
+}
+
+.stat-value input:focus {
+    outline: none;
+}
+
+.stat-value input::placeholder {
+    color: #5D6472;
+    font-weight: 600;
+    font-size: 12px;
+    opacity: 1;
 }
 
 .stat-value:focus-within {
     border-color: #FF5500;
 }
 
+.heart-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+
 .heart-icon svg {
-    width: 14px; /* Уменьшил */
-    height: 14px;
+    width: 16px;
+    height: 16px;
     stroke: #FF5500;
     stroke-width: 2;
     fill: none;
@@ -618,10 +783,10 @@ body {
     width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: 6px; /* Уменьшил */
-    padding: 8px 10px; /* Уменьшил */
+    border-radius: 8px;
+    padding: 10px 12px;
     color: #F5F5F5;
-    font-size: 12px; /* Уменьшил */
+    font-size: 13px;
     margin: 0;
     cursor: text;
     font-weight: 500;
@@ -635,12 +800,34 @@ body {
     outline: none;
 }
 
+.profile-stat-value::placeholder,
+.input-field::placeholder {
+    color: #5D6472;
+    font-weight: 600;
+    font-size: 12px;
+    opacity: 1;
+}
+
+/* Подсветка полей в режиме редактирования */
+.editable-input {
+    border-color: #FF5500 !important;
+    border-width: 2px !important;
+    background: rgba(255, 85, 0, 0.05) !important;
+}
+
+.profile-stat-value.editable-input,
+.input-field.editable-input,
+.stat-value input.editable-input {
+    border-color: #FF5500 !important;
+    border-width: 2px !important;
+}
+
 /* Поля ввода (ссылки) - без внешних плашек */
 .profile-stats {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* Уменьшил */
-    margin-bottom: 4px; /* Уменьшил */
+    gap: 12px;
+    margin-bottom: 8px;
 }
 
 .profile-stat-card {
@@ -650,11 +837,15 @@ body {
     cursor: pointer;
 }
 
+.profile-stat-card.editable {
+    border: none;
+}
+
 .profile-stat-label {
-    font-size: 9px; /* Уменьшил */
+    font-size: 10px;
     color: #9BA1B0;
     font-weight: 600;
-    margin-bottom: 2px; /* Уменьшил */
+    margin-bottom: 4px;
     text-transform: uppercase;
     letter-spacing: 0.3px;
 }
@@ -666,32 +857,47 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 0;
-    margin: 4px 0 2px 0; /* Уменьшил */
+    margin: 8px 0 4px 0;
 }
 
 .friends-header {
     display: flex;
     align-items: center;
-    gap: 4px; /* Уменьшил */
-    margin-bottom: 4px; /* Уменьшил */
+    gap: 6px;
+    margin-bottom: 6px;
 }
 
 .search-icon {
-    width: 16px; /* Уменьшил */
-    height: 16px;
+    width: 18px;
+    height: 18px;
     cursor: pointer;
 }
 
 .search-icon svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     stroke: #9BA1B0;
     stroke-width: 2;
     fill: none;
 }
 
+.back-icon {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin-right: 4px;
+}
+
+.back-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: #B00000;
+    stroke-width: 2;
+    fill: none;
+}
+
 .friends-title {
-    font-size: 14px; /* Уменьшил */
+    font-size: 15px;
     font-weight: 600;
     color: #F5F5F5;
     flex: 1;
@@ -699,18 +905,47 @@ body {
 
 .friends-count {
     color: #9BA1B0;
-    font-size: 10px; /* Уменьшил */
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    margin-bottom: 6px;
+}
+
+.search-input {
+    flex: 1;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #F5F5F5;
+    font-size: 12px;
+    font-weight: 500;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #FF5500;
+}
+
+.search-input::placeholder {
+    color: #5D6472;
     font-weight: 600;
 }
 
 .friends-list {
     flex: 1;
     overflow-y: auto;
-    padding-right: 2px;
+    padding-right: 4px;
 }
 
 .friends-list::-webkit-scrollbar {
-    width: 2px; /* Уменьшил */
+    width: 3px;
 }
 
 .friends-list::-webkit-scrollbar-track {
@@ -726,12 +961,16 @@ body {
 .friend-item {
     display: flex;
     align-items: center;
-    gap: 8px; /* Уменьшил */
-    padding: 6px; /* Уменьшил */
+    gap: 10px;
+    padding: 8px;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 6px;
-    margin-bottom: 4px; /* Уменьшил */
+    margin-bottom: 6px;
+}
+
+.friend-avatar {
+    display: none;
 }
 
 .friend-info {
@@ -741,28 +980,28 @@ body {
 .friend-name-row {
     display: flex;
     align-items: center;
-    gap: 4px; /* Уменьшил */
-    margin-bottom: 1px;
+    gap: 6px;
+    margin-bottom: 2px;
 }
 
 .friend-name {
-    font-size: 12px; /* Уменьшил */
+    font-size: 13px;
     font-weight: 600;
     color: #F5F5F5;
 }
 
 .friend-id {
-    font-size: 8px; /* Уменьшил */
+    font-size: 9px;
     color: #FF5500;
     background: rgba(255, 85, 0, 0.1);
-    padding: 1px 4px;
+    padding: 1px 5px;
     border-radius: 4px;
     font-family: monospace;
     font-weight: 600;
 }
 
 .friend-steam {
-    font-size: 8px; /* Уменьшил */
+    font-size: 9px;
     color: #9BA1B0;
     font-weight: 600;
 }
@@ -785,9 +1024,9 @@ body {
 }
 
 .input-label {
-    font-size: 11px; /* Уменьшил */
+    font-size: 12px;
     color: #9BA1B0;
-    margin-bottom: 2px; /* Уменьшил */
+    margin-bottom: 4px;
     font-weight: 500;
 }
 
@@ -795,19 +1034,19 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px; /* Уменьшил */
-    margin-bottom: 8px; /* Уменьшил */
+    gap: 12px;
+    margin-bottom: 16px;
     position: relative;
 }
 
 .back-btn {
-    width: 32px; /* Уменьшил */
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     background: transparent;
     border: 2px solid #2A2F3A;
     color: #9BA1B0;
-    font-size: 20px; /* Уменьшил */
+    font-size: 22px;
     font-weight: 700;
     cursor: pointer;
     display: flex;
@@ -823,11 +1062,11 @@ body {
 }
 
 .mode-title {
-    font-size: 22px; /* Уменьшил */
+    font-size: 24px;
     font-weight: 700;
     text-align: center;
     margin: 0;
-    line-height: 32px;
+    line-height: 36px;
 }
 
 .mode-title.faceit { color: #FF5500; }
@@ -836,10 +1075,10 @@ body {
 .mode-title.public { color: #F5F5F5; text-transform: none; }
 
 .mode-subtitle {
-    font-size: 11px; /* Уменьшил */
+    font-size: 12px;
     color: #9BA1B0;
     text-align: center;
-    margin-bottom: 8px; /* Уменьшил */
+    margin-bottom: 16px;
     font-weight: 500;
 }
 
@@ -847,11 +1086,11 @@ body {
     width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: 6px; /* Уменьшил */
-    padding: 8px 10px; /* Уменьшил */
+    border-radius: 8px;
+    padding: 10px 12px;
     color: #F5F5F5;
-    font-size: 13px; /* Уменьшил */
-    margin: 2px 0 8px 0; /* Уменьшил */
+    font-size: 14px;
+    margin: 4px 0 12px 0;
     font-weight: 500;
     outline: none;
 }
@@ -861,20 +1100,35 @@ body {
     border-color: #FF5500;
 }
 
+.search-input-field::placeholder {
+    color: #5D6472;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.search-input-field[type="number"] {
+    -moz-appearance: textfield;
+}
+.search-input-field[type="number"]::-webkit-outer-spin-button,
+.search-input-field[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .rank-select {
     width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: 6px;
+    border-radius: 8px;
     color: #F5F5F5;
-    font-size: 13px;
-    padding: 8px 10px;
-    margin: 2px 0 8px 0;
+    font-size: 14px;
+    padding: 10px 12px;
+    margin: 4px 0 12px 0;
     cursor: pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23FF5500' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF5500' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
     background-repeat: no-repeat;
-    background-position: right 12px center;
+    background-position: right 14px center;
     font-weight: 500;
 }
 
@@ -887,23 +1141,28 @@ body {
     border-color: #FF5500;
 }
 
+.rank-select option {
+    background: #1A1D24;
+    color: #F5F5F5;
+}
+
 .play-style {
     display: flex;
-    gap: 6px; /* Уменьшил */
-    margin: 6px 0; /* Уменьшил */
+    gap: 8px;
+    margin: 12px 0;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: 6px;
-    padding: 3px; /* Уменьшил */
+    border-radius: 8px;
+    padding: 4px;
 }
 
 .style-option {
     flex: 1;
     text-align: center;
-    padding: 6px; /* Уменьшил */
-    border-radius: 5px;
+    padding: 8px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 12px; /* Уменьшил */
+    font-size: 13px;
     color: #9BA1B0;
     font-weight: 600;
 }
@@ -915,13 +1174,13 @@ body {
 
 .comment-section {
     width: 100%;
-    margin: 6px 0; /* Уменьшил */
+    margin: 10px 0;
 }
 
 .comment-label {
-    font-size: 11px; /* Уменьшил */
+    font-size: 12px;
     color: #9BA1B0;
-    margin-bottom: 2px; /* Уменьшил */
+    margin-bottom: 4px;
     font-weight: 500;
 }
 
@@ -929,12 +1188,12 @@ body {
     width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: 6px;
-    padding: 8px 10px;
+    border-radius: 8px;
+    padding: 10px 12px;
     color: #F5F5F5;
-    font-size: 12px;
+    font-size: 13px;
     resize: none;
-    height: 60px; /* Уменьшил */
+    height: 70px;
     font-weight: 500;
     outline: none;
 }
@@ -943,37 +1202,42 @@ body {
     border-color: #FF5500;
 }
 
+.comment-input::placeholder {
+    color: #5D6472;
+    font-weight: 600;
+}
+
 /* ЭКРАН ПОИСКА */
 .search-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0 12px 0; /* Уменьшил */
+    padding: 16px 0 20px 0;
     border-bottom: 1px solid #1E2128;
-    margin-bottom: 12px; /* Уменьшил */
+    margin-bottom: 20px;
 }
 
 .search-title {
-    font-size: 22px; /* Уменьшил */
+    font-size: 24px;
     font-weight: 700;
     color: #FF5500;
 }
 
 .search-timer {
-    font-size: 18px; /* Уменьшил */
+    font-size: 20px;
     font-weight: 600;
     color: #F5F5F5;
     background: #1A1D24;
-    padding: 6px 12px; /* Уменьшил */
+    padding: 8px 16px;
     border-radius: 8px;
     border: 1px solid #2A2F3A;
 }
 
 .search-status {
     text-align: center;
-    font-size: 14px; /* Уменьшил */
+    font-size: 16px;
     color: #9BA1B0;
-    margin: 12px 0 24px 0; /* Уменьшил */
+    margin: 20px 0 40px 0;
     font-weight: 500;
 }
 
@@ -986,16 +1250,16 @@ body {
 
 .cancel-search-btn {
     width: 100%;
-    padding: 14px; /* Уменьшил */
+    padding: 18px;
     background: transparent;
     border: 2px solid #FF5500;
     border-radius: 12px;
     color: #FF5500;
-    font-size: 16px; /* Уменьшил */
+    font-size: 18px;
     font-weight: 700;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 12px 0 8px 0; /* Уменьшил */
+    margin: 20px 0 10px 0;
 }
 
 /* Поля ввода как в FACEIT - ИСПРАВЛЕНО */
@@ -1003,10 +1267,10 @@ body {
     width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: 6px;
-    padding: 6px 8px;
+    border-radius: 8px;
+    padding: 10px 12px;
     color: #F5F5F5;
-    font-size: 12px;
+    font-size: 13px;
     margin: 0;
     cursor: text;
     font-weight: 500;
@@ -1022,12 +1286,23 @@ body {
     background: transparent;
     border: none;
     color: #F5F5F5;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     outline: none;
     font-family: 'Montserrat', sans-serif;
     padding: 0;
     margin: 0;
+}
+
+.stat-value input:focus {
+    outline: none;
+}
+
+.stat-value input::placeholder {
+    color: #5D6472;
+    font-weight: 600;
+    font-size: 12px;
+    opacity: 1;
 }
 
 .stat-value:focus-within {
@@ -1043,6 +1318,11 @@ body {
     box-shadow: none !important;
     -webkit-appearance: none;
     -moz-appearance: textfield;
+}
+
+#ageValue:focus {
+    outline: none !important;
+    border: none !important;
 }
 
 /* Специфично для карточки возраста */
