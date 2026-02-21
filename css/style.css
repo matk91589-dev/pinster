@@ -1371,3 +1371,58 @@ input:-webkit-autofill:active {
 #ageCard .stat-value:focus-within {
     border-color: #FF5500;
 }
+
+/* ===== ИСПРАВЛЕНИЕ НАВИГАЦИИ ===== */
+/* Убираем скрытие хедера, которое мешает */
+.start-screen .header {
+    display: flex !important;
+}
+
+/* ===== ИСПРАВЛЕНИЕ ПОЛЕЙ ССЫЛОК ===== */
+.profile-stat-value,
+.input-field {
+    width: 100%;
+    max-width: 100%;
+    padding: 8px 10px !important; /* Уменьшаем padding */
+    font-size: 12px !important; /* Уменьшаем шрифт */
+    height: 36px !important; /* Фиксируем высоту */
+}
+
+/* Ссылка Steam и Faceit в режимах */
+#faceitSteamInput,
+#faceitLinkInput,
+#premierSteamInput,
+#primeSteamInput,
+#publicSteamInput {
+    height: 36px !important;
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+}
+
+/* ===== ИСПРАВЛЕНИЕ НАСЛОЕНИЯ РЕЖИМОВ ===== */
+.mode-container {
+    margin-top: 0 !important; /* Убираем отрицательный margin */
+    justify-content: flex-start !important;
+    padding-top: 20px !important;
+}
+
+/* ===== ИСПРАВЛЕНИЕ ОТСТУПОВ В РЕЖИМАХ ===== */
+.stats-row {
+    margin-bottom: 8px !important;
+}
+
+.mode-subtitle {
+    margin-bottom: 8px !important;
+}
+
+/* ===== ИСПРАВЛЕНИЕ ОТОБРАЖЕНИЯ НАВИГАЦИИ ===== */
+.bottom-nav {
+    display: flex !important;
+    background: #111317 !important;
+    z-index: 100 !important;
+}
+
+/* Убираем скрытие через JS, если оно есть */
+#bottomNav {
+    display: flex !important;
+}
