@@ -1448,3 +1448,32 @@ body {
         margin: 0 auto;
     }
 }
+/* ===== ПОЛНОЭКРАННЫЙ РЕЖИМ ДЛЯ TELEGRAM MINI APP ===== */
+
+/* Убираем скругления у основного контейнера */
+.phone-frame {
+    width: 100%;
+    max-width: 100%; /* На всю ширину */
+    min-height: 100vh;
+    background: #111317;
+    border-radius: 0; /* Убираем скругление */
+    padding: 8px 16px 4px 16px;
+    box-shadow: none; /* Убираем тень */
+    border: none; /* Убираем границу */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 0;
+}
+
+/* Для ПК оставляем карточку (чтобы не на весь экран) */
+@media (min-width: 600px) {
+    .phone-frame {
+        max-width: 380px;
+        border-radius: 16px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        border: 1px solid rgba(245, 245, 245, 0.05);
+        margin: 20px auto;
+        min-height: 700px;
+    }
+}
