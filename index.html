@@ -19,7 +19,7 @@
 <body>
     <div class="app-wrapper">
         <div class="app">
-            <!-- Хедер -->
+            <!-- Хедер (скрыт на стартовом экране через CSS) -->
             <header class="header">
                 <div class="logo" onclick="handleLogoClick()">
                     <span class="ping">Ping</span><span class="ster">ster</span>
@@ -372,8 +372,8 @@
                 </div>
             </main>
 
-            <!-- Нижняя навигация -->
-            <nav class="bottom-nav">
+            <!-- Нижняя навигация (видна только после старта) -->
+            <nav class="bottom-nav" id="bottomNav">
                 <div class="nav-item active" onclick="showMainScreen()">
                     <span class="nav-icon">
                         <svg viewBox="0 0 24 24">
@@ -436,6 +436,14 @@
                     window.USERNAME = tgUser.username || tgUser.first_name || 'player';
                 }
             }
+
+            // Скрываем навигацию на стартовом экране
+            document.addEventListener('DOMContentLoaded', function() {
+                const bottomNav = document.getElementById('bottomNav');
+                if (bottomNav) {
+                    bottomNav.style.display = 'none';
+                }
+            });
         })();
     </script>
 </body>
