@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Pingster</title>
     
     <!-- Telegram Mini App SDK -->
@@ -443,13 +443,16 @@
     <!-- Telegram Mini App initialization -->
     <script>
         (function() {
-            // Telegram Mini App
             const tg = window.Telegram?.WebApp;
+
             if (tg) {
-                tg.expand();
                 tg.ready();
-                
-                // Get user data
+                tg.expand();
+
+                // Цвет фона Telegram
+                tg.setBackgroundColor("#0D0F15");
+                tg.setHeaderColor("#0D0F15");
+
                 const tgUser = tg.initDataUnsafe?.user;
                 if (tgUser) {
                     console.log('Telegram User:', tgUser);
