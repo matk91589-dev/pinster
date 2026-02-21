@@ -11,59 +11,50 @@
     text-rendering: optimizeLegibility;
 }
 
-body {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
-    background: #0D0F15;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #F5F5F5;
-}
-
-/* Используем Telegram viewport variables */
+/* Safe area insets для Telegram Mini App */
 :root {
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
     --tg-viewport-height: 100vh;
     --tg-viewport-stable-height: 100vh;
 }
 
 html, body {
+    position: fixed;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    overscroll-behavior: none;
     background: #0D0F15;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    color: #F5F5F5;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Montserrat', sans-serif;
-    color: #F5F5F5;
-    margin: 0;
-    padding: 0;
-    transform: none !important;
 }
 
-/* Основной контейнер - ПОЛНОЭКРАННЫЙ для всех устройств */
+/* Основной контейнер */
 .phone-frame {
     width: 100%;
-    max-width: 100%;
-    min-height: 100vh;
+    height: 100%;
     background: #111317;
-    border-radius: 0;
-    padding: 8px 16px 4px 16px;
-    box-shadow: none;
-    border: none;
+    padding: calc(8px + var(--sat)) 16px calc(4px + var(--sab)) 16px;
     display: flex;
     flex-direction: column;
     position: relative;
-    margin: 0;
+    overflow: hidden;
 }
 
-/* Контент с правильным скроллом */
+/* Контент со скроллом */
 .content {
     flex: 1;
     display: flex;
@@ -89,6 +80,7 @@ body {
     padding: 4px 0 12px 0;
     border-bottom: 1px solid #1E2128;
     margin-bottom: 12px;
+    flex-shrink: 0;
 }
 
 .logo {
@@ -166,6 +158,7 @@ body {
     justify-content: space-between;
     margin-bottom: 12px;
     min-height: 32px;
+    flex-shrink: 0;
 }
 
 .title-left {
@@ -294,6 +287,7 @@ body {
     margin: 10px auto;
     transition: all 0.2s;
     letter-spacing: 0.5px;
+    flex-shrink: 0;
 }
 
 .mode-search-btn:hover {
@@ -312,12 +306,12 @@ body {
     align-items: center;
     justify-content: flex-start;
     height: 100%;
-    padding: 60px 0 0 0;
+    padding: 40px 0 0 0;
 }
 
 .start-avatar-square {
-    width: 280px;
-    height: 210px;
+    width: 260px;
+    height: 195px;
     margin: 0 auto;
     border: none;
     border-radius: 20px 20px 0 0;
@@ -336,11 +330,11 @@ body {
 }
 
 .start-description-box {
-    width: 280px;
+    width: 260px;
     border: 3px solid #FF5500;
     border-radius: 0 0 20px 20px;
-    padding: 30px 16px 20px 16px;
-    margin: -15px auto 0 auto;
+    padding: 25px 12px 15px 12px;
+    margin: -12px auto 0 auto;
     background: #1A1D24;
     position: relative;
     z-index: 1;
@@ -348,28 +342,29 @@ body {
 
 .start-description {
     color: #F5F5F5;
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 13px;
+    line-height: 1.4;
     text-align: center;
     font-weight: 500;
 }
 
 /* КНОПКА СТАРТОВОГО ЭКРАНА */
 .primary-btn {
-    width: 280px;
-    padding: 14px;
+    width: 260px;
+    padding: 12px;
     background: #B00000;
     border: none;
     border-radius: 12px;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 700;
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 40px auto 0 auto;
+    margin: 30px auto 0 auto;
     transition: all 0.2s ease;
     letter-spacing: 0.5px;
     box-shadow: 0 4px 0 #6B0000;
+    flex-shrink: 0;
 }
 
 .primary-btn:hover {
@@ -392,6 +387,7 @@ body {
     background: transparent;
     margin-top: auto;
     border-top: 1px solid #1E2128;
+    flex-shrink: 0;
 }
 
 .nav-item {
@@ -438,19 +434,19 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 16px;
+    gap: 12px;
     margin: 0;
-    margin-top: -20px;
+    padding: 0 4px;
 }
 
 .mode-btn {
     width: 100%;
-    padding: 20px;
+    padding: 16px;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: 12px;
+    border-radius: 10px;
     color: #E5E7EB;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 600;
     text-transform: uppercase;
     cursor: pointer;
@@ -474,16 +470,16 @@ body {
 .mode-btn.public {
     border-left: 4px solid #F5F5F5;
     text-transform: none;
-    font-size: 16px;
+    font-size: 15px;
 }
 
 .mode-btn::after {
     content: '→';
     position: absolute;
-    right: 22px;
+    right: 18px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 20px;
+    font-size: 18px;
     color: #5D6472;
 }
 
@@ -1021,9 +1017,6 @@ input, select, textarea, button {
     flex-direction: column;
     width: 100%;
     min-height: 0;
-}
-
-.screen {
     display: none;
 }
 
@@ -1268,53 +1261,6 @@ input, select, textarea, button {
     text-transform: uppercase;
     cursor: pointer;
     margin: 20px 0 10px 0;
-}
-
-/* Поля ввода как в FACEIT - ИСПРАВЛЕНО */
-.stat-value {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 10px 12px;
-    color: #F5F5F5;
-    font-size: 13px;
-    margin: 0;
-    cursor: text;
-    font-weight: 500;
-    outline: none;
-    font-family: 'Montserrat', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.stat-value input {
-    width: 100%;
-    background: transparent;
-    border: none;
-    color: #F5F5F5;
-    font-size: 13px;
-    font-weight: 500;
-    outline: none;
-    font-family: 'Montserrat', sans-serif;
-    padding: 0;
-    margin: 0;
-}
-
-.stat-value input:focus {
-    outline: none;
-}
-
-.stat-value input::placeholder {
-    color: #5D6472;
-    font-weight: 600;
-    font-size: 12px;
-    opacity: 1;
-}
-
-.stat-value:focus-within {
-    border-color: #FF5500;
 }
 
 /* Убираем белый фон у инпута возраста */
