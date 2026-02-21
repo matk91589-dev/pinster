@@ -11,55 +11,40 @@
     text-rendering: optimizeLegibility;
 }
 
-/* ===== БАЗОВЫЕ СТИЛИ ===== */
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
+body {
     font-family: 'Montserrat', sans-serif;
     font-weight: 500;
-    color: #F5F5F5;
     background: #0D0F15;
-    overscroll-behavior: none;
-    overflow: hidden;
-}
-
-body {
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #F5F5F5;
 }
 
-/* ===== ОБЕРТКА ПРИЛОЖЕНИЯ ===== */
-.app-wrapper {
+.phone-frame {
     width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* ===== ОСНОВНОЙ КОНТЕЙНЕР ===== */
-.app {
+    max-width: 380px;
+    min-height: 700px; 
+    background: #111317;
+    border-radius: 16px;
+    padding: 12px 20px 8px 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(245, 245, 245, 0.05);
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    width: 100%;
-    background: #111317;
+    position: relative;
 }
 
-/* ===== КОНТЕНТ С ПРОКРУТКОЙ ===== */
 .content {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-}
-
-.content::-webkit-scrollbar {
-    display: none;
+    position: relative;
 }
 
 /* ===== ХЕДЕР ===== */
@@ -67,13 +52,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px 16px 12px 16px;
+    padding: 4px 0 12px 0;
     border-bottom: 1px solid #1E2128;
-    flex-shrink: 0;
-}
-
-.start-screen .header {
-    display: none;
+    margin-bottom: 12px;
 }
 
 .logo {
@@ -86,6 +67,7 @@ body {
     display: inline-block;
 }
 
+/* Упрощенная анимация для Pingster */
 .logo:hover {
     transform: scale(1.05);
 }
@@ -132,21 +114,264 @@ body {
     stroke: #F5F5F5;
     stroke-width: 2;
     fill: none;
+    transition: stroke 0.2s;
 }
 
 .icon-settings.active svg {
     stroke: #B00000;
 }
 
-/* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
+/* Скрываем логотип только на стартовом экране */
+.start-screen .logo {
+    display: none;
+}
+
+.title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    min-height: 32px;
+}
+
+.title-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.title-left .section-title {
+    margin-bottom: 0;
+    line-height: 1;
+    font-size: 22px;
+}
+
+.edit-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.edit-title-icon {
+    width: 26px;
+    height: 26px;
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.edit-title-icon:hover {
+    transform: scale(1.1);
+}
+
+.edit-title-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: #9BA1B0;
+    stroke-width: 2;
+    fill: none;
+    transition: stroke 0.1s;
+}
+
+.edit-title-icon.active svg {
+    stroke: #B00000;
+}
+
+.apply-btn {
+    background: transparent;
+    border: 1px solid #FF5500;
+    border-radius: 6px;
+    padding: 3px 8px;
+    color: #FF5500;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.apply-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.apply-btn:hover {
+    background: #FF5500;
+    color: #F5F5F5;
+    transform: scale(1.05);
+}
+
+.coins-header {
+    background: #1A1D24;
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: #F5F5F5;
+    border: none;
+    font-weight: 600;
+}
+
+/* Глобальные стили для заголовков (базовые) */
+.section-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #F5F5F5;
+    letter-spacing: -0.5px;
+    text-align: center;
+}
+
+.section-subtitle {
+    font-size: 14px;
+    color: #9BA1B0;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Специфичные стили для главного экрана */
+.main-screen .section-title {
+    margin: 40px 0 4px 0;
+}
+
+.main-screen .section-subtitle {
+    margin: 0 0 12px 0;
+}
+
+/* Стили для магазина */
+.shop-screen .section-title {
+    margin: 0;
+}
+
+/* Стили для профиля */
+.profile-screen .section-title {
+    margin: 0;
+}
+
+/* Стили для настроек */
+.settings-screen .section-title {
+    margin: 0 0 20px 0;
+}
+
+/* Стили для кнопки поиска в режимах */
+.mode-search-btn {
+    width: 280px;
+    padding: 14px;
+    background: #FF5500;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #F5F5F5;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin: 10px auto;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+}
+
+.mode-search-btn:hover {
+    transform: scale(1.05);
+    background: #FF6B4A;
+}
+
+.mode-search-btn:active {
+    transform: scale(0.95);
+}
+
+/* ===== СТАРТОВЫЙ ЭКРАН ===== */
+.start-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100%;
+    padding: 60px 0 0 0;
+}
+
+.start-logo {
+    display: none;
+}
+
+.start-avatar-square {
+    width: 280px;
+    height: 210px;
+    margin: 0 auto;
+    border: none;
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+    background: #1A1D24;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 2;
+}
+
+.start-avatar-square img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.start-description-box {
+    width: 280px;
+    border: 3px solid #FF5500;
+    border-radius: 0 0 20px 20px;
+    padding: 30px 16px 20px 16px;
+    margin: -15px auto 0 auto;
+    background: #1A1D24;
+    position: relative;
+    z-index: 1;
+}
+
+.start-description {
+    color: #F5F5F5;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* КНОПКА СТАРТОВОГО ЭКРАНА */
+.primary-btn {
+    width: 280px;
+    padding: 14px;
+    background: #B00000;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #F5F5F5;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin: 40px auto 0 auto;
+    transition: all 0.2s ease;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 0 #6B0000;
+}
+
+.primary-btn:hover {
+    transform: translateY(-0.5px);
+    box-shadow: 0 4px 0 #6B0000;
+}
+
+.primary-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #6B0000;
+    opacity: 0.9;
+}
+
 .bottom-nav {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 8px 16px 4px 16px;
-    background: #111317;
+    padding: 8px 0 4px 0;
+    background: transparent;
+    margin-top: auto;
     border-top: 1px solid #1E2128;
-    flex-shrink: 0;
 }
 
 .nav-item {
@@ -187,44 +412,13 @@ body {
     color: #F5F5F5;
 }
 
-/* ===== ЗАГОЛОВКИ ===== */
-.section-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #F5F5F5;
-    letter-spacing: -0.5px;
-    text-align: center;
-}
-
-.section-subtitle {
-    font-size: 14px;
-    color: #9BA1B0;
-    font-weight: 500;
-    text-align: center;
-}
-
-.main-screen .section-title {
-    margin: 40px 16px 4px 16px;
-}
-
-.main-screen .section-subtitle {
-    margin: 0 16px 12px 16px;
-}
-
-.shop-screen .section-title,
-.profile-screen .section-title,
-.settings-screen .section-title {
-    margin: 0;
-}
-
-/* ===== КОНТЕЙНЕР РЕЖИМОВ ===== */
 .mode-container {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 16px;
-    padding: 0 16px;
+    margin: 0;
     margin-top: -20px;
 }
 
@@ -249,13 +443,22 @@ body {
     background: #1E2128;
 }
 
-.mode-btn.faceit,
+.mode-btn.faceit {
+    border-left: 4px solid #FF5500;
+    color: #FF5500;
+}
+
 .mode-btn.premier {
     border-left: 4px solid #FF5500;
     color: #FF5500;
 }
 
-.mode-btn.prime,
+.mode-btn.prime {
+    border-left: 4px solid #F5F5F5;
+    text-transform: none;
+    font-size: 16px;
+}
+
 .mode-btn.public {
     border-left: 4px solid #F5F5F5;
     text-transform: none;
@@ -272,169 +475,121 @@ body {
     color: #5D6472;
 }
 
-/* ===== СТАРТОВЫЙ ЭКРАН ===== */
-.start-screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 60px 16px 0 16px;
-    height: 100%;
-}
-
-.start-avatar-square {
-    width: 280px;
-    height: 210px;
-    margin: 0 auto;
-    border: none;
-    border-radius: 20px 20px 0 0;
-    overflow: hidden;
-    background: #1A1D24;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-}
-
-.start-avatar-square img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.start-description-box {
-    width: 280px;
-    border: 3px solid #FF5500;
-    border-radius: 0 0 20px 20px;
-    padding: 30px 16px 20px 16px;
-    margin: -15px auto 0 auto;
-    background: #1A1D24;
-}
-
-.start-description {
-    color: #F5F5F5;
-    font-size: 14px;
-    line-height: 1.5;
-    text-align: center;
-    font-weight: 500;
-}
-
-.primary-btn {
-    width: 280px;
-    padding: 14px;
-    background: #B00000;
-    border: none;
-    border-radius: 12px;
-    font-size: 18px;
-    font-weight: 700;
-    color: #F5F5F5;
-    text-transform: uppercase;
-    cursor: pointer;
-    margin: 40px auto 0 auto;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 0 #6B0000;
-}
-
-.primary-btn:hover {
-    transform: translateY(-0.5px);
-    box-shadow: 0 4px 0 #6B0000;
-}
-
-.primary-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #6B0000;
-    opacity: 0.9;
-}
-
-/* ===== КНОПКИ РЕЖИМОВ ===== */
-.mode-search-btn {
-    width: 280px;
-    padding: 14px;
-    background: #FF5500;
-    border: none;
-    border-radius: 30px;
-    font-size: 16px;
-    font-weight: 700;
-    color: #F5F5F5;
-    text-transform: uppercase;
-    cursor: pointer;
-    margin: 10px auto;
-    transition: all 0.2s;
-    letter-spacing: 0.5px;
-}
-
-.mode-search-btn:hover {
-    transform: scale(1.05);
-    background: #FF6B4A;
-}
-
-.mode-search-btn:active {
-    transform: scale(0.95);
-}
-
-/* ===== ЭКРАНЫ РЕЖИМОВ ===== */
-.mode-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 0 16px 16px 16px;
-    position: relative;
-}
-
-.back-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: transparent;
-    border: 2px solid #2A2F3A;
-    color: #9BA1B0;
-    font-size: 22px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    left: 16px;
-}
-
-.back-btn:hover {
-    border-color: #FF5500;
-    color: #F5F5F5;
-}
-
-.mode-title {
-    font-size: 24px;
-    font-weight: 700;
-    text-align: center;
-    margin: 0;
-    line-height: 36px;
-}
-
-.mode-title.faceit,
-.mode-title.premier {
-    color: #FF5500;
-}
-
-.mode-title.prime,
-.mode-title.public {
-    color: #F5F5F5;
-    text-transform: none;
-}
-
-.mode-subtitle {
-    font-size: 12px;
-    color: #9BA1B0;
-    text-align: center;
-    padding: 0 16px 16px 16px;
-    font-weight: 500;
-}
-
 /* ===== ПРОФИЛЬ ===== */
+
+/* СТАТИЧНЫЕ ЭЛЕМЕНТЫ (без анимаций) - ВСЕ ПОЛЯ И КАРТОЧКИ */
+.profile-header,
+.profile-avatar,
+.profile-info,
+.profile-name-row,
+.profile-name-label,
+.profile-status,
+.profile-stats,
+.heart-icon,
+.stats-row,
+.friends-header,
+.friends-title,
+.friends-count,
+.friend-item,
+.friend-info,
+.friend-name,
+.friend-id,
+.friend-steam,
+.search-icon,
+.back-icon,
+.search-container,
+.search-input,
+.comment-section,
+.comment-label,
+.comment-input,
+.rank-select,
+.play-style,
+.style-option,
+.mode-subtitle,
+.input-label,
+.back-btn,
+.mode-title,
+.section-title,
+.section-subtitle,
+.coins-header,
+.title-row,
+.edit-controls,
+.stat-card,
+.stat-label,
+.stat-value,
+.stat-value input,
+.profile-stat-card,
+.profile-stat-label,
+.profile-stat-value,
+.input-field,
+.search-input-field,
+.rank-select option,
+.comment-input,
+.mode-search-btn,
+.cancel-search-btn {
+    transition: none !important;
+    transform: none !important;
+}
+
+/* Дополнительно для всех input, select, textarea */
+input, select, textarea, button {
+    transition: none !important;
+}
+
+/* Но оставляем анимации для кликабельных кнопок */
+.primary-btn,
+.mode-search-btn,
+.cancel-search-btn,
+.nav-item,
+.logo,
+.icon-settings,
+.mode-btn,
+.edit-title-icon,
+.apply-btn,
+.back-btn {
+    transition: all 0.2s ease !important;
+}
+
+.primary-btn:hover,
+.mode-search-btn:hover,
+.cancel-search-btn:hover,
+.nav-item:hover,
+.logo:hover,
+.icon-settings:hover,
+.edit-title-icon:hover,
+.apply-btn:hover,
+.back-btn:hover {
+    transform: scale(1.05) !important;
+}
+
+/* У 4 кнопок режимов убираем увеличение */
+.mode-btn.faceit:hover,
+.mode-btn.premier:hover,
+.mode-btn.prime:hover,
+.mode-btn.public:hover {
+    transform: none !important;
+}
+
+.primary-btn:active,
+.mode-search-btn:active,
+.cancel-search-btn:active,
+.logo:active,
+.icon-settings:active,
+.mode-btn:active,
+.edit-title-icon:active,
+.apply-btn:active,
+.back-btn:active {
+    transform: scale(0.95) !important;
+}
+
+/* Шапка профиля (аватар + ник) */
 .profile-header {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 4px 16px 8px 16px;
+    margin: 4px 0 8px 0;
+    padding: 0;
+    position: relative;
 }
 
 .profile-avatar {
@@ -450,7 +605,6 @@ body {
     color: #9BA1B0;
     cursor: pointer;
     overflow: hidden;
-    flex-shrink: 0;
 }
 
 .profile-avatar img {
@@ -483,18 +637,18 @@ body {
     gap: 4px;
 }
 
-.profile-name-label {
-    font-size: 11px;
-    color: #9BA1B0;
-    font-weight: 500;
-    margin-bottom: 2px;
-}
-
 .profile-name-row {
     display: flex;
     align-items: center;
     gap: 6px;
     flex-wrap: wrap;
+}
+
+.profile-name-label {
+    font-size: 11px;
+    color: #9BA1B0;
+    font-weight: 500;
+    margin-bottom: 2px;
 }
 
 .profile-name {
@@ -529,14 +683,15 @@ body {
     padding: 2px 8px;
     border-radius: 12px;
     border: 1px solid rgba(76, 175, 80, 0.4);
+    letter-spacing: 0.3px;
     display: inline-block;
 }
 
-/* ===== СТАТИСТИКА ===== */
+/* Статистика (рейтинг, возраст) - одинаковые поля */
 .stats-row {
     display: flex;
     gap: 12px;
-    padding: 4px 16px;
+    margin: 4px 0;
 }
 
 .stat-card {
@@ -560,6 +715,7 @@ body {
     letter-spacing: 0.3px;
 }
 
+/* Поля ввода как в FACEIT */
 .stat-value {
     width: 100%;
     background: #1A1D24;
@@ -568,6 +724,8 @@ body {
     padding: 10px 12px;
     color: #F5F5F5;
     font-size: 13px;
+    margin: 0;
+    cursor: text;
     font-weight: 500;
     outline: none;
     font-family: 'Montserrat', sans-serif;
@@ -620,34 +778,7 @@ body {
     display: block;
 }
 
-/* ===== ССЫЛКИ ===== */
-.profile-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 0 16px 8px 16px;
-}
-
-.profile-stat-card {
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-}
-
-.profile-stat-card.editable {
-    border: none;
-}
-
-.profile-stat-label {
-    font-size: 10px;
-    color: #9BA1B0;
-    font-weight: 600;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
+/* Поля ввода для ссылок */
 .profile-stat-value,
 .input-field {
     width: 100%;
@@ -692,13 +823,42 @@ body {
     border-width: 2px !important;
 }
 
+/* Поля ввода (ссылки) - без внешних плашек */
+.profile-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.profile-stat-card {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.profile-stat-card.editable {
+    border: none;
+}
+
+.profile-stat-label {
+    font-size: 10px;
+    color: #9BA1B0;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
 /* ===== ДРУЗЬЯ ===== */
 .friends-section {
+    width: 100%;
     flex: 1;
     display: flex;
     flex-direction: column;
     min-height: 0;
-    padding: 8px 16px 4px 16px;
+    margin: 8px 0 4px 0;
 }
 
 .friends-header {
@@ -783,7 +943,6 @@ body {
     flex: 1;
     overflow-y: auto;
     padding-right: 4px;
-    max-height: 300px;
 }
 
 .friends-list::-webkit-scrollbar {
@@ -848,79 +1007,91 @@ body {
     font-weight: 600;
 }
 
-/* ===== ЭКРАН ПОИСКА ===== */
-.search-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 16px 20px 16px;
-    border-bottom: 1px solid #1E2128;
-    margin-bottom: 20px;
-}
-
-.search-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #FF5500;
-}
-
-.search-timer {
-    font-size: 20px;
-    font-weight: 600;
-    color: #F5F5F5;
-    background: #1A1D24;
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: 1px solid #2A2F3A;
-}
-
-.search-status {
-    text-align: center;
-    font-size: 16px;
-    color: #9BA1B0;
-    margin: 20px 16px 40px 16px;
-    font-weight: 500;
-}
-
-.search-loading {
+/* ===== ОСТАЛЬНЫЕ ЭЛЕМЕНТЫ ===== */
+.screen {
     flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    min-height: 0;
 }
 
-.cancel-search-btn {
-    width: calc(100% - 32px);
-    margin: 20px 16px 10px 16px;
-    padding: 18px;
-    background: transparent;
-    border: 2px solid #FF5500;
-    border-radius: 12px;
-    color: #FF5500;
-    font-size: 18px;
-    font-weight: 700;
-    text-transform: uppercase;
-    cursor: pointer;
+.screen {
+    display: none;
 }
 
-/* ===== ПОЛЯ ВВОДА ===== */
+#startScreen {
+    display: flex;
+}
+
 .input-label {
     font-size: 12px;
     color: #9BA1B0;
-    padding: 0 16px;
     margin-bottom: 4px;
     font-weight: 500;
 }
 
+.mode-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.back-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    border: 2px solid #2A2F3A;
+    color: #9BA1B0;
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+}
+
+.back-btn:hover {
+    border-color: #FF5500;
+    color: #F5F5F5;
+}
+
+.mode-title {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    margin: 0;
+    line-height: 36px;
+}
+
+.mode-title.faceit { color: #FF5500; }
+.mode-title.premier { color: #FF5500; }
+.mode-title.prime { color: #F5F5F5; text-transform: none; }
+.mode-title.public { color: #F5F5F5; text-transform: none; }
+
+.mode-subtitle {
+    font-size: 12px;
+    color: #9BA1B0;
+    text-align: center;
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
 .search-input-field {
-    width: calc(100% - 32px);
-    margin: 4px 16px 12px 16px;
+    width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
     padding: 10px 12px;
     color: #F5F5F5;
     font-size: 14px;
+    margin: 4px 0 12px 0;
     font-weight: 500;
     outline: none;
 }
@@ -946,14 +1117,14 @@ body {
 }
 
 .rank-select {
-    width: calc(100% - 32px);
-    margin: 4px 16px 12px 16px;
+    width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
     color: #F5F5F5;
     font-size: 14px;
     padding: 10px 12px;
+    margin: 4px 0 12px 0;
     cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF5500' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
@@ -962,10 +1133,13 @@ body {
     font-weight: 500;
 }
 
-.rank-select:hover,
-.rank-select:focus {
+.rank-select:hover {
     border-color: #FF5500;
+}
+
+.rank-select:focus {
     outline: none;
+    border-color: #FF5500;
 }
 
 .rank-select option {
@@ -976,7 +1150,7 @@ body {
 .play-style {
     display: flex;
     gap: 8px;
-    margin: 12px 16px;
+    margin: 12px 0;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
@@ -1001,7 +1175,7 @@ body {
 
 .comment-section {
     width: 100%;
-    margin: 10px 16px;
+    margin: 10px 0;
 }
 
 .comment-label {
@@ -1034,319 +1208,109 @@ body {
     font-weight: 600;
 }
 
-/* ===== ЗАГОЛОВКИ ЭКРАНОВ ===== */
-.title-row {
+/* ЭКРАН ПОИСКА */
+.search-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 0 16px;
-    margin-bottom: 12px;
-}
-
-.title-left {
-    display: flex;
     align-items: center;
-    gap: 6px;
+    padding: 16px 0 20px 0;
+    border-bottom: 1px solid #1E2128;
+    margin-bottom: 20px;
 }
 
-.title-left .section-title {
-    margin-bottom: 0;
-    line-height: 1;
-    font-size: 22px;
+.search-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #FF5500;
 }
 
-.edit-controls {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+.search-timer {
+    font-size: 20px;
+    font-weight: 600;
+    color: #F5F5F5;
+    background: #1A1D24;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #2A2F3A;
 }
 
-.edit-title-icon {
-    width: 26px;
-    height: 26px;
-    background: transparent;
-    border: none;
+.search-status {
+    text-align: center;
+    font-size: 16px;
+    color: #9BA1B0;
+    margin: 20px 0 40px 0;
+    font-weight: 500;
+}
+
+.search-loading {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: transform 0.2s ease;
 }
 
-.edit-title-icon:hover {
-    transform: scale(1.1);
-}
-
-.edit-title-icon svg {
-    width: 18px;
-    height: 18px;
-    stroke: #9BA1B0;
-    stroke-width: 2;
-    fill: none;
-}
-
-.edit-title-icon.active svg {
-    stroke: #B00000;
-}
-
-.apply-btn {
+.cancel-search-btn {
+    width: 100%;
+    padding: 18px;
     background: transparent;
-    border: 1px solid #FF5500;
-    border-radius: 6px;
-    padding: 3px 8px;
+    border: 2px solid #FF5500;
+    border-radius: 12px;
     color: #FF5500;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.2s ease;
-    opacity: 0;
-    pointer-events: none;
+    margin: 20px 0 10px 0;
 }
 
-.apply-btn.visible {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.apply-btn:hover {
-    background: #FF5500;
-    color: #F5F5F5;
-    transform: scale(1.05);
-}
-
-.coins-header {
-    background: #1A1D24;
-    border-radius: 8px;
-    padding: 5px 10px;
-    font-size: 12px;
-    color: #F5F5F5;
-    border: none;
-    font-weight: 600;
-}
-
-/* ===== ТАБЫ МАГАЗИНА ===== */
-.shop-tabs {
-    display: flex;
-    gap: 8px;
-    padding: 0 16px;
-    margin-bottom: 12px;
-}
-
-.shop-tab {
-    flex: 1;
-    text-align: center;
-    padding: 8px;
+/* Поля ввода как в FACEIT - ИСПРАВЛЕНО */
+.stat-value {
+    width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
-    color: #9BA1B0;
+    padding: 10px 12px;
+    color: #F5F5F5;
     font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    position: relative;
+    margin: 0;
+    cursor: text;
+    font-weight: 500;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.shop-tab.active {
-    background: #FF5500;
+.stat-value input {
+    width: 100%;
+    background: transparent;
+    border: none;
     color: #F5F5F5;
+    font-size: 13px;
+    font-weight: 500;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+.stat-value input:focus {
+    outline: none;
+}
+
+.stat-value input::placeholder {
+    color: #5D6472;
+    font-weight: 600;
+    font-size: 12px;
+    opacity: 1;
+}
+
+.stat-value:focus-within {
     border-color: #FF5500;
 }
 
-.inventory-count {
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    background: #FF5500;
-    color: #F5F5F5;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: 10px;
-    min-width: 18px;
-    text-align: center;
-}
-
-.cases-section,
-.inventory-section {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0 16px;
-}
-
-.cases-section.hidden,
-.inventory-section.hidden {
-    display: none;
-}
-
-.cases-grid,
-.inventory-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-/* ===== ЭКРАНЫ ===== */
-.screen {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    min-height: 0;
-    display: none;
-}
-
-#startScreen {
-    display: flex;
-}
-
-/* ===== СТАТИЧНЫЕ ЭЛЕМЕНТЫ (без анимаций) ===== */
-.profile-header,
-.profile-avatar,
-.profile-info,
-.profile-name-row,
-.profile-name-label,
-.profile-status,
-.profile-stats,
-.heart-icon,
-.stats-row,
-.friends-header,
-.friends-title,
-.friends-count,
-.friend-item,
-.friend-info,
-.friend-name,
-.friend-id,
-.friend-steam,
-.search-icon,
-.back-icon,
-.search-container,
-.search-input,
-.comment-section,
-.comment-label,
-.comment-input,
-.rank-select,
-.play-style,
-.style-option,
-.mode-subtitle,
-.input-label,
-.back-btn,
-.mode-title,
-.section-title,
-.section-subtitle,
-.coins-header,
-.title-row,
-.edit-controls,
-.stat-card,
-.stat-label,
-.stat-value,
-.stat-value input,
-.profile-stat-card,
-.profile-stat-label,
-.profile-stat-value,
-.input-field,
-.search-input-field,
-.rank-select option,
-.comment-input,
-.mode-search-btn,
-.cancel-search-btn {
-    transition: none !important;
-    transform: none !important;
-}
-
-input, select, textarea, button {
-    transition: none !important;
-}
-
-.primary-btn,
-.mode-search-btn,
-.cancel-search-btn,
-.nav-item,
-.logo,
-.icon-settings,
-.mode-btn,
-.edit-title-icon,
-.apply-btn,
-.back-btn {
-    transition: all 0.2s ease !important;
-}
-
-.primary-btn:hover,
-.mode-search-btn:hover,
-.cancel-search-btn:hover,
-.nav-item:hover,
-.logo:hover,
-.icon-settings:hover,
-.edit-title-icon:hover,
-.apply-btn:hover,
-.back-btn:hover {
-    transform: scale(1.05) !important;
-}
-
-.mode-btn.faceit:hover,
-.mode-btn.premier:hover,
-.mode-btn.prime:hover,
-.mode-btn.public:hover {
-    transform: none !important;
-}
-
-.primary-btn:active,
-.mode-search-btn:active,
-.cancel-search-btn:active,
-.logo:active,
-.icon-settings:active,
-.mode-btn:active,
-.edit-title-icon:active,
-.apply-btn:active,
-.back-btn:active {
-    transform: scale(0.95) !important;
-}
-
-/* ===== УБИРАЕМ БЕЛЫЙ ФОН ===== */
-input {
-    background: transparent;
-    color: #F5F5F5;
-}
-
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: #F5F5F5 !important;
-    transition: background-color 5000s ease-in-out 0s;
-    box-shadow: inset 0 0 20px 20px #1A1D24 !important;
-}
-
-/* ===== АДАПТАЦИЯ ДЛЯ ТЕЛЕФОНОВ ===== */
-@media (max-width: 599px) {
-    .app {
-        width: 100%;
-        height: 100vh;
-        border-radius: 0;
-        box-shadow: none;
-    }
-    
-    .app-wrapper {
-        align-items: stretch;
-    }
-}
-
-/* ===== АДАПТАЦИЯ ДЛЯ ПК ===== */
-@media (min-width: 600px) {
-    .app {
-        width: 380px;
-        height: 800px;
-        border-radius: 24px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-        overflow: hidden;
-    }
-    
-    .app-wrapper {
-        padding: 20px;
-    }
-}
-
-/* ===== УБИРАЕМ БЕЛЫЙ ФОН У ИНПУТА ВОЗРАСТА ===== */
+/* Убираем белый фон у инпута возраста */
 #ageValue {
     background: transparent !important;
     color: #F5F5F5 !important;
@@ -1362,7 +1326,7 @@ input:-webkit-autofill:active {
     border: none !important;
 }
 
-/* ===== СПЕЦИФИЧНО ДЛЯ КАРТОЧКИ ВОЗРАСТА ===== */
+/* Специфично для карточки возраста */
 #ageCard .stat-value {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
@@ -1372,57 +1336,144 @@ input:-webkit-autofill:active {
     border-color: #FF5500;
 }
 
-/* ===== ИСПРАВЛЕНИЕ НАВИГАЦИИ ===== */
-/* Убираем скрытие хедера, которое мешает */
-.start-screen .header {
-    display: flex !important;
+/* Убираем белый фон у всех инпутов */
+input {
+    background: transparent;
+    color: #F5F5F5;
 }
 
-/* ===== ИСПРАВЛЕНИЕ ПОЛЕЙ ССЫЛОК ===== */
-.profile-stat-value,
-.input-field {
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: #F5F5F5 !important;
+    transition: background-color 5000s ease-in-out 0s;
+    box-shadow: inset 0 0 20px 20px #1A1D24 !important;
+}
+
+/* ===== АДАПТАЦИЯ ДЛЯ TELEGRAM MINI APP ===== */
+
+/* Используем Telegram viewport variables */
+:root {
+    --tg-viewport-height: 100vh;
+    --tg-viewport-stable-height: 100vh;
+}
+
+html, body {
     width: 100%;
-    max-width: 100%;
-    padding: 8px 10px !important; /* Уменьшаем padding */
-    font-size: 12px !important; /* Уменьшаем шрифт */
-    height: 36px !important; /* Фиксируем высоту */
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+    background: #0D0F15;
 }
 
-/* Ссылка Steam и Faceit в режимах */
-#faceitSteamInput,
-#faceitLinkInput,
-#premierSteamInput,
-#primeSteamInput,
-#publicSteamInput {
-    height: 36px !important;
-    padding: 6px 10px !important;
-    font-size: 12px !important;
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    color: #F5F5F5;
+    margin: 0;
+    padding: 0;
+    transform: none !important;
 }
 
-/* ===== ИСПРАВЛЕНИЕ НАСЛОЕНИЯ РЕЖИМОВ ===== */
-.mode-container {
-    margin-top: 0 !important; /* Убираем отрицательный margin */
-    justify-content: flex-start !important;
-    padding-top: 20px !important;
+/* Основной контейнер - адаптивный */
+.phone-frame {
+    width: 100%;
+    max-width: 380px;
+    width: calc(100% - 32px);
+    height: auto;
+    min-height: 600px;
+    max-height: calc(var(--tg-viewport-stable-height) - 40px);
+    background: #111317;
+    border-radius: 16px;
+    padding: 12px 20px 8px 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(245, 245, 245, 0.05);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 20px auto;
 }
 
-/* ===== ИСПРАВЛЕНИЕ ОТСТУПОВ В РЕЖИМАХ ===== */
-.stats-row {
-    margin-bottom: 8px !important;
+/* Контент с правильным скроллом */
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    position: relative;
 }
 
-.mode-subtitle {
-    margin-bottom: 8px !important;
+.content::-webkit-scrollbar {
+    display: none;
 }
 
-/* ===== ИСПРАВЛЕНИЕ ОТОБРАЖЕНИЯ НАВИГАЦИИ ===== */
-.bottom-nav {
-    display: flex !important;
-    background: #111317 !important;
-    z-index: 100 !important;
+/* Исправление скролла для друзей */
+.friends-section {
+    min-height: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Убираем скрытие через JS, если оно есть */
-#bottomNav {
-    display: flex !important;
+.friends-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 300px;
+    padding-right: 4px;
+}
+
+/* Медиа-запросы для маленьких экранов */
+@media (max-width: 360px) {
+    .phone-frame {
+        padding: 8px 12px 4px 12px;
+    }
+}
+
+/* Для ПК и больших экранов */
+@media (min-width: 600px) {
+    body {
+        padding: 20px;
+    }
+    
+    .phone-frame {
+        margin: 0 auto;
+    }
+}
+/* ===== ПОЛНОЭКРАННЫЙ РЕЖИМ ДЛЯ TELEGRAM MINI APP ===== */
+
+/* Убираем скругления у основного контейнера */
+.phone-frame {
+    width: 100%;
+    max-width: 100%; /* На всю ширину */
+    min-height: 100vh;
+    background: #111317;
+    border-radius: 0; /* Убираем скругление */
+    padding: 8px 16px 4px 16px;
+    box-shadow: none; /* Убираем тень */
+    border: none; /* Убираем границу */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 0;
+}
+
+/* Для ПК оставляем карточку (чтобы не на весь экран) */
+@media (min-width: 600px) {
+    .phone-frame {
+        max-width: 380px;
+        border-radius: 16px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        border: 1px solid rgba(245, 245, 245, 0.05);
+        margin: 20px auto;
+        min-height: 700px;
+    }
 }
