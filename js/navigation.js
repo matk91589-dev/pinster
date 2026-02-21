@@ -263,9 +263,25 @@ function showSearchScreen() {
 
 // При загрузке страницы скрываем навигацию на стартовом экране
 document.addEventListener('DOMContentLoaded', function() {
+
+    // ===== TELEGRAM INIT =====
+    if (window.Telegram && window.Telegram.WebApp) {
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        tg.disableVerticalSwipes();
+    }
+
+    // Проверяем, виден ли стартовый экран
+    const startScreen = document.getElementById('startScreen');
+    if (startScreen && startScreen.style.display !== 'none') {
+        showBottomNav(false);
+    }
+});
     // Проверяем, виден ли стартовый экран
     const startScreen = document.getElementById('startScreen');
     if (startScreen && startScreen.style.display !== 'none') {
         showBottomNav(false); // Скрываем навигацию
     }
 });
+
