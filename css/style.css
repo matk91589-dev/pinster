@@ -1382,22 +1382,6 @@ html, body {
     overflow-y: auto;
 }
 
-/* ПК режим — карточка */
-@media (min-width: 768px) {
-    body {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-
-    .phone-frame {
-        max-width: 380px;
-        height: 90vh;
-        border-radius: 16px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-        border: 1px solid rgba(245, 245, 245, 0.05);
-    }
 }
 
 /* ===== СТИЛИ ДЛЯ ПК ===== */
@@ -1426,3 +1410,4 @@ html, body {
         overflow: hidden;
     }
 }
+
