@@ -11,40 +11,55 @@
     text-rendering: optimizeLegibility;
 }
 
-body {
+/* ===== БАЗОВЫЕ СТИЛИ (ОБЯЗАТЕЛЬНО) ===== */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
     font-family: 'Montserrat', sans-serif;
     font-weight: 500;
+    color: #F5F5F5;
     background: #0D0F15;
-    min-height: 100vh;
+    overscroll-behavior: none;
+    overflow: hidden;
+}
+
+body {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #F5F5F5;
 }
 
-.phone-frame {
-    width: 100%;
-    max-width: 380px;
-    min-height: 700px; 
-    background: #111317;
-    border-radius: 16px;
-    padding: 12px 20px 8px 20px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-    border: 1px solid rgba(245, 245, 245, 0.05);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-}
-
-.content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+/* ===== ОБЕРТКА ПРИЛОЖЕНИЯ ===== */
+.app-wrapper {
     width: 100%;
     height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ===== ОСНОВНОЙ КОНТЕЙНЕР ПРИЛОЖЕНИЯ ===== */
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    background: #111317;
+}
+
+/* ===== КОНТЕНТ С ПРОКРУТКОЙ ===== */
+.content {
+    flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    position: relative;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.content::-webkit-scrollbar {
+    display: none;
 }
 
 /* ===== ХЕДЕР ===== */
@@ -52,9 +67,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px 0 12px 0;
+    padding: 4px 16px 12px 16px;
     border-bottom: 1px solid #1E2128;
-    margin-bottom: 12px;
+    flex-shrink: 0;
 }
 
 .logo {
@@ -67,7 +82,6 @@ body {
     display: inline-block;
 }
 
-/* Упрощенная анимация для Pingster */
 .logo:hover {
     transform: scale(1.05);
 }
@@ -114,24 +128,23 @@ body {
     stroke: #F5F5F5;
     stroke-width: 2;
     fill: none;
-    transition: stroke 0.2s;
 }
 
 .icon-settings.active svg {
     stroke: #B00000;
 }
 
-/* Скрываем логотип только на стартовом экране */
 .start-screen .logo {
     display: none;
 }
 
+/* ===== ЗАГОЛОВКИ ===== */
 .title-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0 16px;
     margin-bottom: 12px;
-    min-height: 32px;
 }
 
 .title-left {
@@ -174,7 +187,6 @@ body {
     stroke: #9BA1B0;
     stroke-width: 2;
     fill: none;
-    transition: stroke 0.1s;
 }
 
 .edit-title-icon.active svg {
@@ -216,7 +228,7 @@ body {
     font-weight: 600;
 }
 
-/* Глобальные стили для заголовков (базовые) */
+/* ===== ГЛОБАЛЬНЫЕ ЗАГОЛОВКИ ===== */
 .section-title {
     font-size: 24px;
     font-weight: 700;
@@ -232,31 +244,21 @@ body {
     text-align: center;
 }
 
-/* Специфичные стили для главного экрана */
 .main-screen .section-title {
-    margin: 40px 0 4px 0;
+    margin: 20px 16px 4px 16px;
 }
 
 .main-screen .section-subtitle {
-    margin: 0 0 12px 0;
+    margin: 0 16px 12px 16px;
 }
 
-/* Стили для магазина */
-.shop-screen .section-title {
-    margin: 0;
-}
-
-/* Стили для профиля */
-.profile-screen .section-title {
-    margin: 0;
-}
-
-/* Стили для настроек */
+.shop-screen .section-title,
+.profile-screen .section-title,
 .settings-screen .section-title {
-    margin: 0 0 20px 0;
+    margin: 0 16px;
 }
 
-/* Стили для кнопки поиска в режимах */
+/* ===== КНОПКИ ===== */
 .mode-search-btn {
     width: 280px;
     padding: 14px;
@@ -288,12 +290,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    height: 100%;
-    padding: 60px 0 0 0;
-}
-
-.start-logo {
-    display: none;
+    padding: 40px 16px 0 16px;
 }
 
 .start-avatar-square {
@@ -305,8 +302,6 @@ body {
     overflow: hidden;
     background: #1A1D24;
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-    position: relative;
-    z-index: 2;
 }
 
 .start-avatar-square img {
@@ -323,8 +318,6 @@ body {
     padding: 30px 16px 20px 16px;
     margin: -15px auto 0 auto;
     background: #1A1D24;
-    position: relative;
-    z-index: 1;
 }
 
 .start-description {
@@ -335,7 +328,6 @@ body {
     font-weight: 500;
 }
 
-/* КНОПКА СТАРТОВОГО ЭКРАНА */
 .primary-btn {
     width: 280px;
     padding: 14px;
@@ -347,9 +339,8 @@ body {
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 40px auto 0 auto;
+    margin: 30px auto 0 auto;
     transition: all 0.2s ease;
-    letter-spacing: 0.5px;
     box-shadow: 0 4px 0 #6B0000;
 }
 
@@ -364,14 +355,15 @@ body {
     opacity: 0.9;
 }
 
+/* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
 .bottom-nav {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 8px 0 4px 0;
-    background: transparent;
-    margin-top: auto;
+    padding: 8px 16px 4px 16px;
+    background: #111317;
     border-top: 1px solid #1E2128;
+    flex-shrink: 0;
 }
 
 .nav-item {
@@ -412,13 +404,14 @@ body {
     color: #F5F5F5;
 }
 
+/* ===== КОНТЕЙНЕР РЕЖИМОВ ===== */
 .mode-container {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 16px;
-    margin: 0;
+    padding: 0 16px;
     margin-top: -20px;
 }
 
@@ -443,22 +436,13 @@ body {
     background: #1E2128;
 }
 
-.mode-btn.faceit {
-    border-left: 4px solid #FF5500;
-    color: #FF5500;
-}
-
+.mode-btn.faceit,
 .mode-btn.premier {
     border-left: 4px solid #FF5500;
     color: #FF5500;
 }
 
-.mode-btn.prime {
-    border-left: 4px solid #F5F5F5;
-    text-transform: none;
-    font-size: 16px;
-}
-
+.mode-btn.prime,
 .mode-btn.public {
     border-left: 4px solid #F5F5F5;
     text-transform: none;
@@ -477,7 +461,7 @@ body {
 
 /* ===== ПРОФИЛЬ ===== */
 
-/* СТАТИЧНЫЕ ЭЛЕМЕНТЫ (без анимаций) - ВСЕ ПОЛЯ И КАРТОЧКИ */
+/* СТАТИЧНЫЕ ЭЛЕМЕНТЫ (без анимаций) */
 .profile-header,
 .profile-avatar,
 .profile-info,
@@ -531,12 +515,10 @@ body {
     transform: none !important;
 }
 
-/* Дополнительно для всех input, select, textarea */
 input, select, textarea, button {
     transition: none !important;
 }
 
-/* Но оставляем анимации для кликабельных кнопок */
 .primary-btn,
 .mode-search-btn,
 .cancel-search-btn,
@@ -562,7 +544,6 @@ input, select, textarea, button {
     transform: scale(1.05) !important;
 }
 
-/* У 4 кнопок режимов убираем увеличение */
 .mode-btn.faceit:hover,
 .mode-btn.premier:hover,
 .mode-btn.prime:hover,
@@ -582,14 +563,12 @@ input, select, textarea, button {
     transform: scale(0.95) !important;
 }
 
-/* Шапка профиля (аватар + ник) */
+/* Шапка профиля */
 .profile-header {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin: 4px 0 8px 0;
-    padding: 0;
-    position: relative;
+    padding: 4px 16px 8px 16px;
 }
 
 .profile-avatar {
@@ -605,6 +584,7 @@ input, select, textarea, button {
     color: #9BA1B0;
     cursor: pointer;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .profile-avatar img {
@@ -648,7 +628,6 @@ input, select, textarea, button {
     font-size: 11px;
     color: #9BA1B0;
     font-weight: 500;
-    margin-bottom: 2px;
 }
 
 .profile-name {
@@ -683,15 +662,14 @@ input, select, textarea, button {
     padding: 2px 8px;
     border-radius: 12px;
     border: 1px solid rgba(76, 175, 80, 0.4);
-    letter-spacing: 0.3px;
     display: inline-block;
 }
 
-/* Статистика (рейтинг, возраст) - одинаковые поля */
+/* Статистика */
 .stats-row {
     display: flex;
     gap: 12px;
-    margin: 4px 0;
+    padding: 4px 16px;
 }
 
 .stat-card {
@@ -700,10 +678,6 @@ input, select, textarea, button {
     border: none;
     padding: 0;
     cursor: pointer;
-}
-
-.stat-card.editable {
-    border: none;
 }
 
 .stat-label {
@@ -715,7 +689,6 @@ input, select, textarea, button {
     letter-spacing: 0.3px;
 }
 
-/* Поля ввода как в FACEIT */
 .stat-value {
     width: 100%;
     background: #1A1D24;
@@ -724,11 +697,8 @@ input, select, textarea, button {
     padding: 10px 12px;
     color: #F5F5F5;
     font-size: 13px;
-    margin: 0;
-    cursor: text;
     font-weight: 500;
     outline: none;
-    font-family: 'Montserrat', sans-serif;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -745,28 +715,8 @@ input, select, textarea, button {
     font-family: 'Montserrat', sans-serif;
 }
 
-.stat-value input:focus {
-    outline: none;
-}
-
-.stat-value input::placeholder {
-    color: #5D6472;
-    font-weight: 600;
-    font-size: 12px;
-    opacity: 1;
-}
-
 .stat-value:focus-within {
     border-color: #FF5500;
-}
-
-.heart-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    margin-left: 8px;
-    flex-shrink: 0;
 }
 
 .heart-icon svg {
@@ -788,8 +738,6 @@ input, select, textarea, button {
     padding: 10px 12px;
     color: #F5F5F5;
     font-size: 13px;
-    margin: 0;
-    cursor: text;
     font-weight: 500;
     outline: none;
     font-family: 'Montserrat', sans-serif;
@@ -823,12 +771,12 @@ input, select, textarea, button {
     border-width: 2px !important;
 }
 
-/* Поля ввода (ссылки) - без внешних плашек */
+/* Поля ввода (ссылки) */
 .profile-stats {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-bottom: 8px;
+    padding: 0 16px 8px 16px;
 }
 
 .profile-stat-card {
@@ -836,10 +784,6 @@ input, select, textarea, button {
     border: none;
     padding: 0;
     cursor: pointer;
-}
-
-.profile-stat-card.editable {
-    border: none;
 }
 
 .profile-stat-label {
@@ -853,12 +797,11 @@ input, select, textarea, button {
 
 /* ===== ДРУЗЬЯ ===== */
 .friends-section {
-    width: 100%;
     flex: 1;
     display: flex;
     flex-direction: column;
     min-height: 0;
-    margin: 8px 0 4px 0;
+    padding: 8px 16px 4px 16px;
 }
 
 .friends-header {
@@ -943,6 +886,7 @@ input, select, textarea, button {
     flex: 1;
     overflow-y: auto;
     padding-right: 4px;
+    max-height: 300px;
 }
 
 .friends-list::-webkit-scrollbar {
@@ -1014,9 +958,6 @@ input, select, textarea, button {
     flex-direction: column;
     width: 100%;
     min-height: 0;
-}
-
-.screen {
     display: none;
 }
 
@@ -1027,6 +968,7 @@ input, select, textarea, button {
 .input-label {
     font-size: 12px;
     color: #9BA1B0;
+    padding: 0 16px;
     margin-bottom: 4px;
     font-weight: 500;
 }
@@ -1036,7 +978,7 @@ input, select, textarea, button {
     align-items: center;
     justify-content: center;
     gap: 12px;
-    margin-bottom: 16px;
+    padding: 0 16px 16px 16px;
     position: relative;
 }
 
@@ -1054,7 +996,7 @@ input, select, textarea, button {
     align-items: center;
     justify-content: center;
     position: absolute;
-    left: 0;
+    left: 16px;
 }
 
 .back-btn:hover {
@@ -1070,28 +1012,34 @@ input, select, textarea, button {
     line-height: 36px;
 }
 
-.mode-title.faceit { color: #FF5500; }
-.mode-title.premier { color: #FF5500; }
-.mode-title.prime { color: #F5F5F5; text-transform: none; }
-.mode-title.public { color: #F5F5F5; text-transform: none; }
+.mode-title.faceit,
+.mode-title.premier {
+    color: #FF5500;
+}
+
+.mode-title.prime,
+.mode-title.public {
+    color: #F5F5F5;
+    text-transform: none;
+}
 
 .mode-subtitle {
     font-size: 12px;
     color: #9BA1B0;
     text-align: center;
-    margin-bottom: 16px;
+    padding: 0 16px 16px 16px;
     font-weight: 500;
 }
 
 .search-input-field {
-    width: 100%;
+    width: calc(100% - 32px);
+    margin: 4px 16px 12px 16px;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
     padding: 10px 12px;
     color: #F5F5F5;
     font-size: 14px;
-    margin: 4px 0 12px 0;
     font-weight: 500;
     outline: none;
 }
@@ -1117,14 +1065,14 @@ input, select, textarea, button {
 }
 
 .rank-select {
-    width: 100%;
+    width: calc(100% - 32px);
+    margin: 4px 16px 12px 16px;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
     color: #F5F5F5;
     font-size: 14px;
     padding: 10px 12px;
-    margin: 4px 0 12px 0;
     cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF5500' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
@@ -1133,13 +1081,10 @@ input, select, textarea, button {
     font-weight: 500;
 }
 
-.rank-select:hover {
-    border-color: #FF5500;
-}
-
+.rank-select:hover,
 .rank-select:focus {
-    outline: none;
     border-color: #FF5500;
+    outline: none;
 }
 
 .rank-select option {
@@ -1150,7 +1095,7 @@ input, select, textarea, button {
 .play-style {
     display: flex;
     gap: 8px;
-    margin: 12px 0;
+    margin: 12px 16px;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
@@ -1175,7 +1120,7 @@ input, select, textarea, button {
 
 .comment-section {
     width: 100%;
-    margin: 10px 0;
+    margin: 10px 16px;
 }
 
 .comment-label {
@@ -1213,7 +1158,7 @@ input, select, textarea, button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 0 20px 0;
+    padding: 16px 16px 20px 16px;
     border-bottom: 1px solid #1E2128;
     margin-bottom: 20px;
 }
@@ -1238,7 +1183,7 @@ input, select, textarea, button {
     text-align: center;
     font-size: 16px;
     color: #9BA1B0;
-    margin: 20px 0 40px 0;
+    margin: 20px 16px 40px 16px;
     font-weight: 500;
 }
 
@@ -1250,7 +1195,8 @@ input, select, textarea, button {
 }
 
 .cancel-search-btn {
-    width: 100%;
+    width: calc(100% - 32px);
+    margin: 20px 16px 10px 16px;
     padding: 18px;
     background: transparent;
     border: 2px solid #FF5500;
@@ -1260,83 +1206,9 @@ input, select, textarea, button {
     font-weight: 700;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 20px 0 10px 0;
 }
 
-/* Поля ввода как в FACEIT - ИСПРАВЛЕНО */
-.stat-value {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 10px 12px;
-    color: #F5F5F5;
-    font-size: 13px;
-    margin: 0;
-    cursor: text;
-    font-weight: 500;
-    outline: none;
-    font-family: 'Montserrat', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.stat-value input {
-    width: 100%;
-    background: transparent;
-    border: none;
-    color: #F5F5F5;
-    font-size: 13px;
-    font-weight: 500;
-    outline: none;
-    font-family: 'Montserrat', sans-serif;
-    padding: 0;
-    margin: 0;
-}
-
-.stat-value input:focus {
-    outline: none;
-}
-
-.stat-value input::placeholder {
-    color: #5D6472;
-    font-weight: 600;
-    font-size: 12px;
-    opacity: 1;
-}
-
-.stat-value:focus-within {
-    border-color: #FF5500;
-}
-
-/* Убираем белый фон у инпута возраста */
-#ageValue {
-    background: transparent !important;
-    color: #F5F5F5 !important;
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-    -webkit-appearance: none;
-    -moz-appearance: textfield;
-}
-
-#ageValue:focus {
-    outline: none !important;
-    border: none !important;
-}
-
-/* Специфично для карточки возраста */
-#ageCard .stat-value {
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-}
-
-#ageCard .stat-value:focus-within {
-    border-color: #FF5500;
-}
-
-/* Убираем белый фон у всех инпутов */
+/* ===== УБИРАЕМ БЕЛЫЙ ФОН ===== */
 input {
     background: transparent;
     color: #F5F5F5;
@@ -1352,128 +1224,35 @@ input:-webkit-autofill:active {
     box-shadow: inset 0 0 20px 20px #1A1D24 !important;
 }
 
-/* ===== АДАПТАЦИЯ ДЛЯ TELEGRAM MINI APP ===== */
-
-/* Используем Telegram viewport variables */
-:root {
-    --tg-viewport-height: 100vh;
-    --tg-viewport-stable-height: 100vh;
-}
-
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    overscroll-behavior: none;
-    background: #0D0F15;
-}
-
-body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Montserrat', sans-serif;
-    color: #F5F5F5;
-    margin: 0;
-    padding: 0;
-    transform: none !important;
-}
-
-/* Основной контейнер - адаптивный */
-.phone-frame {
-    width: 100%;
-    max-width: 380px;
-    width: calc(100% - 32px);
-    height: auto;
-    min-height: 600px;
-    max-height: calc(var(--tg-viewport-stable-height) - 40px);
-    background: #111317;
-    border-radius: 16px;
-    padding: 12px 20px 8px 20px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-    border: 1px solid rgba(245, 245, 245, 0.05);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    margin: 20px auto;
-}
-
-/* Контент с правильным скроллом */
-.content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    position: relative;
-}
-
-.content::-webkit-scrollbar {
-    display: none;
-}
-
-/* Исправление скролла для друзей */
-.friends-section {
-    min-height: 0;
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-}
-
-.friends-list {
-    flex: 1;
-    overflow-y: auto;
-    max-height: 300px;
-    padding-right: 4px;
-}
-
-/* Медиа-запросы для маленьких экранов */
-@media (max-width: 360px) {
-    .phone-frame {
-        padding: 8px 12px 4px 12px;
+/* ===== АДАПТАЦИЯ ДЛЯ ТЕЛЕФОНОВ ===== */
+@media (max-width: 599px) {
+    .app {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    
+    .app-wrapper {
+        align-items: stretch;
     }
 }
 
-/* Для ПК и больших экранов */
+/* ===== АДАПТАЦИЯ ДЛЯ ПК ===== */
 @media (min-width: 600px) {
-    body {
+    .app {
+        width: 380px;
+        height: 800px;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+    }
+    
+    .app-wrapper {
         padding: 20px;
     }
     
-    .phone-frame {
-        margin: 0 auto;
-    }
-}
-/* ===== ПОЛНОЭКРАННЫЙ РЕЖИМ ДЛЯ TELEGRAM MINI APP ===== */
-
-/* Убираем скругления у основного контейнера */
-.phone-frame {
-    width: 100%;
-    max-width: 100%; /* На всю ширину */
-    min-height: 100vh;
-    background: #111317;
-    border-radius: 0; /* Убираем скругление */
-    padding: 8px 16px 4px 16px;
-    box-shadow: none; /* Убираем тень */
-    border: none; /* Убираем границу */
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    margin: 0;
-}
-
-/* Для ПК оставляем карточку (чтобы не на весь экран) */
-@media (min-width: 600px) {
-    .phone-frame {
-        max-width: 380px;
-        border-radius: 16px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-        border: 1px solid rgba(245, 245, 245, 0.05);
-        margin: 20px auto;
-        min-height: 700px;
+    .content {
+        border-radius: 0 0 24px 24px;
     }
 }
