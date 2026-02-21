@@ -22,23 +22,18 @@ body {
     color: #F5F5F5;
 }
 
-/* ===== ОСНОВНОЙ КОНТЕЙНЕР ===== */
 .phone-frame {
     width: 100%;
     max-width: 380px;
-    height: auto;
-    min-height: 600px;
-    max-height: 800px;
-    aspect-ratio: 9/16;
+    height: 680px; /* Было 700px, стало 680px */
     background: #111317;
     border-radius: 16px;
-    padding: 8px 16px 4px 16px;
+    padding: 8px 16px 4px 16px; /* Уменьшил отступы */
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
     border: 1px solid rgba(245, 245, 245, 0.05);
     display: flex;
     flex-direction: column;
     position: relative;
-    margin: 0 auto;
 }
 
 .content {
@@ -47,11 +42,10 @@ body {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    overflow-y: auto;
+    overflow-y: auto; /* Добавил скролл */
     overflow-x: hidden;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
     position: relative;
+    scrollbar-width: none;
 }
 
 .content::-webkit-scrollbar {
@@ -63,14 +57,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px 0 8px 0;
+    padding: 4px 0 8px 0; /* Уменьшил нижний отступ */
     border-bottom: 1px solid #1E2128;
-    margin-bottom: 8px;
-    flex-shrink: 0;
+    margin-bottom: 8px; /* Уменьшил margin */
 }
 
 .logo {
-    font-size: 22px;
+    font-size: 22px; /* Чуть меньше */
     font-weight: 700;
     letter-spacing: -0.5px;
     color: #F5F5F5;
@@ -103,7 +96,7 @@ body {
 }
 
 .icon-settings {
-    width: 32px;
+    width: 32px; /* Чуть меньше */
     height: 32px;
     border-radius: 50%;
     display: flex;
@@ -120,7 +113,7 @@ body {
 }
 
 .icon-settings svg {
-    width: 20px;
+    width: 20px; /* Чуть меньше */
     height: 20px;
     stroke: #F5F5F5;
     stroke-width: 2;
@@ -137,25 +130,24 @@ body {
     display: none;
 }
 
-/* ===== ЗАГОЛОВКИ ===== */
 .title-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 8px;
-    min-height: 28px;
+    margin-bottom: 8px; /* Уменьшил */
+    min-height: 28px; /* Уменьшил */
 }
 
 .title-left {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 4px; /* Уменьшил */
 }
 
 .title-left .section-title {
     margin-bottom: 0;
     line-height: 1;
-    font-size: 20px;
+    font-size: 20px; /* Чуть меньше */
 }
 
 .edit-controls {
@@ -227,9 +219,9 @@ body {
     font-weight: 600;
 }
 
-/* ===== ЗАГОЛОВКИ (ГЛОБАЛЬНЫЕ) ===== */
+/* Глобальные стили для заголовков (базовые) */
 .section-title {
-    font-size: 22px;
+    font-size: 22px; /* Чуть меньше */
     font-weight: 700;
     color: #F5F5F5;
     letter-spacing: -0.5px;
@@ -237,43 +229,51 @@ body {
 }
 
 .section-subtitle {
-    font-size: 13px;
+    font-size: 13px; /* Чуть меньше */
     color: #9BA1B0;
     font-weight: 500;
     text-align: center;
 }
 
-/* ===== СПЕЦИФИЧНЫЕ СТИЛИ ДЛЯ ЭКРАНОВ ===== */
+/* Специфичные стили для главного экрана */
 .main-screen .section-title {
-    margin: 8px 0 2px 0;
+    margin: 20px 0 2px 0; /* Уменьшил отступы */
 }
 
 .main-screen .section-subtitle {
-    margin: 0 0 8px 0;
+    margin: 0 0 8px 0; /* Уменьшил */
 }
 
-.shop-screen .section-title,
-.profile-screen .section-title,
-.settings-screen .section-title {
+/* Стили для магазина */
+.shop-screen .section-title {
     margin: 0;
 }
 
-/* ===== КНОПКИ ===== */
+/* Стили для профиля */
+.profile-screen .section-title {
+    margin: 0;
+}
+
+/* Стили для настроек */
+.settings-screen .section-title {
+    margin: 0 0 12px 0; /* Уменьшил */
+}
+
+/* Стили для кнопки поиска в режимах */
 .mode-search-btn {
-    width: 260px;
-    padding: 12px;
+    width: 260px; /* Чуть уже */
+    padding: 12px; /* Уменьшил */
     background: #FF5500;
     border: none;
     border-radius: 30px;
-    font-size: 15px;
+    font-size: 15px; /* Чуть меньше */
     font-weight: 700;
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 8px auto;
+    margin: 8px auto; /* Уменьшил */
     transition: all 0.2s;
     letter-spacing: 0.5px;
-    flex-shrink: 0;
 }
 
 .mode-search-btn:hover {
@@ -291,16 +291,16 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    min-height: 100%;
-    padding: 30px 0 0 0;
+    height: 100%;
+    padding: 30px 0 0 0; /* Уменьшил */
 }
 
 .start-avatar-square {
-    width: 240px;
-    height: 180px;
+    width: 240px; /* Уменьшил */
+    height: 180px; /* Уменьшил */
     margin: 0 auto;
     border: none;
-    border-radius: 16px 16px 0 0;
+    border-radius: 16px 16px 0 0; /* Чуть меньше */
     overflow: hidden;
     background: #1A1D24;
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
@@ -316,11 +316,11 @@ body {
 }
 
 .start-description-box {
-    width: 240px;
+    width: 240px; /* Уменьшил */
     border: 3px solid #FF5500;
-    border-radius: 0 0 16px 16px;
-    padding: 20px 12px 16px 12px;
-    margin: -12px auto 0 auto;
+    border-radius: 0 0 16px 16px; /* Чуть меньше */
+    padding: 20px 12px 16px 12px; /* Уменьшил */
+    margin: -12px auto 0 auto; /* Уменьшил */
     background: #1A1D24;
     position: relative;
     z-index: 1;
@@ -328,33 +328,34 @@ body {
 
 .start-description {
     color: #F5F5F5;
-    font-size: 12px;
+    font-size: 12px; /* Чуть меньше */
     line-height: 1.4;
     text-align: center;
     font-weight: 500;
 }
 
-/* ===== КНОПКА СТАРТОВОГО ЭКРАНА ===== */
+/* КНОПКА СТАРТОВОГО ЭКРАНА */
 .primary-btn {
-    width: 240px;
-    padding: 12px;
+    width: 240px; /* Уменьшил */
+    padding: 12px; /* Уменьшил */
     background: #B00000;
     border: none;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 16px; /* Чуть меньше */
     font-weight: 700;
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 20px auto 0 auto;
+    margin: 20px auto 0 auto; /* Уменьшил */
     transition: all 0.2s ease;
     letter-spacing: 0.5px;
     box-shadow: 0 4px 0 #6B0000;
 }
 
 .primary-btn:hover {
-    transform: translateY(-0.5px);
-    box-shadow: 0 4px 0 #6B0000;
+    background: #8B0000;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 0 #6B0000;
 }
 
 .primary-btn:active {
@@ -363,26 +364,24 @@ body {
     opacity: 0.9;
 }
 
-/* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
 .bottom-nav {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 6px 0 2px 0;
+    padding: 6px 0 2px 0; /* Уменьшил */
     background: transparent;
     margin-top: auto;
     border-top: 1px solid #1E2128;
-    flex-shrink: 0;
 }
 
 .nav-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 2px; /* Уменьшил */
     cursor: pointer;
     opacity: 0.6;
-    padding: 2px 8px;
+    padding: 2px 8px; /* Уменьшил */
     transition: all 0.2s;
 }
 
@@ -400,7 +399,7 @@ body {
 }
 
 .nav-icon svg {
-    width: 18px;
+    width: 18px; /* Чуть меньше */
     height: 18px;
     stroke: #F5F5F5;
     stroke-width: 2;
@@ -408,29 +407,29 @@ body {
 }
 
 .nav-label {
-    font-size: 8px;
+    font-size: 8px; /* Чуть меньше */
     font-weight: 600;
     color: #F5F5F5;
 }
 
-/* ===== КОНТЕЙНЕР РЕЖИМОВ ===== */
 .mode-container {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    gap: 8px;
-    margin: 4px 0;
+    justify-content: center;
+    gap: 12px; /* Уменьшил */
+    margin: 0;
+    margin-top: -10px; /* Уменьшил */
 }
 
 .mode-btn {
     width: 100%;
-    padding: 14px;
+    padding: 16px; /* Уменьшил */
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: 10px;
+    border-radius: 10px; /* Чуть меньше */
     color: #E5E7EB;
-    font-size: 16px;
+    font-size: 16px; /* Чуть меньше */
     font-weight: 600;
     text-transform: uppercase;
     cursor: pointer;
@@ -444,13 +443,22 @@ body {
     background: #1E2128;
 }
 
-.mode-btn.faceit,
+.mode-btn.faceit {
+    border-left: 4px solid #FF5500;
+    color: #FF5500;
+}
+
 .mode-btn.premier {
     border-left: 4px solid #FF5500;
     color: #FF5500;
 }
 
-.mode-btn.prime,
+.mode-btn.prime {
+    border-left: 4px solid #F5F5F5;
+    text-transform: none;
+    font-size: 15px;
+}
+
 .mode-btn.public {
     border-left: 4px solid #F5F5F5;
     text-transform: none;
@@ -460,10 +468,10 @@ body {
 .mode-btn::after {
     content: '→';
     position: absolute;
-    right: 18px;
+    right: 18px; /* Уменьшил */
     top: 50%;
     transform: translateY(-50%);
-    font-size: 18px;
+    font-size: 18px; /* Уменьшил */
     color: #5D6472;
 }
 
@@ -471,14 +479,14 @@ body {
 .profile-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin: 2px 0 4px 0;
+    gap: 10px; /* Уменьшил */
+    margin: 2px 0 4px 0; /* Уменьшил */
     padding: 0;
     position: relative;
 }
 
 .profile-avatar {
-    width: 50px;
+    width: 50px; /* Уменьшил */
     height: 50px;
     border-radius: 50%;
     background: #1A1D24;
@@ -486,11 +494,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 24px; /* Уменьшил */
     color: #9BA1B0;
     cursor: pointer;
     overflow: hidden;
-    flex-shrink: 0;
 }
 
 .profile-avatar img {
@@ -503,25 +510,25 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 2px; /* Уменьшил */
 }
 
 .profile-name-row {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 4px; /* Уменьшил */
     flex-wrap: wrap;
 }
 
 .profile-name-label {
-    font-size: 10px;
+    font-size: 10px; /* Уменьшил */
     color: #9BA1B0;
     font-weight: 500;
     margin-bottom: 0;
 }
 
 .profile-name {
-    font-size: 18px;
+    font-size: 18px; /* Уменьшил */
     font-weight: 600;
     color: #F5F5F5;
     cursor: pointer;
@@ -530,20 +537,20 @@ body {
 
 .profile-status {
     color: #4CAF50;
-    font-size: 10px;
+    font-size: 10px; /* Уменьшил */
     font-weight: 600;
     background: rgba(76, 175, 80, 0.15);
-    padding: 1px 6px;
+    padding: 1px 6px; /* Уменьшил */
     border-radius: 10px;
     border: 1px solid rgba(76, 175, 80, 0.4);
     display: inline-block;
 }
 
-/* ===== СТАТИСТИКА ===== */
+/* Статистика (рейтинг, возраст) - одинаковые поля */
 .stats-row {
     display: flex;
-    gap: 8px;
-    margin: 2px 0;
+    gap: 8px; /* Уменьшил */
+    margin: 2px 0; /* Уменьшил */
 }
 
 .stat-card {
@@ -555,14 +562,443 @@ body {
 }
 
 .stat-label {
-    font-size: 9px;
+    font-size: 9px; /* Уменьшил */
     color: #9BA1B0;
     font-weight: 600;
-    margin-bottom: 2px;
+    margin-bottom: 2px; /* Уменьшил */
     text-transform: uppercase;
     letter-spacing: 0.3px;
 }
 
+.stat-value {
+    width: 100%;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 6px; /* Уменьшил */
+    padding: 6px 8px; /* Уменьшил */
+    color: #F5F5F5;
+    font-size: 12px; /* Уменьшил */
+    margin: 0;
+    cursor: text;
+    font-weight: 500;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-value input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #F5F5F5;
+    font-size: 12px;
+    font-weight: 500;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.stat-value:focus-within {
+    border-color: #FF5500;
+}
+
+.heart-icon svg {
+    width: 14px; /* Уменьшил */
+    height: 14px;
+    stroke: #FF5500;
+    stroke-width: 2;
+    fill: none;
+    display: block;
+}
+
+/* Поля ввода для ссылок */
+.profile-stat-value,
+.input-field {
+    width: 100%;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 6px; /* Уменьшил */
+    padding: 8px 10px; /* Уменьшил */
+    color: #F5F5F5;
+    font-size: 12px; /* Уменьшил */
+    margin: 0;
+    cursor: text;
+    font-weight: 500;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.profile-stat-value:focus,
+.input-field:focus {
+    border-color: #FF5500;
+    outline: none;
+}
+
+/* Поля ввода (ссылки) - без внешних плашек */
+.profile-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Уменьшил */
+    margin-bottom: 4px; /* Уменьшил */
+}
+
+.profile-stat-card {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.profile-stat-label {
+    font-size: 9px; /* Уменьшил */
+    color: #9BA1B0;
+    font-weight: 600;
+    margin-bottom: 2px; /* Уменьшил */
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* ===== ДРУЗЬЯ ===== */
+.friends-section {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    margin: 4px 0 2px 0; /* Уменьшил */
+}
+
+.friends-header {
+    display: flex;
+    align-items: center;
+    gap: 4px; /* Уменьшил */
+    margin-bottom: 4px; /* Уменьшил */
+}
+
+.search-icon {
+    width: 16px; /* Уменьшил */
+    height: 16px;
+    cursor: pointer;
+}
+
+.search-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: #9BA1B0;
+    stroke-width: 2;
+    fill: none;
+}
+
+.friends-title {
+    font-size: 14px; /* Уменьшил */
+    font-weight: 600;
+    color: #F5F5F5;
+    flex: 1;
+}
+
+.friends-count {
+    color: #9BA1B0;
+    font-size: 10px; /* Уменьшил */
+    font-weight: 600;
+}
+
+.friends-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
+.friends-list::-webkit-scrollbar {
+    width: 2px; /* Уменьшил */
+}
+
+.friends-list::-webkit-scrollbar-track {
+    background: #1A1D24;
+    border-radius: 10px;
+}
+
+.friends-list::-webkit-scrollbar-thumb {
+    background: #FF5500;
+    border-radius: 10px;
+}
+
+.friend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Уменьшил */
+    padding: 6px; /* Уменьшил */
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 6px;
+    margin-bottom: 4px; /* Уменьшил */
+}
+
+.friend-info {
+    flex: 1;
+}
+
+.friend-name-row {
+    display: flex;
+    align-items: center;
+    gap: 4px; /* Уменьшил */
+    margin-bottom: 1px;
+}
+
+.friend-name {
+    font-size: 12px; /* Уменьшил */
+    font-weight: 600;
+    color: #F5F5F5;
+}
+
+.friend-id {
+    font-size: 8px; /* Уменьшил */
+    color: #FF5500;
+    background: rgba(255, 85, 0, 0.1);
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-weight: 600;
+}
+
+.friend-steam {
+    font-size: 8px; /* Уменьшил */
+    color: #9BA1B0;
+    font-weight: 600;
+}
+
+/* ===== ОСТАЛЬНЫЕ ЭЛЕМЕНТЫ ===== */
+.screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 0;
+}
+
+.screen {
+    display: none;
+}
+
+#startScreen {
+    display: flex;
+}
+
+.input-label {
+    font-size: 11px; /* Уменьшил */
+    color: #9BA1B0;
+    margin-bottom: 2px; /* Уменьшил */
+    font-weight: 500;
+}
+
+.mode-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Уменьшил */
+    margin-bottom: 8px; /* Уменьшил */
+    position: relative;
+}
+
+.back-btn {
+    width: 32px; /* Уменьшил */
+    height: 32px;
+    border-radius: 50%;
+    background: transparent;
+    border: 2px solid #2A2F3A;
+    color: #9BA1B0;
+    font-size: 20px; /* Уменьшил */
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+}
+
+.back-btn:hover {
+    border-color: #FF5500;
+    color: #F5F5F5;
+}
+
+.mode-title {
+    font-size: 22px; /* Уменьшил */
+    font-weight: 700;
+    text-align: center;
+    margin: 0;
+    line-height: 32px;
+}
+
+.mode-title.faceit { color: #FF5500; }
+.mode-title.premier { color: #FF5500; }
+.mode-title.prime { color: #F5F5F5; text-transform: none; }
+.mode-title.public { color: #F5F5F5; text-transform: none; }
+
+.mode-subtitle {
+    font-size: 11px; /* Уменьшил */
+    color: #9BA1B0;
+    text-align: center;
+    margin-bottom: 8px; /* Уменьшил */
+    font-weight: 500;
+}
+
+.search-input-field {
+    width: 100%;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 6px; /* Уменьшил */
+    padding: 8px 10px; /* Уменьшил */
+    color: #F5F5F5;
+    font-size: 13px; /* Уменьшил */
+    margin: 2px 0 8px 0; /* Уменьшил */
+    font-weight: 500;
+    outline: none;
+}
+
+.search-input-field:focus {
+    outline: none;
+    border-color: #FF5500;
+}
+
+.rank-select {
+    width: 100%;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 6px;
+    color: #F5F5F5;
+    font-size: 13px;
+    padding: 8px 10px;
+    margin: 2px 0 8px 0;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23FF5500' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    font-weight: 500;
+}
+
+.rank-select:hover {
+    border-color: #FF5500;
+}
+
+.rank-select:focus {
+    outline: none;
+    border-color: #FF5500;
+}
+
+.play-style {
+    display: flex;
+    gap: 6px; /* Уменьшил */
+    margin: 6px 0; /* Уменьшил */
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 6px;
+    padding: 3px; /* Уменьшил */
+}
+
+.style-option {
+    flex: 1;
+    text-align: center;
+    padding: 6px; /* Уменьшил */
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px; /* Уменьшил */
+    color: #9BA1B0;
+    font-weight: 600;
+}
+
+.style-option.active {
+    background: #FF5500;
+    color: #F5F5F5;
+}
+
+.comment-section {
+    width: 100%;
+    margin: 6px 0; /* Уменьшил */
+}
+
+.comment-label {
+    font-size: 11px; /* Уменьшил */
+    color: #9BA1B0;
+    margin-bottom: 2px; /* Уменьшил */
+    font-weight: 500;
+}
+
+.comment-input {
+    width: 100%;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 6px;
+    padding: 8px 10px;
+    color: #F5F5F5;
+    font-size: 12px;
+    resize: none;
+    height: 60px; /* Уменьшил */
+    font-weight: 500;
+    outline: none;
+}
+
+.comment-input:focus {
+    border-color: #FF5500;
+}
+
+/* ЭКРАН ПОИСКА */
+.search-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0 12px 0; /* Уменьшил */
+    border-bottom: 1px solid #1E2128;
+    margin-bottom: 12px; /* Уменьшил */
+}
+
+.search-title {
+    font-size: 22px; /* Уменьшил */
+    font-weight: 700;
+    color: #FF5500;
+}
+
+.search-timer {
+    font-size: 18px; /* Уменьшил */
+    font-weight: 600;
+    color: #F5F5F5;
+    background: #1A1D24;
+    padding: 6px 12px; /* Уменьшил */
+    border-radius: 8px;
+    border: 1px solid #2A2F3A;
+}
+
+.search-status {
+    text-align: center;
+    font-size: 14px; /* Уменьшил */
+    color: #9BA1B0;
+    margin: 12px 0 24px 0; /* Уменьшил */
+    font-weight: 500;
+}
+
+.search-loading {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cancel-search-btn {
+    width: 100%;
+    padding: 14px; /* Уменьшил */
+    background: transparent;
+    border: 2px solid #FF5500;
+    border-radius: 12px;
+    color: #FF5500;
+    font-size: 16px; /* Уменьшил */
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin: 12px 0 8px 0; /* Уменьшил */
+}
+
+/* Поля ввода как в FACEIT - ИСПРАВЛЕНО */
 .stat-value {
     width: 100%;
     background: #1A1D24;
@@ -598,389 +1034,28 @@ body {
     border-color: #FF5500;
 }
 
-.heart-icon svg {
-    width: 14px;
-    height: 14px;
-    stroke: #FF5500;
-    stroke-width: 2;
-    fill: none;
-    display: block;
+/* Убираем белый фон у инпута возраста */
+#ageValue {
+    background: transparent !important;
+    color: #F5F5F5 !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
 }
 
-/* ===== ССЫЛКИ ===== */
-.profile-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 4px;
-}
-
-.profile-stat-card {
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-}
-
-.profile-stat-label {
-    font-size: 9px;
-    color: #9BA1B0;
-    font-weight: 600;
-    margin-bottom: 2px;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
-.profile-stat-value,
-.input-field {
-    width: 100%;
+/* Специфично для карточки возраста */
+#ageCard .stat-value {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: 6px;
-    padding: 8px 10px;
-    color: #F5F5F5;
-    font-size: 12px;
-    margin: 0;
-    cursor: text;
-    font-weight: 500;
-    outline: none;
-    font-family: 'Montserrat', sans-serif;
 }
 
-.profile-stat-value:focus,
-.input-field:focus {
+#ageCard .stat-value:focus-within {
     border-color: #FF5500;
-    outline: none;
 }
 
-/* ===== ДРУЗЬЯ ===== */
-.friends-section {
-    width: 100%;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    margin: 4px 0 2px 0;
-}
-
-.friends-header {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 4px;
-}
-
-.search-icon {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-}
-
-.search-icon svg {
-    width: 16px;
-    height: 16px;
-    stroke: #9BA1B0;
-    stroke-width: 2;
-    fill: none;
-}
-
-.friends-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #F5F5F5;
-    flex: 1;
-}
-
-.friends-count {
-    color: #9BA1B0;
-    font-size: 10px;
-    font-weight: 600;
-}
-
-.friends-list {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 2px;
-}
-
-.friends-list::-webkit-scrollbar {
-    width: 2px;
-}
-
-.friends-list::-webkit-scrollbar-track {
-    background: #1A1D24;
-    border-radius: 10px;
-}
-
-.friends-list::-webkit-scrollbar-thumb {
-    background: #FF5500;
-    border-radius: 10px;
-}
-
-.friend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 6px;
-    margin-bottom: 4px;
-}
-
-.friend-info {
-    flex: 1;
-}
-
-.friend-name-row {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 1px;
-}
-
-.friend-name {
-    font-size: 12px;
-    font-weight: 600;
-    color: #F5F5F5;
-}
-
-.friend-id {
-    font-size: 8px;
-    color: #FF5500;
-    background: rgba(255, 85, 0, 0.1);
-    padding: 1px 4px;
-    border-radius: 4px;
-    font-family: monospace;
-    font-weight: 600;
-}
-
-.friend-steam {
-    font-size: 8px;
-    color: #9BA1B0;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 150px;
-}
-
-/* ===== ЭКРАНЫ РЕЖИМОВ ===== */
-.mode-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 8px;
-    position: relative;
-    flex-shrink: 0;
-}
-
-.back-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: transparent;
-    border: 2px solid #2A2F3A;
-    color: #9BA1B0;
-    font-size: 20px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    left: 0;
-}
-
-.back-btn:hover {
-    border-color: #FF5500;
-    color: #F5F5F5;
-}
-
-.mode-title {
-    font-size: 22px;
-    font-weight: 700;
-    text-align: center;
-    margin: 0;
-    line-height: 32px;
-}
-
-.mode-title.faceit,
-.mode-title.premier {
-    color: #FF5500;
-}
-
-.mode-title.prime,
-.mode-title.public {
-    color: #F5F5F5;
-    text-transform: none;
-}
-
-.mode-subtitle {
-    font-size: 11px;
-    color: #9BA1B0;
-    text-align: center;
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-
-/* ===== ПОЛЯ ВВОДА ===== */
-.input-label {
-    font-size: 11px;
-    color: #9BA1B0;
-    margin-bottom: 2px;
-    font-weight: 500;
-}
-
-.search-input-field,
-.rank-select {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 6px;
-    padding: 8px 10px;
-    color: #F5F5F5;
-    font-size: 13px;
-    margin: 2px 0 8px 0;
-    font-weight: 500;
-    outline: none;
-}
-
-.rank-select {
-    appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23FF5500' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 30px;
-}
-
-/* ===== СТИЛЬ ИГРЫ (FAN/TRYHARD) ===== */
-.play-style {
-    display: flex;
-    gap: 6px;
-    margin: 6px 0;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 6px;
-    padding: 3px;
-}
-
-.style-option {
-    flex: 1;
-    text-align: center;
-    padding: 6px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 12px;
-    color: #9BA1B0;
-    font-weight: 600;
-}
-
-.style-option.active {
-    background: #FF5500;
-    color: #F5F5F5;
-}
-
-/* ===== КОММЕНТАРИЙ ===== */
-.comment-section {
-    width: 100%;
-    margin: 6px 0;
-}
-
-.comment-label {
-    font-size: 11px;
-    color: #9BA1B0;
-    margin-bottom: 2px;
-    font-weight: 500;
-}
-
-.comment-input {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 6px;
-    padding: 8px 10px;
-    color: #F5F5F5;
-    font-size: 12px;
-    resize: none;
-    height: 60px;
-    font-weight: 500;
-    outline: none;
-}
-
-/* ===== ЭКРАН ПОИСКА ===== */
-.search-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0 12px 0;
-    border-bottom: 1px solid #1E2128;
-    margin-bottom: 12px;
-    flex-shrink: 0;
-}
-
-.search-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: #FF5500;
-}
-
-.search-timer {
-    font-size: 18px;
-    font-weight: 600;
-    color: #F5F5F5;
-    background: #1A1D24;
-    padding: 6px 12px;
-    border-radius: 8px;
-    border: 1px solid #2A2F3A;
-}
-
-.search-status {
-    text-align: center;
-    font-size: 14px;
-    color: #9BA1B0;
-    margin: 12px 0 24px 0;
-    font-weight: 500;
-}
-
-.search-loading {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.cancel-search-btn {
-    width: 100%;
-    padding: 14px;
-    background: transparent;
-    border: 2px solid #FF5500;
-    border-radius: 12px;
-    color: #FF5500;
-    font-size: 16px;
-    font-weight: 700;
-    text-transform: uppercase;
-    cursor: pointer;
-    margin: 12px 0 8px 0;
-    flex-shrink: 0;
-}
-
-/* ===== ОБЩИЕ СТИЛИ ДЛЯ ЭКРАНОВ ===== */
-.screen {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    min-height: 100%;
-    display: none;
-}
-
-#startScreen {
-    display: flex;
-}
-
-/* ===== УБИРАЕМ БЕЛЫЙ ФОН У ИНПУТОВ ===== */
+/* Убираем белый фон у всех инпутов */
 input {
     background: transparent;
     color: #F5F5F5;
