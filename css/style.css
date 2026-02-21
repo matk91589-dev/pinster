@@ -1363,16 +1363,74 @@ input:-webkit-autofill:active {
     overflow-y: auto !important;
 }
 
-/* ===== МАСШТАБИРОВАНИЕ ДЛЯ ПК ===== */
-@media (min-width: 800px) {
+/* ===== АДАПТАЦИЯ ПОД РАЗНЫЕ ЭКРАНЫ ===== */
+
+/* Для очень маленьких телефонов */
+@media (max-width: 360px) {
+    .phone-frame {
+        padding: 8px 12px 4px 12px;
+    }
+    
+    .mode-btn {
+        padding: 14px;
+        font-size: 15px;
+    }
+}
+
+/* Для телефонов (до 480px) - твой основной дизайн */
+@media (min-width: 361px) and (max-width: 480px) {
+    .phone-frame {
+        height: 700px;
+    }
+}
+
+/* Для больших телефонов и маленьких планшетов */
+@media (min-width: 481px) and (max-width: 768px) {
+    .phone-frame {
+        max-width: 450px;
+        height: 750px;
+    }
+}
+
+/* Для планшетов */
+@media (min-width: 769px) and (max-width: 1024px) {
     body {
-        transform: scale(0.8);
-        transform-origin: top center;
-        width: 125%;  /* Компенсация масштаба */
-        margin: 0 auto;
+        padding: 20px;
     }
     
     .phone-frame {
-        margin: 20px auto;
+        max-width: 500px;
+        height: 800px;
+    }
+}
+
+/* ДЛЯ ПК - ГЛАВНОЕ РЕШЕНИЕ */
+@media (min-width: 1025px) {
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0D0F15;
+        padding: 30px;
+    }
+    
+    .phone-frame {
+        max-width: 400px; /* Чуть шире для ПК */
+        height: 750px; /* Чуть выше для ПК */
+        box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8);
+    }
+    
+    /* Убираем лишнее масштабирование */
+    body {
+        transform: none !important;
+        zoom: normal !important;
+    }
+}
+
+/* Для очень больших экранов */
+@media (min-width: 1440px) {
+    .phone-frame {
+        max-width: 420px;
+        height: 800px;
     }
 }
