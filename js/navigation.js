@@ -244,7 +244,7 @@ function showPublicScreen() {
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 }
 
-// Функция для экрана поиска (если нужна)
+// Функция для экрана поиска
 function showSearchScreen() {
     hideAllScreens();
     const searchScreen = document.getElementById('searchScreen');
@@ -260,3 +260,12 @@ function showSearchScreen() {
     
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 }
+
+// При загрузке страницы скрываем навигацию на стартовом экране
+document.addEventListener('DOMContentLoaded', function() {
+    // Проверяем, виден ли стартовый экран
+    const startScreen = document.getElementById('startScreen');
+    if (startScreen && startScreen.style.display !== 'none') {
+        showBottomNav(false); // Скрываем навигацию
+    }
+});
