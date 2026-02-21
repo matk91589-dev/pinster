@@ -17,15 +17,17 @@ body {
     background: #0D0F15;
     min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    justify-content: center; /* только по горизонтали */
+    align-items: flex-start; /* вместо center */
+    padding: 20px 0;
     color: #F5F5F5;
 }
 
 .phone-frame {
     width: 100%;
     max-width: 380px;
-    min-height: 700px; 
+    min-height: 100vh;
+    max-height: 100vh;
     background: #111317;
     border-radius: 16px;
     padding: 12px 20px 8px 20px;
@@ -1355,13 +1357,8 @@ input:-webkit-autofill:active {
 @media (max-width: 599px) {
     .phone-frame {
         width: 100%;
-        max-width: 100%;
+        max-width: 380px;
         min-height: 100vh;
-        border-radius: 0;
-        padding: 8px 16px 4px 16px;
-        box-shadow: none;
-        border: none;
-        margin: 0;
     }
     
     .content {
@@ -1384,3 +1381,4 @@ input:-webkit-autofill:active {
         margin: 0 auto;
     }
 }
+
