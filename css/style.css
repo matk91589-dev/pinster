@@ -25,7 +25,7 @@ body {
 .phone-frame {
     width: 100%;
     max-width: 380px;
-    height: 675px;
+    height: 700px;
     background: #111317;
     border-radius: 16px;
     padding: 12px 20px 8px 20px;
@@ -1350,4 +1350,5 @@ input:-webkit-autofill:active {
     transition: background-color 5000s ease-in-out 0s;
     box-shadow: inset 0 0 20px 20px #1A1D24 !important;
 }
+
 
