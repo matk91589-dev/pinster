@@ -2,6 +2,21 @@
 // ФУНКЦИИ НАВИГАЦИИ
 // ============================================
 
+// Функция для обновления активной кнопки в навигации
+function setActiveNavButton(activeScreen) {
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => item.classList.remove('active'));
+    
+    // Определяем какая кнопка должна быть активной
+    if (activeScreen === 'mainScreen') {
+        document.querySelector('.nav-item[onclick="showMainScreen()"]')?.classList.add('active');
+    } else if (activeScreen === 'shopScreen') {
+        document.querySelector('.nav-item[onclick="showShopScreen()"]')?.classList.add('active');
+    } else if (activeScreen === 'profileScreen') {
+        document.querySelector('.nav-item[onclick="showProfileScreen()"]')?.classList.add('active');
+    }
+}
+
 function hideAllScreens() {
     const screens = [
         'startScreen', 'mainScreen', 'profileScreen', 'shopScreen', 'settingsScreen',
@@ -19,6 +34,7 @@ function startApp() {
     const mainScreen = document.getElementById('mainScreen');
     if (mainScreen) {
         mainScreen.style.display = 'flex';
+        setActiveNavButton('mainScreen');
     } else {
         console.error('mainScreen не найден!');
     }
@@ -29,6 +45,7 @@ function showMainScreen() {
     const mainScreen = document.getElementById('mainScreen');
     if (mainScreen) {
         mainScreen.style.display = 'flex';
+        setActiveNavButton('mainScreen');
     }
     
     const settingsIcon = document.getElementById('settingsIcon');
@@ -42,6 +59,7 @@ function showProfileScreen() {
     const profileScreen = document.getElementById('profileScreen');
     if (profileScreen) {
         profileScreen.style.display = 'flex';
+        setActiveNavButton('profileScreen');
     }
     
     if (typeof isSearchMode !== 'undefined' && isSearchMode) {
@@ -63,6 +81,7 @@ function showShopScreen() {
     const shopScreen = document.getElementById('shopScreen');
     if (shopScreen) {
         shopScreen.style.display = 'flex';
+        setActiveNavButton('shopScreen');
     }
     
     const settingsIcon = document.getElementById('settingsIcon');
@@ -78,7 +97,6 @@ function showSettingsScreen() {
         settingsScreen.style.display = 'flex';
     } else {
         console.warn('settingsScreen не найден в HTML. Создай его или убери вызов.');
-        // Показываем заглушку или возвращаемся на главную
         showMainScreen();
         return;
     }
@@ -87,6 +105,9 @@ function showSettingsScreen() {
     if (settingsIcon) {
         settingsIcon.classList.add('active');
     }
+    
+    // Для экрана настроек убираем активный класс с навигации
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 }
 
 function showFaceitScreen() {
@@ -117,6 +138,9 @@ function showFaceitScreen() {
     if (settingsIcon) {
         settingsIcon.classList.remove('active');
     }
+    
+    // Для экранов режимов убираем активный класс с навигации
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 }
 
 function showPremierScreen() {
@@ -143,6 +167,8 @@ function showPremierScreen() {
     if (settingsIcon) {
         settingsIcon.classList.remove('active');
     }
+    
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 }
 
 function showPrimeScreen() {
@@ -169,6 +195,8 @@ function showPrimeScreen() {
     if (settingsIcon) {
         settingsIcon.classList.remove('active');
     }
+    
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 }
 
 function showPublicScreen() {
@@ -195,4 +223,6 @@ function showPublicScreen() {
     if (settingsIcon) {
         settingsIcon.classList.remove('active');
     }
+    
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 }
