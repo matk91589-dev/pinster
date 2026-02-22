@@ -11,48 +11,44 @@
     text-rendering: optimizeLegibility;
 }
 
-body {
+/* ===== БАЗОВЫЕ СТИЛИ ДЛЯ TELEGRAM MINI APP ===== */
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background: #0D0F15;
     font-family: 'Montserrat', sans-serif;
     font-weight: 500;
-    background: #0D0F15;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     color: #F5F5F5;
 }
 
-/* ===== ОСНОВНОЙ КОНТЕЙНЕР (АДАПТИВНЫЙ) ===== */
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== ОСНОВНОЙ КОНТЕЙНЕР (РАСТЯГИВАЕТСЯ НА ВЕСЬ MINI APP) ===== */
 .phone-frame {
-    width: 100%;
-    max-width: 380px;  /* по умолчанию как было */
-    height: 700px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
     background: #111317;
-    border-radius: 16px;
-    padding: 12px 20px 8px 20px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-    border: 1px solid rgba(245, 245, 245, 0.05);
     display: flex;
     flex-direction: column;
-    position: relative;
+    overflow: hidden;
+    padding: 12px 20px 8px 20px;
 }
 
-/* ===== ДЛЯ ПК И ПЛАНШЕТОВ (ФИКСИРОВАННЫЙ РАЗМЕР) ===== */
-@media (min-width: 768px) {
-    .phone-frame {
-        width: 477px;      /* твой точный размер */
-        max-width: 477px;
-        height: 738px;
-    }
-}
-
+/* ===== СКРОЛЛИРУЕМЫЙ КОНТЕНТ ===== */
 .content {
     flex: 1;
-    display: flex;
-    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
     width: 100%;
     height: 100%;
-    overflow: hidden;
     position: relative;
 }
 
