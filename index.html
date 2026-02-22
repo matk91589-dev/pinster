@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pingster — табличный фикс</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        /* Абсолютный сброс */
         * {
             margin: 0;
             padding: 0;
@@ -16,98 +18,317 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: sans-serif;
         }
+        /* Основной контейнер — как фото рамка */
         .app {
-            width: 100%;
-            max-width: 430px;
+            width: 430px;
             height: 100%;
+            max-height: 932px; /* чтобы не растягивалось */
             background: #111317;
             display: flex;
             flex-direction: column;
+            border-radius: 0;
+            overflow: hidden;
         }
+        /* Хедер — фиксированная высота */
         .header {
+            height: 60px;
+            background: #111317;
+            border-bottom: 1px solid #1E2128;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 12px 20px;
-            border-bottom: 1px solid #333;
-            color: white;
+            justify-content: space-between;
+            padding: 0 20px;
+            flex-shrink: 0;
         }
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #F5F5F5;
+        }
+        .logo .ping { color: #B00000; }
+        .logo .ster { color: #F5F5F5; opacity: 0.9; }
+        .icon-settings {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .icon-settings svg {
+            width: 22px;
+            height: 22px;
+            stroke: #F5F5F5;
+            fill: none;
+        }
+        /* Контент — скроллится, таблица внутри */
         .content {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
+        /* ВСЕ ЭКРАНЫ — через таблицу, ширина 280px */
         .screen {
             display: none;
-            width: 100%;
-            max-width: 320px;
+            width: 280px; /* ЖЁСТКАЯ ШИРИНА */
             margin: 0 auto;
         }
         .screen.active {
             display: block;
         }
-        h2 { color: white; text-align: center; margin-bottom: 20px; }
-        button {
+        /* Таблица — наше всё */
+        table {
             width: 100%;
-            padding: 16px;
-            margin: 10px 0;
-            background: #FF5500;
+            border-collapse: collapse;
+        }
+        td {
+            padding: 8px 0;
+            vertical-align: middle;
+        }
+        /* Стили для элементов (всё внутри таблицы) */
+        .start-avatar-square {
+            width: 280px;
+            height: 210px;
+            background: #1A1D24;
+            border-radius: 20px 20px 0 0;
+            overflow: hidden;
+            margin: 0;
+        }
+        .start-avatar-square img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .start-description-box {
+            width: 280px;
+            border: 3px solid #FF5500;
+            border-radius: 0 0 20px 20px;
+            padding: 20px 16px;
+            background: #1A1D24;
+            margin-top: -5px;
+        }
+        .start-description {
+            color: #F5F5F5;
+            font-size: 14px;
+            text-align: center;
+            line-height: 1.5;
+        }
+        .primary-btn {
+            width: 100%;
+            padding: 14px;
+            background: #B00000;
             border: none;
             border-radius: 12px;
             color: white;
             font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
             cursor: pointer;
+            box-shadow: 0 4px 0 #6B0000;
+        }
+        .primary-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #6B0000;
+        }
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #F5F5F5;
+            text-align: center;
+            margin: 20px 0 4px;
+        }
+        .section-subtitle {
+            font-size: 14px;
+            color: #9BA1B0;
+            text-align: center;
+            margin-bottom: 20px;
         }
         .mode-btn {
+            width: 100%;
+            padding: 20px;
             background: #1A1D24;
-            border-left: 4px solid #FF5500;
+            border: 1px solid #2A2F3A;
+            border-radius: 12px;
+            color: #E5E7EB;
+            font-size: 18px;
+            font-weight: 600;
             text-align: left;
+            position: relative;
+            cursor: pointer;
+            margin: 8px 0;
         }
+        .mode-btn.faceit, .mode-btn.premier {
+            border-left: 4px solid #FF5500;
+            color: #FF5500;
+        }
+        .mode-btn::after {
+            content: '→';
+            position: absolute;
+            right: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #5D6472;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #1A1D24;
+            border: 2px solid #2A2F3A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: #9BA1B0;
+        }
+        .profile-name {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .profile-status {
+            color: #4CAF50;
+            font-size: 11px;
+            background: rgba(76, 175, 80, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        .stats-row {
+            display: flex;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            flex: 1;
+        }
+        .stat-label {
+            font-size: 10px;
+            color: #9BA1B0;
+            text-transform: uppercase;
+        }
+        .stat-value {
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .stat-value input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #F5F5F5;
+            font-size: 13px;
+            outline: none;
+        }
+        .heart-icon svg {
+            width: 16px;
+            height: 16px;
+            stroke: #FF5500;
+            fill: none;
+        }
+        .friends-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #F5F5F5;
+        }
+        .friends-count {
+            color: #9BA1B0;
+            font-size: 11px;
+        }
+        /* Нижняя навигация */
         .bottom-nav {
+            height: 60px;
+            background: #111317;
+            border-top: 1px solid #1E2128;
             display: flex;
             justify-content: space-around;
-            padding: 16px;
-            border-top: 1px solid #333;
-            background: #111317;
+            align-items: center;
+            flex-shrink: 0;
         }
         .nav-item {
-            color: white;
-            opacity: 0.5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
             cursor: pointer;
+            opacity: 0.6;
         }
-        .nav-item.active {
-            opacity: 1;
+        .nav-item.active { opacity: 1; }
+        .nav-item.active svg { stroke: #B00000; }
+        .nav-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: #F5F5F5;
+            fill: none;
+        }
+        .nav-label {
+            font-size: 11px;
+            color: #F5F5F5;
         }
     </style>
 </head>
 <body>
     <div class="app">
+        <!-- Хедер -->
         <div class="header">
-            <span>Pingster</span>
-            <span>⚙️</span>
+            <div class="logo" onclick="switchScreen('main')">
+                <span class="ping">Ping</span><span class="ster">ster</span>
+            </div>
+            <div class="icon-settings" onclick="alert('настройки позже')">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/></svg>
+            </div>
         </div>
+
+        <!-- Контент с таблицами -->
         <div class="content">
-            <!-- Стартовый экран -->
+            <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="start" class="screen active">
-                <h2>Pingster</h2>
-                <p style="color: white; text-align: center; margin-bottom: 20px;">Найди тиммейта за 30 секунд</p>
-                <button onclick="switchScreen('main')">Подключиться</button>
+                <table>
+                    <tr><td><div class="start-avatar-square"><img src="pingster_logo.svg" alt="P" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'210\'><rect width=\'280\' height=\'210\' fill=\'%23FF5500\'/><text x=\'80\' y=\'140\' fill=\'white\' font-size=\'80\'>P</text></svg>'"></div></td></tr>
+                    <tr><td><div class="start-description-box"><div class="start-description">Pingster — найди тиммейта за 30 секунд.<br>Быстро, просто, без смс.</div></div></td></tr>
+                    <tr><td style="padding-top:20px"><button class="primary-btn" onclick="switchScreen('main')">Подключиться</button></td></tr>
+                </table>
             </div>
-            <!-- Главный экран -->
+
+            <!-- ГЛАВНЫЙ ЭКРАН -->
             <div id="main" class="screen">
-                <h2>Выбор режима</h2>
-                <button class="mode-btn">FACEIT</button>
-                <button class="mode-btn">PREMIER</button>
-                <button class="mode-btn">MM PRIME</button>
-                <button class="mode-btn">MM PUBLIC</button>
+                <table>
+                    <tr><td><div class="section-title">Выбор режима</div></td></tr>
+                    <tr><td><div class="section-subtitle">Подберите подходящий</div></td></tr>
+                    <tr><td><button class="mode-btn faceit" onclick="alert('FACEIT')">FACEIT</button></td></tr>
+                    <tr><td><button class="mode-btn premier" onclick="alert('PREMIER')">PREMIER</button></td></tr>
+                    <tr><td><button class="mode-btn prime" onclick="alert('MM PRIME')">MM PRIME</button></td></tr>
+                    <tr><td><button class="mode-btn public" onclick="alert('MM PUBLIC')">MM PUBLIC</button></td></tr>
+                </table>
+            </div>
+
+            <!-- ПРОФИЛЬ -->
+            <div id="profile" class="screen">
+                <table>
+                    <tr><td><div class="profile-header"><div class="profile-avatar">👤</div><div><div class="profile-name-label">ваш никнейм</div><span class="profile-name">-</span> <span class="profile-status">НОВИЧОК</span></div></div></td></tr>
+                    <tr><td><div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input value="0"><span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card"><div class="stat-label">Возраст</div><div class="stat-value"><input placeholder="0-100"></div></div></div></td></tr>
+                    <tr><td><div class="friends-header"><span class="friends-title">Ваши друзья</span><span class="friends-count">0 друзей</span></div></td></tr>
+                </table>
             </div>
         </div>
+
+        <!-- Нижняя навигация -->
         <div class="bottom-nav">
-            <span class="nav-item active" onclick="switchScreen('main')">🏠</span>
-            <span class="nav-item" onclick="alert('магазин')">🛒</span>
-            <span class="nav-item" onclick="alert('профиль')">👤</span>
+            <div class="nav-item active" onclick="switchScreen('main')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span><span class="nav-label">Главная</span></div>
+            <div class="nav-item" onclick="alert('магазин')"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span><span class="nav-label">Магазин</span></div>
+            <div class="nav-item" onclick="switchScreen('profile')"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span><span class="nav-label">Профиль</span></div>
         </div>
     </div>
 
@@ -121,7 +342,9 @@
             document.getElementById(id).classList.add('active');
             
             document.querySelectorAll('.nav-item').forEach((item, i) => {
-                item.classList.toggle('active', i === 0 && id === 'main');
+                item.classList.toggle('active', 
+                    (id === 'main' && i === 0) || (id === 'profile' && i === 2)
+                );
             });
         }
     </script>
