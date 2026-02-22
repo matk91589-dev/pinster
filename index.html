@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pingster — без Supabase</title>
+    <title>Pingster — финальная версия</title>
+    
+    <!-- Telegram Mini App SDK (обязательно) -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- CSS (твои, без изменений) -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
     
-    <!-- Supabase ПОЛНОСТЬЮ ОТКЛЮЧЁН — ничего не подключаем -->
+    <!-- Supabase полностью отключён -->
 </head>
 <body>
     <div class="phone-frame">
@@ -73,7 +76,7 @@
                 </div>
                 <div class="cases-section">
                     <div class="cases-grid">
-                        <!-- ЗДЕСЬ ТВОИ КЕЙСЫ (ВСТАВЬ СВОИ) -->
+                        <!-- ЗДЕСЬ ТВОИ КЕЙСЫ -->
                         <div class="case-item">
                             <div class="case-icon"><img src="img/case1.svg" alt="case1" style="width:48px;height:48px;"></div>
                             <div class="case-info">
@@ -108,7 +111,7 @@
                 </div>
                 <div class="inventory-section hidden">
                     <div class="inventory-grid">
-                        <!-- ТВОЙ ИНВЕНТАРЬ (ПОТОМ) -->
+                        <!-- ТВОЙ ИНВЕНТАРЬ -->
                     </div>
                 </div>
                 <div class="bottom-nav">
@@ -413,7 +416,7 @@
         </div>
     </div>
 
-    <!-- ТОЛЬКО ТВОИ РАБОЧИЕ JS (БЕЗ SUPABASE) -->
+    <!-- ТВОИ РАБОЧИЕ JS (БЕЗ SUPABASE) -->
     <script src="js/navigation.js"></script>
     <script src="js/profile.js"></script>
     <script src="js/avatar.js"></script>
@@ -422,7 +425,7 @@
     <script src="js/search.js"></script>
     <script src="js/logo.js"></script>
 
-    <!-- РАБОЧИЙ JS (ПЕРЕОПРЕДЕЛЯЕТ ВСЁ, ЧТО МОГЛО СЛОМАТЬСЯ) -->
+    <!-- ТВОЙ ОСНОВНОЙ JS (НАВИГАЦИЯ, КАРАНДАШ, МАГАЗИН) -->
     <script>
         // Полное отключение всего, что связано с Supabase
         window.supabase = null;
@@ -572,6 +575,67 @@
         window.editPremierAge = window.editAge;
         window.editPrimeAge = window.editAge;
         window.editPublicAge = window.editAge;
+    </script>
+
+    <!-- ===== ФИНАЛЬНЫЙ ФИКС ДЛЯ ПК (УБИРАЕТ СКРОЛЛ СТРАНИЦЫ) ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            // Принудительно делаем документ скроллируемым (чтобы свайп работал)
+            function ensureDocumentIsScrollable() {
+                const isScrollable = document.documentElement.scrollHeight > window.innerHeight;
+                if (!isScrollable) {
+                    document.documentElement.style.setProperty(
+                        'height',
+                        'calc(100vh + 1px)',
+                        'important'
+                    );
+                }
+            }
+
+            // Не даём scrollY стать 0 (Telegram сворачивает при scrollY === 0)
+            function preventCollapse() {
+                if (window.scrollY === 0) {
+                    window.scrollTo(0, 1);
+                }
+            }
+
+            // Слушаем изменения visualViewport (особенно важно для ПК)
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', () => {
+                    document.body.style.height = window.visualViewport.height + 'px';
+                    ensureDocumentIsScrollable();
+                });
+            }
+
+            // Отключаем вертикальные свайпы через Telegram API (если доступно)
+            if (window.Telegram?.WebApp?.disableVerticalSwipes) {
+                window.Telegram.WebApp.disableVerticalSwipes();
+            }
+
+            // Инициализация после загрузки
+            window.addEventListener('load', () => {
+                ensureDocumentIsScrollable();
+                preventCollapse();
+
+                // Запрещаем overscroll на iOS
+                document.body.addEventListener('touchstart', (e) => {
+                    if (e.target === document.body) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+            });
+
+            // Следим за скроллом внутри контента
+            const content = document.querySelector('.content');
+            if (content) {
+                content.addEventListener('scroll', preventCollapse);
+            }
+
+            // Дополнительно: если вдруг окно изменило размер
+            window.addEventListener('resize', ensureDocumentIsScrollable);
+        })();
     </script>
 </body>
 </html>
