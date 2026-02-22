@@ -42,7 +42,7 @@ html, body {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 12px 20px 90px; /* padding-bottom под нижнюю навигацию */
+    padding: 12px 20px 90px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
 }
@@ -162,75 +162,6 @@ html, body {
     margin-bottom: 0;
     line-height: 1;
     font-size: 22px;
-}
-
-.edit-controls {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.edit-title-icon {
-    width: 26px;
-    height: 26px;
-    background: transparent;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-.edit-title-icon:hover {
-    transform: scale(1.1);
-}
-
-.edit-title-icon svg {
-    width: 18px;
-    height: 18px;
-    stroke: #9BA1B0;
-    stroke-width: 2;
-    fill: none;
-}
-
-.edit-title-icon.active svg {
-    stroke: #B00000;
-}
-
-.apply-btn {
-    background: transparent;
-    border: 1px solid #FF5500;
-    border-radius: 6px;
-    padding: 3px 8px;
-    color: #FF5500;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.apply-btn.visible {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.apply-btn:hover {
-    background: #FF5500;
-    color: #F5F5F5;
-    transform: scale(1.05);
-}
-
-.coins-header {
-    background: #1A1D24;
-    border-radius: 8px;
-    padding: 5px 10px;
-    font-size: 12px;
-    color: #F5F5F5;
-    border: none;
-    font-weight: 600;
 }
 
 /* ===== СТАРТОВЫЙ ЭКРАН ===== */
@@ -368,7 +299,6 @@ html, body {
 .mode-btn:hover {
     border-color: #FF5500;
     background: #1E2128;
-    transform: scale(1.01);
 }
 
 .mode-btn.faceit,
@@ -392,16 +322,6 @@ html, body {
     transform: translateY(-50%);
     font-size: 20px;
     color: #5D6472;
-}
-
-/* HOVER ТОЛЬКО ДЛЯ ПК */
-@media (hover: hover) {
-    .mode-btn.faceit:hover,
-    .mode-btn.premier:hover,
-    .mode-btn.prime:hover,
-    .mode-btn.public:hover {
-        transform: none;
-    }
 }
 
 /* ===== НИЖНЯЯ НАВИГАЦИЯ (FIXED) ===== */
@@ -430,7 +350,7 @@ html, body {
     cursor: pointer;
     opacity: 0.6;
     padding: 8px 12px;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s, transform 0.2s;
 }
 
 .nav-item:hover {
@@ -494,6 +414,18 @@ html, body {
     border-width: 3px;
 }
 
+.profile-avatar.frame-red { border-color: #FF5500; border-width: 3px; }
+.profile-avatar.frame-gold { border-color: #FFD700; border-width: 3px; }
+.profile-avatar.frame-blue { border-color: #2196F3; border-width: 3px; }
+.profile-avatar.frame-green { border-color: #4CAF50; border-width: 3px; }
+.profile-avatar.frame-purple { border-color: #9C27B0; border-width: 3px; }
+.profile-avatar.frame-rainbow { 
+    border: 3px solid transparent;
+    background: linear-gradient(45deg, #FF5500, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+}
+
 .profile-info {
     flex: 1;
     display: flex;
@@ -512,6 +444,7 @@ html, body {
     font-size: 11px;
     color: #9BA1B0;
     font-weight: 500;
+    margin-bottom: 2px;
 }
 
 .profile-name {
@@ -519,10 +452,23 @@ html, body {
     font-weight: 600;
     color: #F5F5F5;
     cursor: pointer;
+    display: inline-block;
 }
 
 .profile-name.editable {
     color: #FF5500;
+}
+
+.profile-name.red { color: #FF5500; }
+.profile-name.green { color: #4CAF50; }
+.profile-name.blue { color: #2196F3; }
+.profile-name.purple { color: #9C27B0; }
+.profile-name.orange { color: #FF9800; }
+.profile-name.multicolor { 
+    background: linear-gradient(45deg, #FF5500, #4CAF50, #2196F3, #9C27B0, #FF9800);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
 }
 
 .profile-status {
@@ -533,6 +479,8 @@ html, body {
     padding: 2px 8px;
     border-radius: 12px;
     border: 1px solid rgba(76, 175, 80, 0.4);
+    letter-spacing: 0.3px;
+    display: inline-block;
 }
 
 /* ===== СТАТИСТИКА ===== */
@@ -550,12 +498,17 @@ html, body {
     cursor: pointer;
 }
 
+.stat-card.editable {
+    border: none;
+}
+
 .stat-label {
     font-size: 10px;
     color: #9BA1B0;
     font-weight: 600;
     margin-bottom: 4px;
     text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
 
 .stat-value {
@@ -582,8 +535,28 @@ html, body {
     font-family: 'Montserrat', sans-serif;
 }
 
+.stat-value input:focus {
+    outline: none;
+}
+
+.stat-value input::placeholder {
+    color: #5D6472;
+    font-weight: 600;
+    font-size: 12px;
+    opacity: 1;
+}
+
 .stat-value:focus-within {
     border-color: #FF5500;
+}
+
+.heart-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    margin-left: 8px;
+    flex-shrink: 0;
 }
 
 .heart-icon svg {
@@ -592,6 +565,7 @@ html, body {
     stroke: #FF5500;
     stroke-width: 2;
     fill: none;
+    display: block;
 }
 
 /* ===== ПОЛЯ ВВОДА ===== */
@@ -616,6 +590,17 @@ html, body {
 .search-input-field:focus,
 .comment-input:focus {
     border-color: #FF5500;
+    outline: none;
+}
+
+.profile-stat-value::placeholder,
+.input-field::placeholder,
+.search-input-field::placeholder,
+.comment-input::placeholder {
+    color: #5D6472;
+    font-weight: 600;
+    font-size: 12px;
+    opacity: 1;
 }
 
 .comment-input {
@@ -628,6 +613,255 @@ html, body {
     color: #9BA1B0;
     margin: 12px 0 4px;
     font-weight: 500;
+}
+
+/* ===== ПРОФИЛЬ СТАТИСТИКА ===== */
+.profile-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.profile-stat-card {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.profile-stat-card.editable {
+    border: none;
+}
+
+.profile-stat-label {
+    font-size: 10px;
+    color: #9BA1B0;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* ===== ДРУЗЬЯ ===== */
+.friends-section {
+    margin: 20px 0;
+}
+
+.friends-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.search-icon {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.search-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: #9BA1B0;
+    stroke-width: 2;
+    fill: none;
+}
+
+.back-icon {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin-right: 4px;
+}
+
+.back-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: #B00000;
+    stroke-width: 2;
+    fill: none;
+}
+
+.friends-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #F5F5F5;
+    flex: 1;
+}
+
+.friends-count {
+    color: #9BA1B0;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    margin-bottom: 6px;
+}
+
+.search-input {
+    flex: 1;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #F5F5F5;
+    font-size: 12px;
+    font-weight: 500;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #FF5500;
+}
+
+.search-input::placeholder {
+    color: #5D6472;
+    font-weight: 600;
+}
+
+.friends-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.friends-list::-webkit-scrollbar {
+    width: 3px;
+}
+
+.friends-list::-webkit-scrollbar-track {
+    background: #1A1D24;
+    border-radius: 10px;
+}
+
+.friends-list::-webkit-scrollbar-thumb {
+    background: #FF5500;
+    border-radius: 10px;
+}
+
+.friend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 6px;
+    margin-bottom: 6px;
+}
+
+.friend-avatar {
+    display: none;
+}
+
+.friend-info {
+    flex: 1;
+}
+
+.friend-name-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+}
+
+.friend-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #F5F5F5;
+}
+
+.friend-id {
+    font-size: 9px;
+    color: #FF5500;
+    background: rgba(255, 85, 0, 0.1);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-weight: 600;
+}
+
+.friend-steam {
+    font-size: 9px;
+    color: #9BA1B0;
+    font-weight: 600;
+}
+
+/* ===== ЭЛЕМЕНТЫ УПРАВЛЕНИЯ ===== */
+.edit-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.edit-title-icon {
+    width: 26px;
+    height: 26px;
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.edit-title-icon:hover {
+    transform: scale(1.1);
+}
+
+.edit-title-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: #9BA1B0;
+    stroke-width: 2;
+    fill: none;
+}
+
+.edit-title-icon.active svg {
+    stroke: #B00000;
+}
+
+.apply-btn {
+    background: transparent;
+    border: 1px solid #FF5500;
+    border-radius: 6px;
+    padding: 3px 8px;
+    color: #FF5500;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.apply-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.apply-btn:hover {
+    background: #FF5500;
+    color: #F5F5F5;
+    transform: scale(1.05);
+}
+
+.coins-header {
+    background: #1A1D24;
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: #F5F5F5;
+    border: none;
+    font-weight: 600;
 }
 
 /* ===== ВЫПАДАЮЩИЕ СПИСКИ ===== */
@@ -645,9 +879,15 @@ html, body {
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF5500' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
     background-repeat: no-repeat;
     background-position: right 14px center;
+    font-weight: 500;
 }
 
 .rank-select:hover {
+    border-color: #FF5500;
+}
+
+.rank-select:focus {
+    outline: none;
     border-color: #FF5500;
 }
 
@@ -683,93 +923,17 @@ html, body {
     color: white;
 }
 
-/* ===== ДРУЗЬЯ ===== */
-.friends-section {
-    margin: 20px 0;
+/* ===== КОММЕНТАРИИ ===== */
+.comment-section {
+    width: 100%;
+    margin: 10px 0;
 }
 
-.friends-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 12px;
-}
-
-.friends-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: #F5F5F5;
-    flex: 1;
-}
-
-.friends-count {
+.comment-label {
+    font-size: 12px;
     color: #9BA1B0;
-    font-size: 11px;
-    font-weight: 600;
-}
-
-.friends-list {
-    max-height: 300px;
-    overflow-y: auto;
-    padding-right: 4px;
-}
-
-.friends-list::-webkit-scrollbar {
-    width: 3px;
-}
-
-.friends-list::-webkit-scrollbar-track {
-    background: #1A1D24;
-    border-radius: 10px;
-}
-
-.friends-list::-webkit-scrollbar-thumb {
-    background: #FF5500;
-    border-radius: 10px;
-}
-
-.friend-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 6px;
-    margin-bottom: 6px;
-}
-
-.friend-info {
-    flex: 1;
-}
-
-.friend-name-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 2px;
-}
-
-.friend-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: #F5F5F5;
-}
-
-.friend-id {
-    font-size: 9px;
-    color: #FF5500;
-    background: rgba(255, 85, 0, 0.1);
-    padding: 1px 5px;
-    border-radius: 4px;
-    font-family: monospace;
-    font-weight: 600;
-}
-
-.friend-steam {
-    font-size: 9px;
-    color: #9BA1B0;
-    font-weight: 600;
+    margin-bottom: 4px;
+    font-weight: 500;
 }
 
 /* ===== ЭКРАН ПОИСКА ===== */
@@ -824,7 +988,7 @@ html, body {
     to { transform: rotate(360deg); }
 }
 
-/* ===== ЭКРАНЫ НАСТРОЕК И ДРУГИЕ ===== */
+/* ===== ЭКРАНЫ НАСТРОЕК ===== */
 .mode-header {
     display: flex;
     align-items: center;
@@ -877,12 +1041,50 @@ html, body {
     margin-bottom: 20px;
 }
 
+/* ===== ДОПОЛНИТЕЛЬНЫЕ ЭЛЕМЕНТЫ ===== */
+.search-input-field[type="number"] {
+    -moz-appearance: textfield;
+}
+.search-input-field[type="number"]::-webkit-outer-spin-button,
+.search-input-field[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.editable-input {
+    border-color: #FF5500 !important;
+    border-width: 2px !important;
+    background: rgba(255, 85, 0, 0.05) !important;
+}
+
 /* ===== ФИКСЫ ДЛЯ ИНПУТОВ ===== */
 #ageValue {
     background: transparent !important;
     color: #F5F5F5 !important;
     border: none !important;
     outline: none !important;
+    box-shadow: none !important;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+}
+
+#ageValue:focus {
+    outline: none !important;
+    border: none !important;
+}
+
+#ageCard .stat-value {
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+}
+
+#ageCard .stat-value:focus-within {
+    border-color: #FF5500;
+}
+
+input {
+    background: transparent;
+    color: #F5F5F5;
 }
 
 input:-webkit-autofill,
@@ -893,6 +1095,108 @@ input:-webkit-autofill:active {
     -webkit-text-fill-color: #F5F5F5 !important;
     transition: background-color 5000s ease-in-out 0s;
     box-shadow: inset 0 0 20px 20px #1A1D24 !important;
+}
+
+/* ===== АНИМАЦИИ ===== */
+.primary-btn,
+.mode-search-btn,
+.cancel-search-btn,
+.nav-item,
+.logo,
+.icon-settings,
+.mode-btn,
+.edit-title-icon,
+.apply-btn,
+.back-btn {
+    transition: all 0.2s ease !important;
+}
+
+.primary-btn:hover,
+.mode-search-btn:hover,
+.cancel-search-btn:hover,
+.nav-item:hover,
+.logo:hover,
+.icon-settings:hover,
+.edit-title-icon:hover,
+.apply-btn:hover,
+.back-btn:hover {
+    transform: scale(1.05) !important;
+}
+
+.mode-btn.faceit:hover,
+.mode-btn.premier:hover,
+.mode-btn.prime:hover,
+.mode-btn.public:hover {
+    transform: none !important;
+}
+
+.primary-btn:active,
+.mode-search-btn:active,
+.cancel-search-btn:active,
+.logo:active,
+.icon-settings:active,
+.mode-btn:active,
+.edit-title-icon:active,
+.apply-btn:active,
+.back-btn:active {
+    transform: scale(0.95) !important;
+}
+
+/* ===== СТАТИЧНЫЕ ЭЛЕМЕНТЫ ===== */
+.profile-header,
+.profile-avatar,
+.profile-info,
+.profile-name-row,
+.profile-name-label,
+.profile-status,
+.profile-stats,
+.heart-icon,
+.stats-row,
+.friends-header,
+.friends-title,
+.friends-count,
+.friend-item,
+.friend-info,
+.friend-name,
+.friend-id,
+.friend-steam,
+.search-icon,
+.back-icon,
+.search-container,
+.search-input,
+.comment-section,
+.comment-label,
+.comment-input,
+.rank-select,
+.play-style,
+.style-option,
+.mode-subtitle,
+.input-label,
+.mode-title,
+.section-title,
+.section-subtitle,
+.coins-header,
+.title-row,
+.edit-controls,
+.stat-card,
+.stat-label,
+.stat-value,
+.stat-value input,
+.profile-stat-card,
+.profile-stat-label,
+.profile-stat-value,
+.input-field,
+.search-input-field,
+.rank-select option,
+.comment-input,
+.mode-search-btn,
+.cancel-search-btn {
+    transition: none !important;
+    transform: none !important;
+}
+
+input, select, textarea, button {
+    transition: none !important;
 }
 
 /* ===== СТИЛИ ДЛЯ ПК ===== */
