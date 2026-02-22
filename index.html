@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
     
-    <!-- Supabase SDK (подключаем, но не используем принудительно) -->
+    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -89,18 +89,12 @@
                     <div class="shop-tab" onclick="showShopTab('inventory')" id="inventoryTab">Инвентарь</div>
                 </div>
                 
-                <!-- Секция кейсов -->
                 <div class="cases-section">
-                    <div class="cases-grid">
-                        <!-- Кейсы будут добавляться через JS -->
-                    </div>
+                    <div class="cases-grid"></div>
                 </div>
                 
-                <!-- Секция инвентаря -->
                 <div class="inventory-section hidden">
-                    <div class="inventory-grid">
-                        <!-- Инвентарь будет добавляться через JS -->
-                    </div>
+                    <div class="inventory-grid"></div>
                 </div>
 
                 <div class="bottom-nav">
@@ -119,7 +113,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН ПРОФИЛЯ (С РАБОЧИМ КАРАНДАШОМ) -->
+            <!-- ЭКРАН ПРОФИЛЯ -->
             <div id="profileScreen" class="screen screen-profile">
                 <div class="title-row">
                     <div class="title-left">
@@ -154,25 +148,25 @@
                             <input type="text" id="ratingValue" placeholder="0" value="0" readonly>
                             <span class="heart-icon">
                                 <svg viewBox="0 0 24 24">
-                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/>
                                 </svg>
                             </span>
                         </div>
                     </div>
-                    <div class="stat-card" id="ageCard" onclick="editAge()">
+                    <div class="stat-card" id="ageCard">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value">
-                            <input type="text" id="ageValue" placeholder="0-100" value="">
+                            <input type="text" id="ageValue" placeholder="0-100" value="" readonly>
                         </div>
                     </div>
                 </div>
 
                 <div class="profile-stats">
-                    <div class="profile-stat-card" id="steamCard" onclick="editSteam()">
+                    <div class="profile-stat-card" id="steamCard">
                         <div class="profile-stat-label">Ссылка Steam</div>
                         <input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" value="" readonly>
                     </div>
-                    <div class="profile-stat-card" id="faceitLinkCard" onclick="editFaceitLink()">
+                    <div class="profile-stat-card" id="faceitLinkCard">
                         <div class="profile-stat-label">Ссылка Faceit</div>
                         <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit / пропустите" value="" readonly>
                     </div>
@@ -184,7 +178,7 @@
                             <svg viewBox="0 0 24 24">
                                 <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
                                 <circle cx="11" cy="11" r="4" stroke="white" stroke-width="2"/>
-                                <line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" stroke-width="2"/>
                             </svg>
                         </div>
                         <span class="friends-title">Ваши друзья</span>
@@ -458,41 +452,11 @@
                 <div class="search-loading"><div class="spinner"></div></div>
                 <button class="cancel-search-btn" onclick="cancelSearch()">Отменить поиск</button>
             </div>
-
         </div>
     </div>
 
-    <!-- JavaScript файлы (отключаем проблемные) -->
-    <!-- <script src="js/config.js"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/globals.js"></script>
-    <script src="js/navigation.js"></script>
-    <script src="js/profile.js"></script>
-    <script src="js/avatar.js"></script>
-    <script src="js/shop.js"></script>
-    <script src="js/friends.js"></script>
-    <script src="js/search.js"></script>
-    <script src="js/logo.js"></script>
-    <script src="js/app.js"></script> -->
-
-    <!-- ПОЛНОСТЬЮ РАБОЧИЙ JS -->
+    <!-- JavaScript -->
     <script>
-        // ============================================
-        // ИНИЦИАЛИЗАЦИЯ
-        // ============================================
-        (function() {
-            console.log('Pingster запущен');
-            
-            // Подавляем ошибки Supabase
-            window.supabase = null;
-            
-            // Загружаем тестовые данные
-            setTimeout(() => {
-                loadTestCases();
-                loadTestInventory();
-            }, 100);
-        })();
-
         // ============================================
         // НАВИГАЦИЯ
         // ============================================
@@ -565,12 +529,8 @@
             showMainScreen();
         }
 
-        function exitSearchMode() {
-            showMainScreen();
-        }
-
         // ============================================
-        // РЕДАКТИРОВАНИЕ ПРОФИЛЯ (КАРАНДАШ)
+        // РЕДАКТИРОВАНИЕ ПРОФИЛЯ
         // ============================================
         let editMode = false;
 
@@ -578,36 +538,39 @@
             editMode = !editMode;
             const editIcon = document.getElementById('editToggle');
             const applyBtn = document.getElementById('applyBtn');
-            const inputs = document.querySelectorAll('#profileScreen input:not([readonly]), #profileScreen .profile-stat-value');
+            
+            const ageInput = document.getElementById('ageValue');
+            const steamInput = document.getElementById('steamDisplay');
+            const faceitInput = document.getElementById('faceitLinkDisplay');
+            const ageCard = document.getElementById('ageCard');
+            const steamCard = document.getElementById('steamCard');
+            const faceitCard = document.getElementById('faceitLinkCard');
             
             editIcon.classList.toggle('active', editMode);
             
             if (editMode) {
                 applyBtn.classList.add('visible');
-                // Делаем поля редактируемыми
-                document.getElementById('ageValue').removeAttribute('readonly');
-                document.getElementById('steamDisplay').removeAttribute('readonly');
-                document.getElementById('faceitLinkDisplay').removeAttribute('readonly');
-                document.getElementById('profileName').style.color = '#FF5500';
+                ageCard.classList.add('editable');
+                steamCard.classList.add('editable');
+                faceitCard.classList.add('editable');
+                
+                ageInput.removeAttribute('readonly');
+                steamInput.removeAttribute('readonly');
+                faceitInput.removeAttribute('readonly');
             } else {
                 applyBtn.classList.remove('visible');
-                // Блокируем поля
-                document.getElementById('ageValue').setAttribute('readonly', true);
-                document.getElementById('steamDisplay').setAttribute('readonly', true);
-                document.getElementById('faceitLinkDisplay').setAttribute('readonly', true);
-                document.getElementById('profileName').style.color = '#F5F5F5';
+                ageCard.classList.remove('editable');
+                steamCard.classList.remove('editable');
+                faceitCard.classList.remove('editable');
+                
+                ageInput.setAttribute('readonly', true);
+                steamInput.setAttribute('readonly', true);
+                faceitInput.setAttribute('readonly', true);
             }
         }
 
         function applyChanges() {
-            // Сохраняем изменения
-            const newAge = document.getElementById('ageValue').value;
-            const newSteam = document.getElementById('steamDisplay').value;
-            const newFaceit = document.getElementById('faceitLinkDisplay').value;
-            
-            console.log('Сохранено:', { age: newAge, steam: newSteam, faceit: newFaceit });
-            
-            // Выходим из режима редактирования
+            console.log('Изменения сохранены');
             editMode = true;
             toggleEditMode();
         }
@@ -620,34 +583,13 @@
             }
         }
 
-        function editAge() {
-            if (!editMode) return;
-            // Поле уже редактируется через input
-        }
-
-        function editSteam() {
-            if (!editMode) return;
-            // Поле уже редактируется через input
-        }
-
-        function editFaceitLink() {
-            if (!editMode) return;
-            // Поле уже редактируется через input
-        }
-
         function selectAvatar() {
             if (!editMode) return;
             alert('Выбор аватара будет доступен позже');
         }
 
-        // Заглушки для остальных функций редактирования
-        function editFaceitAge() {}
-        function editPremierAge() {}
-        function editPrimeAge() {}
-        function editPublicAge() {}
-
         // ============================================
-        // МАГАЗИН И ИНВЕНТАРЬ
+        // МАГАЗИН
         // ============================================
         function showShopTab(tab) {
             const casesSection = document.querySelector('.cases-section');
@@ -667,46 +609,86 @@
             }
         }
 
-        function loadTestCases() {
+        // Загрузка тестовых данных
+        setTimeout(() => {
+            // Кейсы
             const casesGrid = document.querySelector('.cases-grid');
-            if (!casesGrid) return;
-            
-            const testCases = [
-                { name: 'Базовый кейс', price: 100, icon: '📦' },
-                { name: 'Редкий кейс', price: 250, icon: '🔮' },
-                { name: 'Легендарный кейс', price: 500, icon: '👑' }
-            ];
-            
-            casesGrid.innerHTML = testCases.map(item => `
-                <div class="case-item">
-                    <div class="case-icon">${item.icon}</div>
-                    <div class="case-info">
-                        <div class="case-name">${item.name}</div>
-                        <div class="case-price-row">
-                            <span class="price-value">${item.price}</span>
-                            <button class="buy-btn-simple" onclick="buyCase('${item.name}', ${item.price})">Купить</button>
+            if (casesGrid) {
+                casesGrid.innerHTML = `
+                    <div class="case-item">
+                        <div class="case-icon"><span style="font-size: 48px;">🔮</span></div>
+                        <div class="case-info">
+                            <div class="case-name">Базовый кейс</div>
+                            <div class="case-price-row">
+                                <span class="price-value">100</span>
+                                <button class="buy-btn-simple" onclick="buyCase('Базовый кейс', 100)">Купить</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
-        }
+                    <div class="case-item">
+                        <div class="case-icon"><span style="font-size: 48px;">💎</span></div>
+                        <div class="case-info">
+                            <div class="case-name">Редкий кейс</div>
+                            <div class="case-price-row">
+                                <span class="price-value">250</span>
+                                <button class="buy-btn-simple" onclick="buyCase('Редкий кейс', 250)">Купить</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="case-item">
+                        <div class="case-icon"><span style="font-size: 48px;">👑</span></div>
+                        <div class="case-info">
+                            <div class="case-name">Легендарный кейс</div>
+                            <div class="case-price-row">
+                                <span class="price-value">500</span>
+                                <button class="buy-btn-simple" onclick="buyCase('Легендарный кейс', 500)">Купить</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
 
-        function loadTestInventory() {
+            // Инвентарь
             const inventoryGrid = document.querySelector('.inventory-grid');
-            if (!inventoryGrid) return;
-            
-            const testItems = [
-                { name: 'Серебряный ящик', icon: '🥈' },
-                { name: 'Золотой ящик', icon: '🥇' }
-            ];
-            
-            inventoryGrid.innerHTML = testItems.map(item => `
-                <div class="inventory-item">
-                    <div class="item-icon">${item.icon}</div>
-                    <div class="item-name">${item.name}</div>
-                </div>
-            `).join('');
-        }
+            if (inventoryGrid) {
+                inventoryGrid.innerHTML = `
+                    <div class="inventory-item">
+                        <div class="item-icon"><span style="font-size: 48px;">🥈</span></div>
+                    </div>
+                    <div class="inventory-item">
+                        <div class="item-icon"><span style="font-size: 48px;">🥇</span></div>
+                    </div>
+                `;
+            }
+
+            // Друзья
+            const friendsList = document.getElementById('friendsList');
+            if (friendsList) {
+                friendsList.innerHTML = `
+                    <div class="friend-item">
+                        <div class="friend-avatar">👤</div>
+                        <div class="friend-info">
+                            <div class="friend-name-row">
+                                <span class="friend-name">Player1</span>
+                                <span class="friend-id">1234</span>
+                            </div>
+                            <div class="friend-steam">steamcommunity.com/id/player1</div>
+                        </div>
+                    </div>
+                    <div class="friend-item">
+                        <div class="friend-avatar">👤</div>
+                        <div class="friend-info">
+                            <div class="friend-name-row">
+                                <span class="friend-name">Player2</span>
+                                <span class="friend-id">5678</span>
+                            </div>
+                            <div class="friend-steam">steamcommunity.com/id/player2</div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('friendsCount').textContent = '2 друзей';
+            }
+        }, 100);
 
         function buyCase(name, price) {
             alert(`Покупка ${name} за ${price} Pingcoins!`);
@@ -723,7 +705,6 @@
             alert(`Поиск в режиме ${mode} с параметром ${value}`);
             showSearchScreen();
             
-            // Имитация поиска
             setTimeout(() => {
                 alert('Найден тиммейт!');
                 cancelSearch();
@@ -738,36 +719,14 @@
             el.classList.add('active');
         }
 
-        // ============================================
-        // ДРУЗЬЯ
-        // ============================================
-        function loadTestFriends() {
-            const friendsList = document.getElementById('friendsList');
-            if (!friendsList) return;
-            
-            const testFriends = [
-                { name: 'Player1', id: '1234' },
-                { name: 'Player2', id: '5678' }
-            ];
-            
-            friendsList.innerHTML = testFriends.map(f => `
-                <div class="friend-item">
-                    <div class="friend-avatar">👤</div>
-                    <div class="friend-info">
-                        <div class="friend-name-row">
-                            <span class="friend-name">${f.name}</span>
-                            <span class="friend-id">${f.id}</span>
-                        </div>
-                        <div class="friend-steam">steamcommunity.com/id/${f.name}</div>
-                    </div>
-                </div>
-            `).join('');
-            
-            document.getElementById('friendsCount').textContent = testFriends.length + ' друзей';
+        // Заглушки
+        function editFaceitAge() {}
+        function editPremierAge() {}
+        function editPrimeAge() {}
+        function editPublicAge() {}
+        function exitSearchMode() {
+            showMainScreen();
         }
-
-        // Загружаем друзей при старте
-        setTimeout(loadTestFriends, 200);
     </script>
 </body>
 </html>
