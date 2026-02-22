@@ -565,7 +565,7 @@ input, select, textarea, button {
 .edit-title-icon:hover,
 .apply-btn:hover,
 .back-btn:hover {
-    transform: scale(1.05) !important;
+    transform: translateY(-2px) !important;
 }
 
 /* У 4 кнопок режимов убираем увеличение */
@@ -1421,5 +1421,6 @@ body {
         border-radius: 24px;
     }
 }
+
 
 
