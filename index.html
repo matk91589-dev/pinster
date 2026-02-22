@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Pingster — работает</title>
+    <title>Pingster — фикс ширины</title>
     
     <!-- Telegram Mini App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        /* ===== ПОЛНЫЙ СБРОС ===== */
+        /* ===== ЖЁСТКИЙ СБРОС ===== */
         * {
             margin: 0;
             padding: 0;
@@ -74,7 +74,7 @@
             fill: none;
         }
 
-        /* ===== КОНТЕНТ (СКРОЛЛ) ===== */
+        /* ===== КОНТЕНТ ===== */
         .content {
             flex: 1;
             overflow-y: auto;
@@ -91,6 +91,13 @@
 
         .screen.active {
             display: block;
+        }
+
+        /* ===== ЕДИНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ЭКРАНОВ ===== */
+        .screen-container {
+            max-width: 320px;
+            width: 100%;
+            margin: 0 auto;
         }
 
         /* ===== СТАРТОВЫЙ ЭКРАН ===== */
@@ -155,7 +162,7 @@
 
         .mode-container {
             width: 100%;
-            max-width: 320px;
+            max-width: 280px;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -236,6 +243,7 @@
             align-items: center;
             justify-content: center;
             font-size: 28px;
+            flex-shrink: 0;
         }
         .profile-info {
             flex: 1;
@@ -360,10 +368,10 @@
     <div class="app">
         <!-- ХЕДЕР -->
         <div class="header">
-            <div class="logo" onclick="showMainScreen()">
+            <div class="logo" onclick="showScreen('mainScreen')">
                 <span class="ping">Ping</span><span class="ster">ster</span>
             </div>
-            <div class="icon-settings" onclick="alert('Настройки будут позже')">
+            <div class="icon-settings" onclick="alert('Настройки позже')">
                 <svg viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="3"/>
                     <path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/>
@@ -373,70 +381,75 @@
 
         <!-- КОНТЕНТ -->
         <main class="content">
-            <!-- СТАРТОВЫЙ ЭКРАН (активный по умолчанию) -->
+            <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen active start-screen">
-                <div class="start-avatar-square">
-                    <img src="pingster_logo.svg" alt="Pingster" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%23FF5500\'/><text x=\'10\' y=\'65\' fill=\'white\' font-size=\'50\'>P</text></svg>'">
-                </div>
-                <div class="start-description-box">
-                    <div class="start-description">
-                        Pingster — найди тиммейта за 30 секунд.<br>
-                        Быстро, просто, без смс.<br>
-                        Фаниться или апать звания.
+                <div class="screen-container">
+                    <div class="start-avatar-square">
+                        <img src="pingster_logo.svg" alt="Pingster" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%23FF5500\'/><text x=\'10\' y=\'65\' fill=\'white\' font-size=\'50\'>P</text></svg>'">
                     </div>
-                </div>
-                <div class="btn-wrapper">
-                    <button class="primary-btn" onclick="startApp()">Подключиться</button>
+                    <div class="start-description-box">
+                        <div class="start-description">
+                            Pingster — найди тиммейта за 30 секунд.<br>
+                            Быстро, просто, без смс.
+                        </div>
+                    </div>
+                    <div class="btn-wrapper">
+                        <button class="primary-btn" onclick="startApp()">Подключиться</button>
+                    </div>
                 </div>
             </div>
 
             <!-- ГЛАВНЫЙ ЭКРАН -->
             <div id="mainScreen" class="screen main-screen">
-                <div class="section-title">Выбор режима</div>
-                <div class="section-subtitle">Подберите подходящий</div>
-                <div class="mode-container">
-                    <button class="mode-btn faceit" onclick="alert('FACEIT режим')">FACEIT</button>
-                    <button class="mode-btn premier" onclick="alert('PREMIER режим')">PREMIER</button>
-                    <button class="mode-btn prime" onclick="alert('MM PRIME режим')">MM PRIME</button>
-                    <button class="mode-btn public" onclick="alert('MM PUBLIC режим')">MM PUBLIC</button>
+                <div class="screen-container">
+                    <div class="section-title">Выбор режима</div>
+                    <div class="section-subtitle">Подберите подходящий</div>
+                    <div class="mode-container">
+                        <button class="mode-btn faceit" onclick="alert('FACEIT')">FACEIT</button>
+                        <button class="mode-btn premier" onclick="alert('PREMIER')">PREMIER</button>
+                        <button class="mode-btn prime" onclick="alert('MM PRIME')">MM PRIME</button>
+                        <button class="mode-btn public" onclick="alert('MM PUBLIC')">MM PUBLIC</button>
+                    </div>
                 </div>
             </div>
 
             <!-- ПРОФИЛЬ -->
             <div id="profileScreen" class="screen profile-screen">
-                <div class="profile-header">
-                    <div class="profile-avatar">👤</div>
-                    <div class="profile-info">
-                        <div class="profile-name-label">ваш никнейм</div>
-                        <div class="profile-name-row">
-                            <span class="profile-name">-</span>
-                            <span class="profile-status">НОВИЧОК</span>
+                <div class="screen-container">
+                    <div class="profile-header">
+                        <div class="profile-avatar">👤</div>
+                        <div class="profile-info">
+                            <div class="profile-name-label">ваш никнейм</div>
+                            <div class="profile-name-row">
+                                <span class="profile-name">-</span>
+                                <span class="profile-status">НОВИЧОК</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" value="0" readonly>
-                            <span class="heart-icon">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/>
-                                </svg>
-                            </span>
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <div class="stat-label">Рейтинг</div>
+                            <div class="stat-value">
+                                <input type="text" value="0" readonly>
+                                <span class="heart-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Возраст</div>
+                            <div class="stat-value">
+                                <input type="text" placeholder="0-100">
+                            </div>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value">
-                            <input type="text" placeholder="0-100">
+                    <div class="friends-section">
+                        <div class="friends-header">
+                            <span class="friends-title">Ваши друзья</span>
+                            <span class="friends-count">0 друзей</span>
                         </div>
-                    </div>
-                </div>
-                <div class="friends-section">
-                    <div class="friends-header">
-                        <span class="friends-title">Ваши друзья</span>
-                        <span class="friends-count">0 друзей</span>
                     </div>
                 </div>
             </div>
@@ -488,9 +501,6 @@
         function startApp() {
             showScreen('mainScreen');
         }
-
-        // Если логотип нажимают — показываем главную
-        document.querySelector('.logo').addEventListener('click', () => showScreen('mainScreen'));
     </script>
 </body>
 </html>
