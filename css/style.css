@@ -1412,6 +1412,12 @@ body {
     }
 }
 
+/* ===== SYSTEM SCREENS ===== */
 
+.screen {
+    display: none;
+}
 
-
+.screen.active {
+    display: flex;
+}
