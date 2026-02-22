@@ -16,7 +16,7 @@ html, body {
     height: 100%;
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
+    overflow: hidden;         /* убираем двойной скролл */
     margin: 0;
     padding: 0;
     background: #0D0F15;
@@ -27,14 +27,14 @@ html, body {
 
 body {
     display: block;
-    overflow: auto;
+    overflow: hidden;
     overscroll-behavior-x: none;
     padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* ===== ОСНОВНОЙ КОНТЕЙНЕР (ТЕЛЕФОНЫ) ===== */
 .phone-frame {
-    height: 100dvh;
+    height: 100dvh;           /* вместо height: 100% */
     width: 100%;
     max-width: 420px;
     margin: 0 auto;
@@ -42,8 +42,8 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 12px 16px 8px;  /* уменьшили боковые отступы */
-    box-sizing: border-box;    /* КЛЮЧЕВОЕ — padding не выходит за ширину */
+    padding: 12px 16px 8px;
+    box-sizing: border-box;
     border-radius: 16px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
     border: 1px solid rgba(245, 245, 245, 0.05);
@@ -68,7 +68,7 @@ body {
 .content {
     flex: 1;
     min-height: 0;
-    min-width: 0;              /* flex-элементы не растягивают контейнер */
+    min-width: 0;
     overflow-y: auto;
     overflow-x: hidden;
     width: 100%;
@@ -395,15 +395,21 @@ body {
     color: #F5F5F5;
 }
 
-/* ===== ЭКРАНЫ (ИСПРАВЛЕНО) ===== */
+/* ===== ЭКРАНЫ (ПЕРЕПИСАНО С opacity) ===== */
 .screen {
-    display: none;
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
     width: 100%;
-    min-height: 100%;          /* вместо height: 100% */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: #111317;
 }
 
 .screen.active {
-    display: block;
+    opacity: 1;
+    pointer-events: auto;
 }
 
 /* Все экраны используют flex внутри */
@@ -420,6 +426,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100%;
+    padding: 12px 16px;
 }
 
 /* Специфичные стили для главного экрана */
