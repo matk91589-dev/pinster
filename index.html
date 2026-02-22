@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pingster — финальная версия</title>
+    <title>Pingster — финал</title>
     
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
@@ -12,6 +12,27 @@
     
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Дополнительные стили для подсветки редактирования -->
+    <style>
+        .editable {
+            border-color: #FF5500 !important;
+            border-width: 2px !important;
+            background: rgba(255, 85, 0, 0.05) !important;
+        }
+        .profile-name.editable {
+            color: #FF5500 !important;
+        }
+        .profile-avatar.editable {
+            border-color: #FF5500 !important;
+            border-width: 3px !important;
+        }
+        .stat-value.editable,
+        .profile-stat-value.editable {
+            border-color: #FF5500 !important;
+            border-width: 2px !important;
+        }
+    </style>
 </head>
 <body>
     <div class="phone-frame">
@@ -71,7 +92,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН МАГАЗИНА (сокращён для примера, но у тебя он полный) -->
+            <!-- ЭКРАН МАГАЗИНА (сокращён, но у тебя он полный) -->
             <div id="shopScreen" class="screen screen-shop">
                 <div class="title-row">
                     <div class="title-left"><div class="section-title">Магазин</div></div>
@@ -128,7 +149,7 @@
                     </div>
                     <div class="stat-card" id="ageCard">
                         <div class="stat-label">Возраст</div>
-                        <div class="stat-value">
+                        <div class="stat-value" id="ageValueContainer">
                             <input type="text" id="ageValue" placeholder="0-100" value="" maxlength="3" readonly>
                         </div>
                     </div>
@@ -181,7 +202,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН FACEIT (полностью как в исходнике) -->
+            <!-- ЭКРАН FACEIT -->
             <div id="faceitScreen" class="screen screen-faceit">
                 <div class="mode-header">
                     <button class="back-btn" onclick="showMainScreen()">←</button>
@@ -370,46 +391,19 @@
                 <button class="mode-search-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН ПОИСКА (ПОЛНЫЙ, КАК В ИСХОДНИКЕ) -->
+            <!-- ЭКРАН ПОИСКА (ПОЛНОСТЬЮ ИСПРАВЛЕННЫЙ) -->
             <div id="searchScreen" class="screen screen-search">
-                <div class="title-row">
-                    <div class="title-left">
-                        <div class="section-title">Поиск тиммейтов</div>
-                    </div>
-                    <div class="search-close" onclick="exitSearchMode()">✕</div>
+                <div class="search-header">
+                    <div class="search-title" id="searchModeTitle">FACEIT</div>
+                    <div class="search-timer" id="searchTimer">00:00</div>
                 </div>
-                
-                <div class="search-filters">
-                    <select id="searchModeFilter" class="search-filter">
-                        <option value="all">Все режимы</option>
-                        <option value="faceit">FACEIT</option>
-                        <option value="premier">PREMIER</option>
-                        <option value="prime">MM PRIME</option>
-                        <option value="public">MM PUBLIC</option>
-                    </select>
-                    
-                    <input type="number" id="searchAgeFilter" class="search-filter" placeholder="Возраст" min="0" max="100">
+                <div class="search-status" id="searchStatus">Поиск тиммейта начат</div>
+                <div class="search-loading">
+                    <div class="spinner"></div>
                 </div>
-                
-                <div class="search-results" id="searchResults">
-                    <!-- Сюда будут добавляться результаты поиска через JS -->
-                </div>
-                
-                <div class="bottom-nav">
-                    <div class="nav-item" onclick="showMainScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item active" onclick="showProfileScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
-                </div>
+                <button class="cancel-search-btn" onclick="cancelSearch()">Отменить поиск</button>
             </div>
+
         </div>
     </div>
 
@@ -426,7 +420,7 @@
     <script src="js/logo.js"></script>
     <script src="js/app.js"></script>
 
-    <!-- ДОБАВЛЕННЫЙ JS ДЛЯ КАРАНДАША И ПОДАВЛЕНИЯ ОШИБОК -->
+    <!-- ДОБАВЛЕННЫЙ JS ДЛЯ КАРАНДАША И ПОИСКА -->
     <script>
         // Подавление ошибок Supabase
         const originalConsoleError = console.error;
@@ -437,15 +431,16 @@
 
         // Переменная режима редактирования
         window.editMode = false;
+        let searchTimerInterval = null;
 
         // Функция переключения режима
         window.toggleEditMode = function() {
             editMode = !editMode;
             const editIcon = document.getElementById('editToggle');
             const applyBtn = document.getElementById('applyBtn');
-            const ageInput = document.getElementById('ageValue');
-            const steamInput = document.getElementById('steamDisplay');
-            const faceitInput = document.getElementById('faceitLinkDisplay');
+            const ageValue = document.getElementById('ageValue');
+            const steamDisplay = document.getElementById('steamDisplay');
+            const faceitLinkDisplay = document.getElementById('faceitLinkDisplay');
             const ageCard = document.getElementById('ageCard');
             const steamCard = document.getElementById('steamCard');
             const faceitCard = document.getElementById('faceitLinkCard');
@@ -461,9 +456,9 @@
                 faceitCard?.classList.add('editable');
                 avatar?.classList.add('editable');
                 nameSpan?.classList.add('editable');
-                ageInput?.removeAttribute('readonly');
-                steamInput?.removeAttribute('readonly');
-                faceitInput?.removeAttribute('readonly');
+                ageValue?.removeAttribute('readonly');
+                steamDisplay?.removeAttribute('readonly');
+                faceitLinkDisplay?.removeAttribute('readonly');
             } else {
                 applyBtn.classList.remove('visible');
                 ageCard?.classList.remove('editable');
@@ -471,9 +466,9 @@
                 faceitCard?.classList.remove('editable');
                 avatar?.classList.remove('editable');
                 nameSpan?.classList.remove('editable');
-                ageInput?.setAttribute('readonly', 'true');
-                steamInput?.setAttribute('readonly', 'true');
-                faceitInput?.setAttribute('readonly', 'true');
+                ageValue?.setAttribute('readonly', 'true');
+                steamDisplay?.setAttribute('readonly', 'true');
+                faceitLinkDisplay?.setAttribute('readonly', 'true');
             }
         };
 
@@ -497,13 +492,17 @@
             toggleEditMode();
         };
 
-        // Функции навигации (дублируем, если в navigation.js их нет)
+        // Функции навигации
         window.hideAllScreens = function() {
             const screens = ['startScreen','mainScreen','profileScreen','shopScreen','settingsScreen','faceitScreen','premierScreen','primeScreen','publicScreen','searchScreen'];
             screens.forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
         };
         window.startApp = function() { hideAllScreens(); document.getElementById('mainScreen').style.display = 'flex'; };
-        window.showMainScreen = function() { hideAllScreens(); document.getElementById('mainScreen').style.display = 'flex'; };
+        window.showMainScreen = function() { 
+            hideAllScreens(); 
+            document.getElementById('mainScreen').style.display = 'flex'; 
+            if (searchTimerInterval) clearInterval(searchTimerInterval);
+        };
         window.showShopScreen = function() { hideAllScreens(); document.getElementById('shopScreen').style.display = 'flex'; };
         window.showProfileScreen = function() { hideAllScreens(); document.getElementById('profileScreen').style.display = 'flex'; };
         window.showSettingsScreen = function() { hideAllScreens(); document.getElementById('settingsScreen').style.display = 'flex'; };
@@ -512,10 +511,20 @@
         window.showPrimeScreen = function() { hideAllScreens(); document.getElementById('primeScreen').style.display = 'flex'; };
         window.showPublicScreen = function() { hideAllScreens(); document.getElementById('publicScreen').style.display = 'flex'; };
         window.handleLogoClick = function() { showMainScreen(); };
-        window.showSearchScreen = function() { hideAllScreens(); document.getElementById('searchScreen').style.display = 'flex'; };
-        window.cancelSearch = function() { showMainScreen(); };
+        
+        window.showSearchScreen = function() { 
+            hideAllScreens(); 
+            document.getElementById('searchScreen').style.display = 'flex'; 
+        };
+        
+        window.cancelSearch = function() { 
+            if (searchTimerInterval) clearInterval(searchTimerInterval);
+            showMainScreen(); 
+        };
+        
         window.exitSearchMode = function() { showMainScreen(); };
         window.enterSearchMode = function() { showFaceitScreen(); };
+        
         window.showShopTab = function(tab) {
             const cases = document.querySelector('.cases-section');
             const inv = document.querySelector('.inventory-section');
@@ -532,26 +541,47 @@
                 tabs[1]?.classList.add('active');
             }
         };
+        
         window.buyCase = function(name, price) { alert(`Покупка ${name} за ${price} Pingcoins!`); };
+        
         window.startSearch = function(mode, value) { 
             alert(`Поиск в режиме ${mode} с параметром ${value}`);
+            
+            // Устанавливаем название режима
+            document.getElementById('searchModeTitle').textContent = mode.toUpperCase();
+            
+            // Сбрасываем таймер
+            if (searchTimerInterval) clearInterval(searchTimerInterval);
+            let seconds = 0;
+            const timerEl = document.getElementById('searchTimer');
+            timerEl.textContent = '00:00';
+            
+            // Показываем экран поиска
             showSearchScreen();
-            // Имитация результатов
-            const resultsDiv = document.getElementById('searchResults');
-            if (resultsDiv) {
-                resultsDiv.innerHTML = '<div class="friend-item" style="margin-top:10px"><div class="friend-avatar">👤</div><div class="friend-info"><div class="friend-name-row"><span class="friend-name">Найден игрок</span><span class="friend-id">1234</span></div><div class="friend-steam">steamcommunity.com/id/player</div></div></div>';
-            }
+            
+            // Запускаем таймер
+            searchTimerInterval = setInterval(() => {
+                seconds++;
+                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const secs = (seconds % 60).toString().padStart(2, '0');
+                timerEl.textContent = `${mins}:${secs}`;
+            }, 1000);
+            
+            // Имитация окончания поиска через 10 секунд
             setTimeout(() => { 
-                alert('Поиск завершён');
-                // Не закрываем автоматически, пользователь сам закроет
-            }, 3000);
+                if (document.getElementById('searchScreen').style.display === 'flex') {
+                    alert('Найден тиммейт!');
+                    cancelSearch();
+                }
+            }, 10000);
         };
+        
         window.setStyle = function(style, el) {
             document.querySelectorAll('.style-option').forEach(s => s.classList.remove('active'));
             el.classList.add('active');
         };
 
-        // Заглушки для функций возраста (чтобы не было ошибок)
+        // Заглушки для функций возраста
         window.editFaceitAge = function() { if (!editMode) alert('Сначала активируйте режим редактирования'); };
         window.editPremierAge = function() { if (!editMode) alert('Сначала активируйте режим редактирования'); };
         window.editPrimeAge = function() { if (!editMode) alert('Сначала активируйте режим редактирования'); };
