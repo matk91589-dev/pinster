@@ -180,7 +180,7 @@
 .case-item,
 .buy-btn,
 .close-btn {
-    transition: all 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
 .profile-avatar,
@@ -202,7 +202,7 @@
 .profile-name:hover,
 .stat-card:hover,
 .profile-stat-card:hover {
-    transform: scale(1.02);
+    transform: scale(1.01);
 }
 
 /* Active состояния */
@@ -228,3 +228,4 @@
 .orange-pulse {
     animation: orangePulse 1.5s ease-in-out infinite;
 }
+
