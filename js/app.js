@@ -2,21 +2,19 @@
 // ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
 // ============================================
 
-window.onload = async function() {
+document.addEventListener('DOMContentLoaded', () => {
     console.log('Запуск Pingster...');
     
-    // Инициализация
-    setupDragAndDrop();
-    await loadUserFromDB();
-    generateFriends();
-    renderShop();
+    // Инициализация модулей
+    if (typeof Shop !== 'undefined') Shop.init();
+    if (typeof Friends !== 'undefined') Friends.init();
+    if (typeof Search !== 'undefined') Search.init();
     
-    // Сбрасываем иконку настроек при загрузке
+    // Сбрасываем иконку настроек
     const settingsIcon = document.getElementById('settingsIcon');
     if (settingsIcon) {
         settingsIcon.classList.remove('active');
     }
     
     console.log('Pingster готов к работе!');
-
-};
+});
