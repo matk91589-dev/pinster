@@ -98,15 +98,11 @@ html, body {
     flex-direction: column;
     width: 100%;
     min-height: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
 }
-.screen.active { display: flex; }
-
-/* ===== ЕДИНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ЭКРАНОВ ===== */
-.screen > * {
-    max-width: 280px;
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
+.screen.active { 
+    display: flex; 
 }
 
 /* ===== СТАРТОВЫЙ ЭКРАН ===== */
@@ -115,8 +111,10 @@ html, body {
     align-items: center;
 }
 .start-avatar-square {
-    width: 280px;
-    height: 210px;
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    aspect-ratio: 280/210;
     border-radius: 20px 20px 0 0;
     overflow: hidden;
     background: #1A1D24;
@@ -128,7 +126,8 @@ html, body {
     object-fit: cover;
 }
 .start-description-box {
-    width: 280px;
+    width: 100%;
+    max-width: 280px;
     border: 3px solid #FF5500;
     border-radius: 0 0 20px 20px;
     padding: 30px 16px 20px;
@@ -158,7 +157,8 @@ html, body {
 
 /* ===== КНОПКИ ===== */
 .primary-btn {
-    width: 280px;
+    width: 100%;
+    max-width: 280px;
     padding: 14px;
     background: #B00000;
     border: none;
@@ -170,6 +170,7 @@ html, body {
     cursor: pointer;
     box-shadow: 0 4px 0 #6B0000;
     transition: all 0.2s ease;
+    margin: 0 auto;
 }
 .primary-btn:hover { background: #8B0000; transform: translateY(-2px); }
 .primary-btn:active {
@@ -178,7 +179,8 @@ html, body {
 }
 
 .mode-search-btn {
-    width: 280px;
+    width: 100%;
+    max-width: 280px;
     padding: 14px;
     background: #FF5500;
     border: none;
@@ -189,6 +191,7 @@ html, body {
     text-transform: uppercase;
     cursor: pointer;
     transition: all 0.2s;
+    margin: 0 auto;
 }
 .mode-search-btn:hover { background: #FF6B4A; transform: translateY(-2px); }
 .mode-search-btn:active { transform: scale(0.95); }
@@ -312,6 +315,7 @@ html, body {
     justify-content: center;
     font-size: 28px;
     color: #9BA1B0;
+    flex-shrink: 0;
 }
 .profile-info { flex: 1; }
 .profile-name-label {
@@ -568,25 +572,37 @@ input:-webkit-autofill {
     }
 }
 
-/* ЗАПРЕТ НА ВЫЛАЗ ЗА КРАЯ */
-.app {
-    overflow-x: hidden !important;
-}
+/* ===== ФИНАЛЬНЫЙ КОНТРОЛЬ ШИРИНЫ ===== */
 .screen {
-    max-width: 100% !important;
     width: 100% !important;
-    padding-left: 10px !important;
-    padding-right: 10px !important;
+    max-width: 430px !important;
+    padding: 0 10px !important;
+    margin: 0 auto !important;
     box-sizing: border-box !important;
 }
+
 .screen table {
     width: 100% !important;
     max-width: 100% !important;
+    margin: 0 !important;
 }
+
 .screen td {
-    word-break: break-word !important;
+    padding: 4px 0 !important;
 }
-img {
+
+.screen * {
     max-width: 100% !important;
-    height: auto !important;
+    box-sizing: border-box !important;
+}
+
+.primary-btn,
+.mode-btn,
+.start-avatar-square,
+.start-description-box,
+.stat-value,
+.input-field,
+.search-input-field {
+    width: 100% !important;
+    max-width: 100% !important;
 }
