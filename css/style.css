@@ -66,7 +66,7 @@ body {
 
 /* Упрощенная анимация для Pingster */
 .logo:hover {
-    transform: scale(1.05);
+    transform: translateY(-2px);
 }
 
 .logo .ping {
@@ -102,7 +102,7 @@ body {
 
 .icon-settings:hover {
     background: #1E2128;
-    transform: scale(1.05);
+    transform: translateY(-2px);
 }
 
 .icon-settings svg {
@@ -200,7 +200,7 @@ body {
 .apply-btn:hover {
     background: #FF5500;
     color: #F5F5F5;
-    transform: scale(1.05);
+    transform: translateY(-2px);
 }
 
 .coins-header {
@@ -271,7 +271,7 @@ body {
 }
 
 .mode-search-btn:hover {
-    transform: scale(1.05);
+    transform: translateY(-2px);
     background: #FF6B4A;
 }
 
@@ -393,7 +393,7 @@ body {
 
 .nav-item:hover {
     opacity: 1;
-    transform: scale(1.05);
+    transform: translateY(-2px);
 }
 
 .nav-item.active {
@@ -1369,16 +1369,6 @@ body {
     background: #0D0F15;
 }
 
-/* главный контейнер */
-.phone-frame {
-    width: 100%;
-    max-width: 430px;
-    height: 100dvh; /* КЛЮЧЕВОЕ */
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
 /* скролл только внутри контента */
 .content {
     flex: 1;
@@ -1421,6 +1411,7 @@ body {
         border-radius: 24px;
     }
 }
+
 
 
 
