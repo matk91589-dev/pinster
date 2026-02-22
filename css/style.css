@@ -16,7 +16,7 @@ html, body {
     height: 100%;
     width: 100%;
     max-width: 100%;
-    overflow: hidden;         /* убираем двойной скролл */
+    overflow: hidden;
     margin: 0;
     padding: 0;
     background: #0D0F15;
@@ -32,9 +32,10 @@ body {
     padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* ===== ОСНОВНОЙ КОНТЕЙНЕР (ТЕЛЕФОНЫ) ===== */
+/* ===== ОСНОВНОЙ КОНТЕЙНЕР ===== */
 .phone-frame {
-    height: 100dvh;           /* вместо height: 100% */
+    position: relative;
+    height: 100dvh;
     width: 100%;
     max-width: 420px;
     margin: 0 auto;
@@ -42,14 +43,14 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 12px 16px 8px;
+    padding: 12px 0 8px;  /* убрал боковые padding */
     box-sizing: border-box;
     border-radius: 16px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
     border: 1px solid rgba(245, 245, 245, 0.05);
 }
 
-/* ===== ЭКРАН В ЭКРАНЕ ДЛЯ ПК И ПЛАНШЕТОВ ===== */
+/* ===== ЭКРАН В ЭКРАНЕ ДЛЯ ПК ===== */
 @media (min-width: 768px) {
     body {
         background: #0D0F15;
@@ -64,7 +65,7 @@ body {
     }
 }
 
-/* ===== СКРОЛЛИРУЕМЫЙ КОНТЕНТ ===== */
+/* ===== СКРОЛЛИРУЕМЫЙ КОНТЕНТ (ЕДИНСТВЕННЫЙ СКРОЛЛ) ===== */
 .content {
     flex: 1;
     min-height: 0;
@@ -82,7 +83,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px 0 12px 0;
+    padding: 4px 16px 12px;  /* добавил горизонтальные padding */
     border-bottom: 1px solid #1E2128;
     margin-bottom: 12px;
 }
@@ -161,6 +162,7 @@ body {
     justify-content: space-between;
     margin-bottom: 12px;
     min-height: 32px;
+    padding: 0 16px;  /* добавил */
 }
 
 .title-left {
@@ -245,7 +247,7 @@ body {
     font-weight: 600;
 }
 
-/* ===== ГЛОБАЛЬНЫЕ СТИЛИ ДЛЯ ЗАГОЛОВКОВ ===== */
+/* ===== ГЛОБАЛЬНЫЕ ЗАГОЛОВКИ ===== */
 .section-title {
     font-size: 24px;
     font-weight: 700;
@@ -268,8 +270,8 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    min-height: 100%;
-    padding: 60px 0 0 0;
+    padding: 60px 16px 0;
+    width: 100%;
 }
 
 .start-screen .section-title {
@@ -285,34 +287,27 @@ body {
     overflow: hidden;
     background: #1A1D24;
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-    position: relative;
-    z-index: 2;
 }
 
 .start-avatar-square img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block;
 }
 
 .start-description-box {
     width: 280px;
     border: 3px solid #FF5500;
     border-radius: 0 0 20px 20px;
-    padding: 30px 16px 20px 16px;
+    padding: 30px 16px 20px;
     margin: -15px auto 0 auto;
     background: #1A1D24;
-    position: relative;
-    z-index: 1;
 }
 
 .start-description {
-    color: #F5F5F5;
     font-size: 14px;
     line-height: 1.5;
     text-align: center;
-    font-weight: 500;
 }
 
 /* ===== КНОПКА СТАРТОВОГО ЭКРАНА ===== */
@@ -351,8 +346,7 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 8px 0 4px 0;
-    background: transparent;
+    padding: 8px 16px 4px;  /* добавил горизонтальные padding */
     margin-top: auto;
     border-top: 1px solid #1E2128;
 }
@@ -395,24 +389,19 @@ body {
     color: #F5F5F5;
 }
 
-/* ===== ЭКРАНЫ (ПЕРЕПИСАНО С opacity) ===== */
+/* ===== ЭКРАНЫ (ИСПРАВЛЕНО — БЕЗ POSITION ABSOLUTE) ===== */
 .screen {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    pointer-events: none;
+    display: none;
     width: 100%;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    background: #111317;
+    height: 100%;
 }
 
 .screen.active {
-    opacity: 1;
-    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Все экраны используют flex внутри */
+/* Все экраны */
 .main-screen,
 .shop-screen,
 .profile-screen,
@@ -425,17 +414,18 @@ body {
 .start-screen {
     display: flex;
     flex-direction: column;
-    min-height: 100%;
-    padding: 12px 16px;
+    width: 100%;
 }
 
 /* Специфичные стили для главного экрана */
 .main-screen .section-title {
     margin: 10px 0 4px 0;
+    padding: 0 16px;
 }
 
 .main-screen .section-subtitle {
     margin: 0 0 12px 0;
+    padding: 0 16px;
 }
 
 /* Контейнер кнопок режимов */
@@ -472,22 +462,13 @@ body {
     background: #1E2128;
 }
 
-.mode-btn.faceit {
-    border-left: 4px solid #FF5500;
-    color: #FF5500;
-}
-
+.mode-btn.faceit,
 .mode-btn.premier {
     border-left: 4px solid #FF5500;
     color: #FF5500;
 }
 
-.mode-btn.prime {
-    border-left: 4px solid #F5F5F5;
-    text-transform: none;
-    font-size: 16px;
-}
-
+.mode-btn.prime,
 .mode-btn.public {
     border-left: 4px solid #F5F5F5;
     text-transform: none;
@@ -505,120 +486,15 @@ body {
 }
 
 /* ===== ПРОФИЛЬ ===== */
-
-/* СТАТИЧНЫЕ ЭЛЕМЕНТЫ (без анимаций) - ВСЕ ПОЛЯ И КАРТОЧКИ */
-.profile-header,
-.profile-avatar,
-.profile-info,
-.profile-name-row,
-.profile-name-label,
-.profile-status,
-.profile-stats,
-.heart-icon,
-.stats-row,
-.friends-header,
-.friends-title,
-.friends-count,
-.friend-item,
-.friend-info,
-.friend-name,
-.friend-id,
-.friend-steam,
-.search-icon,
-.back-icon,
-.search-container,
-.search-input,
-.comment-section,
-.comment-label,
-.comment-input,
-.rank-select,
-.play-style,
-.style-option,
-.mode-subtitle,
-.input-label,
-.back-btn,
-.mode-title,
-.section-title,
-.section-subtitle,
-.coins-header,
-.title-row,
-.edit-controls,
-.stat-card,
-.stat-label,
-.stat-value,
-.stat-value input,
-.profile-stat-card,
-.profile-stat-label,
-.profile-stat-value,
-.input-field,
-.search-input-field,
-.rank-select option,
-.comment-input,
-.mode-search-btn,
-.cancel-search-btn {
-    transition: none !important;
-    transform: none !important;
+.profile-screen {
+    padding: 0 16px;
 }
 
-/* Дополнительно для всех input, select, textarea */
-input, select, textarea, button {
-    transition: none !important;
-}
-
-/* Но оставляем анимации для кликабельных кнопок */
-.primary-btn,
-.mode-search-btn,
-.cancel-search-btn,
-.nav-item,
-.logo,
-.icon-settings,
-.mode-btn,
-.edit-title-icon,
-.apply-btn,
-.back-btn {
-    transition: all 0.2s ease !important;
-}
-
-.primary-btn:hover,
-.mode-search-btn:hover,
-.cancel-search-btn:hover,
-.nav-item:hover,
-.logo:hover,
-.icon-settings:hover,
-.edit-title-icon:hover,
-.apply-btn:hover,
-.back-btn:hover {
-    transform: scale(1.05) !important;
-}
-
-/* У 4 кнопок режимов убираем увеличение */
-.mode-btn.faceit:hover,
-.mode-btn.premier:hover,
-.mode-btn.prime:hover,
-.mode-btn.public:hover {
-    transform: none !important;
-}
-
-.primary-btn:active,
-.mode-search-btn:active,
-.cancel-search-btn:active,
-.logo:active,
-.icon-settings:active,
-.mode-btn:active,
-.edit-title-icon:active,
-.apply-btn:active,
-.back-btn:active {
-    transform: scale(0.95) !important;
-}
-
-/* Шапка профиля (аватар + ник) */
 .profile-header {
     display: flex;
     align-items: center;
     gap: 12px;
     margin: 4px 0 8px 0;
-    padding: 0;
-    position: relative;
 }
 
 .profile-avatar {
@@ -647,23 +523,14 @@ input, select, textarea, button {
     border-width: 3px;
 }
 
-.profile-avatar.frame-red { border-color: #FF5500; border-width: 3px; }
-.profile-avatar.frame-gold { border-color: #FFD700; border-width: 3px; }
-.profile-avatar.frame-blue { border-color: #2196F3; border-width: 3px; }
-.profile-avatar.frame-green { border-color: #4CAF50; border-width: 3px; }
-.profile-avatar.frame-purple { border-color: #9C27B0; border-width: 3px; }
-.profile-avatar.frame-rainbow { 
-    border: 3px solid transparent;
-    background: linear-gradient(45deg, #FF5500, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
-    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-}
-
 .profile-info {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+}
+
+.profile-name-label {
+    font-size: 11px;
+    color: #9BA1B0;
+    margin-bottom: 2px;
 }
 
 .profile-name-row {
@@ -673,50 +540,26 @@ input, select, textarea, button {
     flex-wrap: wrap;
 }
 
-.profile-name-label {
-    font-size: 11px;
-    color: #9BA1B0;
-    font-weight: 500;
-    margin-bottom: 2px;
-}
-
 .profile-name {
     font-size: 20px;
     font-weight: 600;
-    color: #F5F5F5;
     cursor: pointer;
-    display: inline-block;
 }
 
 .profile-name.editable {
     color: #FF5500;
 }
 
-.profile-name.red { color: #FF5500; }
-.profile-name.green { color: #4CAF50; }
-.profile-name.blue { color: #2196F3; }
-.profile-name.purple { color: #9C27B0; }
-.profile-name.orange { color: #FF9800; }
-.profile-name.multicolor { 
-    background: linear-gradient(45deg, #FF5500, #4CAF50, #2196F3, #9C27B0, #FF9800);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 700;
-}
-
 .profile-status {
     color: #4CAF50;
     font-size: 11px;
-    font-weight: 600;
     background: rgba(76, 175, 80, 0.15);
     padding: 2px 8px;
     border-radius: 12px;
-    border: 1px solid rgba(76, 175, 80, 0.4);
-    letter-spacing: 0.3px;
     display: inline-block;
 }
 
-/* Статистика (рейтинг, возраст) - одинаковые поля */
+/* Статистика */
 .stats-row {
     display: flex;
     gap: 12px;
@@ -725,39 +568,22 @@ input, select, textarea, button {
 
 .stat-card {
     flex: 1;
-    background: transparent;
-    border: none;
-    padding: 0;
     cursor: pointer;
-}
-
-.stat-card.editable {
-    border: none;
 }
 
 .stat-label {
     font-size: 10px;
     color: #9BA1B0;
-    font-weight: 600;
-    margin-bottom: 4px;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    margin-bottom: 4px;
 }
 
-/* Поля ввода как в FACEIT */
 .stat-value {
     width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
     padding: 10px 12px;
-    color: #F5F5F5;
-    font-size: 13px;
-    margin: 0;
-    cursor: text;
-    font-weight: 500;
-    outline: none;
-    font-family: 'Montserrat', sans-serif;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -769,45 +595,21 @@ input, select, textarea, button {
     border: none;
     color: #F5F5F5;
     font-size: 13px;
-    font-weight: 500;
     outline: none;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.stat-value input:focus {
-    outline: none;
-}
-
-.stat-value input::placeholder {
-    color: #5D6472;
-    font-weight: 600;
-    font-size: 12px;
-    opacity: 1;
 }
 
 .stat-value:focus-within {
     border-color: #FF5500;
 }
 
-.heart-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    margin-left: 8px;
-    flex-shrink: 0;
-}
-
 .heart-icon svg {
     width: 16px;
     height: 16px;
     stroke: #FF5500;
-    stroke-width: 2;
     fill: none;
-    display: block;
 }
 
-/* Поля ввода для ссылок */
+/* Поля ввода */
 .profile-stat-value,
 .input-field {
     width: 100%;
@@ -817,67 +619,18 @@ input, select, textarea, button {
     padding: 10px 12px;
     color: #F5F5F5;
     font-size: 13px;
-    margin: 0;
-    cursor: text;
-    font-weight: 500;
     outline: none;
-    font-family: 'Montserrat', sans-serif;
 }
 
 .profile-stat-value:focus,
 .input-field:focus {
     border-color: #FF5500;
-    outline: none;
 }
 
-.profile-stat-value::placeholder,
-.input-field::placeholder {
-    color: #5D6472;
-    font-weight: 600;
-    font-size: 12px;
-    opacity: 1;
-}
-
-/* Подсветка полей в режиме редактирования */
 .editable-input {
     border-color: #FF5500 !important;
     border-width: 2px !important;
     background: rgba(255, 85, 0, 0.05) !important;
-}
-
-.profile-stat-value.editable-input,
-.input-field.editable-input,
-.stat-value input.editable-input {
-    border-color: #FF5500 !important;
-    border-width: 2px !important;
-}
-
-/* Поля ввода (ссылки) - без внешних плашек */
-.profile-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 8px;
-}
-
-.profile-stat-card {
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-}
-
-.profile-stat-card.editable {
-    border: none;
-}
-
-.profile-stat-label {
-    font-size: 10px;
-    color: #9BA1B0;
-    font-weight: 600;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
 }
 
 /* ===== ДРУЗЬЯ ===== */
@@ -929,7 +682,6 @@ input, select, textarea, button {
 .friends-title {
     font-size: 15px;
     font-weight: 600;
-    color: #F5F5F5;
     flex: 1;
 }
 
@@ -1042,6 +794,7 @@ input, select, textarea, button {
     color: #9BA1B0;
     margin-bottom: 4px;
     font-weight: 500;
+    padding: 0 16px;
 }
 
 .mode-header {
@@ -1051,6 +804,7 @@ input, select, textarea, button {
     gap: 12px;
     margin-bottom: 16px;
     position: relative;
+    padding: 0 16px;
 }
 
 .back-btn {
@@ -1067,7 +821,7 @@ input, select, textarea, button {
     align-items: center;
     justify-content: center;
     position: absolute;
-    left: 0;
+    left: 16px;  /* поправил */
 }
 
 .back-btn:hover {
@@ -1094,17 +848,18 @@ input, select, textarea, button {
     text-align: center;
     margin-bottom: 16px;
     font-weight: 500;
+    padding: 0 16px;
 }
 
 .search-input-field {
-    width: 100%;
+    width: calc(100% - 32px);
+    margin: 4px 16px 12px;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
     padding: 10px 12px;
     color: #F5F5F5;
     font-size: 14px;
-    margin: 4px 0 12px 0;
     font-weight: 500;
     outline: none;
 }
@@ -1130,14 +885,14 @@ input, select, textarea, button {
 }
 
 .rank-select {
-    width: 100%;
+    width: calc(100% - 32px);
+    margin: 4px 16px 12px;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
     color: #F5F5F5;
     font-size: 14px;
     padding: 10px 12px;
-    margin: 4px 0 12px 0;
     cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF5500' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
@@ -1163,7 +918,7 @@ input, select, textarea, button {
 .play-style {
     display: flex;
     gap: 8px;
-    margin: 12px 0;
+    margin: 12px 16px;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
@@ -1189,6 +944,7 @@ input, select, textarea, button {
 .comment-section {
     width: 100%;
     margin: 10px 0;
+    padding: 0 16px;
 }
 
 .comment-label {
@@ -1222,6 +978,10 @@ input, select, textarea, button {
 }
 
 /* ЭКРАН ПОИСКА */
+.search-screen {
+    padding: 0 16px;
+}
+
 .search-header {
     display: flex;
     justify-content: space-between;
@@ -1262,6 +1022,19 @@ input, select, textarea, button {
     justify-content: center;
 }
 
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #1A1D24;
+    border-top-color: #FF5500;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
 .cancel-search-btn {
     width: 100%;
     padding: 18px;
@@ -1276,7 +1049,106 @@ input, select, textarea, button {
     margin: 20px 0 10px 0;
 }
 
-/* Убираем белый фон у инпута возраста */
+/* ===== СТАТИЧНЫЕ ЭЛЕМЕНТЫ ===== */
+.profile-header,
+.profile-avatar,
+.profile-info,
+.profile-name-row,
+.profile-name-label,
+.profile-status,
+.profile-stats,
+.heart-icon,
+.stats-row,
+.friends-header,
+.friends-title,
+.friends-count,
+.friend-item,
+.friend-info,
+.friend-name,
+.friend-id,
+.friend-steam,
+.search-icon,
+.back-icon,
+.search-container,
+.search-input,
+.comment-section,
+.comment-label,
+.comment-input,
+.rank-select,
+.play-style,
+.style-option,
+.mode-subtitle,
+.input-label,
+.back-btn,
+.mode-title,
+.section-title,
+.section-subtitle,
+.coins-header,
+.title-row,
+.edit-controls,
+.stat-card,
+.stat-label,
+.stat-value,
+.stat-value input,
+.profile-stat-card,
+.profile-stat-label,
+.profile-stat-value,
+.input-field,
+.search-input-field,
+.rank-select option,
+.comment-input,
+.mode-search-btn,
+.cancel-search-btn {
+    transition: none !important;
+    transform: none !important;
+}
+
+/* Анимации для кнопок */
+.primary-btn,
+.mode-search-btn,
+.cancel-search-btn,
+.nav-item,
+.logo,
+.icon-settings,
+.mode-btn,
+.edit-title-icon,
+.apply-btn,
+.back-btn {
+    transition: all 0.2s ease !important;
+}
+
+.primary-btn:hover,
+.mode-search-btn:hover,
+.cancel-search-btn:hover,
+.nav-item:hover,
+.logo:hover,
+.icon-settings:hover,
+.edit-title-icon:hover,
+.apply-btn:hover,
+.back-btn:hover {
+    transform: scale(1.05) !important;
+}
+
+.mode-btn.faceit:hover,
+.mode-btn.premier:hover,
+.mode-btn.prime:hover,
+.mode-btn.public:hover {
+    transform: none !important;
+}
+
+.primary-btn:active,
+.mode-search-btn:active,
+.cancel-search-btn:active,
+.logo:active,
+.icon-settings:active,
+.mode-btn:active,
+.edit-title-icon:active,
+.apply-btn:active,
+.back-btn:active {
+    transform: scale(0.95) !important;
+}
+
+/* Фиксы инпутов */
 #ageValue {
     background: transparent !important;
     color: #F5F5F5 !important;
@@ -1292,7 +1164,6 @@ input, select, textarea, button {
     border: none !important;
 }
 
-/* Специфично для карточки возраста */
 #ageCard .stat-value {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
@@ -1302,7 +1173,6 @@ input, select, textarea, button {
     border-color: #FF5500;
 }
 
-/* Убираем белый фон у всех инпутов */
 input {
     background: transparent;
     color: #F5F5F5;
