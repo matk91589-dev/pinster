@@ -91,7 +91,6 @@ body {
     display: inline-block;
 }
 
-/* Упрощенная анимация для Pingster */
 .logo:hover {
     transform: scale(1.05);
 }
@@ -240,13 +239,14 @@ body {
     font-weight: 600;
 }
 
-/* Глобальные стили для заголовков (базовые) */
+/* ===== ГЛОБАЛЬНЫЕ СТИЛИ ДЛЯ ЗАГОЛОВКОВ ===== */
 .section-title {
     font-size: 24px;
     font-weight: 700;
     color: #F5F5F5;
     letter-spacing: -0.5px;
     text-align: center;
+    margin: 0;
 }
 
 .section-subtitle {
@@ -254,57 +254,6 @@ body {
     color: #9BA1B0;
     font-weight: 500;
     text-align: center;
-}
-
-/* Специфичные стили для главного экрана */
-/* Специфичные стили для главного экрана */
-.main-screen .section-title {
-    margin: 10px 0 4px 0; /* было 40px, уменьшили */
-}
-
-.main-screen .section-subtitle {
-    margin: 0 0 12px 0;
-}
-
-/* Стили для магазина */
-.shop-screen .section-title {
-    margin: 0;
-}
-
-/* Стили для профиля */
-.profile-screen .section-title {
-    margin: 0;
-}
-
-/* Стили для настроек */
-.settings-screen .section-title {
-    margin: 0 0 20px 0;
-}
-
-/* Стили для кнопки поиска в режимах */
-.mode-search-btn {
-    width: 280px;
-    padding: 14px;
-    background: #FF5500;
-    border: none;
-    border-radius: 30px;
-    font-size: 16px;
-    font-weight: 700;
-    color: #F5F5F5;
-    text-transform: uppercase;
-    cursor: pointer;
-    margin: 10px auto;
-    transition: all 0.2s;
-    letter-spacing: 0.5px;
-}
-
-.mode-search-btn:hover {
-    transform: scale(1.05);
-    background: #FF6B4A;
-}
-
-.mode-search-btn:active {
-    transform: scale(0.95);
 }
 
 /* ===== СТАРТОВЫЙ ЭКРАН ===== */
@@ -317,8 +266,8 @@ body {
     padding: 60px 0 0 0;
 }
 
-.start-logo {
-    display: none;
+.start-screen .section-title {
+    margin: 40px 0 4px 0;  /* на стартовом экране большой отступ */
 }
 
 .start-avatar-square {
@@ -360,7 +309,7 @@ body {
     font-weight: 500;
 }
 
-/* КНОПКА СТАРТОВОГО ЭКРАНА */
+/* ===== КНОПКА СТАРТОВОГО ЭКРАНА ===== */
 .primary-btn {
     width: 280px;
     padding: 14px;
@@ -390,6 +339,65 @@ body {
     opacity: 0.9;
 }
 
+/* ===== ГЛАВНЫЙ ЭКРАН ===== */
+.main-screen .section-title {
+    margin: 10px 0 4px 0;  /* 10px от хедера */
+}
+
+.main-screen .section-subtitle {
+    margin: 0 0 12px 0;
+}
+
+/* Контейнер для главного экрана */
+.main-screen {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding-bottom: 20px;
+}
+
+/* ===== МАГАЗИН ===== */
+.shop-screen .section-title {
+    margin: 10px 0 4px 0;  /* 10px от хедера */
+}
+
+/* ===== ПРОФИЛЬ ===== */
+.profile-screen .section-title {
+    margin: 10px 0 4px 0;  /* 10px от хедера */
+}
+
+/* ===== НАСТРОЙКИ ===== */
+.settings-screen .section-title {
+    margin: 10px 0 20px 0;  /* 10px от хедера */
+}
+
+/* ===== КНОПКА ПОИСКА В РЕЖИМАХ ===== */
+.mode-search-btn {
+    width: 280px;
+    padding: 14px;
+    background: #FF5500;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #F5F5F5;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin: 10px auto;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+}
+
+.mode-search-btn:hover {
+    transform: scale(1.05);
+    background: #FF6B4A;
+}
+
+.mode-search-btn:active {
+    transform: scale(0.95);
+}
+
+/* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
 .bottom-nav {
     display: flex;
     justify-content: space-around;
@@ -438,25 +446,19 @@ body {
     color: #F5F5F5;
 }
 
+/* ===== КОНТЕЙНЕР КНОПОК РЕЖИМОВ ===== */
 .mode-container {
-    flex: none;              /* было flex:1 — убрали растягивание */
+    flex: none;
     display: flex;
     flex-direction: column;
     gap: 16px;
-    margin: 20px auto 0 auto; /* отступ сверху, центрирование */
+    margin: 20px auto 0 auto;
     width: 100%;
-    max-width: 280px;        /* фиксируем ширину */
-    padding-bottom: 20px;     /* отступ снизу */
-}
-
-/* Контейнер для главного экрана */
-.main-screen {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
+    max-width: 280px;
     padding-bottom: 20px;
 }
 
+/* ===== КНОПКИ РЕЖИМОВ ===== */
 .mode-btn {
     width: 100%;
     padding: 20px;
@@ -1336,5 +1338,3 @@ input:-webkit-autofill:active {
     transition: background-color 5000s ease-in-out 0s;
     box-shadow: inset 0 0 20px 20px #1A1D24 !important;
 }
-
-
