@@ -2,16 +2,29 @@
 // ФУНКЦИИ ДЛЯ ЛОГОТИПА
 // ============================================
 
-function handleLogoClick() {
-    if (document.getElementById('searchScreen') && document.getElementById('searchScreen').style.display === 'flex') {
-        alert('Сначала отмените поиск');
-        return;
+const Logo = {
+    handleClick() {
+        // Проверяем, не в поиске ли мы
+        if (App.currentScreen === 'searchScreen') {
+            App.showConfirm('Поиск ещё не завершён. Отменить?', (confirmed) => {
+                if (confirmed) {
+                    Search.cancel();
+                }
+            });
+            return;
+        }
+        
+        // Возвращаемся на главный экран
+        App.showScreen('mainScreen', true);
+        
+        // Сбрасываем иконку настроек
+        const settingsIcon = document.getElementById('settingsIcon');
+        if (settingsIcon) {
+            settingsIcon.classList.remove('active');
+        }
+        
+        App.hapticFeedback('light');
     }
-    
-    // Возвращаемся на главный экран
-    hideAllScreens();
-    document.getElementById('mainScreen').style.display = 'flex';
-    
-    // Сбрасываем иконку настроек
-    document.getElementById('settingsIcon').classList.remove('active');
-}
+};
+
+window.Logo = Logo;
