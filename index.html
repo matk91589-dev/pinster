@@ -1,27 +1,489 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Pingster</title>
+    
+    <!-- Telegram Mini App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #111; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; }
-        .app { width: 100%; max-width: 400px; background: #222; color: white; padding: 20px; border-radius: 20px; }
-        h1 { text-align: center; margin-bottom: 20px; }
-        button { width: 100%; padding: 15px; background: orange; border: none; border-radius: 10px; font-size: 16px; margin: 10px 0; }
+        /* ===== ЖЁСТКИЙ БАЗОВЫЙ СБРОС ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #0D0F15;
+            font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+            color: #F5F5F5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* ===== ОСНОВНОЙ КОНТЕЙНЕР ===== */
+        .app {
+            width: 100%;
+            max-width: 430px;
+            height: 100%;
+            background: #111317;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ===== ХЕДЕР ===== */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: #111317;
+            border-bottom: 1px solid #1E2128;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            cursor: pointer;
+        }
+        .logo .ping { color: #B00000; }
+        .logo .ster { color: #F5F5F5; font-weight: 400; opacity: 0.9; }
+
+        .icon-settings {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .icon-settings svg {
+            width: 22px;
+            height: 22px;
+            stroke: #F5F5F5;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* ===== КОНТЕНТ (СКРОЛЛ) ===== */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0 20px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== ЭКРАНЫ ===== */
+        .screen {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            min-height: 100%;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* ===== СТАРТОВЫЙ ЭКРАН ===== */
+        #startScreen {
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 40px;
+        }
+
+        .start-avatar-square {
+            width: 280px;
+            height: 210px;
+            border-radius: 20px 20px 0 0;
+            overflow: hidden;
+            background: #1A1D24;
+            margin: 0 auto;
+        }
+        .start-avatar-square img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .start-description-box {
+            width: 280px;
+            border: 3px solid #FF5500;
+            border-radius: 0 0 20px 20px;
+            padding: 30px 16px 20px;
+            margin: -15px auto 20px;
+            background: #1A1D24;
+        }
+        .start-description {
+            font-size: 14px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        /* ===== КНОПКИ ===== */
+        .btn-wrapper {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .primary-btn {
+            width: 100%;
+            padding: 16px;
+            background: #B00000;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #F5F5F5;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #6B0000;
+            transition: all 0.2s;
+        }
+        .primary-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #6B0000;
+        }
+
+        /* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 16px 16px;
+            background: #111317;
+            border-top: 1px solid #1E2128;
+            flex-shrink: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            opacity: 0.6;
+            padding: 4px 10px;
+        }
+        .nav-item.active {
+            opacity: 1;
+        }
+        .nav-item.active svg {
+            stroke: #B00000;
+        }
+        .nav-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: #F5F5F5;
+            stroke-width: 2;
+            fill: none;
+        }
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #F5F5F5;
+        }
+
+        /* ===== ЗАГОЛОВКИ ===== */
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #F5F5F5;
+            margin: 20px 0 4px;
+            text-align: center;
+        }
+        .section-subtitle {
+            font-size: 14px;
+            color: #9BA1B0;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* ===== КНОПКИ РЕЖИМОВ ===== */
+        .mode-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .mode-btn {
+            width: 100%;
+            padding: 20px;
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 12px;
+            color: #E5E7EB;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: left;
+            position: relative;
+            cursor: pointer;
+        }
+        .mode-btn.faceit, .mode-btn.premier {
+            border-left: 4px solid #FF5500;
+            color: #FF5500;
+        }
+        .mode-btn::after {
+            content: '→';
+            position: absolute;
+            right: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #5D6472;
+        }
+
+        /* ===== ПРОФИЛЬ (заготовка) ===== */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #1A1D24;
+            border: 2px solid #2A2F3A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        .profile-name {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .profile-status {
+            color: #4CAF50;
+            font-size: 11px;
+            background: rgba(76, 175, 80, 0.15);
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            flex: 1;
+        }
+        .stat-label {
+            font-size: 10px;
+            color: #9BA1B0;
+            text-transform: uppercase;
+        }
+        .stat-value {
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .stat-value input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #F5F5F5;
+            font-size: 13px;
+            outline: none;
+        }
+        .heart-icon svg {
+            width: 16px;
+            height: 16px;
+            stroke: #FF5500;
+            fill: none;
+        }
+
+        /* ===== ДРУЗЬЯ ===== */
+        .friends-section {
+            margin: 20px 0;
+        }
+        .friends-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .friends-title {
+            font-size: 15px;
+            font-weight: 600;
+            flex: 1;
+        }
     </style>
 </head>
 <body>
     <div class="app">
-        <h1>Pingster Test</h1>
-        <p>Это тестовая страница. Если ты её видишь без вылезаний — значит всё ок.</p>
-        <button onclick="alert('работает!')">Нажми меня</button>
+        <!-- ХЕДЕР -->
+        <div class="header">
+            <div class="logo" onclick="handleLogoClick()">
+                <span class="ping">Ping</span><span class="ster">ster</span>
+            </div>
+            <div class="icon-settings" onclick="showSettingsScreen()">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- КОНТЕНТ -->
+        <main class="content">
+            <!-- СТАРТОВЫЙ ЭКРАН -->
+            <div id="startScreen" class="screen active">
+                <div class="start-avatar-square">
+                    <img src="pingster_logo.svg" alt="Pingster">
+                </div>
+                <div class="start-description-box">
+                    <div class="start-description">
+                        Pingster — площадка, где вы можете найти тиммейта за 30 секунд.<br>
+                        Быстро, просто, без смс.
+                    </div>
+                </div>
+                <div class="btn-wrapper">
+                    <button class="primary-btn" onclick="startApp()">Подключиться</button>
+                </div>
+            </div>
+
+            <!-- ГЛАВНЫЙ ЭКРАН -->
+            <div id="mainScreen" class="screen">
+                <div class="section-title">Выбор режима</div>
+                <div class="section-subtitle">Подберите подходящий</div>
+                <div class="mode-container">
+                    <button class="mode-btn faceit" onclick="showFaceitScreen()">FACEIT</button>
+                    <button class="mode-btn premier" onclick="showPremierScreen()">PREMIER</button>
+                    <button class="mode-btn prime" onclick="showPrimeScreen()">MM PRIME</button>
+                    <button class="mode-btn public" onclick="showPublicScreen()">MM PUBLIC</button>
+                </div>
+            </div>
+
+            <!-- ПРОФИЛЬ (короткая версия) -->
+            <div id="profileScreen" class="screen">
+                <div class="profile-header">
+                    <div class="profile-avatar">👤</div>
+                    <div class="profile-info">
+                        <div class="profile-name-label">ваш никнейм</div>
+                        <div class="profile-name-row">
+                            <span class="profile-name">-</span>
+                            <span class="profile-status">НОВИЧОК</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Рейтинг</div>
+                        <div class="stat-value">
+                            <input type="text" value="0" readonly>
+                            <span class="heart-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value">
+                            <input type="text" placeholder="0-100">
+                        </div>
+                    </div>
+                </div>
+                <div class="friends-section">
+                    <div class="friends-header">
+                        <span class="friends-title">Ваши друзья</span>
+                        <span class="friends-count">0 друзей</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ДОБАВЬ СЮДА ДРУГИЕ ЭКРАНЫ (shop, settings, faceit, premier, prime, public, search) 
+                 по тому же принципу — просто копируй разметку из своего HTML -->
+        </main>
+
+        <!-- НИЖНЯЯ НАВИГАЦИЯ -->
+        <footer class="bottom-nav">
+            <div class="nav-item active" onclick="showMainScreen()">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg>
+                </span>
+                <span class="nav-label">Главная</span>
+            </div>
+            <div class="nav-item" onclick="showShopScreen()">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg>
+                </span>
+                <span class="nav-label">Магазин</span>
+            </div>
+            <div class="nav-item" onclick="showProfileScreen()">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg>
+                </span>
+                <span class="nav-label">Профиль</span>
+            </div>
+        </footer>
     </div>
+
+    <!-- Telegram Mini App init + навигация -->
     <script>
         const tg = Telegram.WebApp;
         tg.ready();
         tg.expand();
+
+        function showMainScreen() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('mainScreen').classList.add('active');
+            document.querySelectorAll('.nav-item').forEach((item, i) => {
+                item.classList.toggle('active', i === 0);
+            });
+        }
+
+        function showProfileScreen() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('profileScreen').classList.add('active');
+            document.querySelectorAll('.nav-item').forEach((item, i) => {
+                item.classList.toggle('active', i === 2);
+            });
+        }
+
+        function showShopScreen() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            // временно показываем профиль (замени на shopScreen когда добавишь)
+            document.getElementById('profileScreen').classList.add('active');
+            document.querySelectorAll('.nav-item').forEach((item, i) => {
+                item.classList.toggle('active', i === 1);
+            });
+        }
+
+        function showSettingsScreen() {
+            alert('Настройки пока не готовы');
+        }
+
+        function showFaceitScreen() { alert('FACEIT'); }
+        function showPremierScreen() { alert('PREMIER'); }
+        function showPrimeScreen() { alert('MM PRIME'); }
+        function showPublicScreen() { alert('MM PUBLIC'); }
+
+        function startApp() { showMainScreen(); }
+        function handleLogoClick() { showMainScreen(); }
     </script>
 </body>
 </html>
