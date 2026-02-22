@@ -1014,9 +1014,6 @@ input, select, textarea, button {
     flex-direction: column;
     width: 100%;
     min-height: 0;
-}
-
-.screen {
     display: none;
 }
 
@@ -1261,53 +1258,6 @@ input, select, textarea, button {
     text-transform: uppercase;
     cursor: pointer;
     margin: 20px 0 10px 0;
-}
-
-/* Поля ввода как в FACEIT - ИСПРАВЛЕНО */
-.stat-value {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 10px 12px;
-    color: #F5F5F5;
-    font-size: 13px;
-    margin: 0;
-    cursor: text;
-    font-weight: 500;
-    outline: none;
-    font-family: 'Montserrat', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.stat-value input {
-    width: 100%;
-    background: transparent;
-    border: none;
-    color: #F5F5F5;
-    font-size: 13px;
-    font-weight: 500;
-    outline: none;
-    font-family: 'Montserrat', sans-serif;
-    padding: 0;
-    margin: 0;
-}
-
-.stat-value input:focus {
-    outline: none;
-}
-
-.stat-value input::placeholder {
-    color: #5D6472;
-    font-weight: 600;
-    font-size: 12px;
-    opacity: 1;
-}
-
-.stat-value:focus-within {
-    border-color: #FF5500;
 }
 
 /* Убираем белый фон у инпута возраста */
