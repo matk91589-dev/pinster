@@ -1,7 +1,7 @@
 /* Подключаем шрифт Montserrat */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
-/* Глобальное сглаживание для всего текста */
+/* ===== ГЛОБАЛЬНЫЙ СБРОС ===== */
 * {
     margin: 0;
     padding: 0;
@@ -13,18 +13,14 @@
 
 html, body {
     min-height: 100dvh;
-    margin: 0;
-    overflow: hidden;
     background: #0D0F15;
     font-family: 'Montserrat', sans-serif;
     font-weight: 500;
     color: #F5F5F5;
-}
-
-body {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
 /* ===== ОСНОВНОЙ КОНТЕЙНЕР ===== */
@@ -32,23 +28,21 @@ body {
     width: 100%;
     max-width: 430px;
     min-height: 100dvh;
-    margin: 0 auto;
+    background: #111317;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    box-sizing: border-box;
-    padding: 12px 20px 8px 20px;
+    padding: 12px 20px 8px;
 }
 
+/* ===== СКРОЛЛ-КОНТЕНТ ===== */
 .content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
-    position: relative;
+    width: 100%;
 }
 
 /* ===== ХЕДЕР ===== */
@@ -56,7 +50,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px 0 12px 0;
+    padding: 4px 0 12px;
     border-bottom: 1px solid #1E2128;
     margin-bottom: 12px;
 }
@@ -67,135 +61,100 @@ body {
     letter-spacing: -0.5px;
     color: #F5F5F5;
     cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-block;
+    transition: transform 0.2s ease;
 }
-
-.logo:hover {
-    transform: translateY(-2px);
-}
-
-.logo .ping {
-    color: #B00000;
-    transition: color 0.2s ease;
-}
-
-.logo:hover .ping {
-    color: #FF5500;
-}
-
-.logo .ster {
-    color: #F5F5F5;
-    font-weight: 400;
-    opacity: 0.9;
-}
-
-.logo:active {
-    transform: scale(0.95);
-}
+.logo:hover { transform: translateY(-2px); }
+.logo:active { transform: scale(0.95); }
+.logo .ping { color: #B00000; }
+.logo .ster { color: #F5F5F5; font-weight: 400; opacity: 0.9; }
 
 .icon-settings {
     width: 36px;
     height: 36px;
-    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
-    background: transparent;
 }
-
 .icon-settings:hover {
     background: #1E2128;
     transform: translateY(-2px);
 }
-
 .icon-settings svg {
     width: 22px;
     height: 22px;
     stroke: #F5F5F5;
     stroke-width: 2;
     fill: none;
-    transition: stroke 0.2s;
 }
-
 .icon-settings.active svg {
     stroke: #B00000;
+}
+
+/* ===== ЭКРАНЫ ===== */
+.screen {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100%;
+}
+.screen.active { display: flex; }
+
+/* ===== ЕДИНЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ЭКРАНОВ ===== */
+.screen > * {
+    max-width: 280px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ===== СТАРТОВЫЙ ЭКРАН ===== */
+.start-screen {
+    padding-top: 40px;
+    align-items: center;
+}
+.start-avatar-square {
+    width: 280px;
+    height: 210px;
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+    background: #1A1D24;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+.start-avatar-square img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.start-description-box {
+    width: 280px;
+    border: 3px solid #FF5500;
+    border-radius: 0 0 20px 20px;
+    padding: 30px 16px 20px;
+    margin-top: -15px;
+    background: #1A1D24;
+}
+.start-description {
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
 }
 
 /* ===== ЗАГОЛОВКИ ===== */
 .section-title {
     font-size: 24px;
     font-weight: 700;
-    color: #F5F5F5;
-    letter-spacing: -0.5px;
     text-align: center;
+    margin: 20px 0 4px;
 }
-
 .section-subtitle {
     font-size: 14px;
     color: #9BA1B0;
-    font-weight: 500;
     text-align: center;
+    margin-bottom: 20px;
 }
-
-.main-screen .section-title {
-    margin: 40px 0 4px 0;
-}
-
-.main-screen .section-subtitle {
-    margin: 0 0 12px 0;
-}
-
-/* ===== СТАРТОВЫЙ ЭКРАН ===== */
-.start-screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 100%;
-    padding: 60px 0 0 0;
-}
-
-.start-avatar-square {
-    width: 280px;
-    height: 210px;
-    margin: 0 auto;
-    border: none;
-    border-radius: 20px 20px 0 0;
-    overflow: hidden;
-    background: #1A1D24;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-    position: relative;
-    z-index: 2;
-}
-
-.start-avatar-square img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.start-description-box {
-    width: 280px;
-    border: 3px solid #FF5500;
-    border-radius: 0 0 20px 20px;
-    padding: 30px 16px 20px 16px;
-    margin: -15px auto 0 auto;
-    background: #1A1D24;
-    position: relative;
-    z-index: 1;
-}
-
-.start-description {
-    color: #F5F5F5;
-    font-size: 14px;
-    line-height: 1.5;
-    text-align: center;
-    font-weight: 500;
-}
+.main-screen .section-title { margin-top: 40px; }
 
 /* ===== КНОПКИ ===== */
 .primary-btn {
@@ -209,10 +168,13 @@ body {
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 40px auto 0 auto;
-    transition: all 0.2s ease;
-    letter-spacing: 0.5px;
     box-shadow: 0 4px 0 #6B0000;
+    transition: all 0.2s ease;
+}
+.primary-btn:hover { background: #8B0000; transform: translateY(-2px); }
+.primary-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #6B0000;
 }
 
 .mode-search-btn {
@@ -226,10 +188,10 @@ body {
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 10px auto;
     transition: all 0.2s;
-    letter-spacing: 0.5px;
 }
+.mode-search-btn:hover { background: #FF6B4A; transform: translateY(-2px); }
+.mode-search-btn:active { transform: scale(0.95); }
 
 .cancel-search-btn {
     width: 100%;
@@ -242,40 +204,7 @@ body {
     font-weight: 700;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 20px 0 10px 0;
-}
-
-@media (hover: hover) {
-    .primary-btn:hover,
-    .mode-search-btn:hover,
-    .cancel-search-btn:hover,
-    .nav-item:hover,
-    .logo:hover,
-    .icon-settings:hover,
-    .edit-title-icon:hover,
-    .apply-btn:hover,
-    .back-btn:hover {
-        transform: translateY(-2px);
-    }
-    
-    .primary-btn:hover {
-        background: #8B0000;
-    }
-    
-    .mode-search-btn:hover {
-        background: #FF6B4A;
-    }
-}
-
-.primary-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #6B0000;
-    opacity: 0.9;
-}
-
-.mode-search-btn:active,
-.cancel-search-btn:active {
-    transform: scale(0.95);
+    margin: 20px 0 10px;
 }
 
 /* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
@@ -283,11 +212,10 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 8px 0 4px 0;
-    background: transparent;
+    padding: 8px 0 4px;
     border-top: 1px solid #1E2128;
+    margin-top: auto;
 }
-
 .nav-item {
     display: flex;
     flex-direction: column;
@@ -298,20 +226,14 @@ body {
     padding: 4px 10px;
     transition: all 0.2s;
 }
-
 .nav-item:hover {
     opacity: 1;
     transform: translateY(-2px);
 }
-
 .nav-item.active {
     opacity: 1;
 }
-
-.nav-item.active svg {
-    stroke: #B00000;
-}
-
+.nav-item.active svg { stroke: #B00000; }
 .nav-icon svg {
     width: 20px;
     height: 20px;
@@ -319,7 +241,6 @@ body {
     stroke-width: 2;
     fill: none;
 }
-
 .nav-label {
     font-size: 9px;
     font-weight: 600;
@@ -328,15 +249,11 @@ body {
 
 /* ===== КНОПКИ РЕЖИМОВ ===== */
 .mode-container {
-    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     gap: 16px;
-    margin: 0;
-    margin-top: -20px;
+    margin: 20px 0;
 }
-
 .mode-btn {
     width: 100%;
     padding: 20px;
@@ -352,25 +269,21 @@ body {
     position: relative;
     transition: all 0.2s;
 }
-
 .mode-btn:hover {
     border-color: #FF5500;
     background: #1E2128;
 }
-
 .mode-btn.faceit,
 .mode-btn.premier {
     border-left: 4px solid #FF5500;
     color: #FF5500;
 }
-
 .mode-btn.prime,
 .mode-btn.public {
     border-left: 4px solid #F5F5F5;
     text-transform: none;
     font-size: 16px;
 }
-
 .mode-btn::after {
     content: '→';
     position: absolute;
@@ -386,11 +299,8 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin: 4px 0 8px 0;
-    padding: 0;
-    position: relative;
+    margin: 20px 0;
 }
-
 .profile-avatar {
     width: 60px;
     height: 60px;
@@ -402,74 +312,23 @@ body {
     justify-content: center;
     font-size: 28px;
     color: #9BA1B0;
-    cursor: pointer;
-    overflow: hidden;
 }
-
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.profile-avatar.editable {
-    border-color: #FF5500;
-    border-width: 3px;
-}
-
-.profile-avatar.frame-red { border-color: #FF5500; border-width: 3px; }
-.profile-avatar.frame-gold { border-color: #FFD700; border-width: 3px; }
-.profile-avatar.frame-blue { border-color: #2196F3; border-width: 3px; }
-.profile-avatar.frame-green { border-color: #4CAF50; border-width: 3px; }
-.profile-avatar.frame-purple { border-color: #9C27B0; border-width: 3px; }
-.profile-avatar.frame-rainbow { 
-    border: 3px solid transparent;
-    background: linear-gradient(45deg, #FF5500, #4CAF50, #2196F3, #9C27B0, #FF9800) border-box;
-    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-}
-
-.profile-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.profile-name-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-}
-
+.profile-info { flex: 1; }
 .profile-name-label {
     font-size: 11px;
     color: #9BA1B0;
-    font-weight: 500;
     margin-bottom: 2px;
 }
-
 .profile-name {
     font-size: 20px;
     font-weight: 600;
-    color: #F5F5F5;
-    cursor: pointer;
-    display: inline-block;
 }
-
-.profile-name.editable {
-    color: #FF5500;
-}
-
 .profile-status {
     color: #4CAF50;
     font-size: 11px;
-    font-weight: 600;
     background: rgba(76, 175, 80, 0.15);
     padding: 2px 8px;
     border-radius: 12px;
-    border: 1px solid rgba(76, 175, 80, 0.4);
     display: inline-block;
 }
 
@@ -477,53 +336,32 @@ body {
 .stats-row {
     display: flex;
     gap: 12px;
-    margin: 4px 0;
+    margin: 20px 0;
 }
-
-.stat-card {
-    flex: 1;
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-}
-
+.stat-card { flex: 1; }
 .stat-label {
     font-size: 10px;
     color: #9BA1B0;
-    font-weight: 600;
-    margin-bottom: 4px;
     text-transform: uppercase;
+    margin-bottom: 4px;
 }
-
 .stat-value {
-    width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
     padding: 10px 12px;
-    color: #F5F5F5;
-    font-size: 13px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
-
 .stat-value input {
     width: 100%;
     background: transparent;
     border: none;
     color: #F5F5F5;
     font-size: 13px;
-    font-weight: 500;
     outline: none;
-    font-family: 'Montserrat', sans-serif;
 }
-
-.stat-value:focus-within {
-    border-color: #FF5500;
-}
-
 .heart-icon svg {
     width: 16px;
     height: 16px;
@@ -531,8 +369,34 @@ body {
     fill: none;
 }
 
-/* ===== ПОЛЯ ВВОДА ===== */
-.profile-stat-value,
+/* ===== ДРУЗЬЯ ===== */
+.friends-section {
+    width: 100%;
+    margin: 20px 0;
+}
+.friends-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+.friends-title {
+    font-size: 15px;
+    font-weight: 600;
+    flex: 1;
+}
+.friends-count {
+    color: #9BA1B0;
+    font-size: 11px;
+}
+
+/* ===== ВСПОМОГАТЕЛЬНОЕ ===== */
+.input-label {
+    font-size: 12px;
+    color: #9BA1B0;
+    margin-bottom: 4px;
+}
+.rank-select,
 .input-field,
 .search-input-field,
 .comment-input {
@@ -544,225 +408,16 @@ body {
     color: #F5F5F5;
     font-size: 13px;
     outline: none;
-    font-family: 'Montserrat', sans-serif;
 }
-
-.profile-stat-value:focus,
+.rank-select:focus,
 .input-field:focus,
 .search-input-field:focus,
 .comment-input:focus {
     border-color: #FF5500;
-    outline: none;
 }
-
 .comment-input {
     height: 70px;
     resize: none;
-}
-
-.input-label {
-    font-size: 12px;
-    color: #9BA1B0;
-    margin-bottom: 4px;
-    font-weight: 500;
-}
-
-/* ===== ДРУЗЬЯ ===== */
-.friends-section {
-    width: 100%;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    margin: 8px 0 4px 0;
-}
-
-.friends-header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 6px;
-}
-
-.friends-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: #F5F5F5;
-    flex: 1;
-}
-
-.friends-count {
-    color: #9BA1B0;
-    font-size: 11px;
-    font-weight: 600;
-}
-
-.friends-list {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 4px;
-}
-
-.friends-list::-webkit-scrollbar {
-    width: 3px;
-}
-
-.friends-list::-webkit-scrollbar-track {
-    background: #1A1D24;
-    border-radius: 10px;
-}
-
-.friends-list::-webkit-scrollbar-thumb {
-    background: #FF5500;
-    border-radius: 10px;
-}
-
-.friend-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 6px;
-    margin-bottom: 6px;
-}
-
-.friend-info {
-    flex: 1;
-}
-
-.friend-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: #F5F5F5;
-}
-
-.friend-id {
-    font-size: 9px;
-    color: #FF5500;
-    background: rgba(255, 85, 0, 0.1);
-    padding: 1px 5px;
-    border-radius: 4px;
-    font-family: monospace;
-    font-weight: 600;
-}
-
-/* ===== ЭКРАНЫ ===== */
-.screen {
-    display: none;
-    flex-direction: column;
-    width: 100%;
-    min-height: 100%;
-}
-
-.screen.active {
-    display: flex;
-}
-
-/* ===== ЭЛЕМЕНТЫ РЕЖИМОВ ===== */
-.mode-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin: 20px 0;
-    position: relative;
-}
-
-.back-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: transparent;
-    border: 2px solid #2A2F3A;
-    color: #9BA1B0;
-    font-size: 22px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    left: 0;
-}
-
-.back-btn:hover {
-    border-color: #FF5500;
-    color: #F5F5F5;
-}
-
-.mode-title {
-    font-size: 24px;
-    font-weight: 700;
-    text-align: center;
-}
-
-.mode-title.faceit,
-.mode-title.premier {
-    color: #FF5500;
-}
-
-.mode-title.prime,
-.mode-title.public {
-    color: #F5F5F5;
-    text-transform: none;
-}
-
-.mode-subtitle {
-    font-size: 12px;
-    color: #9BA1B0;
-    text-align: center;
-    margin-bottom: 16px;
-}
-
-/* ===== ВЫПАДАЮЩИЕ СПИСКИ ===== */
-.rank-select {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    color: #F5F5F5;
-    font-size: 14px;
-    padding: 10px 12px;
-    margin: 4px 0 12px 0;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF5500' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-}
-
-.rank-select:hover,
-.rank-select:focus {
-    border-color: #FF5500;
-    outline: none;
-}
-
-/* ===== СТИЛИ ИГРЫ ===== */
-.play-style {
-    display: flex;
-    gap: 8px;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 4px;
-    margin: 12px 0;
-}
-
-.style-option {
-    flex: 1;
-    text-align: center;
-    padding: 8px;
-    border-radius: 6px;
-    cursor: pointer;
-    color: #9BA1B0;
-    font-weight: 600;
-}
-
-.style-option.active {
-    background: #FF5500;
-    color: white;
 }
 
 /* ===== ЭКРАН ПОИСКА ===== */
@@ -774,23 +429,19 @@ body {
     border-bottom: 1px solid #1E2128;
     margin-bottom: 20px;
 }
-
 .search-title {
     font-size: 24px;
     font-weight: 700;
     color: #FF5500;
 }
-
 .search-timer {
     font-size: 20px;
     font-weight: 600;
-    color: #F5F5F5;
     background: #1A1D24;
     padding: 8px 16px;
     border-radius: 8px;
     border: 1px solid #2A2F3A;
 }
-
 .search-status {
     text-align: center;
     font-size: 16px;
@@ -798,110 +449,23 @@ body {
     margin: 20px 0;
 }
 
-.search-loading {
-    display: flex;
-    justify-content: center;
-    margin: 40px 0;
-}
-
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid #1A1D24;
-    border-top-color: #FF5500;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* ===== ТАБЫ МАГАЗИНА ===== */
-.shop-tabs {
-    display: flex;
-    gap: 8px;
-    margin: 12px 0;
-}
-
-.shop-tab {
-    padding: 8px 16px;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    cursor: pointer;
-    color: #9BA1B0;
-    font-weight: 600;
-}
-
-.shop-tab.active {
-    background: #FF5500;
-    color: white;
-    border-color: #FF5500;
-}
-
-.coins-header {
-    background: #1A1D24;
-    border-radius: 8px;
-    padding: 5px 10px;
-    font-size: 12px;
-    color: #F5F5F5;
-    font-weight: 600;
-}
-
-.title-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 12px 0;
-}
-
 /* ===== ФИКСЫ ИНПУТОВ ===== */
-#ageValue {
-    background: transparent !important;
-    color: #F5F5F5 !important;
-    border: none !important;
-    outline: none !important;
-}
-
-#ageCard .stat-value {
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-}
-
 input {
     background: transparent;
     color: #F5F5F5;
 }
-
 input:-webkit-autofill {
     -webkit-box-shadow: inset 0 0 0px 9999px #1A1D24 !important;
     box-shadow: inset 0 0 0px 9999px #1A1D24 !important;
     -webkit-text-fill-color: #F5F5F5 !important;
 }
-
-/* ===== АНИМАЦИИ ===== */
-.primary-btn,
-.mode-search-btn,
-.cancel-search-btn,
-.nav-item,
-.logo,
-.icon-settings,
-.mode-btn,
-.edit-title-icon,
-.apply-btn,
-.back-btn {
-    transition: all 0.2s ease !important;
+#ageValue {
+    background: transparent !important;
+    color: #F5F5F5 !important;
+    border: none !important;
 }
 
-.mode-btn.faceit:hover,
-.mode-btn.premier:hover,
-.mode-btn.prime:hover,
-.mode-btn.public:hover {
-    transform: none !important;
-}
-
-/* ===== СТАТИЧНЫЕ ЭЛЕМЕНТЫ ===== */
+/* ===== СТАТИЧНЫЕ ЭЛЕМЕНТЫ (без анимаций) ===== */
 .profile-header,
 .profile-avatar,
 .profile-info,
@@ -954,34 +518,52 @@ input:-webkit-autofill {
     transform: none !important;
 }
 
+/* ===== АНИМАЦИИ ДЛЯ КНОПОК ===== */
+.primary-btn,
+.mode-search-btn,
+.cancel-search-btn,
+.nav-item,
+.logo,
+.icon-settings,
+.mode-btn,
+.edit-title-icon,
+.apply-btn,
+.back-btn {
+    transition: all 0.2s ease !important;
+}
+.primary-btn:hover,
+.mode-search-btn:hover,
+.cancel-search-btn:hover,
+.nav-item:hover,
+.logo:hover,
+.icon-settings:hover,
+.edit-title-icon:hover,
+.apply-btn:hover,
+.back-btn:hover {
+    transform: translateY(-2px) !important;
+}
+.mode-btn.faceit:hover,
+.mode-btn.premier:hover,
+.mode-btn.prime:hover,
+.mode-btn.public:hover {
+    transform: none !important;
+}
+.primary-btn:active,
+.mode-search-btn:active,
+.cancel-search-btn:active,
+.logo:active,
+.icon-settings:active,
+.mode-btn:active,
+.edit-title-icon:active,
+.apply-btn:active,
+.back-btn:active {
+    transform: scale(0.95) !important;
+}
+
 /* ===== СТИЛИ ДЛЯ ПК ===== */
 @media (min-width: 768px) {
     .phone-frame {
         height: 90vh;
         border-radius: 24px;
     }
-}
-
-/* ===== ЕДИНАЯ ШИРИНА ДЛЯ ВСЕХ ЭКРАНОВ ===== */
-.screen.active {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-}
-
-.screen.active > * {
-    width: 100% !important;
-    max-width: 280px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-}
-
-/* Для стартового экрана — особый случай */
-#startScreen.active .start-avatar-square,
-#startScreen.active .start-description-box,
-#startScreen.active .btn-wrapper {
-    width: 280px !important;
-    max-width: 280px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
 }
