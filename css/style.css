@@ -28,12 +28,12 @@ body {
     justify-content: center;
 }
 
-/* ===== ОСНОВНОЙ КОНТЕЙНЕР (ИСПРАВЛЕН ДЛЯ ПК) ===== */
+/* ===== ОСНОВНОЙ КОНТЕЙНЕР (ТЕЛЕФОНЫ) ===== */
 .phone-frame {
-    position: relative;          /* было absolute */
+    position: relative;
     width: 100%;
-    max-width: 420px;            /* ограничиваем ширину, как у телефона */
-    height: 100vh;               /* фиксированная высота для ПК */
+    max-width: 420px;
+    height: 100vh;
     background: #111317;
     display: flex;
     flex-direction: column;
@@ -42,6 +42,21 @@ body {
     border-radius: 16px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
     border: 1px solid rgba(245, 245, 245, 0.05);
+}
+
+/* ===== ЭКРАН В ЭКРАНЕ ДЛЯ ПК И ПЛАНШЕТОВ ===== */
+@media (min-width: 768px) {
+    body {
+        background: #0D0F15; /* тёмный фон вокруг */
+    }
+    .phone-frame {
+        width: 380px;        /* фиксированная ширина как у телефона */
+        height: 700px;       /* фиксированная высота, пропорции сохраняются */
+        max-width: none;      /* убираем ограничение */
+        border-radius: 36px;  /* скругления как у телефона */
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        margin: 20px auto;    /* центрирование */
+    }
 }
 
 /* ===== СКРОЛЛИРУЕМЫЙ КОНТЕНТ ===== */
