@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pingster — финальный фикс</title>
+    <title>Pingster — финал с твоими кейсами</title>
     
-    <!-- CSS -->
+    <!-- CSS (твои, без изменений) -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
     
-    <!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase отключён -->
+    <script>window.supabase = null;</script>
 </head>
 <body>
     <div class="phone-frame">
@@ -56,22 +56,13 @@
                     <button class="mode-btn public" onclick="showPublicScreen()">MM PUBLIC</button>
                 </div>
                 <div class="bottom-nav">
-                    <div class="nav-item active" onclick="showMainScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
-                        <span class="nav-label">Главная</span>
-                    </div>
-                    <div class="nav-item" onclick="showShopScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span>
-                        <span class="nav-label">Магазин</span>
-                    </div>
-                    <div class="nav-item" onclick="showProfileScreen()">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
-                        <span class="nav-label">Профиль</span>
-                    </div>
+                    <div class="nav-item active" onclick="showMainScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span><span class="nav-label">Главная</span></div>
+                    <div class="nav-item" onclick="showShopScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span><span class="nav-label">Магазин</span></div>
+                    <div class="nav-item" onclick="showProfileScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span><span class="nav-label">Профиль</span></div>
                 </div>
             </div>
 
-            <!-- ЭКРАН МАГАЗИНА (сокращён, но у тебя он полный) -->
+            <!-- ЭКРАН МАГАЗИНА (ТВОИ КЕЙСЫ, ТВОИ ИКОНКИ) -->
             <div id="shopScreen" class="screen screen-shop">
                 <div class="title-row">
                     <div class="title-left"><div class="section-title">Магазин</div></div>
@@ -81,8 +72,46 @@
                     <div class="shop-tab active" onclick="showShopTab('cases')">Кейсы</div>
                     <div class="shop-tab" onclick="showShopTab('inventory')" id="inventoryTab">Инвентарь</div>
                 </div>
-                <div class="cases-section"><div class="cases-grid"></div></div>
-                <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
+                <div class="cases-section">
+                    <div class="cases-grid">
+                        <!-- ТВОИ КЕЙСЫ (КАК В ТВОЁМ ОРИГИНАЛЕ) -->
+                        <div class="case-item">
+                            <div class="case-icon"><img src="img/case1.svg" alt="case1" style="width:48px;height:48px;"></div>
+                            <div class="case-info">
+                                <div class="case-name">Базовый кейс</div>
+                                <div class="case-price-row">
+                                    <span class="price-value">100</span>
+                                    <button class="buy-btn-simple" onclick="buyCase('Базовый кейс', 100)">Купить</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="case-item">
+                            <div class="case-icon"><img src="img/case2.svg" alt="case2" style="width:48px;height:48px;"></div>
+                            <div class="case-info">
+                                <div class="case-name">Редкий кейс</div>
+                                <div class="case-price-row">
+                                    <span class="price-value">250</span>
+                                    <button class="buy-btn-simple" onclick="buyCase('Редкий кейс', 250)">Купить</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="case-item">
+                            <div class="case-icon"><img src="img/case3.svg" alt="case3" style="width:48px;height:48px;"></div>
+                            <div class="case-info">
+                                <div class="case-name">Легендарный кейс</div>
+                                <div class="case-price-row">
+                                    <span class="price-value">500</span>
+                                    <button class="buy-btn-simple" onclick="buyCase('Легендарный кейс', 500)">Купить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="inventory-section hidden">
+                    <div class="inventory-grid">
+                        <!-- ТВОЙ ИНВЕНТАРЬ (ПОТОМ) -->
+                    </div>
+                </div>
                 <div class="bottom-nav">
                     <div class="nav-item" onclick="showMainScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span><span class="nav-label">Главная</span></div>
                     <div class="nav-item active" onclick="showShopScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span><span class="nav-label">Магазин</span></div>
@@ -90,7 +119,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН ПРОФИЛЯ (с карандашом) -->
+            <!-- ЭКРАН ПРОФИЛЯ (С РАБОЧИМ КАРАНДАШОМ) -->
             <div id="profileScreen" class="screen screen-profile">
                 <div class="title-row">
                     <div class="title-left">
@@ -153,7 +182,9 @@
                         <span class="friends-title">Ваши друзья</span>
                         <span class="friends-count" id="friendsCount">0 друзей</span>
                     </div>
-                    <div class="friends-list" id="friendsList"></div>
+                    <div class="friends-list" id="friendsList">
+                        <!-- Друзья подгрузятся из friends.js -->
+                    </div>
                 </div>
 
                 <div class="bottom-nav">
@@ -186,31 +217,187 @@
                     <div class="mode-title faceit">FACEIT</div>
                 </div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
+                
                 <div class="input-label">Faceit ELO</div>
                 <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="-" min="0" max="5000">
+                
                 <div class="stats-row">
-                    <div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span></div></div>
-                    <div class="stat-card" onclick="editFaceitAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="faceitAgeValue" placeholder="21" value="21"></div></div>
+                    <div class="stat-card">
+                        <div class="stat-label">Рейтинг</div>
+                        <div class="stat-value">
+                            <input type="text" placeholder="0" value="0" readonly>
+                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="editFaceitAge()">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value">
+                            <input type="text" id="faceitAgeValue" placeholder="21" value="21">
+                        </div>
+                    </div>
                 </div>
+                
                 <div class="input-label">Ссылка Steam</div>
                 <input type="text" class="input-field" id="faceitSteamInput" placeholder="Ссылка на Steam" value="">
+                
                 <div class="input-label">Ссылка Faceit</div>
                 <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="">
+                
                 <div class="play-style">
                     <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
                     <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
                 </div>
+
                 <div class="comment-section">
                     <div class="comment-label">Комментарий к поиску</div>
                     <textarea class="comment-input" id="faceitComment" placeholder="Введите комментарий" maxlength="100"></textarea>
                 </div>
+
                 <button class="mode-search-btn" onclick="startSearch('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
             </div>
 
-            <!-- Аналогично PREMIER, PRIME, PUBLIC (сокращены для читаемости, но в твоём коде они полные) -->
-            <div id="premierScreen" class="screen screen-premier">...</div>
-            <div id="primeScreen" class="screen screen-prime">...</div>
-            <div id="publicScreen" class="screen screen-public">...</div>
+            <!-- ЭКРАН PREMIER -->
+            <div id="premierScreen" class="screen screen-premier">
+                <div class="mode-header">
+                    <button class="back-btn" onclick="showMainScreen()">←</button>
+                    <div class="mode-title premier">PREMIER</div>
+                </div>
+                <div class="mode-subtitle">введите ваши актуальные данные</div>
+                
+                <div class="input-label">CS Rating</div>
+                <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="12500" min="0" max="35000">
+                
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Рейтинг</div>
+                        <div class="stat-value">
+                            <input type="text" placeholder="0" value="0" readonly>
+                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="editPremierAge()">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value">
+                            <input type="text" id="premierAgeValue" placeholder="21" value="21">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-label">Ссылка Steam</div>
+                <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="">
+                
+                <div class="play-style">
+                    <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
+                    <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
+                </div>
+
+                <div class="comment-section">
+                    <div class="comment-label">Комментарий к поиску</div>
+                    <textarea class="comment-input" id="premierComment" placeholder="Введите комментарий" maxlength="100"></textarea>
+                </div>
+
+                <button class="mode-search-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
+            </div>
+
+            <!-- ЭКРАН MM PRIME -->
+            <div id="primeScreen" class="screen screen-prime">
+                <div class="mode-header">
+                    <button class="back-btn" onclick="showMainScreen()">←</button>
+                    <div class="mode-title prime">MM PRIME</div>
+                </div>
+                <div class="mode-subtitle">введите ваши актуальные данные</div>
+                
+                <div class="input-label">Звание</div>
+                <select class="rank-select" id="primeRankSelect">
+                    <option>Silver 1</option><option>Silver 2</option><option>Silver 3</option><option>Silver 4</option>
+                    <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option>
+                    <option selected>Gold Nova 3</option><option>Gold Nova Master</option><option>Master Guardian 1</option>
+                    <option>Master Guardian 2</option><option>Master Guardian Elite</option>
+                    <option>Distinguished Master Guardian</option><option>Legendary Eagle</option>
+                    <option>Legendary Eagle Master</option><option>Supreme Master First Class</option><option>Global Elite</option>
+                </select>
+                
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Рейтинг</div>
+                        <div class="stat-value">
+                            <input type="text" placeholder="0" value="0" readonly>
+                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="editPrimeAge()">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value">
+                            <input type="text" id="primeAgeValue" placeholder="21" value="21">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-label">Ссылка Steam</div>
+                <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="">
+                
+                <div class="play-style">
+                    <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
+                    <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
+                </div>
+
+                <div class="comment-section">
+                    <div class="comment-label">Комментарий к поиску</div>
+                    <textarea class="comment-input" id="primeComment" placeholder="Введите комментарий" maxlength="100"></textarea>
+                </div>
+
+                <button class="mode-search-btn" onclick="startSearch('MM PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
+            </div>
+
+            <!-- ЭКРАН MM PUBLIC -->
+            <div id="publicScreen" class="screen screen-public">
+                <div class="mode-header">
+                    <button class="back-btn" onclick="showMainScreen()">←</button>
+                    <div class="mode-title public">MM PUBLIC</div>
+                </div>
+                <div class="mode-subtitle">введите ваши актуальные данные</div>
+                
+                <div class="input-label">Звание</div>
+                <select class="rank-select" id="publicRankSelect">
+                    <option>Silver 1</option><option>Silver 2</option><option selected>Silver 3</option><option>Silver 4</option>
+                    <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option>
+                    <option>Gold Nova 3</option><option>Gold Nova Master</option><option>Master Guardian 1</option>
+                    <option>Master Guardian 2</option><option>Master Guardian Elite</option>
+                    <option>Distinguished Master Guardian</option><option>Legendary Eagle</option>
+                    <option>Legendary Eagle Master</option><option>Supreme Master First Class</option><option>Global Elite</option>
+                </select>
+                
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Рейтинг</div>
+                        <div class="stat-value">
+                            <input type="text" placeholder="0" value="0" readonly>
+                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="editPublicAge()">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value">
+                            <input type="text" id="publicAgeValue" placeholder="21" value="21">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-label">Ссылка Steam</div>
+                <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="">
+                
+                <div class="play-style">
+                    <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
+                    <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
+                </div>
+
+                <div class="comment-section">
+                    <div class="comment-label">Комментарий к поиску</div>
+                    <textarea class="comment-input" id="publicComment" placeholder="Введите комментарий" maxlength="100"></textarea>
+                </div>
+
+                <button class="mode-search-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
+            </div>
 
             <!-- ЭКРАН ПОИСКА -->
             <div id="searchScreen" class="screen screen-search">
@@ -227,9 +414,7 @@
         </div>
     </div>
 
-    <!-- Подключаем JS-файлы (возможно, они конфликтуют) -->
-    <!-- ВРЕМЕННО ОТКЛЮЧИМ, ЧТОБЫ ПРОВЕРИТЬ -->
-    <!--
+    <!-- ТВОИ JS ФАЙЛЫ -->
     <script src="js/config.js"></script>
     <script src="js/supabase.js"></script>
     <script src="js/globals.js"></script>
@@ -241,117 +426,43 @@
     <script src="js/search.js"></script>
     <script src="js/logo.js"></script>
     <script src="js/app.js"></script>
-    -->
 
-    <!-- ЕДИНСТВЕННЫЙ РАБОЧИЙ JS -->
+    <!-- РАБОЧИЙ JS (переопределяет всё лишнее) -->
     <script>
-        // Подавление ошибок Supabase
-        const originalConsoleError = console.error;
-        console.error = function(...args) {
-            if (args[0] && typeof args[0] === 'string' && args[0].includes('Could not find the table')) return;
-            originalConsoleError.apply(console, args);
-        };
+        // Полное отключение Supabase
+        window.supabase = null;
+        window._supabase = null;
 
-        // ------------------------------------------------------------
-        // НАВИГАЦИЯ
-        // ------------------------------------------------------------
-        function hideAllScreens() {
-            const screens = [
-                'startScreen', 'mainScreen', 'profileScreen', 'shopScreen', 'settingsScreen',
-                'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen', 'searchScreen'
-            ];
+        // Навигация
+        window.hideAllScreens = function() {
+            const screens = ['startScreen','mainScreen','profileScreen','shopScreen','settingsScreen','faceitScreen','premierScreen','primeScreen','publicScreen','searchScreen'];
             screens.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
-        }
+        };
 
-        function startApp() {
-            console.log('startApp вызвана');
-            hideAllScreens();
-            const main = document.getElementById('mainScreen');
-            if (main) {
-                main.style.display = 'flex';
-                console.log('Главный экран показан');
-            } else {
-                console.error('mainScreen не найден');
-            }
-        }
+        window.startApp = function() { hideAllScreens(); document.getElementById('mainScreen').style.display = 'flex'; };
+        window.showMainScreen = function() { hideAllScreens(); document.getElementById('mainScreen').style.display = 'flex'; };
+        window.showShopScreen = function() { hideAllScreens(); document.getElementById('shopScreen').style.display = 'flex'; };
+        window.showProfileScreen = function() { hideAllScreens(); document.getElementById('profileScreen').style.display = 'flex'; };
+        window.showSettingsScreen = function() { hideAllScreens(); document.getElementById('settingsScreen').style.display = 'flex'; };
+        window.showFaceitScreen = function() { hideAllScreens(); document.getElementById('faceitScreen').style.display = 'flex'; };
+        window.showPremierScreen = function() { hideAllScreens(); document.getElementById('premierScreen').style.display = 'flex'; };
+        window.showPrimeScreen = function() { hideAllScreens(); document.getElementById('primeScreen').style.display = 'flex'; };
+        window.showPublicScreen = function() { hideAllScreens(); document.getElementById('publicScreen').style.display = 'flex'; };
+        window.handleLogoClick = window.showMainScreen;
 
-        function showMainScreen() {
-            hideAllScreens();
-            document.getElementById('mainScreen').style.display = 'flex';
-        }
+        // Карандаш — подсветка ВСЕХ полей
+        window.editMode = false;
 
-        function showShopScreen() {
-            hideAllScreens();
-            document.getElementById('shopScreen').style.display = 'flex';
-        }
-
-        function showProfileScreen() {
-            hideAllScreens();
-            document.getElementById('profileScreen').style.display = 'flex';
-        }
-
-        function showSettingsScreen() {
-            hideAllScreens();
-            document.getElementById('settingsScreen').style.display = 'flex';
-        }
-
-        function showFaceitScreen() {
-            hideAllScreens();
-            document.getElementById('faceitScreen').style.display = 'flex';
-        }
-
-        function showPremierScreen() {
-            hideAllScreens();
-            document.getElementById('premierScreen').style.display = 'flex';
-        }
-
-        function showPrimeScreen() {
-            hideAllScreens();
-            document.getElementById('primeScreen').style.display = 'flex';
-        }
-
-        function showPublicScreen() {
-            hideAllScreens();
-            document.getElementById('publicScreen').style.display = 'flex';
-        }
-
-        function handleLogoClick() {
-            showMainScreen();
-        }
-
-        function showSearchScreen() {
-            hideAllScreens();
-            document.getElementById('searchScreen').style.display = 'flex';
-        }
-
-        function cancelSearch() {
-            if (searchTimerInterval) clearInterval(searchTimerInterval);
-            showMainScreen();
-        }
-
-        function exitSearchMode() {
-            showMainScreen();
-        }
-
-        function enterSearchMode() {
-            showFaceitScreen();
-        }
-
-        // ------------------------------------------------------------
-        // РЕДАКТИРОВАНИЕ ПРОФИЛЯ (КАРАНДАШ)
-        // ------------------------------------------------------------
-        let editMode = false;
-
-        function toggleEditMode() {
+        window.toggleEditMode = function() {
             editMode = !editMode;
             const editIcon = document.getElementById('editToggle');
             const applyBtn = document.getElementById('applyBtn');
-            const ageValue = document.getElementById('ageValue');
-            const steamDisplay = document.getElementById('steamDisplay');
-            const faceitLinkDisplay = document.getElementById('faceitLinkDisplay');
+            const ageInput = document.getElementById('ageValue');
+            const steamInput = document.getElementById('steamDisplay');
+            const faceitInput = document.getElementById('faceitLinkDisplay');
             const ageCard = document.getElementById('ageCard');
             const steamCard = document.getElementById('steamCard');
             const faceitCard = document.getElementById('faceitLinkCard');
@@ -367,9 +478,9 @@
                 faceitCard?.classList.add('editable');
                 avatar?.classList.add('editable');
                 nameSpan?.classList.add('editable');
-                ageValue?.removeAttribute('readonly');
-                steamDisplay?.removeAttribute('readonly');
-                faceitLinkDisplay?.removeAttribute('readonly');
+                if (ageInput) ageInput.removeAttribute('readonly');
+                if (steamInput) steamInput.removeAttribute('readonly');
+                if (faceitInput) faceitInput.removeAttribute('readonly');
             } else {
                 applyBtn.classList.remove('visible');
                 ageCard?.classList.remove('editable');
@@ -377,63 +488,33 @@
                 faceitCard?.classList.remove('editable');
                 avatar?.classList.remove('editable');
                 nameSpan?.classList.remove('editable');
-                ageValue?.setAttribute('readonly', 'true');
-                steamDisplay?.setAttribute('readonly', 'true');
-                faceitLinkDisplay?.setAttribute('readonly', 'true');
+                if (ageInput) ageInput.setAttribute('readonly', 'true');
+                if (steamInput) steamInput.setAttribute('readonly', 'true');
+                if (faceitInput) faceitInput.setAttribute('readonly', 'true');
             }
-        }
+        };
 
-        function applyChanges() {
-            if (!editMode) { alert('Сначала активируйте режим редактирования'); return; }
-            console.log('Изменения сохранены');
-            toggleEditMode();
-        }
-
-        function editName() {
+        window.editName = function() {
             if (!editMode) { alert('Сначала активируйте режим редактирования (карандаш)'); return; }
             const newName = prompt('Введите новый никнейм:');
             if (newName) document.getElementById('profileName').textContent = newName;
-        }
+        };
 
-        function editAge() { if (!editMode) alert('Сначала активируйте режим редактирования (карандаш)'); }
-        function editSteam() { if (!editMode) alert('Сначала активируйте режим редактирования (карандаш)'); }
-        function editFaceitLink() { if (!editMode) alert('Сначала активируйте режим редактирования (карандаш)'); }
-        function selectAvatar() { 
+        window.editAge = function() { if (!editMode) alert('Сначала активируйте режим редактирования (карандаш)'); };
+        window.editSteam = function() { if (!editMode) alert('Сначала активируйте режим редактирования (карандаш)'); };
+        window.editFaceitLink = function() { if (!editMode) alert('Сначала активируйте режим редактирования (карандаш)'); };
+        window.selectAvatar = function() { 
             if (!editMode) { alert('Сначала активируйте режим редактирования (карандаш)'); return; }
             alert('Выбор аватара будет доступен позже');
-        }
+        };
+        window.applyChanges = function() { 
+            if (!editMode) { alert('Сначала активируйте режим редактирования'); return; }
+            console.log('Изменения сохранены');
+            toggleEditMode();
+        };
 
-        // ------------------------------------------------------------
-        // ПОИСК
-        // ------------------------------------------------------------
-        let searchTimerInterval = null;  // единственное объявление
-
-        function startSearch(mode, value) {
-            alert(`Поиск в режиме ${mode} с параметром ${value}`);
-            document.getElementById('searchModeTitle').textContent = mode.toUpperCase();
-            if (searchTimerInterval) clearInterval(searchTimerInterval);
-            let seconds = 0;
-            const timerEl = document.getElementById('searchTimer');
-            timerEl.textContent = '00:00';
-            showSearchScreen();
-            searchTimerInterval = setInterval(() => {
-                seconds++;
-                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
-                const secs = (seconds % 60).toString().padStart(2, '0');
-                timerEl.textContent = `${mins}:${secs}`;
-            }, 1000);
-            setTimeout(() => {
-                if (document.getElementById('searchScreen').style.display === 'flex') {
-                    alert('Найден тиммейт!');
-                    cancelSearch();
-                }
-            }, 10000);
-        }
-
-        // ------------------------------------------------------------
-        // МАГАЗИН
-        // ------------------------------------------------------------
-        function showShopTab(tab) {
+        // Магазин
+        window.showShopTab = function(tab) {
             const cases = document.querySelector('.cases-section');
             const inv = document.querySelector('.inventory-section');
             const tabs = document.querySelectorAll('.shop-tab');
@@ -448,28 +529,51 @@
                 tabs[0]?.classList.remove('active');
                 tabs[1]?.classList.add('active');
             }
-        }
+        };
 
-        function buyCase(name, price) {
-            alert(`Покупка ${name} за ${price} Pingcoins!`);
-        }
+        window.buyCase = function(name, price) { alert(`Покупка ${name} за ${price} Pingcoins!`); };
 
-        // ------------------------------------------------------------
-        // СТИЛИ
-        // ------------------------------------------------------------
-        function setStyle(style, el) {
+        // Поиск
+        let searchTimerInterval = null;
+
+        window.startSearch = function(mode, value) { 
+            alert(`Поиск в режиме ${mode} с параметром ${value}`);
+            document.getElementById('searchModeTitle').textContent = mode.toUpperCase();
+            if (searchTimerInterval) clearInterval(searchTimerInterval);
+            let seconds = 0;
+            const timerEl = document.getElementById('searchTimer');
+            timerEl.textContent = '00:00';
+            showSearchScreen();
+            searchTimerInterval = setInterval(() => {
+                seconds++;
+                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const secs = (seconds % 60).toString().padStart(2, '0');
+                timerEl.textContent = `${mins}:${secs}`;
+            }, 1000);
+        };
+
+        window.showSearchScreen = function() { 
+            hideAllScreens(); 
+            document.getElementById('searchScreen').style.display = 'flex'; 
+        };
+
+        window.cancelSearch = function() { 
+            if (searchTimerInterval) clearInterval(searchTimerInterval);
+            showMainScreen(); 
+        };
+
+        window.enterSearchMode = function() { showFaceitScreen(); };
+        window.exitSearchMode = function() { showMainScreen(); };
+        window.setStyle = function(style, el) {
             document.querySelectorAll('.style-option').forEach(s => s.classList.remove('active'));
             el.classList.add('active');
-        }
+        };
 
-        // Заглушки для функций возраста
-        function editFaceitAge() { if (!editMode) alert('Сначала активируйте режим редактирования'); }
-        function editPremierAge() { if (!editMode) alert('Сначала активируйте режим редактирования'); }
-        function editPrimeAge() { if (!editMode) alert('Сначала активируйте режим редактирования'); }
-        function editPublicAge() { if (!editMode) alert('Сначала активируйте режим редактирования'); }
-
-        // Инициализация (подавление ошибок)
-        console.log('Pingster готов к работе!');
+        // Заглушки
+        window.editFaceitAge = window.editAge;
+        window.editPremierAge = window.editAge;
+        window.editPrimeAge = window.editAge;
+        window.editPublicAge = window.editAge;
     </script>
 </body>
 </html>
