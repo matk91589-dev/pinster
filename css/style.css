@@ -13,8 +13,10 @@
 
 /* ===== БАЗОВЫЕ СТИЛИ ДЛЯ TELEGRAM MINI APP ===== */
 html, body {
-    min-height: 100%;
+    height: 100%;
     width: 100%;
+    margin: 0;
+    padding: 0;
     background: #0D0F15;
     font-family: 'Montserrat', sans-serif;
     font-weight: 500;
@@ -22,19 +24,17 @@ html, body {
 }
 
 body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block;
     overflow: auto;
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* ===== ОСНОВНОЙ КОНТЕЙНЕР (ТЕЛЕФОНЫ) ===== */
 .phone-frame {
-    height: 100%;
-    flex: 1;
-    min-height: 0;
+    height: 100dvh;
     width: 100%;
     max-width: 420px;
+    margin: 0 auto;
     background: #111317;
     display: flex;
     flex-direction: column;
@@ -63,16 +63,17 @@ body {
 /* ===== СКРОЛЛИРУЕМЫЙ КОНТЕНТ ===== */
 .content {
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
     width: 100%;
-    height: 100%;
     position: relative;
     -webkit-overflow-scrolling: touch;
 }
 
 /* ===== ХЕДЕР ===== */
 .header {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -267,7 +268,7 @@ body {
 }
 
 .start-screen .section-title {
-    margin: 40px 0 4px 0;  /* на стартовом экране большой отступ */
+    margin: 40px 0 4px 0;
 }
 
 .start-avatar-square {
@@ -339,66 +340,9 @@ body {
     opacity: 0.9;
 }
 
-/* ===== ГЛАВНЫЙ ЭКРАН ===== */
-.main-screen .section-title {
-    margin: 10px 0 4px 0;  /* 10px от хедера */
-}
-
-.main-screen .section-subtitle {
-    margin: 0 0 12px 0;
-}
-
-/* Контейнер для главного экрана */
-.main-screen {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-    padding-bottom: 20px;
-}
-
-/* ===== МАГАЗИН ===== */
-.shop-screen .section-title {
-    margin: 10px 0 4px 0;  /* 10px от хедера */
-}
-
-/* ===== ПРОФИЛЬ ===== */
-.profile-screen .section-title {
-    margin: 10px 0 4px 0;  /* 10px от хедера */
-}
-
-/* ===== НАСТРОЙКИ ===== */
-.settings-screen .section-title {
-    margin: 10px 0 20px 0;  /* 10px от хедера */
-}
-
-/* ===== КНОПКА ПОИСКА В РЕЖИМАХ ===== */
-.mode-search-btn {
-    width: 280px;
-    padding: 14px;
-    background: #FF5500;
-    border: none;
-    border-radius: 30px;
-    font-size: 16px;
-    font-weight: 700;
-    color: #F5F5F5;
-    text-transform: uppercase;
-    cursor: pointer;
-    margin: 10px auto;
-    transition: all 0.2s;
-    letter-spacing: 0.5px;
-}
-
-.mode-search-btn:hover {
-    transform: scale(1.05);
-    background: #FF6B4A;
-}
-
-.mode-search-btn:active {
-    transform: scale(0.95);
-}
-
 /* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
 .bottom-nav {
+    flex-shrink: 0;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -446,7 +390,43 @@ body {
     color: #F5F5F5;
 }
 
-/* ===== КОНТЕЙНЕР КНОПОК РЕЖИМОВ ===== */
+/* ===== ЭКРАНЫ (ИСПРАВЛЕНО) ===== */
+.screen {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* Все экраны используют flex внутри */
+.main-screen,
+.shop-screen,
+.profile-screen,
+.settings-screen,
+.faceit-screen,
+.premier-screen,
+.prime-screen,
+.public-screen,
+.search-screen,
+.start-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Специфичные стили для главного экрана */
+.main-screen .section-title {
+    margin: 10px 0 4px 0;
+}
+
+.main-screen .section-subtitle {
+    margin: 0 0 12px 0;
+}
+
+/* Контейнер кнопок режимов */
 .mode-container {
     flex: none;
     display: flex;
@@ -458,7 +438,7 @@ body {
     padding-bottom: 20px;
 }
 
-/* ===== КНОПКИ РЕЖИМОВ ===== */
+/* Кнопки режимов */
 .mode-btn {
     width: 100%;
     padding: 20px;
@@ -1045,19 +1025,6 @@ input, select, textarea, button {
 }
 
 /* ===== ОСТАЛЬНЫЕ ЭЛЕМЕНТЫ ===== */
-.screen {
-    flex: 1;
-    min-height: 0;
-    display: none;
-    flex-direction: column;
-    width: 100%;
-}
-
-#startScreen {
-    display: flex;
-    flex-direction: column;
-}
-
 .input-label {
     font-size: 12px;
     color: #9BA1B0;
