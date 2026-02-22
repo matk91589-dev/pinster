@@ -1,65 +1,80 @@
 // ============================================
-// ФУНКЦИИ ПОИСКА
+// ПОИСК (Telegram Mini App версия)
 // ============================================
 
-let searchTimerInterval = null;
-let searchSeconds = 0;
-let currentSearchMode = '';
-
-function setStyle(style, element) {
-    const parent = element.parentElement;
-    const options = parent.querySelectorAll('.style-option');
-    options.forEach(opt => opt.classList.remove('active'));
-    element.classList.add('active');
-}
-
-function showSearchScreen(mode) {
-    currentSearchMode = mode;
-    hideAllScreens();
+const Search = {
+    timerInterval: null,
+    seconds: 0,
+    currentMode: '',
     
-    document.getElementById('searchModeTitle').textContent = mode;
-    document.getElementById('searchScreen').style.display = 'flex';
+    init() {
+        this.resetTimer();
+    },
     
-    resetTimer();
-    startTimer();
-}
-
-function startTimer() {
-    searchSeconds = 0;
-    updateTimerDisplay();
+    setStyle(style, element) {
+        const parent = element.parentElement;
+        const options = parent.querySelectorAll('.style-option');
+        options.forEach(opt => opt.classList.remove('active'));
+        element.classList.add('active');
+        App.hapticFeedback('light');
+    },
     
-    if (searchTimerInterval) clearInterval(searchTimerInterval);
+    start(mode, value) {
+        this.currentMode = mode;
+        App.showScreen('searchScreen', false);
+        
+        document.getElementById('searchModeTitle').textContent = mode;
+        
+        this.resetTimer();
+        this.startTimer();
+        
+        App.hapticFeedback('medium');
+        console.log(`Поиск в режиме ${mode} с данными: ${value}`);
+    },
     
-    searchTimerInterval = setInterval(() => {
-        searchSeconds++;
-        updateTimerDisplay();
-    }, CONFIG.SEARCH.TIMER_UPDATE_INTERVAL);
-}
-
-function updateTimerDisplay() {
-    const minutes = Math.floor(searchSeconds / 60);
-    const seconds = searchSeconds % 60;
-    document.getElementById('searchTimer').textContent = 
-        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
-
-function resetTimer() {
-    if (searchTimerInterval) {
-        clearInterval(searchTimerInterval);
-        searchTimerInterval = null;
+    showScreen(mode) {
+        this.currentMode = mode;
+        App.showScreen('searchScreen', false);
+        
+        document.getElementById('searchModeTitle').textContent = mode;
+        
+        this.resetTimer();
+        this.startTimer();
+    },
+    
+    startTimer() {
+        this.seconds = 0;
+        this.updateDisplay();
+        
+        if (this.timerInterval) clearInterval(this.timerInterval);
+        
+        this.timerInterval = setInterval(() => {
+            this.seconds++;
+            this.updateDisplay();
+        }, 1000);
+    },
+    
+    updateDisplay() {
+        const minutes = Math.floor(this.seconds / 60);
+        const seconds = this.seconds % 60;
+        document.getElementById('searchTimer').textContent = 
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    },
+    
+    resetTimer() {
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
+        this.seconds = 0;
+        this.updateDisplay();
+    },
+    
+    cancel() {
+        this.resetTimer();
+        App.showScreen('mainScreen', true);
+        App.hapticFeedback('light');
     }
-    searchSeconds = 0;
-    updateTimerDisplay();
-}
+};
 
-function cancelSearch() {
-    resetTimer();
-    hideAllScreens();
-    document.getElementById(lastModeScreen).style.display = 'flex';
-    document.getElementById('settingsIcon').classList.remove('active');
-}
-
-function startSearch(mode, value) {
-    showSearchScreen(mode);
-    console.log(`Поиск в режиме ${mode} с данными: ${value}`);
-}
+window.Search = Search;
