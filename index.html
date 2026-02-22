@@ -51,7 +51,7 @@
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            padding: 0 20px 90px; /* padding-bottom под нижнюю навигацию */
+            padding: 0 20px 90px;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
         }
@@ -153,7 +153,7 @@
             text-align: center;
         }
 
-        /* ===== КНОПКИ (БЕЗ ВЫХОДА ЗА ГРАНИЦЫ) ===== */
+        /* ===== КНОПКИ ===== */
         .btn-wrapper {
             width: 100%;
             border-radius: 12px;
@@ -200,7 +200,6 @@
             color: #5D6472;
         }
 
-        /* HOVER ТОЛЬКО ДЛЯ ПК */
         @media (hover: hover) {
             .primary-btn:hover {
                 transform: scale(1.02);
@@ -230,7 +229,7 @@
             color: #FF5500;
         }
 
-        /* ===== НИЖНЯЯ НАВИГАЦИЯ (FIXED) ===== */
+        /* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -303,8 +302,10 @@
             text-align: center;
         }
 
-        .mode-title.faceit { color: #FF5500; }
-        .mode-title.premier { color: #FF5500; }
+        .mode-title.faceit,
+        .mode-title.premier {
+            color: #FF5500;
+        }
 
         /* ===== КОНТЕЙНЕРЫ ===== */
         .mode-container {
@@ -312,6 +313,32 @@
             flex-direction: column;
             gap: 12px;
             margin: 20px 0;
+        }
+
+        .mode-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: transparent;
+            border: 2px solid #2A2F3A;
+            color: #9BA1B0;
+            font-size: 22px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            color: #FF5500;
+            font-size: 24px;
         }
 
         .stats-row {
@@ -487,7 +514,7 @@
 </head>
 <body>
     <div class="app">
-        <!-- Хедер (виден на всех экранах) -->
+        <!-- Хедер -->
         <div class="header">
             <div class="logo" onclick="handleLogoClick()">
                 <span class="ping">Ping</span><span class="ster">ster</span>
@@ -500,10 +527,10 @@
             </div>
         </div>
 
-        <!-- Скроллируемый контент -->
+        <!-- Контент -->
         <main class="content">
             <!-- СТАРТОВЫЙ ЭКРАН -->
-            <div id="startScreen" class="screen">
+            <div id="startScreen" class="screen active">
                 <div class="start-avatar-square" id="startAvatar">
                     <img src="pingster_logo.svg" alt="Pingster">
                 </div>
@@ -648,8 +675,8 @@
 
             <!-- ЭКРАН FACEIT -->
             <div id="faceitScreen" class="screen">
-                <div class="mode-header" style="display: flex; align-items: center; gap: 12px; margin: 20px 0;">
-                    <button class="back-btn" onclick="showMainScreen()" style="background: none; border: none; color: #FF5500; font-size: 24px; cursor: pointer;">←</button>
+                <div class="mode-header">
+                    <button class="back-btn" onclick="showMainScreen()">←</button>
                     <div class="mode-title faceit">FACEIT</div>
                 </div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
@@ -701,8 +728,8 @@
 
             <!-- ЭКРАН PREMIER -->
             <div id="premierScreen" class="screen">
-                <div class="mode-header" style="display: flex; align-items: center; gap: 12px; margin: 20px 0;">
-                    <button class="back-btn" onclick="showMainScreen()" style="background: none; border: none; color: #FF5500; font-size: 24px; cursor: pointer;">←</button>
+                <div class="mode-header">
+                    <button class="back-btn" onclick="showMainScreen()">←</button>
                     <div class="mode-title premier">PREMIER</div>
                 </div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
@@ -751,8 +778,8 @@
 
             <!-- ЭКРАН MM PRIME -->
             <div id="primeScreen" class="screen">
-                <div class="mode-header" style="display: flex; align-items: center; gap: 12px; margin: 20px 0;">
-                    <button class="back-btn" onclick="showMainScreen()" style="background: none; border: none; color: #FF5500; font-size: 24px; cursor: pointer;">←</button>
+                <div class="mode-header">
+                    <button class="back-btn" onclick="showMainScreen()">←</button>
                     <div class="mode-title prime">MM PRIME</div>
                 </div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
@@ -808,8 +835,8 @@
 
             <!-- ЭКРАН MM PUBLIC -->
             <div id="publicScreen" class="screen">
-                <div class="mode-header" style="display: flex; align-items: center; gap: 12px; margin: 20px 0;">
-                    <button class="back-btn" onclick="showMainScreen()" style="background: none; border: none; color: #FF5500; font-size: 24px; cursor: pointer;">←</button>
+                <div class="mode-header">
+                    <button class="back-btn" onclick="showMainScreen()">←</button>
                     <div class="mode-title public">MM PUBLIC</div>
                 </div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
@@ -877,7 +904,7 @@
             </div>
         </main>
 
-        <!-- ЕДИНАЯ НИЖНЯЯ НАВИГАЦИЯ -->
+        <!-- Нижняя навигация -->
         <footer class="bottom-nav">
             <div class="nav-item" onclick="showMainScreen()">
                 <span class="nav-icon">
@@ -939,9 +966,6 @@
                     window.USERNAME = tgUser.username || tgUser.first_name || 'player';
                 }
             }
-            
-            // Показываем стартовый экран по умолчанию
-            document.getElementById('startScreen').classList.add('active');
         })();
         
         // Функции навигации
