@@ -2,35 +2,50 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pingster — финальная версия</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Pingster — Telegram Mini App</title>
     
-    <!-- Telegram Mini App SDK (обязательно) -->
+    <!-- Telegram Mini App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- CSS (твои, без изменений) -->
+    <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
     
-    <!-- Supabase полностью отключён -->
+    <!-- Дополнительные стили для плавности -->
+    <style>
+        .screen {
+            transition: opacity 0.2s ease;
+            opacity: 0;
+            display: none;
+        }
+        .screen.active {
+            opacity: 1;
+            display: flex;
+        }
+        .app-content {
+            overscroll-behavior: contain;
+        }
+    </style>
 </head>
 <body>
-    <div class="phone-frame">
-        <div class="content">
-            <!-- Хедер -->
-            <div class="header">
-                <div class="logo" onclick="handleLogoClick()">
-                    <span class="ping">Ping</span><span class="ster">ster</span>
-                </div>
-                <div id="settingsIcon" class="icon-settings" onclick="showSettingsScreen()">
-                    <svg viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="3"/>
-                        <path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/>
-                    </svg>
-                </div>
+    <div class="app">
+        <!-- Хедер (один на всё приложение) -->
+        <header class="app-header header">
+            <div class="logo" onclick="Logo.handleClick()">
+                <span class="ping">Ping</span><span class="ster">ster</span>
             </div>
+            <div id="settingsIcon" class="icon-settings" onclick="App.showScreen('settingsScreen', true)">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/>
+                </svg>
+            </div>
+        </header>
 
+        <!-- Контент (скроллится) -->
+        <main class="app-content">
             <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
                 <div class="start-avatar-square" id="startAvatar">
@@ -44,7 +59,7 @@
                         Фаниться или апать звания.
                     </div>
                 </div>
-                <button class="primary-btn" onclick="startApp()">Подключиться</button>
+                <button class="primary-btn" onclick="App.startApp()">Подключиться</button>
             </div>
 
             <!-- ГЛАВНЫЙ ЭКРАН -->
@@ -52,38 +67,33 @@
                 <div class="section-title">Выбор режима</div>
                 <div class="section-subtitle">Подберите подходящий</div>
                 <div class="mode-container">
-                    <button class="mode-btn faceit" onclick="showFaceitScreen()">FACEIT</button>
-                    <button class="mode-btn premier" onclick="showPremierScreen()">PREMIER</button>
-                    <button class="mode-btn prime" onclick="showPrimeScreen()">MM PRIME</button>
-                    <button class="mode-btn public" onclick="showPublicScreen()">MM PUBLIC</button>
-                </div>
-                <div class="bottom-nav">
-                    <div class="nav-item active" onclick="showMainScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span><span class="nav-label">Главная</span></div>
-                    <div class="nav-item" onclick="showShopScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span><span class="nav-label">Магазин</span></div>
-                    <div class="nav-item" onclick="showProfileScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span><span class="nav-label">Профиль</span></div>
+                    <button class="mode-btn faceit" onclick="App.showScreen('faceitScreen', false)">FACEIT</button>
+                    <button class="mode-btn premier" onclick="App.showScreen('premierScreen', false)">PREMIER</button>
+                    <button class="mode-btn prime" onclick="App.showScreen('primeScreen', false)">MM PRIME</button>
+                    <button class="mode-btn public" onclick="App.showScreen('publicScreen', false)">MM PUBLIC</button>
                 </div>
             </div>
 
-            <!-- ЭКРАН МАГАЗИНА (ТВОИ КЕЙСЫ) -->
+            <!-- ЭКРАН МАГАЗИНА -->
             <div id="shopScreen" class="screen screen-shop">
                 <div class="title-row">
                     <div class="title-left"><div class="section-title">Магазин</div></div>
                     <div class="coins-header">Pingcoins: <span id="coinsAmount">99999</span></div>
                 </div>
                 <div class="shop-tabs">
-                    <div class="shop-tab active" onclick="showShopTab('cases')">Кейсы</div>
-                    <div class="shop-tab" onclick="showShopTab('inventory')" id="inventoryTab">Инвентарь</div>
+                    <div class="shop-tab active" onclick="Shop.showTab('cases')">Кейсы</div>
+                    <div class="shop-tab" onclick="Shop.showTab('inventory')" id="inventoryTab">Инвентарь</div>
                 </div>
                 <div class="cases-section">
                     <div class="cases-grid">
-                        <!-- ЗДЕСЬ ТВОИ КЕЙСЫ -->
+                        <!-- ТВОИ КЕЙСЫ -->
                         <div class="case-item">
                             <div class="case-icon"><img src="img/case1.svg" alt="case1" style="width:48px;height:48px;"></div>
                             <div class="case-info">
                                 <div class="case-name">Базовый кейс</div>
                                 <div class="case-price-row">
                                     <span class="price-value">100</span>
-                                    <button class="buy-btn-simple" onclick="buyCase('Базовый кейс', 100)">Купить</button>
+                                    <button class="buy-btn-simple" onclick="Shop.buyCase('common_case')">Купить</button>
                                 </div>
                             </div>
                         </div>
@@ -93,7 +103,7 @@
                                 <div class="case-name">Редкий кейс</div>
                                 <div class="case-price-row">
                                     <span class="price-value">250</span>
-                                    <button class="buy-btn-simple" onclick="buyCase('Редкий кейс', 250)">Купить</button>
+                                    <button class="buy-btn-simple" onclick="Shop.buyCase('rare_case')">Купить</button>
                                 </div>
                             </div>
                         </div>
@@ -103,7 +113,7 @@
                                 <div class="case-name">Легендарный кейс</div>
                                 <div class="case-price-row">
                                     <span class="price-value">500</span>
-                                    <button class="buy-btn-simple" onclick="buyCase('Легендарный кейс', 500)">Купить</button>
+                                    <button class="buy-btn-simple" onclick="Shop.buyCase('premium_case')">Купить</button>
                                 </div>
                             </div>
                         </div>
@@ -111,39 +121,34 @@
                 </div>
                 <div class="inventory-section hidden">
                     <div class="inventory-grid">
-                        <!-- ТВОЙ ИНВЕНТАРЬ -->
+                        <!-- ИНВЕНТАРЬ -->
                     </div>
-                </div>
-                <div class="bottom-nav">
-                    <div class="nav-item" onclick="showMainScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span><span class="nav-label">Главная</span></div>
-                    <div class="nav-item active" onclick="showShopScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span><span class="nav-label">Магазин</span></div>
-                    <div class="nav-item" onclick="showProfileScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span><span class="nav-label">Профиль</span></div>
                 </div>
             </div>
 
-            <!-- ЭКРАН ПРОФИЛЯ (С КАРАНДАШОМ) -->
+            <!-- ЭКРАН ПРОФИЛЯ -->
             <div id="profileScreen" class="screen screen-profile">
                 <div class="title-row">
                     <div class="title-left">
                         <div class="section-title">Ваш профиль</div>
                         <div class="edit-controls">
-                            <div id="editToggle" class="edit-title-icon" onclick="toggleEditMode()">
+                            <div id="editToggle" class="edit-title-icon" onclick="Profile.toggleEditMode()">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M12 20h9" stroke="white" stroke-width="2" stroke-linecap="round"/>
                                     <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </div>
-                            <div id="applyBtn" class="apply-btn" onclick="applyChanges()">Применить</div>
+                            <div id="applyBtn" class="apply-btn" onclick="Profile.applyChanges()">Применить</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="profile-header">
-                    <div id="profileAvatar" class="profile-avatar" onclick="selectAvatar()">👤</div>
+                    <div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()">👤</div>
                     <div class="profile-info">
                         <div class="profile-name-label">ваш никнейм</div>
                         <div class="profile-name-row">
-                            <span id="profileName" class="profile-name" onclick="editName()">-</span>
+                            <span id="profileName" class="profile-name" onclick="Profile.editName()">-</span>
                             <span class="profile-status">НОВИЧОК</span>
                         </div>
                     </div>
@@ -178,21 +183,13 @@
 
                 <div class="friends-section" id="friendsSection">
                     <div id="friendsHeader" class="friends-header">
-                        <div class="search-icon" onclick="enterSearchMode()">
+                        <div class="search-icon" onclick="Friends.enterSearchMode()">
                             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/><circle cx="11" cy="11" r="4" stroke="white" stroke-width="2"/><line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" stroke-width="2"/></svg>
                         </div>
                         <span class="friends-title">Ваши друзья</span>
                         <span class="friends-count" id="friendsCount">0 друзей</span>
                     </div>
-                    <div class="friends-list" id="friendsList">
-                        <!-- Друзья подгрузятся из friends.js -->
-                    </div>
-                </div>
-
-                <div class="bottom-nav">
-                    <div class="nav-item" onclick="showMainScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span><span class="nav-label">Главная</span></div>
-                    <div class="nav-item" onclick="showShopScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span><span class="nav-label">Магазин</span></div>
-                    <div class="nav-item active" onclick="showProfileScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span><span class="nav-label">Профиль</span></div>
+                    <div class="friends-list" id="friendsList"></div>
                 </div>
             </div>
 
@@ -204,18 +201,13 @@
                     <div class="settings-item"><span class="settings-label">Уведомления</span><label class="switch"><input type="checkbox" id="notificationsToggle" checked><span class="slider round"></span></label></div>
                     <div class="settings-item"><span class="settings-label">Тёмная тема</span><label class="switch"><input type="checkbox" id="themeToggle" checked><span class="slider round"></span></label></div>
                 </div>
-                <button class="primary-btn" onclick="showMainScreen()" style="margin:20px 0;">На главную</button>
-                <div class="bottom-nav">
-                    <div class="nav-item" onclick="showMainScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span><span class="nav-label">Главная</span></div>
-                    <div class="nav-item" onclick="showShopScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span><span class="nav-label">Магазин</span></div>
-                    <div class="nav-item" onclick="showProfileScreen()"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span><span class="nav-label">Профиль</span></div>
-                </div>
+                <button class="primary-btn" onclick="App.showScreen('mainScreen', true)" style="margin:20px 0;">На главную</button>
             </div>
 
             <!-- ЭКРАН FACEIT -->
             <div id="faceitScreen" class="screen screen-faceit">
                 <div class="mode-header">
-                    <button class="back-btn" onclick="showMainScreen()">←</button>
+                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
                     <div class="mode-title faceit">FACEIT</div>
                 </div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
@@ -231,7 +223,7 @@
                             <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
                         </div>
                     </div>
-                    <div class="stat-card" onclick="editFaceitAge()">
+                    <div class="stat-card" onclick="Profile.editFaceitAge()">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value">
                             <input type="text" id="faceitAgeValue" placeholder="21" value="21">
@@ -246,8 +238,8 @@
                 <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="">
                 
                 <div class="play-style">
-                    <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
+                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
+                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
                 </div>
 
                 <div class="comment-section">
@@ -255,13 +247,13 @@
                     <textarea class="comment-input" id="faceitComment" placeholder="Введите комментарий" maxlength="100"></textarea>
                 </div>
 
-                <button class="mode-search-btn" onclick="startSearch('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
+                <button class="mode-search-btn" onclick="Search.start('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
             </div>
 
             <!-- ЭКРАН PREMIER -->
             <div id="premierScreen" class="screen screen-premier">
                 <div class="mode-header">
-                    <button class="back-btn" onclick="showMainScreen()">←</button>
+                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
                     <div class="mode-title premier">PREMIER</div>
                 </div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
@@ -277,7 +269,7 @@
                             <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
                         </div>
                     </div>
-                    <div class="stat-card" onclick="editPremierAge()">
+                    <div class="stat-card" onclick="Profile.editPremierAge()">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value">
                             <input type="text" id="premierAgeValue" placeholder="21" value="21">
@@ -289,8 +281,8 @@
                 <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="">
                 
                 <div class="play-style">
-                    <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
+                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
+                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
                 </div>
 
                 <div class="comment-section">
@@ -298,13 +290,13 @@
                     <textarea class="comment-input" id="premierComment" placeholder="Введите комментарий" maxlength="100"></textarea>
                 </div>
 
-                <button class="mode-search-btn" onclick="startSearch('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
+                <button class="mode-search-btn" onclick="Search.start('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
             </div>
 
             <!-- ЭКРАН MM PRIME -->
             <div id="primeScreen" class="screen screen-prime">
                 <div class="mode-header">
-                    <button class="back-btn" onclick="showMainScreen()">←</button>
+                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
                     <div class="mode-title prime">MM PRIME</div>
                 </div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
@@ -327,7 +319,7 @@
                             <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
                         </div>
                     </div>
-                    <div class="stat-card" onclick="editPrimeAge()">
+                    <div class="stat-card" onclick="Profile.editPrimeAge()">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value">
                             <input type="text" id="primeAgeValue" placeholder="21" value="21">
@@ -339,8 +331,8 @@
                 <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="">
                 
                 <div class="play-style">
-                    <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
+                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
+                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
                 </div>
 
                 <div class="comment-section">
@@ -348,13 +340,13 @@
                     <textarea class="comment-input" id="primeComment" placeholder="Введите комментарий" maxlength="100"></textarea>
                 </div>
 
-                <button class="mode-search-btn" onclick="startSearch('MM PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
+                <button class="mode-search-btn" onclick="Search.start('MM PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
             </div>
 
             <!-- ЭКРАН MM PUBLIC -->
             <div id="publicScreen" class="screen screen-public">
                 <div class="mode-header">
-                    <button class="back-btn" onclick="showMainScreen()">←</button>
+                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
                     <div class="mode-title public">MM PUBLIC</div>
                 </div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
@@ -377,7 +369,7 @@
                             <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
                         </div>
                     </div>
-                    <div class="stat-card" onclick="editPublicAge()">
+                    <div class="stat-card" onclick="Profile.editPublicAge()">
                         <div class="stat-label">Возраст</div>
                         <div class="stat-value">
                             <input type="text" id="publicAgeValue" placeholder="21" value="21">
@@ -389,8 +381,8 @@
                 <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="">
                 
                 <div class="play-style">
-                    <div class="style-option fan active" onclick="setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="setStyle('tryhard', this)">Tryhard</div>
+                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
+                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
                 </div>
 
                 <div class="comment-section">
@@ -398,7 +390,7 @@
                     <textarea class="comment-input" id="publicComment" placeholder="Введите комментарий" maxlength="100"></textarea>
                 </div>
 
-                <button class="mode-search-btn" onclick="startSearch('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
+                <button class="mode-search-btn" onclick="Search.start('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
             </div>
 
             <!-- ЭКРАН ПОИСКА -->
@@ -411,231 +403,37 @@
                 <div class="search-loading">
                     <div class="spinner"></div>
                 </div>
-                <button class="cancel-search-btn" onclick="cancelSearch()">Отменить поиск</button>
+                <button class="cancel-search-btn" onclick="Search.cancel()">Отменить поиск</button>
             </div>
-        </div>
+        </main>
+
+        <!-- Нижняя навигация (одна на всё приложение) -->
+        <nav class="app-nav bottom-nav">
+            <div class="nav-item active" onclick="App.showScreen('mainScreen', true)">
+                <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
+                <span class="nav-label">Главная</span>
+            </div>
+            <div class="nav-item" onclick="App.showScreen('shopScreen', true)">
+                <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span>
+                <span class="nav-label">Магазин</span>
+            </div>
+            <div class="nav-item" onclick="App.showScreen('profileScreen', true)">
+                <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
+                <span class="nav-label">Профиль</span>
+            </div>
+        </nav>
     </div>
 
-    <!-- ТВОИ РАБОЧИЕ JS (БЕЗ SUPABASE) -->
+    <!-- ТВОИ JS ФАЙЛЫ (НОВЫЕ) -->
+    <script src="js/config.js"></script>
+    <script src="js/globals.js"></script>
     <script src="js/navigation.js"></script>
     <script src="js/profile.js"></script>
     <script src="js/avatar.js"></script>
-    <script src="js/shop.js"></script>
     <script src="js/friends.js"></script>
+    <script src="js/shop.js"></script>
     <script src="js/search.js"></script>
     <script src="js/logo.js"></script>
-
-    <!-- ТВОЙ ОСНОВНОЙ JS (НАВИГАЦИЯ, КАРАНДАШ, МАГАЗИН) -->
-    <script>
-        // Полное отключение всего, что связано с Supabase
-        window.supabase = null;
-        window.supabaseClient = null;
-        
-        // Удаляем все возможные вызовы из других файлов
-        if (window.supabaseModule) window.supabaseModule = null;
-
-        // Навигация (на всякий случай дублируем)
-        window.hideAllScreens = function() {
-            const screens = ['startScreen','mainScreen','profileScreen','shopScreen','settingsScreen','faceitScreen','premierScreen','primeScreen','publicScreen','searchScreen'];
-            screens.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
-            });
-        };
-
-        window.startApp = function() { hideAllScreens(); document.getElementById('mainScreen').style.display = 'flex'; };
-        window.showMainScreen = function() { hideAllScreens(); document.getElementById('mainScreen').style.display = 'flex'; };
-        window.showShopScreen = function() { hideAllScreens(); document.getElementById('shopScreen').style.display = 'flex'; };
-        window.showProfileScreen = function() { hideAllScreens(); document.getElementById('profileScreen').style.display = 'flex'; };
-        window.showSettingsScreen = function() { hideAllScreens(); document.getElementById('settingsScreen').style.display = 'flex'; };
-        window.showFaceitScreen = function() { hideAllScreens(); document.getElementById('faceitScreen').style.display = 'flex'; };
-        window.showPremierScreen = function() { hideAllScreens(); document.getElementById('premierScreen').style.display = 'flex'; };
-        window.showPrimeScreen = function() { hideAllScreens(); document.getElementById('primeScreen').style.display = 'flex'; };
-        window.showPublicScreen = function() { hideAllScreens(); document.getElementById('publicScreen').style.display = 'flex'; };
-        window.handleLogoClick = window.showMainScreen;
-
-        // Карандаш
-        window.editMode = false;
-
-        window.toggleEditMode = function() {
-            editMode = !editMode;
-            const editIcon = document.getElementById('editToggle');
-            const applyBtn = document.getElementById('applyBtn');
-            const ageInput = document.getElementById('ageValue');
-            const steamInput = document.getElementById('steamDisplay');
-            const faceitInput = document.getElementById('faceitLinkDisplay');
-            const ageCard = document.getElementById('ageCard');
-            const steamCard = document.getElementById('steamCard');
-            const faceitCard = document.getElementById('faceitLinkCard');
-            const avatar = document.getElementById('profileAvatar');
-            const nameSpan = document.getElementById('profileName');
-
-            editIcon.classList.toggle('active', editMode);
-            
-            if (editMode) {
-                applyBtn.classList.add('visible');
-                ageCard?.classList.add('editable');
-                steamCard?.classList.add('editable');
-                faceitCard?.classList.add('editable');
-                avatar?.classList.add('editable');
-                nameSpan?.classList.add('editable');
-                if (ageInput) ageInput.removeAttribute('readonly');
-                if (steamInput) steamInput.removeAttribute('readonly');
-                if (faceitInput) faceitInput.removeAttribute('readonly');
-            } else {
-                applyBtn.classList.remove('visible');
-                ageCard?.classList.remove('editable');
-                steamCard?.classList.remove('editable');
-                faceitCard?.classList.remove('editable');
-                avatar?.classList.remove('editable');
-                nameSpan?.classList.remove('editable');
-                if (ageInput) ageInput.setAttribute('readonly', 'true');
-                if (steamInput) steamInput.setAttribute('readonly', 'true');
-                if (faceitInput) faceitInput.setAttribute('readonly', 'true');
-            }
-        };
-
-        window.editName = function() {
-            if (!editMode) { alert('Сначала активируйте режим редактирования (карандаш)'); return; }
-            const newName = prompt('Введите новый никнейм:');
-            if (newName) document.getElementById('profileName').textContent = newName;
-        };
-
-        window.editAge = function() { if (!editMode) alert('Сначала активируйте режим редактирования (карандаш)'); };
-        window.editSteam = function() { if (!editMode) alert('Сначала активируйте режим редактирования (карандаш)'); };
-        window.editFaceitLink = function() { if (!editMode) alert('Сначала активируйте режим редактирования (карандаш)'); };
-        window.selectAvatar = function() { 
-            if (!editMode) { alert('Сначала активируйте режим редактирования (карандаш)'); return; }
-            alert('Выбор аватара будет доступен позже');
-        };
-        window.applyChanges = function() { 
-            if (!editMode) { alert('Сначала активируйте режим редактирования'); return; }
-            console.log('Изменения сохранены');
-            toggleEditMode();
-        };
-
-        // Магазин
-        window.showShopTab = function(tab) {
-            const cases = document.querySelector('.cases-section');
-            const inv = document.querySelector('.inventory-section');
-            const tabs = document.querySelectorAll('.shop-tab');
-            if (tab === 'cases') {
-                cases?.classList.remove('hidden');
-                inv?.classList.add('hidden');
-                tabs[0]?.classList.add('active');
-                tabs[1]?.classList.remove('active');
-            } else {
-                cases?.classList.add('hidden');
-                inv?.classList.remove('hidden');
-                tabs[0]?.classList.remove('active');
-                tabs[1]?.classList.add('active');
-            }
-        };
-
-        window.buyCase = function(name, price) { alert(`Покупка ${name} за ${price} Pingcoins!`); };
-
-        // Поиск (с единственным таймером)
-        let searchTimerInterval = null;
-
-        window.startSearch = function(mode, value) { 
-            alert(`Поиск в режиме ${mode} с параметром ${value}`);
-            document.getElementById('searchModeTitle').textContent = mode.toUpperCase();
-            if (searchTimerInterval) clearInterval(searchTimerInterval);
-            let seconds = 0;
-            const timerEl = document.getElementById('searchTimer');
-            timerEl.textContent = '00:00';
-            showSearchScreen();
-            searchTimerInterval = setInterval(() => {
-                seconds++;
-                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
-                const secs = (seconds % 60).toString().padStart(2, '0');
-                timerEl.textContent = `${mins}:${secs}`;
-            }, 1000);
-        };
-
-        window.showSearchScreen = function() { 
-            hideAllScreens(); 
-            document.getElementById('searchScreen').style.display = 'flex'; 
-        };
-
-        window.cancelSearch = function() { 
-            if (searchTimerInterval) clearInterval(searchTimerInterval);
-            showMainScreen(); 
-        };
-
-        window.enterSearchMode = function() { showFaceitScreen(); };
-        window.exitSearchMode = function() { showMainScreen(); };
-        window.setStyle = function(style, el) {
-            document.querySelectorAll('.style-option').forEach(s => s.classList.remove('active'));
-            el.classList.add('active');
-        };
-
-        // Заглушки для возраста
-        window.editFaceitAge = window.editAge;
-        window.editPremierAge = window.editAge;
-        window.editPrimeAge = window.editAge;
-        window.editPublicAge = window.editAge;
-    </script>
-
-    <!-- ===== ФИНАЛЬНЫЙ ФИКС ДЛЯ ПК (УБИРАЕТ СКРОЛЛ СТРАНИЦЫ) ===== -->
-    <script>
-        (function() {
-            'use strict';
-
-            // Принудительно делаем документ скроллируемым (чтобы свайп работал)
-            function ensureDocumentIsScrollable() {
-                const isScrollable = document.documentElement.scrollHeight > window.innerHeight;
-                if (!isScrollable) {
-                    document.documentElement.style.setProperty(
-                        'height',
-                        'calc(100vh + 1px)',
-                        'important'
-                    );
-                }
-            }
-
-            // Не даём scrollY стать 0 (Telegram сворачивает при scrollY === 0)
-            function preventCollapse() {
-                if (window.scrollY === 0) {
-                    window.scrollTo(0, 1);
-                }
-            }
-
-            // Слушаем изменения visualViewport (особенно важно для ПК)
-            if (window.visualViewport) {
-                window.visualViewport.addEventListener('resize', () => {
-                    document.body.style.height = window.visualViewport.height + 'px';
-                    ensureDocumentIsScrollable();
-                });
-            }
-
-            // Отключаем вертикальные свайпы через Telegram API (если доступно)
-            if (window.Telegram?.WebApp?.disableVerticalSwipes) {
-                window.Telegram.WebApp.disableVerticalSwipes();
-            }
-
-            // Инициализация после загрузки
-            window.addEventListener('load', () => {
-                ensureDocumentIsScrollable();
-                preventCollapse();
-
-                // Запрещаем overscroll на iOS
-                document.body.addEventListener('touchstart', (e) => {
-                    if (e.target === document.body) {
-                        e.preventDefault();
-                    }
-                }, { passive: false });
-            });
-
-            // Следим за скроллом внутри контента
-            const content = document.querySelector('.content');
-            if (content) {
-                content.addEventListener('scroll', preventCollapse);
-            }
-
-            // Дополнительно: если вдруг окно изменило размер
-            window.addEventListener('resize', ensureDocumentIsScrollable);
-        })();
-    </script>
+    <script src="js/app.js"></script>
 </body>
 </html>
