@@ -1354,11 +1354,15 @@ input:-webkit-autofill:active {
 html, body {
     height: 100%;
     margin: 0;
+}
+
+body {
     overflow: hidden;
 }
 
 .phone-frame {
-    height: 100vh;
+    height: 100%;
+    min-height: 100vh;
     max-width: 430px;
     margin: 0 auto;
     display: flex;
@@ -1404,6 +1408,7 @@ html, body {
         border-radius: 24px;
     }
 }
+
 
 
 
