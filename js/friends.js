@@ -1,99 +1,55 @@
 // ============================================
-// ФУНКЦИИ ДРУЗЕЙ
+// ДРУЗЬЯ (Telegram Mini App версия)
 // ============================================
 
-function generateFriends() {
-    friendsData = [];
-    for (let i = 0; i < 10; i++) {
-        const num = (i + 7).toString().padStart(3, '0');
-        friendsData.push({
-            avatar: ['😼','🤖','👾','🎮','😎','👻','💀','😱','🤠','🥷'][i],
-            name: `abs${num}`,
-            id: Math.random().toString(16).substring(2, 10),
-            steam: `steamcommunity.com/id/abs${num}`
-        });
-    }
-    renderFriendsList();
-}
-
-function renderFriendsList() {
-    const friendsList = document.getElementById('friendsList');
-    const friendsCount = document.getElementById('friendsCount');
-    if (!friendsList) return;
+const Friends = {
+    list: [],
+    count: 0,
     
-    let filteredFriends = friendsData;
-    if (isSearchMode && searchQuery) {
-        const query = searchQuery.toLowerCase();
-        filteredFriends = friendsData.filter(friend => 
-            friend.name.toLowerCase().includes(query) || 
-            friend.id.toLowerCase().includes(query)
-        );
-    }
+    init() {
+        this.loadFriends();
+    },
     
-    friendsList.innerHTML = filteredFriends.map(friend => `
-        <div class="friend-item">
-            <div class="friend-avatar">${friend.avatar}</div>
-            <div class="friend-info">
-                <div class="friend-name-row">
-                    <div class="friend-name">${friend.name}</div>
-                    <div class="friend-id">${friend.id.substring(0, 6)}</div>
+    loadFriends() {
+        // Тестовые данные
+        this.list = [
+            { name: 'Player1', id: '1234' },
+            { name: 'Player2', id: '5678' }
+        ];
+        this.count = this.list.length;
+        this.render();
+    },
+    
+    render() {
+        const friendsList = document.getElementById('friendsList');
+        const friendsCount = document.getElementById('friendsCount');
+        
+        if (friendsList) {
+            friendsList.innerHTML = this.list.map(f => `
+                <div class="friend-item">
+                    <div class="friend-avatar">👤</div>
+                    <div class="friend-info">
+                        <div class="friend-name-row">
+                            <span class="friend-name">${f.name}</span>
+                            <span class="friend-id">${f.id}</span>
+                        </div>
+                        <div class="friend-steam">steamcommunity.com/id/${f.name.toLowerCase()}</div>
+                    </div>
                 </div>
-                <div class="friend-steam">${friend.steam}</div>
-            </div>
-        </div>
-    `).join('');
+            `).join('');
+        }
+        
+        if (friendsCount) {
+            const word = this.count === 1 ? 'друг' : 
+                        this.count >= 2 && this.count <= 4 ? 'друга' : 'друзей';
+            friendsCount.textContent = `${this.count} ${word}`;
+        }
+    },
     
-    if (friendsCount) {
-        friendsCount.textContent = `${filteredFriends.length} ${filteredFriends.length === 1 ? 'друг' : 'друзей'}`;
+    enterSearchMode() {
+        App.showScreen('faceitScreen', false);
+        App.hapticFeedback('light');
     }
-}
+};
 
-function enterSearchMode() {
-    isSearchMode = true;
-    searchQuery = '';
-    updateSearchUI();
-}
-
-function exitSearchMode() {
-    isSearchMode = false;
-    searchQuery = '';
-    updateSearchUI();
-    renderFriendsList();
-}
-
-function handleSearchInput(value) {
-    searchQuery = value;
-    renderFriendsList();
-}
-
-function updateSearchUI() {
-    const header = document.getElementById('friendsHeader');
-    if (!header) return;
-    
-    if (isSearchMode) {
-        header.innerHTML = `
-            <div class="search-container">
-                <div class="back-icon" onclick="exitSearchMode()">
-                    <svg viewBox="0 0 24 24">
-                        <line x1="19" y1="12" x2="5" y2="12" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                        <polyline points="12 19 5 12 12 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-                <input type="text" class="search-input" placeholder="Поиск..." value="${searchQuery}" 
-                       oninput="handleSearchInput(this.value)" autofocus>
-            </div>
-        `;
-    } else {
-        header.innerHTML = `
-            <div class="search-icon" onclick="enterSearchMode()">
-                <svg viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
-                    <circle cx="11" cy="11" r="4" stroke="white" stroke-width="2"/>
-                    <line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-            </div>
-            <span class="friends-title">Ваши друзья</span>
-            <span class="friends-count" id="friendsCount">${friendsData.length} друзей</span>
-        `;
-    }
-}
+window.Friends = Friends;
