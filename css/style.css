@@ -22,9 +22,10 @@ body {
     color: #F5F5F5;
 }
 
+/* ===== ОСНОВНОЙ КОНТЕЙНЕР (АДАПТИВНЫЙ) ===== */
 .phone-frame {
     width: 100%;
-    max-width: 380px;
+    max-width: 380px;  /* по умолчанию как было */
     height: 700px;
     background: #111317;
     border-radius: 16px;
@@ -34,6 +35,15 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
+}
+
+/* ===== ДЛЯ ПК И ПЛАНШЕТОВ (ФИКСИРОВАННЫЙ РАЗМЕР) ===== */
+@media (min-width: 768px) {
+    .phone-frame {
+        width: 477px;      /* твой точный размер */
+        max-width: 477px;
+        height: 738px;
+    }
 }
 
 .content {
