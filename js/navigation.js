@@ -25,38 +25,44 @@ function setActiveNavButton(activeScreen) {
     }
 }
 
+// ============================================
+// НОВАЯ hideAllScreens() - через классы
+// ============================================
 function hideAllScreens() {
-    const screens = [
-        'startScreen', 'mainScreen', 'profileScreen', 'shopScreen', 'settingsScreen',
-        'faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen', 'searchScreen'
-    ];
-    screens.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-    });
+    document.querySelectorAll('.screen')
+        .forEach(screen => screen.classList.remove('active'));
 }
+
+// ============================================
+// УНИВЕРСАЛЬНАЯ ФУНКЦИЯ (ОПЦИОНАЛЬНО)
+// ============================================
+function showScreen(screenId, showNav = true) {
+    hideAllScreens();
+    const screen = document.getElementById(screenId);
+    if (screen) {
+        screen.classList.add('active');
+        showBottomNav(showNav);
+        
+        // Устанавливаем активную кнопку навигации если нужно
+        if (showNav && (screenId === 'mainScreen' || screenId === 'shopScreen' || screenId === 'profileScreen')) {
+            setActiveNavButton(screenId);
+        } else {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        }
+    }
+}
+
+// ============================================
+// ИСПРАВЛЕННЫЕ ФУНКЦИИ
+// ============================================
 
 function startApp() {
     console.log('startApp вызвана');
-    hideAllScreens();
-    const mainScreen = document.getElementById('mainScreen');
-    if (mainScreen) {
-        mainScreen.style.display = 'flex';
-        setActiveNavButton('mainScreen');
-        showBottomNav(true); // Показываем навигацию на главном экране
-    } else {
-        console.error('mainScreen не найден!');
-    }
+    showScreen('mainScreen', true);
 }
 
 function showMainScreen() {
-    hideAllScreens();
-    const mainScreen = document.getElementById('mainScreen');
-    if (mainScreen) {
-        mainScreen.style.display = 'flex';
-        setActiveNavButton('mainScreen');
-        showBottomNav(true); // Показываем навигацию
-    }
+    showScreen('mainScreen', true);
     
     const settingsIcon = document.getElementById('settingsIcon');
     if (settingsIcon) {
@@ -65,13 +71,7 @@ function showMainScreen() {
 }
 
 function showProfileScreen() {
-    hideAllScreens();
-    const profileScreen = document.getElementById('profileScreen');
-    if (profileScreen) {
-        profileScreen.style.display = 'flex';
-        setActiveNavButton('profileScreen');
-        showBottomNav(true); // Показываем навигацию
-    }
+    showScreen('profileScreen', true);
     
     if (typeof isSearchMode !== 'undefined' && isSearchMode) {
         if (typeof exitSearchMode === 'function') exitSearchMode();
@@ -88,13 +88,7 @@ function showProfileScreen() {
 }
 
 function showShopScreen() {
-    hideAllScreens();
-    const shopScreen = document.getElementById('shopScreen');
-    if (shopScreen) {
-        shopScreen.style.display = 'flex';
-        setActiveNavButton('shopScreen');
-        showBottomNav(true); // Показываем навигацию
-    }
+    showScreen('shopScreen', true);
     
     const settingsIcon = document.getElementById('settingsIcon');
     if (settingsIcon) {
@@ -103,38 +97,32 @@ function showShopScreen() {
 }
 
 function showSettingsScreen() {
-    hideAllScreens();
     const settingsScreen = document.getElementById('settingsScreen');
-    if (settingsScreen) {
-        settingsScreen.style.display = 'flex';
-        showBottomNav(true); // Показываем навигацию на настройках
-    } else {
+    if (!settingsScreen) {
         console.warn('settingsScreen не найден в HTML. Создай его или убери вызов.');
         showMainScreen();
         return;
     }
     
+    showScreen('settingsScreen', true);
+    
     const settingsIcon = document.getElementById('settingsIcon');
     if (settingsIcon) {
         settingsIcon.classList.add('active');
     }
-    
-    // Для экрана настроек убираем активный класс с навигации
-    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 }
 
 function showFaceitScreen() {
     lastModeScreen = 'faceitScreen';
-    hideAllScreens();
+    
     const faceitScreen = document.getElementById('faceitScreen');
-    if (faceitScreen) {
-        faceitScreen.style.display = 'flex';
-        showBottomNav(false); // Скрываем навигацию на экране FACEIT
-    } else {
+    if (!faceitScreen) {
         console.warn('faceitScreen не найден в HTML. Создай его или убери кнопку.');
         showMainScreen();
         return;
     }
+    
+    showScreen('faceitScreen', false);
     
     if (typeof loadSavedValues === 'function') loadSavedValues();
     
@@ -152,23 +140,19 @@ function showFaceitScreen() {
     if (settingsIcon) {
         settingsIcon.classList.remove('active');
     }
-    
-    // Для экранов режимов убираем активный класс с навигации
-    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 }
 
 function showPremierScreen() {
     lastModeScreen = 'premierScreen';
-    hideAllScreens();
+    
     const premierScreen = document.getElementById('premierScreen');
-    if (premierScreen) {
-        premierScreen.style.display = 'flex';
-        showBottomNav(false); // Скрываем навигацию на экране PREMIER
-    } else {
+    if (!premierScreen) {
         console.warn('premierScreen не найден в HTML. Создай его или убери кнопку.');
         showMainScreen();
         return;
     }
+    
+    showScreen('premierScreen', false);
     
     if (typeof loadSavedValues === 'function') loadSavedValues();
     
@@ -182,22 +166,19 @@ function showPremierScreen() {
     if (settingsIcon) {
         settingsIcon.classList.remove('active');
     }
-    
-    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 }
 
 function showPrimeScreen() {
     lastModeScreen = 'primeScreen';
-    hideAllScreens();
+    
     const primeScreen = document.getElementById('primeScreen');
-    if (primeScreen) {
-        primeScreen.style.display = 'flex';
-        showBottomNav(false); // Скрываем навигацию на экране PRIME
-    } else {
+    if (!primeScreen) {
         console.warn('primeScreen не найден в HTML. Создай его или убери кнопку.');
         showMainScreen();
         return;
     }
+    
+    showScreen('primeScreen', false);
     
     if (typeof loadSavedValues === 'function') loadSavedValues();
     
@@ -211,22 +192,19 @@ function showPrimeScreen() {
     if (settingsIcon) {
         settingsIcon.classList.remove('active');
     }
-    
-    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 }
 
 function showPublicScreen() {
     lastModeScreen = 'publicScreen';
-    hideAllScreens();
+    
     const publicScreen = document.getElementById('publicScreen');
-    if (publicScreen) {
-        publicScreen.style.display = 'flex';
-        showBottomNav(false); // Скрываем навигацию на экране PUBLIC
-    } else {
+    if (!publicScreen) {
         console.warn('publicScreen не найден в HTML. Создай его или убери кнопку.');
         showMainScreen();
         return;
     }
+    
+    showScreen('publicScreen', false);
     
     if (typeof loadSavedValues === 'function') loadSavedValues();
     
@@ -240,28 +218,28 @@ function showPublicScreen() {
     if (settingsIcon) {
         settingsIcon.classList.remove('active');
     }
-    
-    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 }
 
 // Функция для экрана поиска
 function showSearchScreen() {
-    hideAllScreens();
     const searchScreen = document.getElementById('searchScreen');
-    if (searchScreen) {
-        searchScreen.style.display = 'flex';
-        showBottomNav(false); // Скрываем навигацию на экране поиска
+    if (!searchScreen) {
+        console.warn('searchScreen не найден');
+        showMainScreen();
+        return;
     }
+    
+    showScreen('searchScreen', false);
     
     const settingsIcon = document.getElementById('settingsIcon');
     if (settingsIcon) {
         settingsIcon.classList.remove('active');
     }
-    
-    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 }
 
-// При загрузке страницы скрываем навигацию на стартовом экране
+// ============================================
+// DOM CONTENT LOADED - ИСПРАВЛЕНО
+// ============================================
 document.addEventListener('DOMContentLoaded', function() {
 
     // ===== TELEGRAM INIT =====
@@ -272,9 +250,12 @@ document.addEventListener('DOMContentLoaded', function() {
         tg.disableVerticalSwipes();
     }
 
-    // Проверяем, виден ли стартовый экран
+    // Проверяем, виден ли стартовый экран (через классы)
     const startScreen = document.getElementById('startScreen');
-    if (startScreen && startScreen.style.display !== 'none') {
+    if (startScreen && startScreen.classList.contains('active')) {
         showBottomNav(false);
     }
 });
+
+// Для обратной совместимости
+window.showScreen = showScreen;
