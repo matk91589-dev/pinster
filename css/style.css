@@ -1013,16 +1013,18 @@ input, select, textarea, button {
     font-weight: 600;
 }
 
-/* ===== ОСТАЛЬНЫЕ ЭЛЕМЕНТЫ ===== */
+/* ===== ЭКРАНЫ (SPA FIX) ===== */
+
 .screen {
-    flex: 1;
-    display: flex;
+    position: absolute;
+    inset: 0;
+    display: none;
     flex-direction: column;
     width: 100%;
-    min-height: 0;
+    height: 100%;
 }
 
-#startScreen {
+.screen.active {
     display: flex;
 }
 
@@ -1359,6 +1361,7 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
     padding-bottom: 70px;
+    position: relative;
 }
 
 /* стартовый экран */
@@ -1394,3 +1397,4 @@ body {
         border-radius: 24px;
     }
 }
+
