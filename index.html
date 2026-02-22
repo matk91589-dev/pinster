@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pingster — финал с твоими кейсами</title>
+    <title>Pingster — без Supabase</title>
     
     <!-- CSS (твои, без изменений) -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
     
-    <!-- Supabase отключён -->
-    <script>window.supabase = null;</script>
+    <!-- Supabase ПОЛНОСТЬЮ ОТКЛЮЧЁН — ничего не подключаем -->
 </head>
 <body>
     <div class="phone-frame">
@@ -62,7 +61,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН МАГАЗИНА (ТВОИ КЕЙСЫ, ТВОИ ИКОНКИ) -->
+            <!-- ЭКРАН МАГАЗИНА (ТВОИ КЕЙСЫ) -->
             <div id="shopScreen" class="screen screen-shop">
                 <div class="title-row">
                     <div class="title-left"><div class="section-title">Магазин</div></div>
@@ -74,7 +73,7 @@
                 </div>
                 <div class="cases-section">
                     <div class="cases-grid">
-                        <!-- ТВОИ КЕЙСЫ (КАК В ТВОЁМ ОРИГИНАЛЕ) -->
+                        <!-- ЗДЕСЬ ТВОИ КЕЙСЫ (ВСТАВЬ СВОИ) -->
                         <div class="case-item">
                             <div class="case-icon"><img src="img/case1.svg" alt="case1" style="width:48px;height:48px;"></div>
                             <div class="case-info">
@@ -119,7 +118,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН ПРОФИЛЯ (С РАБОЧИМ КАРАНДАШОМ) -->
+            <!-- ЭКРАН ПРОФИЛЯ (С КАРАНДАШОМ) -->
             <div id="profileScreen" class="screen screen-profile">
                 <div class="title-row">
                     <div class="title-left">
@@ -414,10 +413,7 @@
         </div>
     </div>
 
-    <!-- ТВОИ JS ФАЙЛЫ -->
-    <script src="js/config.js"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/globals.js"></script>
+    <!-- ТОЛЬКО ТВОИ РАБОЧИЕ JS (БЕЗ SUPABASE) -->
     <script src="js/navigation.js"></script>
     <script src="js/profile.js"></script>
     <script src="js/avatar.js"></script>
@@ -425,15 +421,17 @@
     <script src="js/friends.js"></script>
     <script src="js/search.js"></script>
     <script src="js/logo.js"></script>
-    <script src="js/app.js"></script>
 
-    <!-- РАБОЧИЙ JS (переопределяет всё лишнее) -->
+    <!-- РАБОЧИЙ JS (ПЕРЕОПРЕДЕЛЯЕТ ВСЁ, ЧТО МОГЛО СЛОМАТЬСЯ) -->
     <script>
-        // Полное отключение Supabase
+        // Полное отключение всего, что связано с Supabase
         window.supabase = null;
-        window._supabase = null;
+        window.supabaseClient = null;
+        
+        // Удаляем все возможные вызовы из других файлов
+        if (window.supabaseModule) window.supabaseModule = null;
 
-        // Навигация
+        // Навигация (на всякий случай дублируем)
         window.hideAllScreens = function() {
             const screens = ['startScreen','mainScreen','profileScreen','shopScreen','settingsScreen','faceitScreen','premierScreen','primeScreen','publicScreen','searchScreen'];
             screens.forEach(id => {
@@ -453,7 +451,7 @@
         window.showPublicScreen = function() { hideAllScreens(); document.getElementById('publicScreen').style.display = 'flex'; };
         window.handleLogoClick = window.showMainScreen;
 
-        // Карандаш — подсветка ВСЕХ полей
+        // Карандаш
         window.editMode = false;
 
         window.toggleEditMode = function() {
@@ -533,7 +531,7 @@
 
         window.buyCase = function(name, price) { alert(`Покупка ${name} за ${price} Pingcoins!`); };
 
-        // Поиск
+        // Поиск (с единственным таймером)
         let searchTimerInterval = null;
 
         window.startSearch = function(mode, value) { 
@@ -569,7 +567,7 @@
             el.classList.add('active');
         };
 
-        // Заглушки
+        // Заглушки для возраста
         window.editFaceitAge = window.editAge;
         window.editPremierAge = window.editAge;
         window.editPrimeAge = window.editAge;
