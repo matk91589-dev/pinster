@@ -962,3 +962,26 @@ input:-webkit-autofill {
     }
 }
 
+/* ===== ЕДИНАЯ ШИРИНА ДЛЯ ВСЕХ ЭКРАНОВ ===== */
+.screen.active {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+.screen.active > * {
+    width: 100% !important;
+    max-width: 280px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Для стартового экрана — особый случай */
+#startScreen.active .start-avatar-square,
+#startScreen.active .start-description-box,
+#startScreen.active .btn-wrapper {
+    width: 280px !important;
+    max-width: 280px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
