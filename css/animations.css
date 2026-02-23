@@ -245,7 +245,7 @@
     transform: scale(1.02);
 }
 
-/* КНОПКИ НА ГЛАВНОМ ЭКРАНЕ - сначала уменьшение до 0.97, потом увеличение до 1.02 */
+/* КНОПКИ НА ГЛАВНОМ ЭКРАНЕ - ТОЛЬКО ОТДАЛЕНИЕ (0.97) */
 .mode-btn:hover {
     transform: scale(0.97) !important;
     border-color: #FF5500;
@@ -253,16 +253,12 @@
     transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease !important;
 }
 
-/* Добавляем увеличение при наведении на кнопки главного экрана */
-.mode-btn {
-    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease !important;
-}
-
+/* Явно убираем приближение для кнопок главного экрана */
 .mode-btn.faceit:hover,
 .mode-btn.premier:hover,
 .mode-btn.prime:hover,
 .mode-btn.public:hover {
-    transform: scale(1.02) !important; /* Увеличение после уменьшения */
+    transform: scale(0.97) !important; /* Только отдаление, без приближения */
 }
 
 /* Друзья в профиле - scale 0.98 при наведении */
