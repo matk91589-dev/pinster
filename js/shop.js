@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - ИСПРАВЛЕНЫ КЛИКИ
+// МАГАЗИН (Telegram Mini App версия) - ФИНАЛЬНЫЙ ФИКС
 // ============================================
 
 const Shop = {
@@ -7,7 +7,6 @@ const Shop = {
     currentTab: 'cases',
     ownedCases: [],
     newItems: [],
-    isBuying: false,
     
     cases: [
         { 
@@ -51,25 +50,32 @@ const Shop = {
     },
     
     setupEventListeners() {
-        // Убираем старые обработчики
-        if (this.boundHandleBuyClick) {
-            document.removeEventListener('click', this.boundHandleBuyClick);
-        }
-        
-        this.boundHandleBuyClick = (e) => {
+        // ЕБАНЫЙ ДЕЛЕГИРОВАНИЕ - РАБОТАЕТ ВСЕГДА
+        document.addEventListener('click', (e) => {
+            // Для кнопок покупки
             const buyBtn = e.target.closest('.buy-btn-simple');
             if (buyBtn && !buyBtn.classList.contains('disabled')) {
                 e.preventDefault();
                 e.stopPropagation();
-                
                 const caseId = buyBtn.dataset.caseId;
                 if (caseId) {
                     this.buyCase(caseId);
                 }
+                return;
             }
-        };
-        
-        document.addEventListener('click', this.boundHandleBuyClick.bind(this));
+            
+            // Для предметов в инвентаре
+            const inventoryItem = e.target.closest('.inventory-item');
+            if (inventoryItem) {
+                e.preventDefault();
+                e.stopPropagation();
+                const uniqueId = inventoryItem.dataset.uniqueId;
+                if (uniqueId) {
+                    this.useItem(uniqueId);
+                }
+                return;
+            }
+        });
     },
     
     updateCoinsDisplay() {
@@ -169,13 +175,8 @@ const Shop = {
             return;
         }
         
-        const newCases = this.ownedCases.filter(c => this.newItems.includes(c.uniqueId));
-        const oldCases = this.ownedCases.filter(c => !this.newItems.includes(c.uniqueId));
-        
-        newCases.sort((a, b) => b.purchaseDate - a.purchaseDate);
-        const sortedCases = [...newCases, ...oldCases];
-        
-        container.innerHTML = sortedCases.map(caseItem => {
+        // Показываем все кейсы
+        container.innerHTML = this.ownedCases.map(caseItem => {
             const isNew = this.newItems.includes(caseItem.uniqueId);
             const caseData = this.cases.find(c => c.id === caseItem.caseId);
             
@@ -189,18 +190,6 @@ const Shop = {
                 </div>
             `;
         }).join('');
-        
-        // Убираем старые обработчики и вешаем новые
-        container.querySelectorAll('.inventory-item').forEach(item => {
-            item.removeEventListener('click', this.handleItemClick);
-            this.handleItemClick = (e) => {
-                const uniqueId = item.dataset.uniqueId;
-                if (uniqueId) {
-                    this.useItem(uniqueId);
-                }
-            };
-            item.addEventListener('click', this.handleItemClick.bind(this));
-        });
         
         this.renderInventoryStats();
     },
@@ -223,7 +212,6 @@ const Shop = {
     },
     
     buyCase(caseId) {
-        // Убираем блокировку isBuying - она только мешает
         const caseItem = this.cases.find(c => c.id === caseId);
         if (!caseItem) return;
         
@@ -237,20 +225,21 @@ const Shop = {
             return;
         }
         
-        // ПОКАЗЫВАЕМ ПОДТВЕРЖДЕНИЕ ПЕРЕД ПОКУПКОЙ
+        // ПОКАЗЫВАЕМ ПОДТВЕРЖДЕНИЕ
         App.showConfirm(
             `Вы уверены, что хотите купить ${caseItem.name} за ${caseItem.price} PC?`, 
             (confirmed) => {
                 if (confirmed) {
-                    // ПОКУПАЕМ КЕЙС
+                    // СПИСЫВАЕМ МОНЕТЫ
                     this.coins -= caseItem.price;
                     this.updateCoinsDisplay();
                     
+                    // ГЕНЕРИРУЕМ ID
                     const timestamp = Date.now();
-                    const random1 = Math.random().toString(36).substring(2, 10);
-                    const random2 = Math.random().toString(36).substring(2, 10);
-                    const uniqueId = `${caseId}_${timestamp}_${random1}_${random2}`;
+                    const random = Math.random().toString(36).substring(2, 15);
+                    const uniqueId = `${caseId}_${timestamp}_${random}`;
                     
+                    // ДОБАВЛЯЕМ КЕЙС
                     this.ownedCases.push({
                         caseId: caseId,
                         uniqueId: uniqueId,
@@ -262,6 +251,7 @@ const Shop = {
                     
                     App.hapticFeedback('medium');
                     
+                    // ОБНОВЛЯЕМ ИНВЕНТАРЬ ЕСЛИ НАДО
                     if (this.currentTab === 'inventory') {
                         this.renderInventory();
                     }
@@ -292,9 +282,8 @@ const Shop = {
         const caseItem = this.cases.find(c => c.id === caseId);
         
         const timestamp = Date.now();
-        const random1 = Math.random().toString(36).substring(2, 10);
-        const random2 = Math.random().toString(36).substring(2, 10);
-        const uniqueId = `${caseId}_${timestamp}_${random1}_${random2}`;
+        const random = Math.random().toString(36).substring(2, 15);
+        const uniqueId = `${caseId}_${timestamp}_${random}`;
         
         this.ownedCases.push({
             caseId: caseId,
@@ -313,7 +302,7 @@ const Shop = {
     }
 };
 
-// Инициализация при загрузке
+// ИНИЦИАЛИЗАЦИЯ
 document.addEventListener('DOMContentLoaded', () => {
     Shop.init();
 });
