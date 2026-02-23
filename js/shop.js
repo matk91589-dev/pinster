@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - БЕЗ СМАЙЛИКОВ
+// МАГАЗИН (Telegram Mini App версия) - БЕЗ ЛИМИТОВ
 // ============================================
 
 const Shop = {
@@ -144,6 +144,8 @@ const Shop = {
             return;
         }
         
+        // Просто отображаем все кейсы без сортировки по new/old
+        // Но сначала новые, потом старые
         const newCases = this.ownedCases.filter(c => this.newItems.includes(c.uniqueId));
         const oldCases = this.ownedCases.filter(c => !this.newItems.includes(c.uniqueId));
         
@@ -204,7 +206,8 @@ const Shop = {
                 this.coins -= caseItem.price;
                 this.updateCoinsDisplay();
                 
-                const uniqueId = `${caseId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                // УНИКАЛЬНЫЙ ID - гарантированно разный каждый раз
+                const uniqueId = `${caseId}_${Date.now()}_${Math.random().toString(36).substring(2, 15)}_${Math.random().toString(36).substring(2, 15)}`;
                 
                 this.ownedCases.push({
                     caseId: caseId,
@@ -217,6 +220,7 @@ const Shop = {
                 
                 App.hapticFeedback('medium');
                 
+                // Всегда обновляем инвентарь, если мы на вкладке инвентаря
                 if (this.currentTab === 'inventory') {
                     this.renderInventory();
                 }
@@ -247,7 +251,7 @@ const Shop = {
         const caseId = 'secret_case';
         const caseItem = this.cases.find(c => c.id === caseId);
         
-        const uniqueId = `${caseId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const uniqueId = `${caseId}_${Date.now()}_${Math.random().toString(36).substring(2, 15)}_${Math.random().toString(36).substring(2, 15)}`;
         
         this.ownedCases.push({
             caseId: caseId,
