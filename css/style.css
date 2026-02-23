@@ -43,7 +43,7 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 12px 0 0;
+    padding: 12px 0 16px;  /* добавил нижний padding */
     box-sizing: border-box;
     border-radius: 16px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
@@ -353,17 +353,19 @@ body {
     opacity: 0.9;
 }
 
-/* ===== НИЖНЯЯ НАВИГАЦИЯ (ЕДИНАЯ ДЛЯ ВСЕХ ЭКРАНОВ) ===== */
+/* ===== НИЖНЯЯ НАВИГАЦИЯ (СТИКИ) ===== */
 .bottom-nav {
-    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    left: 0;
     display: flex;
     justify-content: space-around;
     align-items: center;
     padding: 8px 20px 16px;
-    margin-top: auto;
     border-top: 1px solid #1E2128;
     background: #111317;
     width: 100%;
+    z-index: 10;
 }
 
 .nav-item {
@@ -639,6 +641,7 @@ body {
     align-items: center;
     gap: 16px;
     margin: 16px 0;
+    padding: 0;  /* добавил отступы */
 }
 
 .profile-avatar {
@@ -821,6 +824,7 @@ body {
     align-items: center;
     gap: 8px;
     margin-bottom: 12px;
+    padding: 0;
 }
 
 .search-icon {
