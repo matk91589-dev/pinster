@@ -14,7 +14,7 @@ const Shop = {
             name: 'COMMON CASE', 
             price: 100, 
             class: 'common-case',
-            imagePath: 'cases/common_case.png', // ПРАВИЛЬНЫЙ ПУТЬ
+            imagePath: 'cases/common_case.png',
             isSecret: false
         },
         { 
@@ -22,7 +22,7 @@ const Shop = {
             name: 'RARE CASE', 
             price: 250, 
             class: 'rare-case',
-            imagePath: 'cases/rare_case.png', // ПРАВИЛЬНЫЙ ПУТЬ
+            imagePath: 'cases/rare_case.png',
             isSecret: false
         },
         { 
@@ -30,7 +30,7 @@ const Shop = {
             name: 'PREMIUM CASE', 
             price: 500, 
             class: 'premium-case',
-            imagePath: 'cases/premium_case.png', // ПРАВИЛЬНЫЙ ПУТЬ
+            imagePath: 'cases/premium_case.png',
             isSecret: false
         },
         { 
@@ -38,7 +38,7 @@ const Shop = {
             name: 'SECRET CASE', 
             price: 0,
             class: 'secret-case',
-            imagePath: 'cases/secret_case.png', // ПРАВИЛЬНЫЙ ПУТЬ
+            imagePath: 'cases/secret_case.png',
             isSecret: true
         }
     ],
