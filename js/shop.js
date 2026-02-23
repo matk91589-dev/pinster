@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - БЕЗ СООБЩЕНИЙ, ЧИНИК КЛИКОВ
+// МАГАЗИН (Telegram Mini App версия) - ИСПРАВЛЕНЫ КЛИКИ
 // ============================================
 
 const Shop = {
@@ -51,9 +51,12 @@ const Shop = {
     },
     
     setupEventListeners() {
-        // Убираем сложную логику с клонированием, вешаем обработчик просто на документ
-        document.removeEventListener('click', this.handleBuyClick);
-        this.handleBuyClick = (e) => {
+        // Убираем старые обработчики
+        if (this.boundHandleBuyClick) {
+            document.removeEventListener('click', this.boundHandleBuyClick);
+        }
+        
+        this.boundHandleBuyClick = (e) => {
             const buyBtn = e.target.closest('.buy-btn-simple');
             if (buyBtn && !buyBtn.classList.contains('disabled')) {
                 e.preventDefault();
@@ -65,7 +68,8 @@ const Shop = {
                 }
             }
         };
-        document.addEventListener('click', this.handleBuyClick.bind(this));
+        
+        document.addEventListener('click', this.boundHandleBuyClick.bind(this));
     },
     
     updateCoinsDisplay() {
@@ -97,15 +101,16 @@ const Shop = {
         this.currentTab = tab;
         
         document.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
-        document.querySelector(`.shop-tab[onclick="Shop.showTab('${tab}')"]`).classList.add('active');
+        const activeTab = document.querySelector(`.shop-tab[onclick="Shop.showTab('${tab}')"]`);
+        if (activeTab) activeTab.classList.add('active');
         
         if (tab === 'cases') {
-            document.querySelector('.cases-section').classList.remove('hidden');
-            document.querySelector('.inventory-section').classList.add('hidden');
+            document.querySelector('.cases-section')?.classList.remove('hidden');
+            document.querySelector('.inventory-section')?.classList.add('hidden');
             this.renderCases();
         } else {
-            document.querySelector('.cases-section').classList.add('hidden');
-            document.querySelector('.inventory-section').classList.remove('hidden');
+            document.querySelector('.cases-section')?.classList.add('hidden');
+            document.querySelector('.inventory-section')?.classList.remove('hidden');
             this.renderInventory();
         }
         
@@ -185,7 +190,7 @@ const Shop = {
             `;
         }).join('');
         
-        // Вешаем обработчики на предметы инвентаря
+        // Убираем старые обработчики и вешаем новые
         container.querySelectorAll('.inventory-item').forEach(item => {
             item.removeEventListener('click', this.handleItemClick);
             this.handleItemClick = (e) => {
@@ -218,27 +223,17 @@ const Shop = {
     },
     
     buyCase(caseId) {
-        if (this.isBuying) {
-            return;
-        }
-        
-        this.isBuying = true;
-        
+        // Убираем блокировку isBuying - она только мешает
         const caseItem = this.cases.find(c => c.id === caseId);
-        if (!caseItem) {
-            this.isBuying = false;
-            return;
-        }
+        if (!caseItem) return;
         
         if (caseItem.isSecret) {
             App.showAlert('❌ Этот кейс нельзя купить! Выполняйте задания чтобы получить его.');
-            this.isBuying = false;
             return;
         }
         
         if (this.coins < caseItem.price) {
             App.showAlert('❌ Недостаточно Pingcoins!');
-            this.isBuying = false;
             return;
         }
         
@@ -270,14 +265,7 @@ const Shop = {
                     if (this.currentTab === 'inventory') {
                         this.renderInventory();
                     }
-                    
-                    // СООБЩЕНИЕ УБРАНО!
                 }
-                
-                // Разблокируем покупки
-                setTimeout(() => {
-                    this.isBuying = false;
-                }, 300);
             }
         );
     },
@@ -321,7 +309,6 @@ const Shop = {
             this.renderInventory();
         }
         
-        // СООБЩЕНИЕ УБРАНО!
         App.hapticFeedback('medium');
     }
 };
