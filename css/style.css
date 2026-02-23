@@ -43,7 +43,7 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 12px 0 16px;  /* добавил нижний padding */
+    padding: 0;
     box-sizing: border-box;
     border-radius: 16px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
@@ -75,6 +75,7 @@ body {
     width: 100%;
     position: relative;
     -webkit-overflow-scrolling: touch;
+    padding-bottom: 0; /* Убираем padding, так как навигация будет поверх */
 }
 
 /* ===== ХЕДЕР ===== */
@@ -366,6 +367,8 @@ body {
     background: #111317;
     width: 100%;
     z-index: 10;
+    flex-shrink: 0; /* Запрещаем сжатие */
+    margin-top: auto; /* Прижимаем к низу при необходимости */
 }
 
 .nav-item {
@@ -641,7 +644,7 @@ body {
     align-items: center;
     gap: 16px;
     margin: 16px 0;
-    padding: 0;  /* добавил отступы */
+    padding: 0;
 }
 
 .profile-avatar {
