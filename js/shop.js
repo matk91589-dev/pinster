@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - АНГЛИЙСКИЕ НАЗВАНИЯ
+// МАГАЗИН (Telegram Mini App версия) - АНГЛ. НАЗВАНИЯ + РУССКИЙ ИНТЕРФЕЙС
 // ============================================
 
 const Shop = {
@@ -12,7 +12,7 @@ const Shop = {
     cases: [
         { 
             id: 'common_case', 
-            name: 'COMMON CASE',
+            name: 'COMMON CASE', // АНГЛИЙСКОЕ НАЗВАНИЕ
             price: 1000,
             class: 'common-case',
             imagePath: 'cases/common_case.png',
@@ -20,7 +20,7 @@ const Shop = {
         },
         { 
             id: 'rare_case', 
-            name: 'RARE CASE',
+            name: 'RARE CASE', // АНГЛИЙСКОЕ НАЗВАНИЕ
             price: 2500,
             class: 'rare-case',
             imagePath: 'cases/rare_case.png',
@@ -28,7 +28,7 @@ const Shop = {
         },
         { 
             id: 'premium_case', 
-            name: 'PREMIUM CASE',
+            name: 'PREMIUM CASE', // АНГЛИЙСКОЕ НАЗВАНИЕ
             price: 5000,
             class: 'premium-case',
             imagePath: 'cases/premium_case.png',
@@ -36,7 +36,7 @@ const Shop = {
         },
         { 
             id: 'secret_case', 
-            name: 'SECRET CASE',
+            name: 'SECRET CASE', // АНГЛИЙСКОЕ НАЗВАНИЕ
             price: 0,
             class: 'secret-case',
             imagePath: 'cases/secret_case.png',
@@ -133,7 +133,7 @@ const Shop = {
                         <div class="case-icon"><img src="${caseItem.imagePath}" alt="${caseItem.name}"></div>
                         <div class="case-info">
                             <div class="case-name">${caseItem.name}</div>
-                            <div class="secret-message">complete tasks →</div>
+                            <div class="secret-message">выполняйте задания →</div>
                         </div>
                     </div>
                 `;
@@ -148,7 +148,7 @@ const Shop = {
                             <span class="price-value">${caseItem.price}</span>
                             <button class="buy-btn-simple ${!canAfford ? 'disabled' : ''}" 
                                     data-case-id="${caseItem.id}">
-                                BUY
+                                Купить
                             </button>
                         </div>
                     </div>
@@ -214,7 +214,7 @@ const Shop = {
         
         const statsDiv = document.createElement('div');
         statsDiv.className = 'inventory-stats';
-        statsDiv.innerHTML = `Items: <span>${this.ownedCases.length}</span>`;
+        statsDiv.innerHTML = `Количество предметов: <span>${this.ownedCases.length}</span>`;
         
         const grid = inventorySection.querySelector('.inventory-grid');
         if (grid) {
@@ -236,13 +236,13 @@ const Shop = {
         }
         
         if (caseItem.isSecret) {
-            App.showAlert('❌ This case cannot be bought! Complete tasks to get it.');
+            App.showAlert('❌ Этот кейс нельзя купить! Выполняйте задания чтобы получить его.');
             this.isBuying = false;
             return;
         }
         
         if (this.coins < caseItem.price) {
-            App.showAlert('❌ Not enough Pingcoins!');
+            App.showAlert('❌ Недостаточно Pingcoins!');
             this.isBuying = false;
             return;
         }
@@ -270,7 +270,7 @@ const Shop = {
             this.renderInventory();
         }
         
-        App.showAlert(`✅ ${caseItem.name} added to inventory!`);
+        App.showAlert(`✅ ${caseItem.name} добавлен в инвентарь!`);
         
         setTimeout(() => {
             this.isBuying = false;
@@ -288,9 +288,9 @@ const Shop = {
         App.hapticFeedback('light');
         
         App.showPopup({
-            title: 'Opening Case',
-            message: 'Animation will be here',
-            buttons: [{ id: 'ok', type: 'ok', text: 'OK' }]
+            title: 'Открытие кейса',
+            message: 'Здесь будет анимация открытия',
+            buttons: [{ id: 'ok', type: 'ok', text: 'ОК' }]
         });
     },
     
@@ -316,7 +316,7 @@ const Shop = {
             this.renderInventory();
         }
         
-        App.showAlert(`✅ ${caseItem.name} added to inventory!`);
+        App.showAlert(`✅ ${caseItem.name} добавлен в инвентарь!`);
         App.hapticFeedback('medium');
     }
 };
