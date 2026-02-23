@@ -95,7 +95,7 @@
 .cases-grid {
     display: flex;
     flex-direction: column;
-    gap: 12px;  /* Уменьшил отступы */
+    gap: 12px;
     padding: 0;
 }
 
@@ -106,7 +106,7 @@
     padding: 0;
     display: flex;
     align-items: flex-start;
-    gap: 12px;  /* Уменьшил отступ */
+    gap: 12px;
     cursor: default;
     transition: transform 0.2s ease;
     margin: 0;
@@ -119,8 +119,8 @@
 
 .case-icon {
     position: relative;
-    width: 90px;   /* Уменьшил размер кейса */
-    height: 90px;   /* Уменьшил размер кейса */
+    width: 90px;
+    height: 90px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -135,19 +135,19 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.5)); /* Уменьшил тень */
+    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.5));
 }
 
 .case-info {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;  /* Уменьшил отступы */
-    padding-top: 8px;  /* Уменьшил отступ */
+    gap: 4px;
+    padding-top: 8px;
 }
 
 .case-name {
-    font-size: 16px;  /* Уменьшил шрифт */
+    font-size: 16px;
     font-weight: 700;
     color: #F5F5F5;
     letter-spacing: 0.3px;
@@ -167,7 +167,7 @@
 }
 
 .price-value {
-    font-size: 14px;  /* Уменьшил шрифт */
+    font-size: 14px;
     font-weight: 600;
     color: #F5F5F5;
     font-family: 'Montserrat', sans-serif;
@@ -189,9 +189,9 @@
     background: #B00000;
     border: none;
     border-radius: 30px;
-    padding: 4px 10px;  /* Уменьшил отступы */
+    padding: 4px 10px;
     color: #F5F5F5;
-    font-size: 11px;  /* Уменьшил шрифт */
+    font-size: 11px;
     font-weight: 600;
     cursor: pointer;
     font-family: 'Montserrat', sans-serif;
@@ -201,7 +201,7 @@
     outline: none;
     transition: background 0.2s ease;
     margin: 0;
-    min-width: 60px;  /* Уменьшил ширину */
+    min-width: 60px;
     text-align: center;
     line-height: 1.3;
 }
@@ -352,37 +352,32 @@
     transform: scale(1.05);
 }
 
-/* Бейдж NEW на предметах - ближе к кейсу */
+/* ===== ИСПРАВЛЕННАЯ ПЛАШКА NEW ===== */
+/* Теперь такая же, как на вкладке инвентаря */
 .item-badge {
     position: absolute;
-    top: 0px;
-    left: 0px;
+    top: -5px;
+    right: -5px;
     background: #B00000;
     color: #F5F5F5;
-    font-size: 6px;
-    font-weight: 700;
-    padding: 2px 4px;
-    border-radius: 3px;
+    font-size: 8px;  /* ТАКОЙ ЖЕ РАЗМЕР */
+    font-weight: 700; /* ТАКАЯ ЖЕ ЖИРНОСТЬ */
+    padding: 2px 6px; /* ТАКИЕ ЖЕ ОТСТУПЫ */
+    border-radius: 10px; /* ТАКОЕ ЖЕ СКРУГЛЕНИЕ */
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.5px; /* ТАКОЙ ЖЕ ИНТЕРВАЛ */
     z-index: 10;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    animation: badgeGlow 2s ease infinite;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    animation: badgePulse 2s ease infinite;
     white-space: nowrap;
     pointer-events: none;
     line-height: 1;
-    transform: translate(0, 0);
-}
-
-@keyframes badgeGlow {
-    0%, 100% { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); }
-    50% { box-shadow: 0 1px 5px rgba(255, 85, 0, 0.5); }
 }
 
 /* Новый предмет - анимация свечения */
 .new-item {
     position: relative;
-    animation: newPulse 2s ease;
+    animation: newPulse 2s ease infinite;
 }
 
 @keyframes newPulse {
