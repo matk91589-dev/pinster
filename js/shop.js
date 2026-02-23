@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - БЕЗ БАГОВ С КЛИКАМИ
+// МАГАЗИН (Telegram Mini App версия) - ИСПРАВЛЕННЫЕ ЦЕНЫ
 // ============================================
 
 const Shop = {
@@ -11,31 +11,31 @@ const Shop = {
     cases: [
         { 
             id: 'common_case', 
-            name: 'COMMON CASE', 
-            price: 100, 
+            name: 'Базовый кейс', 
+            price: 1000, // БЫЛО 100, СТАЛО 1000
             class: 'common-case',
             imagePath: 'cases/common_case.png',
             isSecret: false
         },
         { 
             id: 'rare_case', 
-            name: 'RARE CASE', 
-            price: 250, 
+            name: 'Редкий кейс', 
+            price: 2500, // БЫЛО 250, СТАЛО 2500
             class: 'rare-case',
             imagePath: 'cases/rare_case.png',
             isSecret: false
         },
         { 
             id: 'premium_case', 
-            name: 'PREMIUM CASE', 
-            price: 500, 
+            name: 'Легендарный кейс', 
+            price: 5000, // БЫЛО 500, СТАЛО 5000
             class: 'premium-case',
             imagePath: 'cases/premium_case.png',
             isSecret: false
         },
         { 
             id: 'secret_case', 
-            name: 'SECRET CASE', 
+            name: 'Секретный кейс', 
             price: 0,
             class: 'secret-case',
             imagePath: 'cases/secret_case.png',
@@ -235,7 +235,7 @@ const Shop = {
             return;
         }
         
-        // Покупаем сразу без confirm для быстроты (можно вернуть если надо)
+        // Покупаем сразу без confirm для быстроты
         this.coins -= caseItem.price;
         this.updateCoinsDisplay();
         
@@ -246,6 +246,7 @@ const Shop = {
         const random3 = Math.random().toString(36).substring(2, 15);
         const uniqueId = `${caseId}_${timestamp}_${random1}_${random2}_${random3}`;
         
+        // Добавляем ТОЛЬКО ОДИН кейс!
         this.ownedCases.push({
             caseId: caseId,
             uniqueId: uniqueId,
