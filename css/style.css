@@ -36,12 +36,12 @@ body {
 .phone-frame {
     position: relative;
     width: 100%;
-    height: 100%; /* ИЗМЕНЕНО: с 85vh на 100% для полного растяжения */
+    height: 100%;
     max-width: 1000px;
     margin: 0 auto;
     background: #111317;
     display: flex;
-    flex-direction: column; /* ВАЖНО: для вертикального распределения */
+    flex-direction: column;
     overflow: hidden;
     padding: 12px 20px 8px 20px;
     box-sizing: border-box;
@@ -86,7 +86,7 @@ body {
 
 /* ===== СКРОЛЛИРУЕМЫЙ КОНТЕНТ ===== */
 .content {
-    flex: 1; /* Контент растягивается, занимая всё доступное пространство */
+    flex: 1;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -117,7 +117,7 @@ body {
 }
 
 .logo:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 .logo .ping {
@@ -136,7 +136,7 @@ body {
 }
 
 .logo:active {
-    transform: scale(0.95);
+    transform: scale(0.97);
 }
 
 .icon-settings {
@@ -153,7 +153,7 @@ body {
 
 .icon-settings:hover {
     background: #1E2128;
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 .icon-settings svg {
@@ -214,7 +214,7 @@ body {
 }
 
 .edit-title-icon:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .edit-title-icon svg {
@@ -252,7 +252,7 @@ body {
 .apply-btn:hover {
     background: #FF5500;
     color: #F5F5F5;
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 .coins-header {
@@ -298,7 +298,7 @@ body {
     flex: 1;
     width: 100%;
     min-height: 0;
-    height: 100%; /* ДОБАВЛЕНО: для растяжения по высоте */
+    height: 100%;
 }
 
 /* ===== СТАРТОВЫЙ ЭКРАН ===== */
@@ -382,7 +382,7 @@ body {
     align-items: center;
     padding: 1vh 0 0.5vh 0;
     background: transparent;
-    margin-top: auto; /* ВАЖНО: прижимает навигацию к низу */
+    margin-top: auto;
     border-top: 1px solid #1E2128;
     flex-shrink: 0;
 }
@@ -408,7 +408,7 @@ body:has(.search-screen.active) .bottom-nav {
 
 .nav-item:hover {
     opacity: 1;
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 .nav-item.active {
@@ -439,14 +439,14 @@ body:has(.search-screen.active) .bottom-nav {
     width: 100%;
     flex: 1;
     min-height: 0;
-    height: 100%; /* ДОБАВЛЕНО: для растяжения */
+    height: 100%;
 }
 
 .screen.active {
     display: flex;
     flex-direction: column;
     flex: 1;
-    height: 100%; /* ДОБАВЛЕНО: для растяжения */
+    height: 100%;
 }
 
 /* ===== ГЛАВНЫЙ ЭКРАН ===== */
@@ -456,7 +456,7 @@ body:has(.search-screen.active) .bottom-nav {
     flex-direction: column;
     flex: 1;
     min-height: 0;
-    height: 100%; /* ВАЖНО: растяжение на всю высоту */
+    height: 100%;
 }
 
 .main-screen .section-title {
@@ -501,6 +501,7 @@ body:has(.search-screen.active) .bottom-nav {
 .mode-btn:hover {
     border-color: #FF5500;
     background: #1E2128;
+    transform: none;
 }
 
 .mode-btn.faceit,
@@ -558,6 +559,11 @@ body:has(.search-screen.active) .bottom-nav {
     font-weight: 600;
     font-size: clamp(11px, 3.5vw, 13px);
     text-align: center;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.shop-tab:hover {
+    transform: none;
 }
 
 .shop-tab.active {
@@ -594,6 +600,12 @@ body:has(.search-screen.active) .bottom-nav {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 12px;
+    transition: border-color 0.2s;
+}
+
+.case-item:hover {
+    border-color: #FF5500;
+    transform: none;
 }
 
 .case-icon {
@@ -662,6 +674,7 @@ body:has(.search-screen.active) .bottom-nav {
 
 .buy-btn-simple:hover {
     background: #8B0000;
+    transform: none;
 }
 
 .inventory-grid {
@@ -680,11 +693,12 @@ body:has(.search-screen.active) .bottom-nav {
     justify-content: center;
     padding: 2vh 1vw;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: border-color 0.2s;
 }
 
 .inventory-item:hover {
     border-color: #FF5500;
+    transform: none;
 }
 
 .inventory-item .item-icon {
@@ -1086,7 +1100,7 @@ body:has(.search-screen.active) .bottom-nav {
 }
 
 .friend-item:hover {
-    transform: scale(1.02);
+    transform: scale(1.01);
     border-color: #FF5500;
 }
 
@@ -1235,7 +1249,7 @@ input:checked + .slider:before {
     align-items: center;
     justify-content: center;
     gap: 3vw;
-    margin-bottom: 2.5vh;
+    margin-bottom: 1.5vh; /* Уменьшено с 2.5vh до 1.5vh */
     position: relative;
     flex-shrink: 0;
 }
@@ -1255,6 +1269,7 @@ input:checked + .slider:before {
     justify-content: center;
     position: absolute;
     left: 0;
+    top: -0.5vh; /* Поднята стрелка вверх */
     transition: all 0.2s;
     flex-shrink: 0;
 }
@@ -1262,6 +1277,7 @@ input:checked + .slider:before {
 .back-btn:hover {
     border-color: #FF5500;
     color: #F5F5F5;
+    transform: scale(1.02);
 }
 
 .mode-title {
@@ -1291,7 +1307,7 @@ input:checked + .slider:before {
     font-size: clamp(10px, 3vw, 12px);
     color: #9BA1B0;
     text-align: center;
-    margin-bottom: 2.5vh;
+    margin-bottom: 1.5vh; /* Уменьшено с 2.5vh до 1.5vh */
     font-weight: 500;
     flex-shrink: 0;
 }
@@ -1299,7 +1315,7 @@ input:checked + .slider:before {
 .input-label {
     font-size: clamp(10px, 3vw, 12px);
     color: #9BA1B0;
-    margin-bottom: 0.8vh;
+    margin-bottom: 0.5vh; /* Уменьшено с 0.8vh до 0.5vh */
     font-weight: 500;
 }
 
@@ -1311,7 +1327,7 @@ input:checked + .slider:before {
     padding: 1.5vh 3vw;
     color: #F5F5F5;
     font-size: clamp(12px, 3.5vw, 14px);
-    margin: 0.5vh 0 2vh 0;
+    margin: 0.5vh 0 1.5vh 0; /* Уменьшен нижний отступ с 2vh до 1.5vh */
     font-weight: 500;
     outline: none;
 }
@@ -1344,7 +1360,7 @@ input:checked + .slider:before {
     color: #F5F5F5;
     font-size: clamp(12px, 3.5vw, 14px);
     padding: 1.5vh 3vw;
-    margin: 0.5vh 0 2vh 0;
+    margin: 0.5vh 0 1.5vh 0; /* Уменьшен нижний отступ с 2vh до 1.5vh */
     cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF5500' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
@@ -1368,7 +1384,7 @@ input:checked + .slider:before {
 .play-style {
     display: flex;
     gap: 2vw;
-    margin: 2vh 0;
+    margin: 1.5vh 0; /* Уменьшено с 2vh до 1.5vh */
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
@@ -1388,6 +1404,10 @@ input:checked + .slider:before {
     white-space: nowrap;
 }
 
+.style-option:hover {
+    transform: none;
+}
+
 .style-option.active {
     background: #FF5500;
     color: #F5F5F5;
@@ -1395,13 +1415,13 @@ input:checked + .slider:before {
 
 .comment-section {
     width: 100%;
-    margin: 1.5vh 0;
+    margin: 1vh 0; /* Уменьшено с 1.5vh до 1vh */
 }
 
 .comment-label {
     font-size: clamp(10px, 3vw, 12px);
     color: #9BA1B0;
-    margin-bottom: 0.8vh;
+    margin-bottom: 0.5vh; /* Уменьшено с 0.8vh до 0.5vh */
     font-weight: 500;
 }
 
@@ -1439,18 +1459,18 @@ input:checked + .slider:before {
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 2vh auto;
+    margin: 1.5vh auto 1vh auto; /* Уменьшены отступы */
     transition: all 0.2s;
     letter-spacing: 0.5px;
 }
 
 .mode-search-btn:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
     background: #FF6B4A;
 }
 
 .mode-search-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.97);
 }
 
 /* ===== ЭКРАН ПОИСКА ===== */
@@ -1539,6 +1559,7 @@ input:checked + .slider:before {
 
 .cancel-search-btn:hover {
     background: rgba(255, 85, 0, 0.1);
+    transform: scale(1.01);
 }
 
 /* ===== СТАТИЧНЫЕ ЭЛЕМЕНТЫ ===== */
@@ -1626,7 +1647,14 @@ input:checked + .slider:before {
 .buy-btn-simple:hover,
 .inventory-item:hover,
 .friend-item:hover {
-    transform: scale(1.02) !important;
+    transform: scale(1.01) !important; /* Едва заметное увеличение */
+}
+
+/* Убираем масштабирование у элементов, где нужно только изменение цвета */
+.shop-tab:hover,
+.buy-btn-simple:hover,
+.inventory-item:hover {
+    transform: none !important;
 }
 
 .mode-btn.faceit:hover,
@@ -1649,7 +1677,7 @@ input:checked + .slider:before {
 .buy-btn-simple:active,
 .inventory-item:active,
 .friend-item:active {
-    transform: scale(0.97) !important;
+    transform: scale(0.98) !important;
 }
 
 /* Фиксы инпутов */
@@ -1692,4 +1720,3 @@ input:-webkit-autofill:active {
     transition: background-color 5000s ease-in-out 0s;
     box-shadow: inset 0 0 20px 20px #1A1D24 !important;
 }
-
