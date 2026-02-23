@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия)
+// МАГАЗИН (Telegram Mini App версия) - БЕЗ СМАЙЛИКОВ
 // ============================================
 
 const Shop = {
@@ -14,8 +14,7 @@ const Shop = {
             name: 'COMMON CASE', 
             price: 100, 
             class: 'common-case',
-            icon: '📦',
-            imagePath: 'img/case1.svg',
+            imagePath: 'cases/common_case.png', // ПРАВИЛЬНЫЙ ПУТЬ
             isSecret: false
         },
         { 
@@ -23,8 +22,7 @@ const Shop = {
             name: 'RARE CASE', 
             price: 250, 
             class: 'rare-case',
-            icon: '🔮',
-            imagePath: 'img/case2.svg',
+            imagePath: 'cases/rare_case.png', // ПРАВИЛЬНЫЙ ПУТЬ
             isSecret: false
         },
         { 
@@ -32,8 +30,7 @@ const Shop = {
             name: 'PREMIUM CASE', 
             price: 500, 
             class: 'premium-case',
-            icon: '👑',
-            imagePath: 'img/case3.svg',
+            imagePath: 'cases/premium_case.png', // ПРАВИЛЬНЫЙ ПУТЬ
             isSecret: false
         },
         { 
@@ -41,8 +38,7 @@ const Shop = {
             name: 'SECRET CASE', 
             price: 0,
             class: 'secret-case',
-            icon: '❓',
-            imagePath: 'img/case_secret.svg',
+            imagePath: 'cases/secret_case.png', // ПРАВИЛЬНЫЙ ПУТЬ
             isSecret: true
         }
     ],
@@ -111,7 +107,7 @@ const Shop = {
             if (caseItem.isSecret) {
                 return `
                     <div class="case-item ${caseItem.class} secret-case">
-                        <div class="case-icon"><span style="font-size:48px;">${caseItem.icon}</span></div>
+                        <div class="case-icon"><img src="${caseItem.imagePath}" alt="${caseItem.name}"></div>
                         <div class="case-info">
                             <div class="case-name">${caseItem.name}</div>
                             <div class="secret-message">выполняйте задания →</div>
@@ -122,7 +118,7 @@ const Shop = {
             
             return `
                 <div class="case-item ${caseItem.class}">
-                    <div class="case-icon"><span style="font-size:48px;">${caseItem.icon}</span></div>
+                    <div class="case-icon"><img src="${caseItem.imagePath}" alt="${caseItem.name}"></div>
                     <div class="case-info">
                         <div class="case-name">${caseItem.name}</div>
                         <div class="case-price-row">
@@ -163,7 +159,7 @@ const Shop = {
                      onclick="Shop.useItem('${caseItem.uniqueId}')">
                     ${isNew ? '<span class="item-badge">NEW</span>' : ''}
                     <div class="item-icon">
-                        <span style="font-size:48px;">${caseData?.icon || '📦'}</span>
+                        <img src="${caseData?.imagePath || 'cases/common_case.png'}" alt="case">
                     </div>
                 </div>
             `;
