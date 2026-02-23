@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - АНГЛ. НАЗВАНИЯ + РУССКИЙ ИНТЕРФЕЙС
+// МАГАЗИН (Telegram Mini App версия) - МАЛЕНЬКАЯ ПЛАШКА NEW НАД ТЕКСТОМ
 // ============================================
 
 const Shop = {
@@ -12,7 +12,7 @@ const Shop = {
     cases: [
         { 
             id: 'common_case', 
-            name: 'COMMON CASE', // АНГЛИЙСКОЕ НАЗВАНИЕ
+            name: 'COMMON CASE',
             price: 1000,
             class: 'common-case',
             imagePath: 'cases/common_case.png',
@@ -20,7 +20,7 @@ const Shop = {
         },
         { 
             id: 'rare_case', 
-            name: 'RARE CASE', // АНГЛИЙСКОЕ НАЗВАНИЕ
+            name: 'RARE CASE',
             price: 2500,
             class: 'rare-case',
             imagePath: 'cases/rare_case.png',
@@ -28,7 +28,7 @@ const Shop = {
         },
         { 
             id: 'premium_case', 
-            name: 'PREMIUM CASE', // АНГЛИЙСКОЕ НАЗВАНИЕ
+            name: 'PREMIUM CASE',
             price: 5000,
             class: 'premium-case',
             imagePath: 'cases/premium_case.png',
@@ -36,7 +36,7 @@ const Shop = {
         },
         { 
             id: 'secret_case', 
-            name: 'SECRET CASE', // АНГЛИЙСКОЕ НАЗВАНИЕ
+            name: 'SECRET CASE',
             price: 0,
             class: 'secret-case',
             imagePath: 'cases/secret_case.png',
