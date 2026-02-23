@@ -172,28 +172,29 @@
 
 /* ===== АНИМАЦИЯ ДЛЯ НОВЫХ ПРЕДМЕТОВ В ИНВЕНТАРЕ ===== */
 
-/* Постоянное свечение для новых предметов - УМЕНЬШЕННОЕ */
+/* Постоянное свечение для новых предметов */
 .new-item {
     animation: caseGlow 2s ease-in-out infinite !important;
     position: relative;
     z-index: 2;
 }
 
-/* СТАРЫЙ ДОБРЫЙ NEW БЕЙДЖ */
+/* МАЛЕНЬКАЯ ПЛАШКА NEW КАК В ИНВЕНТАРЕ */
 .new-item .item-badge {
-    background: #B00000; /* Тёмно-красный как было */
+    background: #B00000;
     color: white;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 6px;
+    font-size: 9px;  /* МЕЛКИЙ ШРИФТ */
+    font-weight: 600;
+    padding: 2px 5px;  /* МАЛЕНЬКИЕ ОТСТУПЫ */
     border-radius: 4px;
     position: absolute;
     top: 5px;
     right: 5px;
     z-index: 3;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: none; /* Убрал свечение */
+    letter-spacing: 0.3px;
+    line-height: 1;
+    box-shadow: none;
 }
 
 /* Транзакции переходов */
