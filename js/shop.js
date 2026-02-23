@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - ИСПРАВЛЕНО (1 КЕЙС ЗА РАЗ)
+// МАГАЗИН (Telegram Mini App версия) - АНГЛИЙСКИЕ НАЗВАНИЯ
 // ============================================
 
 const Shop = {
@@ -7,12 +7,12 @@ const Shop = {
     currentTab: 'cases',
     ownedCases: [],
     newItems: [],
-    isBuying: false, // Флаг для блокировки повторных покупок
+    isBuying: false,
     
     cases: [
         { 
             id: 'common_case', 
-            name: 'Базовый кейс', 
+            name: 'COMMON CASE',
             price: 1000,
             class: 'common-case',
             imagePath: 'cases/common_case.png',
@@ -20,7 +20,7 @@ const Shop = {
         },
         { 
             id: 'rare_case', 
-            name: 'Редкий кейс', 
+            name: 'RARE CASE',
             price: 2500,
             class: 'rare-case',
             imagePath: 'cases/rare_case.png',
@@ -28,7 +28,7 @@ const Shop = {
         },
         { 
             id: 'premium_case', 
-            name: 'Легендарный кейс', 
+            name: 'PREMIUM CASE',
             price: 5000,
             class: 'premium-case',
             imagePath: 'cases/premium_case.png',
@@ -36,7 +36,7 @@ const Shop = {
         },
         { 
             id: 'secret_case', 
-            name: 'Секретный кейс', 
+            name: 'SECRET CASE',
             price: 0,
             class: 'secret-case',
             imagePath: 'cases/secret_case.png',
@@ -51,14 +51,11 @@ const Shop = {
     },
     
     setupEventListeners() {
-        // Удаляем старый обработчик если был
         const casesGrid = document.querySelector('.cases-grid');
         if (casesGrid) {
-            // Удаляем все предыдущие обработчики
             const newCasesGrid = casesGrid.cloneNode(true);
             casesGrid.parentNode.replaceChild(newCasesGrid, casesGrid);
             
-            // Вешаем новый обработчик
             newCasesGrid.addEventListener('click', (e) => {
                 const buyBtn = e.target.closest('.buy-btn-simple');
                 if (buyBtn && !buyBtn.classList.contains('disabled')) {
@@ -136,7 +133,7 @@ const Shop = {
                         <div class="case-icon"><img src="${caseItem.imagePath}" alt="${caseItem.name}"></div>
                         <div class="case-info">
                             <div class="case-name">${caseItem.name}</div>
-                            <div class="secret-message">выполняйте задания →</div>
+                            <div class="secret-message">complete tasks →</div>
                         </div>
                     </div>
                 `;
@@ -151,7 +148,7 @@ const Shop = {
                             <span class="price-value">${caseItem.price}</span>
                             <button class="buy-btn-simple ${!canAfford ? 'disabled' : ''}" 
                                     data-case-id="${caseItem.id}">
-                                КУПИТЬ
+                                BUY
                             </button>
                         </div>
                     </div>
@@ -159,7 +156,6 @@ const Shop = {
             `;
         }).join('');
         
-        // Перевешиваем обработчики после рендера
         setTimeout(() => this.setupEventListeners(), 0);
     },
     
@@ -194,9 +190,7 @@ const Shop = {
             `;
         }).join('');
         
-        // Добавляем обработчики для инвентаря
         container.querySelectorAll('.inventory-item').forEach(item => {
-            // Удаляем старые обработчики
             const newItem = item.cloneNode(true);
             item.parentNode.replaceChild(newItem, item);
             
@@ -220,7 +214,7 @@ const Shop = {
         
         const statsDiv = document.createElement('div');
         statsDiv.className = 'inventory-stats';
-        statsDiv.innerHTML = `Кол-во предметов: <span>${this.ownedCases.length}</span>`;
+        statsDiv.innerHTML = `Items: <span>${this.ownedCases.length}</span>`;
         
         const grid = inventorySection.querySelector('.inventory-grid');
         if (grid) {
@@ -229,15 +223,11 @@ const Shop = {
     },
     
     buyCase(caseId) {
-        // Блокируем повторные покупки
         if (this.isBuying) {
-            console.log('Уже покупаем, подождите...');
             return;
         }
         
         this.isBuying = true;
-        
-        console.log('Покупка кейса:', caseId);
         
         const caseItem = this.cases.find(c => c.id === caseId);
         if (!caseItem) {
@@ -246,28 +236,25 @@ const Shop = {
         }
         
         if (caseItem.isSecret) {
-            App.showAlert('❌ Этот кейс нельзя купить! Выполняйте задания чтобы получить его.');
+            App.showAlert('❌ This case cannot be bought! Complete tasks to get it.');
             this.isBuying = false;
             return;
         }
         
         if (this.coins < caseItem.price) {
-            App.showAlert('❌ Недостаточно Pingcoins!');
+            App.showAlert('❌ Not enough Pingcoins!');
             this.isBuying = false;
             return;
         }
         
-        // Списываем монеты
         this.coins -= caseItem.price;
         this.updateCoinsDisplay();
         
-        // Генерируем уникальный ID
         const timestamp = Date.now();
         const random1 = Math.random().toString(36).substring(2, 10);
         const random2 = Math.random().toString(36).substring(2, 10);
         const uniqueId = `${caseId}_${timestamp}_${random1}_${random2}`;
         
-        // Добавляем ТОЛЬКО ОДИН кейс
         this.ownedCases.push({
             caseId: caseId,
             uniqueId: uniqueId,
@@ -279,23 +266,18 @@ const Shop = {
         
         App.hapticFeedback('medium');
         
-        // Если мы на вкладке инвентаря - обновляем
         if (this.currentTab === 'inventory') {
             this.renderInventory();
         }
         
-        // Показываем уведомление
-        App.showAlert(`✅ ${caseItem.name} добавлен в инвентарь!`);
+        App.showAlert(`✅ ${caseItem.name} added to inventory!`);
         
-        // Разблокируем покупки через небольшую задержку
         setTimeout(() => {
             this.isBuying = false;
         }, 300);
     },
     
     useItem(uniqueId) {
-        console.log('Использование предмета:', uniqueId);
-        
         const newIndex = this.newItems.indexOf(uniqueId);
         if (newIndex !== -1) {
             this.newItems.splice(newIndex, 1);
@@ -306,9 +288,9 @@ const Shop = {
         App.hapticFeedback('light');
         
         App.showPopup({
-            title: 'Открытие кейса',
-            message: 'Здесь будет анимация открытия',
-            buttons: [{ id: 'ok', type: 'ok', text: 'ОК' }]
+            title: 'Opening Case',
+            message: 'Animation will be here',
+            buttons: [{ id: 'ok', type: 'ok', text: 'OK' }]
         });
     },
     
@@ -334,7 +316,7 @@ const Shop = {
             this.renderInventory();
         }
         
-        App.showAlert(`✅ ${caseItem.name} добавлен в инвентарь!`);
+        App.showAlert(`✅ ${caseItem.name} added to inventory!`);
         App.hapticFeedback('medium');
     }
 };
