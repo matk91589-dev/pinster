@@ -214,6 +214,27 @@
     display: inline-block;
 }
 
+/* ===== СТИЛИ ДЛЯ ПРОФИЛЯ ===== */
+
+/* Увеличиваем карандаш */
+.edit-title-icon {
+    width: 32px !important;  /* БЫЛО 26px */
+    height: 32px !important; /* БЫЛО 26px */
+    transition: transform 0.2s ease;
+}
+
+.edit-title-icon svg {
+    width: 22px !important;  /* БЫЛО 18px */
+    height: 22px !important; /* БЫЛО 18px */
+}
+
+/* Увеличиваем кнопку "Применить" */
+.apply-btn {
+    font-size: 13px !important;    /* БЫЛО 11px */
+    padding: 4px 12px !important;  /* БЫЛО 3px 8px */
+    border-radius: 8px !important;
+}
+
 /* Транзакции переходов */
 .nav-item,
 .mode-btn,
