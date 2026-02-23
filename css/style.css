@@ -269,17 +269,17 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 40px 20px 0;
+    padding: 20px 20px 0;
     width: 100%;
 }
 
 .start-screen .section-title {
-    margin: 40px 0 4px;
+    margin: 30px 0 4px;
 }
 
 .start-avatar-square {
-    width: 280px;
-    height: 210px;
+    width: 260px;
+    height: 195px;
     margin: 0 auto;
     border: none;
     border-radius: 20px 20px 0 0;
@@ -1415,3 +1415,4 @@ input:-webkit-autofill:active {
     transition: background-color 5000s ease-in-out 0s;
     box-shadow: inset 0 0 20px 20px #1A1D24 !important;
 }
+
