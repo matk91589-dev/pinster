@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - ИСПРАВЛЕННЫЕ ЦЕНЫ
+// МАГАЗИН (Telegram Mini App версия) - ИСПРАВЛЕНО (1 КЕЙС ЗА РАЗ)
 // ============================================
 
 const Shop = {
@@ -7,12 +7,13 @@ const Shop = {
     currentTab: 'cases',
     ownedCases: [],
     newItems: [],
+    isBuying: false, // Флаг для блокировки повторных покупок
     
     cases: [
         { 
             id: 'common_case', 
             name: 'Базовый кейс', 
-            price: 1000, // БЫЛО 100, СТАЛО 1000
+            price: 1000,
             class: 'common-case',
             imagePath: 'cases/common_case.png',
             isSecret: false
@@ -20,7 +21,7 @@ const Shop = {
         { 
             id: 'rare_case', 
             name: 'Редкий кейс', 
-            price: 2500, // БЫЛО 250, СТАЛО 2500
+            price: 2500,
             class: 'rare-case',
             imagePath: 'cases/rare_case.png',
             isSecret: false
@@ -28,7 +29,7 @@ const Shop = {
         { 
             id: 'premium_case', 
             name: 'Легендарный кейс', 
-            price: 5000, // БЫЛО 500, СТАЛО 5000
+            price: 5000,
             class: 'premium-case',
             imagePath: 'cases/premium_case.png',
             isSecret: false
@@ -50,16 +51,20 @@ const Shop = {
     },
     
     setupEventListeners() {
-        // Вешаем один обработчик на контейнер (делегирование событий)
+        // Удаляем старый обработчик если был
         const casesGrid = document.querySelector('.cases-grid');
         if (casesGrid) {
-            casesGrid.addEventListener('click', (e) => {
+            // Удаляем все предыдущие обработчики
+            const newCasesGrid = casesGrid.cloneNode(true);
+            casesGrid.parentNode.replaceChild(newCasesGrid, casesGrid);
+            
+            // Вешаем новый обработчик
+            newCasesGrid.addEventListener('click', (e) => {
                 const buyBtn = e.target.closest('.buy-btn-simple');
-                if (buyBtn) {
+                if (buyBtn && !buyBtn.classList.contains('disabled')) {
                     e.preventDefault();
                     e.stopPropagation();
                     
-                    // Получаем caseId из атрибута data-case-id
                     const caseId = buyBtn.dataset.caseId;
                     if (caseId) {
                         this.buyCase(caseId);
@@ -155,7 +160,7 @@ const Shop = {
         }).join('');
         
         // Перевешиваем обработчики после рендера
-        this.setupEventListeners();
+        setTimeout(() => this.setupEventListeners(), 0);
     },
     
     renderInventory() {
@@ -191,8 +196,12 @@ const Shop = {
         
         // Добавляем обработчики для инвентаря
         container.querySelectorAll('.inventory-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                const uniqueId = item.dataset.uniqueId;
+            // Удаляем старые обработчики
+            const newItem = item.cloneNode(true);
+            item.parentNode.replaceChild(newItem, item);
+            
+            newItem.addEventListener('click', (e) => {
+                const uniqueId = newItem.dataset.uniqueId;
                 if (uniqueId) {
                     this.useItem(uniqueId);
                 }
@@ -220,33 +229,45 @@ const Shop = {
     },
     
     buyCase(caseId) {
-        console.log('Покупка кейса:', caseId); // Для отладки
+        // Блокируем повторные покупки
+        if (this.isBuying) {
+            console.log('Уже покупаем, подождите...');
+            return;
+        }
+        
+        this.isBuying = true;
+        
+        console.log('Покупка кейса:', caseId);
         
         const caseItem = this.cases.find(c => c.id === caseId);
-        if (!caseItem) return;
+        if (!caseItem) {
+            this.isBuying = false;
+            return;
+        }
         
         if (caseItem.isSecret) {
             App.showAlert('❌ Этот кейс нельзя купить! Выполняйте задания чтобы получить его.');
+            this.isBuying = false;
             return;
         }
         
         if (this.coins < caseItem.price) {
             App.showAlert('❌ Недостаточно Pingcoins!');
+            this.isBuying = false;
             return;
         }
         
-        // Покупаем сразу без confirm для быстроты
+        // Списываем монеты
         this.coins -= caseItem.price;
         this.updateCoinsDisplay();
         
-        // Генерируем реально уникальный ID
+        // Генерируем уникальный ID
         const timestamp = Date.now();
-        const random1 = Math.random().toString(36).substring(2, 15);
-        const random2 = Math.random().toString(36).substring(2, 15);
-        const random3 = Math.random().toString(36).substring(2, 15);
-        const uniqueId = `${caseId}_${timestamp}_${random1}_${random2}_${random3}`;
+        const random1 = Math.random().toString(36).substring(2, 10);
+        const random2 = Math.random().toString(36).substring(2, 10);
+        const uniqueId = `${caseId}_${timestamp}_${random1}_${random2}`;
         
-        // Добавляем ТОЛЬКО ОДИН кейс!
+        // Добавляем ТОЛЬКО ОДИН кейс
         this.ownedCases.push({
             caseId: caseId,
             uniqueId: uniqueId,
@@ -265,10 +286,15 @@ const Shop = {
         
         // Показываем уведомление
         App.showAlert(`✅ ${caseItem.name} добавлен в инвентарь!`);
+        
+        // Разблокируем покупки через небольшую задержку
+        setTimeout(() => {
+            this.isBuying = false;
+        }, 300);
     },
     
     useItem(uniqueId) {
-        console.log('Использование предмета:', uniqueId); // Для отладки
+        console.log('Использование предмета:', uniqueId);
         
         const newIndex = this.newItems.indexOf(uniqueId);
         if (newIndex !== -1) {
@@ -291,10 +317,9 @@ const Shop = {
         const caseItem = this.cases.find(c => c.id === caseId);
         
         const timestamp = Date.now();
-        const random1 = Math.random().toString(36).substring(2, 15);
-        const random2 = Math.random().toString(36).substring(2, 15);
-        const random3 = Math.random().toString(36).substring(2, 15);
-        const uniqueId = `${caseId}_${timestamp}_${random1}_${random2}_${random3}`;
+        const random1 = Math.random().toString(36).substring(2, 10);
+        const random2 = Math.random().toString(36).substring(2, 10);
+        const uniqueId = `${caseId}_${timestamp}_${random1}_${random2}`;
         
         this.ownedCases.push({
             caseId: caseId,
