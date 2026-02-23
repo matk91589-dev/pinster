@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия)
+// ПРОФИЛЬ (Telegram Mini App версия) - С СООБЩЕНИЕМ ДЛЯ INPUT
 // ============================================
 
 const Profile = {
@@ -40,6 +40,31 @@ const Profile = {
                     input.classList.remove('editable-input');
                     if (parentStat) parentStat.classList.remove('editable-input');
                 }
+            }
+        });
+    },
+    
+    // Добавляем обработчики для полей ввода
+    setupInputListeners() {
+        const ageInput = document.getElementById('ageValue');
+        const steamInput = document.getElementById('steamDisplay');
+        const faceitInput = document.getElementById('faceitLinkDisplay');
+        
+        [ageInput, steamInput, faceitInput].forEach(input => {
+            if (input) {
+                input.addEventListener('click', (e) => {
+                    if (!this.editMode) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        App.showAlert('Для изменений перейдите в раздел редактирования (карандаш)');
+                    }
+                });
+                
+                input.addEventListener('focus', (e) => {
+                    if (!this.editMode) {
+                        e.target.blur(); // Убираем фокус
+                    }
+                });
             }
         });
     },
@@ -87,6 +112,9 @@ const Profile = {
         this.tempAge = this.savedAge;
         this.tempSteam = this.savedSteam;
         this.tempFaceitLink = this.savedFaceitLink;
+        
+        // Настраиваем обработчики после загрузки
+        this.setupInputListeners();
     },
     
     toggleEditMode() {
@@ -149,8 +177,6 @@ const Profile = {
             ]
         }, (buttonId) => {
             if (buttonId === 'ok') {
-                // Здесь нужен ввод текста, но Telegram не поддерживает prompt
-                // Временно используем стандартный prompt
                 const newName = prompt('Введите новый никнейм:', this.tempName);
                 if (newName && newName.length >= 3 && newName.length <= 10) {
                     this.tempName = newName;
