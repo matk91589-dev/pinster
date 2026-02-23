@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - МГНОВЕННАЯ ПОКУПКА
+// МАГАЗИН (Telegram Mini App версия) - ИСПРАВЛЕН ДВОЙНОЙ КЛИК
 // ============================================
 
 const Shop = {
@@ -7,6 +7,7 @@ const Shop = {
     currentTab: 'cases',
     ownedCases: [],
     newItems: [],
+    processingIds: new Set(), // Добавляем Set для отслеживания обрабатываемых кейсов
     
     cases: [
         { 
@@ -50,18 +51,24 @@ const Shop = {
     },
     
     setupEventListeners() {
-        // Единый обработчик на документе
-        document.addEventListener('click', (e) => {
+        // Убираем старый обработчик если был
+        if (this.clickHandler) {
+            document.removeEventListener('click', this.clickHandler);
+        }
+        
+        this.clickHandler = (e) => {
             // Для кнопок покупки
             const buyBtn = e.target.closest('.buy-btn-simple');
             if (buyBtn && !buyBtn.classList.contains('disabled')) {
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation(); // Останавливаем дальнейшее всплытие
+                
                 const caseId = buyBtn.dataset.caseId;
                 if (caseId) {
                     this.buyCase(caseId);
                 }
-                return;
+                return false;
             }
             
             // Для предметов в инвентаре
@@ -69,13 +76,17 @@ const Shop = {
             if (inventoryItem) {
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
+                
                 const uniqueId = inventoryItem.dataset.uniqueId;
                 if (uniqueId) {
                     this.useItem(uniqueId);
                 }
-                return;
+                return false;
             }
-        });
+        };
+        
+        document.addEventListener('click', this.clickHandler);
     },
     
     updateCoinsDisplay() {
@@ -210,8 +221,12 @@ const Shop = {
         }
     },
     
-    // МГНОВЕННАЯ ПОКУПКА БЕЗ ПОДТВЕРЖДЕНИЯ
     buyCase(caseId) {
+        // Проверяем, не обрабатывается ли уже этот кейс
+        if (this.processingIds.has(caseId)) {
+            return;
+        }
+        
         const caseItem = this.cases.find(c => c.id === caseId);
         if (!caseItem) return;
         
@@ -225,7 +240,10 @@ const Shop = {
             return;
         }
         
-        // МГНОВЕННО СПИСЫВАЕМ МОНЕТЫ
+        // Добавляем в обрабатываемые
+        this.processingIds.add(caseId);
+        
+        // СПИСЫВАЕМ МОНЕТЫ
         this.coins -= caseItem.price;
         this.updateCoinsDisplay();
         
@@ -246,12 +264,17 @@ const Shop = {
         
         App.hapticFeedback('medium');
         
-        // ОБНОВЛЯЕМ ВСЁ МГНОВЕННО
-        this.renderCases(); // Обновляем кнопки (disabled/active)
+        // ОБНОВЛЯЕМ ВСЁ
+        this.renderCases();
         
         if (this.currentTab === 'inventory') {
             this.renderInventory();
         }
+        
+        // Убираем из обрабатываемых через небольшой таймаут
+        setTimeout(() => {
+            this.processingIds.delete(caseId);
+        }, 100);
     },
     
     useItem(uniqueId) {
