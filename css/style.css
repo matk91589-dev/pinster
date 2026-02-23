@@ -615,14 +615,39 @@ body:has(.search-screen.active) .bottom-nav {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    background: transparent;
+    background: transparent !important;
 }
 
 .case-icon img {
+    display: block !important;
     width: 100% !important;
     height: 100% !important;
     object-fit: contain !important;
-    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.case-icon::before,
+.case-icon::after {
+    display: none !important;
+    content: none !important;
+}
+
+/* Индивидуальные пути для каждого кейса */
+.case-item:nth-child(1) .case-icon img {
+    content: url('../cases/common_case.png');
+}
+
+.case-item:nth-child(2) .case-icon img {
+    content: url('../cases/rare_case.png');
+}
+
+.case-item:nth-child(3) .case-icon img {
+    content: url('../cases/premium_case.png');
+}
+
+.case-item:nth-child(4) .case-icon img {
+    content: url('../cases/secret_case.png');
 }
 
 .case-info {
@@ -1680,24 +1705,6 @@ input:checked + .slider:before {
 .inventory-item:active,
 .friend-item:active {
     transform: scale(0.98) !important;
-}
-
-/* ===== ПЕРЕОПРЕДЕЛЕНИЕ СТИЛЕЙ ДЛЯ КЕЙСОВ ===== */
-.case-icon img {
-    content: '' !important;
-    display: block !important;
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;
-}
-
-.case-icon::before,
-.case-icon::after {
-    display: none !important;
-}
-
-.case-icon {
-    background: none !important;
 }
 
 /* Фиксы инпутов */
