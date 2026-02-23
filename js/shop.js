@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - МАЛЕНЬКАЯ ПЛАШКА NEW НАД ТЕКСТОМ
+// МАГАЗИН (Telegram Mini App версия) - С ПОДТВЕРЖДЕНИЕМ ПОКУПКИ
 // ============================================
 
 const Shop = {
@@ -247,34 +247,44 @@ const Shop = {
             return;
         }
         
-        this.coins -= caseItem.price;
-        this.updateCoinsDisplay();
-        
-        const timestamp = Date.now();
-        const random1 = Math.random().toString(36).substring(2, 10);
-        const random2 = Math.random().toString(36).substring(2, 10);
-        const uniqueId = `${caseId}_${timestamp}_${random1}_${random2}`;
-        
-        this.ownedCases.push({
-            caseId: caseId,
-            uniqueId: uniqueId,
-            purchaseDate: timestamp
-        });
-        
-        this.newItems.push(uniqueId);
-        this.updateInventoryBadge();
-        
-        App.hapticFeedback('medium');
-        
-        if (this.currentTab === 'inventory') {
-            this.renderInventory();
-        }
-        
-        App.showAlert(`✅ ${caseItem.name} добавлен в инвентарь!`);
-        
-        setTimeout(() => {
-            this.isBuying = false;
-        }, 300);
+        // ПОКАЗЫВАЕМ ПОДТВЕРЖДЕНИЕ ПЕРЕД ПОКУПКОЙ
+        App.showConfirm(
+            `Вы уверены, что хотите купить ${caseItem.name} за ${caseItem.price} PC?`, 
+            (confirmed) => {
+                if (confirmed) {
+                    // ПОКУПАЕМ КЕЙС
+                    this.coins -= caseItem.price;
+                    this.updateCoinsDisplay();
+                    
+                    const timestamp = Date.now();
+                    const random1 = Math.random().toString(36).substring(2, 10);
+                    const random2 = Math.random().toString(36).substring(2, 10);
+                    const uniqueId = `${caseId}_${timestamp}_${random1}_${random2}`;
+                    
+                    this.ownedCases.push({
+                        caseId: caseId,
+                        uniqueId: uniqueId,
+                        purchaseDate: timestamp
+                    });
+                    
+                    this.newItems.push(uniqueId);
+                    this.updateInventoryBadge();
+                    
+                    App.hapticFeedback('medium');
+                    
+                    if (this.currentTab === 'inventory') {
+                        this.renderInventory();
+                    }
+                    
+                    App.showAlert(`✅ ${caseItem.name} добавлен в инвентарь!`);
+                }
+                
+                // Разблокируем покупки в любом случае (и при подтверждении, и при отмене)
+                setTimeout(() => {
+                    this.isBuying = false;
+                }, 300);
+            }
+        );
     },
     
     useItem(uniqueId) {
