@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - БЕЗ ЛИМИТОВ
+// МАГАЗИН (Telegram Mini App версия) - БЕЗ БАГОВ С КЛИКАМИ
 // ============================================
 
 const Shop = {
@@ -46,6 +46,27 @@ const Shop = {
     init() {
         this.updateCoinsDisplay();
         this.renderShop();
+        this.setupEventListeners();
+    },
+    
+    setupEventListeners() {
+        // Вешаем один обработчик на контейнер (делегирование событий)
+        const casesGrid = document.querySelector('.cases-grid');
+        if (casesGrid) {
+            casesGrid.addEventListener('click', (e) => {
+                const buyBtn = e.target.closest('.buy-btn-simple');
+                if (buyBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Получаем caseId из атрибута data-case-id
+                    const caseId = buyBtn.dataset.caseId;
+                    if (caseId) {
+                        this.buyCase(caseId);
+                    }
+                }
+            });
+        }
     },
     
     updateCoinsDisplay() {
@@ -124,7 +145,7 @@ const Shop = {
                         <div class="case-price-row">
                             <span class="price-value">${caseItem.price}</span>
                             <button class="buy-btn-simple ${!canAfford ? 'disabled' : ''}" 
-                                    onclick="Shop.buyCase('${caseItem.id}')">
+                                    data-case-id="${caseItem.id}">
                                 КУПИТЬ
                             </button>
                         </div>
@@ -132,6 +153,9 @@ const Shop = {
                 </div>
             `;
         }).join('');
+        
+        // Перевешиваем обработчики после рендера
+        this.setupEventListeners();
     },
     
     renderInventory() {
@@ -144,8 +168,6 @@ const Shop = {
             return;
         }
         
-        // Просто отображаем все кейсы без сортировки по new/old
-        // Но сначала новые, потом старые
         const newCases = this.ownedCases.filter(c => this.newItems.includes(c.uniqueId));
         const oldCases = this.ownedCases.filter(c => !this.newItems.includes(c.uniqueId));
         
@@ -158,7 +180,7 @@ const Shop = {
             
             return `
                 <div class="inventory-item ${isNew ? 'new-item' : ''}" 
-                     onclick="Shop.useItem('${caseItem.uniqueId}')">
+                     data-unique-id="${caseItem.uniqueId}">
                     ${isNew ? '<span class="item-badge">NEW</span>' : ''}
                     <div class="item-icon">
                         <img src="${caseData?.imagePath || 'cases/common_case.png'}" alt="case">
@@ -166,6 +188,16 @@ const Shop = {
                 </div>
             `;
         }).join('');
+        
+        // Добавляем обработчики для инвентаря
+        container.querySelectorAll('.inventory-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const uniqueId = item.dataset.uniqueId;
+                if (uniqueId) {
+                    this.useItem(uniqueId);
+                }
+            });
+        });
         
         this.renderInventoryStats();
     },
@@ -188,6 +220,8 @@ const Shop = {
     },
     
     buyCase(caseId) {
+        console.log('Покупка кейса:', caseId); // Для отладки
+        
         const caseItem = this.cases.find(c => c.id === caseId);
         if (!caseItem) return;
         
@@ -201,36 +235,40 @@ const Shop = {
             return;
         }
         
-        App.showConfirm(`Купить ${caseItem.name} за ${caseItem.price} PC?`, (confirmed) => {
-            if (confirmed) {
-                this.coins -= caseItem.price;
-                this.updateCoinsDisplay();
-                
-                // УНИКАЛЬНЫЙ ID - гарантированно разный каждый раз
-                const uniqueId = `${caseId}_${Date.now()}_${Math.random().toString(36).substring(2, 15)}_${Math.random().toString(36).substring(2, 15)}`;
-                
-                this.ownedCases.push({
-                    caseId: caseId,
-                    uniqueId: uniqueId,
-                    purchaseDate: Date.now()
-                });
-                
-                this.newItems.push(uniqueId);
-                this.updateInventoryBadge();
-                
-                App.hapticFeedback('medium');
-                
-                // Всегда обновляем инвентарь, если мы на вкладке инвентаря
-                if (this.currentTab === 'inventory') {
-                    this.renderInventory();
-                }
-                
-                App.showAlert(`✅ ${caseItem.name} добавлен в инвентарь!`);
-            }
+        // Покупаем сразу без confirm для быстроты (можно вернуть если надо)
+        this.coins -= caseItem.price;
+        this.updateCoinsDisplay();
+        
+        // Генерируем реально уникальный ID
+        const timestamp = Date.now();
+        const random1 = Math.random().toString(36).substring(2, 15);
+        const random2 = Math.random().toString(36).substring(2, 15);
+        const random3 = Math.random().toString(36).substring(2, 15);
+        const uniqueId = `${caseId}_${timestamp}_${random1}_${random2}_${random3}`;
+        
+        this.ownedCases.push({
+            caseId: caseId,
+            uniqueId: uniqueId,
+            purchaseDate: timestamp
         });
+        
+        this.newItems.push(uniqueId);
+        this.updateInventoryBadge();
+        
+        App.hapticFeedback('medium');
+        
+        // Если мы на вкладке инвентаря - обновляем
+        if (this.currentTab === 'inventory') {
+            this.renderInventory();
+        }
+        
+        // Показываем уведомление
+        App.showAlert(`✅ ${caseItem.name} добавлен в инвентарь!`);
     },
     
     useItem(uniqueId) {
+        console.log('Использование предмета:', uniqueId); // Для отладки
+        
         const newIndex = this.newItems.indexOf(uniqueId);
         if (newIndex !== -1) {
             this.newItems.splice(newIndex, 1);
@@ -251,12 +289,16 @@ const Shop = {
         const caseId = 'secret_case';
         const caseItem = this.cases.find(c => c.id === caseId);
         
-        const uniqueId = `${caseId}_${Date.now()}_${Math.random().toString(36).substring(2, 15)}_${Math.random().toString(36).substring(2, 15)}`;
+        const timestamp = Date.now();
+        const random1 = Math.random().toString(36).substring(2, 15);
+        const random2 = Math.random().toString(36).substring(2, 15);
+        const random3 = Math.random().toString(36).substring(2, 15);
+        const uniqueId = `${caseId}_${timestamp}_${random1}_${random2}_${random3}`;
         
         this.ownedCases.push({
             caseId: caseId,
             uniqueId: uniqueId,
-            purchaseDate: Date.now()
+            purchaseDate: timestamp
         });
         
         this.newItems.push(uniqueId);
@@ -270,5 +312,10 @@ const Shop = {
         App.hapticFeedback('medium');
     }
 };
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', () => {
+    Shop.init();
+});
 
 window.Shop = Shop;
