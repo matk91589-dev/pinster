@@ -67,7 +67,7 @@ body {
 
 /* ===== СКРОЛЛИРУЕМЫЙ КОНТЕНТ ===== */
 .content {
-    flex: 1 1 auto;  /* Изменено с flex: 1 на flex: 1 1 auto для лучшего растягивания */
+    flex: 1 1 auto;
     min-height: 0;
     min-width: 0;
     overflow-y: auto;
@@ -278,9 +278,9 @@ body {
 .start-screen {
     display: flex;
     flex-direction: column;
-    flex: 1 1 auto;  /* Добавлено flex: 1 1 auto для растягивания */
+    flex: 1 1 auto;
     width: 100%;
-    min-height: 0;  /* Важно для правильной работы flex-контейнера */
+    min-height: 0;
 }
 
 /* ===== СТАРТОВЫЙ ЭКРАН ===== */
@@ -370,7 +370,7 @@ body {
     width: 100%;
     z-index: 10;
     flex-shrink: 0;
-    margin-top: auto;  /* Важно: прижимает навигацию к низу */
+    margin-top: auto;  /* Критически важно: прижимает навигацию к низу */
 }
 
 .nav-item {
@@ -415,7 +415,7 @@ body {
 .screen {
     display: none;
     width: 100%;
-    flex: 1 1 auto;  /* Растягиваем экран на всю доступную высоту */
+    flex: 1 1 auto;
     min-height: 0;
 }
 
@@ -425,13 +425,14 @@ body {
     flex: 1 1 auto;
 }
 
-/* ===== ГЛАВНЫЙ ЭКРАН ===== */
+/* ===== ГЛАВНЫЙ ЭКРАН (ОСОБОЕ ВНИМАНИЕ) ===== */
 .main-screen {
     padding: 0 20px;
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
     min-height: 0;
+    height: 100%; /* Гарантируем полную высоту */
 }
 
 .main-screen .section-title {
@@ -506,6 +507,7 @@ body {
     flex-direction: column;
     flex: 1 1 auto;
     min-height: 0;
+    height: 100%;
 }
 
 .shop-tabs {
@@ -658,6 +660,7 @@ body {
     flex-direction: column;
     flex: 1 1 auto;
     min-height: 0;
+    height: 100%;
 }
 
 .profile-header {
@@ -969,6 +972,7 @@ body {
     flex-direction: column;
     flex: 1 1 auto;
     min-height: 0;
+    height: 100%;
 }
 
 .settings-content {
@@ -1050,6 +1054,7 @@ input:checked + .slider:before {
     flex-direction: column;
     flex: 1 1 auto;
     min-height: 0;
+    height: 100%;
 }
 
 .mode-header {
@@ -1108,14 +1113,6 @@ input:checked + .slider:before {
     text-align: center;
     margin-bottom: 24px;
     font-weight: 500;
-    flex-shrink: 0;
-}
-
-/* Формы на экранах режимов */
-.faceit-screen > *:not(.mode-header):not(.mode-subtitle):not(.bottom-nav),
-.premier-screen > *:not(.mode-header):not(.mode-subtitle):not(.bottom-nav),
-.prime-screen > *:not(.mode-header):not(.mode-subtitle):not(.bottom-nav),
-.public-screen > *:not(.mode-header):not(.mode-subtitle):not(.bottom-nav) {
     flex-shrink: 0;
 }
 
@@ -1264,6 +1261,7 @@ input:checked + .slider:before {
     flex-direction: column;
     flex: 1 1 auto;
     min-height: 0;
+    height: 100%;
 }
 
 .search-header {
