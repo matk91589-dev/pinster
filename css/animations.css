@@ -88,26 +88,18 @@
 
 /* ===== CS:GO КЕЙС АНИМАЦИИ ===== */
 
-/* Анимация свечения для новых кейсов - ПОСТОЯННАЯ! */
+/* Анимация свечения для новых кейсов - УМЕНЬШЕННАЯ */
 @keyframes caseGlow {
     0% { 
-        filter: drop-shadow(0 0 5px #FF5500);
+        filter: drop-shadow(0 0 3px #FF5500);
         transform: scale(1);
     }
-    25% { 
-        filter: drop-shadow(0 0 15px #FF5500);
-        transform: scale(1.02);
-    }
     50% { 
-        filter: drop-shadow(0 0 20px #FF5500);
-        transform: scale(1.03);
-    }
-    75% { 
-        filter: drop-shadow(0 0 15px #FF5500);
-        transform: scale(1.02);
+        filter: drop-shadow(0 0 8px #FF5500);
+        transform: scale(1.01);
     }
     100% { 
-        filter: drop-shadow(0 0 5px #FF5500);
+        filter: drop-shadow(0 0 3px #FF5500);
         transform: scale(1);
     }
 }
@@ -159,7 +151,7 @@
 
 /* Классы для анимаций */
 .case-glow {
-    animation: caseGlow 2s ease-in-out infinite !important; /* Бесконечная анимация */
+    animation: caseGlow 2s ease-in-out infinite !important;
 }
 
 .case-opening {
@@ -180,15 +172,16 @@
 
 /* ===== АНИМАЦИЯ ДЛЯ НОВЫХ ПРЕДМЕТОВ В ИНВЕНТАРЕ ===== */
 
-/* Постоянное свечение для новых предметов */
+/* Постоянное свечение для новых предметов - УМЕНЬШЕННОЕ */
 .new-item {
     animation: caseGlow 2s ease-in-out infinite !important;
     position: relative;
     z-index: 2;
 }
 
+/* СТАРЫЙ ДОБРЫЙ NEW БЕЙДЖ */
 .new-item .item-badge {
-    background: #FF5500;
+    background: #B00000; /* Тёмно-красный как было */
     color: white;
     font-size: 10px;
     font-weight: 700;
@@ -200,7 +193,7 @@
     z-index: 3;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    box-shadow: 0 0 10px rgba(255, 85, 0, 0.5);
+    box-shadow: none; /* Убрал свечение */
 }
 
 /* Транзакции переходов */
