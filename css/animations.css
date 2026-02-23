@@ -170,6 +170,22 @@
     animation: spinWheel 4s cubic-bezier(0.08, 0.6, 0.1, 1);
 }
 
+/* ===== ПЛАШКА NEW ДЛЯ ВКЛАДКИ ИНВЕНТАРЬ ===== */
+.new-badge {
+    background: #B00000;
+    color: white;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 5px;
+    border-radius: 4px;
+    margin-left: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    line-height: 1;
+    display: inline-block;
+    vertical-align: middle;
+}
+
 /* ===== АНИМАЦИЯ ДЛЯ НОВЫХ ПРЕДМЕТОВ В ИНВЕНТАРЕ ===== */
 
 /* Постоянное свечение для новых предметов */
@@ -179,22 +195,23 @@
     z-index: 2;
 }
 
-/* МАЛЕНЬКАЯ ПЛАШКА NEW КАК В ИНВЕНТАРЕ */
+/* ТАКАЯ ЖЕ ПЛАШКА NEW ДЛЯ ПРЕДМЕТОВ - как у вкладки инвентаря */
 .new-item .item-badge {
     background: #B00000;
     color: white;
-    font-size: 9px;  /* МЕЛКИЙ ШРИФТ */
-    font-weight: 600;
-    padding: 2px 5px;  /* МАЛЕНЬКИЕ ОТСТУПЫ */
-    border-radius: 4px;
+    font-size: 9px;  /* ТАКОЙ ЖЕ РАЗМЕР */
+    font-weight: 600; /* ТАКОЙ ЖЕ НАСЫЩЕННОСТИ */
+    padding: 2px 5px; /* ТАКИЕ ЖЕ ОТСТУПЫ */
+    border-radius: 4px; /* ТАКОЕ ЖЕ СКРУГЛЕНИЕ */
     position: absolute;
     top: 5px;
     right: 5px;
     z-index: 3;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.3px; /* ТАКОЙ ЖЕ ИНТЕРВАЛ */
     line-height: 1;
     box-shadow: none;
+    display: inline-block;
 }
 
 /* Транзакции переходов */
