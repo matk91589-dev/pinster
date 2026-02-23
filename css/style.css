@@ -1232,30 +1232,32 @@ input:checked + .slider:before {
     flex-shrink: 0;
 }
 
+/* ===== НОВЫЙ СТИЛЬ КНОПКИ НАЗАД (БЕЗ КРУЖКА) ===== */
 .back-btn {
-    width: clamp(30px, 9vw, 36px);
-    height: clamp(30px, 9vw, 36px);
-    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 40px;
+    height: 40px;
     background: transparent;
-    border: 2px solid #2A2F3A;
-    color: #9BA1B0;
-    font-size: clamp(18px, 5.5vw, 22px);
+    border: none;
+    color: #FF5500;
+    font-size: 24px;
     font-weight: 700;
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: absolute;
-    left: 0;
-    top: -0.5vh;
+    cursor: pointer;
     transition: all 0.2s;
     flex-shrink: 0;
 }
 
 .back-btn:hover {
-    border-color: #FF5500;
-    color: #F5F5F5;
-    transform: scale(1.02);
+    opacity: 0.8;
+}
+
+.back-btn:active {
+    transform: scale(0.95);
 }
 
 .mode-title {
