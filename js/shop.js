@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - С ПОДТВЕРЖДЕНИЕМ ПОКУПКИ
+// МАГАЗИН (Telegram Mini App версия) - БЕЗ СООБЩЕНИЙ, ЧИНИК КЛИКОВ
 // ============================================
 
 const Shop = {
@@ -51,24 +51,21 @@ const Shop = {
     },
     
     setupEventListeners() {
-        const casesGrid = document.querySelector('.cases-grid');
-        if (casesGrid) {
-            const newCasesGrid = casesGrid.cloneNode(true);
-            casesGrid.parentNode.replaceChild(newCasesGrid, casesGrid);
-            
-            newCasesGrid.addEventListener('click', (e) => {
-                const buyBtn = e.target.closest('.buy-btn-simple');
-                if (buyBtn && !buyBtn.classList.contains('disabled')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    const caseId = buyBtn.dataset.caseId;
-                    if (caseId) {
-                        this.buyCase(caseId);
-                    }
+        // Убираем сложную логику с клонированием, вешаем обработчик просто на документ
+        document.removeEventListener('click', this.handleBuyClick);
+        this.handleBuyClick = (e) => {
+            const buyBtn = e.target.closest('.buy-btn-simple');
+            if (buyBtn && !buyBtn.classList.contains('disabled')) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const caseId = buyBtn.dataset.caseId;
+                if (caseId) {
+                    this.buyCase(caseId);
                 }
-            });
-        }
+            }
+        };
+        document.addEventListener('click', this.handleBuyClick.bind(this));
     },
     
     updateCoinsDisplay() {
@@ -155,8 +152,6 @@ const Shop = {
                 </div>
             `;
         }).join('');
-        
-        setTimeout(() => this.setupEventListeners(), 0);
     },
     
     renderInventory() {
@@ -190,16 +185,16 @@ const Shop = {
             `;
         }).join('');
         
+        // Вешаем обработчики на предметы инвентаря
         container.querySelectorAll('.inventory-item').forEach(item => {
-            const newItem = item.cloneNode(true);
-            item.parentNode.replaceChild(newItem, item);
-            
-            newItem.addEventListener('click', (e) => {
-                const uniqueId = newItem.dataset.uniqueId;
+            item.removeEventListener('click', this.handleItemClick);
+            this.handleItemClick = (e) => {
+                const uniqueId = item.dataset.uniqueId;
                 if (uniqueId) {
                     this.useItem(uniqueId);
                 }
-            });
+            };
+            item.addEventListener('click', this.handleItemClick.bind(this));
         });
         
         this.renderInventoryStats();
@@ -276,10 +271,10 @@ const Shop = {
                         this.renderInventory();
                     }
                     
-                    App.showAlert(`✅ ${caseItem.name} добавлен в инвентарь!`);
+                    // СООБЩЕНИЕ УБРАНО!
                 }
                 
-                // Разблокируем покупки в любом случае (и при подтверждении, и при отмене)
+                // Разблокируем покупки
                 setTimeout(() => {
                     this.isBuying = false;
                 }, 300);
@@ -326,7 +321,7 @@ const Shop = {
             this.renderInventory();
         }
         
-        App.showAlert(`✅ ${caseItem.name} добавлен в инвентарь!`);
+        // СООБЩЕНИЕ УБРАНО!
         App.hapticFeedback('medium');
     }
 };
