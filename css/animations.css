@@ -199,16 +199,16 @@
 .new-item .item-badge {
     background: #B00000;
     color: white;
-    font-size: 9px;  /* ТАКОЙ ЖЕ РАЗМЕР */
-    font-weight: 600; /* ТАКОЙ ЖЕ НАСЫЩЕННОСТИ */
-    padding: 2px 5px; /* ТАКИЕ ЖЕ ОТСТУПЫ */
-    border-radius: 4px; /* ТАКОЕ ЖЕ СКРУГЛЕНИЕ */
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 5px;
+    border-radius: 4px;
     position: absolute;
     top: 5px;
     right: 5px;
     z-index: 3;
     text-transform: uppercase;
-    letter-spacing: 0.3px; /* ТАКОЙ ЖЕ ИНТЕРВАЛ */
+    letter-spacing: 0.3px;
     line-height: 1;
     box-shadow: none;
     display: inline-block;
@@ -240,13 +240,25 @@
     transition: border 0.1s ease, border-width 0.1s ease, transform 0.2s ease;
 }
 
-/* Hover эффекты */
-.nav-item:hover,
-.mode-btn:hover,
-.friend-item:hover {
-    transform: translateY(-2px);
+/* Hover эффекты - ОБНОВЛЕНО */
+.nav-item:hover {
+    transform: scale(1.02);
 }
 
+/* Кнопки на главном экране - scale 0.97 при наведении */
+.mode-btn:hover {
+    transform: scale(0.97) !important;
+    border-color: #FF5500;
+    background: #1E2128;
+}
+
+/* Друзья в профиле - scale 0.98 при наведении */
+.friend-item:hover {
+    transform: scale(0.98) !important;
+    border-color: #FF5500;
+}
+
+/* Остальные hover эффекты */
 .profile-avatar:hover,
 .profile-name:hover,
 .stat-card:hover,
@@ -254,12 +266,42 @@
     transform: scale(1.01);
 }
 
+.primary-btn:hover,
+.mode-search-btn:hover,
+.cancel-search-btn:hover,
+.logo:hover,
+.icon-settings:hover,
+.edit-title-icon:hover,
+.apply-btn:hover,
+.back-btn:hover,
+.shop-tab:hover,
+.buy-btn-simple:hover,
+.inventory-item:hover {
+    transform: scale(1.01) !important;
+}
+
+/* Убираем масштабирование у элементов, где нужно только изменение цвета */
+.shop-tab:hover,
+.buy-btn-simple:hover,
+.inventory-item:hover {
+    transform: none !important;
+}
+
 /* Active состояния */
 .primary-btn:active,
 .mode-search-btn:active,
 .cancel-search-btn:active,
-.buy-btn:active {
-    transform: scale(0.95);
+.logo:active,
+.icon-settings:active,
+.mode-btn:active,
+.edit-title-icon:active,
+.apply-btn:active,
+.back-btn:active,
+.shop-tab:active,
+.buy-btn-simple:active,
+.inventory-item:active,
+.friend-item:active {
+    transform: scale(0.95) !important;
 }
 
 /* Добавляем анимацию для нового оранжевого цвета */
