@@ -71,6 +71,40 @@ const App = {
         }
     },
     
+    // НОВЫЙ МЕТОД: обновление активной кнопки в навигации
+    updateNavHighlight(screenId) {
+        // Убираем active у всех кнопок
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // Определяем, какая кнопка должна быть активной
+        let activeNavId = null;
+        
+        if (screenId === 'mainScreen') {
+            activeNavId = 'navMain';
+        } else if (screenId === 'shopScreen') {
+            activeNavId = 'navShop';
+        } else if (screenId === 'profileScreen') {
+            activeNavId = 'navProfile';
+        } else if (screenId === 'settingsScreen') {
+            // Для настроек ничего не подсвечиваем или можно главную
+            activeNavId = 'navMain';
+        } else {
+            // Для остальных экранов (faceit, premier, prime, public, search)
+            // оставляем подсветку на главной
+            activeNavId = 'navMain';
+        }
+        
+        // Добавляем active нужной кнопке
+        if (activeNavId) {
+            const navItem = document.getElementById(activeNavId);
+            if (navItem) {
+                navItem.classList.add('active');
+            }
+        }
+    },
+    
     hapticFeedback(style = 'light') {
         if (this.tg?.HapticFeedback) {
             this.tg.HapticFeedback.impactOccurred(style);
@@ -122,6 +156,9 @@ const App = {
             
             // Хаптик
             this.hapticFeedback('light');
+            
+            // ОБНОВЛЯЕМ ПОДСВЕТКУ НАВИГАЦИИ
+            this.updateNavHighlight(screenId);
         }
         
         // Обновляем BackButton
