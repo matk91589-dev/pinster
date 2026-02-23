@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - ИСПРАВЛЕН ДВОЙНОЙ КЛИК
+// МАГАЗИН (Telegram Mini App версия) - НОВЫЕ КЕЙСЫ ПЕРВЫЕ
 // ============================================
 
 const Shop = {
@@ -7,7 +7,7 @@ const Shop = {
     currentTab: 'cases',
     ownedCases: [],
     newItems: [],
-    processingIds: new Set(), // Добавляем Set для отслеживания обрабатываемых кейсов
+    processingIds: new Set(),
     
     cases: [
         { 
@@ -51,18 +51,16 @@ const Shop = {
     },
     
     setupEventListeners() {
-        // Убираем старый обработчик если был
         if (this.clickHandler) {
             document.removeEventListener('click', this.clickHandler);
         }
         
         this.clickHandler = (e) => {
-            // Для кнопок покупки
             const buyBtn = e.target.closest('.buy-btn-simple');
             if (buyBtn && !buyBtn.classList.contains('disabled')) {
                 e.preventDefault();
                 e.stopPropagation();
-                e.stopImmediatePropagation(); // Останавливаем дальнейшее всплытие
+                e.stopImmediatePropagation();
                 
                 const caseId = buyBtn.dataset.caseId;
                 if (caseId) {
@@ -71,7 +69,6 @@ const Shop = {
                 return false;
             }
             
-            // Для предметов в инвентаре
             const inventoryItem = e.target.closest('.inventory-item');
             if (inventoryItem) {
                 e.preventDefault();
@@ -186,7 +183,18 @@ const Shop = {
             return;
         }
         
-        container.innerHTML = this.ownedCases.map(caseItem => {
+        // СОРТИРУЕМ: сначала новые, потом старые, внутри каждой группы по дате (сначала свежие)
+        const sortedCases = [...this.ownedCases].sort((a, b) => {
+            const aIsNew = this.newItems.includes(a.uniqueId);
+            const bIsNew = this.newItems.includes(b.uniqueId);
+            
+            if (aIsNew && !bIsNew) return -1;
+            if (!aIsNew && bIsNew) return 1;
+            
+            return b.purchaseDate - a.purchaseDate;
+        });
+        
+        container.innerHTML = sortedCases.map(caseItem => {
             const isNew = this.newItems.includes(caseItem.uniqueId);
             const caseData = this.cases.find(c => c.id === caseItem.caseId);
             
@@ -222,7 +230,6 @@ const Shop = {
     },
     
     buyCase(caseId) {
-        // Проверяем, не обрабатывается ли уже этот кейс
         if (this.processingIds.has(caseId)) {
             return;
         }
@@ -240,19 +247,15 @@ const Shop = {
             return;
         }
         
-        // Добавляем в обрабатываемые
         this.processingIds.add(caseId);
         
-        // СПИСЫВАЕМ МОНЕТЫ
         this.coins -= caseItem.price;
         this.updateCoinsDisplay();
         
-        // ГЕНЕРИРУЕМ ID
         const timestamp = Date.now();
         const random = Math.random().toString(36).substring(2, 15);
         const uniqueId = `${caseId}_${timestamp}_${random}`;
         
-        // ДОБАВЛЯЕМ КЕЙС
         this.ownedCases.push({
             caseId: caseId,
             uniqueId: uniqueId,
@@ -264,14 +267,12 @@ const Shop = {
         
         App.hapticFeedback('medium');
         
-        // ОБНОВЛЯЕМ ВСЁ
         this.renderCases();
         
         if (this.currentTab === 'inventory') {
             this.renderInventory();
         }
         
-        // Убираем из обрабатываемых через небольшой таймаут
         setTimeout(() => {
             this.processingIds.delete(caseId);
         }, 100);
