@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - ФИНАЛЬНЫЙ ФИКС
+// МАГАЗИН (Telegram Mini App версия) - МГНОВЕННАЯ ПОКУПКА
 // ============================================
 
 const Shop = {
@@ -50,7 +50,7 @@ const Shop = {
     },
     
     setupEventListeners() {
-        // ЕБАНЫЙ ДЕЛЕГИРОВАНИЕ - РАБОТАЕТ ВСЕГДА
+        // Единый обработчик на документе
         document.addEventListener('click', (e) => {
             // Для кнопок покупки
             const buyBtn = e.target.closest('.buy-btn-simple');
@@ -175,7 +175,6 @@ const Shop = {
             return;
         }
         
-        // Показываем все кейсы
         container.innerHTML = this.ownedCases.map(caseItem => {
             const isNew = this.newItems.includes(caseItem.uniqueId);
             const caseData = this.cases.find(c => c.id === caseItem.caseId);
@@ -211,6 +210,7 @@ const Shop = {
         }
     },
     
+    // МГНОВЕННАЯ ПОКУПКА БЕЗ ПОДТВЕРЖДЕНИЯ
     buyCase(caseId) {
         const caseItem = this.cases.find(c => c.id === caseId);
         if (!caseItem) return;
@@ -225,39 +225,33 @@ const Shop = {
             return;
         }
         
-        // ПОКАЗЫВАЕМ ПОДТВЕРЖДЕНИЕ
-        App.showConfirm(
-            `Вы уверены, что хотите купить ${caseItem.name} за ${caseItem.price} PC?`, 
-            (confirmed) => {
-                if (confirmed) {
-                    // СПИСЫВАЕМ МОНЕТЫ
-                    this.coins -= caseItem.price;
-                    this.updateCoinsDisplay();
-                    
-                    // ГЕНЕРИРУЕМ ID
-                    const timestamp = Date.now();
-                    const random = Math.random().toString(36).substring(2, 15);
-                    const uniqueId = `${caseId}_${timestamp}_${random}`;
-                    
-                    // ДОБАВЛЯЕМ КЕЙС
-                    this.ownedCases.push({
-                        caseId: caseId,
-                        uniqueId: uniqueId,
-                        purchaseDate: timestamp
-                    });
-                    
-                    this.newItems.push(uniqueId);
-                    this.updateInventoryBadge();
-                    
-                    App.hapticFeedback('medium');
-                    
-                    // ОБНОВЛЯЕМ ИНВЕНТАРЬ ЕСЛИ НАДО
-                    if (this.currentTab === 'inventory') {
-                        this.renderInventory();
-                    }
-                }
-            }
-        );
+        // МГНОВЕННО СПИСЫВАЕМ МОНЕТЫ
+        this.coins -= caseItem.price;
+        this.updateCoinsDisplay();
+        
+        // ГЕНЕРИРУЕМ ID
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substring(2, 15);
+        const uniqueId = `${caseId}_${timestamp}_${random}`;
+        
+        // ДОБАВЛЯЕМ КЕЙС
+        this.ownedCases.push({
+            caseId: caseId,
+            uniqueId: uniqueId,
+            purchaseDate: timestamp
+        });
+        
+        this.newItems.push(uniqueId);
+        this.updateInventoryBadge();
+        
+        App.hapticFeedback('medium');
+        
+        // ОБНОВЛЯЕМ ВСЁ МГНОВЕННО
+        this.renderCases(); // Обновляем кнопки (disabled/active)
+        
+        if (this.currentTab === 'inventory') {
+            this.renderInventory();
+        }
     },
     
     useItem(uniqueId) {
