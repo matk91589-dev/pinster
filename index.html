@@ -24,15 +24,14 @@
             opacity: 1;
             display: flex;
         }
-        .app-content {
-            overscroll-behavior: contain;
-        }
     </style>
 </head>
 <body>
-    <div class="app">
+    <!-- ОСНОВНОЙ КОНТЕЙНЕР С КЛАССОМ phone-frame -->
+    <div class="phone-frame">
+        
         <!-- Хедер (один на всё приложение) -->
-        <header class="app-header header">
+        <header class="header">  <!-- Убрал app-header, оставил header как в CSS -->
             <div class="logo" onclick="Logo.handleClick()">
                 <span class="ping">Ping</span><span class="ster">ster</span>
             </div>
@@ -44,8 +43,8 @@
             </div>
         </header>
 
-        <!-- Контент (скроллится) -->
-        <main class="app-content">
+        <!-- Контент (скроллится) - КЛАСС content КАК В CSS -->
+        <main class="content">
             <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
                 <div class="start-avatar-square" id="startAvatar">
@@ -63,7 +62,7 @@
             </div>
 
             <!-- ГЛАВНЫЙ ЭКРАН -->
-            <div id="mainScreen" class="screen screen-main main-screen">
+            <div id="mainScreen" class="screen main-screen">  <!-- Убрал screen-main, оставил main-screen -->
                 <div class="section-title">Выбор режима</div>
                 <div class="section-subtitle">Подберите подходящий</div>
                 <div class="mode-container">
@@ -75,7 +74,7 @@
             </div>
 
             <!-- ЭКРАН МАГАЗИНА -->
-            <div id="shopScreen" class="screen screen-shop">
+            <div id="shopScreen" class="screen shop-screen">  <!-- Убрал screen-shop, оставил shop-screen -->
                 <div class="title-row">
                     <div class="title-left"><div class="section-title">Магазин</div></div>
                     <div class="coins-header">Pingcoins: <span id="coinsAmount">99999</span></div>
@@ -127,7 +126,7 @@
             </div>
 
             <!-- ЭКРАН ПРОФИЛЯ -->
-            <div id="profileScreen" class="screen screen-profile">
+            <div id="profileScreen" class="screen profile-screen">  <!-- Убрал screen-profile, оставил profile-screen -->
                 <div class="title-row">
                     <div class="title-left">
                         <div class="section-title">Ваш профиль</div>
@@ -194,7 +193,7 @@
             </div>
 
             <!-- ЭКРАН НАСТРОЕК -->
-            <div id="settingsScreen" class="screen screen-settings">
+            <div id="settingsScreen" class="screen settings-screen">  <!-- Убрал screen-settings, оставил settings-screen -->
                 <div class="title-row"><div class="title-left"><div class="section-title">Настройки</div></div></div>
                 <div class="settings-content">
                     <div class="settings-item"><span class="settings-label">Звуки</span><label class="switch"><input type="checkbox" id="soundToggle" checked><span class="slider round"></span></label></div>
@@ -205,7 +204,7 @@
             </div>
 
             <!-- ЭКРАН FACEIT -->
-            <div id="faceitScreen" class="screen screen-faceit">
+            <div id="faceitScreen" class="screen faceit-screen">  <!-- Убрал screen-faceit, оставил faceit-screen -->
                 <div class="mode-header">
                     <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
                     <div class="mode-title faceit">FACEIT</div>
@@ -251,7 +250,7 @@
             </div>
 
             <!-- ЭКРАН PREMIER -->
-            <div id="premierScreen" class="screen screen-premier">
+            <div id="premierScreen" class="screen premier-screen">  <!-- Убрал screen-premier, оставил premier-screen -->
                 <div class="mode-header">
                     <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
                     <div class="mode-title premier">PREMIER</div>
@@ -294,7 +293,7 @@
             </div>
 
             <!-- ЭКРАН MM PRIME -->
-            <div id="primeScreen" class="screen screen-prime">
+            <div id="primeScreen" class="screen prime-screen">  <!-- Убрал screen-prime, оставил prime-screen -->
                 <div class="mode-header">
                     <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
                     <div class="mode-title prime">MM PRIME</div>
@@ -344,7 +343,7 @@
             </div>
 
             <!-- ЭКРАН MM PUBLIC -->
-            <div id="publicScreen" class="screen screen-public">
+            <div id="publicScreen" class="screen public-screen">  <!-- Убрал screen-public, оставил public-screen -->
                 <div class="mode-header">
                     <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
                     <div class="mode-title public">MM PUBLIC</div>
@@ -394,7 +393,7 @@
             </div>
 
             <!-- ЭКРАН ПОИСКА -->
-            <div id="searchScreen" class="screen screen-search">
+            <div id="searchScreen" class="screen search-screen">  <!-- Убрал screen-search, оставил search-screen -->
                 <div class="search-header">
                     <div class="search-title" id="searchModeTitle">FACEIT</div>
                     <div class="search-timer" id="searchTimer">00:00</div>
@@ -407,8 +406,8 @@
             </div>
         </main>
 
-        <!-- Нижняя навигация (одна на всё приложение) -->
-        <nav class="app-nav bottom-nav">
+        <!-- Нижняя навигация (одна на всё приложение) - КЛАСС bottom-nav КАК В CSS -->
+        <nav class="bottom-nav">  <!-- Убрал app-nav, оставил bottom-nav -->
             <div class="nav-item active" onclick="App.showScreen('mainScreen', true)">
                 <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
                 <span class="nav-label">Главная</span>
@@ -424,7 +423,7 @@
         </nav>
     </div>
 
-    <!-- ТВОИ JS ФАЙЛЫ (НОВЫЕ) -->
+    <!-- ТВОИ JS ФАЙЛЫ -->
     <script src="js/config.js"></script>
     <script src="js/globals.js"></script>
     <script src="js/navigation.js"></script>
