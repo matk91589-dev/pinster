@@ -37,7 +37,7 @@ body {
     position: relative;
     width: 100%;
     max-width: 1000px;
-    aspect-ratio: 2 / 3;  /* Единое соотношение 3:2 для всех устройств */
+    aspect-ratio: 1 / 2;
     margin: 0 auto;
     background: #111317;
     display: flex;
@@ -63,7 +63,7 @@ body {
     .phone-frame {
         width: 90%;
         max-width: 800px;  /* Ограничиваем максимальную ширину на ПК */
-        aspect-ratio: 2 /3;  /* Сохраняем то же соотношение */
+        aspect-ratio: 1 / 2;  /* Сохраняем то же соотношение */
         margin: 0 auto;
         border-radius: 36px;  /* Более скругленные углы на ПК */
     }
@@ -72,7 +72,7 @@ body {
 /* ===== ДЛЯ ОЧЕНЬ МАЛЕНЬКИХ ЭКРАНОВ ===== */
 @media (max-width: 480px) {
     .phone-frame {
-        aspect-ratio: 2 / 3;  /* То же соотношение */
+        aspect-ratio: 1 / 2;  /* То же соотношение */
         border-radius: 0;  /* На очень маленьких экранах убираем скругление */
     }
 }
@@ -2073,6 +2073,7 @@ input:-webkit-autofill:active {
     transition: background-color 5000s ease-in-out 0s;
     box-shadow: inset 0 0 20px 20px #1A1D24 !important;
 }
+
 
 
 
