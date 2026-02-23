@@ -1626,7 +1626,7 @@ input:checked + .slider:before {
 .buy-btn-simple:hover,
 .inventory-item:hover,
 .friend-item:hover {
-    transform: scale(1.05) !important;
+    transform: scale(1.02) !important;
 }
 
 .mode-btn.faceit:hover,
@@ -1649,7 +1649,7 @@ input:checked + .slider:before {
 .buy-btn-simple:active,
 .inventory-item:active,
 .friend-item:active {
-    transform: scale(0.95) !important;
+    transform: scale(0.97) !important;
 }
 
 /* Фиксы инпутов */
@@ -1692,3 +1692,4 @@ input:-webkit-autofill:active {
     transition: background-color 5000s ease-in-out 0s;
     box-shadow: inset 0 0 20px 20px #1A1D24 !important;
 }
+
