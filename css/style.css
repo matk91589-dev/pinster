@@ -67,7 +67,7 @@ body {
 
 /* ===== СКРОЛЛИРУЕМЫЙ КОНТЕНТ ===== */
 .content {
-    flex: 1;
+    flex: 1 1 auto;  /* Изменено с flex: 1 на flex: 1 1 auto для лучшего растягивания */
     min-height: 0;
     min-width: 0;
     overflow-y: auto;
@@ -75,7 +75,8 @@ body {
     width: 100%;
     position: relative;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 0; /* Убираем padding, так как навигация будет поверх */
+    display: flex;
+    flex-direction: column;
 }
 
 /* ===== ХЕДЕР ===== */
@@ -277,8 +278,9 @@ body {
 .start-screen {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    flex: 1 1 auto;  /* Добавлено flex: 1 1 auto для растягивания */
     width: 100%;
+    min-height: 0;  /* Важно для правильной работы flex-контейнера */
 }
 
 /* ===== СТАРТОВЫЙ ЭКРАН ===== */
@@ -354,7 +356,7 @@ body {
     opacity: 0.9;
 }
 
-/* ===== НИЖНЯЯ НАВИГАЦИЯ (СТИКИ) ===== */
+/* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
 .bottom-nav {
     position: sticky;
     bottom: 0;
@@ -367,8 +369,8 @@ body {
     background: #111317;
     width: 100%;
     z-index: 10;
-    flex-shrink: 0; /* Запрещаем сжатие */
-    margin-top: auto; /* Прижимаем к низу при необходимости */
+    flex-shrink: 0;
+    margin-top: auto;  /* Важно: прижимает навигацию к низу */
 }
 
 .nav-item {
@@ -413,35 +415,43 @@ body {
 .screen {
     display: none;
     width: 100%;
-    height: 100%;
+    flex: 1 1 auto;  /* Растягиваем экран на всю доступную высоту */
+    min-height: 0;
 }
 
 .screen.active {
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
 }
 
 /* ===== ГЛАВНЫЙ ЭКРАН ===== */
 .main-screen {
     padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .main-screen .section-title {
     margin: 16px 0 4px;
+    flex-shrink: 0;
 }
 
 .main-screen .section-subtitle {
     margin: 0 0 20px;
+    flex-shrink: 0;
 }
 
 .mode-container {
-    flex: 1;
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     gap: 12px;
     margin: 0;
     width: 100%;
-    padding-bottom: 20px;
+    min-height: 0;
 }
 
 .mode-btn {
@@ -458,6 +468,7 @@ body {
     text-align: left;
     position: relative;
     transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .mode-btn:hover {
@@ -491,12 +502,17 @@ body {
 /* ===== МАГАЗИН ===== */
 .shop-screen {
     padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .shop-tabs {
     display: flex;
     gap: 12px;
     margin: 16px 0;
+    flex-shrink: 0;
 }
 
 .shop-tab {
@@ -519,6 +535,7 @@ body {
 .cases-section,
 .inventory-section {
     margin: 16px 0;
+    flex-shrink: 0;
 }
 
 .cases-grid {
@@ -637,6 +654,10 @@ body {
 /* ===== ПРОФИЛЬ ===== */
 .profile-screen {
     padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .profile-header {
@@ -645,6 +666,7 @@ body {
     gap: 16px;
     margin: 16px 0;
     padding: 0;
+    flex-shrink: 0;
 }
 
 .profile-avatar {
@@ -716,6 +738,7 @@ body {
     display: flex;
     gap: 12px;
     margin: 16px 0;
+    flex-shrink: 0;
 }
 
 .stat-card {
@@ -769,6 +792,7 @@ body {
     flex-direction: column;
     gap: 16px;
     margin: 16px 0;
+    flex-shrink: 0;
 }
 
 .profile-stat-card {
@@ -815,7 +839,7 @@ body {
 /* ===== ДРУЗЬЯ ===== */
 .friends-section {
     width: 100%;
-    flex: 1;
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     min-height: 0;
@@ -828,6 +852,7 @@ body {
     gap: 8px;
     margin-bottom: 12px;
     padding: 0;
+    flex-shrink: 0;
 }
 
 .search-icon {
@@ -873,9 +898,10 @@ body {
 }
 
 .friends-list {
-    flex: 1;
+    flex: 1 1 auto;
     overflow-y: auto;
     padding-right: 6px;
+    min-height: 0;
 }
 
 .friends-list::-webkit-scrollbar {
@@ -939,10 +965,17 @@ body {
 /* ===== ЭКРАН НАСТРОЕК ===== */
 .settings-screen {
     padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .settings-content {
     margin: 16px 0;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
 }
 
 .settings-item {
@@ -1013,6 +1046,10 @@ input:checked + .slider:before {
 .prime-screen,
 .public-screen {
     padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .mode-header {
@@ -1021,6 +1058,7 @@ input:checked + .slider:before {
     justify-content: center;
     margin: 16px 0 24px;
     position: relative;
+    flex-shrink: 0;
 }
 
 .back-btn {
@@ -1070,6 +1108,15 @@ input:checked + .slider:before {
     text-align: center;
     margin-bottom: 24px;
     font-weight: 500;
+    flex-shrink: 0;
+}
+
+/* Формы на экранах режимов */
+.faceit-screen > *:not(.mode-header):not(.mode-subtitle):not(.bottom-nav),
+.premier-screen > *:not(.mode-header):not(.mode-subtitle):not(.bottom-nav),
+.prime-screen > *:not(.mode-header):not(.mode-subtitle):not(.bottom-nav),
+.public-screen > *:not(.mode-header):not(.mode-subtitle):not(.bottom-nav) {
+    flex-shrink: 0;
 }
 
 .input-label {
@@ -1213,6 +1260,10 @@ input:checked + .slider:before {
 /* ===== ЭКРАН ПОИСКА ===== */
 .search-screen {
     padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .search-header {
@@ -1222,6 +1273,7 @@ input:checked + .slider:before {
     padding: 20px 0;
     border-bottom: 1px solid #1E2128;
     margin-bottom: 20px;
+    flex-shrink: 0;
 }
 
 .search-title {
@@ -1246,12 +1298,14 @@ input:checked + .slider:before {
     color: #9BA1B0;
     margin: 30px 0;
     font-weight: 500;
+    flex-shrink: 0;
 }
 
 .search-loading {
     display: flex;
     justify-content: center;
     margin: 40px 0;
+    flex-shrink: 0;
 }
 
 .spinner {
@@ -1280,6 +1334,7 @@ input:checked + .slider:before {
     cursor: pointer;
     margin: 20px 0;
     transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .cancel-search-btn:hover {
