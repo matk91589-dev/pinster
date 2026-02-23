@@ -32,12 +32,12 @@ body {
     padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* ===== ОСНОВНОЙ КОНТЕЙНЕР ===== */
+/* ===== ОСНОВНОЙ КОНТЕЙНЕР С АВТОПОДГОНКОЙ ===== */
 .phone-frame {
     position: relative;
     width: 100%;
-    max-width: 380px;
-    height: 700px;
+    height: 85vh; /* Адаптивная высота на основе viewport */
+    max-width: 1000px; /* Максимальная ширина для больших экранов */
     margin: 0 auto;
     background: #111317;
     display: flex;
@@ -50,8 +50,8 @@ body {
     border: 1px solid rgba(245, 245, 245, 0.05);
 }
 
-/* ===== ЭКРАН В ЭКРАНЕ ДЛЯ ПК ===== */
-@media (min-width: 768px) {
+/* ===== АДАПТАЦИЯ ДЛЯ ПЛАНШЕТОВ ===== */
+@media (min-width: 768px) and (max-width: 1023px) {
     body {
         background: #0D0F15;
         display: flex;
@@ -60,22 +60,37 @@ body {
         padding: 20px;
     }
     .phone-frame {
-        width: 380px;
-        height: 700px;
+        max-width: 480px; /* Ограничение для планшетов */
+        height: 80vh; /* Высота остается адаптивной */
+        width: 90%;
+        border-radius: 36px;
+    }
+}
+
+/* ===== АДАПТАЦИЯ ДЛЯ ПК ===== */
+@media (min-width: 1024px) {
+    body {
+        background: #0D0F15;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    .phone-frame {
+        width: 800px; /* Фиксированная ширина для ПК */
+        height: 90vh; /* Высота подстраивается */
         max-width: none;
         border-radius: 36px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-        margin: 0 auto;
     }
 }
 
 /* ===== СКРОЛЛИРУЕМЫЙ КОНТЕНТ ===== */
 .content {
-    flex: 1;
+    flex: 1; /* Контент растягивается по доступному пространству */
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
+    height: 100%; /* Подстраивается по высоте */
     overflow: hidden;
     position: relative;
 }
@@ -92,7 +107,7 @@ body {
 }
 
 .logo {
-    font-size: 24px;
+    font-size: clamp(20px, 5vw, 24px); /* Адаптивный размер шрифта */
     font-weight: 700;
     letter-spacing: -0.5px;
     color: #F5F5F5;
@@ -125,8 +140,8 @@ body {
 }
 
 .icon-settings {
-    width: 36px;
-    height: 36px;
+    width: clamp(32px, 8vw, 36px); /* Адаптивный размер */
+    height: clamp(32px, 8vw, 36px);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -142,8 +157,8 @@ body {
 }
 
 .icon-settings svg {
-    width: 22px;
-    height: 22px;
+    width: clamp(18px, 5vw, 22px);
+    height: clamp(18px, 5vw, 22px);
     stroke: #F5F5F5;
     stroke-width: 2;
     fill: none;
@@ -177,7 +192,7 @@ body {
 .title-left .section-title {
     margin-bottom: 0;
     line-height: 1;
-    font-size: 22px;
+    font-size: clamp(18px, 5vw, 22px); /* Адаптивный размер */
 }
 
 .edit-controls {
@@ -187,8 +202,8 @@ body {
 }
 
 .edit-title-icon {
-    width: 26px;
-    height: 26px;
+    width: clamp(22px, 6vw, 26px);
+    height: clamp(22px, 6vw, 26px);
     background: transparent;
     border: none;
     display: flex;
@@ -203,8 +218,8 @@ body {
 }
 
 .edit-title-icon svg {
-    width: 18px;
-    height: 18px;
+    width: clamp(14px, 4vw, 18px);
+    height: clamp(14px, 4vw, 18px);
     stroke: #9BA1B0;
     stroke-width: 2;
     fill: none;
@@ -221,7 +236,7 @@ body {
     border-radius: 6px;
     padding: 3px 8px;
     color: #FF5500;
-    font-size: 11px;
+    font-size: clamp(10px, 2.5vw, 11px);
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -244,7 +259,7 @@ body {
     background: #1A1D24;
     border-radius: 8px;
     padding: 5px 10px;
-    font-size: 12px;
+    font-size: clamp(10px, 3vw, 12px);
     color: #F5F5F5;
     border: none;
     font-weight: 600;
@@ -252,7 +267,7 @@ body {
 
 /* ===== ГЛОБАЛЬНЫЕ ЗАГОЛОВКИ ===== */
 .section-title {
-    font-size: 24px;
+    font-size: clamp(20px, 6vw, 24px); /* Адаптивный размер */
     font-weight: 700;
     color: #F5F5F5;
     letter-spacing: -0.5px;
@@ -261,7 +276,7 @@ body {
 }
 
 .section-subtitle {
-    font-size: 14px;
+    font-size: clamp(12px, 3.5vw, 14px);
     color: #9BA1B0;
     font-weight: 500;
     text-align: center;
@@ -289,16 +304,17 @@ body {
 .start-screen {
     align-items: center;
     justify-content: flex-start;
-    padding: 60px 0 0 0;
+    padding: 8vh 0 0 0; /* Адаптивный отступ */
 }
 
 .start-screen .section-title {
-    margin: 30px 0 4px;
+    margin: 4vh 0 0.5vh 0;
 }
 
 .start-avatar-square {
-    width: 280px;
-    height: 210px;
+    width: min(280px, 70vw); /* Адаптивная ширина */
+    height: auto;
+    aspect-ratio: 4 / 3;
     margin: 0 auto;
     border: none;
     border-radius: 20px 20px 0 0;
@@ -314,33 +330,33 @@ body {
 }
 
 .start-description-box {
-    width: 280px;
+    width: min(280px, 70vw);
     border: 3px solid #FF5500;
     border-radius: 0 0 20px 20px;
-    padding: 30px 16px 20px 16px;
-    margin: -15px auto 0 auto;
+    padding: 4vh 4vw 3vh;
+    margin: -2vh auto 0 auto;
     background: #1A1D24;
 }
 
 .start-description {
-    font-size: 14px;
+    font-size: clamp(12px, 3.5vw, 14px);
     line-height: 1.5;
     text-align: center;
 }
 
 /* ===== КНОПКА СТАРТОВОГО ЭКРАНА ===== */
 .primary-btn {
-    width: 280px;
-    padding: 14px;
+    width: min(280px, 80%); /* Кнопка занимает 80% ширины экрана */
+    padding: 2vh 0;
     background: #B00000;
     border: none;
     border-radius: 12px;
-    font-size: 18px;
+    font-size: clamp(16px, 5vw, 18px);
     font-weight: 700;
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 40px auto 0 auto;
+    margin: 5vh auto 0 auto;
     transition: all 0.2s ease;
     letter-spacing: 0.5px;
     box-shadow: 0 4px 0 #6B0000;
@@ -363,7 +379,7 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 8px 0 4px 0;
+    padding: 1vh 0 0.5vh 0;
     background: transparent;
     margin-top: auto;
     border-top: 1px solid #1E2128;
@@ -403,15 +419,15 @@ body:has(.search-screen.active) .bottom-nav {
 }
 
 .nav-icon svg {
-    width: 20px;
-    height: 20px;
+    width: clamp(18px, 5vw, 20px);
+    height: clamp(18px, 5vw, 20px);
     stroke: #F5F5F5;
     stroke-width: 2;
     fill: none;
 }
 
 .nav-label {
-    font-size: 9px;
+    font-size: clamp(8px, 2.5vw, 9px);
     font-weight: 600;
     color: #F5F5F5;
 }
@@ -441,12 +457,12 @@ body:has(.search-screen.active) .bottom-nav {
 }
 
 .main-screen .section-title {
-    margin: 40px 0 4px 0;
+    margin: 5vh 0 0.5vh 0;
     flex-shrink: 0;
 }
 
 .main-screen .section-subtitle {
-    margin: 0 0 12px 0;
+    margin: 0 0 2vh 0;
     flex-shrink: 0;
 }
 
@@ -455,21 +471,21 @@ body:has(.search-screen.active) .bottom-nav {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 16px;
+    gap: 2vh;
     margin: 0;
-    margin-top: -20px;
+    margin-top: -3vh;
     width: 100%;
     min-height: 0;
 }
 
 .mode-btn {
     width: 100%;
-    padding: 20px;
+    padding: 2.5vh 4vw;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 12px;
     color: #E5E7EB;
-    font-size: 18px;
+    font-size: clamp(16px, 4.5vw, 18px);
     font-weight: 600;
     text-transform: uppercase;
     cursor: pointer;
@@ -494,16 +510,16 @@ body:has(.search-screen.active) .bottom-nav {
 .mode-btn.public {
     border-left: 4px solid #F5F5F5;
     text-transform: none;
-    font-size: 16px;
+    font-size: clamp(14px, 4vw, 16px);
 }
 
 .mode-btn::after {
     content: '→';
     position: absolute;
-    right: 22px;
+    right: 4vw;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 20px;
+    font-size: clamp(18px, 5vw, 20px);
     color: #5D6472;
 }
 
@@ -523,21 +539,21 @@ body:has(.search-screen.active) .bottom-nav {
 
 .shop-tabs {
     display: flex;
-    gap: 8px;
-    margin: 12px 0;
+    gap: 2vw;
+    margin: 2vh 0;
     flex-shrink: 0;
 }
 
 .shop-tab {
     flex: 1;
-    padding: 8px 12px;
+    padding: 1.5vh 2vw;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
     cursor: pointer;
     color: #9BA1B0;
     font-weight: 600;
-    font-size: 13px;
+    font-size: clamp(11px, 3.5vw, 13px);
     text-align: center;
 }
 
@@ -548,14 +564,14 @@ body:has(.search-screen.active) .bottom-nav {
 }
 
 .cases-section {
-    margin: 12px 0;
+    margin: 2vh 0;
     flex: 1;
     overflow-y: auto;
     min-height: 0;
 }
 
 .inventory-section {
-    margin: 12px 0;
+    margin: 2vh 0;
     flex: 1;
     overflow-y: auto;
     min-height: 0;
@@ -564,22 +580,22 @@ body:has(.search-screen.active) .bottom-nav {
 .cases-grid {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 1.5vh;
 }
 
 .case-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px;
+    gap: 3vw;
+    padding: 1.5vh 2vw;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 12px;
 }
 
 .case-icon {
-    width: 48px;
-    height: 48px;
+    width: clamp(40px, 12vw, 48px);
+    height: clamp(40px, 12vw, 48px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -596,12 +612,12 @@ body:has(.search-screen.active) .bottom-nav {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 0.8vh;
     min-width: 0;
 }
 
 .case-name {
-    font-size: 15px;
+    font-size: clamp(13px, 4vw, 15px);
     font-weight: 700;
     color: #F5F5F5;
     white-space: nowrap;
@@ -613,11 +629,11 @@ body:has(.search-screen.active) .bottom-nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 2vw;
 }
 
 .price-value {
-    font-size: 13px;
+    font-size: clamp(11px, 3.5vw, 13px);
     font-weight: 600;
     color: #F5F5F5;
     white-space: nowrap;
@@ -632,9 +648,9 @@ body:has(.search-screen.active) .bottom-nav {
     background: #B00000;
     border: none;
     border-radius: 30px;
-    padding: 5px 12px;
+    padding: 0.8vh 3vw;
     color: #F5F5F5;
-    font-size: 11px;
+    font-size: clamp(10px, 3vw, 11px);
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s;
@@ -648,7 +664,7 @@ body:has(.search-screen.active) .bottom-nav {
 .inventory-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 2vw;
 }
 
 .inventory-item {
@@ -659,7 +675,7 @@ body:has(.search-screen.active) .bottom-nav {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 15px;
+    padding: 2vh 1vw;
     cursor: pointer;
     transition: all 0.2s;
 }
@@ -699,22 +715,22 @@ body:has(.search-screen.active) .bottom-nav {
 .profile-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin: 4px 0 8px 0;
+    gap: 3vw;
+    margin: 1vh 0 2vh 0;
     padding: 0;
     flex-shrink: 0;
 }
 
 .profile-avatar {
-    width: 60px;
-    height: 60px;
+    width: clamp(50px, 15vw, 60px);
+    height: clamp(50px, 15vw, 60px);
     border-radius: 50%;
     background: #1A1D24;
     border: 2px solid #2A2F3A;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    font-size: clamp(24px, 7vw, 28px);
     color: #9BA1B0;
     cursor: pointer;
     overflow: hidden;
@@ -742,12 +758,12 @@ body:has(.search-screen.active) .bottom-nav {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 0.8vh;
     min-width: 0;
 }
 
 .profile-name-label {
-    font-size: 11px;
+    font-size: clamp(9px, 2.8vw, 11px);
     color: #9BA1B0;
     font-weight: 500;
     margin-bottom: 2px;
@@ -756,12 +772,12 @@ body:has(.search-screen.active) .bottom-nav {
 .profile-name-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 1.5vw;
     flex-wrap: wrap;
 }
 
 .profile-name {
-    font-size: 20px;
+    font-size: clamp(16px, 5vw, 20px);
     font-weight: 600;
     color: #F5F5F5;
     cursor: pointer;
@@ -784,10 +800,10 @@ body:has(.search-screen.active) .bottom-nav {
 
 .profile-status {
     color: #4CAF50;
-    font-size: 11px;
+    font-size: clamp(9px, 2.8vw, 11px);
     font-weight: 600;
     background: rgba(76, 175, 80, 0.15);
-    padding: 2px 8px;
+    padding: 0.5vh 2vw;
     border-radius: 12px;
     border: 1px solid rgba(76, 175, 80, 0.4);
     letter-spacing: 0.3px;
@@ -798,8 +814,8 @@ body:has(.search-screen.active) .bottom-nav {
 /* Статистика */
 .stats-row {
     display: flex;
-    gap: 12px;
-    margin: 4px 0;
+    gap: 3vw;
+    margin: 1vh 0;
     flex-shrink: 0;
 }
 
@@ -813,10 +829,10 @@ body:has(.search-screen.active) .bottom-nav {
 }
 
 .stat-label {
-    font-size: 10px;
+    font-size: clamp(8px, 2.5vw, 10px);
     color: #9BA1B0;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 0.8vh;
     text-transform: uppercase;
     letter-spacing: 0.3px;
 }
@@ -826,11 +842,11 @@ body:has(.search-screen.active) .bottom-nav {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
-    padding: 10px 12px;
+    padding: 1.5vh 3vw;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 2vw;
 }
 
 .stat-value input {
@@ -838,7 +854,7 @@ body:has(.search-screen.active) .bottom-nav {
     background: transparent;
     border: none;
     color: #F5F5F5;
-    font-size: 13px;
+    font-size: clamp(11px, 3.5vw, 13px);
     font-weight: 500;
     outline: none;
     font-family: 'Montserrat', sans-serif;
@@ -850,7 +866,7 @@ body:has(.search-screen.active) .bottom-nav {
 .stat-value input::placeholder {
     color: #5D6472;
     font-weight: 600;
-    font-size: 12px;
+    font-size: clamp(10px, 3vw, 12px);
     opacity: 1;
 }
 
@@ -863,13 +879,13 @@ body:has(.search-screen.active) .bottom-nav {
     align-items: center;
     justify-content: center;
     line-height: 1;
-    margin-left: 8px;
+    margin-left: 2vw;
     flex-shrink: 0;
 }
 
 .heart-icon svg {
-    width: 16px;
-    height: 16px;
+    width: clamp(14px, 4vw, 16px);
+    height: clamp(14px, 4vw, 16px);
     stroke: #FF5500;
     stroke-width: 2;
     fill: none;
@@ -880,8 +896,8 @@ body:has(.search-screen.active) .bottom-nav {
 .profile-stats {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-bottom: 8px;
+    gap: 2vh;
+    margin-bottom: 1.5vh;
     flex-shrink: 0;
 }
 
@@ -893,10 +909,10 @@ body:has(.search-screen.active) .bottom-nav {
 }
 
 .profile-stat-label {
-    font-size: 10px;
+    font-size: clamp(8px, 2.5vw, 10px);
     color: #9BA1B0;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 0.8vh;
     text-transform: uppercase;
     letter-spacing: 0.3px;
 }
@@ -907,9 +923,9 @@ body:has(.search-screen.active) .bottom-nav {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
-    padding: 10px 12px;
+    padding: 1.5vh 3vw;
     color: #F5F5F5;
-    font-size: 13px;
+    font-size: clamp(11px, 3.5vw, 13px);
     font-weight: 500;
     outline: none;
     font-family: 'Montserrat', sans-serif;
@@ -925,7 +941,7 @@ body:has(.search-screen.active) .bottom-nav {
 .input-field::placeholder {
     color: #5D6472;
     font-weight: 600;
-    font-size: 12px;
+    font-size: clamp(10px, 3vw, 12px);
     opacity: 1;
 }
 
@@ -942,50 +958,50 @@ body:has(.search-screen.active) .bottom-nav {
     display: flex;
     flex-direction: column;
     min-height: 0;
-    margin: 8px 0 4px 0;
+    margin: 1.5vh 0 0.5vh 0;
 }
 
 .friends-header {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-bottom: 6px;
+    gap: 1.5vw;
+    margin-bottom: 1vh;
     flex-shrink: 0;
 }
 
 .search-icon {
-    width: 18px;
-    height: 18px;
+    width: clamp(16px, 4.5vw, 18px);
+    height: clamp(16px, 4.5vw, 18px);
     cursor: pointer;
     flex-shrink: 0;
 }
 
 .search-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 100%;
+    height: 100%;
     stroke: #9BA1B0;
     stroke-width: 2;
     fill: none;
 }
 
 .back-icon {
-    width: 18px;
-    height: 18px;
+    width: clamp(16px, 4.5vw, 18px);
+    height: clamp(16px, 4.5vw, 18px);
     cursor: pointer;
-    margin-right: 4px;
+    margin-right: 1vw;
     flex-shrink: 0;
 }
 
 .back-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 100%;
+    height: 100%;
     stroke: #B00000;
     stroke-width: 2;
     fill: none;
 }
 
 .friends-title {
-    font-size: 15px;
+    font-size: clamp(13px, 4vw, 15px);
     font-weight: 600;
     color: #F5F5F5;
     flex: 1;
@@ -997,7 +1013,7 @@ body:has(.search-screen.active) .bottom-nav {
 
 .friends-count {
     color: #9BA1B0;
-    font-size: 11px;
+    font-size: clamp(9px, 2.8vw, 11px);
     font-weight: 600;
     white-space: nowrap;
     flex-shrink: 0;
@@ -1006,9 +1022,9 @@ body:has(.search-screen.active) .bottom-nav {
 .search-container {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 1.5vw;
     width: 100%;
-    margin-bottom: 6px;
+    margin-bottom: 1vh;
 }
 
 .search-input {
@@ -1016,9 +1032,9 @@ body:has(.search-screen.active) .bottom-nav {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 6px;
-    padding: 6px 10px;
+    padding: 1vh 2.5vw;
     color: #F5F5F5;
-    font-size: 12px;
+    font-size: clamp(10px, 3vw, 12px);
     font-weight: 500;
     outline: none;
 }
@@ -1035,7 +1051,7 @@ body:has(.search-screen.active) .bottom-nav {
 .friends-list {
     flex: 1;
     overflow-y: auto;
-    padding-right: 4px;
+    padding-right: 1vw;
     min-height: 0;
 }
 
@@ -1056,12 +1072,12 @@ body:has(.search-screen.active) .bottom-nav {
 .friend-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px;
+    gap: 2.5vw;
+    padding: 1.5vh 2vw;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 6px;
-    margin-bottom: 6px;
+    margin-bottom: 1vh;
     cursor: pointer;
     transition: all 0.2s;
 }
@@ -1079,13 +1095,13 @@ body:has(.search-screen.active) .bottom-nav {
 .friend-name-row {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-bottom: 2px;
+    gap: 1.5vw;
+    margin-bottom: 0.5vh;
     flex-wrap: wrap;
 }
 
 .friend-name {
-    font-size: 13px;
+    font-size: clamp(11px, 3.5vw, 13px);
     font-weight: 600;
     color: #F5F5F5;
     white-space: nowrap;
@@ -1095,10 +1111,10 @@ body:has(.search-screen.active) .bottom-nav {
 }
 
 .friend-id {
-    font-size: 9px;
+    font-size: clamp(7px, 2.2vw, 9px);
     color: #FF5500;
     background: rgba(255, 85, 0, 0.1);
-    padding: 1px 5px;
+    padding: 0.3vh 1.5vw;
     border-radius: 4px;
     font-family: monospace;
     font-weight: 600;
@@ -1106,7 +1122,7 @@ body:has(.search-screen.active) .bottom-nav {
 }
 
 .friend-steam {
-    font-size: 9px;
+    font-size: clamp(7px, 2.2vw, 9px);
     color: #9BA1B0;
     font-weight: 600;
     white-space: nowrap;
@@ -1125,11 +1141,11 @@ body:has(.search-screen.active) .bottom-nav {
 }
 
 .settings-screen .section-title {
-    margin: 0 0 20px 0;
+    margin: 0 0 3vh 0;
 }
 
 .settings-content {
-    margin: 12px 0;
+    margin: 2vh 0;
     flex: 1;
     overflow-y: auto;
     min-height: 0;
@@ -1139,15 +1155,15 @@ body:has(.search-screen.active) .bottom-nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px;
+    padding: 2vh 3vw;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 1.5vh;
 }
 
 .settings-label {
-    font-size: 14px;
+    font-size: clamp(12px, 3.5vw, 14px);
     font-weight: 600;
     color: #F5F5F5;
 }
@@ -1155,8 +1171,8 @@ body:has(.search-screen.active) .bottom-nav {
 .switch {
     position: relative;
     display: inline-block;
-    width: 50px;
-    height: 26px;
+    width: clamp(40px, 12vw, 50px);
+    height: clamp(20px, 6vw, 26px);
     flex-shrink: 0;
 }
 
@@ -1181,10 +1197,10 @@ body:has(.search-screen.active) .bottom-nav {
 .slider:before {
     position: absolute;
     content: "";
-    height: 20px;
-    width: 20px;
+    height: clamp(16px, 5vw, 20px);
+    width: clamp(16px, 5vw, 20px);
     left: 3px;
-    bottom: 3px;
+    bottom: 2px;
     background-color: #F5F5F5;
     transition: 0.2s;
     border-radius: 50%;
@@ -1195,7 +1211,7 @@ input:checked + .slider {
 }
 
 input:checked + .slider:before {
-    transform: translateX(24px);
+    transform: translateX(clamp(18px, 5vw, 24px));
 }
 
 /* ===== ЭКРАНЫ РЕЖИМОВ ===== */
@@ -1215,20 +1231,20 @@ input:checked + .slider:before {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 3vw;
+    margin-bottom: 2.5vh;
     position: relative;
     flex-shrink: 0;
 }
 
 .back-btn {
-    width: 36px;
-    height: 36px;
+    width: clamp(30px, 9vw, 36px);
+    height: clamp(30px, 9vw, 36px);
     border-radius: 50%;
     background: transparent;
     border: 2px solid #2A2F3A;
     color: #9BA1B0;
-    font-size: 22px;
+    font-size: clamp(18px, 5.5vw, 22px);
     font-weight: 700;
     cursor: pointer;
     display: flex;
@@ -1246,11 +1262,11 @@ input:checked + .slider:before {
 }
 
 .mode-title {
-    font-size: 24px;
+    font-size: clamp(20px, 6vw, 24px);
     font-weight: 700;
     text-align: center;
     margin: 0;
-    line-height: 36px;
+    line-height: 1.2;
     max-width: 80%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1269,18 +1285,18 @@ input:checked + .slider:before {
 }
 
 .mode-subtitle {
-    font-size: 12px;
+    font-size: clamp(10px, 3vw, 12px);
     color: #9BA1B0;
     text-align: center;
-    margin-bottom: 16px;
+    margin-bottom: 2.5vh;
     font-weight: 500;
     flex-shrink: 0;
 }
 
 .input-label {
-    font-size: 12px;
+    font-size: clamp(10px, 3vw, 12px);
     color: #9BA1B0;
-    margin-bottom: 4px;
+    margin-bottom: 0.8vh;
     font-weight: 500;
 }
 
@@ -1289,10 +1305,10 @@ input:checked + .slider:before {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
-    padding: 10px 12px;
+    padding: 1.5vh 3vw;
     color: #F5F5F5;
-    font-size: 14px;
-    margin: 4px 0 12px 0;
+    font-size: clamp(12px, 3.5vw, 14px);
+    margin: 0.5vh 0 2vh 0;
     font-weight: 500;
     outline: none;
 }
@@ -1305,7 +1321,7 @@ input:checked + .slider:before {
 .search-input-field::placeholder {
     color: #5D6472;
     font-weight: 600;
-    font-size: 12px;
+    font-size: clamp(10px, 3vw, 12px);
 }
 
 .search-input-field[type="number"] {
@@ -1323,14 +1339,15 @@ input:checked + .slider:before {
     border: 1px solid #2A2F3A;
     border-radius: 8px;
     color: #F5F5F5;
-    font-size: 14px;
-    padding: 10px 12px;
-    margin: 4px 0 12px 0;
+    font-size: clamp(12px, 3.5vw, 14px);
+    padding: 1.5vh 3vw;
+    margin: 0.5vh 0 2vh 0;
     cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF5500' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
     background-repeat: no-repeat;
-    background-position: right 14px center;
+    background-position: right 3vw center;
+    background-size: clamp(12px, 3.5vw, 16px);
     font-weight: 500;
 }
 
@@ -1347,21 +1364,21 @@ input:checked + .slider:before {
 
 .play-style {
     display: flex;
-    gap: 8px;
-    margin: 12px 0;
+    gap: 2vw;
+    margin: 2vh 0;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
-    padding: 4px;
+    padding: 0.5vh 1vw;
 }
 
 .style-option {
     flex: 1;
     text-align: center;
-    padding: 8px;
+    padding: 1.5vh 2vw;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 13px;
+    font-size: clamp(11px, 3.2vw, 13px);
     color: #9BA1B0;
     font-weight: 600;
     transition: all 0.2s;
@@ -1375,13 +1392,13 @@ input:checked + .slider:before {
 
 .comment-section {
     width: 100%;
-    margin: 10px 0;
+    margin: 1.5vh 0;
 }
 
 .comment-label {
-    font-size: 12px;
+    font-size: clamp(10px, 3vw, 12px);
     color: #9BA1B0;
-    margin-bottom: 4px;
+    margin-bottom: 0.8vh;
     font-weight: 500;
 }
 
@@ -1390,11 +1407,11 @@ input:checked + .slider:before {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
-    padding: 10px 12px;
+    padding: 1.5vh 3vw;
     color: #F5F5F5;
-    font-size: 13px;
+    font-size: clamp(11px, 3.2vw, 13px);
     resize: none;
-    height: 70px;
+    height: 10vh;
     font-weight: 500;
     outline: none;
 }
@@ -1409,17 +1426,17 @@ input:checked + .slider:before {
 }
 
 .mode-search-btn {
-    width: 280px;
-    padding: 14px;
+    width: min(280px, 80%);
+    padding: 2vh 0;
     background: #FF5500;
     border: none;
     border-radius: 30px;
-    font-size: 16px;
+    font-size: clamp(14px, 4vw, 16px);
     font-weight: 700;
     color: #F5F5F5;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 10px auto;
+    margin: 2vh auto;
     transition: all 0.2s;
     letter-spacing: 0.5px;
 }
@@ -1447,26 +1464,26 @@ input:checked + .slider:before {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 0 20px 0;
+    padding: 2.5vh 0 3vh 0;
     border-bottom: 1px solid #1E2128;
-    margin-bottom: 20px;
+    margin-bottom: 3vh;
     flex-shrink: 0;
-    gap: 12px;
+    gap: 3vw;
 }
 
 .search-title {
-    font-size: 24px;
+    font-size: clamp(20px, 6vw, 24px);
     font-weight: 700;
     color: #FF5500;
     white-space: nowrap;
 }
 
 .search-timer {
-    font-size: 20px;
+    font-size: clamp(16px, 5vw, 20px);
     font-weight: 600;
     color: #F5F5F5;
     background: #1A1D24;
-    padding: 8px 16px;
+    padding: 1vh 4vw;
     border-radius: 8px;
     border: 1px solid #2A2F3A;
     white-space: nowrap;
@@ -1474,9 +1491,9 @@ input:checked + .slider:before {
 
 .search-status {
     text-align: center;
-    font-size: 16px;
+    font-size: clamp(14px, 4vw, 16px);
     color: #9BA1B0;
-    margin: 20px 0 40px 0;
+    margin: 3vh 0 5vh 0;
     font-weight: 500;
     flex-shrink: 0;
 }
@@ -1489,8 +1506,8 @@ input:checked + .slider:before {
 }
 
 .spinner {
-    width: 50px;
-    height: 50px;
+    width: clamp(40px, 12vw, 50px);
+    height: clamp(40px, 12vw, 50px);
     border: 4px solid #1A1D24;
     border-top-color: #FF5500;
     border-radius: 50%;
@@ -1503,16 +1520,16 @@ input:checked + .slider:before {
 
 .cancel-search-btn {
     width: 100%;
-    padding: 18px;
+    padding: 2.5vh 0;
     background: transparent;
     border: 2px solid #FF5500;
     border-radius: 12px;
     color: #FF5500;
-    font-size: 18px;
+    font-size: clamp(16px, 5vw, 18px);
     font-weight: 700;
     text-transform: uppercase;
     cursor: pointer;
-    margin: 20px 0 10px 0;
+    margin: 3vh 0 1.5vh 0;
     transition: all 0.2s;
     flex-shrink: 0;
 }
