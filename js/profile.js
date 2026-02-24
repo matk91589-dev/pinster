@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - С МОДАЛЬНЫМ ОКНОМ ДЛЯ ВВОДА
+// ПРОФИЛЬ (Telegram Mini App версия) - ПОЛНОСТЬЮ РАБОЧАЯ ВЕРСИЯ
 // ============================================
 
 const Profile = {
@@ -67,191 +67,39 @@ const Profile = {
                 });
             }
         });
-    },
-    
-    // Создаем модальное окно для ввода ника
-    showNameInputModal() {
-        // Создаем затемнение
-        const overlay = document.createElement('div');
-        overlay.className = 'modal-overlay';
-        overlay.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        `;
 
-        // Создаем модальное окно
-        const modal = document.createElement('div');
-        modal.className = 'name-input-modal';
-        modal.style.cssText = `
-            background: #1A1D24;
-            border: 1px solid #2A2F3A;
-            border-radius: 16px;
-            padding: 24px;
-            width: 280px;
-            max-width: 90%;
-            transform: scale(0.9);
-            transition: transform 0.2s ease;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        `;
+        // Добавляем валидацию для возраста
+        if (ageInput) {
+            ageInput.addEventListener('blur', (e) => {
+                if (this.editMode && e.target.value) {
+                    this.validateAge(e.target.value);
+                }
+            });
 
-        // Заголовок
-        const title = document.createElement('div');
-        title.style.cssText = `
-            font-size: 18px;
-            font-weight: 600;
-            color: #F5F5F5;
-            margin-bottom: 16px;
-            text-align: center;
-            font-family: 'Montserrat', sans-serif;
-        `;
-        title.textContent = 'Изменить никнейм';
-
-        // Поле ввода
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = this.tempName;
-        input.placeholder = 'Введите никнейм (3-10 символов)';
-        input.style.cssText = `
-            width: 100%;
-            background: #111317;
-            border: 1px solid #2A2F3A;
-            border-radius: 8px;
-            padding: 12px 16px;
-            color: #F5F5F5;
-            font-size: 14px;
-            font-family: 'Montserrat', sans-serif;
-            outline: none;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-        `;
-        input.maxLength = 10;
-
-        input.addEventListener('focus', () => {
-            input.style.borderColor = '#FF5500';
-        });
-
-        input.addEventListener('blur', () => {
-            input.style.borderColor = '#2A2F3A';
-        });
-
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                okBtn.click();
-            }
-        });
-
-        // Кнопки
-        const buttonsDiv = document.createElement('div');
-        buttonsDiv.style.cssText = `
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-        `;
-
-        // Кнопка отмены
-        const cancelBtn = document.createElement('button');
-        cancelBtn.textContent = 'Отмена';
-        cancelBtn.style.cssText = `
-            flex: 1;
-            background: transparent;
-            border: 1px solid #2A2F3A;
-            border-radius: 8px;
-            padding: 12px;
-            color: #9BA1B0;
-            font-size: 14px;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        `;
-
-        cancelBtn.addEventListener('mouseenter', () => {
-            cancelBtn.style.background = '#2A2F3A';
-        });
-
-        cancelBtn.addEventListener('mouseleave', () => {
-            cancelBtn.style.background = 'transparent';
-        });
-
-        cancelBtn.addEventListener('click', () => {
-            this.closeModal(overlay);
-        });
-
-        // Кнопка сохранения
-        const okBtn = document.createElement('button');
-        okBtn.textContent = 'Сохранить';
-        okBtn.style.cssText = `
-            flex: 1;
-            background: #FF5500;
-            border: none;
-            border-radius: 8px;
-            padding: 12px;
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        `;
-
-        okBtn.addEventListener('mouseenter', () => {
-            okBtn.style.background = '#FF6B4A';
-        });
-
-        okBtn.addEventListener('mouseleave', () => {
-            okBtn.style.background = '#FF5500';
-        });
-
-        okBtn.addEventListener('click', () => {
-            const newName = input.value.trim();
-            if (newName.length >= 3 && newName.length <= 10) {
-                this.tempName = newName;
-                document.getElementById('profileName').textContent = newName;
-                App.hapticFeedback('medium');
-                this.closeModal(overlay);
-            } else {
-                App.showAlert('Никнейм должен быть от 3 до 10 символов');
-                input.focus();
-            }
-        });
-
-        // Собираем модалку
-        buttonsDiv.appendChild(cancelBtn);
-        buttonsDiv.appendChild(okBtn);
-        
-        modal.appendChild(title);
-        modal.appendChild(input);
-        modal.appendChild(buttonsDiv);
-        
-        overlay.appendChild(modal);
-        document.body.appendChild(overlay);
-
-        // Анимация появления
-        setTimeout(() => {
-            overlay.style.opacity = '1';
-            modal.style.transform = 'scale(1)';
-            input.focus();
-        }, 10);
+            ageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.target.blur();
+                }
+            });
+        }
     },
 
-    closeModal(overlay) {
-        overlay.style.opacity = '0';
-        overlay.querySelector('div').style.transform = 'scale(0.9)';
-        setTimeout(() => {
-            overlay.remove();
-        }, 200);
+    // Валидация возраста
+    validateAge(ageStr) {
+        const age = parseInt(ageStr);
+        
+        if (ageStr === '') {
+            return true; // Пустое поле - ок
+        }
+        
+        if (isNaN(age) || age < 0 || age > 100) {
+            App.showAlert('❌ Возраст должен быть от 0 до 100');
+            document.getElementById('ageValue').value = this.tempAge || '';
+            return false;
+        }
+        
+        this.tempAge = ageStr;
+        return true;
     },
     
     loadSavedValues() {
@@ -299,7 +147,7 @@ const Profile = {
         this.tempFaceitLink = this.savedFaceitLink;
         
         // Настраиваем обработчики после загрузки
-        this.setupInputListeners();
+        setTimeout(() => this.setupInputListeners(), 100);
     },
     
     toggleEditMode() {
@@ -336,6 +184,12 @@ const Profile = {
     },
     
     applyChanges() {
+        // Проверяем возраст перед сохранением
+        const ageInput = document.getElementById('ageValue');
+        if (ageInput && !this.validateAge(ageInput.value)) {
+            return; // Если возраст не прошел валидацию, не сохраняем
+        }
+
         this.savedName = this.tempName;
         this.savedAvatar = this.tempAvatar;
         this.savedAge = document.getElementById('ageValue').value;
@@ -343,7 +197,7 @@ const Profile = {
         this.savedFaceitLink = document.getElementById('faceitLinkDisplay').value;
         
         this.loadSavedValues();
-        App.showAlert('Изменения сохранены');
+        App.showAlert('✅ Изменения сохранены');
         this.toggleEditMode();
     },
     
@@ -353,8 +207,21 @@ const Profile = {
             return;
         }
         
-        // Показываем красивое модальное окно вместо prompt
-        this.showNameInputModal();
+        // Используем стандартный prompt, но добавим стилизацию через CSS
+        const newName = prompt('Введите новый никнейм (3-10 символов):', this.tempName);
+        
+        if (newName === null) {
+            return; // Пользователь нажал отмена
+        }
+        
+        if (newName.length >= 3 && newName.length <= 10) {
+            this.tempName = newName;
+            document.getElementById('profileName').textContent = newName;
+            App.hapticFeedback('medium');
+            App.showAlert('✅ Никнейм изменен');
+        } else {
+            App.showAlert('❌ Никнейм должен быть от 3 до 10 символов');
+        }
     },
     
     editAge() {
@@ -387,6 +254,7 @@ const Profile = {
             return;
         }
         
+        // Здесь можно добавить выбор аватара позже
         App.showPopup({
             title: 'Выбор аватара',
             message: 'Функция будет доступна позже',
@@ -394,5 +262,15 @@ const Profile = {
         });
     }
 };
+
+// Инициализация после загрузки DOM
+document.addEventListener('DOMContentLoaded', () => {
+    // Даем время на загрузку всех элементов
+    setTimeout(() => {
+        if (document.getElementById('profileName')) {
+            Profile.loadSavedValues();
+        }
+    }, 200);
+});
 
 window.Profile = Profile;
