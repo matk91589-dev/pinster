@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - С ВАЛИДАЦИЕЙ
+// ПРОФИЛЬ (Telegram Mini App версия) - РАБОЧАЯ ВЕРСИЯ
 // ============================================
 
 const Profile = {
@@ -149,7 +149,7 @@ const Profile = {
         if (steamDisplayEl) {
             steamDisplayEl.value = this.savedSteam || '';
             steamDisplayEl.placeholder = 'введите ссылку на ваш профиль steam';
-            steamDisplayEl.maxLength = 100; // Увеличил до 100
+            steamDisplayEl.maxLength = 100;
             steamDisplayEl.readOnly = true;
         }
         
@@ -157,7 +157,7 @@ const Profile = {
         if (faceitLinkDisplayEl) {
             faceitLinkDisplayEl.value = this.savedFaceitLink || '';
             faceitLinkDisplayEl.placeholder = 'введите ссылку на ваш профиль faceit / пропустите';
-            faceitLinkDisplayEl.maxLength = 100; // Увеличил до 100
+            faceitLinkDisplayEl.maxLength = 100;
             faceitLinkDisplayEl.readOnly = true;
         }
         
@@ -286,6 +286,23 @@ const Profile = {
             return;
         }
         alert('Функция выбора аватара будет доступна позже');
+    },
+
+    // Методы для экранов FACEIT, PREMIER, PRIME, PUBLIC
+    editFaceitAge() {
+        document.getElementById('faceitAgeValue').focus();
+    },
+
+    editPremierAge() {
+        document.getElementById('premierAgeValue').focus();
+    },
+
+    editPrimeAge() {
+        document.getElementById('primeAgeValue').focus();
+    },
+
+    editPublicAge() {
+        document.getElementById('publicAgeValue').focus();
     }
 };
 
