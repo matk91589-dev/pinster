@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - С ПОЛЕМ ДЛЯ ВВОДА НИКА
+// ПРОФИЛЬ (Telegram Mini App версия) - ИСПРАВЛЕННАЯ ВЕРСИЯ
 // ============================================
 
 const Profile = {
@@ -32,7 +32,7 @@ const Profile = {
         [ageInput, steamInput, faceitInput].forEach(input => {
             if (input) {
                 input.readOnly = readonly;
-                const parentStat = input.closest('.stat-value');
+                const parentStat = input.closest('.stat-value') || input.closest('.profile-stat-card');
                 if (!readonly) {
                     input.classList.add('editable-input');
                     if (parentStat) parentStat.classList.add('editable-input');
@@ -52,7 +52,11 @@ const Profile = {
         
         [ageInput, steamInput, faceitInput].forEach(input => {
             if (input) {
-                input.addEventListener('click', (e) => {
+                // Убираем старые обработчики
+                const newInput = input.cloneNode(true);
+                input.parentNode.replaceChild(newInput, input);
+                
+                newInput.addEventListener('click', (e) => {
                     if (!this.editMode) {
                         e.preventDefault();
                         e.stopPropagation();
@@ -60,22 +64,27 @@ const Profile = {
                     }
                 });
                 
-                input.addEventListener('focus', (e) => {
+                newInput.addEventListener('focus', (e) => {
                     if (!this.editMode) {
                         e.target.blur();
                     }
                 });
+
+                // Валидация возраста
+                if (newInput.id === 'ageValue') {
+                    newInput.addEventListener('blur', (e) => {
+                        if (this.editMode) {
+                            this.validateAge(e.target.value);
+                        }
+                    });
+                }
+
+                // Обновляем ссылки на элементы
+                if (newInput.id === 'ageValue') document.getElementById('ageValue') = newInput;
+                if (newInput.id === 'steamDisplay') document.getElementById('steamDisplay') = newInput;
+                if (newInput.id === 'faceitLinkDisplay') document.getElementById('faceitLinkDisplay') = newInput;
             }
         });
-
-        // Валидация возраста
-        if (ageInput) {
-            ageInput.addEventListener('blur', (e) => {
-                if (this.editMode) {
-                    this.validateAge(e.target.value);
-                }
-            });
-        }
     },
 
     // Валидация возраста
@@ -127,16 +136,17 @@ const Profile = {
         if (!nameInput) return;
 
         // Убираем старые обработчики
-        nameInput.removeEventListener('blur', this.handleNameBlur);
-        nameInput.removeEventListener('keypress', this.handleNameKeypress);
+        const newNameInput = nameInput.cloneNode(true);
+        nameInput.parentNode.replaceChild(newNameInput, nameInput);
+        document.getElementById('editProfileName') = newNameInput;
 
         // Обработчик потери фокуса
-        nameInput.addEventListener('blur', () => {
+        newNameInput.addEventListener('blur', () => {
             this.saveNameFromInput();
         });
 
         // Обработчик нажатия Enter
-        nameInput.addEventListener('keypress', (e) => {
+        newNameInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 this.saveNameFromInput();
@@ -220,9 +230,11 @@ const Profile = {
         this.tempSteam = this.savedSteam;
         this.tempFaceitLink = this.savedFaceitLink;
         
-        // Настраиваем обработчики
-        this.setupInputListeners();
-        this.setupNameInputListener();
+        // Настраиваем обработчики после загрузки
+        setTimeout(() => {
+            this.setupInputListeners();
+            this.setupNameInputListener();
+        }, 100);
     },
     
     toggleEditMode() {
@@ -242,6 +254,7 @@ const Profile = {
         const nameInput = document.getElementById('editProfileName');
         
         if (this.editMode) {
+            // Включаем режим редактирования
             if (editToggle) editToggle.classList.add('active');
             if (applyBtn) applyBtn.classList.add('visible');
             elements.forEach(el => {
@@ -249,13 +262,15 @@ const Profile = {
             });
             this.setInputsReadonly(false);
             
-            // В режиме редактирования показываем поле для ввода ника
+            // ПОКАЗЫВАЕМ ПОЛЕ ВВОДА, СКРЫВАЕМ ТЕКСТ
             if (profileName && nameInput) {
                 profileName.style.display = 'none';
                 nameInput.style.display = 'inline-block';
-                nameInput.value = this.tempName;
+                nameInput.value = this.tempName; // Устанавливаем текущий ник
+                setTimeout(() => nameInput.focus(), 100); // Ставим фокус с небольшой задержкой
             }
         } else {
+            // Выключаем режим редактирования
             if (editToggle) editToggle.classList.remove('active');
             if (applyBtn) applyBtn.classList.remove('visible');
             elements.forEach(el => {
@@ -263,7 +278,7 @@ const Profile = {
             });
             this.setInputsReadonly(true);
             
-            // Выходим из режима редактирования - показываем текст, скрываем поле
+            // СКРЫВАЕМ ПОЛЕ ВВОДА, ПОКАЗЫВАЕМ ТЕКСТ
             if (profileName && nameInput) {
                 nameInput.style.display = 'none';
                 profileName.style.display = 'inline-block';
@@ -370,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.getElementById('profileName')) {
             Profile.loadSavedValues();
         }
-    }, 100);
+    }, 200);
 });
 
 window.Profile = Profile;
