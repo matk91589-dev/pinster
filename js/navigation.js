@@ -1,5 +1,5 @@
 // ============================================
-// НАВИГАЦИЯ (Telegram Mini App версия)
+// НАВИГАЦИЯ (Telegram Mini App версия) - ИСПРАВЛЕНО
 // ============================================
 
 const App = {
@@ -129,9 +129,18 @@ const App = {
         }
     },
     
-    showPopup(params) {
+    // ИСПРАВЛЕННЫЙ МЕТОД showPopup с поддержкой колбэка
+    showPopup(params, callback) {
         if (this.tg) {
-            this.tg.showPopup(params);
+            this.tg.showPopup(params, callback);
+        } else {
+            // fallback для браузера
+            if (params.buttons && params.buttons.length > 0) {
+                const result = confirm(params.message || 'Подтвердите действие');
+                if (callback) {
+                    callback(result ? 'ok' : 'cancel');
+                }
+            }
         }
     },
     
