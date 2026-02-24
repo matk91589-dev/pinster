@@ -24,6 +24,41 @@
             opacity: 1;
             display: flex;
         }
+
+        /* Стили для поля ввода ника */
+        .edit-name-input {
+            width: 100%;
+            padding: 8px 12px;
+            background: #1A1D24;
+            border: 2px solid #FF5500;
+            border-radius: 8px;
+            color: #F5F5F5;
+            font-size: 18px;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            outline: none;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .edit-name-input:focus {
+            border-color: #FF5500;
+            box-shadow: 0 0 0 2px rgba(255, 85, 0, 0.2);
+        }
+
+        .profile-name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .profile-name-row .profile-name,
+        .profile-name-row .edit-name-input {
+            flex: 1;
+            min-width: 0;
+        }
     </style>
 </head>
 <body>
@@ -158,7 +193,8 @@
                         <div class="profile-name-label">ваш никнейм</div>
                         <div class="profile-name-row">
                             <span id="profileName" class="profile-name" onclick="Profile.editName()">-</span>
-                            <span class="profile-status">НОВИЧОК</span>
+                            <!-- ДОБАВЛЕНО: поле для ввода ника -->
+                            <input type="text" id="editProfileName" class="edit-name-input" placeholder="Введите ник" maxlength="10" style="display: none;">
                         </div>
                     </div>
                 </div>
