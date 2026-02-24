@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - ПОЛНОСТЬЮ РАБОЧАЯ ВЕРСИЯ
+// ПРОФИЛЬ (Telegram Mini App версия) - РАБОЧАЯ ВЕРСИЯ
 // ============================================
 
 const Profile = {
@@ -52,33 +52,33 @@ const Profile = {
         
         [ageInput, steamInput, faceitInput].forEach(input => {
             if (input) {
+                // Убираем старые обработчики
+                input.removeEventListener('click', this.handleInputClick);
+                input.removeEventListener('focus', this.handleInputFocus);
+                
+                // Добавляем новые
                 input.addEventListener('click', (e) => {
                     if (!this.editMode) {
                         e.preventDefault();
                         e.stopPropagation();
-                        App.showAlert('Для изменений перейдите в раздел редактирования (карандаш)');
+                        alert('Для изменений перейдите в раздел редактирования (карандаш)');
                     }
                 });
                 
                 input.addEventListener('focus', (e) => {
                     if (!this.editMode) {
-                        e.target.blur(); // Убираем фокус
+                        e.target.blur();
                     }
                 });
             }
         });
 
-        // Добавляем валидацию для возраста
+        // Валидация возраста
         if (ageInput) {
+            ageInput.removeEventListener('blur', this.handleAgeBlur);
             ageInput.addEventListener('blur', (e) => {
-                if (this.editMode && e.target.value) {
+                if (this.editMode) {
                     this.validateAge(e.target.value);
-                }
-            });
-
-            ageInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.target.blur();
                 }
             });
         }
@@ -86,15 +86,16 @@ const Profile = {
 
     // Валидация возраста
     validateAge(ageStr) {
-        const age = parseInt(ageStr);
-        
         if (ageStr === '') {
-            return true; // Пустое поле - ок
+            this.tempAge = '';
+            return true;
         }
         
+        const age = parseInt(ageStr);
+        
         if (isNaN(age) || age < 0 || age > 100) {
-            App.showAlert('❌ Возраст должен быть от 0 до 100');
-            document.getElementById('ageValue').value = this.tempAge || '';
+            alert('❌ Возраст должен быть от 0 до 100');
+            document.getElementById('ageValue').value = this.tempAge;
             return false;
         }
         
@@ -146,13 +147,12 @@ const Profile = {
         this.tempSteam = this.savedSteam;
         this.tempFaceitLink = this.savedFaceitLink;
         
-        // Настраиваем обработчики после загрузки
-        setTimeout(() => this.setupInputListeners(), 100);
+        // Настраиваем обработчики
+        this.setupInputListeners();
     },
     
     toggleEditMode() {
         this.editMode = !this.editMode;
-        console.log('editMode =', this.editMode);
         
         const elements = [
             document.getElementById('profileName'),
@@ -172,7 +172,6 @@ const Profile = {
                 if (el) el.classList.add('editable');
             });
             this.setInputsReadonly(false);
-            App.hapticFeedback('light');
         } else {
             if (editToggle) editToggle.classList.remove('active');
             if (applyBtn) applyBtn.classList.remove('visible');
@@ -184,10 +183,10 @@ const Profile = {
     },
     
     applyChanges() {
-        // Проверяем возраст перед сохранением
+        // Проверяем возраст
         const ageInput = document.getElementById('ageValue');
         if (ageInput && !this.validateAge(ageInput.value)) {
-            return; // Если возраст не прошел валидацию, не сохраняем
+            return;
         }
 
         this.savedName = this.tempName;
@@ -197,36 +196,32 @@ const Profile = {
         this.savedFaceitLink = document.getElementById('faceitLinkDisplay').value;
         
         this.loadSavedValues();
-        App.showAlert('✅ Изменения сохранены');
+        alert('✅ Изменения сохранены');
         this.toggleEditMode();
     },
     
     editName() {
         if (!this.editMode) {
-            App.showAlert('Сначала активируйте режим редактирования (карандаш)');
+            alert('Сначала активируйте режим редактирования (карандаш)');
             return;
         }
         
-        // Используем стандартный prompt, но добавим стилизацию через CSS
         const newName = prompt('Введите новый никнейм (3-10 символов):', this.tempName);
         
-        if (newName === null) {
-            return; // Пользователь нажал отмена
-        }
+        if (newName === null) return;
         
         if (newName.length >= 3 && newName.length <= 10) {
             this.tempName = newName;
             document.getElementById('profileName').textContent = newName;
-            App.hapticFeedback('medium');
-            App.showAlert('✅ Никнейм изменен');
+            alert('✅ Никнейм изменен');
         } else {
-            App.showAlert('❌ Никнейм должен быть от 3 до 10 символов');
+            alert('❌ Никнейм должен быть от 3 до 10 символов');
         }
     },
     
     editAge() {
         if (!this.editMode) {
-            App.showAlert('Сначала активируйте режим редактирования (карандаш)');
+            alert('Сначала активируйте режим редактирования (карандаш)');
             return;
         }
         document.getElementById('ageValue').focus();
@@ -234,7 +229,7 @@ const Profile = {
     
     editSteam() {
         if (!this.editMode) {
-            App.showAlert('Сначала активируйте режим редактирования (карандаш)');
+            alert('Сначала активируйте режим редактирования (карандаш)');
             return;
         }
         document.getElementById('steamDisplay').focus();
@@ -242,7 +237,7 @@ const Profile = {
     
     editFaceitLink() {
         if (!this.editMode) {
-            App.showAlert('Сначала активируйте режим редактирования (карандаш)');
+            alert('Сначала активируйте режим редактирования (карандаш)');
             return;
         }
         document.getElementById('faceitLinkDisplay').focus();
@@ -250,28 +245,20 @@ const Profile = {
     
     selectAvatar() {
         if (!this.editMode) {
-            App.showAlert('Сначала активируйте режим редактирования (карандаш)');
+            alert('Сначала активируйте режим редактирования (карандаш)');
             return;
         }
-        
-        // Здесь можно добавить выбор аватара позже
-        App.showPopup({
-            title: 'Выбор аватара',
-            message: 'Функция будет доступна позже',
-            buttons: [{ id: 'ok', type: 'ok', text: 'ОК' }]
-        });
+        alert('Функция выбора аватара будет доступна позже');
     }
 };
 
-// Инициализация после загрузки DOM
+// Инициализация
 document.addEventListener('DOMContentLoaded', () => {
-    // Даем время на загрузку всех элементов
     setTimeout(() => {
         if (document.getElementById('profileName')) {
             Profile.loadSavedValues();
         }
-    }, 200);
+    }, 100);
 });
 
 window.Profile = Profile;
-
