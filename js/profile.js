@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - РАБОЧАЯ ВЕРСИЯ
+// ПРОФИЛЬ (Telegram Mini App версия) - С ВАЛИДАЦИЕЙ
 // ============================================
 
 const Profile = {
@@ -84,22 +84,47 @@ const Profile = {
         }
     },
 
-    // Валидация возраста
+    // Валидация возраста (улучшенная)
     validateAge(ageStr) {
         if (ageStr === '') {
             this.tempAge = '';
             return true;
         }
         
+        // Проверяем длину
+        if (ageStr.length > 3) {
+            alert('❌ Возраст должен быть не более 3 символов');
+            document.getElementById('ageValue').value = this.tempAge;
+            return false;
+        }
+        
         const age = parseInt(ageStr);
         
         if (isNaN(age) || age < 0 || age > 100) {
-            alert('❌ Возраст должен быть от 0 до 100');
+            alert('❌ Возраст должен быть числом от 0 до 100');
             document.getElementById('ageValue').value = this.tempAge;
             return false;
         }
         
         this.tempAge = ageStr;
+        return true;
+    },
+
+    // Валидация ссылки Steam
+    validateSteamLink(link) {
+        if (link.length > 100) {
+            alert('❌ Ссылка Steam должна быть не более 100 символов');
+            return false;
+        }
+        return true;
+    },
+
+    // Валидация ссылки Faceit
+    validateFaceitLink(link) {
+        if (link.length > 100) {
+            alert('❌ Ссылка Faceit должна быть не более 100 символов');
+            return false;
+        }
         return true;
     },
     
@@ -124,7 +149,7 @@ const Profile = {
         if (steamDisplayEl) {
             steamDisplayEl.value = this.savedSteam || '';
             steamDisplayEl.placeholder = 'введите ссылку на ваш профиль steam';
-            steamDisplayEl.maxLength = 50;
+            steamDisplayEl.maxLength = 100; // Увеличил до 100
             steamDisplayEl.readOnly = true;
         }
         
@@ -132,7 +157,7 @@ const Profile = {
         if (faceitLinkDisplayEl) {
             faceitLinkDisplayEl.value = this.savedFaceitLink || '';
             faceitLinkDisplayEl.placeholder = 'введите ссылку на ваш профиль faceit / пропустите';
-            faceitLinkDisplayEl.maxLength = 50;
+            faceitLinkDisplayEl.maxLength = 100; // Увеличил до 100
             faceitLinkDisplayEl.readOnly = true;
         }
         
@@ -186,6 +211,18 @@ const Profile = {
         // Проверяем возраст
         const ageInput = document.getElementById('ageValue');
         if (ageInput && !this.validateAge(ageInput.value)) {
+            return;
+        }
+
+        // Проверяем ссылку Steam
+        const steamInput = document.getElementById('steamDisplay');
+        if (steamInput && !this.validateSteamLink(steamInput.value)) {
+            return;
+        }
+
+        // Проверяем ссылку Faceit
+        const faceitInput = document.getElementById('faceitLinkDisplay');
+        if (faceitInput && !this.validateFaceitLink(faceitInput.value)) {
             return;
         }
 
