@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - РАБОЧАЯ ВЕРСИЯ
+// ПРОФИЛЬ (Telegram Mini App версия) - С ПОЛЕМ ДЛЯ ВВОДА НИКА
 // ============================================
 
 const Profile = {
@@ -52,11 +52,6 @@ const Profile = {
         
         [ageInput, steamInput, faceitInput].forEach(input => {
             if (input) {
-                // Убираем старые обработчики
-                input.removeEventListener('click', this.handleInputClick);
-                input.removeEventListener('focus', this.handleInputFocus);
-                
-                // Добавляем новые
                 input.addEventListener('click', (e) => {
                     if (!this.editMode) {
                         e.preventDefault();
@@ -75,7 +70,6 @@ const Profile = {
 
         // Валидация возраста
         if (ageInput) {
-            ageInput.removeEventListener('blur', this.handleAgeBlur);
             ageInput.addEventListener('blur', (e) => {
                 if (this.editMode) {
                     this.validateAge(e.target.value);
@@ -84,14 +78,13 @@ const Profile = {
         }
     },
 
-    // Валидация возраста (улучшенная)
+    // Валидация возраста
     validateAge(ageStr) {
         if (ageStr === '') {
             this.tempAge = '';
             return true;
         }
         
-        // Проверяем длину
         if (ageStr.length > 3) {
             alert('❌ Возраст должен быть не более 3 символов');
             document.getElementById('ageValue').value = this.tempAge;
@@ -126,6 +119,61 @@ const Profile = {
             return false;
         }
         return true;
+    },
+    
+    // Настройка поля для ввода ника
+    setupNameInputListener() {
+        const nameInput = document.getElementById('editProfileName');
+        if (!nameInput) return;
+
+        // Убираем старые обработчики
+        nameInput.removeEventListener('blur', this.handleNameBlur);
+        nameInput.removeEventListener('keypress', this.handleNameKeypress);
+
+        // Обработчик потери фокуса
+        nameInput.addEventListener('blur', () => {
+            this.saveNameFromInput();
+        });
+
+        // Обработчик нажатия Enter
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.saveNameFromInput();
+            }
+        });
+    },
+
+    // Сохранение имени из поля ввода
+    saveNameFromInput() {
+        const nameInput = document.getElementById('editProfileName');
+        const profileName = document.getElementById('profileName');
+        
+        if (!nameInput || !profileName) return;
+
+        const newName = nameInput.value.trim();
+        
+        if (newName === '') {
+            // Если пусто, возвращаем старое имя
+            nameInput.value = this.tempName;
+            nameInput.style.display = 'none';
+            profileName.style.display = 'inline-block';
+            return;
+        }
+        
+        if (newName.length >= 3 && newName.length <= 10) {
+            this.tempName = newName;
+            profileName.textContent = newName;
+            alert('✅ Никнейм изменен');
+            
+            // Скрываем поле ввода, показываем текст
+            nameInput.style.display = 'none';
+            profileName.style.display = 'inline-block';
+        } else {
+            alert('❌ Никнейм должен быть от 3 до 10 символов');
+            nameInput.value = this.tempName;
+            nameInput.focus();
+        }
     },
     
     loadSavedValues() {
@@ -174,6 +222,7 @@ const Profile = {
         
         // Настраиваем обработчики
         this.setupInputListeners();
+        this.setupNameInputListener();
     },
     
     toggleEditMode() {
@@ -189,6 +238,8 @@ const Profile = {
         
         const editToggle = document.getElementById('editToggle');
         const applyBtn = document.getElementById('applyBtn');
+        const profileName = document.getElementById('profileName');
+        const nameInput = document.getElementById('editProfileName');
         
         if (this.editMode) {
             if (editToggle) editToggle.classList.add('active');
@@ -197,6 +248,13 @@ const Profile = {
                 if (el) el.classList.add('editable');
             });
             this.setInputsReadonly(false);
+            
+            // В режиме редактирования показываем поле для ввода ника
+            if (profileName && nameInput) {
+                profileName.style.display = 'none';
+                nameInput.style.display = 'inline-block';
+                nameInput.value = this.tempName;
+            }
         } else {
             if (editToggle) editToggle.classList.remove('active');
             if (applyBtn) applyBtn.classList.remove('visible');
@@ -204,6 +262,12 @@ const Profile = {
                 if (el) el.classList.remove('editable');
             });
             this.setInputsReadonly(true);
+            
+            // Выходим из режима редактирования - показываем текст, скрываем поле
+            if (profileName && nameInput) {
+                nameInput.style.display = 'none';
+                profileName.style.display = 'inline-block';
+            }
         }
     },
     
@@ -243,16 +307,10 @@ const Profile = {
             return;
         }
         
-        const newName = prompt('Введите новый никнейм (3-10 символов):', this.tempName);
-        
-        if (newName === null) return;
-        
-        if (newName.length >= 3 && newName.length <= 10) {
-            this.tempName = newName;
-            document.getElementById('profileName').textContent = newName;
-            alert('✅ Никнейм изменен');
-        } else {
-            alert('❌ Никнейм должен быть от 3 до 10 символов');
+        // Фокус на поле ввода
+        const nameInput = document.getElementById('editProfileName');
+        if (nameInput) {
+            nameInput.focus();
         }
     },
     
