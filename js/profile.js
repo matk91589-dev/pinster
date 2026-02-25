@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// ПРОФИЛЬ (Telegram Mini App версия) - С ОТПРАВКОЙ НА СЕРВЕР
 // ============================================
 
 const Profile = {
@@ -14,6 +14,7 @@ const Profile = {
     tempAge: '',
     tempSteam: '',
     tempFaceitLink: '',
+    telegramId: null,
     
     generateRandomNick() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -42,6 +43,81 @@ const Profile = {
                 }
             }
         });
+    },
+    
+    // Получаем telegram_id из URL
+    getTelegramId() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('tg_id');
+    },
+    
+    // Загружаем профиль с сервера
+    async loadProfileFromServer() {
+        this.telegramId = this.getTelegramId();
+        if (!this.telegramId) {
+            console.error('❌ Нет telegram_id в URL');
+            return;
+        }
+        
+        try {
+            const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/profile/get', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    telegram_id: this.telegramId
+                })
+            });
+            
+            const data = await response.json();
+            console.log('📥 Загружен профиль:', data);
+            
+            if (data.status === 'ok') {
+                this.savedName = data.nick || '-';
+                this.savedAge = data.age || '';
+                this.savedSteam = data.steam_link || '';
+                this.savedFaceitLink = data.faceit_link || '';
+                this.savedAvatar = data.avatar || '👤';
+                this.savedPingcoins = data.pingcoins || 0;
+                
+                this.tempName = this.savedName;
+                this.tempAge = this.savedAge;
+                this.tempSteam = this.savedSteam;
+                this.tempFaceitLink = this.savedFaceitLink;
+                this.tempAvatar = this.savedAvatar;
+                
+                this.updateDisplay();
+            }
+        } catch (error) {
+            console.error('❌ Ошибка загрузки профиля:', error);
+        }
+    },
+    
+    // Обновляем отображение
+    updateDisplay() {
+        const profileNameEl = document.getElementById('profileName');
+        if (profileNameEl) profileNameEl.textContent = this.savedName;
+        
+        const ageValueEl = document.getElementById('ageValue');
+        if (ageValueEl) {
+            ageValueEl.value = this.savedAge || '';
+        }
+        
+        const steamDisplayEl = document.getElementById('steamDisplay');
+        if (steamDisplayEl) {
+            steamDisplayEl.value = this.savedSteam || '';
+        }
+        
+        const faceitLinkDisplayEl = document.getElementById('faceitLinkDisplay');
+        if (faceitLinkDisplayEl) {
+            faceitLinkDisplayEl.value = this.savedFaceitLink || '';
+        }
+        
+        const avatarDiv = document.getElementById('profileAvatar');
+        if (avatarDiv) {
+            avatarDiv.innerHTML = this.savedAvatar;
+        }
     },
     
     // Добавляем обработчики для полей ввода
@@ -187,48 +263,13 @@ const Profile = {
     },
     
     loadSavedValues() {
-        if (this.savedName === '-') {
-            this.savedName = this.generateRandomNick();
-            this.tempName = this.savedName;
-        }
-        
-        const profileNameEl = document.getElementById('profileName');
-        if (profileNameEl) profileNameEl.textContent = this.savedName;
-        
-        const ageValueEl = document.getElementById('ageValue');
-        if (ageValueEl) {
-            ageValueEl.value = this.savedAge || '';
-            ageValueEl.placeholder = '0-100';
-            ageValueEl.maxLength = 3;
-            ageValueEl.readOnly = true;
-        }
-        
-        const steamDisplayEl = document.getElementById('steamDisplay');
-        if (steamDisplayEl) {
-            steamDisplayEl.value = this.savedSteam || '';
-            steamDisplayEl.placeholder = 'введите ссылку на ваш профиль steam';
-            steamDisplayEl.maxLength = 100;
-            steamDisplayEl.readOnly = true;
-        }
-        
-        const faceitLinkDisplayEl = document.getElementById('faceitLinkDisplay');
-        if (faceitLinkDisplayEl) {
-            faceitLinkDisplayEl.value = this.savedFaceitLink || '';
-            faceitLinkDisplayEl.placeholder = 'введите ссылку на ваш профиль faceit / пропустите';
-            faceitLinkDisplayEl.maxLength = 100;
-            faceitLinkDisplayEl.readOnly = true;
-        }
+        // Загружаем с сервера вместо локального
+        this.loadProfileFromServer();
         
         const avatarDiv = document.getElementById('profileAvatar');
         if (avatarDiv) {
             avatarDiv.innerHTML = this.savedAvatar;
         }
-        
-        this.tempName = this.savedName;
-        this.tempAvatar = this.savedAvatar;
-        this.tempAge = this.savedAge;
-        this.tempSteam = this.savedSteam;
-        this.tempFaceitLink = this.savedFaceitLink;
         
         // Настраиваем обработчики после загрузки
         setTimeout(() => {
@@ -266,8 +307,8 @@ const Profile = {
             if (profileName && nameInput) {
                 profileName.style.display = 'none';
                 nameInput.style.display = 'inline-block';
-                nameInput.value = this.tempName; // Устанавливаем текущий ник
-                setTimeout(() => nameInput.focus(), 100); // Ставим фокус с небольшой задержкой
+                nameInput.value = this.tempName;
+                setTimeout(() => nameInput.focus(), 100);
             }
         } else {
             // Выключаем режим редактирования
@@ -286,7 +327,7 @@ const Profile = {
         }
     },
     
-    applyChanges() {
+    async applyChanges() {
         // Проверяем возраст
         const ageInput = document.getElementById('ageValue');
         if (ageInput && !this.validateAge(ageInput.value)) {
@@ -305,15 +346,41 @@ const Profile = {
             return;
         }
 
-        this.savedName = this.tempName;
-        this.savedAvatar = this.tempAvatar;
-        this.savedAge = document.getElementById('ageValue').value;
-        this.savedSteam = document.getElementById('steamDisplay').value;
-        this.savedFaceitLink = document.getElementById('faceitLinkDisplay').value;
-        
-        this.loadSavedValues();
-        alert('✅ Изменения сохранены');
-        this.toggleEditMode();
+        // Сохраняем на сервер
+        try {
+            const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/profile/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    telegram_id: this.telegramId,
+                    nick: this.tempName,
+                    age: ageInput ? ageInput.value : null,
+                    steam_link: steamInput ? steamInput.value : null,
+                    faceit_link: faceitInput ? faceitInput.value : null
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.status === 'ok') {
+                this.savedName = this.tempName;
+                this.savedAvatar = this.tempAvatar;
+                this.savedAge = ageInput ? ageInput.value : '';
+                this.savedSteam = steamInput ? steamInput.value : '';
+                this.savedFaceitLink = faceitInput ? faceitInput.value : '';
+                
+                this.updateDisplay();
+                alert('✅ Изменения сохранены');
+                this.toggleEditMode();
+            } else {
+                alert('❌ Ошибка при сохранении');
+            }
+        } catch (error) {
+            console.error('❌ Ошибка отправки:', error);
+            alert('❌ Не удалось сохранить изменения');
+        }
     },
     
     editName() {
