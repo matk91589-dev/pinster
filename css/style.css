@@ -955,14 +955,22 @@ body:has(.search-screen.active) .bottom-nav {
 }
 
 /* ===== ПОДСВЕТКА ПОЛЕЙ В РЕЖИМЕ РЕДАКТИРОВАНИЯ ===== */
-/* Подсвечиваем ТОЛЬКО возраст (первый stat-card) */
+
+/* Подсвечиваем возраст (первый stat-card) */
 .profile-screen.editable .stats-row .stat-card:first-child .stat-value {
     border-color: #FF5500 !important;
     border-width: 2px !important;
     background: rgba(255, 85, 0, 0.05) !important;
 }
 
-/* А рейтинг (второй stat-card) НЕ трогаем */
+/* Подсвечиваем все поля ссылок (profile-stat-value) */
+.profile-screen.editable .profile-stat-value {
+    border-color: #FF5500 !important;
+    border-width: 2px !important;
+    background: rgba(255, 85, 0, 0.05) !important;
+}
+
+/* Рейтинг (второй stat-card) НЕ трогаем - всегда серый */
 .profile-screen.editable .stats-row .stat-card:last-child .stat-value {
     border-color: #2A2F3A !important;
     border-width: 1px !important;
@@ -1621,3 +1629,4 @@ input:-webkit-autofill:active {
     border: none;
     outline: none;
 }
+
