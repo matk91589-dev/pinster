@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - ФИНАЛЬНАЯ ВЕРСИЯ
+// ПРОФИЛЬ (Telegram Mini App версия) - РАБОЧАЯ ВЕРСИЯ
 // ============================================
 
 const Profile = {
@@ -279,6 +279,17 @@ const Profile = {
         
         if (!nameInput || !profileName) return;
 
+        // Проверяем telegramId
+        if (!this.telegramId) {
+            this.telegramId = this.getTelegramId();
+            if (!this.telegramId) {
+                alert('❌ Ошибка: нет telegram_id');
+                nameInput.style.display = 'none';
+                profileName.style.display = 'inline-block';
+                return;
+            }
+        }
+
         const newName = nameInput.value.trim();
         
         if (newName === '') {
@@ -316,13 +327,13 @@ const Profile = {
                     
                     console.log('✅ Никнейм изменен на сервере');
                 } else {
-                    alert('❌ Ошибка при сохранении ника');
+                    alert('❌ Ошибка при сохранении ника: ' + JSON.stringify(data));
                     nameInput.value = this.tempName;
                     nameInput.focus();
                 }
             } catch (error) {
                 console.error('❌ Ошибка отправки:', error);
-                alert('❌ Не удалось сохранить ник');
+                alert('❌ Не удалось сохранить ник: ' + error.message);
                 nameInput.value = this.tempName;
                 nameInput.focus();
             }
@@ -356,9 +367,6 @@ const Profile = {
     
     toggleEditMode() {
         console.log('✏️ toggleEditMode:', this.editMode ? 'выключение' : 'включение');
-        
-        // Сохраняем текущее состояние перед переключением
-        const wasInEditMode = this.editMode;
         
         this.editMode = !this.editMode;
         
