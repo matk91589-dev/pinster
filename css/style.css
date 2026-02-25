@@ -956,11 +956,18 @@ body:has(.search-screen.active) .bottom-nav {
 
 /* ===== ПОДСВЕТКА ПОЛЕЙ В РЕЖИМЕ РЕДАКТИРОВАНИЯ ===== */
 
-/* Подсвечиваем возраст (первый stat-card) */
-.profile-screen.editable .stats-row .stat-card:first-child .stat-value {
+/* Подсвечиваем возраст (ВТОРОЙ stat-card, потому что рейтинг первый) */
+.profile-screen.editable .stats-row .stat-card:last-child .stat-value {
     border-color: #FF5500 !important;
     border-width: 2px !important;
     background: rgba(255, 85, 0, 0.05) !important;
+}
+
+/* Рейтинг (ПЕРВЫЙ stat-card) НЕ трогаем - всегда серый */
+.profile-screen.editable .stats-row .stat-card:first-child .stat-value {
+    border-color: #2A2F3A !important;
+    border-width: 1px !important;
+    background: #1A1D24 !important;
 }
 
 /* Подсвечиваем все поля ссылок (profile-stat-value) */
@@ -968,13 +975,6 @@ body:has(.search-screen.active) .bottom-nav {
     border-color: #FF5500 !important;
     border-width: 2px !important;
     background: rgba(255, 85, 0, 0.05) !important;
-}
-
-/* Рейтинг (второй stat-card) НЕ трогаем - всегда серый */
-.profile-screen.editable .stats-row .stat-card:last-child .stat-value {
-    border-color: #2A2F3A !important;
-    border-width: 1px !important;
-    background: #1A1D24 !important;
 }
 
 .profile-screen.editable .stat-value input,
@@ -1629,4 +1629,5 @@ input:-webkit-autofill:active {
     border: none;
     outline: none;
 }
+
 
