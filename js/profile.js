@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// ПРОФИЛЬ - ИСПРАВЛЕННАЯ ВЕРСИЯ
 // ============================================
 
 const Profile = {
@@ -100,10 +100,10 @@ const Profile = {
             profileScreen.classList.add('editable');
             if (editToggle) editToggle.classList.add('active');
             
-            // ПОКАЗЫВАЕМ кнопку "Применить" (убираем hidden, добавляем visible)
+            // ПОКАЗЫВАЕМ кнопку "Применить"
             if (applyBtn) {
-                applyBtn.classList.remove('hidden');
                 applyBtn.classList.add('visible');
+                applyBtn.style.display = 'inline-block';
             }
             
             // Делаем поля редактируемыми
@@ -120,10 +120,10 @@ const Profile = {
             profileScreen.classList.remove('editable');
             if (editToggle) editToggle.classList.remove('active');
             
-            // СКРЫВАЕМ кнопку "Применить"
+            // ПОЛНОСТЬЮ СКРЫВАЕМ кнопку "Применить"
             if (applyBtn) {
                 applyBtn.classList.remove('visible');
-                // Не добавляем hidden, просто убираем visible
+                applyBtn.style.display = 'none';
             }
             
             // Делаем поля только для чтения
@@ -255,13 +255,13 @@ const Profile = {
                     profileName.textContent = this.savedName;
                 }
                 
-                // ВЫКЛЮЧАЕМ режим редактирования (кнопка скроется сама в toggleEditMode)
+                // ВЫКЛЮЧАЕМ режим редактирования (кнопка скроется)
                 this.toggleEditMode();
             }
         } catch (error) {
             console.error('❌ Ошибка отправки:', error);
         } finally {
-            // Разблокируем кнопку
+            // Разблокируем кнопку (она уже будет скрыта)
             if (applyBtn) {
                 applyBtn.style.pointerEvents = 'auto';
                 applyBtn.style.opacity = '1';
@@ -279,51 +279,42 @@ const Profile = {
         const profileName = document.getElementById('profileName');
         if (!profileName) return;
         
-        // Создаем компактное поле ввода (как у возраста)
-        const tempInput = document.createElement('input');
-        tempInput.type = 'text';
-        tempInput.value = this.tempName;
-        tempInput.maxLength = 10;
-        tempInput.style.cssText = `
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: #FF5500;
-            font-size: clamp(16px, 5vw, 20px);
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            outline: none;
-            padding: 4px 0;
-            margin: 0;
-        `;
+        const editInput = document.getElementById('editProfileName');
+        if (!editInput) return;
         
-        // Заменяем текст на поле ввода
+        // Прячем текст, показываем поле ввода
         profileName.style.display = 'none';
-        profileName.parentNode.insertBefore(tempInput, profileName.nextSibling);
-        
-        // Фокус на поле
-        setTimeout(() => tempInput.focus(), 50);
+        editInput.style.display = 'inline-block';
+        editInput.value = this.tempName;
+        editInput.focus();
         
         // Обработчик потери фокуса
-        tempInput.addEventListener('blur', () => {
-            this.saveNameFromTempInput(tempInput, profileName);
-        });
+        const blurHandler = () => {
+            setTimeout(() => {
+                if (!editInput.matches(':focus')) {
+                    this.saveNameFromInput(editInput, profileName);
+                }
+            }, 100);
+        };
         
         // Обработчик Enter
-        tempInput.addEventListener('keypress', (e) => {
+        const keyHandler = (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                this.saveNameFromTempInput(tempInput, profileName);
+                this.saveNameFromInput(editInput, profileName);
             }
-        });
+        };
+        
+        editInput.addEventListener('blur', blurHandler, { once: true });
+        editInput.addEventListener('keypress', keyHandler, { once: true });
     },
     
-    // Сохранение из временного поля
-    async saveNameFromTempInput(tempInput, profileName) {
-        const newName = tempInput.value.trim();
+    // Сохранение из поля ввода
+    async saveNameFromInput(editInput, profileName) {
+        const newName = editInput.value.trim();
         
         if (newName === '') {
-            tempInput.remove();
+            editInput.style.display = 'none';
             profileName.style.display = 'inline-block';
             return;
         }
@@ -332,7 +323,7 @@ const Profile = {
             if (!this.telegramId) {
                 this.telegramId = this.getTelegramId();
                 if (!this.telegramId) {
-                    tempInput.remove();
+                    editInput.style.display = 'none';
                     profileName.style.display = 'inline-block';
                     return;
                 }
@@ -356,7 +347,6 @@ const Profile = {
                     this.tempName = newName;
                     this.savedName = newName;
                     profileName.textContent = newName;
-                    profileName.classList.add('editable'); // Оставляем оранжевым
                 } else {
                     alert('❌ Ошибка при сохранении ника');
                 }
@@ -368,8 +358,8 @@ const Profile = {
             alert('❌ Никнейм должен быть от 3 до 10 символов');
         }
         
-        // Удаляем временное поле и показываем текст
-        tempInput.remove();
+        // Убираем поле ввода, показываем текст
+        editInput.style.display = 'none';
         profileName.style.display = 'inline-block';
     },
     
@@ -403,6 +393,12 @@ const Profile = {
             ageInput.addEventListener('blur', (e) => {
                 if (this.editMode) this.validateAge(e.target.value);
             });
+        }
+        
+        // Скрываем кнопку "Применить" при загрузке
+        const applyBtn = document.getElementById('applyBtn');
+        if (applyBtn) {
+            applyBtn.style.display = 'none';
         }
     },
     
