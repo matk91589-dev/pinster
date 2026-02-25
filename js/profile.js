@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - РАБОЧАЯ ВЕРСИЯ
+// ПРОФИЛЬ (Telegram Mini App версия) - ФИНАЛЬНАЯ ВЕРСИЯ
 // ============================================
 
 const Profile = {
@@ -91,7 +91,6 @@ const Profile = {
         const editToggle = document.getElementById('editToggle');
         const applyBtn = document.getElementById('applyBtn');
         const profileName = document.getElementById('profileName');
-        const nameInput = document.getElementById('editProfileName');
         const ageInput = document.getElementById('ageValue');
         const steamInput = document.getElementById('steamDisplay');
         const faceitInput = document.getElementById('faceitLinkDisplay');
@@ -107,12 +106,9 @@ const Profile = {
             if (steamInput) steamInput.readOnly = false;
             if (faceitInput) faceitInput.readOnly = false;
             
-            // Показываем поле для ника, скрываем текст
-            if (profileName && nameInput) {
-                profileName.style.display = 'none';
-                nameInput.style.display = 'inline-block';
-                nameInput.value = this.tempName;
-                setTimeout(() => nameInput.focus(), 100);
+            // Подсвечиваем ник оранжевым
+            if (profileName) {
+                profileName.classList.add('editable');
             }
         } else {
             // Выключаем режим редактирования
@@ -125,10 +121,9 @@ const Profile = {
             if (steamInput) steamInput.readOnly = true;
             if (faceitInput) faceitInput.readOnly = true;
             
-            // Показываем текст, скрываем поле для ника
-            if (profileName && nameInput) {
-                nameInput.style.display = 'none';
-                profileName.style.display = 'inline-block';
+            // Убираем подсветку с ника
+            if (profileName) {
+                profileName.classList.remove('editable');
             }
         }
     },
@@ -174,24 +169,52 @@ const Profile = {
     },
     
     async applyChanges() {
+        // Блокируем кнопку на время отправки
+        const applyBtn = document.getElementById('applyBtn');
+        if (applyBtn) {
+            applyBtn.style.pointerEvents = 'none';
+            applyBtn.style.opacity = '0.5';
+        }
+        
         if (!this.telegramId) {
             this.telegramId = this.getTelegramId();
-            if (!this.telegramId) return;
+            if (!this.telegramId) {
+                if (applyBtn) {
+                    applyBtn.style.pointerEvents = 'auto';
+                    applyBtn.style.opacity = '1';
+                }
+                return;
+            }
         }
 
         const ageInput = document.getElementById('ageValue');
         const steamInput = document.getElementById('steamDisplay');
         const faceitInput = document.getElementById('faceitLinkDisplay');
-        
-        // Обновляем tempName из поля ввода
-        const nameInput = document.getElementById('editProfileName');
-        if (nameInput && nameInput.style.display !== 'none' && nameInput.value.trim() !== '') {
-            this.tempName = nameInput.value.trim();
-        }
+        const profileName = document.getElementById('profileName');
 
-        if (ageInput && !this.validateAge(ageInput.value)) return;
-        if (steamInput && !this.validateSteamLink(steamInput.value)) return;
-        if (faceitInput && !this.validateFaceitLink(faceitInput.value)) return;
+        if (ageInput && !this.validateAge(ageInput.value)) {
+            if (applyBtn) {
+                applyBtn.style.pointerEvents = 'auto';
+                applyBtn.style.opacity = '1';
+            }
+            return;
+        }
+        
+        if (steamInput && !this.validateSteamLink(steamInput.value)) {
+            if (applyBtn) {
+                applyBtn.style.pointerEvents = 'auto';
+                applyBtn.style.opacity = '1';
+            }
+            return;
+        }
+        
+        if (faceitInput && !this.validateFaceitLink(faceitInput.value)) {
+            if (applyBtn) {
+                applyBtn.style.pointerEvents = 'auto';
+                applyBtn.style.opacity = '1';
+            }
+            return;
+        }
 
         const dataToSend = {
             telegram_id: this.telegramId,
@@ -218,25 +241,78 @@ const Profile = {
                 this.savedSteam = steamInput ? steamInput.value : '';
                 this.savedFaceitLink = faceitInput ? faceitInput.value : '';
                 
-                this.updateDisplay();
+                if (profileName) {
+                    profileName.textContent = this.savedName;
+                }
+                
                 this.toggleEditMode();
             }
         } catch (error) {
             console.error('❌ Ошибка отправки:', error);
+        } finally {
+            // Разблокируем кнопку
+            if (applyBtn) {
+                applyBtn.style.pointerEvents = 'auto';
+                applyBtn.style.opacity = '1';
+            }
         }
     },
     
-    async saveNameFromInput() {
-        const nameInput = document.getElementById('editProfileName');
-        const profileName = document.getElementById('profileName');
+    // Редактирование ника с компактным полем
+    editName() {
+        if (!this.editMode) {
+            alert('Сначала активируйте режим редактирования (карандаш)');
+            return;
+        }
         
-        if (!nameInput || !profileName) return;
-
-        const newName = nameInput.value.trim();
+        const profileName = document.getElementById('profileName');
+        if (!profileName) return;
+        
+        // Создаем компактное поле ввода (как у возраста)
+        const tempInput = document.createElement('input');
+        tempInput.type = 'text';
+        tempInput.value = this.tempName;
+        tempInput.maxLength = 10;
+        tempInput.style.cssText = `
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #FF5500;
+            font-size: clamp(16px, 5vw, 20px);
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            outline: none;
+            padding: 4px 0;
+            margin: 0;
+        `;
+        
+        // Заменяем текст на поле ввода
+        profileName.style.display = 'none';
+        profileName.parentNode.insertBefore(tempInput, profileName.nextSibling);
+        
+        // Фокус на поле
+        setTimeout(() => tempInput.focus(), 50);
+        
+        // Обработчик потери фокуса
+        tempInput.addEventListener('blur', () => {
+            this.saveNameFromTempInput(tempInput, profileName);
+        });
+        
+        // Обработчик Enter
+        tempInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.saveNameFromTempInput(tempInput, profileName);
+            }
+        });
+    },
+    
+    // Сохранение из временного поля
+    async saveNameFromTempInput(tempInput, profileName) {
+        const newName = tempInput.value.trim();
         
         if (newName === '') {
-            nameInput.value = this.tempName;
-            nameInput.style.display = 'none';
+            tempInput.remove();
             profileName.style.display = 'inline-block';
             return;
         }
@@ -244,7 +320,11 @@ const Profile = {
         if (newName.length >= 3 && newName.length <= 10) {
             if (!this.telegramId) {
                 this.telegramId = this.getTelegramId();
-                if (!this.telegramId) return;
+                if (!this.telegramId) {
+                    tempInput.remove();
+                    profileName.style.display = 'inline-block';
+                    return;
+                }
             }
             
             try {
@@ -265,55 +345,21 @@ const Profile = {
                     this.tempName = newName;
                     this.savedName = newName;
                     profileName.textContent = newName;
-                    
-                    nameInput.style.display = 'none';
-                    profileName.style.display = 'inline-block';
+                    profileName.classList.add('editable'); // Оставляем оранжевым
                 } else {
-                    nameInput.value = this.tempName;
+                    alert('❌ Ошибка при сохранении ника');
                 }
             } catch (error) {
                 console.error('❌ Ошибка отправки:', error);
-                nameInput.value = this.tempName;
+                alert('❌ Не удалось сохранить ник');
             }
         } else {
             alert('❌ Никнейм должен быть от 3 до 10 символов');
-            nameInput.value = this.tempName;
-            nameInput.focus();
-        }
-    },
-    
-    setupListeners() {
-        const nameInput = document.getElementById('editProfileName');
-        if (nameInput) {
-            nameInput.addEventListener('blur', () => this.saveNameFromInput());
-            nameInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    this.saveNameFromInput();
-                }
-            });
         }
         
-        const ageInput = document.getElementById('ageValue');
-        if (ageInput) {
-            ageInput.addEventListener('blur', (e) => {
-                if (this.editMode) this.validateAge(e.target.value);
-            });
-        }
-    },
-    
-    loadSavedValues() {
-        this.loadProfileFromServer();
-        setTimeout(() => this.setupListeners(), 200);
-    },
-    
-    editName() {
-        if (!this.editMode) {
-            alert('Сначала активируйте режим редактирования (карандаш)');
-            return;
-        }
-        const nameInput = document.getElementById('editProfileName');
-        if (nameInput) nameInput.focus();
+        // Удаляем временное поле и показываем текст
+        tempInput.remove();
+        profileName.style.display = 'inline-block';
     },
     
     editAge() {
@@ -338,6 +384,20 @@ const Profile = {
             return;
         }
         document.getElementById('faceitLinkDisplay')?.focus();
+    },
+    
+    setupListeners() {
+        const ageInput = document.getElementById('ageValue');
+        if (ageInput) {
+            ageInput.addEventListener('blur', (e) => {
+                if (this.editMode) this.validateAge(e.target.value);
+            });
+        }
+    },
+    
+    loadSavedValues() {
+        this.loadProfileFromServer();
+        setTimeout(() => this.setupListeners(), 200);
     }
 };
 
