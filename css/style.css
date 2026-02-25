@@ -217,6 +217,12 @@ body {
     pointer-events: auto;
 }
 
+/* Кнопка скрыта принудительно (после сохранения) */
+.apply-btn.hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
 .apply-btn:hover {
     background: #FF5500;
     color: #F5F5F5;
@@ -949,11 +955,18 @@ body:has(.search-screen.active) .bottom-nav {
 }
 
 /* ===== ПОДСВЕТКА ПОЛЕЙ В РЕЖИМЕ РЕДАКТИРОВАНИЯ ===== */
-.profile-screen.editable .stat-value,
-.profile-screen.editable .profile-stat-value {
+/* Подсвечиваем ТОЛЬКО возраст (первый stat-card) */
+.profile-screen.editable .stats-row .stat-card:first-child .stat-value {
     border-color: #FF5500 !important;
     border-width: 2px !important;
     background: rgba(255, 85, 0, 0.05) !important;
+}
+
+/* А рейтинг (второй stat-card) НЕ трогаем */
+.profile-screen.editable .stats-row .stat-card:last-child .stat-value {
+    border-color: #2A2F3A !important;
+    border-width: 1px !important;
+    background: #1A1D24 !important;
 }
 
 .profile-screen.editable .stat-value input,
