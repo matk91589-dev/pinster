@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - РАБОЧАЯ ВЕРСИЯ
+// ПРОФИЛЬ (Telegram Mini App версия) - ИСПРАВЛЕННАЯ ВЕРСИЯ
 // ============================================
 
 const Profile = {
@@ -162,45 +162,39 @@ const Profile = {
         }
     },
     
-    // Добавляем обработчики для полей ввода
+    // Добавляем обработчики для полей ввода (ИСПРАВЛЕНО - без клонирования)
     setupInputListeners() {
         const ageInput = document.getElementById('ageValue');
         const steamInput = document.getElementById('steamDisplay');
         const faceitInput = document.getElementById('faceitLinkDisplay');
-        
+
         [ageInput, steamInput, faceitInput].forEach(input => {
-            if (input) {
-                // Убираем старые обработчики
-                const newInput = input.cloneNode(true);
-                input.parentNode.replaceChild(newInput, input);
-                
-                newInput.addEventListener('click', (e) => {
-                    if (!this.editMode) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        alert('Для изменений перейдите в раздел редактирования (карандаш)');
-                    }
-                });
-                
-                newInput.addEventListener('focus', (e) => {
-                    if (!this.editMode) {
-                        e.target.blur();
-                    }
-                });
+            if (!input) return;
 
-                // Валидация возраста
-                if (newInput.id === 'ageValue') {
-                    newInput.addEventListener('blur', (e) => {
-                        if (this.editMode) {
-                            this.validateAge(e.target.value);
-                        }
-                    });
+            // Убираем старые обработчики
+            input.removeEventListener('click', this.handleInputClick);
+            input.removeEventListener('focus', this.handleInputFocus);
+            
+            input.addEventListener('click', (e) => {
+                if (!this.editMode) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    alert('Для изменений перейдите в раздел редактирования (карандаш)');
                 }
+            });
 
-                // Обновляем ссылки на элементы
-                if (newInput.id === 'ageValue') document.getElementById('ageValue') = newInput;
-                if (newInput.id === 'steamDisplay') document.getElementById('steamDisplay') = newInput;
-                if (newInput.id === 'faceitLinkDisplay') document.getElementById('faceitLinkDisplay') = newInput;
+            input.addEventListener('focus', (e) => {
+                if (!this.editMode) {
+                    e.target.blur();
+                }
+            });
+
+            if (input.id === 'ageValue') {
+                input.addEventListener('blur', (e) => {
+                    if (this.editMode) {
+                        this.validateAge(e.target.value);
+                    }
+                });
             }
         });
     },
@@ -248,23 +242,20 @@ const Profile = {
         return true;
     },
     
-    // Настройка поля для ввода ника
+    // Настройка поля для ввода ника (ИСПРАВЛЕНО - без клонирования)
     setupNameInputListener() {
         const nameInput = document.getElementById('editProfileName');
         if (!nameInput) return;
 
         // Убираем старые обработчики
-        const newNameInput = nameInput.cloneNode(true);
-        nameInput.parentNode.replaceChild(newNameInput, nameInput);
-        document.getElementById('editProfileName') = newNameInput;
+        nameInput.removeEventListener('blur', this.handleNameBlur);
+        nameInput.removeEventListener('keypress', this.handleNameKeypress);
 
-        // Обработчик потери фокуса
-        newNameInput.addEventListener('blur', () => {
+        nameInput.addEventListener('blur', () => {
             this.saveNameFromInput();
         });
 
-        // Обработчик нажатия Enter
-        newNameInput.addEventListener('keypress', (e) => {
+        nameInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 this.saveNameFromInput();
@@ -484,6 +475,12 @@ const Profile = {
         const ageInput = document.getElementById('ageValue');
         const steamInput = document.getElementById('steamDisplay');
         const faceitInput = document.getElementById('faceitLinkDisplay');
+        
+        // Проверяем поле ввода ника на случай, если там есть изменения
+        const nameInput = document.getElementById('editProfileName');
+        if (nameInput && nameInput.value.trim() !== '' && nameInput.value.trim() !== this.tempName) {
+            this.tempName = nameInput.value.trim();
+        }
 
         if (ageInput && !this.validateAge(ageInput.value)) {
             return;
