@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - ФИНАЛЬНАЯ ВЕРСИЯ
+// ПРОФИЛЬ (Telegram Mini App версия) - ИСПРАВЛЕННАЯ ВЕРСИЯ
 // ============================================
 
 const Profile = {
@@ -96,10 +96,15 @@ const Profile = {
         const faceitInput = document.getElementById('faceitLinkDisplay');
         
         if (this.editMode) {
-            // Включаем режим редактирования
+            // ВКЛЮЧАЕМ режим редактирования
             profileScreen.classList.add('editable');
             if (editToggle) editToggle.classList.add('active');
-            if (applyBtn) applyBtn.classList.add('visible');
+            
+            // ПОКАЗЫВАЕМ кнопку "Применить" (убираем hidden, добавляем visible)
+            if (applyBtn) {
+                applyBtn.classList.remove('hidden');
+                applyBtn.classList.add('visible');
+            }
             
             // Делаем поля редактируемыми
             if (ageInput) ageInput.readOnly = false;
@@ -111,10 +116,15 @@ const Profile = {
                 profileName.classList.add('editable');
             }
         } else {
-            // Выключаем режим редактирования
+            // ВЫКЛЮЧАЕМ режим редактирования
             profileScreen.classList.remove('editable');
             if (editToggle) editToggle.classList.remove('active');
-            if (applyBtn) applyBtn.classList.remove('visible');
+            
+            // СКРЫВАЕМ кнопку "Применить"
+            if (applyBtn) {
+                applyBtn.classList.remove('visible');
+                // Не добавляем hidden, просто убираем visible
+            }
             
             // Делаем поля только для чтения
             if (ageInput) ageInput.readOnly = true;
@@ -245,6 +255,7 @@ const Profile = {
                     profileName.textContent = this.savedName;
                 }
                 
+                // ВЫКЛЮЧАЕМ режим редактирования (кнопка скроется сама в toggleEditMode)
                 this.toggleEditMode();
             }
         } catch (error) {
