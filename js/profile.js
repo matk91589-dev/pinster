@@ -272,8 +272,8 @@ const Profile = {
         });
     },
 
-    // Сохранение имени из поля ввода
-    saveNameFromInput() {
+    // Сохранение имени из поля ввода (с отправкой на сервер)
+    async saveNameFromInput() {
         const nameInput = document.getElementById('editProfileName');
         const profileName = document.getElementById('profileName');
         
@@ -290,12 +290,42 @@ const Profile = {
         }
         
         if (newName.length >= 3 && newName.length <= 10) {
-            this.tempName = newName;
-            profileName.textContent = newName;
-            
-            // Скрываем поле ввода, показываем текст
-            nameInput.style.display = 'none';
-            profileName.style.display = 'inline-block';
+            // Отправляем на сервер
+            try {
+                const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/profile/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        telegram_id: this.telegramId,
+                        nick: newName
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'ok') {
+                    this.tempName = newName;
+                    this.savedName = newName;
+                    profileName.textContent = newName;
+                    
+                    // Скрываем поле ввода, показываем текст
+                    nameInput.style.display = 'none';
+                    profileName.style.display = 'inline-block';
+                    
+                    console.log('✅ Никнейм изменен на сервере');
+                } else {
+                    alert('❌ Ошибка при сохранении ника');
+                    nameInput.value = this.tempName;
+                    nameInput.focus();
+                }
+            } catch (error) {
+                console.error('❌ Ошибка отправки:', error);
+                alert('❌ Не удалось сохранить ник');
+                nameInput.value = this.tempName;
+                nameInput.focus();
+            }
         } else {
             alert('❌ Никнейм должен быть от 3 до 10 символов');
             nameInput.value = this.tempName;
