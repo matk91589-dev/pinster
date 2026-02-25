@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - БЕЗ СООБЩЕНИЙ
+// ПРОФИЛЬ (Telegram Mini App версия) - РАБОЧАЯ ВЕРСИЯ
 // ============================================
 
 const Profile = {
@@ -25,13 +25,11 @@ const Profile = {
         return nick;
     },
     
-    // Получаем telegram_id из URL
     getTelegramId() {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get('tg_id');
     },
     
-    // Загружаем профиль с сервера
     async loadProfileFromServer() {
         this.telegramId = this.getTelegramId();
         if (!this.telegramId) return;
@@ -69,7 +67,6 @@ const Profile = {
         }
     },
     
-    // Обновляем отображение
     updateDisplay() {
         const profileNameEl = document.getElementById('profileName');
         if (profileNameEl) profileNameEl.textContent = this.savedName;
@@ -87,10 +84,10 @@ const Profile = {
         if (avatarDiv) avatarDiv.innerHTML = this.savedAvatar;
     },
     
-    // Переключение режима редактирования
     toggleEditMode() {
         this.editMode = !this.editMode;
         
+        const profileScreen = document.getElementById('profileScreen');
         const editToggle = document.getElementById('editToggle');
         const applyBtn = document.getElementById('applyBtn');
         const profileName = document.getElementById('profileName');
@@ -101,6 +98,7 @@ const Profile = {
         
         if (this.editMode) {
             // Включаем режим редактирования
+            profileScreen.classList.add('editable');
             if (editToggle) editToggle.classList.add('active');
             if (applyBtn) applyBtn.classList.add('visible');
             
@@ -118,6 +116,7 @@ const Profile = {
             }
         } else {
             // Выключаем режим редактирования
+            profileScreen.classList.remove('editable');
             if (editToggle) editToggle.classList.remove('active');
             if (applyBtn) applyBtn.classList.remove('visible');
             
@@ -134,7 +133,6 @@ const Profile = {
         }
     },
     
-    // Валидация возраста
     validateAge(ageStr) {
         if (ageStr === '') {
             this.tempAge = '';
@@ -159,7 +157,6 @@ const Profile = {
         return true;
     },
 
-    // Валидация ссылки Steam
     validateSteamLink(link) {
         if (link.length > 100) {
             alert('❌ Ссылка Steam должна быть не более 100 символов');
@@ -168,7 +165,6 @@ const Profile = {
         return true;
     },
 
-    // Валидация ссылки Faceit
     validateFaceitLink(link) {
         if (link.length > 100) {
             alert('❌ Ссылка Faceit должна быть не более 100 символов');
@@ -177,7 +173,6 @@ const Profile = {
         return true;
     },
     
-    // Сохранение изменений
     async applyChanges() {
         if (!this.telegramId) {
             this.telegramId = this.getTelegramId();
@@ -231,7 +226,6 @@ const Profile = {
         }
     },
     
-    // Сохранение имени из поля ввода
     async saveNameFromInput() {
         const nameInput = document.getElementById('editProfileName');
         const profileName = document.getElementById('profileName');
@@ -288,7 +282,6 @@ const Profile = {
         }
     },
     
-    // Настройка обработчиков
     setupListeners() {
         const nameInput = document.getElementById('editProfileName');
         if (nameInput) {
@@ -301,22 +294,7 @@ const Profile = {
             });
         }
         
-        // Обработчики для полей
         const ageInput = document.getElementById('ageValue');
-        const steamInput = document.getElementById('steamDisplay');
-        const faceitInput = document.getElementById('faceitLinkDisplay');
-        
-        [ageInput, steamInput, faceitInput].forEach(input => {
-            if (!input) return;
-            
-            input.addEventListener('click', (e) => {
-                if (!this.editMode) {
-                    e.preventDefault();
-                    alert('Для изменений перейдите в раздел редактирования (карандаш)');
-                }
-            });
-        });
-        
         if (ageInput) {
             ageInput.addEventListener('blur', (e) => {
                 if (this.editMode) this.validateAge(e.target.value);
@@ -324,7 +302,6 @@ const Profile = {
         }
     },
     
-    // Загрузка данных
     loadSavedValues() {
         this.loadProfileFromServer();
         setTimeout(() => this.setupListeners(), 200);
@@ -364,7 +341,6 @@ const Profile = {
     }
 };
 
-// Инициализация
 document.addEventListener('DOMContentLoaded', () => {
     Profile.loadSavedValues();
 });
