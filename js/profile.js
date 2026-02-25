@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// ПРОФИЛЬ - ИСПРАВЛЕННАЯ ВЕРСИЯ (БЕЗ ПЛАШКИ)
 // ============================================
 
 const Profile = {
@@ -269,7 +269,7 @@ const Profile = {
         }
     },
     
-    // Редактирование ника с компактным полем
+    // Редактирование ника без плашки - просто в строку
     editName() {
         if (!this.editMode) {
             alert('Сначала активируйте режим редактирования (карандаш)');
@@ -279,20 +279,36 @@ const Profile = {
         const profileName = document.getElementById('profileName');
         if (!profileName) return;
         
-        const editInput = document.getElementById('editProfileName');
-        if (!editInput) return;
+        // Создаем компактное поле ввода прямо на месте текста
+        const tempInput = document.createElement('input');
+        tempInput.type = 'text';
+        tempInput.value = this.tempName;
+        tempInput.maxLength = 10;
+        tempInput.style.cssText = `
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #FF5500;
+            font-size: clamp(16px, 5vw, 20px);
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            outline: none;
+            padding: 4px 0;
+            margin: 0;
+        `;
         
-        // Прячем текст, показываем поле ввода
+        // Заменяем текст на поле ввода
         profileName.style.display = 'none';
-        editInput.style.display = 'inline-block';
-        editInput.value = this.tempName;
-        editInput.focus();
+        profileName.parentNode.insertBefore(tempInput, profileName.nextSibling);
+        
+        // Фокус на поле
+        setTimeout(() => tempInput.focus(), 50);
         
         // Обработчик потери фокуса
         const blurHandler = () => {
             setTimeout(() => {
-                if (!editInput.matches(':focus')) {
-                    this.saveNameFromInput(editInput, profileName);
+                if (!tempInput.matches(':focus')) {
+                    this.saveNameFromTempInput(tempInput, profileName);
                 }
             }, 100);
         };
@@ -301,20 +317,20 @@ const Profile = {
         const keyHandler = (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                this.saveNameFromInput(editInput, profileName);
+                this.saveNameFromTempInput(tempInput, profileName);
             }
         };
         
-        editInput.addEventListener('blur', blurHandler, { once: true });
-        editInput.addEventListener('keypress', keyHandler, { once: true });
+        tempInput.addEventListener('blur', blurHandler, { once: true });
+        tempInput.addEventListener('keypress', keyHandler, { once: true });
     },
     
-    // Сохранение из поля ввода
-    async saveNameFromInput(editInput, profileName) {
-        const newName = editInput.value.trim();
+    // Сохранение из временного поля
+    async saveNameFromTempInput(tempInput, profileName) {
+        const newName = tempInput.value.trim();
         
         if (newName === '') {
-            editInput.style.display = 'none';
+            tempInput.remove();
             profileName.style.display = 'inline-block';
             return;
         }
@@ -323,7 +339,7 @@ const Profile = {
             if (!this.telegramId) {
                 this.telegramId = this.getTelegramId();
                 if (!this.telegramId) {
-                    editInput.style.display = 'none';
+                    tempInput.remove();
                     profileName.style.display = 'inline-block';
                     return;
                 }
@@ -358,8 +374,8 @@ const Profile = {
             alert('❌ Никнейм должен быть от 3 до 10 символов');
         }
         
-        // Убираем поле ввода, показываем текст
-        editInput.style.display = 'none';
+        // Удаляем временное поле и показываем текст
+        tempInput.remove();
         profileName.style.display = 'inline-block';
     },
     
