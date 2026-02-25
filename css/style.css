@@ -752,7 +752,7 @@ body:has(.search-screen.active) .bottom-nav {
     margin-bottom: 2px;
 }
 
-/* ===== РЕДАКТИРОВАНИЕ НИКА ===== */
+/* ===== РЕДАКТИРОВАНИЕ НИКА (БЕЗ ПЛАШКИ) ===== */
 .profile-name-row {
     display: flex;
     align-items: center;
@@ -773,10 +773,12 @@ body:has(.search-screen.active) .bottom-nav {
     max-width: 100%;
     padding: 4px 0;
     transition: color 0.2s ease;
+    background: transparent !important;
+    border: none !important;
 }
 
 .profile-name.editable {
-    color: #FF5500;
+    color: #FF5500 !important;
 }
 
 .profile-name.editable:hover {
@@ -946,12 +948,12 @@ body:has(.search-screen.active) .bottom-nav {
     outline: none;
 }
 
-/* ===== РЕЖИМ РЕДАКТИРОВАНИЯ ===== */
+/* ===== ПОДСВЕТКА ПОЛЕЙ В РЕЖИМЕ РЕДАКТИРОВАНИЯ ===== */
 .profile-screen.editable .stat-value,
 .profile-screen.editable .profile-stat-value {
-    border-color: #FF5500;
-    border-width: 2px;
-    background: rgba(255, 85, 0, 0.05);
+    border-color: #FF5500 !important;
+    border-width: 2px !important;
+    background: rgba(255, 85, 0, 0.05) !important;
 }
 
 .profile-screen.editable .stat-value input,
@@ -963,16 +965,6 @@ body:has(.search-screen.active) .bottom-nav {
 .profile-screen.editable .profile-stat-value:focus {
     border-color: #FF5500;
     outline: none;
-}
-
-/* Стили для полей в режиме редактирования */
-.profile-screen .stat-value input.editable-input,
-.profile-screen .profile-stat-value.editable-input {
-    border: 2px solid #FF5500 !important;
-    background: rgba(255, 85, 0, 0.05) !important;
-    padding: 1.5vh 3vw !important;
-    border-radius: 8px !important;
-    color: #F5F5F5 !important;
 }
 
 /* ===== ДРУЗЬЯ ===== */
