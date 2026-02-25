@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// ПРОФИЛЬ (Telegram Mini App версия) - ФИНАЛЬНАЯ ВЕРСИЯ
 // ============================================
 
 const Profile = {
@@ -23,6 +23,26 @@ const Profile = {
             nick += chars.charAt(Math.floor(Math.random() * chars.length));
         }
         return nick;
+    },
+    
+    // Сброс стилей полей
+    resetInputStyles() {
+        const ageInput = document.getElementById('ageValue');
+        const steamInput = document.getElementById('steamDisplay');
+        const faceitInput = document.getElementById('faceitLinkDisplay');
+        
+        [ageInput, steamInput, faceitInput].forEach(input => {
+            if (input) {
+                input.style.border = '';
+                input.style.background = '';
+                input.style.padding = '';
+                input.style.borderRadius = '';
+                input.classList.remove('editable-input');
+                
+                const parentStat = input.closest('.stat-value') || input.closest('.profile-stat-card');
+                if (parentStat) parentStat.classList.remove('editable-input');
+            }
+        });
     },
     
     setInputsReadonly(readonly) {
@@ -272,7 +292,6 @@ const Profile = {
         if (newName.length >= 3 && newName.length <= 10) {
             this.tempName = newName;
             profileName.textContent = newName;
-            alert('✅ Никнейм изменен');
             
             // Скрываем поле ввода, показываем текст
             nameInput.style.display = 'none';
@@ -289,6 +308,9 @@ const Profile = {
         this.telegramId = this.getTelegramId();
         console.log('📱 Telegram ID из URL:', this.telegramId);
         
+        // Сбрасываем стили перед загрузкой
+        this.resetInputStyles();
+        
         this.loadProfileFromServer();
         
         const avatarDiv = document.getElementById('profileAvatar');
@@ -304,6 +326,10 @@ const Profile = {
     
     toggleEditMode() {
         console.log('✏️ toggleEditMode:', this.editMode ? 'выключение' : 'включение');
+        
+        // Сохраняем текущее состояние перед переключением
+        const wasInEditMode = this.editMode;
+        
         this.editMode = !this.editMode;
         
         const elements = [
@@ -338,16 +364,21 @@ const Profile = {
                 ageInput.style.border = '2px solid #FF5500';
                 ageInput.style.background = 'rgba(255, 85, 0, 0.05)';
                 ageInput.style.padding = '8px 12px';
+                ageInput.style.borderRadius = '8px';
             }
             if (steamInput) {
                 steamInput.readOnly = false;
                 steamInput.style.border = '2px solid #FF5500';
                 steamInput.style.background = 'rgba(255, 85, 0, 0.05)';
+                steamInput.style.padding = '8px 12px';
+                steamInput.style.borderRadius = '8px';
             }
             if (faceitInput) {
                 faceitInput.readOnly = false;
                 faceitInput.style.border = '2px solid #FF5500';
                 faceitInput.style.background = 'rgba(255, 85, 0, 0.05)';
+                faceitInput.style.padding = '8px 12px';
+                faceitInput.style.borderRadius = '8px';
             }
             
             this.setInputsReadonly(false);
@@ -369,19 +400,24 @@ const Profile = {
             // Возвращаем поля в исходное состояние
             if (ageInput) {
                 ageInput.readOnly = true;
-                ageInput.style.border = '';
+                ageInput.style.border = '1px solid #2A2F3A';
                 ageInput.style.background = '';
                 ageInput.style.padding = '';
+                ageInput.style.borderRadius = '';
             }
             if (steamInput) {
                 steamInput.readOnly = true;
-                steamInput.style.border = '';
+                steamInput.style.border = '1px solid #2A2F3A';
                 steamInput.style.background = '';
+                steamInput.style.padding = '';
+                steamInput.style.borderRadius = '';
             }
             if (faceitInput) {
                 faceitInput.readOnly = true;
-                faceitInput.style.border = '';
+                faceitInput.style.border = '1px solid #2A2F3A';
                 faceitInput.style.background = '';
+                faceitInput.style.padding = '';
+                faceitInput.style.borderRadius = '';
             }
             
             this.setInputsReadonly(true);
