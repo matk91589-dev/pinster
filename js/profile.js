@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - С ОТПРАВКОЙ НА СЕРВЕР
+// ПРОФИЛЬ (Telegram Mini App версия) - ПОЛНОСТЬЮ РАБОЧАЯ ВЕРСИЯ
 // ============================================
 
 const Profile = {
@@ -59,6 +59,8 @@ const Profile = {
             return;
         }
         
+        console.log('📡 Загрузка профиля для telegram_id:', this.telegramId);
+        
         try {
             const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/profile/get', {
                 method: 'POST',
@@ -79,7 +81,6 @@ const Profile = {
                 this.savedSteam = data.steam_link || '';
                 this.savedFaceitLink = data.faceit_link || '';
                 this.savedAvatar = data.avatar || '👤';
-                this.savedPingcoins = data.pingcoins || 0;
                 
                 this.tempName = this.savedName;
                 this.tempAge = this.savedAge;
@@ -88,6 +89,8 @@ const Profile = {
                 this.tempAvatar = this.savedAvatar;
                 
                 this.updateDisplay();
+            } else {
+                console.error('❌ Ошибка загрузки:', data);
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки профиля:', error);
@@ -263,7 +266,11 @@ const Profile = {
     },
     
     loadSavedValues() {
-        // Загружаем с сервера вместо локального
+        // Получаем telegram_id сразу при загрузке
+        this.telegramId = this.getTelegramId();
+        console.log('📱 Telegram ID:', this.telegramId);
+        
+        // Загружаем с сервера
         this.loadProfileFromServer();
         
         const avatarDiv = document.getElementById('profileAvatar');
@@ -328,6 +335,15 @@ const Profile = {
     },
     
     async applyChanges() {
+        // Проверяем telegram_id
+        if (!this.telegramId) {
+            this.telegramId = this.getTelegramId();
+            if (!this.telegramId) {
+                alert('❌ Ошибка: нет telegram_id');
+                return;
+            }
+        }
+
         // Проверяем возраст
         const ageInput = document.getElementById('ageValue');
         if (ageInput && !this.validateAge(ageInput.value)) {
@@ -348,21 +364,26 @@ const Profile = {
 
         // Сохраняем на сервер
         try {
+            const dataToSend = {
+                telegram_id: this.telegramId,
+                nick: this.tempName,
+                age: ageInput ? ageInput.value || null : null,
+                steam_link: steamInput ? steamInput.value || null : null,
+                faceit_link: faceitInput ? faceitInput.value || null : null
+            };
+            
+            console.log('📤 Отправка данных:', dataToSend);
+
             const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/profile/update', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    telegram_id: this.telegramId,
-                    nick: this.tempName,
-                    age: ageInput ? ageInput.value : null,
-                    steam_link: steamInput ? steamInput.value : null,
-                    faceit_link: faceitInput ? faceitInput.value : null
-                })
+                body: JSON.stringify(dataToSend)
             });
             
             const data = await response.json();
+            console.log('📥 Ответ сервера:', data);
             
             if (data.status === 'ok') {
                 this.savedName = this.tempName;
@@ -375,11 +396,11 @@ const Profile = {
                 alert('✅ Изменения сохранены');
                 this.toggleEditMode();
             } else {
-                alert('❌ Ошибка при сохранении');
+                alert('❌ Ошибка при сохранении: ' + JSON.stringify(data));
             }
         } catch (error) {
             console.error('❌ Ошибка отправки:', error);
-            alert('❌ Не удалось сохранить изменения');
+            alert('❌ Не удалось сохранить изменения. Ошибка: ' + error.message);
         }
     },
     
@@ -448,11 +469,14 @@ const Profile = {
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🔥 Profile.js инициализация');
     setTimeout(() => {
         if (document.getElementById('profileName')) {
             Profile.loadSavedValues();
+        } else {
+            console.error('❌ Элемент profileName не найден');
         }
-    }, 200);
+    }, 500);
 });
 
 window.Profile = Profile;
