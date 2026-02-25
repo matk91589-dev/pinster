@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - С АЛЕРТАМИ ДЛЯ ОТЛАДКИ
+// ПРОФИЛЬ (Telegram Mini App версия) - ИСПРАВЛЕННАЯ ВЕРСИЯ
 // ============================================
 
 const Profile = {
@@ -33,6 +33,21 @@ const Profile = {
         [ageInput, steamInput, faceitInput].forEach(input => {
             if (input) {
                 input.readOnly = readonly;
+                
+                // Принудительно меняем стили
+                if (!readonly) {
+                    input.style.border = '2px solid #FF5500';
+                    input.style.background = 'rgba(255, 85, 0, 0.05)';
+                    input.style.padding = '8px 12px';
+                    input.style.borderRadius = '8px';
+                    input.style.color = '#F5F5F5';
+                } else {
+                    input.style.border = '';
+                    input.style.background = '';
+                    input.style.padding = '';
+                    input.style.borderRadius = '';
+                }
+                
                 const parentStat = input.closest('.stat-value') || input.closest('.profile-stat-card');
                 if (!readonly) {
                     input.classList.add('editable-input');
@@ -53,17 +68,17 @@ const Profile = {
     
     // Загружаем профиль с сервера
     async loadProfileFromServer() {
-        alert('1. loadProfileFromServer начата');
+        console.log('1. loadProfileFromServer начата');
         this.telegramId = this.getTelegramId();
-        alert('2. telegramId из URL: ' + (this.telegramId || 'НЕТ'));
+        console.log('2. telegramId из URL:', this.telegramId);
         
         if (!this.telegramId) {
-            alert('❌ Нет telegram_id в URL');
+            console.error('❌ Нет telegram_id в URL');
             return;
         }
         
         try {
-            alert('3. Отправка запроса к /api/profile/get');
+            console.log('3. Отправка запроса к /api/profile/get');
             const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/profile/get', {
                 method: 'POST',
                 headers: {
@@ -74,9 +89,9 @@ const Profile = {
                 })
             });
             
-            alert('4. Статус ответа: ' + response.status);
+            console.log('4. Статус ответа:', response.status);
             const data = await response.json();
-            alert('5. Данные получены: ' + JSON.stringify(data));
+            console.log('5. Данные получены:', data);
             
             if (data.status === 'ok') {
                 this.savedName = data.nick || '-';
@@ -92,12 +107,12 @@ const Profile = {
                 this.tempAvatar = this.savedAvatar;
                 
                 this.updateDisplay();
-                alert('6. Профиль обновлён на странице');
+                console.log('6. Профиль обновлён на странице');
             } else {
-                alert('❌ Ошибка загрузки: ' + JSON.stringify(data));
+                console.error('❌ Ошибка загрузки:', data);
             }
         } catch (error) {
-            alert('❌ Ошибка загрузки: ' + error.message);
+            console.error('❌ Ошибка загрузки профиля:', error);
         }
     },
     
@@ -270,9 +285,9 @@ const Profile = {
     },
     
     loadSavedValues() {
-        alert('🔄 loadSavedValues начата');
+        console.log('🔄 loadSavedValues начата');
         this.telegramId = this.getTelegramId();
-        alert('📱 Telegram ID из URL: ' + (this.telegramId || 'НЕТ'));
+        console.log('📱 Telegram ID из URL:', this.telegramId);
         
         this.loadProfileFromServer();
         
@@ -288,7 +303,7 @@ const Profile = {
     },
     
     toggleEditMode() {
-        alert('✏️ toggleEditMode: ' + (this.editMode ? 'выключение' : 'включение'));
+        console.log('✏️ toggleEditMode:', this.editMode ? 'выключение' : 'включение');
         this.editMode = !this.editMode;
         
         const elements = [
@@ -304,12 +319,37 @@ const Profile = {
         const profileName = document.getElementById('profileName');
         const nameInput = document.getElementById('editProfileName');
         
+        // Принудительно меняем стили у полей
+        const ageInput = document.getElementById('ageValue');
+        const steamInput = document.getElementById('steamDisplay');
+        const faceitInput = document.getElementById('faceitLinkDisplay');
+        
         if (this.editMode) {
+            // Включаем режим редактирования
             if (editToggle) editToggle.classList.add('active');
             if (applyBtn) applyBtn.classList.add('visible');
             elements.forEach(el => {
                 if (el) el.classList.add('editable');
             });
+            
+            // Принудительно делаем поля редактируемыми
+            if (ageInput) {
+                ageInput.readOnly = false;
+                ageInput.style.border = '2px solid #FF5500';
+                ageInput.style.background = 'rgba(255, 85, 0, 0.05)';
+                ageInput.style.padding = '8px 12px';
+            }
+            if (steamInput) {
+                steamInput.readOnly = false;
+                steamInput.style.border = '2px solid #FF5500';
+                steamInput.style.background = 'rgba(255, 85, 0, 0.05)';
+            }
+            if (faceitInput) {
+                faceitInput.readOnly = false;
+                faceitInput.style.border = '2px solid #FF5500';
+                faceitInput.style.background = 'rgba(255, 85, 0, 0.05)';
+            }
+            
             this.setInputsReadonly(false);
             
             if (profileName && nameInput) {
@@ -319,11 +359,31 @@ const Profile = {
                 setTimeout(() => nameInput.focus(), 100);
             }
         } else {
+            // Выключаем режим редактирования
             if (editToggle) editToggle.classList.remove('active');
             if (applyBtn) applyBtn.classList.remove('visible');
             elements.forEach(el => {
                 if (el) el.classList.remove('editable');
             });
+            
+            // Возвращаем поля в исходное состояние
+            if (ageInput) {
+                ageInput.readOnly = true;
+                ageInput.style.border = '';
+                ageInput.style.background = '';
+                ageInput.style.padding = '';
+            }
+            if (steamInput) {
+                steamInput.readOnly = true;
+                steamInput.style.border = '';
+                steamInput.style.background = '';
+            }
+            if (faceitInput) {
+                faceitInput.readOnly = true;
+                faceitInput.style.border = '';
+                faceitInput.style.background = '';
+            }
+            
             this.setInputsReadonly(true);
             
             if (profileName && nameInput) {
@@ -334,43 +394,34 @@ const Profile = {
     },
     
     async applyChanges() {
-        alert('🔵 ШАГ 1: applyChanges вызвана!');
+        console.log('🔵 applyChanges вызвана!');
         
         if (!this.telegramId) {
-            alert('🔵 ШАГ 2: telegramId нет, пробуем получить из URL');
+            console.log('🔵 telegramId нет, пробуем получить из URL');
             this.telegramId = this.getTelegramId();
-            alert('🔵 ШАГ 3: telegramId = ' + (this.telegramId || 'НЕТ'));
+            console.log('🔵 telegramId =', this.telegramId);
             
             if (!this.telegramId) {
                 alert('❌ Ошибка: нет telegram_id');
                 return;
             }
-        } else {
-            alert('🔵 ШАГ 2: telegramId уже есть = ' + this.telegramId);
         }
 
         const ageInput = document.getElementById('ageValue');
-        alert('🔵 ШАГ 4: возраст = ' + (ageInput ? ageInput.value : 'поле не найдено'));
+        const steamInput = document.getElementById('steamDisplay');
+        const faceitInput = document.getElementById('faceitLinkDisplay');
 
         if (ageInput && !this.validateAge(ageInput.value)) {
-            alert('🔵 ШАГ 5: возраст не прошёл валидацию');
             return;
         }
-        alert('🔵 ШАГ 5: возраст прошёл валидацию');
 
-        const steamInput = document.getElementById('steamDisplay');
         if (steamInput && !this.validateSteamLink(steamInput.value)) {
-            alert('🔵 ШАГ 6: ссылка Steam не прошла валидацию');
             return;
         }
-        alert('🔵 ШАГ 6: ссылка Steam прошла валидацию');
 
-        const faceitInput = document.getElementById('faceitLinkDisplay');
         if (faceitInput && !this.validateFaceitLink(faceitInput.value)) {
-            alert('🔵 ШАГ 7: ссылка Faceit не прошла валидацию');
             return;
         }
-        alert('🔵 ШАГ 7: ссылка Faceit прошла валидацию');
 
         const dataToSend = {
             telegram_id: this.telegramId,
@@ -379,10 +430,10 @@ const Profile = {
             steam_link: steamInput ? steamInput.value || null : null,
             faceit_link: faceitInput ? faceitInput.value || null : null
         };
-        alert('🔵 ШАГ 8: данные для отправки: ' + JSON.stringify(dataToSend));
+        
+        console.log('🔵 Отправка данных:', dataToSend);
 
         try {
-            alert('🔵 ШАГ 9: отправка запроса...');
             const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/profile/update', {
                 method: 'POST',
                 headers: {
@@ -391,10 +442,10 @@ const Profile = {
                 body: JSON.stringify(dataToSend)
             });
             
-            alert('🔵 ШАГ 10: статус ответа: ' + response.status);
+            console.log('🔵 Статус ответа:', response.status);
             
             const data = await response.json();
-            alert('🔵 ШАГ 11: ответ сервера: ' + JSON.stringify(data));
+            console.log('🔵 Ответ сервера:', data);
             
             if (data.status === 'ok') {
                 this.savedName = this.tempName;
@@ -404,18 +455,19 @@ const Profile = {
                 this.savedFaceitLink = faceitInput ? faceitInput.value : '';
                 
                 this.updateDisplay();
-                alert('✅ ШАГ 12: Изменения сохранены!');
+                alert('✅ Изменения сохранены');
                 this.toggleEditMode();
             } else {
-                alert('❌ ШАГ 12: Ошибка при сохранении: ' + JSON.stringify(data));
+                alert('❌ Ошибка при сохранении: ' + JSON.stringify(data));
             }
         } catch (error) {
-            alert('❌ ОШИБКА: ' + error.message);
+            console.error('❌ Ошибка отправки:', error);
+            alert('❌ Не удалось сохранить изменения: ' + error.message);
         }
     },
     
     editName() {
-        alert('📝 editName');
+        console.log('📝 editName');
         if (!this.editMode) {
             alert('Сначала активируйте режим редактирования (карандаш)');
             return;
@@ -478,12 +530,12 @@ const Profile = {
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
-    alert('🔥 Profile.js загружен');
+    console.log('🔥 Profile.js загружен');
     setTimeout(() => {
         if (document.getElementById('profileName')) {
             Profile.loadSavedValues();
         } else {
-            alert('❌ Элемент profileName не найден');
+            console.error('❌ Элемент profileName не найден');
         }
     }, 500);
 });
