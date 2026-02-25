@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ (Telegram Mini App версия) - РАБОЧАЯ ВЕРСИЯ
+// ПРОФИЛЬ (Telegram Mini App версия) - БЕЗ СООБЩЕНИЙ
 // ============================================
 
 const Profile = {
@@ -181,17 +181,14 @@ const Profile = {
     async applyChanges() {
         if (!this.telegramId) {
             this.telegramId = this.getTelegramId();
-            if (!this.telegramId) {
-                alert('❌ Ошибка: нет telegram_id');
-                return;
-            }
+            if (!this.telegramId) return;
         }
 
         const ageInput = document.getElementById('ageValue');
         const steamInput = document.getElementById('steamDisplay');
         const faceitInput = document.getElementById('faceitLinkDisplay');
         
-        // Проверяем поле ввода ника
+        // Обновляем tempName из поля ввода
         const nameInput = document.getElementById('editProfileName');
         if (nameInput && nameInput.style.display !== 'none' && nameInput.value.trim() !== '') {
             this.tempName = nameInput.value.trim();
@@ -227,14 +224,10 @@ const Profile = {
                 this.savedFaceitLink = faceitInput ? faceitInput.value : '';
                 
                 this.updateDisplay();
-                alert('✅ Изменения сохранены');
                 this.toggleEditMode();
-            } else {
-                alert('❌ Ошибка при сохранении: ' + JSON.stringify(data));
             }
         } catch (error) {
             console.error('❌ Ошибка отправки:', error);
-            alert('❌ Не удалось сохранить изменения');
         }
     },
     
@@ -257,10 +250,7 @@ const Profile = {
         if (newName.length >= 3 && newName.length <= 10) {
             if (!this.telegramId) {
                 this.telegramId = this.getTelegramId();
-                if (!this.telegramId) {
-                    alert('❌ Ошибка: нет telegram_id');
-                    return;
-                }
+                if (!this.telegramId) return;
             }
             
             try {
@@ -285,12 +275,10 @@ const Profile = {
                     nameInput.style.display = 'none';
                     profileName.style.display = 'inline-block';
                 } else {
-                    alert('❌ Ошибка при сохранении ника');
                     nameInput.value = this.tempName;
                 }
             } catch (error) {
                 console.error('❌ Ошибка отправки:', error);
-                alert('❌ Не удалось сохранить ник');
                 nameInput.value = this.tempName;
             }
         } else {
