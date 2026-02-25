@@ -1660,32 +1660,42 @@ input:checked + .slider:before {
     transform: scale(0.98) !important;
 }
 
-/* Фиксы инпутов */
+/* Фиксы инпутов - исправлено для редактирования */
 #ageValue {
-    background: transparent !important;
-    color: #F5F5F5 !important;
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
+    background: transparent;
+    color: #F5F5F5;
+    border: 1px solid #2A2F3A;
+    border-radius: 8px;
+    outline: none;
     -webkit-appearance: none;
     -moz-appearance: textfield;
-    padding: 0 !important;
+    padding: 8px 12px !important;
+    width: 100%;
+    font-size: 14px;
 }
 
 #ageValue:focus {
-    outline: none !important;
-    border: none !important;
+    border-color: #FF5500;
 }
 
 #ageCard .stat-value {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
+    padding: 0;
 }
 
 #ageCard .stat-value:focus-within {
     border-color: #FF5500;
 }
 
+/* Когда поле в режиме редактирования */
+.editable-input {
+    border-color: #FF5500 !important;
+    border-width: 2px !important;
+    background: rgba(255, 85, 0, 0.05) !important;
+}
+
+/* Для всех input */
 input {
     background: transparent;
     color: #F5F5F5;
@@ -1768,4 +1778,13 @@ input:-webkit-autofill:active {
 /* Убираем стандартные обводки у инпутов */
 input:focus {
     outline: none;
+}
+
+/* Принудительно убираем блокировку для полей в режиме редактирования */
+.editable input,
+.profile-screen.editable input {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    background: rgba(255, 85, 0, 0.05) !important;
+    border: 2px solid #FF5500 !important;
 }
