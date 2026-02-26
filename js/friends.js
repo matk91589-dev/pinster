@@ -1,5 +1,5 @@
 // ============================================
-// ДРУЗЬЯ (Telegram Mini App версия) - ИСПРАВЛЕННАЯ
+// ДРУЗЬЯ (Telegram Mini App версия) - БЕЗ СМАЙЛИКОВ
 // ============================================
 
 const Friends = {
@@ -30,14 +30,13 @@ const Friends = {
             if (this.list.length === 0) {
                 friendsList.innerHTML = `
                     <div class="empty-friends">
-                        <div class="empty-friends-icon">👥</div>
                         <div class="empty-friends-text">пока что пусто</div>
                     </div>
                 `;
             } else {
                 friendsList.innerHTML = this.list.map(f => `
                     <div class="friend-item" onclick="Friends.showFriendProfile('${f.id}')">
-                        <div class="friend-avatar">👤</div>
+                        <div class="friend-avatar"></div>
                         <div class="friend-info">
                             <div class="friend-name-row">
                                 <span class="friend-name">${f.name || 'Без имени'}</span>
@@ -64,14 +63,13 @@ const Friends = {
         if (this.list.length === 0) {
             friendsPageList.innerHTML = `
                 <div class="empty-friends">
-                    <div class="empty-friends-icon">👥</div>
                     <div class="empty-friends-text">пока что пусто</div>
                 </div>
             `;
         } else {
             friendsPageList.innerHTML = this.list.map(f => `
                 <div class="friend-item" onclick="Friends.showFriendProfile('${f.id}')">
-                    <div class="friend-avatar">👤</div>
+                    <div class="friend-avatar"></div>
                     <div class="friend-details">
                         <div class="friend-name">${f.name || 'Без имени'}</div>
                         <div class="friend-id">ID: ${f.id}</div>
@@ -82,7 +80,7 @@ const Friends = {
         }
     },
     
-    // Показать страницу друзей - ИСПРАВЛЕНО!
+    // Показать страницу друзей
     showFriendsPage() {
         console.log('showFriendsPage called'); // для отладки
         const friendsScreen = document.getElementById('friendsScreen');
