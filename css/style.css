@@ -1012,7 +1012,7 @@ body:has(.search-screen.active) .bottom-nav {
 .friends-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 4px;
 }
 
 .friends-count {
@@ -1750,4 +1750,5 @@ input:-webkit-autofill:active {
     font-weight: 400;
     color: #5D6472;
 }
+
 
