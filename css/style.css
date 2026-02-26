@@ -1018,12 +1018,6 @@ body:has(.team-screen.active) .bottom-nav {
     gap: 4px;
 }
 
-.friends-count {
-    color: #9BA1B0;
-    font-size: clamp(12px, 3.5vw, 14px);
-    font-weight: 600;
-}
-
 .friends-arrow {
     width: 32px;
     height: 32px;
@@ -1115,8 +1109,9 @@ body:has(.team-screen.active) .bottom-nav {
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    width: 45px;  /* было 40px */
-    margin-right: -5px;  /* сдвигаем левее */
+    width: 45px;
+    margin-right: -8px;
+    padding-right: 5px;
 }
 
 .team-requests .tg-help-minimal {
@@ -1134,40 +1129,42 @@ body:has(.team-screen.active) .bottom-nav {
     font-size: 10px;
     color: #8c97a8;
     margin-top: 2px;
-    white-space: nowrap;  /* чтобы не переносилось */
+    white-space: nowrap;
 }
 
-/* ===== ТАБЫ КОМАНДЫ (КАК В МАГАЗИНЕ) ===== */
+/* ===== ТАБЫ КОМАНДЫ - КАК В МАГАЗИНЕ ===== */
 .team-tabs {
     display: flex;
-    gap: 10px;
-    margin: 0 0 20px 0;
-    flex-shrink: 0;
+    gap: 8px;
+    margin: 0 0 15px 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    position: relative;
 }
 
 .team-tab {
     flex: 1;
-    padding: 12px 10px;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    cursor: pointer;
-    color: #9BA1B0;
-    font-weight: 600;
-    font-size: clamp(12px, 3.5vw, 14px);
     text-align: center;
-    transition: all 0.2s ease;
-}
-
-.team-tab:hover {
-    border-color: #FF5500;
-    transform: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #9BA1B0;
+    transition: all 0.2s;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    background: transparent;
+    border: 1px solid transparent;
+    position: relative;
 }
 
 .team-tab.active {
-    background: #FF5500;
-    color: white;
-    border-color: #FF5500;
+    background: transparent;
+    color: #FF5500;
+    border: 1px solid #FF5500;
 }
 
 .team-content {
@@ -1932,4 +1929,3 @@ input:-webkit-autofill:active {
     font-weight: 400;
     color: #5D6472;
 }
-
