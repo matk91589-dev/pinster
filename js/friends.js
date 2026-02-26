@@ -14,12 +14,6 @@ const Friends = {
     
     // Загрузка списка друзей
     async loadFriends() {
-        // ТЕСТОВЫЕ ДРУЗЬЯ (раскомментируй чтобы проверить счетчик)
-        // this.list = [
-        //     { id: '12345', name: 'Player1' },
-        //     { id: '67890', name: 'Player2' },
-        //     { id: '54321', name: 'Player3' }
-        // ];
         
         // ПОКА ПУСТО - 0 друзей
         this.list = [];
@@ -172,3 +166,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Для теста в консоли (чтобы проверить счетчик)
 window.Friends = Friends;
+
