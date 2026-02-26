@@ -23,32 +23,39 @@ const Friends = {
     },
     
     // Отрисовка на главном экране профиля
-    render() {
-        const friendsList = document.getElementById('friendsList');
-        const friendsCount = document.getElementById('friendsCount');
-        
-        if (friendsList) {
-            if (this.list.length === 0) {
-                friendsList.innerHTML = `
-                    <div class="empty-friends">
-                        <div class="empty-friends-text">пока что пусто</div>
-                    </div>
-                `;
-            } else {
-                friendsList.innerHTML = this.list.map(f => `
-                    <div class="friend-item" onclick="Friends.showFriendProfile('${f.id}')">
-                        <div class="friend-avatar"></div>
-                        <div class="friend-info">
-                            <div class="friend-name-row">
-                                <span class="friend-name">${f.name || 'Без имени'}</span>
-                                <span class="friend-id">${f.id}</span>
-                            </div>
-                            <div class="friend-steam">steamcommunity.com/id/${(f.name || 'user').toLowerCase()}</div>
+    // Отрисовка на главном экране профиля
+render() {
+    const friendsList = document.getElementById('friendsList');
+    const friendsTitle = document.querySelector('.friends-title');
+    
+    if (friendsTitle) {
+        // МЕНЯЕМ ТЕКСТ ЗАГОЛОВКА - теперь цифра прямо тут
+        friendsTitle.textContent = `Ваши друзья: ${this.count}`;
+    }
+    
+    if (friendsList) {
+        if (this.list.length === 0) {
+            friendsList.innerHTML = `
+                <div class="empty-friends">
+                    <div class="empty-friends-text">пока что пусто</div>
+                </div>
+            `;
+        } else {
+            friendsList.innerHTML = this.list.map(f => `
+                <div class="friend-item" onclick="Friends.showFriendProfile('${f.id}')">
+                    <div class="friend-avatar"></div>
+                    <div class="friend-info">
+                        <div class="friend-name-row">
+                            <span class="friend-name">${f.name || 'Без имени'}</span>
+                            <span class="friend-id">${f.id}</span>
                         </div>
+                        <div class="friend-steam">steamcommunity.com/id/${(f.name || 'user').toLowerCase()}</div>
                     </div>
-                `).join('');
-            }
+                </div>
+            `).join('');
         }
+    }
+}
         
         // ОБНОВЛЯЕМ СЧЕТЧИК
         if (friendsCount) {
@@ -166,4 +173,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Для теста в консоли (чтобы проверить счетчик)
 window.Friends = Friends;
+
 
