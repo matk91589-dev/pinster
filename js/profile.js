@@ -1,16 +1,16 @@
 // ============================================
-// ПРОФИЛЬ - ИСПРАВЛЕННАЯ ВЕРСИЯ (БЕЗ ПЛАШКИ)
+// ПРОФИЛЬ - ИСПРАВЛЕННАЯ ВЕРСИЯ (С SVG АВАТАРКОЙ)
 // ============================================
 
 const Profile = {
     editMode: false,
     savedName: '-',
-    savedAvatar: '👤',
+    savedAvatar: '<div class="tg-avatar-svg"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#ffffff"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="#ffffff"/></svg></div>',
     savedAge: '',
     savedSteam: '',
     savedFaceitLink: '',
     tempName: '-',
-    tempAvatar: '👤',
+    tempAvatar: '<div class="tg-avatar-svg"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#ffffff"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="#ffffff"/></svg></div>',
     tempAge: '',
     tempSteam: '',
     tempFaceitLink: '',
@@ -52,7 +52,10 @@ const Profile = {
                 this.savedAge = data.age || '';
                 this.savedSteam = data.steam_link || '';
                 this.savedFaceitLink = data.faceit_link || '';
-                this.savedAvatar = data.avatar || '👤';
+                // Если с сервера приходит аватарка, используем её, иначе оставляем SVG
+                if (data.avatar) {
+                    this.savedAvatar = data.avatar;
+                }
                 
                 this.tempName = this.savedName;
                 this.tempAge = this.savedAge;
@@ -81,7 +84,9 @@ const Profile = {
         if (faceitLinkDisplayEl) faceitLinkDisplayEl.value = this.savedFaceitLink || '';
         
         const avatarDiv = document.getElementById('profileAvatar');
-        if (avatarDiv) avatarDiv.innerHTML = this.savedAvatar;
+        if (avatarDiv) {
+            avatarDiv.innerHTML = this.savedAvatar;
+        }
     },
     
     toggleEditMode() {
