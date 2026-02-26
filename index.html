@@ -253,7 +253,7 @@
                     <div id="friendsHeader" class="friends-header">
                         <span class="friends-title">Ваши друзья: 0</span>
                         <div class="friends-actions">
-                            <div class="friends-arrow" onclick="Friends.showFriendsPage()">
+                            <div class="friends-arrow" onclick="Team.showTeamPage()">
                                 <svg viewBox="0 0 24 24" width="20" height="20">
                                     <path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
@@ -262,6 +262,28 @@
                     </div>
                     <div class="friends-list" id="friendsList"></div>
                 </div>
+            </div>
+
+            <!-- ЭКРАН КОМАНДА (НОВЫЙ) -->
+            <div id="teamScreen" class="screen team-screen">
+                <div class="team-header">
+                    <div class="team-back" onclick="Team.goBack()">←</div>
+                    <div class="team-title">КОМАНДА</div>
+                    <div class="team-requests" onclick="Team.showRequests()">
+                        <span class="tg-help-minimal">?</span>
+                        <span>запросы</span>
+                    </div>
+                </div>
+
+                <div class="team-tabs">
+                    <div class="team-tab active" onclick="Team.switchTab('friends', this)">ВАШИ ДРУЗЬЯ</div>
+                    <div class="team-tab" onclick="Team.switchTab('search', this)">ПОИСК ИГРОКА</div>
+                </div>
+
+                <div class="team-content" id="teamContent">
+                    <!-- Сюда будет подгружаться контент через JS -->
+                </div>
+            </div>
 
             <!-- ЭКРАН НАСТРОЕК -->
             <div id="settingsScreen" class="screen settings-screen">
@@ -499,7 +521,7 @@
                 <button class="cancel-search-btn" onclick="Search.cancel()">Отменить поиск</button>
             </div>
 
-            <!-- НОВЫЙ ЭКРАН ДРУЗЕЙ -->
+            <!-- ЭКРАН ДРУЗЕЙ (старый, пока оставим) -->
             <div id="friendsScreen" class="screen friends-screen">
                 <div class="friends-page-header">
                     <button class="back-btn" onclick="App.showScreen('profileScreen', true)">←</button>
@@ -552,8 +574,6 @@
     <script src="js/search.js"></script>
     <script src="js/logo.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/team.js"></script>
 </body>
 </html>
-
-
-
