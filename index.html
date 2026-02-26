@@ -193,8 +193,6 @@
                         <div class="profile-name-label">ваш никнейм</div>
                         <div class="profile-name-row">
                             <span id="profileName" class="profile-name" onclick="Profile.editName()">-</span>
-                            <!-- ДОБАВЛЕНО: поле для ввода ника -->
-                            <input type="text" id="editProfileName" class="edit-name-input" placeholder="Введите ник" maxlength="10" style="display: none;">
                         </div>
                     </div>
                 </div>
@@ -226,13 +224,18 @@
                     </div>
                 </div>
 
+                <!-- ОБНОВЛЕННЫЙ БЛОК ДРУЗЕЙ -->
                 <div class="friends-section" id="friendsSection">
                     <div id="friendsHeader" class="friends-header">
-                        <div class="search-icon" onclick="Friends.enterSearchMode()">
-                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/><circle cx="11" cy="11" r="4" stroke="white" stroke-width="2"/><line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" stroke-width="2"/></svg>
-                        </div>
                         <span class="friends-title">Ваши друзья</span>
-                        <span class="friends-count" id="friendsCount">0 друзей</span>
+                        <div class="friends-actions">
+                            <span class="friends-count" id="friendsCount">0</span>
+                            <div class="friends-arrow" onclick="Friends.showFriendsPage()">
+                                <svg viewBox="0 0 24 24" width="20" height="20">
+                                    <path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
                     </div>
                     <div class="friends-list" id="friendsList"></div>
                 </div>
@@ -471,6 +474,30 @@
                     <div class="spinner"></div>
                 </div>
                 <button class="cancel-search-btn" onclick="Search.cancel()">Отменить поиск</button>
+            </div>
+
+            <!-- НОВЫЙ ЭКРАН ДРУЗЕЙ -->
+            <div id="friendsScreen" class="screen friends-screen">
+                <div class="friends-page-header">
+                    <button class="back-btn" onclick="App.showScreen('profileScreen', true)">←</button>
+                    <div class="friends-page-title">Ваши друзья</div>
+                    <div style="width: 40px;"></div>
+                </div>
+                
+                <div class="friends-search-container">
+                    <div class="friends-search-label">Найти тиммейта по ID</div>
+                    <div class="friends-search-box">
+                        <input type="text" id="friendSearchInput" class="friends-search-input" placeholder="Введите ID пользователя" maxlength="20">
+                        <button class="friends-search-btn" onclick="Friends.searchByID()">Найти</button>
+                    </div>
+                </div>
+                
+                <div class="friends-list-container">
+                    <div class="friends-list-title">Мои друзья</div>
+                    <div class="friends-page-list" id="friendsPageList">
+                        <!-- Сюда будут подгружаться друзья -->
+                    </div>
+                </div>
             </div>
         </main>
 
