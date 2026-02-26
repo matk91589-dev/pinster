@@ -1,5 +1,5 @@
 // ============================================
-// ДРУЗЬЯ (Telegram Mini App версия) - БЕЗ СМАЙЛИКОВ
+// ДРУЗЬЯ (Telegram Mini App версия) - СЧЕТЧИК РЯДОМ
 // ============================================
 
 const Friends = {
@@ -14,6 +14,13 @@ const Friends = {
     
     // Загрузка списка друзей
     async loadFriends() {
+        // ТЕСТОВЫЕ ДРУЗЬЯ (раскомментируй чтобы проверить счетчик)
+        // this.list = [
+        //     { id: '12345', name: 'Player1' },
+        //     { id: '67890', name: 'Player2' },
+        //     { id: '54321', name: 'Player3' }
+        // ];
+        
         // ПОКА ПУСТО - 0 друзей
         this.list = [];
         this.count = this.list.length;
@@ -49,6 +56,7 @@ const Friends = {
             }
         }
         
+        // ОБНОВЛЯЕМ СЧЕТЧИК
         if (friendsCount) {
             friendsCount.textContent = this.count;
         }
@@ -126,9 +134,34 @@ const Friends = {
         searchInput.value = '';
     },
     
-    // Показать профиль друга
+    // ПОКАЗАТЬ ПРОФИЛЬ ДРУГА
     showFriendProfile(friendId) {
         alert(`👤 Профиль друга ${friendId} (будет позже)`);
+    },
+    
+    // ТЕСТОВАЯ ФУНКЦИЯ - добавить друга (чтобы проверить счетчик)
+    addTestFriend() {
+        const newFriend = {
+            id: Math.floor(Math.random() * 100000).toString(),
+            name: `Player${this.list.length + 1}`
+        };
+        
+        this.list.push(newFriend);
+        this.count = this.list.length;
+        this.render();
+        this.renderFriendsPage();
+        
+        console.log(`✅ Добавлен друг, теперь друзей: ${this.count}`);
+    },
+    
+    // ТЕСТОВАЯ ФУНКЦИЯ - удалить друга
+    removeTestFriend() {
+        this.list.pop();
+        this.count = this.list.length;
+        this.render();
+        this.renderFriendsPage();
+        
+        console.log(`✅ Удален друг, теперь друзей: ${this.count}`);
     }
 };
 
@@ -137,4 +170,5 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => Friends.init(), 300);
 });
 
+// Для теста в консоли (чтобы проверить счетчик)
 window.Friends = Friends;
