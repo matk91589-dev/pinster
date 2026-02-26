@@ -1,157 +1,142 @@
-/* ===== ПУСТЫЕ СОСТОЯНИЯ ===== */
-.empty-friends {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
-    text-align: center;
-    color: #9BA1B0;
-    height: 100%;
-    min-height: 200px;
-}
+// ============================================
+// ДРУЗЬЯ (Telegram Mini App версия) - ИСПРАВЛЕННАЯ
+// ============================================
 
-.empty-friends-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    text-align: center;
-    color: #9BA1B0;
-    height: 100%;
-}
+const Friends = {
+    list: [],
+    count: 0,
+    telegramId: null,
+    
+    init() {
+        this.telegramId = Profile.getTelegramId();
+        this.loadFriends();
+    },
+    
+    // Загрузка списка друзей
+    async loadFriends() {
+        // ПОКА ПУСТО - 0 друзей
+        this.list = [];
+        this.count = this.list.length;
+        this.render();
+        this.renderFriendsPage();
+    },
+    
+    // Отрисовка на главном экране профиля
+    render() {
+        const friendsList = document.getElementById('friendsList');
+        const friendsCount = document.getElementById('friendsCount');
+        
+        if (friendsList) {
+            if (this.list.length === 0) {
+                friendsList.innerHTML = `
+                    <div class="empty-friends">
+                        <div class="empty-friends-icon">👥</div>
+                        <div class="empty-friends-text">пока что пусто</div>
+                    </div>
+                `;
+            } else {
+                friendsList.innerHTML = this.list.map(f => `
+                    <div class="friend-item" onclick="Friends.showFriendProfile('${f.id}')">
+                        <div class="friend-avatar">👤</div>
+                        <div class="friend-info">
+                            <div class="friend-name-row">
+                                <span class="friend-name">${f.name || 'Без имени'}</span>
+                                <span class="friend-id">${f.id}</span>
+                            </div>
+                            <div class="friend-steam">steamcommunity.com/id/${(f.name || 'user').toLowerCase()}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        if (friendsCount) {
+            friendsCount.textContent = this.count;
+        }
+    },
+    
+    // Отрисовка на странице друзей
+    renderFriendsPage() {
+        const friendsPageList = document.getElementById('friendsPageList');
+        
+        if (!friendsPageList) return;
+        
+        if (this.list.length === 0) {
+            friendsPageList.innerHTML = `
+                <div class="empty-friends">
+                    <div class="empty-friends-icon">👥</div>
+                    <div class="empty-friends-text">пока что пусто</div>
+                </div>
+            `;
+        } else {
+            friendsPageList.innerHTML = this.list.map(f => `
+                <div class="friend-item" onclick="Friends.showFriendProfile('${f.id}')">
+                    <div class="friend-avatar">👤</div>
+                    <div class="friend-details">
+                        <div class="friend-name">${f.name || 'Без имени'}</div>
+                        <div class="friend-id">ID: ${f.id}</div>
+                    </div>
+                    <div class="friend-status">online</div>
+                </div>
+            `).join('');
+        }
+    },
+    
+    // Показать страницу друзей - ИСПРАВЛЕНО!
+    showFriendsPage() {
+        console.log('showFriendsPage called'); // для отладки
+        const friendsScreen = document.getElementById('friendsScreen');
+        if (friendsScreen) {
+            // Скрываем все экраны
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Показываем экран друзей
+            friendsScreen.classList.add('active');
+            
+            // Обновляем список
+            this.renderFriendsPage();
+            
+            // Обновляем навигацию
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Добавляем тактильную отдачу (если есть)
+            if (window.Telegram?.WebApp?.HapticFeedback) {
+                Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            }
+        } else {
+            console.error('friendsScreen not found!');
+        }
+    },
+    
+    // Поиск пользователя по ID
+    searchByID() {
+        const searchInput = document.getElementById('friendSearchInput');
+        if (!searchInput) return;
+        
+        const userId = searchInput.value.trim();
+        
+        if (!userId) {
+            alert('❌ Введите ID пользователя');
+            return;
+        }
+        
+        alert(`🔍 Поиск пользователя с ID: ${userId} (будет позже)`);
+        searchInput.value = '';
+    },
+    
+    // Показать профиль друга
+    showFriendProfile(friendId) {
+        alert(`👤 Профиль друга ${friendId} (будет позже)`);
+    }
+};
 
-.empty-friends-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-    opacity: 0.5;
-}
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => Friends.init(), 300);
+});
 
-.empty-friends-text {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 8px;
-}
-
-.empty-friends-hint {
-    font-size: 14px;
-    color: #5D6472;
-}
-
-/* ===== ДИАЛОГ ДОБАВЛЕНИЯ ДРУГА ===== */
-.friend-dialog {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    opacity: 0;
-    transition: opacity 0.2s;
-    padding: 20px;
-}
-
-.friend-dialog.show {
-    opacity: 1;
-}
-
-.friend-dialog-content {
-    background: #1A1D24;
-    border-radius: 16px;
-    padding: 24px;
-    max-width: 320px;
-    width: 100%;
-    border: 1px solid #2A2F3A;
-    transform: scale(0.9);
-    transition: transform 0.2s;
-}
-
-.friend-dialog.show .friend-dialog-content {
-    transform: scale(1);
-}
-
-.friend-dialog-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #F5F5F5;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.friend-dialog-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 24px;
-    padding: 12px;
-    background: #111317;
-    border-radius: 12px;
-}
-
-.friend-dialog-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: #2A2F3A;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-}
-
-.friend-dialog-name {
-    font-size: 16px;
-    font-weight: 600;
-    color: #F5F5F5;
-    margin-bottom: 4px;
-}
-
-.friend-dialog-id {
-    font-size: 14px;
-    color: #FF5500;
-}
-
-.friend-dialog-buttons {
-    display: flex;
-    gap: 10px;
-}
-
-.friend-dialog-btn {
-    flex: 1;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.friend-dialog-btn.cancel {
-    background: transparent;
-    border: 1px solid #2A2F3A;
-    color: #9BA1B0;
-}
-
-.friend-dialog-btn.cancel:hover {
-    background: #2A2F3A;
-}
-
-.friend-dialog-btn.add {
-    background: #FF5500;
-    color: white;
-}
-
-.friend-dialog-btn.add:hover {
-    background: #FF6B4A;
-}
-
-.friend-dialog-btn:disabled {
-    opacity: 0.5;
-    pointer-events: none;
-}
+window.Friends = Friends;
