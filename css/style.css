@@ -1731,3 +1731,28 @@ input:-webkit-autofill:active {
     border: none;
     outline: none;
 }
+
+/* ===== ПУСТЫЕ СОСТОЯНИЯ ===== */
+.empty-friends {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    color: #9BA1B0;
+    height: 100%;
+    min-height: 100px;
+}
+
+.empty-friends-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+    opacity: 0.5;
+}
+
+.empty-friends-text {
+    font-size: 14px;
+    font-weight: 400;
+    color: #5D6472;
+}
