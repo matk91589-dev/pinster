@@ -1115,7 +1115,8 @@ body:has(.team-screen.active) .bottom-nav {
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    width: 40px;
+    width: 45px;  /* было 40px */
+    margin-right: -5px;  /* сдвигаем левее */
 }
 
 .team-requests .tg-help-minimal {
@@ -1133,8 +1134,10 @@ body:has(.team-screen.active) .bottom-nav {
     font-size: 10px;
     color: #8c97a8;
     margin-top: 2px;
+    white-space: nowrap;  /* чтобы не переносилось */
 }
 
+/* ===== ТАБЫ КОМАНДЫ (КАК В МАГАЗИНЕ) ===== */
 .team-tabs {
     display: flex;
     gap: 10px;
@@ -1153,11 +1156,12 @@ body:has(.team-screen.active) .bottom-nav {
     font-weight: 600;
     font-size: clamp(12px, 3.5vw, 14px);
     text-align: center;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 }
 
 .team-tab:hover {
     border-color: #FF5500;
+    transform: none;
 }
 
 .team-tab.active {
@@ -1928,3 +1932,4 @@ input:-webkit-autofill:active {
     font-weight: 400;
     color: #5D6472;
 }
+
