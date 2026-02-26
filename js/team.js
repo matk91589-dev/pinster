@@ -9,15 +9,40 @@ const Team = {
         this.renderFriendsTab();
     },
     
+    // НУЖНЫЙ МЕТОД - открывает экран команды
+    showTeamPage() {
+        console.log('showTeamPage called');
+        const teamScreen = document.getElementById('teamScreen');
+        if (teamScreen) {
+            // Скрываем все экраны
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Показываем экран команды
+            teamScreen.classList.add('active');
+            
+            // Инициализируем контент
+            this.renderFriendsTab();
+            
+            // Добавляем тактильную отдачу
+            if (window.Telegram?.WebApp?.HapticFeedback) {
+                Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            }
+        } else {
+            console.error('teamScreen not found!');
+        }
+    },
+    
     // Переключение табов
-    switchTab(tab) {
+    switchTab(tab, element) {
         this.currentTab = tab;
         
         // Обновляем активный таб
         document.querySelectorAll('.team-tab').forEach(t => {
             t.classList.remove('active');
         });
-        event.target.classList.add('active');
+        element.classList.add('active');
         
         // Рендерим соответствующий контент
         if (tab === 'friends') {
