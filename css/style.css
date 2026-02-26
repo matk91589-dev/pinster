@@ -1109,9 +1109,9 @@ body:has(.team-screen.active) .bottom-nav {
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    width: 45px;
-    margin-right: -8px;
-    padding-right: 5px;
+    width: 55px;  /* увеличил с 45px до 55px */
+    margin-right: -5px;  /* уменьшил отрицательный отступ */
+    padding-right: 0;
 }
 
 .team-requests .tg-help-minimal {
@@ -1929,3 +1929,4 @@ input:-webkit-autofill:active {
     font-weight: 400;
     color: #5D6472;
 }
+
