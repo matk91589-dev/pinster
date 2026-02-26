@@ -28,7 +28,6 @@ const Friends = {
         const friendsTitle = document.querySelector('.friends-title');
         
         if (friendsTitle) {
-            // МЕНЯЕМ ТЕКСТ ЗАГОЛОВКА - теперь цифра прямо тут
             friendsTitle.textContent = `Ваши друзья: ${this.count}`;
         }
         
@@ -82,28 +81,36 @@ const Friends = {
         }
     },
     
-    // Показать страницу друзей
+    // НОВЫЙ МЕТОД - показать экран команды
+    showTeamPage() {
+        console.log('showTeamPage called');
+        if (typeof Team !== 'undefined' && Team.showTeamPage) {
+            Team.showTeamPage();
+        } else {
+            console.error('Team not found!');
+            // Запасной вариант - показываем старый экран друзей
+            const friendsScreen = document.getElementById('friendsScreen');
+            if (friendsScreen) {
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+                friendsScreen.classList.add('active');
+                this.renderFriendsPage();
+            }
+        }
+    },
+    
+    // Показать страницу друзей (старый метод)
     showFriendsPage() {
-        console.log('showFriendsPage called'); // для отладки
+        console.log('showFriendsPage called');
         const friendsScreen = document.getElementById('friendsScreen');
         if (friendsScreen) {
-            // Скрываем все экраны
             document.querySelectorAll('.screen').forEach(screen => {
                 screen.classList.remove('active');
             });
-            
-            // Показываем экран друзей
             friendsScreen.classList.add('active');
-            
-            // Обновляем список
             this.renderFriendsPage();
             
-            // Обновляем навигацию
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            // Добавляем тактильную отдачу (если есть)
             if (window.Telegram?.WebApp?.HapticFeedback) {
                 Telegram.WebApp.HapticFeedback.impactOccurred('light');
             }
