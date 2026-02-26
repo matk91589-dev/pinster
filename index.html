@@ -59,6 +59,22 @@
             flex: 1;
             min-width: 0;
         }
+
+        /* Стили для SVG аватарки */
+        .tg-avatar-svg {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: #2B2F36;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tg-avatar-svg svg {
+            width: 42px;
+            height: 42px;
+        }
     </style>
 </head>
 <body>
@@ -188,7 +204,15 @@
                 </div>
 
                 <div class="profile-header">
-                    <div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()">👤</div>
+                    <!-- НОВАЯ SVG АВАТАРКА -->
+                    <div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()">
+                        <div class="tg-avatar-svg">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="8" r="4" fill="#ffffff"/>
+                                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="#ffffff"/>
+                            </svg>
+                        </div>
+                    </div>
                     <div class="profile-info">
                         <div class="profile-name-label">ваш никнейм</div>
                         <div class="profile-name-row">
@@ -224,20 +248,21 @@
                     </div>
                 </div>
 
-            <!-- БЛОК ДРУЗЕЙ В ПРОФИЛЕ -->
-            <div class="friends-section" id="friendsSection">
-                <div id="friendsHeader" class="friends-header">
-                    <span class="friends-title">Ваши друзья:</span>
-                    <div class="friends-actions">
-                        <span class="friends-count" id="friendsCount">0</span>
-                        <div class="friends-arrow" onclick="Friends.showFriendsPage()">
-                            <svg viewBox="0 0 24 24" width="20" height="20">
-                                <path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                <!-- БЛОК ДРУЗЕЙ В ПРОФИЛЕ -->
+                <div class="friends-section" id="friendsSection">
+                    <div id="friendsHeader" class="friends-header">
+                        <span class="friends-title">Ваши друзья:</span>
+                        <div class="friends-actions">
+                            <span class="friends-count" id="friendsCount">0</span>
+                            <div class="friends-arrow" onclick="Friends.showFriendsPage()">
+                                <svg viewBox="0 0 24 24" width="20" height="20">
+                                    <path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
                         </div>
                     </div>
+                    <div class="friends-list" id="friendsList"></div>
                 </div>
-                <div class="friends-list" id="friendsList"></div>
             </div>
 
             <!-- ЭКРАН НАСТРОЕК -->
@@ -531,5 +556,3 @@
     <script src="js/app.js"></script>
 </body>
 </html>
-
-
