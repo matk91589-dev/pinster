@@ -134,7 +134,7 @@ body {
 }
 
 .icon-settings.active svg {
-    stroke: #B00000;
+    stroke: #FF5500;  /* БЫЛО B00000, СТАЛО FF5500 */
 }
 
 /* Скрываем логотип только на стартовом экране */
@@ -195,7 +195,7 @@ body {
 }
 
 .edit-title-icon.active svg {
-    stroke: #B00000;
+    stroke: #FF5500;  /* БЫЛО B00000, СТАЛО FF5500 */
 }
 
 .apply-btn {
@@ -325,9 +325,9 @@ body {
 .primary-btn {
     width: min(280px, 80%);
     padding: 2vh 0;
-    background: #B00000;
+    background: #FF5500;  /* БЫЛО B00000, СТАЛО FF5500 */
     border: none;
-    border-radius: 12px;
+    border-radius: 12px;  /* БЫЛО 12px, ОСТАВИЛ */
     font-size: clamp(16px, 5vw, 18px);
     font-weight: 700;
     color: #F5F5F5;
@@ -336,19 +336,19 @@ body {
     margin: 5vh auto 0 auto;
     transition: all 0.2s ease;
     letter-spacing: 0.5px;
-    box-shadow: 0 4px 0 #6B0000;
+    box-shadow: none;  /* УБРАЛ 3D эффект */
 }
 
 .primary-btn:hover {
-    background: #8B0000;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0 #6B0000;
+    background: #FF6B4A;  /* Светлее при наведении */
+    transform: scale(1.02);
+    box-shadow: none;
 }
 
 .primary-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #6B0000;
+    transform: scale(0.98);
     opacity: 0.9;
+    box-shadow: none;
 }
 
 /* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
@@ -394,7 +394,7 @@ body:has(.team-screen.active) .bottom-nav {
 }
 
 .nav-item.active svg {
-    stroke: #B00000;
+    stroke: #FF5500;  /* БЫЛО B00000, СТАЛО FF5500 */
 }
 
 .nav-icon svg {
@@ -1109,8 +1109,8 @@ body:has(.team-screen.active) .bottom-nav {
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    width: 55px;  /* увеличил с 45px до 55px */
-    margin-right: -5px;  /* уменьшил отрицательный отступ */
+    width: 55px;
+    margin-right: -8px;  /* Еще немного сдвинул */
     padding-right: 0;
 }
 
@@ -1929,4 +1929,3 @@ input:-webkit-autofill:active {
     font-weight: 400;
     color: #5D6472;
 }
-
