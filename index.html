@@ -297,7 +297,7 @@
                 <button class="primary-btn" onclick="App.showScreen('mainScreen', true)" style="margin:20px 0;">На главную</button>
             </div>
 
-            <!-- ЭКРАН FACEIT -->
+            <!-- ЭКРАН FACEIT - ИСПРАВЛЕННЫЙ (убрал поле Steam ТОЛЬКО ЗДЕСЬ) -->
             <div id="faceitScreen" class="screen faceit-screen">
                 <div class="mode-header">
                     <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
@@ -324,8 +324,7 @@
                     </div>
                 </div>
                 
-                <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="faceitSteamInput" placeholder="Ссылка на Steam" value="">
+                <!-- ПОЛЕ STEAM УДАЛЕНО - теперь только ссылка Faceit -->
                 
                 <div class="input-label">Ссылка Faceit</div>
                 <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="">
@@ -343,7 +342,7 @@
                 <button class="mode-search-btn" onclick="Search.start('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН PREMIER -->
+            <!-- ЭКРАН PREMIER (оставил как есть) -->
             <div id="premierScreen" class="screen premier-screen">
                 <div class="mode-header">
                     <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
@@ -386,7 +385,7 @@
                 <button class="mode-search-btn" onclick="Search.start('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MM PRIME -->
+            <!-- ЭКРАН MM PRIME (оставил как есть) -->
             <div id="primeScreen" class="screen prime-screen">
                 <div class="mode-header">
                     <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
@@ -448,7 +447,7 @@
                 <button class="mode-search-btn" onclick="Search.start('MM PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MM PUBLIC -->
+            <!-- ЭКРАН MM PUBLIC (оставил как есть) -->
             <div id="publicScreen" class="screen public-screen">
                 <div class="mode-header">
                     <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
