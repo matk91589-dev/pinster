@@ -89,13 +89,13 @@ body {
 }
 
 .logo .ping {
-    color: #FF5500;  /* БЫЛО B00000, СТАЛО FF5500 */
+    color: #FF5500;
     transition: color 0.2s ease;
 }
 
 .logo:hover .ping {
     color: #FF5500;
-    opacity: 0.8;  /* Добавил прозрачность при наведении */
+    opacity: 0.8;
 }
 
 .logo .ster {
@@ -290,7 +290,7 @@ body {
 }
 
 .start-avatar-square {
-    width: min(280px, 70vw);
+    width: min(320px, 75vw);  /* УВЕЛИЧИЛ с 280px до 320px */
     height: auto;
     aspect-ratio: 4 / 3;
     margin: 0 auto;
@@ -308,7 +308,7 @@ body {
 }
 
 .start-description-box {
-    width: min(280px, 70vw);
+    width: min(320px, 75vw);  /* УВЕЛИЧИЛ с 280px до 320px */
     border: 3px solid #FF5500;
     border-radius: 0 0 20px 20px;
     padding: 4vh 4vw 3vh;
