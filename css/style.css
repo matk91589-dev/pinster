@@ -89,12 +89,13 @@ body {
 }
 
 .logo .ping {
-    color: #B00000;
+    color: #FF5500;  /* БЫЛО B00000, СТАЛО FF5500 */
     transition: color 0.2s ease;
 }
 
 .logo:hover .ping {
     color: #FF5500;
+    opacity: 0.8;  /* Добавил прозрачность при наведении */
 }
 
 .logo .ster {
@@ -134,7 +135,7 @@ body {
 }
 
 .icon-settings.active svg {
-    stroke: #FF5500;  /* БЫЛО B00000, СТАЛО FF5500 */
+    stroke: #FF5500;
 }
 
 /* Скрываем логотип только на стартовом экране */
@@ -195,7 +196,7 @@ body {
 }
 
 .edit-title-icon.active svg {
-    stroke: #FF5500;  /* БЫЛО B00000, СТАЛО FF5500 */
+    stroke: #FF5500;
 }
 
 .apply-btn {
@@ -325,9 +326,9 @@ body {
 .primary-btn {
     width: min(280px, 80%);
     padding: 2vh 0;
-    background: #FF5500;  /* БЫЛО B00000, СТАЛО FF5500 */
+    background: #FF5500;
     border: none;
-    border-radius: 12px;  /* БЫЛО 12px, ОСТАВИЛ */
+    border-radius: 12px;
     font-size: clamp(16px, 5vw, 18px);
     font-weight: 700;
     color: #F5F5F5;
@@ -336,11 +337,11 @@ body {
     margin: 5vh auto 0 auto;
     transition: all 0.2s ease;
     letter-spacing: 0.5px;
-    box-shadow: none;  /* УБРАЛ 3D эффект */
+    box-shadow: none;
 }
 
 .primary-btn:hover {
-    background: #FF6B4A;  /* Светлее при наведении */
+    background: #FF6B4A;
     transform: scale(1.02);
     box-shadow: none;
 }
@@ -394,7 +395,7 @@ body:has(.team-screen.active) .bottom-nav {
 }
 
 .nav-item.active svg {
-    stroke: #FF5500;  /* БЫЛО B00000, СТАЛО FF5500 */
+    stroke: #FF5500;
 }
 
 .nav-icon svg {
@@ -1110,7 +1111,7 @@ body:has(.team-screen.active) .bottom-nav {
     align-items: center;
     cursor: pointer;
     width: 55px;
-    margin-right: -8px;  /* Еще немного сдвинул */
+    margin-right: -8px;
     padding-right: 0;
 }
 
