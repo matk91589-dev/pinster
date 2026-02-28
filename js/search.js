@@ -36,8 +36,6 @@ const Search = {
         this.resetTimer();
         this.startTimer();
         
-        // TODO: потом добавим отправку на бэкенд
-        /*
         const data = this.collectSearchData(mode);
         
         fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/search/start', {
@@ -221,3 +219,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.Search = Search;
+
