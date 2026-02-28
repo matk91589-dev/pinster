@@ -865,6 +865,7 @@ body:has(.team-screen.active) .bottom-nav {
     align-items: center;
     justify-content: space-between;
     gap: 2vw;
+    transition: none !important;
 }
 
 .stat-value input {
@@ -893,7 +894,8 @@ body:has(.team-screen.active) .bottom-nav {
 }
 
 .stat-value:focus-within {
-    border-color: #FF5500;
+    border-color: #2A2F3A;
+    transition: none !important;
 }
 
 .heart-icon {
@@ -951,12 +953,14 @@ body:has(.team-screen.active) .bottom-nav {
     font-weight: 500;
     outline: none;
     font-family: 'Montserrat', sans-serif;
+    transition: none !important;
 }
 
 .profile-stat-value:focus,
 .input-field:focus {
-    border-color: #FF5500;
+    border-color: #2A2F3A;
     outline: none;
+    transition: none !important;
 }
 
 /* ===== ПОДСВЕТКА ПОЛЕЙ В РЕЖИМЕ РЕДАКТИРОВАНИЯ ===== */
@@ -1960,5 +1964,6 @@ input:-webkit-autofill:active {
     transform: translateY(0);
     opacity: 1;
 }
+
 
 
