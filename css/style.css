@@ -1931,7 +1931,7 @@ input:-webkit-autofill:active {
     color: #5D6472;
 }
 
-/* ===== TOAST УВЕДОМЛЕНИЯ (СВЕРХУ, МНОГОСТРОЧНЫЙ) ===== */
+/* ===== TOAST УВЕДОМЛЕНИЯ (СВЕРХУ, 2 СТРОКИ) ===== */
 .profile-toast {
     position: fixed;
     top: 80px;
@@ -1940,20 +1940,25 @@ input:-webkit-autofill:active {
     background: #1A1D24;
     border: 2px solid #B00000;
     border-radius: 12px;
-    padding: 16px 24px;
+    padding: 12px 20px;
     color: #F5F5F5;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     text-align: center;
     z-index: 2000;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     opacity: 0;
     transition: all 0.3s ease;
-    max-width: 280px;
+    max-width: 260px;
     width: auto;
-    line-height: 1.4;
+    line-height: 1.3;
     word-wrap: break-word;
     white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .profile-toast.show {
