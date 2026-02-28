@@ -522,7 +522,7 @@ const Profile = {
         document.getElementById('faceitLinkDisplay')?.focus();
     },
     
-    // НОВЫЙ МЕТОД: обработка кликов по всем элементам профиля
+    // Обработка кликов по всем элементам профиля
     setupClickHandlers() {
         // Аватарка
         const avatar = document.getElementById('profileAvatar');
@@ -600,6 +600,20 @@ const Profile = {
                     container?.classList.remove('error');
                 }
             });
+            
+            // Добавляем проверку при вводе (чтобы ошибка уходила сразу)
+            ageInput.addEventListener('input', (e) => {
+                if (this.editMode) {
+                    const val = e.target.value;
+                    const container = ageInput.closest('.stat-value');
+                    
+                    // Если поле стало пустым или корректным - убираем ошибку
+                    if (val === '' || (val.length <= 3 && !isNaN(parseInt(val)) && parseInt(val) >= 0 && parseInt(val) <= 100)) {
+                        this.removeErrorMessage(container);
+                        container?.classList.remove('error');
+                    }
+                }
+            });
         }
         
         const steamInput = document.getElementById('steamDisplay');
@@ -615,6 +629,19 @@ const Profile = {
                     container?.classList.remove('error');
                 }
             });
+            
+            // Добавляем проверку при вводе
+            steamInput.addEventListener('input', (e) => {
+                if (this.editMode) {
+                    const val = e.target.value;
+                    const container = steamInput.closest('.profile-stat-value');
+                    
+                    if (val.length <= 100) {
+                        this.removeErrorMessage(container);
+                        container?.classList.remove('error');
+                    }
+                }
+            });
         }
         
         const faceitInput = document.getElementById('faceitLinkDisplay');
@@ -628,6 +655,19 @@ const Profile = {
                     const container = faceitInput.closest('.profile-stat-value');
                     this.removeErrorMessage(container);
                     container?.classList.remove('error');
+                }
+            });
+            
+            // Добавляем проверку при вводе
+            faceitInput.addEventListener('input', (e) => {
+                if (this.editMode) {
+                    const val = e.target.value;
+                    const container = faceitInput.closest('.profile-stat-value');
+                    
+                    if (val.length <= 100) {
+                        this.removeErrorMessage(container);
+                        container?.classList.remove('error');
+                    }
                 }
             });
         }
