@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ - ИСПРАВЛЕННАЯ ВЕРСИЯ (С TOAST И ПУСТЫМИ СТРОКАМИ)
+// ПРОФИЛЬ - ИСПРАВЛЕННАЯ ВЕРСИЯ (С TOAST СВЕРХУ)
 // ============================================
 
 const Profile = {
@@ -31,7 +31,7 @@ const Profile = {
         return urlParams.get('tg_id');
     },
     
-    // Toast уведомление
+    // Toast уведомление (СВЕРХУ)
     showToast(message) {
         // Очищаем предыдущий таймер
         if (this.toastTimeout) {
@@ -451,6 +451,69 @@ const Profile = {
         document.getElementById('faceitLinkDisplay')?.focus();
     },
     
+    // НОВЫЙ МЕТОД: обработка кликов по всем элементам профиля
+    setupClickHandlers() {
+        // Аватарка
+        const avatar = document.getElementById('profileAvatar');
+        if (avatar) {
+            avatar.addEventListener('click', (e) => {
+                if (!this.editMode) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.showToast('Сначала перейдите в режим редактирования (карандаш)');
+                }
+            });
+        }
+        
+        // Ник (есть встроенный обработчик, но добавим для надежности)
+        const profileName = document.getElementById('profileName');
+        if (profileName) {
+            profileName.addEventListener('click', (e) => {
+                if (!this.editMode) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.showToast('Сначала перейдите в режим редактирования (карандаш)');
+                }
+            });
+        }
+        
+        // Возраст
+        const ageCard = document.getElementById('ageCard');
+        if (ageCard) {
+            ageCard.addEventListener('click', (e) => {
+                if (!this.editMode) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.showToast('Сначала перейдите в режим редактирования (карандаш)');
+                }
+            });
+        }
+        
+        // Steam
+        const steamCard = document.getElementById('steamCard');
+        if (steamCard) {
+            steamCard.addEventListener('click', (e) => {
+                if (!this.editMode) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.showToast('Сначала перейдите в режим редактирования (карандаш)');
+                }
+            });
+        }
+        
+        // Faceit
+        const faceitCard = document.getElementById('faceitLinkCard');
+        if (faceitCard) {
+            faceitCard.addEventListener('click', (e) => {
+                if (!this.editMode) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.showToast('Сначала перейдите в режим редактирования (карандаш)');
+                }
+            });
+        }
+    },
+    
     setupListeners() {
         const ageInput = document.getElementById('ageValue');
         if (ageInput) {
@@ -468,7 +531,10 @@ const Profile = {
     
     loadSavedValues() {
         this.loadProfileFromServer();
-        setTimeout(() => this.setupListeners(), 200);
+        setTimeout(() => {
+            this.setupListeners();
+            this.setupClickHandlers(); // Добавляем обработчики кликов
+        }, 200);
     }
 };
 
