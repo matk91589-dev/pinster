@@ -65,7 +65,6 @@ const Search = {
             console.error('Error:', error);
             App.showAlert('❌ Ошибка');
         });
-        */
     },
     
     collectSearchData(mode) {
@@ -219,4 +218,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.Search = Search;
+
 
