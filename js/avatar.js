@@ -7,7 +7,10 @@ const Avatar = {
     
     select() {
         if (!Profile.editMode) {
-            App.showAlert('Сначала активируйте режим редактирования (карандаш)');
+            // Заменяем alert на toast
+            if (Profile.showToast) {
+                Profile.showToast('Для изменений перейдите в режим редактирования');
+            }
             return;
         }
         
@@ -77,7 +80,10 @@ const Avatar = {
             avatarDiv.style.border = '';
             
             if (!Profile.editMode) {
-                App.showAlert('Сначала активируйте режим редактирования');
+                // Заменяем alert на toast
+                if (Profile.showToast) {
+                    Profile.showToast('Для изменений перейдите в режим редактирования');
+                }
                 return;
             }
             
