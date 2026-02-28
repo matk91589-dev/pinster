@@ -53,7 +53,7 @@ const Profile = {
         // Запускаем анимацию
         setTimeout(() => toast.classList.add('show'), 10);
         
-        // Убираем через 2 секунды
+        // Убираем через 1 секунду
         this.toastTimeout = setTimeout(() => {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
@@ -453,7 +453,7 @@ const Profile = {
     
     // НОВЫЙ МЕТОД: обработка кликов по всем элементам профиля
     setupClickHandlers() {
-        // Аватарка
+        // Аватарка - ТЕПЕРЬ ТОЖЕ ПОКАЗЫВАЕТ ТОСТ
         const avatar = document.getElementById('profileAvatar');
         if (avatar) {
             avatar.addEventListener('click', (e) => {
@@ -543,4 +543,3 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.Profile = Profile;
-
