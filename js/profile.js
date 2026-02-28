@@ -57,7 +57,7 @@ const Profile = {
         this.toastTimeout = setTimeout(() => {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
-        }, 2000);
+        }, 1000);
     },
     
     async loadProfileFromServer() {
@@ -320,7 +320,7 @@ const Profile = {
     // Редактирование ника без плашки - просто в строку
     editName() {
         if (!this.editMode) {
-            this.showToast('Сначала перейдите в режим редактирования (карандаш)');
+            this.showToast('Для изменений перейдите в режим редактирования');
             return;
         }
         
@@ -429,7 +429,7 @@ const Profile = {
     
     editAge() {
         if (!this.editMode) {
-            this.showToast('Сначала перейдите в режим редактирования (карандаш)');
+            this.showToast('Для изменений перейдите в режим редактирования');
             return;
         }
         document.getElementById('ageValue')?.focus();
@@ -437,7 +437,7 @@ const Profile = {
     
     editSteam() {
         if (!this.editMode) {
-            this.showToast('Сначала перейдите в режим редактирования (карандаш)');
+            this.showToast('Для изменений перейдите в режим редактирования');
             return;
         }
         document.getElementById('steamDisplay')?.focus();
@@ -445,7 +445,7 @@ const Profile = {
     
     editFaceitLink() {
         if (!this.editMode) {
-            this.showToast('Сначала перейдите в режим редактирования (карандаш)');
+            this.showToast('Для изменений перейдите в режим редактирования');
             return;
         }
         document.getElementById('faceitLinkDisplay')?.focus();
@@ -460,7 +460,7 @@ const Profile = {
                 if (!this.editMode) {
                     e.preventDefault();
                     e.stopPropagation();
-                    this.showToast('Сначала перейдите в режим редактирования (карандаш)');
+                    this.showToast('Для изменений перейдите в режим редактирования');
                 }
             });
         }
@@ -472,7 +472,7 @@ const Profile = {
                 if (!this.editMode) {
                     e.preventDefault();
                     e.stopPropagation();
-                    this.showToast('Сначала перейдите в режим редактирования (карандаш)');
+                    this.showToast('Для изменений перейдите в режим редактирования');
                 }
             });
         }
@@ -484,7 +484,7 @@ const Profile = {
                 if (!this.editMode) {
                     e.preventDefault();
                     e.stopPropagation();
-                    this.showToast('Сначала перейдите в режим редактирования (карандаш)');
+                    this.showToast('Для изменений перейдите в режим редактирования');
                 }
             });
         }
@@ -496,7 +496,7 @@ const Profile = {
                 if (!this.editMode) {
                     e.preventDefault();
                     e.stopPropagation();
-                    this.showToast('Сначала перейдите в режим редактирования (карандаш)');
+                    this.showToast('Для изменений перейдите в режим редактирования');
                 }
             });
         }
@@ -508,7 +508,7 @@ const Profile = {
                 if (!this.editMode) {
                     e.preventDefault();
                     e.stopPropagation();
-                    this.showToast('Сначала перейдите в режим редактирования (карандаш)');
+                    this.showToast('Для изменений перейдите в режим редактирования');
                 }
             });
         }
@@ -543,3 +543,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.Profile = Profile;
+
