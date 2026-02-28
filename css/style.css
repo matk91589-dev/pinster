@@ -1931,12 +1931,12 @@ input:-webkit-autofill:active {
     color: #5D6472;
 }
 
-/* ===== TOAST УВЕДОМЛЕНИЯ ===== */
+/* ===== TOAST УВЕДОМЛЕНИЯ (СВЕРХУ) ===== */
 .profile-toast {
     position: fixed;
-    bottom: 30px;
+    top: 20px;  /* было bottom: 30px */
     left: 50%;
-    transform: translateX(-50%) translateY(100px);
+    transform: translateX(-50%) translateY(-100px);  /* отрицательное значение для появления сверху */
     background: #1A1D24;
     border: 2px solid #B00000;
     border-radius: 12px;
@@ -1956,15 +1956,4 @@ input:-webkit-autofill:active {
 .profile-toast.show {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
-}
-
-/* ===== УБИРАЕМ АНИМАЦИЮ У ПЛАШЕК ===== */
-.stat-value,
-.profile-stat-value {
-    transition: none !important;
-}
-
-.stat-value:focus-within,
-.profile-stat-value:focus-within {
-    border-color: #2A2F3A; /* Возвращаем обычный цвет, без подсветки */
 }
