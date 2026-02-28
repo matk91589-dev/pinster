@@ -1930,3 +1930,41 @@ input:-webkit-autofill:active {
     font-weight: 400;
     color: #5D6472;
 }
+
+/* ===== TOAST УВЕДОМЛЕНИЯ ===== */
+.profile-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #1A1D24;
+    border: 2px solid #B00000;
+    border-radius: 12px;
+    padding: 12px 24px;
+    color: #F5F5F5;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    z-index: 2000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    max-width: 90%;
+}
+
+.profile-toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* ===== УБИРАЕМ АНИМАЦИЮ У ПЛАШЕК ===== */
+.stat-value,
+.profile-stat-value {
+    transition: none !important;
+}
+
+.stat-value:focus-within,
+.profile-stat-value:focus-within {
+    border-color: #2A2F3A; /* Возвращаем обычный цвет, без подсветки */
+}
