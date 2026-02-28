@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ - ИСПРАВЛЕННАЯ ВЕРСИЯ (С SVG АВАТАРКОЙ)
+// ПРОФИЛЬ - ИСПРАВЛЕННАЯ ВЕРСИЯ (С TOAST И ПУСТЫМИ СТРОКАМИ)
 // ============================================
 
 const Profile = {
@@ -15,6 +15,7 @@ const Profile = {
     tempSteam: '',
     tempFaceitLink: '',
     telegramId: null,
+    toastTimeout: null,
     
     generateRandomNick() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -28,6 +29,35 @@ const Profile = {
     getTelegramId() {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get('tg_id');
+    },
+    
+    // Toast уведомление
+    showToast(message) {
+        // Очищаем предыдущий таймер
+        if (this.toastTimeout) {
+            clearTimeout(this.toastTimeout);
+        }
+        
+        // Удаляем существующий тост
+        const existingToast = document.querySelector('.profile-toast');
+        if (existingToast) {
+            existingToast.remove();
+        }
+        
+        // Создаем новый
+        const toast = document.createElement('div');
+        toast.className = 'profile-toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        // Запускаем анимацию
+        setTimeout(() => toast.classList.add('show'), 10);
+        
+        // Убираем через 2 секунды
+        this.toastTimeout = setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 2000);
     },
     
     async loadProfileFromServer() {
@@ -144,13 +174,14 @@ const Profile = {
     },
     
     validateAge(ageStr) {
+        // Разрешаем пустую строку
         if (ageStr === '') {
             this.tempAge = '';
             return true;
         }
         
         if (ageStr.length > 3) {
-            alert('❌ Возраст должен быть не более 3 символов');
+            this.showToast('❌ Возраст должен быть не более 3 символов');
             document.getElementById('ageValue').value = this.tempAge;
             return false;
         }
@@ -158,7 +189,7 @@ const Profile = {
         const age = parseInt(ageStr);
         
         if (isNaN(age) || age < 0 || age > 100) {
-            alert('❌ Возраст должен быть числом от 0 до 100');
+            this.showToast('❌ Возраст должен быть числом от 0 до 100');
             document.getElementById('ageValue').value = this.tempAge;
             return false;
         }
@@ -168,16 +199,28 @@ const Profile = {
     },
 
     validateSteamLink(link) {
+        // Разрешаем пустую строку
+        if (link === '') {
+            this.tempSteam = '';
+            return true;
+        }
+        
         if (link.length > 100) {
-            alert('❌ Ссылка Steam должна быть не более 100 символов');
+            this.showToast('❌ Ссылка Steam должна быть не более 100 символов');
             return false;
         }
         return true;
     },
 
     validateFaceitLink(link) {
+        // Разрешаем пустую строку
+        if (link === '') {
+            this.tempFaceitLink = '';
+            return true;
+        }
+        
         if (link.length > 100) {
-            alert('❌ Ссылка Faceit должна быть не более 100 символов');
+            this.showToast('❌ Ссылка Faceit должна быть не более 100 символов');
             return false;
         }
         return true;
@@ -277,7 +320,7 @@ const Profile = {
     // Редактирование ника без плашки - просто в строку
     editName() {
         if (!this.editMode) {
-            alert('Сначала активируйте режим редактирования (карандаш)');
+            this.showToast('Сначала перейдите в режим редактирования (карандаш)');
             return;
         }
         
@@ -369,14 +412,14 @@ const Profile = {
                     this.savedName = newName;
                     profileName.textContent = newName;
                 } else {
-                    alert('❌ Ошибка при сохранении ника');
+                    this.showToast('❌ Ошибка при сохранении ника');
                 }
             } catch (error) {
                 console.error('❌ Ошибка отправки:', error);
-                alert('❌ Не удалось сохранить ник');
+                this.showToast('❌ Не удалось сохранить ник');
             }
         } else {
-            alert('❌ Никнейм должен быть от 3 до 10 символов');
+            this.showToast('❌ Никнейм должен быть от 3 до 10 символов');
         }
         
         // Удаляем временное поле и показываем текст
@@ -386,7 +429,7 @@ const Profile = {
     
     editAge() {
         if (!this.editMode) {
-            alert('Сначала активируйте режим редактирования (карандаш)');
+            this.showToast('Сначала перейдите в режим редактирования (карандаш)');
             return;
         }
         document.getElementById('ageValue')?.focus();
@@ -394,7 +437,7 @@ const Profile = {
     
     editSteam() {
         if (!this.editMode) {
-            alert('Сначала активируйте режим редактирования (карандаш)');
+            this.showToast('Сначала перейдите в режим редактирования (карандаш)');
             return;
         }
         document.getElementById('steamDisplay')?.focus();
@@ -402,7 +445,7 @@ const Profile = {
     
     editFaceitLink() {
         if (!this.editMode) {
-            alert('Сначала активируйте режим редактирования (карандаш)');
+            this.showToast('Сначала перейдите в режим редактирования (карандаш)');
             return;
         }
         document.getElementById('faceitLinkDisplay')?.focus();
