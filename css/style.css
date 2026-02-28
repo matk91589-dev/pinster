@@ -1984,3 +1984,94 @@ input:-webkit-autofill:active {
     animation: none;
     transition: none;
 }
+
+/* ===== ПОПАП ДЛЯ МЭТЧА ===== */
+.match-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.2s ease;
+}
+
+.match-popup-content {
+    background: #1A1D24;
+    border: 2px solid #FF5500;
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 320px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(255, 85, 0, 0.2);
+}
+
+.match-popup-content h3 {
+    color: #FF5500;
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.match-info {
+    margin-bottom: 24px;
+}
+
+.match-info p {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #2A2F3A;
+    color: #9BA1B0;
+}
+
+.match-info span {
+    color: #F5F5F5;
+    font-weight: 600;
+}
+
+.match-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.accept-btn, .reject-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.accept-btn {
+    background: #FF5500;
+    color: white;
+}
+
+.accept-btn:hover {
+    background: #FF6B4A;
+    transform: scale(1.02);
+}
+
+.reject-btn {
+    background: transparent;
+    border: 1px solid #B00000;
+    color: #B00000;
+}
+
+.reject-btn:hover {
+    background: rgba(176, 0, 0, 0.1);
+    transform: scale(1.02);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
