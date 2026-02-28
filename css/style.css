@@ -1931,26 +1931,29 @@ input:-webkit-autofill:active {
     color: #5D6472;
 }
 
-/* ===== TOAST УВЕДОМЛЕНИЯ (СВЕРХУ) ===== */
+/* ===== TOAST УВЕДОМЛЕНИЯ (СВЕРХУ, МНОГОСТРОЧНЫЙ) ===== */
 .profile-toast {
     position: fixed;
-    top: 20px;  /* было bottom: 30px */
+    top: 80px;
     left: 50%;
-    transform: translateX(-50%) translateY(-100px);  /* отрицательное значение для появления сверху */
+    transform: translateX(-50%) translateY(-100px);
     background: #1A1D24;
     border: 2px solid #B00000;
     border-radius: 12px;
-    padding: 12px 24px;
+    padding: 16px 24px;
     color: #F5F5F5;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     text-align: center;
     z-index: 2000;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     opacity: 0;
     transition: all 0.3s ease;
-    white-space: nowrap;
-    max-width: 90%;
+    max-width: 280px;
+    width: auto;
+    line-height: 1.4;
+    word-wrap: break-word;
+    white-space: normal;
 }
 
 .profile-toast.show {
