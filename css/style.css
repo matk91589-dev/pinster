@@ -1965,5 +1965,22 @@ input:-webkit-autofill:active {
     opacity: 1;
 }
 
+/* ===== СТИЛИ ДЛЯ ОШИБОК В ПРОФИЛЕ ===== */
+.stat-value.error,
+.profile-stat-value.error {
+    border-color: #B00000 !important;
+    border-width: 2px !important;
+    background: rgba(176, 0, 0, 0.05) !important;
+    transition: none !important;
+}
 
-
+.error-message {
+    color: #B00000;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 4px;
+    margin-left: 4px;
+    text-align: left;
+    animation: none;
+    transition: none;
+}
