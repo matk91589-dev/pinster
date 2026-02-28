@@ -1934,7 +1934,7 @@ input:-webkit-autofill:active {
 /* ===== TOAST УВЕДОМЛЕНИЯ (НА ВСЮ ШИРИНУ) ===== */
 .profile-toast {
     position: fixed;
-    top: 60px;
+    top: 20px;
     left: 20px;
     right: 20px;
     transform: translateY(-100px);
@@ -1960,4 +1960,5 @@ input:-webkit-autofill:active {
     transform: translateY(0);
     opacity: 1;
 }
+
 
