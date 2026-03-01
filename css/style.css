@@ -269,7 +269,8 @@ body {
 .search-screen,
 .start-screen,
 .friends-screen,
-.team-screen {
+.team-screen,
+.match-found-screen {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -290,7 +291,7 @@ body {
 }
 
 .start-avatar-square {
-    width: min(320px, 75vw);  /* УВЕЛИЧИЛ с 280px до 320px */
+    width: min(320px, 75vw);
     height: auto;
     aspect-ratio: 4 / 3;
     margin: 0 auto;
@@ -308,7 +309,7 @@ body {
 }
 
 .start-description-box {
-    width: min(320px, 75vw);  /* УВЕЛИЧИЛ с 280px до 320px */
+    width: min(320px, 75vw);
     border: 3px solid #FF5500;
     border-radius: 0 0 20px 20px;
     padding: 4vh 4vw 3vh;
@@ -364,13 +365,15 @@ body {
     flex-shrink: 0;
 }
 
-/* Скрываем навигацию на стартовом экране, экране поиска и экране команды */
+/* Скрываем навигацию на стартовом экране, экране поиска, экране команды и экране найденного мэтча */
 .start-screen.active ~ .bottom-nav,
 .search-screen.active ~ .bottom-nav,
 .team-screen.active ~ .bottom-nav,
+.match-found-screen.active ~ .bottom-nav,
 body:has(.start-screen.active) .bottom-nav,
 body:has(.search-screen.active) .bottom-nav,
-body:has(.team-screen.active) .bottom-nav {
+body:has(.team-screen.active) .bottom-nav,
+body:has(.match-found-screen.active) .bottom-nav {
     display: none !important;
 }
 
@@ -2069,6 +2072,265 @@ input:-webkit-autofill:active {
 .reject-btn:hover {
     background: rgba(176, 0, 0, 0.1);
     transform: scale(1.02);
+}
+
+/* ===== НОВЫЙ ЭКРАН НАЙДЕННОГО ТИММЕЙТА ===== */
+.match-found-screen {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+}
+
+.match-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0 20px 0;
+    flex-shrink: 0;
+}
+
+.match-title {
+    font-size: clamp(20px, 6vw, 24px);
+    font-weight: 700;
+    color: #FF5500;
+    text-align: center;
+}
+
+.match-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 5px;
+}
+
+.match-avatar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.match-avatar .tg-avatar-svg {
+    width: 100px;
+    height: 100px;
+}
+
+.match-avatar .tg-avatar-svg svg {
+    width: 48px;
+    height: 48px;
+}
+
+.match-player-id {
+    font-size: 14px;
+    color: #FF5500;
+    text-align: center;
+    margin-bottom: 4px;
+    font-family: monospace;
+    font-weight: 600;
+}
+
+.match-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding: 0 5px;
+}
+
+.match-player-nick {
+    font-size: clamp(20px, 6vw, 24px);
+    font-weight: 700;
+    color: #F5F5F5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+}
+
+.match-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid #FF5500;
+}
+
+.match-rating span {
+    font-size: 16px;
+    font-weight: 600;
+    color: #FF5500;
+}
+
+.match-rating .heart-icon {
+    margin-left: 0;
+}
+
+.match-rating .heart-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.match-stats-row {
+    display: flex;
+    gap: 3vw;
+    margin: 0 0 24px 0;
+}
+
+.match-stat-item {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.match-stat-label {
+    font-size: clamp(8px, 2.5vw, 10px);
+    color: #9BA1B0;
+    font-weight: 600;
+    margin-bottom: 0.8vh;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: block;
+}
+
+.match-stat-value {
+    width: 100%;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 8px;
+    padding: 1.5vh 3vw;
+    display: block;
+    color: #F5F5F5;
+    font-size: clamp(11px, 3.5vw, 13px);
+    font-weight: 500;
+}
+
+.match-stat-value.highlight {
+    color: #FF5500;
+}
+
+.match-links {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+    margin-bottom: 24px;
+}
+
+.match-link-item {
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.match-link-label {
+    font-size: clamp(8px, 2.5vw, 10px);
+    color: #9BA1B0;
+    font-weight: 600;
+    margin-bottom: 0.8vh;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: block;
+}
+
+.match-link-value {
+    width: 100%;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 8px;
+    padding: 1.5vh 3vw;
+    display: block;
+    color: #F5F5F5;
+    font-size: clamp(11px, 3.5vw, 13px);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.match-comment {
+    margin-bottom: 24px;
+}
+
+.match-comment-label {
+    font-size: clamp(8px, 2.5vw, 10px);
+    color: #9BA1B0;
+    font-weight: 600;
+    margin-bottom: 0.8vh;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: block;
+}
+
+.match-comment-text {
+    width: 100%;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 8px;
+    padding: 12px 15px;
+    color: #F5F5F5;
+    font-size: clamp(11px, 3.2vw, 13px);
+    min-height: 60px;
+    word-wrap: break-word;
+}
+
+.match-timer {
+    text-align: center;
+    font-size: 16px;
+    color: #FF5500;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.match-buttons {
+    display: flex;
+    gap: 12px;
+    margin: 0 0 16px 0;
+}
+
+.match-btn {
+    flex: 1;
+    padding: 16px 0;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.match-btn.accept {
+    background: #FF5500;
+    color: white;
+}
+
+.match-btn.accept:hover {
+    background: #FF6B4A;
+    transform: scale(1.02);
+}
+
+.match-btn.accept:active {
+    transform: scale(0.98);
+}
+
+.match-btn.reject {
+    background: transparent;
+    border: 2px solid #B00000;
+    color: #B00000;
+}
+
+.match-btn.reject:hover {
+    background: rgba(176, 0, 0, 0.1);
+    transform: scale(1.02);
+}
+
+.match-btn.reject:active {
+    transform: scale(0.98);
 }
 
 @keyframes fadeIn {
