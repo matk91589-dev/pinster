@@ -1,5 +1,5 @@
 // ============================================
-// ПОИСК (Telegram Mini App версия) - ПОЛНОСТЬЮ РАБОЧИЙ
+// ПОИСК (Telegram Mini App версия) - С БЛОКИРОВКОЙ 2 СЕКУНДЫ
 // ============================================
 
 const Search = {
@@ -8,6 +8,8 @@ const Search = {
     currentMode: '',
     pollingInterval: null,
     currentMatchId: null,
+    matchTimerInterval: null,
+    blockUntil: null, // время до которого нельзя искать
     
     init() {
         this.resetTimer();
@@ -24,11 +26,18 @@ const Search = {
         }
     },
     
-    // НАЧАТЬ ПОИСК - ИСПРАВЛЕНО!
+    // НАЧАТЬ ПОИСК
     start(mode, value) {
-        console.log('🚀 Search.start called with mode:', mode);
+        console.log('Search.start called with mode:', mode);
         
-        // СНАЧАЛА ПОКАЗЫВАЕМ ЭКРАН ПОИСКА
+        // Проверяем не заблокирован ли поиск
+        if (this.blockUntil && Date.now() < this.blockUntil) {
+            const waitSeconds = Math.ceil((this.blockUntil - Date.now()) / 1000);
+            App.showAlert(`⏳ Подождите ${waitSeconds} сек перед новым поиском`);
+            return;
+        }
+        
+        // Показываем экран поиска
         App.showScreen('searchScreen', true);
         document.getElementById('searchModeTitle').textContent = mode;
         
@@ -36,21 +45,21 @@ const Search = {
         this.resetTimer();
         this.startTimer();
         
-        // ПОЛУЧАЕМ TELEGRAM ID
+        // Получаем Telegram ID
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        console.log('🆔 Telegram ID:', telegram_id);
+        console.log('Telegram ID:', telegram_id);
         
         if (!telegram_id) {
-            console.error('❌ No telegram_id');
-            App.showAlert('❌ Ошибка: не удалось получить Telegram ID');
+            console.error('No telegram_id');
+            App.showAlert('Ошибка: не удалось получить Telegram ID');
             return;
         }
         
-        // СОБИРАЕМ ДАННЫЕ
+        // Собираем данные
         const data = this.collectSearchData(mode);
-        console.log('📦 Collected data:', data);
+        console.log('Collected data:', data);
         
-        // ОТПРАВЛЯЕМ ЗАПРОС
+        // Отправляем запрос
         fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/search/start', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -65,27 +74,27 @@ const Search = {
             })
         })
         .then(res => {
-            console.log('📥 Response status:', res.status);
+            console.log('Response status:', res.status);
             return res.json();
         })
         .then(data => {
-            console.log('📥 Response data:', data);
+            console.log('Response data:', data);
             
             if (data.status === 'searching') {
-                console.log('✅ В очереди, запускаем polling');
+                console.log('В очереди, запускаем polling');
                 this.startPolling();
             } 
             else if (data.status === 'match_found') {
-                console.log('✅ Мэтч найден сразу!', data);
-                this.showMatchPopup(data);
+                console.log('Мэтч найден сразу!', data);
+                this.showMatchScreen(data);
             }
             else {
-                console.log('❌ Неизвестный статус:', data);
+                console.log('Неизвестный статус:', data);
             }
         })
         .catch(error => {
-            console.error('❌ Fetch error:', error);
-            App.showAlert('❌ Ошибка при запуске поиска');
+            console.error('Fetch error:', error);
+            App.showAlert('Ошибка при запуске поиска');
         });
     },
     
@@ -135,12 +144,12 @@ const Search = {
     
     startPolling() {
         if (this.pollingInterval) clearInterval(this.pollingInterval);
-        console.log('🔄 Запуск polling (каждые 2 сек)');
+        console.log('Запуск polling (каждые 2 сек)');
         this.pollingInterval = setInterval(() => this.checkMatchStatus(), 2000);
     },
     
     checkMatchStatus() {
-        console.log('🔍 Checking match status...');
+        console.log('Checking match status...');
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         if (!telegram_id) return;
@@ -154,16 +163,16 @@ const Search = {
         })
         .then(res => res.json())
         .then(data => {
-            console.log('📥 Match check response:', data);
+            console.log('Match check response:', data);
             
             if (data.match_found) {
-                console.log('✅ Мэтч найден!');
+                console.log('Мэтч найден!');
                 this.stopPolling();
-                this.showMatchPopup(data);
+                this.showMatchScreen(data);
             }
         })
         .catch(error => {
-            console.error('❌ Error checking match:', error);
+            console.error('Error checking match:', error);
         });
     },
     
@@ -171,44 +180,96 @@ const Search = {
         if (this.pollingInterval) {
             clearInterval(this.pollingInterval);
             this.pollingInterval = null;
-            console.log('🛑 Polling остановлен');
+            console.log('Polling остановлен');
         }
     },
     
-    showMatchPopup(data) {
+    // ПОКАЗАТЬ ЭКРАН НАЙДЕННОГО ТИММЕЙТА (НОВЫЙ)
+    showMatchScreen(data) {
         this.currentMatchId = data.match_id;
-        console.log('🎯 Показываем попап для match_id:', data.match_id);
+        console.log('Показываем экран для match_id:', data.match_id);
         
-        // Удаляем старый попап если есть
-        const oldPopup = document.getElementById('matchPopup');
-        if (oldPopup) oldPopup.remove();
+        // Заполняем данные
+        document.getElementById('matchPlayerId').textContent = data.opponent.player_id || '???';
+        document.getElementById('matchPlayerNick').textContent = data.opponent.nick || 'Игрок';
+        document.getElementById('matchRatingValue').textContent = data.opponent.rating || '0';
+        document.getElementById('matchAge').textContent = data.opponent.age + ' лет' || '? лет';
+        document.getElementById('matchRank').textContent = data.opponent.rank || 'Не указан';
+        document.getElementById('matchSteamLink').textContent = data.opponent.steam_link || 'Не указана';
+        document.getElementById('matchFaceitLink').textContent = data.opponent.faceit_link || 'Не указана';
+        document.getElementById('matchComment').textContent = data.opponent.comment || 'Нет комментария';
         
-        const popup = document.createElement('div');
-        popup.className = 'match-popup';
-        popup.id = 'matchPopup';
-        popup.innerHTML = `
-            <div class="match-popup-content">
-                <h3>✅ Найден тиммейт!</h3>
-                <div class="match-info">
-                    <p>👤 Возраст: <span>${data.opponent?.age || '?'}</span></p>
-                    <p>🎮 Стиль: <span>${data.opponent?.style === 'fan' ? 'Fan' : 'Tryhard'}</span></p>
-                    <p>⭐ Рейтинг: <span>${data.opponent?.rating || '?'}</span></p>
-                    <p>📊 Совместимость: <span>${Math.round((1 - (data.score || 0)/1000)*100)}%</span></p>
-                </div>
-                <div class="match-buttons">
-                    <button onclick="Search.acceptMatch()" class="accept-btn">✅ Принять</button>
-                    <button onclick="Search.rejectMatch()" class="reject-btn">❌ Отклонить</button>
-                </div>
-            </div>
-        `;
+        // Показываем экран
+        App.showScreen('matchFoundScreen', true);
         
-        document.body.appendChild(popup);
         this.resetTimer();
         this.stopPolling();
+        
+        // Запускаем таймер на 30 секунд
+        this.startMatchTimer(data.expires_at);
+    },
+    
+    startMatchTimer(expiresAt) {
+        const timerElement = document.getElementById('matchTimer');
+        if (!timerElement) return;
+        
+        const endTime = expiresAt ? new Date(expiresAt).getTime() : Date.now() + 30000;
+        
+        const updateTimer = () => {
+            const now = Date.now();
+            const diff = Math.max(0, Math.floor((endTime - now) / 1000));
+            
+            if (diff <= 0) {
+                timerElement.textContent = '0с';
+                clearInterval(this.matchTimerInterval);
+                this.matchTimeout();
+                return;
+            }
+            
+            timerElement.textContent = `⏳ ${diff}с`;
+            
+            if (diff < 10) {
+                timerElement.style.color = '#FF5500';
+            }
+        };
+        
+        updateTimer();
+        this.matchTimerInterval = setInterval(updateTimer, 1000);
+    },
+    
+    // ТАЙМАУТ - не нажали кнопки
+    matchTimeout() {
+        console.log('Время вышло, отменяем мэтч');
+        
+        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        
+        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                telegram_id: telegram_id,
+                match_id: this.currentMatchId,
+                response: 'timeout'
+            })
+        })
+        .then(() => {
+            // Показываем сообщение
+            App.showCustomAlert(
+                'Время истекло',
+                'Вы не подтвердили тиммейта. Начните поиск заново.',
+                () => {
+                    App.showScreen('mainScreen', true);
+                }
+            );
+        })
+        .catch(error => {
+            console.error('Error timing out match:', error);
+            App.showScreen('mainScreen', true);
+        });
     },
     
     acceptMatch() {
-        console.log('✅ Принимаем мэтч:', this.currentMatchId);
+        console.log('Принимаем мэтч:', this.currentMatchId);
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         
@@ -223,14 +284,13 @@ const Search = {
         })
         .then(res => res.json())
         .then(data => {
-            console.log('📥 Accept response:', data);
-            document.getElementById('matchPopup')?.remove();
+            console.log('Accept response:', data);
             
             if (data.both_accepted) {
-                App.showAlert('✅ Оба приняли! Создаем игру...');
+                App.showAlert('Оба приняли! Создаем игру...');
                 this.createGame();
             } else if (data.status === 'waiting') {
-                App.showAlert('⏳ Ожидаем ответа второго игрока...');
+                App.showAlert('Ожидаем ответа второго игрока...');
                 // Возвращаемся на экран поиска
                 App.showScreen('searchScreen', true);
                 this.startTimer();
@@ -238,13 +298,12 @@ const Search = {
             }
         })
         .catch(error => {
-            console.error('❌ Error accepting match:', error);
-            document.getElementById('matchPopup')?.remove();
+            console.error('Error accepting match:', error);
         });
     },
     
     rejectMatch() {
-        console.log('❌ Отклоняем мэтч:', this.currentMatchId);
+        console.log('Отклоняем мэтч:', this.currentMatchId);
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         
@@ -259,19 +318,21 @@ const Search = {
         })
         .then(res => res.json())
         .then(data => {
-            console.log('📥 Reject response:', data);
-            document.getElementById('matchPopup')?.remove();
-            App.showAlert('❌ Мэтч отклонен');
+            console.log('Reject response:', data);
+            
+            // Устанавливаем блокировку на 2 секунды
+            this.blockUntil = Date.now() + 2000;
+            
+            App.showAlert('Мэтч отклонен');
             App.showScreen('mainScreen', true);
         })
         .catch(error => {
-            console.error('❌ Error rejecting match:', error);
-            document.getElementById('matchPopup')?.remove();
+            console.error('Error rejecting match:', error);
         });
     },
     
     createGame() {
-        console.log('🎮 Создаем игру для match_id:', this.currentMatchId);
+        console.log('Создаем игру для match_id:', this.currentMatchId);
         
         fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/game/create', {
             method: 'POST',
@@ -282,8 +343,8 @@ const Search = {
         })
         .then(res => res.json())
         .then(data => {
-            console.log('📥 Game create response:', data);
-            App.showAlert(`✅ Чат создан! Ссылка: ${data.chat_link}`);
+            console.log('Game create response:', data);
+            App.showAlert(`Чат создан! Ссылка: ${data.chat_link}`);
             
             // Открываем ссылку в Telegram
             if (window.Telegram?.WebApp?.openTelegramLink) {
@@ -293,7 +354,7 @@ const Search = {
             App.showScreen('mainScreen', true);
         })
         .catch(error => {
-            console.error('❌ Error creating game:', error);
+            console.error('Error creating game:', error);
         });
     },
     
@@ -335,7 +396,7 @@ const Search = {
     },
     
     cancel() {
-        console.log('🛑 Отмена поиска');
+        console.log('Отмена поиска');
         this.resetTimer();
         this.stopPolling();
         
@@ -355,10 +416,17 @@ const Search = {
             }
         })
         .catch(error => {
-            console.error('❌ Error stopping search:', error);
+            console.error('Error stopping search:', error);
             App.showScreen('mainScreen', true);
         });
     }
+};
+
+// Вспомогательная функция для кастомного алерта
+App.showCustomAlert = function(title, message, callback) {
+    // Создаем простой alert (позже можно заменить на красивый)
+    alert(`${title}\n\n${message}`);
+    if (callback) callback();
 };
 
 // Инициализация
