@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ъ<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -283,6 +283,81 @@
 
                 <div class="team-content" id="teamContent">
                     <!-- Сюда будет подгружаться контент через JS -->
+                </div>
+            </div>
+
+            <!-- НОВЫЙ ЭКРАН НАЙДЕННОГО ТИММЕЙТА -->
+            <div id="matchFoundScreen" class="screen match-found-screen">
+                <div class="match-header">
+                    <button class="back-btn" onclick="App.showScreen('searchScreen', true)">←</button>
+                    <div class="match-title">НАЙДЕН ТИММЕЙТ</div>
+                    <div style="width: 40px;"></div>
+                </div>
+
+                <div class="match-content">
+                    <!-- Аватарка (как в профиле) -->
+                    <div class="match-avatar">
+                        <div class="tg-avatar-svg">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                                <circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/>
+                                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- ID -->
+                    <div class="match-player-id" id="matchPlayerId">80794177</div>
+                    
+                    <!-- Ник и рейтинг в одной строке -->
+                    <div class="match-name-row">
+                        <span class="match-player-nick" id="matchPlayerNick">Player123</span>
+                        <span class="match-rating">
+                            <span id="matchRatingValue">1500</span>
+                            <span class="heart-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#FF5500" stroke-width="2" fill="none"/>
+                                </svg>
+                            </span>
+                        </span>
+                    </div>
+
+                    <!-- Возраст и ранг в одной строке -->
+                    <div class="match-stats-row">
+                        <div class="match-stat-item">
+                            <span class="match-stat-label">возраст</span>
+                            <span class="match-stat-value" id="matchAge">21 год</span>
+                        </div>
+                        <div class="match-stat-item">
+                            <span class="match-stat-label">ранг</span>
+                            <span class="match-stat-value highlight" id="matchRank">Gold Nova 3</span>
+                        </div>
+                    </div>
+
+                    <!-- Ссылки (как в профиле) -->
+                    <div class="match-links">
+                        <div class="match-link-item">
+                            <span class="match-link-label">Ссылка Steam</span>
+                            <span class="match-link-value" id="matchSteamLink">steamcommunity.com/id/player123</span>
+                        </div>
+                        <div class="match-link-item">
+                            <span class="match-link-label">Ссылка Faceit</span>
+                            <span class="match-link-value" id="matchFaceitLink">faceit.com/player123</span>
+                        </div>
+                    </div>
+
+                    <!-- Комментарий -->
+                    <div class="match-comment">
+                        <span class="match-comment-label">Комментарий</span>
+                        <div class="match-comment-text" id="matchComment">ищу норм тиммейтов для каток, без токсиков</div>
+                    </div>
+
+                    <!-- Таймер и кнопки -->
+                    <div class="match-timer" id="matchTimer">⏳ 30с</div>
+                    
+                    <div class="match-buttons">
+                        <button class="match-btn accept" onclick="Search.acceptMatch()">ПРИНЯТЬ</button>
+                        <button class="match-btn reject" onclick="Search.rejectMatch()">ОТКЛОНИТЬ</button>
+                    </div>
                 </div>
             </div>
 
@@ -577,4 +652,3 @@
     <script src="js/team.js"></script>
 </body>
 </html>
-
