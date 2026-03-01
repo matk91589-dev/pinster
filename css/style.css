@@ -365,7 +365,7 @@ body {
     flex-shrink: 0;
 }
 
-/* Скрываем навигацию на стартовом экране, экране поиска, экране команды и экране найденного мэтча */
+/* Скрываем навигацию на стартовом экране, экране поиска и экране команды */
 .start-screen.active ~ .bottom-nav,
 .search-screen.active ~ .bottom-nav,
 .team-screen.active ~ .bottom-nav,
