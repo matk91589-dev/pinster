@@ -220,20 +220,57 @@ const Search = {
     showMatchScreen(data) {
         this.currentMatchId = data.match_id;
         console.log('Показываем экран для match_id:', data.match_id);
+        console.log('Данные оппонента:', data.opponent);
         
         // Показываем кнопки (на случай если они были скрыты)
         const buttons = document.querySelector('.match-buttons');
         if (buttons) buttons.style.display = 'flex';
         
-        // Заполняем данные
-        document.getElementById('matchPlayerId').textContent = data.opponent.player_id || '???';
-        document.getElementById('matchPlayerNick').textContent = data.opponent.nick || 'Игрок';
-        document.getElementById('matchRatingValue').textContent = data.opponent.rating || '0';
-        document.getElementById('matchAge').textContent = data.opponent.age + ' лет' || '? лет';
-        document.getElementById('matchRank').textContent = data.opponent.rank || 'Не указан';
-        document.getElementById('matchSteamLink').textContent = data.opponent.steam_link || 'Не указана';
-        document.getElementById('matchFaceitLink').textContent = data.opponent.faceit_link || 'Не указана';
-        document.getElementById('matchComment').textContent = data.opponent.comment || 'Нет комментария';
+        // Заполняем данные с проверкой существования элементов
+        const playerIdEl = document.getElementById('matchPlayerId');
+        if (playerIdEl) playerIdEl.textContent = data.opponent.player_id || '???';
+        
+        const playerNickEl = document.getElementById('matchPlayerNick');
+        if (playerNickEl) playerNickEl.textContent = data.opponent.nick || 'Игрок';
+        
+        const ratingValueEl = document.getElementById('matchRatingValue');
+        if (ratingValueEl) ratingValueEl.textContent = data.opponent.rating || '0';
+        
+        const ageEl = document.getElementById('matchAge');
+        if (ageEl) ageEl.textContent = data.opponent.age + ' лет' || '? лет';
+        
+        const rankEl = document.getElementById('matchRank');
+        if (rankEl) rankEl.textContent = data.opponent.rank || 'Не указан';
+        
+        // Ссылка Steam (input field)
+        const steamLinkEl = document.getElementById('matchSteamLink');
+        if (steamLinkEl) {
+            if (steamLinkEl.tagName === 'INPUT' || steamLinkEl.tagName === 'TEXTAREA') {
+                steamLinkEl.value = data.opponent.steam_link || 'Не указана';
+            } else {
+                steamLinkEl.textContent = data.opponent.steam_link || 'Не указана';
+            }
+        }
+        
+        // Ссылка Faceit (если есть такой элемент)
+        const faceitLinkEl = document.getElementById('matchFaceitLink');
+        if (faceitLinkEl) {
+            if (faceitLinkEl.tagName === 'INPUT' || faceitLinkEl.tagName === 'TEXTAREA') {
+                faceitLinkEl.value = data.opponent.faceit_link || 'Не указана';
+            } else {
+                faceitLinkEl.textContent = data.opponent.faceit_link || 'Не указана';
+            }
+        }
+        
+        // Комментарий
+        const commentEl = document.getElementById('matchComment');
+        if (commentEl) {
+            if (commentEl.tagName === 'TEXTAREA' || commentEl.tagName === 'INPUT') {
+                commentEl.value = data.opponent.comment || 'Нет комментария';
+            } else {
+                commentEl.textContent = data.opponent.comment || 'Нет комментария';
+            }
+        }
         
         // Показываем экран
         App.showScreen('matchFoundScreen', true);
