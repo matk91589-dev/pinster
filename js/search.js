@@ -18,6 +18,14 @@ const Search = {
         
         // Сразу начинаем проверять мэтчи при загрузке
         setTimeout(() => this.startPolling(), 1000);
+        
+        // Добавляем проверку при фокусе на приложение
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.onEvent('activated', () => {
+                console.log('App activated, checking match...');
+                this.checkMatchStatus();
+            });
+        }
     },
     
     setStyle(style, element) {
@@ -223,7 +231,10 @@ const Search = {
         this.currentMatchId = data.match_id;
         console.log('Показываем экран для match_id:', data.match_id);
         console.log('Данные оппонента:', data.opponent);
-        console.log('Текущий режим:', this.currentMode);
+        
+        // Определяем режим из данных оппонента или из сохраненного
+        const mode = data.opponent.mode || this.currentMode || 'PREMIER';
+        console.log('Режим для отображения:', mode);
         
         // Показываем кнопки (на случай если они были скрыты)
         const buttons = document.querySelector('.match-buttons');
@@ -245,23 +256,27 @@ const Search = {
         const rankEl = document.getElementById('matchRank');
         if (rankEl) rankEl.textContent = data.opponent.rank || 'Не указан';
         
-        // Определяем, какой режим (берем из data или из сохраненного)
-        const mode = data.opponent.mode || this.currentMode || 'PREMIER';
-        
-        // Ссылка Steam
+        // Получаем элементы ссылок и их контейнеры
         const steamLinkEl = document.getElementById('matchSteamLink');
         const steamContainer = steamLinkEl?.parentElement;
         
-        // Ссылка Faceit
         const faceitLinkEl = document.getElementById('matchFaceitLink');
         const faceitContainer = faceitLinkEl?.parentElement;
         
-        // Для FACEIT показываем только ссылку Faceit
+        // Для FACEIT показываем только ссылку Faceit, Steam скрываем
         if (mode === 'FACEIT') {
-            // Прячем Steam
-            if (steamContainer) steamContainer.style.display = 'none';
-            // Показываем Faceit
-            if (faceitContainer) faceitContainer.style.display = 'block';
+            console.log('FACEIT режим: показываем только Faceit ссылку');
+            
+            // Скрываем Steam контейнер
+            if (steamContainer) {
+                steamContainer.style.display = 'none';
+            }
+            
+            // Показываем и заполняем Faceit
+            if (faceitContainer) {
+                faceitContainer.style.display = 'block';
+            }
+            
             if (faceitLinkEl) {
                 if (faceitLinkEl.tagName === 'INPUT' || faceitLinkEl.tagName === 'TEXTAREA') {
                     faceitLinkEl.value = data.opponent.faceit_link || 'Не указана';
@@ -270,18 +285,26 @@ const Search = {
                 }
             }
         } 
-        // Для остальных режимов показываем только ссылку Steam
+        // Для остальных режимов показываем только ссылку Steam, Faceit скрываем
         else {
-            // Показываем Steam
-            if (steamContainer) steamContainer.style.display = 'block';
-            // Прячем Faceit
-            if (faceitContainer) faceitContainer.style.display = 'none';
+            console.log('Другой режим: показываем только Steam ссылку');
+            
+            // Показываем и заполняем Steam
+            if (steamContainer) {
+                steamContainer.style.display = 'block';
+            }
+            
             if (steamLinkEl) {
                 if (steamLinkEl.tagName === 'INPUT' || steamLinkEl.tagName === 'TEXTAREA') {
                     steamLinkEl.value = data.opponent.steam_link || 'Не указана';
                 } else {
                     steamLinkEl.textContent = data.opponent.steam_link || 'Не указана';
                 }
+            }
+            
+            // Скрываем Faceit контейнер
+            if (faceitContainer) {
+                faceitContainer.style.display = 'none';
             }
         }
         
