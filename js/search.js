@@ -44,11 +44,13 @@ const Search = {
         // Сбрасываем флаг ожидания
         this.waitingForPartner = false;
         
+        // Сохраняем текущий режим
+        this.currentMode = mode;
+        
         // Показываем экран поиска
         App.showScreen('searchScreen', true);
         document.getElementById('searchModeTitle').textContent = mode;
         
-        this.currentMode = mode;
         this.resetTimer();
         this.startTimer();
         
@@ -221,6 +223,7 @@ const Search = {
         this.currentMatchId = data.match_id;
         console.log('Показываем экран для match_id:', data.match_id);
         console.log('Данные оппонента:', data.opponent);
+        console.log('Текущий режим:', this.currentMode);
         
         // Показываем кнопки (на случай если они были скрыты)
         const buttons = document.querySelector('.match-buttons');
@@ -242,23 +245,43 @@ const Search = {
         const rankEl = document.getElementById('matchRank');
         if (rankEl) rankEl.textContent = data.opponent.rank || 'Не указан';
         
-        // Ссылка Steam (input field)
-        const steamLinkEl = document.getElementById('matchSteamLink');
-        if (steamLinkEl) {
-            if (steamLinkEl.tagName === 'INPUT' || steamLinkEl.tagName === 'TEXTAREA') {
-                steamLinkEl.value = data.opponent.steam_link || 'Не указана';
-            } else {
-                steamLinkEl.textContent = data.opponent.steam_link || 'Не указана';
-            }
-        }
+        // Определяем, какой режим (берем из data или из сохраненного)
+        const mode = data.opponent.mode || this.currentMode || 'PREMIER';
         
-        // Ссылка Faceit (если есть такой элемент)
+        // Ссылка Steam
+        const steamLinkEl = document.getElementById('matchSteamLink');
+        const steamContainer = steamLinkEl?.parentElement;
+        
+        // Ссылка Faceit
         const faceitLinkEl = document.getElementById('matchFaceitLink');
-        if (faceitLinkEl) {
-            if (faceitLinkEl.tagName === 'INPUT' || faceitLinkEl.tagName === 'TEXTAREA') {
-                faceitLinkEl.value = data.opponent.faceit_link || 'Не указана';
-            } else {
-                faceitLinkEl.textContent = data.opponent.faceit_link || 'Не указана';
+        const faceitContainer = faceitLinkEl?.parentElement;
+        
+        // Для FACEIT показываем только ссылку Faceit
+        if (mode === 'FACEIT') {
+            // Прячем Steam
+            if (steamContainer) steamContainer.style.display = 'none';
+            // Показываем Faceit
+            if (faceitContainer) faceitContainer.style.display = 'block';
+            if (faceitLinkEl) {
+                if (faceitLinkEl.tagName === 'INPUT' || faceitLinkEl.tagName === 'TEXTAREA') {
+                    faceitLinkEl.value = data.opponent.faceit_link || 'Не указана';
+                } else {
+                    faceitLinkEl.textContent = data.opponent.faceit_link || 'Не указана';
+                }
+            }
+        } 
+        // Для остальных режимов показываем только ссылку Steam
+        else {
+            // Показываем Steam
+            if (steamContainer) steamContainer.style.display = 'block';
+            // Прячем Faceit
+            if (faceitContainer) faceitContainer.style.display = 'none';
+            if (steamLinkEl) {
+                if (steamLinkEl.tagName === 'INPUT' || steamLinkEl.tagName === 'TEXTAREA') {
+                    steamLinkEl.value = data.opponent.steam_link || 'Не указана';
+                } else {
+                    steamLinkEl.textContent = data.opponent.steam_link || 'Не указана';
+                }
             }
         }
         
