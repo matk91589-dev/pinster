@@ -309,15 +309,15 @@
                 </div>
             </div>
 
-            <!-- НОВЫЙ ЭКРАН НАЙДЕННОГО ТИММЕЙТА (ОБНОВЛЕННАЯ СТРУКТУРА) -->
+            <!-- НОВЫЙ ЭКРАН НАЙДЕННОГО ТИММЕЙТА (ИСПРАВЛЕННЫЙ) -->
             <div id="matchFoundScreen" class="screen match-found-screen">
-                <!-- Только заголовок по центру, без стрелки назад -->
+                <!-- Только заголовок по центру, БЕЗ СТРЕЛКИ -->
                 <div class="match-title-center">НАЙДЕН ТИММЕЙТ</div>
 
                 <div class="match-content">
                     <!-- Верхний блок: аватарка + ник + рейтинг -->
                     <div class="match-player-row">
-                        <!-- Аватарка (как в профиле) -->
+                        <!-- Аватарка (60x60 как в профиле) -->
                         <div class="match-avatar-small">
                             <div class="tg-avatar-svg">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
@@ -344,33 +344,34 @@
                         </div>
                     </div>
 
-                    <!-- Две плашки в ряд: ранг и возраст (как в профиле) -->
-                    <div class="match-stats-row">
-                        <div class="match-stat-item">
-                            <span class="match-stat-label">ранг</span>
-                            <span class="match-stat-value" id="matchRank">Gold Nova 3</span>
+                    <!-- ДВЕ ПЛАШКИ: ранг и возраст (как в профиле) -->
+                    <div class="match-two-cols">
+                        <div class="match-col">
+                            <div class="match-label">ранг</div>
+                            <div class="match-value" id="matchRank">Gold Nova 3</div>
                         </div>
-                        <div class="match-stat-item">
-                            <span class="match-stat-label">возраст</span>
-                            <span class="match-stat-value" id="matchAge">21 год</span>
+                        <div class="match-col">
+                            <div class="match-label">возраст</div>
+                            <div class="match-value" id="matchAge">21 год</div>
                         </div>
                     </div>
 
-                    <!-- Одна длинная плашка для ссылки -->
-                    <div class="match-link-single">
-                        <span class="match-link-label">Ссылка на профиль</span>
-                        <div class="match-link-value" id="matchSteamLink">steamcommunity.com/id/player123</div>
+                    <!-- ОДНА ДЛИННАЯ ПЛАШКА для ссылки -->
+                    <div class="match-full-width">
+                        <div class="match-label">Ссылка на профиль</div>
+                        <div class="match-value" id="matchSteamLink">steamcommunity.com/id/player123</div>
                     </div>
 
-                    <!-- Комментарий (как на экране поиска) -->
-                    <div class="match-comment">
-                        <span class="match-comment-label">Комментарий</span>
-                        <div class="match-comment-text" id="matchComment">ищу норм тиммейтов для каток, без токсиков</div>
+                    <!-- КОММЕНТАРИЙ (как на экране поиска) -->
+                    <div class="match-full-width">
+                        <div class="match-label">Комментарий</div>
+                        <div class="match-comment-box" id="matchComment">ищу норм тиммейтов для каток, без токсиков</div>
                     </div>
 
-                    <!-- Таймер и кнопки -->
+                    <!-- Таймер -->
                     <div class="match-timer" id="matchTimer">⏳ 30с</div>
                     
+                    <!-- Кнопки -->
                     <div class="match-buttons">
                         <button class="match-btn accept" onclick="Search.acceptMatch()">ПРИНЯТЬ</button>
                         <button class="match-btn reject" onclick="Search.rejectMatch()">ОТКЛОНИТЬ</button>
