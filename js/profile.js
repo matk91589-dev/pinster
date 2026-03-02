@@ -127,6 +127,15 @@ const Profile = {
                 
                 this.updateDisplay();
             }
+            
+            // ВАЖНО: После загрузки профиля проверяем мэтч
+            setTimeout(() => {
+                if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
+                    console.log('Проверяем мэтч после загрузки профиля');
+                    Search.checkMatchStatus();
+                }
+            }, 1000);
+            
         } catch (error) {
             console.error('❌ Ошибка загрузки профиля:', error);
         }
