@@ -3,15 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- Блокировка кэша -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <title>Pingster — Telegram Mini App</title>
     
     <!-- Telegram Mini App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/shop-cases.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <!-- CSS с версионированием -->
+    <link rel="stylesheet" href="css/style.css?v=20260302">
+    <link rel="stylesheet" href="css/shop-cases.css?v=20260302">
+    <link rel="stylesheet" href="css/animations.css?v=20260302">
     
     <!-- Дополнительные стили для плавности -->
     <style>
@@ -75,9 +81,26 @@
             width: 42px;
             height: 42px;
         }
+        
+        /* Диагностический блок (будет виден только при проблемах) */
+        #diagnostic-badge {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: #FF5500;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 9999;
+            display: none;
+        }
     </style>
 </head>
 <body>
+    <!-- Диагностический элемент -->
+    <div id="diagnostic-badge">⚠️</div>
+    
     <!-- ОСНОВНОЙ КОНТЕЙНЕР С КЛАССОМ phone-frame -->
     <div class="phone-frame">
         
@@ -99,7 +122,7 @@
             <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
                 <div class="start-avatar-square" id="startAvatar">
-                    <img src="pingster_logo.svg" alt="Pingster">
+                    <img src="pingster_logo.svg?v=20260302" alt="Pingster">
                 </div>
                 <div class="start-description-box">
                     <div class="start-description">
@@ -139,7 +162,7 @@
                     <div class="cases-grid">
                         <!-- ТВОИ КЕЙСЫ - ТЕПЕРЬ С НАСТОЯЩИМИ КАРТИНКАМИ -->
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/common_case.png" alt="common case"></div>
+                            <div class="case-icon"><img src="cases/common_case.png?v=20260302" alt="common case"></div>
                             <div class="case-info">
                                 <div class="case-name">Базовый кейс</div>
                                 <div class="case-price-row">
@@ -149,7 +172,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/rare_case.png" alt="rare case"></div>
+                            <div class="case-icon"><img src="cases/rare_case.png?v=20260302" alt="rare case"></div>
                             <div class="case-info">
                                 <div class="case-name">Редкий кейс</div>
                                 <div class="case-price-row">
@@ -159,7 +182,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/premium_case.png" alt="premium case"></div>
+                            <div class="case-icon"><img src="cases/premium_case.png?v=20260302" alt="premium case"></div>
                             <div class="case-info">
                                 <div class="case-name">Легендарный кейс</div>
                                 <div class="case-price-row">
@@ -169,7 +192,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/secret_case.png" alt="secret case"></div>
+                            <div class="case-icon"><img src="cases/secret_case.png?v=20260302" alt="secret case"></div>
                             <div class="case-info">
                                 <div class="case-name">Секретный кейс</div>
                                 <div class="case-price-row">
@@ -638,18 +661,56 @@
         </nav>
     </div>
 
-    <!-- ТВОИ JS ФАЙЛЫ -->
-    <script src="js/config.js"></script>
-    <script src="js/globals.js"></script>
-    <script src="js/navigation.js"></script>
-    <script src="js/profile.js"></script>
-    <script src="js/avatar.js"></script>
-    <script src="js/friends.js"></script>
-    <script src="js/shop.js"></script>
-    <script src="js/search.js"></script>
-    <script src="js/logo.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/team.js"></script>
+    <!-- ТВОИ JS ФАЙЛЫ С ВЕРСИОНИРОВАНИЕМ -->
+    <script src="js/config.js?v=20260302"></script>
+    <script src="js/globals.js?v=20260302"></script>
+    <script src="js/navigation.js?v=20260302"></script>
+    <script src="js/profile.js?v=20260302"></script>
+    <script src="js/avatar.js?v=20260302"></script>
+    <script src="js/friends.js?v=20260302"></script>
+    <script src="js/shop.js?v=20260302"></script>
+    <script src="js/search.js?v=20260302"></script>
+    <script src="js/logo.js?v=20260302"></script>
+    <script src="js/app.js?v=20260302"></script>
+    <script src="js/team.js?v=20260302"></script>
+    
+    <!-- Диагностика загрузки -->
+    <script>
+        (function() {
+            console.log('=== ДИАГНОСТИКА ЗАГРУЗКИ ===');
+            console.log('User-Agent:', navigator.userAgent);
+            console.log('Timestamp:', new Date().toISOString());
+            
+            // Показываем бейдж если что-то пошло не так
+            const badge = document.getElementById('diagnostic-badge');
+            
+            // Проверяем загрузку основных объектов через 2 секунды
+            setTimeout(function() {
+                const missing = [];
+                if (typeof App === 'undefined') missing.push('App');
+                if (typeof Profile === 'undefined') missing.push('Profile');
+                if (typeof Search === 'undefined') missing.push('Search');
+                if (typeof Shop === 'undefined') missing.push('Shop');
+                
+                if (missing.length > 0) {
+                    console.error('НЕ ЗАГРУЖЕНЫ:', missing.join(', '));
+                    if (badge) {
+                        badge.style.display = 'block';
+                        badge.textContent = `❌ ${missing.length} ошибок`;
+                        badge.style.background = '#B00000';
+                    }
+                } else {
+                    console.log('✅ Все модули загружены');
+                    if (badge) {
+                        badge.style.display = 'block';
+                        badge.textContent = '✅ OK';
+                        setTimeout(function() {
+                            badge.style.display = 'none';
+                        }, 3000);
+                    }
+                }
+            }, 2000);
+        })();
+    </script>
 </body>
 </html>
-
