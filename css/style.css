@@ -2074,7 +2074,7 @@ input:-webkit-autofill:active {
     transform: scale(1.02);
 }
 
-/* ===== НОВЫЙ ЭКРАН НАЙДЕННОГО ТИММЕЙТА ===== */
+/* ===== НОВЫЙ ЭКРАН НАЙДЕННОГО ТИММЕЙТА (ВЫРОВНЕННЫЙ) ===== */
 .match-found-screen {
     padding: 0;
     display: flex;
@@ -2091,7 +2091,7 @@ input:-webkit-autofill:active {
     text-align: center;
     padding: 15px 0 20px 0;
     border-bottom: 1px solid #1E2128;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     flex-shrink: 0;
 }
 
@@ -2100,14 +2100,13 @@ input:-webkit-autofill:active {
     display: flex;
     flex-direction: column;
     padding: 0 5px;
-    gap: 16px;
+    gap: 20px;
 }
 
 .match-player-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 5px;
+    gap: 15px;
 }
 
 .match-avatar-small {
@@ -2141,7 +2140,7 @@ input:-webkit-autofill:active {
     color: #FF5500;
     font-family: monospace;
     font-weight: 600;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 }
 
 .match-player-nick {
@@ -2156,17 +2155,17 @@ input:-webkit-autofill:active {
 .match-rating-block {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     background: transparent;
-    padding: 6px 12px;
-    border-radius: 20px;
-    border: 1px solid #FF5500;
+    padding: 8px 14px;
+    border-radius: 30px;
+    border: 2px solid #FF5500;
     flex-shrink: 0;
 }
 
 .match-rating-value {
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 700;
     color: #FF5500;
 }
 
@@ -2179,108 +2178,73 @@ input:-webkit-autofill:active {
     height: 18px;
 }
 
-.match-stats-row {
+/* ДВЕ КОЛОНКИ (как в профиле) */
+.match-two-cols {
     display: flex;
-    gap: 3vw;
+    gap: 15px;
     margin: 5px 0;
 }
 
-.match-stat-item {
+.match-col {
     flex: 1;
-    background: transparent;
-    border: none;
-    padding: 0;
 }
 
-.match-stat-label {
-    font-size: clamp(8px, 2.5vw, 10px);
+/* ПОЛНАЯ ШИРИНА */
+.match-full-width {
+    width: 100%;
+}
+
+/* ОБЩИЕ СТИЛИ ДЛЯ ЛЕЙБЛОВ И ЗНАЧЕНИЙ */
+.match-label {
+    font-size: 10px;
     color: #9BA1B0;
     font-weight: 600;
-    margin-bottom: 0.8vh;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
-    display: block;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
 }
 
-.match-stat-value {
+.match-value {
     width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 1.5vh 3vw;
-    display: block;
+    border-radius: 10px;
+    padding: 14px 16px;
     color: #F5F5F5;
-    font-size: clamp(11px, 3.5vw, 13px);
-    font-weight: 500;
-}
-
-.match-link-single {
-    margin: 5px 0;
-}
-
-.match-link-single .match-link-label {
-    font-size: clamp(8px, 2.5vw, 10px);
-    color: #9BA1B0;
-    font-weight: 600;
-    margin-bottom: 0.8vh;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    display: block;
-}
-
-.match-link-single .match-link-value {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 1.5vh 3vw;
-    color: #F5F5F5;
-    font-size: clamp(11px, 3.5vw, 13px);
+    font-size: 14px;
     font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.match-comment {
-    margin: 5px 0;
-}
-
-.match-comment-label {
-    font-size: clamp(8px, 2.5vw, 10px);
-    color: #9BA1B0;
-    font-weight: 600;
-    margin-bottom: 0.8vh;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    display: block;
-}
-
-.match-comment-text {
+/* КОММЕНТАРИЙ (как на экране поиска) */
+.match-comment-box {
     width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 12px 15px;
+    border-radius: 10px;
+    padding: 14px 16px;
     color: #F5F5F5;
-    font-size: clamp(11px, 3.2vw, 13px);
-    min-height: 80px;
+    font-size: 14px;
+    font-weight: 500;
+    min-height: 100px;
     word-wrap: break-word;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 .match-timer {
     text-align: center;
-    font-size: 16px;
+    font-size: 18px;
     color: #FF5500;
-    margin: 16px 0 8px 0;
-    font-weight: 600;
+    margin: 10px 0 5px 0;
+    font-weight: 700;
 }
 
 .match-buttons {
     display: flex;
-    gap: 12px;
-    margin: 8px 0 16px 0;
+    gap: 15px;
+    margin: 10px 0 20px 0;
 }
 
 .match-btn {
@@ -2293,7 +2257,7 @@ input:-webkit-autofill:active {
     cursor: pointer;
     transition: all 0.2s;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
 
 .match-btn.accept {
@@ -2329,3 +2293,4 @@ input:-webkit-autofill:active {
     from { opacity: 0; }
     to { opacity: 1; }
 }
+
