@@ -1,5 +1,5 @@
 // ============================================
-// ПОИСК (Telegram Mini App версия) - С БЛОКИРОВКОЙ 2 СЕКУНДЫ
+// ПОИСК (Telegram Mini App версия) - ИСПРАВЛЕННАЯ ВЕРСИЯ
 // ============================================
 
 const Search = {
@@ -9,11 +9,15 @@ const Search = {
     pollingInterval: null,
     currentMatchId: null,
     matchTimerInterval: null,
-    blockUntil: null, // время до которого нельзя искать
+    blockUntil: null,
+    waitingForPartner: false, // флаг что ждем ответа партнера
     
     init() {
         this.resetTimer();
         console.log('Search.init()');
+        
+        // Сразу начинаем проверять мэтчи при загрузке
+        setTimeout(() => this.startPolling(), 1000);
     },
     
     setStyle(style, element) {
@@ -36,6 +40,9 @@ const Search = {
             App.showAlert(`⏳ Подождите ${waitSeconds} сек перед новым поиском`);
             return;
         }
+        
+        // Сбрасываем флаг ожидания
+        this.waitingForPartner = false;
         
         // Показываем экран поиска
         App.showScreen('searchScreen', true);
@@ -70,7 +77,8 @@ const Search = {
                 style: data.style,
                 age: data.age,
                 steam_link: data.steam_link,
-                faceit_link: data.faceit_link
+                faceit_link: data.faceit_link,
+                comment: data.comment || ''
             })
         })
         .then(res => {
@@ -104,7 +112,8 @@ const Search = {
             age: 21,
             steam_link: '',
             faceit_link: '',
-            rating_value: 0
+            rating_value: 0,
+            comment: ''
         };
         
         // Определяем стиль
@@ -119,24 +128,28 @@ const Search = {
             data.age = parseInt(document.getElementById('faceitAgeValue')?.value) || 21;
             data.steam_link = Profile?.savedSteam || '';
             data.faceit_link = document.getElementById('faceitLinkInput')?.value || '';
+            data.comment = document.getElementById('faceitComment')?.value || '';
         }
         else if (mode === 'PREMIER') {
             data.rating_value = parseInt(document.getElementById('premierRatingInput')?.value) || 0;
             data.age = parseInt(document.getElementById('premierAgeValue')?.value) || 21;
             data.steam_link = document.getElementById('premierSteamInput')?.value || '';
             data.faceit_link = Profile?.savedFaceitLink || '';
+            data.comment = document.getElementById('premierComment')?.value || '';
         }
         else if (mode === 'MM PRIME') {
             data.rating_value = document.getElementById('primeRankSelect')?.value || 'Silver 1';
             data.age = parseInt(document.getElementById('primeAgeValue')?.value) || 21;
             data.steam_link = document.getElementById('primeSteamInput')?.value || '';
             data.faceit_link = Profile?.savedFaceitLink || '';
+            data.comment = document.getElementById('primeComment')?.value || '';
         }
         else if (mode === 'MM PUBLIC') {
             data.rating_value = document.getElementById('publicRankSelect')?.value || 'Silver 1';
             data.age = parseInt(document.getElementById('publicAgeValue')?.value) || 21;
             data.steam_link = document.getElementById('publicSteamInput')?.value || '';
             data.faceit_link = Profile?.savedFaceitLink || '';
+            data.comment = document.getElementById('publicComment')?.value || '';
         }
         
         return data;
@@ -167,13 +180,32 @@ const Search = {
             
             if (data.match_found) {
                 console.log('Мэтч найден!');
-                this.stopPolling();
-                this.showMatchScreen(data);
+                
+                // Если мы уже ждем ответа партнера, обновляем статус
+                if (this.waitingForPartner) {
+                    this.updateWaitingStatus(data);
+                } else {
+                    // Показываем экран мэтча
+                    this.stopPolling();
+                    this.showMatchScreen(data);
+                }
             }
         })
         .catch(error => {
             console.error('Error checking match:', error);
         });
+    },
+    
+    updateWaitingStatus(data) {
+        // Обновляем информацию о том, что партнер еще не ответил
+        if (data.your_response === 'accept' && !data.opponent_response) {
+            // Мы приняли, партнер еще нет
+            const timer = document.getElementById('matchTimer');
+            if (timer) {
+                timer.innerHTML = `⏳ Ожидаем ответа тиммейта...`;
+                timer.style.color = '#FF5500';
+            }
+        }
     },
     
     stopPolling() {
@@ -184,10 +216,14 @@ const Search = {
         }
     },
     
-    // ПОКАЗАТЬ ЭКРАН НАЙДЕННОГО ТИММЕЙТА (НОВЫЙ)
+    // ПОКАЗАТЬ ЭКРАН НАЙДЕННОГО ТИММЕЙТА
     showMatchScreen(data) {
         this.currentMatchId = data.match_id;
         console.log('Показываем экран для match_id:', data.match_id);
+        
+        // Показываем кнопки (на случай если они были скрыты)
+        const buttons = document.querySelector('.match-buttons');
+        if (buttons) buttons.style.display = 'flex';
         
         // Заполняем данные
         document.getElementById('matchPlayerId').textContent = data.opponent.player_id || '???';
@@ -253,6 +289,9 @@ const Search = {
             })
         })
         .then(() => {
+            // Сбрасываем флаги
+            this.waitingForPartner = false;
+            
             // Показываем сообщение
             App.showCustomAlert(
                 'Время истекло',
@@ -287,13 +326,25 @@ const Search = {
             console.log('Accept response:', data);
             
             if (data.both_accepted) {
-                App.showAlert('Оба приняли! Создаем игру...');
+                // Оба приняли!
+                App.showAlert('✅ Тиммейт принял приглашение! Создаем игру...');
                 this.createGame();
-            } else if (data.status === 'waiting') {
-                App.showAlert('Ожидаем ответа второго игрока...');
-                // Возвращаемся на экран поиска
-                App.showScreen('searchScreen', true);
-                this.startTimer();
+            } 
+            else if (data.status === 'waiting') {
+                // Ждем ответа второго игрока
+                this.waitingForPartner = true;
+                
+                // Скрываем кнопки, показываем статус ожидания
+                const buttons = document.querySelector('.match-buttons');
+                if (buttons) buttons.style.display = 'none';
+                
+                const timer = document.getElementById('matchTimer');
+                if (timer) {
+                    timer.innerHTML = '⏳ Ожидаем ответа тиммейта...';
+                    timer.style.color = '#FF5500';
+                }
+                
+                // Продолжаем проверять статус
                 this.startPolling();
             }
         })
@@ -322,8 +373,9 @@ const Search = {
             
             // Устанавливаем блокировку на 2 секунды
             this.blockUntil = Date.now() + 2000;
+            this.waitingForPartner = false;
             
-            App.showAlert('Мэтч отклонен');
+            App.showAlert('❌ Мэтч отклонен');
             App.showScreen('mainScreen', true);
         })
         .catch(error => {
@@ -344,14 +396,22 @@ const Search = {
         .then(res => res.json())
         .then(data => {
             console.log('Game create response:', data);
-            App.showAlert(`Чат создан! Ссылка: ${data.chat_link}`);
             
-            // Открываем ссылку в Telegram
-            if (window.Telegram?.WebApp?.openTelegramLink) {
-                window.Telegram.WebApp.openTelegramLink(data.chat_link);
-            }
+            // Сбрасываем флаги
+            this.waitingForPartner = false;
             
-            App.showScreen('mainScreen', true);
+            // Показываем сообщение
+            App.showCustomAlert(
+                '✅ Игра создана!',
+                `Ссылка на чат: ${data.chat_link}`,
+                () => {
+                    // Открываем ссылку в Telegram
+                    if (window.Telegram?.WebApp?.openTelegramLink) {
+                        window.Telegram.WebApp.openTelegramLink(data.chat_link);
+                    }
+                    App.showScreen('mainScreen', true);
+                }
+            );
         })
         .catch(error => {
             console.error('Error creating game:', error);
@@ -360,6 +420,7 @@ const Search = {
     
     showScreen(mode) {
         this.currentMode = mode;
+        this.waitingForPartner = false;
         App.showScreen('searchScreen', true);
         document.getElementById('searchModeTitle').textContent = mode;
         this.resetTimer();
@@ -399,6 +460,7 @@ const Search = {
         console.log('Отмена поиска');
         this.resetTimer();
         this.stopPolling();
+        this.waitingForPartner = false;
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         
