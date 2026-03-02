@@ -309,72 +309,73 @@
                 </div>
             </div>
 
-            <!-- НОВЫЙ ЭКРАН НАЙДЕННОГО ТИММЕЙТА (ИСПРАВЛЕННЫЙ) -->
+            <!-- НОВЫЙ ЭКРАН НАЙДЕННОГО ТИММЕЙТА (В СТИЛЕ ЭКРАНОВ РЕЖИМОВ) -->
             <div id="matchFoundScreen" class="screen match-found-screen">
-                <!-- Только заголовок по центру, БЕЗ СТРЕЛКИ -->
-                <div class="match-title-center">НАЙДЕН ТИММЕЙТ</div>
+                <!-- Заголовок как в режимах -->
+                <div class="mode-header" style="justify-content: center; margin-bottom: 10px;">
+                    <div class="mode-title faceit" style="position: static; margin: 0;">НАЙДЕН ТИММЕЙТ</div>
+                </div>
+                <div class="mode-subtitle" style="margin-bottom: 20px;">игрок найден, подтвердите</div>
 
-                <div class="match-content">
+                <div class="match-content" style="padding: 0 5px;">
                     <!-- Верхний блок: аватарка + ник + рейтинг -->
-                    <div class="match-player-row">
-                        <!-- Аватарка (60x60 как в профиле) -->
-                        <div class="match-avatar-small">
-                            <div class="tg-avatar-svg">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
+                        <!-- Аватарка 60x60 -->
+                        <div style="width: 60px; height: 60px; flex-shrink: 0;">
+                            <div class="tg-avatar-svg" style="width: 60px; height: 60px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
                                     <circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/>
                                     <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/>
                                 </svg>
                             </div>
                         </div>
                         
-                        <!-- Блок с ником и ID -->
-                        <div class="match-name-block">
-                            <div class="match-player-id" id="matchPlayerId">80794177</div>
-                            <div class="match-player-nick" id="matchPlayerNick">Player123</div>
+                        <!-- Блок с ником (ID сверху, ник снизу) -->
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-size: 12px; color: #FF5500; font-family: monospace; font-weight: 600; margin-bottom: 2px;" id="matchPlayerId">80794177</div>
+                            <div style="font-size: clamp(18px, 5vw, 22px); font-weight: 700; color: #F5F5F5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="matchPlayerNick">Player123</div>
                         </div>
                         
-                        <!-- Рейтинг справа -->
-                        <div class="match-rating-block">
-                            <span class="match-rating-value" id="matchRatingValue">1500</span>
-                            <span class="heart-icon">
-                                <svg viewBox="0 0 24 24">
+                        <!-- Рейтинг справа (число + сердечко) -->
+                        <div style="display: flex; align-items: center; gap: 4px; background: transparent; padding: 8px 14px; border-radius: 30px; border: 2px solid #FF5500; flex-shrink: 0;">
+                            <span style="font-size: 18px; font-weight: 700; color: #FF5500;" id="matchRatingValue">1500</span>
+                            <span class="heart-icon" style="margin-left: 0;">
+                                <svg viewBox="0 0 24 24" width="18" height="18">
                                     <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#FF5500" stroke-width="2" fill="none"/>
                                 </svg>
                             </span>
                         </div>
                     </div>
 
-                    <!-- ДВЕ ПЛАШКИ: ранг и возраст (как в профиле) -->
-                    <div class="match-two-cols">
-                        <div class="match-col">
-                            <div class="match-label">ранг</div>
-                            <div class="match-value" id="matchRank">Gold Nova 3</div>
+                    <!-- ДВЕ ПЛАШКИ: ранг и возраст (как на экране FACEIT) -->
+                    <div class="stats-row" style="margin-bottom: 20px;">
+                        <div class="stat-card">
+                            <div class="stat-label">РАНГ</div>
+                            <div class="stat-value" id="matchRank" style="justify-content: flex-start;">Gold Nova 3</div>
                         </div>
-                        <div class="match-col">
-                            <div class="match-label">возраст</div>
-                            <div class="match-value" id="matchAge">21 год</div>
+                        <div class="stat-card">
+                            <div class="stat-label">ВОЗРАСТ</div>
+                            <div class="stat-value" id="matchAge" style="justify-content: flex-start;">21 год</div>
                         </div>
                     </div>
 
-                    <!-- ОДНА ДЛИННАЯ ПЛАШКА для ссылки -->
-                    <div class="match-full-width">
-                        <div class="match-label">Ссылка на профиль</div>
-                        <div class="match-value" id="matchSteamLink">steamcommunity.com/id/player123</div>
-                    </div>
+                    <!-- ССЫЛКА (как на экране FACEIT) -->
+                    <div class="input-label" style="margin-top: 5px;">Ссылка на профиль</div>
+                    <input type="text" class="input-field" id="matchSteamLink" value="steamcommunity.com/id/player123" readonly style="margin-bottom: 20px;">
 
-                    <!-- КОММЕНТАРИЙ (как на экране поиска) -->
-                    <div class="match-full-width">
-                        <div class="match-label">Комментарий</div>
-                        <div class="match-comment-box" id="matchComment">ищу норм тиммейтов для каток, без токсиков</div>
+                    <!-- КОММЕНТАРИЙ (как на экране FACEIT) -->
+                    <div class="comment-section" style="margin-bottom: 20px;">
+                        <div class="comment-label">Комментарий</div>
+                        <textarea class="comment-input" id="matchComment" readonly style="height: 80px; resize: none;">ищу норм тиммейтов для каток, без токсиков</textarea>
                     </div>
 
                     <!-- Таймер -->
-                    <div class="match-timer" id="matchTimer">⏳ 30с</div>
+                    <div style="text-align: center; font-size: 18px; color: #FF5500; margin: 10px 0; font-weight: 700;" id="matchTimer">⏳ 30с</div>
                     
-                    <!-- Кнопки -->
-                    <div class="match-buttons">
-                        <button class="match-btn accept" onclick="Search.acceptMatch()">ПРИНЯТЬ</button>
-                        <button class="match-btn reject" onclick="Search.rejectMatch()">ОТКЛОНИТЬ</button>
+                    <!-- Кнопки как в режимах -->
+                    <div style="display: flex; gap: 15px; margin: 10px 0 20px 0;">
+                        <button class="mode-search-btn" style="margin: 0; flex: 1; background: #FF5500;" onclick="Search.acceptMatch()">ПРИНЯТЬ</button>
+                        <button class="mode-search-btn" style="margin: 0; flex: 1; background: transparent; border: 2px solid #B00000; color: #B00000;" onclick="Search.rejectMatch()">ОТКЛОНИТЬ</button>
                     </div>
                 </div>
             </div>
