@@ -15,9 +15,9 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- CSS с версионированием -->
-    <link rel="stylesheet" href="css/style.css?v=20260303">
-    <link rel="stylesheet" href="css/shop-cases.css?v=20260303">
-    <link rel="stylesheet" href="css/animations.css?v=20260303">
+    <link rel="stylesheet" href="css/style.css?v=20260304">
+    <link rel="stylesheet" href="css/shop-cases.css?v=20260304">
+    <link rel="stylesheet" href="css/animations.css?v=20260304">
     
     <!-- Дополнительные стили для плавности -->
     <style>
@@ -122,7 +122,7 @@
             <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
                 <div class="start-avatar-square" id="startAvatar">
-                    <img src="pingster_logo.svg?v=20260303" alt="Pingster">
+                    <img src="pingster_logo.svg?v=20260304" alt="Pingster">
                 </div>
                 <div class="start-description-box">
                     <div class="start-description">
@@ -162,7 +162,7 @@
                     <div class="cases-grid">
                         <!-- ТВОИ КЕЙСЫ - ТЕПЕРЬ С НАСТОЯЩИМИ КАРТИНКАМИ -->
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/common_case.png?v=20260303" alt="common case"></div>
+                            <div class="case-icon"><img src="cases/common_case.png?v=20260304" alt="common case"></div>
                             <div class="case-info">
                                 <div class="case-name">Базовый кейс</div>
                                 <div class="case-price-row">
@@ -172,7 +172,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/rare_case.png?v=20260303" alt="rare case"></div>
+                            <div class="case-icon"><img src="cases/rare_case.png?v=20260304" alt="rare case"></div>
                             <div class="case-info">
                                 <div class="case-name">Редкий кейс</div>
                                 <div class="case-price-row">
@@ -182,7 +182,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/premium_case.png?v=20260303" alt="premium case"></div>
+                            <div class="case-icon"><img src="cases/premium_case.png?v=20260304" alt="premium case"></div>
                             <div class="case-info">
                                 <div class="case-name">Легендарный кейс</div>
                                 <div class="case-price-row">
@@ -192,7 +192,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/secret_case.png?v=20260303" alt="secret case"></div>
+                            <div class="case-icon"><img src="cases/secret_case.png?v=20260304" alt="secret case"></div>
                             <div class="case-info">
                                 <div class="case-name">Секретный кейс</div>
                                 <div class="case-price-row">
@@ -309,7 +309,7 @@
                 </div>
             </div>
 
-            <!-- НОВЫЙ ЭКРАН НАЙДЕННОГО ТИММЕЙТА (В СТИЛЕ ЭКРАНОВ РЕЖИМОВ) -->
+            <!-- НОВЫЙ ЭКРАН НАЙДЕННОГО ТИММЕЙТА (ИСПРАВЛЕННЫЙ) -->
             <div id="matchFoundScreen" class="screen match-found-screen">
                 <!-- Заголовок как в режимах -->
                 <div class="mode-header" style="justify-content: center; margin-bottom: 10px;">
@@ -359,11 +359,15 @@
                         </div>
                     </div>
 
-                    <!-- ССЫЛКА (как на экране FACEIT) -->
-                    <div class="input-label" style="margin-top: 5px;">Ссылка на профиль</div>
-                    <input type="text" class="input-field" id="matchSteamLink" value="steamcommunity.com/id/player123" readonly style="margin-bottom: 20px;">
+                    <!-- ССЫЛКА Steam -->
+                    <div class="input-label" style="margin-top: 5px;">Ссылка Steam</div>
+                    <input type="text" class="input-field" id="matchSteamLink" value="steamcommunity.com/id/player123" readonly style="margin-bottom: 10px;">
 
-                    <!-- КОММЕНТАРИЙ (как на экране FACEIT) -->
+                    <!-- ССЫЛКА Faceit -->
+                    <div class="input-label">Ссылка Faceit</div>
+                    <input type="text" class="input-field" id="matchFaceitLink" value="faceit.com/player123" readonly style="margin-bottom: 20px;">
+
+                    <!-- КОММЕНТАРИЙ -->
                     <div class="comment-section" style="margin-bottom: 20px;">
                         <div class="comment-label">Комментарий</div>
                         <textarea class="comment-input" id="matchComment" readonly style="height: 80px; resize: none;">ищу норм тиммейтов для каток, без токсиков</textarea>
@@ -656,17 +660,17 @@
     </div>
 
     <!-- ТВОИ JS ФАЙЛЫ С ВЕРСИОНИРОВАНИЕМ -->
-    <script src="js/config.js?v=20260303"></script>
-    <script src="js/globals.js?v=20260303"></script>
-    <script src="js/navigation.js?v=20260303"></script>
-    <script src="js/profile.js?v=20260303"></script>
-    <script src="js/avatar.js?v=20260303"></script>
-    <script src="js/friends.js?v=20260303"></script>
-    <script src="js/shop.js?v=20260303"></script>
-    <script src="js/search.js?v=20260303"></script>
-    <script src="js/logo.js?v=20260303"></script>
-    <script src="js/app.js?v=20260303"></script>
-    <script src="js/team.js?v=20260303"></script>
+    <script src="js/config.js?v=20260304"></script>
+    <script src="js/globals.js?v=20260304"></script>
+    <script src="js/navigation.js?v=20260304"></script>
+    <script src="js/profile.js?v=20260304"></script>
+    <script src="js/avatar.js?v=20260304"></script>
+    <script src="js/friends.js?v=20260304"></script>
+    <script src="js/shop.js?v=20260304"></script>
+    <script src="js/search.js?v=20260304"></script>
+    <script src="js/logo.js?v=20260304"></script>
+    <script src="js/app.js?v=20260304"></script>
+    <script src="js/team.js?v=20260304"></script>
     
     <!-- Диагностика загрузки -->
     <script>
