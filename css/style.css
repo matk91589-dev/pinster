@@ -2084,19 +2084,15 @@ input:-webkit-autofill:active {
     height: 100%;
 }
 
-.match-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 0 20px 0;
-    flex-shrink: 0;
-}
-
-.match-title {
+.match-title-center {
     font-size: clamp(20px, 6vw, 24px);
     font-weight: 700;
-    color: #FF5500;
+    color: #F5F5F5;
     text-align: center;
+    padding: 15px 0 20px 0;
+    border-bottom: 1px solid #1E2128;
+    margin-bottom: 15px;
+    flex-shrink: 0;
 }
 
 .match-content {
@@ -2104,80 +2100,89 @@ input:-webkit-autofill:active {
     display: flex;
     flex-direction: column;
     padding: 0 5px;
+    gap: 16px;
 }
 
-.match-avatar {
+.match-player-row {
     display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 5px;
+}
+
+.match-avatar-small {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+}
+
+.match-avatar-small .tg-avatar-svg {
+    width: 60px;
+    height: 60px;
+    background: #2B2F36;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    margin-bottom: 16px;
 }
 
-.match-avatar .tg-avatar-svg {
-    width: 100px;
-    height: 100px;
+.match-avatar-small .tg-avatar-svg svg {
+    width: 30px;
+    height: 30px;
 }
 
-.match-avatar .tg-avatar-svg svg {
-    width: 48px;
-    height: 48px;
+.match-name-block {
+    flex: 1;
+    min-width: 0;
 }
 
 .match-player-id {
-    font-size: 14px;
+    font-size: 12px;
     color: #FF5500;
-    text-align: center;
-    margin-bottom: 4px;
     font-family: monospace;
     font-weight: 600;
-}
-
-.match-name-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 24px;
-    padding: 0 5px;
+    margin-bottom: 2px;
 }
 
 .match-player-nick {
-    font-size: clamp(20px, 6vw, 24px);
+    font-size: clamp(18px, 5vw, 22px);
     font-weight: 700;
     color: #F5F5F5;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 70%;
 }
 
-.match-rating {
+.match-rating-block {
     display: flex;
     align-items: center;
     gap: 4px;
     background: transparent;
-    padding: 4px 10px;
+    padding: 6px 12px;
     border-radius: 20px;
     border: 1px solid #FF5500;
+    flex-shrink: 0;
 }
 
-.match-rating span {
-    font-size: 16px;
+.match-rating-value {
+    font-size: 18px;
     font-weight: 600;
     color: #FF5500;
 }
 
-.match-rating .heart-icon {
+.match-rating-block .heart-icon {
     margin-left: 0;
 }
 
-.match-rating .heart-icon svg {
-    width: 16px;
-    height: 16px;
+.match-rating-block .heart-icon svg {
+    width: 18px;
+    height: 18px;
 }
 
 .match-stats-row {
     display: flex;
     gap: 3vw;
-    margin: 0 0 24px 0;
+    margin: 5px 0;
 }
 
 .match-stat-item {
@@ -2209,24 +2214,11 @@ input:-webkit-autofill:active {
     font-weight: 500;
 }
 
-.match-stat-value.highlight {
-    color: #FF5500;
+.match-link-single {
+    margin: 5px 0;
 }
 
-.match-links {
-    display: flex;
-    flex-direction: column;
-    gap: 2vh;
-    margin-bottom: 24px;
-}
-
-.match-link-item {
-    background: transparent;
-    border: none;
-    padding: 0;
-}
-
-.match-link-label {
+.match-link-single .match-link-label {
     font-size: clamp(8px, 2.5vw, 10px);
     color: #9BA1B0;
     font-weight: 600;
@@ -2236,13 +2228,12 @@ input:-webkit-autofill:active {
     display: block;
 }
 
-.match-link-value {
+.match-link-single .match-link-value {
     width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
     padding: 1.5vh 3vw;
-    display: block;
     color: #F5F5F5;
     font-size: clamp(11px, 3.5vw, 13px);
     font-weight: 500;
@@ -2252,7 +2243,7 @@ input:-webkit-autofill:active {
 }
 
 .match-comment {
-    margin-bottom: 24px;
+    margin: 5px 0;
 }
 
 .match-comment-label {
@@ -2273,22 +2264,23 @@ input:-webkit-autofill:active {
     padding: 12px 15px;
     color: #F5F5F5;
     font-size: clamp(11px, 3.2vw, 13px);
-    min-height: 60px;
+    min-height: 80px;
     word-wrap: break-word;
+    line-height: 1.4;
 }
 
 .match-timer {
     text-align: center;
     font-size: 16px;
     color: #FF5500;
-    margin-bottom: 16px;
+    margin: 16px 0 8px 0;
     font-weight: 600;
 }
 
 .match-buttons {
     display: flex;
     gap: 12px;
-    margin: 0 0 16px 0;
+    margin: 8px 0 16px 0;
 }
 
 .match-btn {
