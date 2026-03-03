@@ -247,21 +247,36 @@ const Search = {
         const playerNickEl = document.getElementById('matchPlayerNick');
         if (playerNickEl) playerNickEl.textContent = data.opponent.nick || 'Игрок';
         
+        // Рейтинг - просто число из профиля
         const ratingValueEl = document.getElementById('matchRatingValue');
-        if (ratingValueEl) ratingValueEl.textContent = data.opponent.rating || '0';
+        if (ratingValueEl) {
+            ratingValueEl.textContent = data.opponent.rating || '0';
+        }
         
         const ageEl = document.getElementById('matchAge');
-        if (ageEl) ageEl.textContent = data.opponent.age + ' лет' || '? лет';
+        if (ageEl) {
+            if (ageEl.tagName === 'INPUT' || ageEl.tagName === 'TEXTAREA') {
+                ageEl.value = data.opponent.age + ' лет' || '? лет';
+            } else {
+                ageEl.textContent = data.opponent.age + ' лет' || '? лет';
+            }
+        }
         
         const rankEl = document.getElementById('matchRank');
-        if (rankEl) rankEl.textContent = data.opponent.rank || 'Не указан';
+        if (rankEl) {
+            if (rankEl.tagName === 'INPUT' || rankEl.tagName === 'TEXTAREA') {
+                rankEl.value = data.opponent.rank || 'Не указан';
+            } else {
+                rankEl.textContent = data.opponent.rank || 'Не указан';
+            }
+        }
         
-        // Получаем элементы ссылок и их контейнеры
+        // Получаем элементы ссылок и их контейнеры (родительские div)
+        const steamContainer = document.querySelector('.match-steam-container');
+        const faceitContainer = document.querySelector('.match-faceit-container');
+        
         const steamLinkEl = document.getElementById('matchSteamLink');
-        const steamContainer = steamLinkEl?.parentElement;
-        
         const faceitLinkEl = document.getElementById('matchFaceitLink');
-        const faceitContainer = faceitLinkEl?.parentElement;
         
         // Для FACEIT показываем только ссылку Faceit, Steam скрываем
         if (mode === 'FACEIT') {
