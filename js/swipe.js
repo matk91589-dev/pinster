@@ -18,10 +18,11 @@ const Swipe = {
     initialX: 0,
     
     // Константы
-    SWIPE_THRESHOLD: 0.3, // 30% ширины экрана (меньше для удобства)
+    SWIPE_THRESHOLD: 0.25, // 25% ширины экрана
     MAX_ROTATE: 8,
     ANIMATION_DURATION: 250,
     AUTO_COMPLETE_DURATION: 300,
+    MIN_THRESHOLD_PX: 150, // минимальный порог в пикселях
     
     // Данные
     currentPlayer: null,
@@ -31,7 +32,7 @@ const Swipe = {
     isInitialized: false,
     connectionTimer: null,
     connectionEndTime: null,
-    isConnectionMode: false, // режим соединения (карточка трансформирована)
+    isConnectionMode: false,
     
     init(mode) {
         console.log('Swipe.init() with mode:', mode);
@@ -55,7 +56,7 @@ const Swipe = {
         // Загружаем первого игрока
         this.loadNextPlayer();
         
-        // Устанавливаем обработчики, если еще не установлены
+        // Устанавливаем обработчики
         if (!this.isInitialized) {
             this.setupEventListeners();
             this.isInitialized = true;
@@ -73,15 +74,21 @@ const Swipe = {
         console.log('✅ Обработчики событий установлены');
     },
     
+    // Унифицированное получение координат для ПК и мобильных
+    getClientX(e) {
+        return e.clientX ?? e.touches?.[0]?.clientX;
+    },
+    
     onDragStart(e) {
-        if (this.isConnectionMode) return; // Не даем свайпать в режиме соединения
+        if (this.isConnectionMode) return;
         
         this.isDragging = true;
-        this.startX = e.clientX;
+        this.startX = this.getClientX(e);
         this.initialX = this.currentX || 0;
         
         this.card.style.transition = 'none';
         this.card.style.cursor = 'grabbing';
+        this.card.style.transform = 'scale(1.02)';
         this.card.classList.remove('right-swipe', 'left-swipe');
         
         e.preventDefault();
@@ -92,16 +99,21 @@ const Swipe = {
         
         e.preventDefault();
         
-        const deltaX = e.clientX - this.startX;
+        const clientX = this.getClientX(e);
+        if (!clientX) return;
+        
+        const deltaX = clientX - this.startX;
         this.currentX = this.initialX + deltaX;
         
         const maxDistance = window.innerWidth * 0.5;
         this.currentX = Math.max(-maxDistance, Math.min(maxDistance, this.currentX));
         
-        const progress = Math.min(Math.abs(this.currentX) / (window.innerWidth * this.SWIPE_THRESHOLD), 1);
+        // Динамический порог
+        const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
+        const progress = Math.min(Math.abs(this.currentX) / threshold, 1);
         const rotate = (this.currentX / maxDistance) * this.MAX_ROTATE;
         
-        this.card.style.transform = `translateX(${this.currentX}px) rotate(${rotate}deg)`;
+        this.card.style.transform = `translateX(${this.currentX}px) rotate(${rotate}deg) scale(1.02)`;
         
         if (this.currentX > 0) {
             this.card.classList.add('right-swipe');
@@ -121,22 +133,22 @@ const Swipe = {
         
         this.isDragging = false;
         this.card.style.cursor = 'grab';
-        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
+        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.25, 0.8, 0.25, 1)`;
         
-        const threshold = window.innerWidth * this.SWIPE_THRESHOLD;
+        const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
         
         if (Math.abs(this.currentX) > threshold) {
-            // АВТОДОВОДКА - карточка сама улетает
+            // АВТОДОВОДКА
             this.autoComplete = true;
             
             if (this.currentX > 0) {
-                this.card.style.transform = `translateX(200%) rotate(15deg)`;
+                this.card.style.transform = `translateX(200%) rotate(12deg) scale(1)`;
                 setTimeout(() => {
                     this.autoComplete = false;
                     this.acceptPlayer();
                 }, this.ANIMATION_DURATION);
             } else {
-                this.card.style.transform = `translateX(-200%) rotate(-15deg)`;
+                this.card.style.transform = `translateX(-200%) rotate(-12deg) scale(1)`;
                 setTimeout(() => {
                     this.autoComplete = false;
                     this.rejectPlayer();
@@ -148,7 +160,7 @@ const Swipe = {
     },
     
     resetCardPosition() {
-        this.card.style.transform = 'translateX(0) rotate(0)';
+        this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
         this.currentX = 0;
         
         if (this.labelLeft) this.labelLeft.style.opacity = 0;
@@ -161,17 +173,18 @@ const Swipe = {
         }, this.ANIMATION_DURATION);
     },
     
-    // Принятие игрока (свайп вправо)
     acceptPlayer() {
-        console.log('✅ Принят игрок (свайп вправо):', this.currentPlayer);
+        console.log('✅ Принят игрок:', this.currentPlayer);
         
-        // Сохраняем ID мэтча
         this.currentMatchId = Math.floor(100000 + Math.random() * 900000);
         
-        // Трансформируем карточку в режим соединения
-        this.showConnectionMode();
+        // Плавное исчезновение старого контента
+        this.card.style.opacity = '0';
         
-        // Отправляем запрос на сервер
+        setTimeout(() => {
+            this.showConnectionMode();
+        }, 200);
+        
         fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -185,19 +198,16 @@ const Swipe = {
             console.log('Accept response:', data);
             
             if (data.both_accepted) {
-                // Оба приняли
                 this.handleBothAccepted();
             } else if (data.status === 'rejected') {
-                // Тиммейт отклонил
                 this.handleRejection();
             } else {
-                // Ждем ответа
-                console.log('Ожидаем ответа тиммейта');
+                console.log('Ожидаем ответа');
                 this.startConnectionTimer();
             }
         })
         .catch(error => {
-            console.error('Error accepting match:', error);
+            console.error('Error:', error);
             setTimeout(() => {
                 this.exitConnectionMode();
                 this.loadNextPlayer();
@@ -205,41 +215,46 @@ const Swipe = {
         });
     },
     
-    // Пропуск игрока (свайп влево)
     rejectPlayer() {
-        console.log('❌ Пропущен игрок (свайп влево):', this.currentPlayer);
+        console.log('❌ Пропущен игрок:', this.currentPlayer);
         this.loadNextPlayer();
     },
     
-    // Трансформация карточки в режим соединения
     showConnectionMode() {
         this.isConnectionMode = true;
         
-        // Прячем лейблы свайпа
+        // Прячем лейблы
         if (this.labelLeft) this.labelLeft.style.display = 'none';
         if (this.labelRight) this.labelRight.style.display = 'none';
-        
-        // Прячем подсказку
         if (this.hint) this.hint.style.display = 'none';
         
-        // Возвращаем карточку в центр с анимацией
-        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms ease`;
-        this.card.style.transform = 'translateX(0) rotate(0)';
+        // Возвращаем карточку в центр
+        this.card.style.transition = 'none';
+        this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
+        this.card.style.opacity = '1';
         
-        // Меняем содержимое карточки на режим соединения
-        setTimeout(() => {
-            this.card.innerHTML = this.getConnectionHTML();
-            this.setupConnectionMode();
-        }, this.ANIMATION_DURATION);
+        // Меняем содержимое с анимацией появления
+        this.card.innerHTML = this.getConnectionHTML();
+        
+        // Анимация появления аватарок
+        const avatars = this.card.querySelectorAll('.connection-avatar');
+        avatars.forEach((avatar, index) => {
+            avatar.style.opacity = '0';
+            avatar.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                avatar.style.transition = 'all 0.3s ease';
+                avatar.style.opacity = '1';
+                avatar.style.transform = 'scale(1)';
+            }, 50 + index * 100);
+        });
+        
+        this.setupConnectionMode();
     },
     
-    // HTML для режима соединения
     getConnectionHTML() {
         return `
             <div class="swipe-card-content connection-mode">
-                <!-- Контейнер с аватарками -->
                 <div class="connection-avatars">
-                    <!-- Твоя аватарка (яркая) -->
                     <div class="connection-avatar self-avatar">
                         <div class="tg-avatar-svg">
                             <svg viewBox="0 0 24 24" width="35" height="35">
@@ -249,12 +264,10 @@ const Swipe = {
                         </div>
                     </div>
 
-                    <!-- Линия соединения -->
                     <div class="connection-line" id="cardConnectionLine">
                         <div class="line-pulse"></div>
                     </div>
 
-                    <!-- Аватарка тиммейта -->
                     <div class="connection-avatar teammate-avatar" id="cardTeammateAvatar">
                         <div class="tg-avatar-svg">
                             <svg viewBox="0 0 24 24" width="30" height="30">
@@ -265,50 +278,62 @@ const Swipe = {
                     </div>
                 </div>
 
-                <!-- Статус -->
                 <div class="connection-status" id="cardConnectionStatus">
+                    <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="#9BA1B0" stroke-width="2"/>
+                        <path d="M12 8v4l3 3" stroke="#9BA1B0" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
                     Ожидаем ответа тиммейта...
                 </div>
 
-                <!-- Информация о тиммейте -->
                 <div class="teammate-info">
                     <span class="teammate-nick" id="cardTeammateNick">${this.currentPlayer.nick}</span>
-                    <span class="teammate-rating" id="cardTeammateRating">${this.currentPlayer.rating} ❤️</span>
+                    <span class="teammate-rating" id="cardTeammateRating">
+                        ${this.currentPlayer.rating}
+                        <svg class="heart-icon-small" width="14" height="14" viewBox="0 0 24 24">
+                            <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#FF5500" stroke-width="2" fill="none"/>
+                        </svg>
+                    </span>
                 </div>
 
-                <!-- Таймер -->
-                <div class="connection-timer" id="cardConnectionTimer">⏳ 30с</div>
+                <div class="connection-timer" id="cardConnectionTimer">
+                    <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="#FF5500" stroke-width="2"/>
+                        <polyline points="12 6 12 12 16 14" stroke="#FF5500" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span>30с</span>
+                </div>
             </div>
         `;
     },
     
-    // Настройка режима соединения
     setupConnectionMode() {
-        // Заполняем данные
         document.getElementById('cardTeammateNick').textContent = this.currentPlayer.nick;
-        document.getElementById('cardTeammateRating').textContent = this.currentPlayer.rating + ' ❤️';
+        document.getElementById('cardTeammateRating').innerHTML = `
+            ${this.currentPlayer.rating}
+            <svg class="heart-icon-small" width="14" height="14" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#FF5500" stroke-width="2" fill="none"/>
+            </svg>
+        `;
         
-        // Сбрасываем классы
         this.card.classList.remove('both-accepted', 'rejected', 'right-swipe', 'left-swipe');
-        
-        // Обновляем статус
-        document.getElementById('cardConnectionStatus').textContent = 'Ожидаем ответа тиммейта...';
     },
     
-    // Выход из режима соединения
     exitConnectionMode() {
         this.isConnectionMode = false;
         
-        // Возвращаем лейблы
         if (this.labelLeft) this.labelLeft.style.display = 'block';
         if (this.labelRight) this.labelRight.style.display = 'block';
         if (this.hint) this.hint.style.display = 'block';
         
-        // Восстанавливаем исходный HTML карточки
-        this.card.innerHTML = this.getOriginalCardHTML();
+        this.card.style.opacity = '0';
+        
+        setTimeout(() => {
+            this.card.innerHTML = this.getOriginalCardHTML();
+            this.card.style.opacity = '1';
+        }, 200);
     },
     
-    // Оригинальный HTML карточки
     getOriginalCardHTML() {
         return `
             <div class="swipe-label swipe-label-left" id="swipeLabelLeft">SKIP</div>
@@ -371,7 +396,6 @@ const Swipe = {
         `;
     },
     
-    // Запуск таймера в карточке
     startConnectionTimer() {
         const timerElement = document.getElementById('cardConnectionTimer');
         if (!timerElement) return;
@@ -383,25 +407,47 @@ const Swipe = {
             const diff = Math.max(0, Math.floor((this.connectionEndTime - now) / 1000));
             
             if (diff <= 0) {
-                timerElement.textContent = '⏳ 0с';
+                timerElement.innerHTML = `
+                    <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="#B00000" stroke-width="2"/>
+                        <line x1="12" y1="8" x2="12" y2="12" stroke="#B00000" stroke-width="2"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16" stroke="#B00000" stroke-width="2"/>
+                    </svg>
+                    <span>0с</span>
+                `;
                 clearInterval(this.connectionTimer);
                 this.connectionTimeout();
                 return;
             }
             
-            timerElement.textContent = `⏳ ${diff}с`;
+            timerElement.innerHTML = `
+                <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" stroke="#FF5500" stroke-width="2"/>
+                    <polyline points="12 6 12 12 16 14" stroke="#FF5500" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>${diff}с</span>
+            `;
         };
         
         updateTimer();
         this.connectionTimer = setInterval(updateTimer, 1000);
     },
     
-    // Таймаут в карточке
     connectionTimeout() {
-        console.log('⏰ Время ожидания истекло');
+        console.log('⏰ Время истекло');
         
         this.card.classList.add('rejected');
-        document.getElementById('cardConnectionStatus').textContent = '⏰ Время ожидания истекло';
+        const statusEl = document.getElementById('cardConnectionStatus');
+        if (statusEl) {
+            statusEl.innerHTML = `
+                <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="#B00000" stroke-width="2"/>
+                    <line x1="15" y1="9" x2="9" y2="15" stroke="#B00000" stroke-width="2"/>
+                    <line x1="9" y1="9" x2="15" y2="15" stroke="#B00000" stroke-width="2"/>
+                </svg>
+                ⏰ Время ожидания истекло
+            `;
+        }
         
         setTimeout(() => {
             this.exitConnectionMode();
@@ -409,7 +455,6 @@ const Swipe = {
         }, 2000);
     },
     
-    // Обработка случая, когда оба приняли
     handleBothAccepted() {
         console.log('✅ Оба приняли!');
         
@@ -419,14 +464,22 @@ const Swipe = {
         }
         
         this.card.classList.add('both-accepted');
-        document.getElementById('cardConnectionStatus').textContent = '✅ Тиммейт принял приглашение!';
+        const statusEl = document.getElementById('cardConnectionStatus');
+        if (statusEl) {
+            statusEl.innerHTML = `
+                <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="#4CAF50" stroke-width="2"/>
+                    <path d="M8 12L11 15L16 9" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                ✅ Тиммейт принял приглашение!
+            `;
+        }
         
         setTimeout(() => {
             this.createGame();
         }, 1500);
     },
     
-    // Обработка отказа тиммейта
     handleRejection() {
         console.log('❌ Тиммейт отклонил');
         
@@ -436,7 +489,17 @@ const Swipe = {
         }
         
         this.card.classList.add('rejected');
-        document.getElementById('cardConnectionStatus').textContent = '❌ Тиммейт отклонил приглашение';
+        const statusEl = document.getElementById('cardConnectionStatus');
+        if (statusEl) {
+            statusEl.innerHTML = `
+                <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="#B00000" stroke-width="2"/>
+                    <line x1="15" y1="9" x2="9" y2="15" stroke="#B00000" stroke-width="2"/>
+                    <line x1="9" y1="9" x2="15" y2="15" stroke="#B00000" stroke-width="2"/>
+                </svg>
+                ❌ Тиммейт отклонил приглашение
+            `;
+        }
         
         setTimeout(() => {
             this.exitConnectionMode();
@@ -444,7 +507,6 @@ const Swipe = {
         }, 2000);
     },
     
-    // Создание игры
     createGame() {
         console.log('Создаем игру для match_id:', this.currentMatchId);
         
@@ -550,7 +612,7 @@ const Swipe = {
             this.hint.classList.remove('fade-out');
             setTimeout(() => {
                 this.hint.classList.add('fade-out');
-            }, 2000);
+            }, 3000);
             localStorage.setItem('swipeHintShown', 'true');
         } else {
             this.hint.classList.add('fade-out');
@@ -585,7 +647,6 @@ const Swipe = {
     }
 };
 
-// Автоматическая инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Swipe: DOM загружен');
     window.Swipe = Swipe;
