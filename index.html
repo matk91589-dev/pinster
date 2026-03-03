@@ -675,44 +675,6 @@
     <script src="js/logo.js?v=20260304"></script>
     <script src="js/app.js?v=20260304"></script>
     <script src="js/team.js?v=20260304"></script>
-    
-    <!-- Диагностика загрузки -->
-    <script>
-        (function() {
-            console.log('=== ДИАГНОСТИКА ЗАГРУЗКИ ===');
-            console.log('User-Agent:', navigator.userAgent);
-            console.log('Timestamp:', new Date().toISOString());
-            
-            // Показываем бейдж если что-то пошло не так
-            const badge = document.getElementById('diagnostic-badge');
-            
-            // Проверяем загрузку основных объектов через 2 секунды
-            setTimeout(function() {
-                const missing = [];
-                if (typeof App === 'undefined') missing.push('App');
-                if (typeof Profile === 'undefined') missing.push('Profile');
-                if (typeof Search === 'undefined') missing.push('Search');
-                if (typeof Shop === 'undefined') missing.push('Shop');
-                
-                if (missing.length > 0) {
-                    console.error('НЕ ЗАГРУЖЕНЫ:', missing.join(', '));
-                    if (badge) {
-                        badge.style.display = 'block';
-                        badge.textContent = `❌ ${missing.length} ошибок`;
-                        badge.style.background = '#B00000';
-                    }
-                } else {
-                    console.log('✅ Все модули загружены');
-                    if (badge) {
-                        badge.style.display = 'block';
-                        badge.textContent = '✅ OK';
-                        setTimeout(function() {
-                            badge.style.display = 'none';
-                        }, 3000);
-                    }
-                }
-            }, 2000);
-        })();
-    </script>
 </body>
 </html>
+
