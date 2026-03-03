@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ + ЭКРАН СОЕДИНЕНИЯ
+// СВАЙП-КАРТОЧКИ с автодоводкой и соединением в карточке
 // ============================================
 
 const Swipe = {
@@ -18,9 +18,10 @@ const Swipe = {
     initialX: 0,
     
     // Константы
-    SWIPE_THRESHOLD: 0.35, // 35% ширины экрана
-    MAX_ROTATE: 8, // максимальный угол поворота
-    ANIMATION_DURATION: 250, // мс
+    SWIPE_THRESHOLD: 0.3, // 30% ширины экрана (меньше для удобства)
+    MAX_ROTATE: 8,
+    ANIMATION_DURATION: 250,
+    AUTO_COMPLETE_DURATION: 300,
     
     // Данные
     currentPlayer: null,
@@ -30,6 +31,7 @@ const Swipe = {
     isInitialized: false,
     connectionTimer: null,
     connectionEndTime: null,
+    isConnectionMode: false, // режим соединения (карточка трансформирована)
     
     init(mode) {
         console.log('Swipe.init() with mode:', mode);
@@ -72,6 +74,8 @@ const Swipe = {
     },
     
     onDragStart(e) {
+        if (this.isConnectionMode) return; // Не даем свайпать в режиме соединения
+        
         this.isDragging = true;
         this.startX = e.clientX;
         this.initialX = this.currentX || 0;
@@ -84,7 +88,7 @@ const Swipe = {
     },
     
     onDragMove(e) {
-        if (!this.isDragging) return;
+        if (!this.isDragging || this.isConnectionMode) return;
         
         e.preventDefault();
         
@@ -113,7 +117,7 @@ const Swipe = {
     },
     
     onDragEnd(e) {
-        if (!this.isDragging) return;
+        if (!this.isDragging || this.isConnectionMode) return;
         
         this.isDragging = false;
         this.card.style.cursor = 'grab';
@@ -122,12 +126,21 @@ const Swipe = {
         const threshold = window.innerWidth * this.SWIPE_THRESHOLD;
         
         if (Math.abs(this.currentX) > threshold) {
+            // АВТОДОВОДКА - карточка сама улетает
+            this.autoComplete = true;
+            
             if (this.currentX > 0) {
                 this.card.style.transform = `translateX(200%) rotate(15deg)`;
-                setTimeout(() => this.acceptPlayer(), this.ANIMATION_DURATION);
+                setTimeout(() => {
+                    this.autoComplete = false;
+                    this.acceptPlayer();
+                }, this.ANIMATION_DURATION);
             } else {
                 this.card.style.transform = `translateX(-200%) rotate(-15deg)`;
-                setTimeout(() => this.rejectPlayer(), this.ANIMATION_DURATION);
+                setTimeout(() => {
+                    this.autoComplete = false;
+                    this.rejectPlayer();
+                }, this.ANIMATION_DURATION);
             }
         } else {
             this.resetCardPosition();
@@ -152,11 +165,11 @@ const Swipe = {
     acceptPlayer() {
         console.log('✅ Принят игрок (свайп вправо):', this.currentPlayer);
         
-        // Сохраняем ID мэтча (в реальности придет с сервера)
+        // Сохраняем ID мэтча
         this.currentMatchId = Math.floor(100000 + Math.random() * 900000);
         
-        // Показываем экран соединения
-        this.showConnectionScreen();
+        // Трансформируем карточку в режим соединения
+        this.showConnectionMode();
         
         // Отправляем запрос на сервер
         fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
@@ -185,9 +198,8 @@ const Swipe = {
         })
         .catch(error => {
             console.error('Error accepting match:', error);
-            // В случае ошибки возвращаемся в свайп
             setTimeout(() => {
-                App.showScreen('swipeScreen', true);
+                this.exitConnectionMode();
                 this.loadNextPlayer();
             }, 1000);
         });
@@ -196,33 +208,174 @@ const Swipe = {
     // Пропуск игрока (свайп влево)
     rejectPlayer() {
         console.log('❌ Пропущен игрок (свайп влево):', this.currentPlayer);
-        
-        // Просто загружаем следующего игрока
         this.loadNextPlayer();
     },
     
-    // Показать экран соединения
-    showConnectionScreen() {
-        App.showScreen('connectionScreen', true);
+    // Трансформация карточки в режим соединения
+    showConnectionMode() {
+        this.isConnectionMode = true;
         
-        // Заполняем данные тиммейта
-        document.getElementById('teammateNick').textContent = this.currentPlayer.nick;
-        document.getElementById('teammateRating').textContent = this.currentPlayer.rating + ' ❤️';
+        // Прячем лейблы свайпа
+        if (this.labelLeft) this.labelLeft.style.display = 'none';
+        if (this.labelRight) this.labelRight.style.display = 'none';
         
-        // Сбрасываем классы
-        const screen = document.querySelector('.connection-screen');
-        screen.classList.remove('both-accepted', 'rejected');
+        // Прячем подсказку
+        if (this.hint) this.hint.style.display = 'none';
         
-        // Обновляем статус
-        document.getElementById('connectionStatus').textContent = 'Ожидаем ответа тиммейта...';
+        // Возвращаем карточку в центр с анимацией
+        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms ease`;
+        this.card.style.transform = 'translateX(0) rotate(0)';
+        
+        // Меняем содержимое карточки на режим соединения
+        setTimeout(() => {
+            this.card.innerHTML = this.getConnectionHTML();
+            this.setupConnectionMode();
+        }, this.ANIMATION_DURATION);
     },
     
-    // Запуск таймера на экране соединения
+    // HTML для режима соединения
+    getConnectionHTML() {
+        return `
+            <div class="swipe-card-content connection-mode">
+                <!-- Контейнер с аватарками -->
+                <div class="connection-avatars">
+                    <!-- Твоя аватарка (яркая) -->
+                    <div class="connection-avatar self-avatar">
+                        <div class="tg-avatar-svg">
+                            <svg viewBox="0 0 24 24" width="35" height="35">
+                                <circle cx="12" cy="8" r="4" fill="#FF5500" stroke="#FF5500" stroke-width="2"/>
+                                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" fill="#FF5500" stroke="#FF5500" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Линия соединения -->
+                    <div class="connection-line" id="cardConnectionLine">
+                        <div class="line-pulse"></div>
+                    </div>
+
+                    <!-- Аватарка тиммейта -->
+                    <div class="connection-avatar teammate-avatar" id="cardTeammateAvatar">
+                        <div class="tg-avatar-svg">
+                            <svg viewBox="0 0 24 24" width="30" height="30">
+                                <circle cx="12" cy="8" r="4" stroke="#9BA1B0" stroke-width="2" fill="none"/>
+                                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#9BA1B0" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Статус -->
+                <div class="connection-status" id="cardConnectionStatus">
+                    Ожидаем ответа тиммейта...
+                </div>
+
+                <!-- Информация о тиммейте -->
+                <div class="teammate-info">
+                    <span class="teammate-nick" id="cardTeammateNick">${this.currentPlayer.nick}</span>
+                    <span class="teammate-rating" id="cardTeammateRating">${this.currentPlayer.rating} ❤️</span>
+                </div>
+
+                <!-- Таймер -->
+                <div class="connection-timer" id="cardConnectionTimer">⏳ 30с</div>
+            </div>
+        `;
+    },
+    
+    // Настройка режима соединения
+    setupConnectionMode() {
+        // Заполняем данные
+        document.getElementById('cardTeammateNick').textContent = this.currentPlayer.nick;
+        document.getElementById('cardTeammateRating').textContent = this.currentPlayer.rating + ' ❤️';
+        
+        // Сбрасываем классы
+        this.card.classList.remove('both-accepted', 'rejected', 'right-swipe', 'left-swipe');
+        
+        // Обновляем статус
+        document.getElementById('cardConnectionStatus').textContent = 'Ожидаем ответа тиммейта...';
+    },
+    
+    // Выход из режима соединения
+    exitConnectionMode() {
+        this.isConnectionMode = false;
+        
+        // Возвращаем лейблы
+        if (this.labelLeft) this.labelLeft.style.display = 'block';
+        if (this.labelRight) this.labelRight.style.display = 'block';
+        if (this.hint) this.hint.style.display = 'block';
+        
+        // Восстанавливаем исходный HTML карточки
+        this.card.innerHTML = this.getOriginalCardHTML();
+    },
+    
+    // Оригинальный HTML карточки
+    getOriginalCardHTML() {
+        return `
+            <div class="swipe-label swipe-label-left" id="swipeLabelLeft">SKIP</div>
+            <div class="swipe-label swipe-label-right" id="swipeLabelRight">INVITE</div>
+            
+            <div class="swipe-card-content">
+                <div class="swipe-player-row">
+                    <div class="swipe-avatar">
+                        <div class="tg-avatar-svg" style="width: 70px; height: 70px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="35" height="35">
+                                <circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/>
+                                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="swipe-name-block">
+                        <div class="swipe-player-id" id="swipePlayerId">${this.currentPlayer.player_id}</div>
+                        <div class="swipe-player-nick" id="swipePlayerNick">${this.currentPlayer.nick}</div>
+                    </div>
+                    
+                    <div class="swipe-rating-block">
+                        <span class="swipe-rating-value" id="swipeRatingValue">${this.currentPlayer.rating}</span>
+                        <span class="heart-icon">
+                            <svg viewBox="0 0 24 24" width="18" height="18">
+                                <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#F5F5F5" stroke-width="2" fill="none"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="swipe-rating-line"></div>
+
+                <div class="swipe-stats-row">
+                    <div class="swipe-stat-item">
+                        <div class="swipe-stat-label">РАНГ</div>
+                        <div class="swipe-stat-value" id="swipeRank">${this.currentPlayer.rank}</div>
+                    </div>
+                    <div class="swipe-stat-item">
+                        <div class="swipe-stat-label">ВОЗРАСТ</div>
+                        <div class="swipe-stat-value" id="swipeAge">${this.currentPlayer.age} лет</div>
+                    </div>
+                </div>
+
+                <div class="swipe-steam-container">
+                    <div class="swipe-link-label">Ссылка Steam</div>
+                    <div class="swipe-link-value" id="swipeSteamLink">${this.currentPlayer.steam_link}</div>
+                </div>
+
+                <div class="swipe-faceit-container">
+                    <div class="swipe-link-label">Ссылка Faceit</div>
+                    <div class="swipe-link-value" id="swipeFaceitLink">${this.currentPlayer.faceit_link}</div>
+                </div>
+
+                <div class="swipe-comment">
+                    <div class="swipe-comment-label">Комментарий</div>
+                    <div class="swipe-comment-text" id="swipeComment">${this.currentPlayer.comment}</div>
+                </div>
+            </div>
+        `;
+    },
+    
+    // Запуск таймера в карточке
     startConnectionTimer() {
-        const timerElement = document.getElementById('connectionTimer');
+        const timerElement = document.getElementById('cardConnectionTimer');
         if (!timerElement) return;
         
-        // 30 секунд от текущего момента
         this.connectionEndTime = Date.now() + 30000;
         
         const updateTimer = () => {
@@ -243,16 +396,15 @@ const Swipe = {
         this.connectionTimer = setInterval(updateTimer, 1000);
     },
     
-    // Таймаут на экране соединения
+    // Таймаут в карточке
     connectionTimeout() {
         console.log('⏰ Время ожидания истекло');
         
-        const screen = document.querySelector('.connection-screen');
-        screen.classList.add('rejected');
-        document.getElementById('connectionStatus').textContent = '⏰ Время ожидания истекло';
+        this.card.classList.add('rejected');
+        document.getElementById('cardConnectionStatus').textContent = '⏰ Время ожидания истекло';
         
         setTimeout(() => {
-            App.showScreen('swipeScreen', true);
+            this.exitConnectionMode();
             this.loadNextPlayer();
         }, 2000);
     },
@@ -261,15 +413,13 @@ const Swipe = {
     handleBothAccepted() {
         console.log('✅ Оба приняли!');
         
-        // Очищаем таймер
         if (this.connectionTimer) {
             clearInterval(this.connectionTimer);
             this.connectionTimer = null;
         }
         
-        const screen = document.querySelector('.connection-screen');
-        screen.classList.add('both-accepted');
-        document.getElementById('connectionStatus').textContent = '✅ Тиммейт принял приглашение!';
+        this.card.classList.add('both-accepted');
+        document.getElementById('cardConnectionStatus').textContent = '✅ Тиммейт принял приглашение!';
         
         setTimeout(() => {
             this.createGame();
@@ -280,18 +430,16 @@ const Swipe = {
     handleRejection() {
         console.log('❌ Тиммейт отклонил');
         
-        // Очищаем таймер
         if (this.connectionTimer) {
             clearInterval(this.connectionTimer);
             this.connectionTimer = null;
         }
         
-        const screen = document.querySelector('.connection-screen');
-        screen.classList.add('rejected');
-        document.getElementById('connectionStatus').textContent = '❌ Тиммейт отклонил приглашение';
+        this.card.classList.add('rejected');
+        document.getElementById('cardConnectionStatus').textContent = '❌ Тиммейт отклонил приглашение';
         
         setTimeout(() => {
-            App.showScreen('swipeScreen', true);
+            this.exitConnectionMode();
             this.loadNextPlayer();
         }, 2000);
     },
@@ -315,11 +463,12 @@ const Swipe = {
                 window.Telegram.WebApp.openTelegramLink(data.chat_link);
             }
             
-            // Возвращаемся на главный экран
+            this.exitConnectionMode();
             App.showScreen('mainScreen', true);
         })
         .catch(error => {
             console.error('Error creating game:', error);
+            this.exitConnectionMode();
             App.showScreen('mainScreen', true);
         });
     },
@@ -327,9 +476,7 @@ const Swipe = {
     loadNextPlayer() {
         if (this.loading) this.loading.classList.add('active');
         
-        // Имитация загрузки с сервера
         setTimeout(() => {
-            // В реальности здесь будет fetch запрос к /api/swipe/next
             const testPlayer = {
                 player_id: Math.floor(10000000 + Math.random() * 90000000),
                 nick: 'Player' + Math.floor(Math.random() * 1000),
@@ -349,33 +496,36 @@ const Swipe = {
     
     showPlayer(player) {
         this.currentPlayer = player;
-        this.resetCardPosition();
         
-        const playerIdEl = document.getElementById('swipePlayerId');
-        if (playerIdEl) playerIdEl.textContent = player.player_id;
-        
-        const playerNickEl = document.getElementById('swipePlayerNick');
-        if (playerNickEl) playerNickEl.textContent = player.nick;
-        
-        const ratingValueEl = document.getElementById('swipeRatingValue');
-        if (ratingValueEl) ratingValueEl.textContent = player.rating;
-        
-        const rankEl = document.getElementById('swipeRank');
-        if (rankEl) rankEl.textContent = player.rank;
-        
-        const ageEl = document.getElementById('swipeAge');
-        if (ageEl) ageEl.textContent = player.age + ' лет';
-        
-        const steamLinkEl = document.getElementById('swipeSteamLink');
-        if (steamLinkEl) steamLinkEl.textContent = player.steam_link;
-        
-        const faceitLinkEl = document.getElementById('swipeFaceitLink');
-        if (faceitLinkEl) faceitLinkEl.textContent = player.faceit_link;
-        
-        const commentEl = document.getElementById('swipeComment');
-        if (commentEl) commentEl.textContent = player.comment;
-        
-        this.updateLinksVisibility();
+        if (!this.isConnectionMode) {
+            this.resetCardPosition();
+            
+            const playerIdEl = document.getElementById('swipePlayerId');
+            if (playerIdEl) playerIdEl.textContent = player.player_id;
+            
+            const playerNickEl = document.getElementById('swipePlayerNick');
+            if (playerNickEl) playerNickEl.textContent = player.nick;
+            
+            const ratingValueEl = document.getElementById('swipeRatingValue');
+            if (ratingValueEl) ratingValueEl.textContent = player.rating;
+            
+            const rankEl = document.getElementById('swipeRank');
+            if (rankEl) rankEl.textContent = player.rank;
+            
+            const ageEl = document.getElementById('swipeAge');
+            if (ageEl) ageEl.textContent = player.age + ' лет';
+            
+            const steamLinkEl = document.getElementById('swipeSteamLink');
+            if (steamLinkEl) steamLinkEl.textContent = player.steam_link;
+            
+            const faceitLinkEl = document.getElementById('swipeFaceitLink');
+            if (faceitLinkEl) faceitLinkEl.textContent = player.faceit_link;
+            
+            const commentEl = document.getElementById('swipeComment');
+            if (commentEl) commentEl.textContent = player.comment;
+            
+            this.updateLinksVisibility();
+        }
     },
     
     updateLinksVisibility() {
@@ -411,12 +561,11 @@ const Swipe = {
         console.log('Swipe.startSwipe() called with mode:', mode);
         this.mode = mode || 'PREMIER';
         this.playersQueue = [];
+        this.isConnectionMode = false;
         
-        // Если карточка уже есть, просто загружаем нового игрока
         if (this.card) {
             this.loadNextPlayer();
         } else {
-            // Если нет - инициализируем
             this.init(mode);
         }
     },
@@ -442,7 +591,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.Swipe = Swipe;
 });
 
-// Также можно инициализировать если экран уже активен
 if (document.getElementById('swipeScreen')?.classList.contains('active')) {
     console.log('Swipe экран уже активен, инициализируем');
     setTimeout(() => Swipe.init(), 100);
