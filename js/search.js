@@ -10,9 +10,10 @@ const Search = {
     currentMatchId: null,
     matchTimerInterval: null,
     blockUntil: null,
-    waitingForPartner: false, // флаг что ждем ответа партнера
-    matchEndTime: null, // время окончания мэтча
-    myResponse: null, // мой ответ (accept/reject)
+    waitingForPartner: false,
+    matchEndTime: null,
+    myResponse: null,
+    isSearching: false, // флаг что мы в поиске
     
     init() {
         this.resetTimer();
@@ -54,6 +55,7 @@ const Search = {
         // Сбрасываем флаги
         this.waitingForPartner = false;
         this.myResponse = null;
+        this.isSearching = true;
         
         // Сохраняем текущий режим
         this.currentMode = mode;
@@ -197,6 +199,9 @@ const Search = {
                 // Если мы уже ждем ответа партнера, обновляем статус
                 if (this.waitingForPartner) {
                     this.updateWaitingStatus(data);
+                } else if (!this.isSearching) {
+                    // Мы не в поиске, но мэтч есть - показываем экран
+                    this.showMatchScreen(data);
                 } else {
                     // Показываем экран мэтча
                     this.stopPolling();
@@ -216,18 +221,9 @@ const Search = {
         if (data.opponent_response === 'reject') {
             // Оппонент отклонил
             this.handlePartnerReject();
-        } else if (data.opponent_response === 'accept') {
-            // Оппонент принял, а мы уже приняли
-            if (this.myResponse === 'accept') {
-                this.handleBothAccepted();
-            }
-        } else {
-            // Оппонент еще не ответил
-            const timer = document.getElementById('matchTimer');
-            if (timer) {
-                timer.innerHTML = `⏳ Ожидаем ответа тиммейта...`;
-                timer.style.color = '#FF5500';
-            }
+        } else if (data.opponent_response === 'accept' && this.myResponse === 'accept') {
+            // Оба приняли
+            this.handleBothAccepted();
         }
     },
     
@@ -243,6 +239,7 @@ const Search = {
         // Сбрасываем флаги
         this.waitingForPartner = false;
         this.myResponse = null;
+        this.isSearching = true;
         
         // Показываем сообщение
         App.showCustomAlert(
@@ -266,6 +263,7 @@ const Search = {
         
         // Сбрасываем флаги
         this.waitingForPartner = false;
+        this.isSearching = false;
         
         // Создаем игру
         this.createGame();
@@ -283,6 +281,7 @@ const Search = {
     showMatchScreen(data) {
         this.currentMatchId = data.match_id;
         this.myResponse = null;
+        this.isSearching = false;
         console.log('Показываем экран для match_id:', data.match_id);
         console.log('Данные оппонента:', data.opponent);
         
@@ -444,6 +443,7 @@ const Search = {
             // Сбрасываем флаги
             this.waitingForPartner = false;
             this.myResponse = null;
+            this.isSearching = false;
             
             // Показываем сообщение
             App.showCustomAlert(
@@ -536,6 +536,7 @@ const Search = {
             this.blockUntil = Date.now() + 2000;
             this.waitingForPartner = false;
             this.myResponse = null;
+            this.isSearching = true;
             
             App.showCustomAlert(
                 '❌ Вы отклонили мэтч',
@@ -568,6 +569,7 @@ const Search = {
             // Сбрасываем флаги
             this.waitingForPartner = false;
             this.myResponse = null;
+            this.isSearching = false;
             
             // Показываем сообщение
             App.showCustomAlert(
@@ -591,6 +593,7 @@ const Search = {
         this.currentMode = mode;
         this.waitingForPartner = false;
         this.myResponse = null;
+        this.isSearching = true;
         App.showScreen('searchScreen', true);
         document.getElementById('searchModeTitle').textContent = mode;
         this.resetTimer();
@@ -632,6 +635,7 @@ const Search = {
         this.stopPolling();
         this.waitingForPartner = false;
         this.myResponse = null;
+        this.isSearching = false;
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         
