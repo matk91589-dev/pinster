@@ -15,9 +15,9 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- CSS с версионированием -->
-    <link rel="stylesheet" href="css/style.css?v=20260305">
-    <link rel="stylesheet" href="css/shop-cases.css?v=20260305">
-    <link rel="stylesheet" href="css/animations.css?v=20260305">
+    <link rel="stylesheet" href="css/style.css?v=20260306">
+    <link rel="stylesheet" href="css/shop-cases.css?v=20260306">
+    <link rel="stylesheet" href="css/animations.css?v=20260306">
     
     <!-- Дополнительные стили для плавности -->
     <style>
@@ -122,7 +122,7 @@
             <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
                 <div class="start-avatar-square" id="startAvatar">
-                    <img src="pingster_logo.svg?v=20260305" alt="Pingster">
+                    <img src="pingster_logo.svg?v=20260306" alt="Pingster">
                 </div>
                 <div class="start-description-box">
                     <div class="start-description">
@@ -162,7 +162,7 @@
                     <div class="cases-grid">
                         <!-- ТВОИ КЕЙСЫ - ТЕПЕРЬ С НАСТОЯЩИМИ КАРТИНКАМИ -->
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/common_case.png?v=20260305" alt="common case"></div>
+                            <div class="case-icon"><img src="cases/common_case.png?v=20260306" alt="common case"></div>
                             <div class="case-info">
                                 <div class="case-name">Базовый кейс</div>
                                 <div class="case-price-row">
@@ -172,7 +172,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/rare_case.png?v=20260305" alt="rare case"></div>
+                            <div class="case-icon"><img src="cases/rare_case.png?v=20260306" alt="rare case"></div>
                             <div class="case-info">
                                 <div class="case-name">Редкий кейс</div>
                                 <div class="case-price-row">
@@ -182,7 +182,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/premium_case.png?v=20260305" alt="premium case"></div>
+                            <div class="case-icon"><img src="cases/premium_case.png?v=20260306" alt="premium case"></div>
                             <div class="case-info">
                                 <div class="case-name">Легендарный кейс</div>
                                 <div class="case-price-row">
@@ -192,7 +192,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/secret_case.png?v=20260305" alt="secret case"></div>
+                            <div class="case-icon"><img src="cases/secret_case.png?v=20260306" alt="secret case"></div>
                             <div class="case-info">
                                 <div class="case-name">Секретный кейс</div>
                                 <div class="case-price-row">
@@ -309,7 +309,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН СВАЙП-КАРТОЧЕК (НОВЫЙ) -->
+            <!-- ЭКРАН СВАЙП-КАРТОЧЕК -->
             <div id="swipeScreen" class="screen swipe-screen">
                 <!-- Хедер экрана -->
                 <div class="mode-header" style="justify-content: center; margin-bottom: 10px;">
@@ -397,89 +397,60 @@
                     </div>
                 </div>
 
-                <!-- Индикатор загрузки (показывается при подгрузке) -->
+                <!-- Индикатор загрузки -->
                 <div class="swipe-loading" id="swipeLoading">
                     <div class="spinner-small"></div>
                 </div>
             </div>
 
-            <!-- НОВЫЙ ЭКРАН НАЙДЕННОГО ТИММЕЙТА (ИСПРАВЛЕННЫЙ) -->
-            <div id="matchFoundScreen" class="screen match-found-screen">
-                <!-- Заголовок как в режимах -->
-                <div class="mode-header" style="justify-content: center; margin-bottom: 10px;">
-                    <div class="mode-title faceit" style="position: static; margin: 0;">НАЙДЕН ТИММЕЙТ</div>
+            <!-- ЭКРАН СОЕДИНЕНИЯ (НОВЫЙ) -->
+            <div id="connectionScreen" class="screen connection-screen">
+                <!-- Хедер -->
+                <div class="mode-header" style="justify-content: center;">
+                    <div class="mode-title faceit">ПОИСК ТИММЕЙТА</div>
                 </div>
-                <div class="mode-subtitle" style="margin-bottom: 20px;">игрок найден, подтвердите</div>
 
-                <div class="match-content" style="padding: 0 5px;">
-                    <!-- Верхний блок: аватарка + ник + рейтинг -->
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
-                        <!-- Аватарка 60x60 -->
-                        <div style="width: 60px; height: 60px; flex-shrink: 0;">
-                            <div class="tg-avatar-svg" style="width: 60px; height: 60px;">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
-                                    <circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/>
-                                    <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/>
-                                </svg>
-                            </div>
-                        </div>
-                        
-                        <!-- Блок с ником (ID сверху, ник снизу) -->
-                        <div style="flex: 1; min-width: 0;">
-                            <div style="font-size: 12px; color: #FF5500; font-family: monospace; font-weight: 600; margin-bottom: 2px;" id="matchPlayerId">80794177</div>
-                            <div style="font-size: clamp(18px, 5vw, 22px); font-weight: 700; color: #F5F5F5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="matchPlayerNick">Player123</div>
-                        </div>
-                        
-                        <!-- Рейтинг справа (число + сердечко) -->
-                        <div style="display: flex; align-items: center; gap: 4px; background: transparent; padding: 8px 14px; border-radius: 30px; border: 2px solid #FF5500; flex-shrink: 0;">
-                            <span style="font-size: 18px; font-weight: 700; color: #FF5500;" id="matchRatingValue">1500</span>
-                            <span class="heart-icon" style="margin-left: 0;">
-                                <svg viewBox="0 0 24 24" width="18" height="18">
-                                    <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#FF5500" stroke-width="2" fill="none"/>
-                                </svg>
-                            </span>
+                <!-- Контейнер с аватарками -->
+                <div class="connection-container">
+                    <!-- Твоя аватарка (яркая) -->
+                    <div class="connection-avatar self-avatar">
+                        <div class="tg-avatar-svg">
+                            <svg viewBox="0 0 24 24" width="35" height="35">
+                                <circle cx="12" cy="8" r="4" fill="#FF5500" stroke="#FF5500" stroke-width="2"/>
+                                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" fill="#FF5500" stroke="#FF5500" stroke-width="2"/>
+                            </svg>
                         </div>
                     </div>
 
-                    <!-- ДВЕ ПЛАШКИ: ранг и возраст (как на экране FACEIT) -->
-                    <div class="stats-row" style="margin-bottom: 20px;">
-                        <div class="stat-card">
-                            <div class="stat-label">РАНГ</div>
-                            <div class="stat-value" id="matchRank" style="justify-content: flex-start;">Gold Nova 3</div>
+                    <!-- Линия соединения -->
+                    <div class="connection-line" id="connectionLine">
+                        <div class="line-pulse"></div>
+                    </div>
+
+                    <!-- Аватарка тиммейта (серая, уменьшенная) -->
+                    <div class="connection-avatar teammate-avatar" id="teammateAvatar">
+                        <div class="tg-avatar-svg" style="opacity: 0.6;">
+                            <svg viewBox="0 0 24 24" width="30" height="30">
+                                <circle cx="12" cy="8" r="4" stroke="#9BA1B0" stroke-width="2" fill="none"/>
+                                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#9BA1B0" stroke-width="2" fill="none"/>
+                            </svg>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-label">ВОЗРАСТ</div>
-                            <div class="stat-value" id="matchAge" style="justify-content: flex-start;">21 год</div>
-                        </div>
-                    </div>
-
-                    <!-- КОНТЕЙНЕР ДЛЯ ССЫЛКИ STEAM -->
-                    <div class="match-steam-container">
-                        <div class="input-label" style="margin-top: 5px;">Ссылка Steam</div>
-                        <input type="text" class="input-field" id="matchSteamLink" value="steamcommunity.com/id/player123" readonly style="margin-bottom: 10px;">
-                    </div>
-
-                    <!-- КОНТЕЙНЕР ДЛЯ ССЫЛКИ FACEIT -->
-                    <div class="match-faceit-container">
-                        <div class="input-label">Ссылка Faceit</div>
-                        <input type="text" class="input-field" id="matchFaceitLink" value="faceit.com/player123" readonly style="margin-bottom: 20px;">
-                    </div>
-
-                    <!-- КОММЕНТАРИЙ -->
-                    <div class="comment-section" style="margin-bottom: 20px;">
-                        <div class="comment-label">Комментарий</div>
-                        <textarea class="comment-input" id="matchComment" readonly style="height: 80px; resize: none;">ищу норм тиммейтов для каток, без токсиков</textarea>
-                    </div>
-
-                    <!-- Таймер -->
-                    <div style="text-align: center; font-size: 18px; color: #FF5500; margin: 10px 0; font-weight: 700;" id="matchTimer">⏳ 30с</div>
-                    
-                    <!-- Кнопки как в режимах -->
-                    <div style="display: flex; gap: 15px; margin: 10px 0 20px 0;">
-                        <button class="mode-search-btn" style="margin: 0; flex: 1; background: #FF5500;" onclick="Search.acceptMatch()">ПРИНЯТЬ</button>
-                        <button class="mode-search-btn" style="margin: 0; flex: 1; background: transparent; border: 2px solid #B00000; color: #B00000;" onclick="Search.rejectMatch()">ОТКЛОНИТЬ</button>
                     </div>
                 </div>
+
+                <!-- Статус -->
+                <div class="connection-status" id="connectionStatus">
+                    Ожидаем ответа тиммейта...
+                </div>
+
+                <!-- Информация о тиммейте -->
+                <div class="teammate-info">
+                    <span class="teammate-nick" id="teammateNick">Player123</span>
+                    <span class="teammate-rating" id="teammateRating">1500 ❤️</span>
+                </div>
+
+                <!-- Таймер -->
+                <div class="connection-timer" id="connectionTimer">⏳ 30с</div>
             </div>
 
             <!-- ЭКРАН НАСТРОЕК -->
@@ -758,17 +729,17 @@
     </div>
 
     <!-- ТВОИ JS ФАЙЛЫ С ВЕРСИОНИРОВАНИЕМ -->
-    <script src="js/config.js?v=20260305"></script>
-    <script src="js/globals.js?v=20260305"></script>
-    <script src="js/navigation.js?v=20260305"></script>
-    <script src="js/profile.js?v=20260305"></script>
-    <script src="js/avatar.js?v=20260305"></script>
-    <script src="js/friends.js?v=20260305"></script>
-    <script src="js/shop.js?v=20260305"></script>
-    <script src="js/search.js?v=20260305"></script>
-    <script src="js/logo.js?v=20260305"></script>
-    <script src="js/app.js?v=20260305"></script>
-    <script src="js/team.js?v=20260305"></script>
-    <script src="js/swipe.js?v=20260305"></script>
+    <script src="js/config.js?v=20260306"></script>
+    <script src="js/globals.js?v=20260306"></script>
+    <script src="js/navigation.js?v=20260306"></script>
+    <script src="js/profile.js?v=20260306"></script>
+    <script src="js/avatar.js?v=20260306"></script>
+    <script src="js/friends.js?v=20260306"></script>
+    <script src="js/shop.js?v=20260306"></script>
+    <script src="js/search.js?v=20260306"></script>
+    <script src="js/logo.js?v=20260306"></script>
+    <script src="js/app.js?v=20260306"></script>
+    <script src="js/team.js?v=20260306"></script>
+    <script src="js/swipe.js?v=20260306"></script>
 </body>
 </html>
