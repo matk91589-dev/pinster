@@ -26,6 +26,7 @@ const Swipe = {
     currentPlayer: null,
     playersQueue: [],
     mode: 'PREMIER',
+    isInitialized: false,
     
     init(mode) {
         console.log('Swipe.init() with mode:', mode);
@@ -49,8 +50,13 @@ const Swipe = {
         // Загружаем первого игрока
         this.loadNextPlayer();
         
-        // Устанавливаем обработчики
-        this.setupEventListeners();
+        // Устанавливаем обработчики, если еще не установлены
+        if (!this.isInitialized) {
+            this.setupEventListeners();
+            this.isInitialized = true;
+        }
+        
+        console.log('✅ Swipe инициализирован');
     },
     
     setupEventListeners() {
@@ -59,6 +65,7 @@ const Swipe = {
         this.card.addEventListener('pointerup', this.onDragEnd.bind(this));
         this.card.addEventListener('pointercancel', this.onDragEnd.bind(this));
         this.card.addEventListener('dragstart', (e) => e.preventDefault());
+        console.log('✅ Обработчики событий установлены');
     },
     
     onDragStart(e) {
@@ -233,17 +240,38 @@ const Swipe = {
     },
     
     startSwipe(mode) {
+        console.log('Swipe.startSwipe() called with mode:', mode);
         this.mode = mode || 'PREMIER';
         this.playersQueue = [];
-        this.loadNextPlayer();
+        
+        // Если карточка уже есть, просто загружаем нового игрока
+        if (this.card) {
+            this.loadNextPlayer();
+        } else {
+            // Если нет - инициализируем
+            this.init(mode);
+        }
     },
     
     destroy() {
-        this.card.removeEventListener('pointerdown', this.onDragStart);
-        this.card.removeEventListener('pointermove', this.onDragMove);
-        this.card.removeEventListener('pointerup', this.onDragEnd);
-        this.card.removeEventListener('pointercancel', this.onDragEnd);
+        if (this.card) {
+            this.card.removeEventListener('pointerdown', this.onDragStart);
+            this.card.removeEventListener('pointermove', this.onDragMove);
+            this.card.removeEventListener('pointerup', this.onDragEnd);
+            this.card.removeEventListener('pointercancel', this.onDragEnd);
+        }
     }
 };
 
-window.Swipe = Swipe;
+// Автоматическая инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Swipe: DOM загружен');
+    // Не инициализируем сразу, ждем вызова из search.js
+    window.Swipe = Swipe;
+});
+
+// Также можно инициализировать если экран уже активен
+if (document.getElementById('swipeScreen')?.classList.contains('active')) {
+    console.log('Swipe экран уже активен, инициализируем');
+    setTimeout(() => Swipe.init(), 100);
+}
