@@ -13,7 +13,8 @@ const Search = {
     waitingForPartner: false,
     matchEndTime: null,
     myResponse: null,
-    isSearching: false, // флаг что мы в поиске
+    isSearching: false,
+    processedMatchIds: new Set(), // храним ID обработанных мэтчей
     
     init() {
         this.resetTimer();
@@ -196,12 +197,17 @@ const Search = {
             if (data.match_found) {
                 console.log('Мэтч найден!');
                 
+                // Проверяем не обрабатывали ли мы уже этот мэтч
+                if (this.processedMatchIds.has(data.match_id)) {
+                    console.log('Мэтч уже обработан, пропускаем');
+                    return;
+                }
+                
+                this.processedMatchIds.add(data.match_id);
+                
                 // Если мы уже ждем ответа партнера, обновляем статус
                 if (this.waitingForPartner) {
                     this.updateWaitingStatus(data);
-                } else if (!this.isSearching) {
-                    // Мы не в поиске, но мэтч есть - показываем экран
-                    this.showMatchScreen(data);
                 } else {
                     // Показываем экран мэтча
                     this.stopPolling();
@@ -240,16 +246,10 @@ const Search = {
         this.waitingForPartner = false;
         this.myResponse = null;
         this.isSearching = true;
+        this.currentMatchId = null;
         
-        // Показываем сообщение
-        App.showCustomAlert(
-            '❌ Мэтч отклонен',
-            'Тиммейт отклонил приглашение',
-            () => {
-                // Возвращаемся на экран поиска в том же режиме
-                this.showScreen(this.currentMode);
-            }
-        );
+        // Просто возвращаемся на экран поиска без сообщения
+        this.showScreen(this.currentMode);
     },
     
     handleBothAccepted() {
@@ -444,6 +444,7 @@ const Search = {
             this.waitingForPartner = false;
             this.myResponse = null;
             this.isSearching = false;
+            this.currentMatchId = null;
             
             // Показываем сообщение
             App.showCustomAlert(
@@ -537,15 +538,10 @@ const Search = {
             this.waitingForPartner = false;
             this.myResponse = null;
             this.isSearching = true;
+            this.currentMatchId = null;
             
-            App.showCustomAlert(
-                '❌ Вы отклонили мэтч',
-                'Возвращаемся к поиску',
-                () => {
-                    // Возвращаемся на экран поиска в том же режиме
-                    this.showScreen(this.currentMode);
-                }
-            );
+            // Просто возвращаемся на экран поиска без сообщения
+            this.showScreen(this.currentMode);
         })
         .catch(error => {
             console.error('Error rejecting match:', error);
@@ -570,6 +566,7 @@ const Search = {
             this.waitingForPartner = false;
             this.myResponse = null;
             this.isSearching = false;
+            this.currentMatchId = null;
             
             // Показываем сообщение
             App.showCustomAlert(
@@ -594,6 +591,7 @@ const Search = {
         this.waitingForPartner = false;
         this.myResponse = null;
         this.isSearching = true;
+        this.currentMatchId = null;
         App.showScreen('searchScreen', true);
         document.getElementById('searchModeTitle').textContent = mode;
         this.resetTimer();
@@ -636,6 +634,7 @@ const Search = {
         this.waitingForPartner = false;
         this.myResponse = null;
         this.isSearching = false;
+        this.currentMatchId = null;
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         
