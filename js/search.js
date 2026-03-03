@@ -67,62 +67,7 @@ const Search = {
         this.currentMode = mode;
         
         // Показываем экран поиска
-        App.showScreen('searchScreen', true);
-        document.getElementById('searchModeTitle').textContent = mode;
-        
-        this.resetTimer();
-        this.startTimer();
-        
-        // Получаем Telegram ID
-        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        console.log('Telegram ID:', telegram_id);
-        
-        if (!telegram_id) {
-            console.error('No telegram_id');
-            return;
-        }
-        
-        // Собираем данные
-        const data = this.collectSearchData(mode);
-        console.log('Collected data:', data);
-        
-        // Отправляем запрос
-        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/search/start', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                telegram_id: telegram_id,
-                mode: mode,
-                rating_value: data.rating_value,
-                style: data.style,
-                age: data.age,
-                steam_link: data.steam_link,
-                faceit_link: data.faceit_link,
-                comment: data.comment || ''
-            })
-        })
-        .then(res => {
-            console.log('Response status:', res.status);
-            return res.json();
-        })
-        .then(data => {
-            console.log('Response data:', data);
-            
-            if (data.status === 'searching') {
-                console.log('В очереди, запускаем polling');
-                this.startPolling();
-            } 
-            else if (data.status === 'match_found') {
-                console.log('Мэтч найден сразу!', data);
-                this.showMatchScreen(data);
-            }
-            else {
-                console.log('Неизвестный статус:', data);
-            }
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-        });
+        this.showSearchScreen(mode);
     },
     
     collectSearchData(mode) {
@@ -252,7 +197,7 @@ const Search = {
         this.currentMatchId = null;
         
         // Возвращаемся на экран поиска
-        this.showScreen(this.currentMode);
+        this.showSearchScreen(this.currentMode);
     },
     
     handleBothAccepted() {
@@ -568,11 +513,11 @@ const Search = {
             this.currentMatchId = null;
             
             // Возвращаемся на экран поиска
-            this.showScreen(this.currentMode);
+            this.showSearchScreen(this.currentMode);
         })
         .catch(error => {
             console.error('Error rejecting match:', error);
-            this.showScreen(this.currentMode);
+            this.showSearchScreen(this.currentMode);
         });
     },
     
@@ -617,12 +562,21 @@ const Search = {
         });
     },
     
-    showScreen(mode) {
+    // НОВАЯ ФУНКЦИЯ для показа экрана поиска
+    showSearchScreen(mode) {
         this.currentMode = mode;
         this.waitingForPartner = false;
         this.myResponse = null;
         this.isSearching = true;
         this.currentMatchId = null;
+        
+        // Получаем Telegram ID для отправки запроса
+        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        
+        // Собираем данные для поиска
+        const data = this.collectSearchData(mode);
+        
+        // Показываем экран поиска
         App.showScreen('searchScreen', true);
         document.getElementById('searchModeTitle').textContent = mode;
         
@@ -635,7 +589,38 @@ const Search = {
         
         this.resetTimer();
         this.startTimer();
-        this.startPolling();
+        
+        // Отправляем запрос на поиск
+        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/search/start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                telegram_id: telegram_id,
+                mode: mode,
+                rating_value: data.rating_value,
+                style: data.style,
+                age: data.age,
+                steam_link: data.steam_link,
+                faceit_link: data.faceit_link,
+                comment: data.comment || ''
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log('Search start response:', data);
+            
+            if (data.status === 'searching') {
+                console.log('В очереди, запускаем polling');
+                this.startPolling();
+            } 
+            else if (data.status === 'match_found') {
+                console.log('Мэтч найден сразу!', data);
+                this.showMatchScreen(data);
+            }
+        })
+        .catch(error => {
+            console.error('Error starting search:', error);
+        });
     },
     
     startTimer() {
