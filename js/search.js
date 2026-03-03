@@ -11,6 +11,8 @@ const Search = {
     matchTimerInterval: null,
     blockUntil: null,
     waitingForPartner: false, // флаг что ждем ответа партнера
+    matchEndTime: null, // время окончания мэтча
+    myResponse: null, // мой ответ (accept/reject)
     
     init() {
         this.resetTimer();
@@ -49,8 +51,9 @@ const Search = {
             return;
         }
         
-        // Сбрасываем флаг ожидания
+        // Сбрасываем флаги
         this.waitingForPartner = false;
+        this.myResponse = null;
         
         // Сохраняем текущий режим
         this.currentMode = mode;
@@ -207,15 +210,65 @@ const Search = {
     },
     
     updateWaitingStatus(data) {
-        // Обновляем информацию о том, что партнер еще не ответил
-        if (data.your_response === 'accept' && !data.opponent_response) {
-            // Мы приняли, партнер еще нет
+        console.log('Обновление статуса ожидания:', data);
+        
+        // Проверяем ответ оппонента
+        if (data.opponent_response === 'reject') {
+            // Оппонент отклонил
+            this.handlePartnerReject();
+        } else if (data.opponent_response === 'accept') {
+            // Оппонент принял, а мы уже приняли
+            if (this.myResponse === 'accept') {
+                this.handleBothAccepted();
+            }
+        } else {
+            // Оппонент еще не ответил
             const timer = document.getElementById('matchTimer');
             if (timer) {
                 timer.innerHTML = `⏳ Ожидаем ответа тиммейта...`;
                 timer.style.color = '#FF5500';
             }
         }
+    },
+    
+    handlePartnerReject() {
+        console.log('Партнер отклонил мэтч');
+        
+        // Очищаем таймер
+        if (this.matchTimerInterval) {
+            clearInterval(this.matchTimerInterval);
+            this.matchTimerInterval = null;
+        }
+        
+        // Сбрасываем флаги
+        this.waitingForPartner = false;
+        this.myResponse = null;
+        
+        // Показываем сообщение
+        App.showCustomAlert(
+            '❌ Мэтч отклонен',
+            'Тиммейт отклонил приглашение',
+            () => {
+                // Возвращаемся на экран поиска в том же режиме
+                this.showScreen(this.currentMode);
+            }
+        );
+    },
+    
+    handleBothAccepted() {
+        console.log('Оба приняли!');
+        
+        // Очищаем таймер
+        if (this.matchTimerInterval) {
+            clearInterval(this.matchTimerInterval);
+            this.matchTimerInterval = null;
+        }
+        
+        // Сбрасываем флаги
+        this.waitingForPartner = false;
+        
+        // Создаем игру
+        this.createGame();
     },
     
     stopPolling() {
@@ -229,6 +282,7 @@ const Search = {
     // ПОКАЗАТЬ ЭКРАН НАЙДЕННОГО ТИММЕЙТА
     showMatchScreen(data) {
         this.currentMatchId = data.match_id;
+        this.myResponse = null;
         console.log('Показываем экран для match_id:', data.match_id);
         console.log('Данные оппонента:', data.opponent);
         
@@ -271,7 +325,7 @@ const Search = {
             }
         }
         
-        // Получаем элементы ссылок и их контейнеры (родительские div)
+        // Получаем элементы ссылок и их контейнеры
         const steamContainer = document.querySelector('.match-steam-container');
         const faceitContainer = document.querySelector('.match-faceit-container');
         
@@ -347,11 +401,11 @@ const Search = {
         const timerElement = document.getElementById('matchTimer');
         if (!timerElement) return;
         
-        const endTime = expiresAt ? new Date(expiresAt).getTime() : Date.now() + 30000;
+        this.matchEndTime = expiresAt ? new Date(expiresAt).getTime() : Date.now() + 30000;
         
         const updateTimer = () => {
             const now = Date.now();
-            const diff = Math.max(0, Math.floor((endTime - now) / 1000));
+            const diff = Math.max(0, Math.floor((this.matchEndTime - now) / 1000));
             
             if (diff <= 0) {
                 timerElement.textContent = '0с';
@@ -389,12 +443,14 @@ const Search = {
         .then(() => {
             // Сбрасываем флаги
             this.waitingForPartner = false;
+            this.myResponse = null;
             
             // Показываем сообщение
             App.showCustomAlert(
-                'Время истекло',
-                'Вы не подтвердили тиммейта. Начните поиск заново.',
+                '⏰ Время истекло',
+                'Вы не успели подтвердить тиммейта',
                 () => {
+                    // Тот кто не нажал - на главный экран
                     App.showScreen('mainScreen', true);
                 }
             );
@@ -409,6 +465,7 @@ const Search = {
         console.log('Принимаем мэтч:', this.currentMatchId);
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        this.myResponse = 'accept';
         
         fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
             method: 'POST',
@@ -425,8 +482,7 @@ const Search = {
             
             if (data.both_accepted) {
                 // Оба приняли!
-                App.showAlert('✅ Тиммейт принял приглашение! Создаем игру...');
-                this.createGame();
+                this.handleBothAccepted();
             } 
             else if (data.status === 'waiting') {
                 // Ждем ответа второго игрока
@@ -455,6 +511,7 @@ const Search = {
         console.log('Отклоняем мэтч:', this.currentMatchId);
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        this.myResponse = 'reject';
         
         fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
             method: 'POST',
@@ -469,12 +526,25 @@ const Search = {
         .then(data => {
             console.log('Reject response:', data);
             
+            // Очищаем таймер
+            if (this.matchTimerInterval) {
+                clearInterval(this.matchTimerInterval);
+                this.matchTimerInterval = null;
+            }
+            
             // Устанавливаем блокировку на 2 секунды
             this.blockUntil = Date.now() + 2000;
             this.waitingForPartner = false;
+            this.myResponse = null;
             
-            App.showAlert('❌ Мэтч отклонен');
-            App.showScreen('mainScreen', true);
+            App.showCustomAlert(
+                '❌ Вы отклонили мэтч',
+                'Возвращаемся к поиску',
+                () => {
+                    // Возвращаемся на экран поиска в том же режиме
+                    this.showScreen(this.currentMode);
+                }
+            );
         })
         .catch(error => {
             console.error('Error rejecting match:', error);
@@ -497,6 +567,7 @@ const Search = {
             
             // Сбрасываем флаги
             this.waitingForPartner = false;
+            this.myResponse = null;
             
             // Показываем сообщение
             App.showCustomAlert(
@@ -519,6 +590,7 @@ const Search = {
     showScreen(mode) {
         this.currentMode = mode;
         this.waitingForPartner = false;
+        this.myResponse = null;
         App.showScreen('searchScreen', true);
         document.getElementById('searchModeTitle').textContent = mode;
         this.resetTimer();
@@ -559,6 +631,7 @@ const Search = {
         this.resetTimer();
         this.stopPolling();
         this.waitingForPartner = false;
+        this.myResponse = null;
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         
