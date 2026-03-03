@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ (только свайпы, без кнопок)
+// СВАЙП-КАРТОЧКИ + ЭКРАН СОЕДИНЕНИЯ
 // ============================================
 
 const Swipe = {
@@ -24,9 +24,12 @@ const Swipe = {
     
     // Данные
     currentPlayer: null,
+    currentMatchId: null,
     playersQueue: [],
     mode: 'PREMIER',
     isInitialized: false,
+    connectionTimer: null,
+    connectionEndTime: null,
     
     init(mode) {
         console.log('Swipe.init() with mode:', mode);
@@ -145,23 +148,188 @@ const Swipe = {
         }, this.ANIMATION_DURATION);
     },
     
+    // Принятие игрока (свайп вправо)
     acceptPlayer() {
         console.log('✅ Принят игрок (свайп вправо):', this.currentPlayer);
-        // Тут вызов API для принятия
+        
+        // Сохраняем ID мэтча (в реальности придет с сервера)
+        this.currentMatchId = Math.floor(100000 + Math.random() * 900000);
+        
+        // Показываем экран соединения
+        this.showConnectionScreen();
+        
+        // Отправляем запрос на сервер
+        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                match_id: this.currentMatchId,
+                response: 'accept'
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log('Accept response:', data);
+            
+            if (data.both_accepted) {
+                // Оба приняли
+                this.handleBothAccepted();
+            } else if (data.status === 'rejected') {
+                // Тиммейт отклонил
+                this.handleRejection();
+            } else {
+                // Ждем ответа
+                console.log('Ожидаем ответа тиммейта');
+                this.startConnectionTimer();
+            }
+        })
+        .catch(error => {
+            console.error('Error accepting match:', error);
+            // В случае ошибки возвращаемся в свайп
+            setTimeout(() => {
+                App.showScreen('swipeScreen', true);
+                this.loadNextPlayer();
+            }, 1000);
+        });
+    },
+    
+    // Пропуск игрока (свайп влево)
+    rejectPlayer() {
+        console.log('❌ Пропущен игрок (свайп влево):', this.currentPlayer);
+        
+        // Просто загружаем следующего игрока
         this.loadNextPlayer();
     },
     
-    rejectPlayer() {
-        console.log('❌ Пропущен игрок (свайп влево):', this.currentPlayer);
-        // Тут вызов API для пропуска
-        this.loadNextPlayer();
+    // Показать экран соединения
+    showConnectionScreen() {
+        App.showScreen('connectionScreen', true);
+        
+        // Заполняем данные тиммейта
+        document.getElementById('teammateNick').textContent = this.currentPlayer.nick;
+        document.getElementById('teammateRating').textContent = this.currentPlayer.rating + ' ❤️';
+        
+        // Сбрасываем классы
+        const screen = document.querySelector('.connection-screen');
+        screen.classList.remove('both-accepted', 'rejected');
+        
+        // Обновляем статус
+        document.getElementById('connectionStatus').textContent = 'Ожидаем ответа тиммейта...';
+    },
+    
+    // Запуск таймера на экране соединения
+    startConnectionTimer() {
+        const timerElement = document.getElementById('connectionTimer');
+        if (!timerElement) return;
+        
+        // 30 секунд от текущего момента
+        this.connectionEndTime = Date.now() + 30000;
+        
+        const updateTimer = () => {
+            const now = Date.now();
+            const diff = Math.max(0, Math.floor((this.connectionEndTime - now) / 1000));
+            
+            if (diff <= 0) {
+                timerElement.textContent = '⏳ 0с';
+                clearInterval(this.connectionTimer);
+                this.connectionTimeout();
+                return;
+            }
+            
+            timerElement.textContent = `⏳ ${diff}с`;
+        };
+        
+        updateTimer();
+        this.connectionTimer = setInterval(updateTimer, 1000);
+    },
+    
+    // Таймаут на экране соединения
+    connectionTimeout() {
+        console.log('⏰ Время ожидания истекло');
+        
+        const screen = document.querySelector('.connection-screen');
+        screen.classList.add('rejected');
+        document.getElementById('connectionStatus').textContent = '⏰ Время ожидания истекло';
+        
+        setTimeout(() => {
+            App.showScreen('swipeScreen', true);
+            this.loadNextPlayer();
+        }, 2000);
+    },
+    
+    // Обработка случая, когда оба приняли
+    handleBothAccepted() {
+        console.log('✅ Оба приняли!');
+        
+        // Очищаем таймер
+        if (this.connectionTimer) {
+            clearInterval(this.connectionTimer);
+            this.connectionTimer = null;
+        }
+        
+        const screen = document.querySelector('.connection-screen');
+        screen.classList.add('both-accepted');
+        document.getElementById('connectionStatus').textContent = '✅ Тиммейт принял приглашение!';
+        
+        setTimeout(() => {
+            this.createGame();
+        }, 1500);
+    },
+    
+    // Обработка отказа тиммейта
+    handleRejection() {
+        console.log('❌ Тиммейт отклонил');
+        
+        // Очищаем таймер
+        if (this.connectionTimer) {
+            clearInterval(this.connectionTimer);
+            this.connectionTimer = null;
+        }
+        
+        const screen = document.querySelector('.connection-screen');
+        screen.classList.add('rejected');
+        document.getElementById('connectionStatus').textContent = '❌ Тиммейт отклонил приглашение';
+        
+        setTimeout(() => {
+            App.showScreen('swipeScreen', true);
+            this.loadNextPlayer();
+        }, 2000);
+    },
+    
+    // Создание игры
+    createGame() {
+        console.log('Создаем игру для match_id:', this.currentMatchId);
+        
+        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/game/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                match_id: this.currentMatchId
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log('Game create response:', data);
+            
+            if (window.Telegram?.WebApp?.openTelegramLink && data.chat_link) {
+                window.Telegram.WebApp.openTelegramLink(data.chat_link);
+            }
+            
+            // Возвращаемся на главный экран
+            App.showScreen('mainScreen', true);
+        })
+        .catch(error => {
+            console.error('Error creating game:', error);
+            App.showScreen('mainScreen', true);
+        });
     },
     
     loadNextPlayer() {
         if (this.loading) this.loading.classList.add('active');
         
-        // Имитация загрузки
+        // Имитация загрузки с сервера
         setTimeout(() => {
+            // В реальности здесь будет fetch запрос к /api/swipe/next
             const testPlayer = {
                 player_id: Math.floor(10000000 + Math.random() * 90000000),
                 nick: 'Player' + Math.floor(Math.random() * 1000),
@@ -260,13 +428,17 @@ const Swipe = {
             this.card.removeEventListener('pointerup', this.onDragEnd);
             this.card.removeEventListener('pointercancel', this.onDragEnd);
         }
+        
+        if (this.connectionTimer) {
+            clearInterval(this.connectionTimer);
+            this.connectionTimer = null;
+        }
     }
 };
 
 // Автоматическая инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Swipe: DOM загружен');
-    // Не инициализируем сразу, ждем вызова из search.js
     window.Swipe = Swipe;
 });
 
