@@ -400,32 +400,38 @@ const Search = {
     },
     
     startMatchTimer(expiresAt) {
-        const timerElement = document.getElementById('matchTimer');
-        if (!timerElement) return;
+            const timerElement = document.getElementById('matchTimer');
+            if (!timerElement) return;
+    
+            // Используем время с сервера или 30 секунд от текущего момента
+            const serverTime = expiresAt ? new Date(expiresAt).getTime() : Date.now() + 30000;
+    
+            // ФИКС: всегда показываем 30 секунд, даже если серверное время немного плавает
+            const endTime = Date.now() + 30000;
+    
+            console.log('Таймер запущен до:', new Date(endTime).toLocaleTimeString());
+    
+            const updateTimer = () => {
+                const now = Date.now();
+                const diff = Math.max(0, Math.floor((endTime - now) / 1000));
         
-        this.matchEndTime = expiresAt ? new Date(expiresAt).getTime() : Date.now() + 30000;
+                if (diff <= 0) {
+                    timerElement.textContent = '0с';
+                    clearInterval(this.matchTimerInterval);
+                    this.matchTimeout();
+                    return;
+                }
         
-        const updateTimer = () => {
-            const now = Date.now();
-            const diff = Math.max(0, Math.floor((this.matchEndTime - now) / 1000));
-            
-            if (diff <= 0) {
-                timerElement.textContent = '0с';
-                clearInterval(this.matchTimerInterval);
-                this.matchTimeout();
-                return;
-            }
-            
-            timerElement.textContent = `⏳ ${diff}с`;
-            
-            if (diff < 10) {
-                timerElement.style.color = '#FF5500';
-            }
-        };
+                timerElement.textContent = `⏳ ${diff}с`;
         
-        updateTimer();
-        this.matchTimerInterval = setInterval(updateTimer, 1000);
-    },
+                if (diff < 10) {
+                    timerElement.style.color = '#FF5500';
+                }
+            };
+    
+    updateTimer();
+    this.matchTimerInterval = setInterval(updateTimer, 1000);
+}
     
     // ТАЙМАУТ - не нажали кнопки
     matchTimeout() {
@@ -664,3 +670,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.Search = Search;
+
