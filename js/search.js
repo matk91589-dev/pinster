@@ -334,8 +334,10 @@ const Search = {
             }
         }
         
-        // Показываем экран
-        App.showScreen('matchFoundScreen', true);
+        // Показываем экран свайп-карточек
+        App.showScreen('swipeScreen', true);
+        // Запускаем свайп с текущим режимом
+        Swipe.startSwipe(mode); // mode = 'FACEIT' или 'PREMIER' и т.д.
         
         this.resetTimer();
         this.stopPolling();
@@ -688,3 +690,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.Search = Search;
+
