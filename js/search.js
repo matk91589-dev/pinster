@@ -396,65 +396,78 @@ const Search = {
         this.stopPolling();
         
         // Запускаем таймер на 30 секунд
-        this.startMatchTimer(data.expires_at);
+        this.startMatchTimer();
     },
     
-    startMatchTimer(expiresAt) {
-            const timerElement = document.getElementById('matchTimer');
-            if (!timerElement) return;
-    
-            // Используем время с сервера или 30 секунд от текущего момента
-            const serverTime = expiresAt ? new Date(expiresAt).getTime() : Date.now() + 30000;
-    
-            // ФИКС: всегда показываем 30 секунд, даже если серверное время немного плавает
-            const endTime = Date.now() + 30000;
-    
-            console.log('Таймер запущен до:', new Date(endTime).toLocaleTimeString());
-    
-            const updateTimer = () => {
-                const now = Date.now();
-                const diff = Math.max(0, Math.floor((endTime - now) / 1000));
+    startMatchTimer() {
+        const timerElement = document.getElementById('matchTimer');
+        if (!timerElement) return;
         
-                if (diff <= 0) {
-                    timerElement.textContent = '0с';
-                    clearInterval(this.matchTimerInterval);
-                    this.matchTimeout();
-                    return;
-                }
+        // Очищаем предыдущий таймер если был
+        if (this.matchTimerInterval) {
+            clearInterval(this.matchTimerInterval);
+            this.matchTimerInterval = null;
+        }
         
-                timerElement.textContent = `⏳ ${diff}с`;
+        // ВАЖНО: Всегда 30 секунд от МОМЕНТА ЗАПУСКА
+        const startTime = Date.now();
+        const endTime = startTime + 30000; // ровно 30 секунд
+        this.matchEndTime = endTime;
         
-                if (diff < 10) {
-                    timerElement.style.color = '#FF5500';
-                }
-            };
-    
-    updateTimer();
-    this.matchTimerInterval = setInterval(updateTimer, 1000);
-}
+        console.log('✅ Таймер запущен, до:', new Date(endTime).toLocaleTimeString());
+        
+        const updateTimer = () => {
+            const now = Date.now();
+            const diff = Math.max(0, Math.floor((endTime - now) / 1000));
+            
+            if (diff <= 0) {
+                timerElement.textContent = '0с';
+                clearInterval(this.matchTimerInterval);
+                this.matchTimerInterval = null;
+                this.matchTimeout();
+                return;
+            }
+            
+            timerElement.textContent = `⏳ ${diff}с`;
+            
+            if (diff < 10) {
+                timerElement.style.color = '#FF5500';
+            }
+        };
+        
+        updateTimer();
+        this.matchTimerInterval = setInterval(updateTimer, 1000);
+    },
     
     // ТАЙМАУТ - не нажали кнопки
     matchTimeout() {
-        console.log('Время вышло, отменяем мэтч');
+        console.log('⏰ Время вышло, отменяем мэтч');
+        
+        // Если уже нет текущего мэтча - выходим
+        if (!this.currentMatchId) {
+            console.log('Нет активного мэтча');
+            return;
+        }
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        const matchId = this.currentMatchId;
+        
+        // Сначала сбрасываем флаги, чтобы предотвратить повторные вызовы
+        this.waitingForPartner = false;
+        this.myResponse = null;
+        this.isSearching = false;
+        this.currentMatchId = null;
         
         fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 telegram_id: telegram_id,
-                match_id: this.currentMatchId,
+                match_id: matchId,
                 response: 'timeout'
             })
         })
         .then(() => {
-            // Сбрасываем флаги
-            this.waitingForPartner = false;
-            this.myResponse = null;
-            this.isSearching = false;
-            this.currentMatchId = null;
-            
             // Тот кто не нажал - на главный экран
             App.showScreen('mainScreen', true);
         })
@@ -465,7 +478,12 @@ const Search = {
     },
     
     acceptMatch() {
-        console.log('Принимаем мэтч:', this.currentMatchId);
+        console.log('✅ Принимаем мэтч:', this.currentMatchId);
+        
+        if (!this.currentMatchId) {
+            console.log('Нет активного мэтча');
+            return;
+        }
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         this.myResponse = 'accept';
@@ -511,9 +529,22 @@ const Search = {
     },
     
     rejectMatch() {
-        console.log('Отклоняем мэтч:', this.currentMatchId);
+        console.log('❌ Отклоняем мэтч:', this.currentMatchId);
+        
+        if (!this.currentMatchId) {
+            console.log('Нет активного мэтча');
+            return;
+        }
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        const matchId = this.currentMatchId;
+        
+        // Очищаем таймер
+        if (this.matchTimerInterval) {
+            clearInterval(this.matchTimerInterval);
+            this.matchTimerInterval = null;
+        }
+        
         this.myResponse = 'reject';
         
         fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
@@ -521,19 +552,13 @@ const Search = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 telegram_id: telegram_id,
-                match_id: this.currentMatchId,
+                match_id: matchId,
                 response: 'reject'
             })
         })
         .then(res => res.json())
         .then(data => {
             console.log('Reject response:', data);
-            
-            // Очищаем таймер
-            if (this.matchTimerInterval) {
-                clearInterval(this.matchTimerInterval);
-                this.matchTimerInterval = null;
-            }
             
             // Устанавливаем блокировку на 2 секунды
             this.blockUntil = Date.now() + 2000;
@@ -547,17 +572,25 @@ const Search = {
         })
         .catch(error => {
             console.error('Error rejecting match:', error);
+            this.showScreen(this.currentMode);
         });
     },
     
     createGame() {
         console.log('Создаем игру для match_id:', this.currentMatchId);
         
+        if (!this.currentMatchId) {
+            console.log('Нет активного мэтча');
+            return;
+        }
+        
+        const matchId = this.currentMatchId;
+        
         fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/game/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                match_id: this.currentMatchId
+                match_id: matchId
             })
         })
         .then(res => res.json())
@@ -670,4 +703,3 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.Search = Search;
-
