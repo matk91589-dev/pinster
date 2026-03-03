@@ -49,7 +49,12 @@ const Search = {
         // Проверяем не заблокирован ли поиск
         if (this.blockUntil && Date.now() < this.blockUntil) {
             const waitSeconds = Math.ceil((this.blockUntil - Date.now()) / 1000);
-            App.showAlert(`⏳ Подождите ${waitSeconds} сек перед новым поиском`);
+            // Вместо alert - просто показываем на экране поиска
+            const statusEl = document.getElementById('searchStatus');
+            if (statusEl) {
+                statusEl.textContent = `⏳ Подождите ${waitSeconds} сек`;
+                statusEl.style.color = '#FF5500';
+            }
             return;
         }
         
@@ -74,7 +79,6 @@ const Search = {
         
         if (!telegram_id) {
             console.error('No telegram_id');
-            App.showAlert('Ошибка: не удалось получить Telegram ID');
             return;
         }
         
@@ -118,7 +122,6 @@ const Search = {
         })
         .catch(error => {
             console.error('Fetch error:', error);
-            App.showAlert('Ошибка при запуске поиска');
         });
     },
     
@@ -248,7 +251,7 @@ const Search = {
         this.isSearching = true;
         this.currentMatchId = null;
         
-        // Просто возвращаемся на экран поиска без сообщения
+        // Возвращаемся на экран поиска
         this.showScreen(this.currentMode);
     },
     
@@ -446,15 +449,8 @@ const Search = {
             this.isSearching = false;
             this.currentMatchId = null;
             
-            // Показываем сообщение
-            App.showCustomAlert(
-                '⏰ Время истекло',
-                'Вы не успели подтвердить тиммейта',
-                () => {
-                    // Тот кто не нажал - на главный экран
-                    App.showScreen('mainScreen', true);
-                }
-            );
+            // Тот кто не нажал - на главный экран
+            App.showScreen('mainScreen', true);
         })
         .catch(error => {
             console.error('Error timing out match:', error);
@@ -540,7 +536,7 @@ const Search = {
             this.isSearching = true;
             this.currentMatchId = null;
             
-            // Просто возвращаемся на экран поиска без сообщения
+            // Возвращаемся на экран поиска
             this.showScreen(this.currentMode);
         })
         .catch(error => {
@@ -568,21 +564,17 @@ const Search = {
             this.isSearching = false;
             this.currentMatchId = null;
             
-            // Показываем сообщение
-            App.showCustomAlert(
-                '✅ Игра создана!',
-                `Ссылка на чат: ${data.chat_link}`,
-                () => {
-                    // Открываем ссылку в Telegram
-                    if (window.Telegram?.WebApp?.openTelegramLink) {
-                        window.Telegram.WebApp.openTelegramLink(data.chat_link);
-                    }
-                    App.showScreen('mainScreen', true);
-                }
-            );
+            // Открываем ссылку в Telegram
+            if (window.Telegram?.WebApp?.openTelegramLink && data.chat_link) {
+                window.Telegram.WebApp.openTelegramLink(data.chat_link);
+            }
+            
+            // Переходим на главный экран
+            App.showScreen('mainScreen', true);
         })
         .catch(error => {
             console.error('Error creating game:', error);
+            App.showScreen('mainScreen', true);
         });
     },
     
@@ -594,6 +586,14 @@ const Search = {
         this.currentMatchId = null;
         App.showScreen('searchScreen', true);
         document.getElementById('searchModeTitle').textContent = mode;
+        
+        // Сбрасываем статус
+        const statusEl = document.getElementById('searchStatus');
+        if (statusEl) {
+            statusEl.textContent = 'Поиск тиммейта начат';
+            statusEl.style.color = '#9BA1B0';
+        }
+        
         this.resetTimer();
         this.startTimer();
         this.startPolling();
@@ -656,13 +656,6 @@ const Search = {
             App.showScreen('mainScreen', true);
         });
     }
-};
-
-// Вспомогательная функция для кастомного алерта
-App.showCustomAlert = function(title, message, callback) {
-    // Создаем простой alert (позже можно заменить на красивый)
-    alert(`${title}\n\n${message}`);
-    if (callback) callback();
 };
 
 // Инициализация
