@@ -2009,9 +2009,8 @@ input:-webkit-autofill:active {
 .swipe-container {
     flex: 1;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: center; /* Центрирование по вертикали */
+    justify-content: center; /* Центрирование по горизонтали */
     position: relative;
     margin: 0;
     padding: 0 15px;
@@ -2032,7 +2031,7 @@ input:-webkit-autofill:active {
     touch-action: pan-y pinch-zoom;
     position: relative;
     z-index: 10;
-    margin: 0; /* Убрали отступы сверху/снизу */
+    margin: 0; /* Убираем все внешние отступы */
 }
 
 .swipe-card:active {
@@ -2530,3 +2529,4 @@ input:-webkit-autofill:active {
         100% { transform: translateX(0) scale(1); opacity: 1; }
     }
 }
+
