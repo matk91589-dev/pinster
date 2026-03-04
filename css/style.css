@@ -1996,33 +1996,23 @@ input:-webkit-autofill:active {
 
 /* ===== НОВЫЙ ЭКРАН СВАЙП-КАРТОЧЕК ===== */
 .swipe-screen {
-    padding: 0;
+    flex: 1;
     display: flex;
     flex-direction: column;
-    flex: 1;
-    min-height: 0;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
 }
 
-/* Контейнер для карточки - жесткое центрирование */
 .swipe-container {
     flex: 1;
     display: flex;
-    align-items: center !important;
-    justify-content: center !important;
-    position: relative;
-    margin: 0 !important;
-    padding: 0 !important;
-    min-height: 0;
-    height: 100%;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
 }
 
-/* Карточка - без единого отступа */
 .swipe-card {
     width: min(90%, 380px);
-    margin: 0 auto !important;
+    margin: 0 auto;
     background: #1A1D24;
     border-radius: 20px;
     padding: 20px 18px;
@@ -2040,10 +2030,10 @@ input:-webkit-autofill:active {
     cursor: grabbing;
 }
 
-/* Лейблы для свайпа - динамические */
+/* Лейблы для свайпа */
 .swipe-label {
     position: absolute;
-    top: clamp(15px, 4vh, 20px);
+    top: 20px;
     font-size: clamp(18px, 6vw, 24px);
     font-weight: 800;
     letter-spacing: 2px;
@@ -2054,13 +2044,13 @@ input:-webkit-autofill:active {
 }
 
 .swipe-label-left {
-    left: clamp(15px, 5vw, 25px);
+    left: 25px;
     color: rgba(200, 60, 60, 0.9);
     transform: rotate(-5deg);
 }
 
 .swipe-label-right {
-    right: clamp(15px, 5vw, 25px);
+    right: 25px;
     color: rgba(60, 180, 90, 0.9);
     transform: rotate(5deg);
 }
@@ -2069,26 +2059,24 @@ input:-webkit-autofill:active {
 .swipe-card-content {
     display: flex;
     flex-direction: column;
-    gap: clamp(10px, 2.5vh, 14px);
+    gap: 14px;
 }
 
-/* Верхний ряд с аватаркой */
 .swipe-player-row {
     display: flex;
     align-items: center;
-    gap: clamp(10px, 3vw, 15px);
+    gap: 15px;
 }
 
-/* Аватарка с динамическим размером */
 .swipe-avatar {
-    width: clamp(60px, 15vw, 70px);
-    height: clamp(60px, 15vw, 70px);
+    width: 70px;
+    height: 70px;
     flex-shrink: 0;
 }
 
 .swipe-avatar .tg-avatar-svg {
-    width: 100%;
-    height: 100%;
+    width: 70px;
+    height: 70px;
     background: #2B2F36;
     border-radius: 50%;
     display: flex;
@@ -2097,26 +2085,25 @@ input:-webkit-autofill:active {
 }
 
 .swipe-avatar .tg-avatar-svg svg {
-    width: clamp(30px, 7vw, 35px);
-    height: clamp(30px, 7vw, 35px);
+    width: 35px;
+    height: 35px;
 }
 
-/* Блок с ником */
 .swipe-name-block {
     flex: 1;
     min-width: 0;
 }
 
 .swipe-player-id {
-    font-size: clamp(10px, 2.5vw, 12px);
+    font-size: 12px;
     color: #FF5500;
     font-family: monospace;
     font-weight: 600;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 }
 
 .swipe-player-nick {
-    font-size: clamp(16px, 5vw, 20px);
+    font-size: 20px;
     font-weight: 700;
     color: #F5F5F5;
     white-space: nowrap;
@@ -2124,17 +2111,16 @@ input:-webkit-autofill:active {
     text-overflow: ellipsis;
 }
 
-/* Блок рейтинга */
 .swipe-rating-block {
     display: flex;
     align-items: center;
     gap: 4px;
     flex-shrink: 0;
-    padding: clamp(3px, 1vw, 5px) 0;
+    padding: 5px 0;
 }
 
 .swipe-rating-value {
-    font-size: clamp(16px, 5vw, 20px);
+    font-size: 20px;
     font-weight: 700;
     color: #F5F5F5;
 }
@@ -2144,8 +2130,8 @@ input:-webkit-autofill:active {
 }
 
 .swipe-rating-block .heart-icon svg {
-    width: clamp(14px, 4vw, 18px);
-    height: clamp(14px, 4vw, 18px);
+    width: 18px;
+    height: 18px;
     stroke: #F5F5F5;
 }
 
@@ -2155,13 +2141,13 @@ input:-webkit-autofill:active {
     height: 1px;
     background: linear-gradient(90deg, transparent, #F5F5F5, transparent);
     opacity: 0.3;
-    margin: 2px 0 clamp(4px, 1.5vh, 8px) 0;
+    margin: 2px 0 8px 0;
 }
 
 /* Плашки ранга и возраста */
 .swipe-stats-row {
     display: flex;
-    gap: clamp(8px, 2.5vw, 12px);
+    gap: 12px;
     margin: 0;
 }
 
@@ -2173,10 +2159,10 @@ input:-webkit-autofill:active {
 }
 
 .swipe-stat-label {
-    font-size: clamp(8px, 2.2vw, 10px);
+    font-size: 10px;
     color: #9BA1B0;
     font-weight: 600;
-    margin-bottom: clamp(4px, 1.5vh, 6px);
+    margin-bottom: 6px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -2185,10 +2171,10 @@ input:-webkit-autofill:active {
     width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: clamp(6px, 2vw, 8px);
-    padding: clamp(10px, 3vh, 12px) clamp(10px, 3vw, 14px);
+    border-radius: 8px;
+    padding: 12px 14px;
     color: #F5F5F5;
-    font-size: clamp(12px, 3.5vw, 14px);
+    font-size: 14px;
     font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
@@ -2202,10 +2188,10 @@ input:-webkit-autofill:active {
 }
 
 .swipe-link-label {
-    font-size: clamp(8px, 2.2vw, 10px);
+    font-size: 10px;
     color: #9BA1B0;
     font-weight: 600;
-    margin-bottom: clamp(4px, 1.5vh, 6px);
+    margin-bottom: 6px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -2214,10 +2200,10 @@ input:-webkit-autofill:active {
     width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: clamp(6px, 2vw, 8px);
-    padding: clamp(10px, 3vh, 12px) clamp(10px, 3vw, 14px);
+    border-radius: 8px;
+    padding: 12px 14px;
     color: #F5F5F5;
-    font-size: clamp(11px, 3.2vw, 13px);
+    font-size: 13px;
     font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
@@ -2230,10 +2216,10 @@ input:-webkit-autofill:active {
 }
 
 .swipe-comment-label {
-    font-size: clamp(8px, 2.2vw, 10px);
+    font-size: 10px;
     color: #9BA1B0;
     font-weight: 600;
-    margin-bottom: clamp(4px, 1.5vh, 6px);
+    margin-bottom: 6px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -2242,12 +2228,12 @@ input:-webkit-autofill:active {
     width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
-    border-radius: clamp(6px, 2vw, 8px);
-    padding: clamp(10px, 3vh, 12px) clamp(10px, 3vw, 14px);
+    border-radius: 8px;
+    padding: 12px 14px;
     color: #F5F5F5;
-    font-size: clamp(11px, 3.2vw, 13px);
+    font-size: 13px;
     font-weight: 500;
-    min-height: clamp(60px, 15vh, 70px);
+    min-height: 70px;
     word-wrap: break-word;
     line-height: 1.5;
 }
@@ -2255,10 +2241,10 @@ input:-webkit-autofill:active {
 /* Подсказка */
 .swipe-hint {
     text-align: center;
-    font-size: clamp(11px, 3.2vw, 13px);
+    font-size: 13px;
     color: #6C7483;
-    padding: clamp(8px, 2vh, 10px) 0;
-    margin-bottom: clamp(5px, 1.5vh, 10px);
+    padding: 10px 0;
+    margin-bottom: 10px;
     opacity: 0.8;
     transition: opacity 0.3s ease;
 }
@@ -2276,8 +2262,8 @@ input:-webkit-autofill:active {
 }
 
 .spinner-small {
-    width: clamp(24px, 7vw, 30px);
-    height: clamp(24px, 7vw, 30px);
+    width: 30px;
+    height: 30px;
     border: 3px solid #1A1D24;
     border-top-color: #FF5500;
     border-radius: 50%;
@@ -2311,8 +2297,8 @@ input:-webkit-autofill:active {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(15px, 5vw, 25px);
-    margin: clamp(10px, 3vh, 20px) 0 clamp(15px, 4vh, 30px) 0;
+    gap: 25px;
+    margin: 20px 0 30px 0;
 }
 
 .connection-avatar {
@@ -2320,8 +2306,8 @@ input:-webkit-autofill:active {
 }
 
 .self-avatar .tg-avatar-svg {
-    width: clamp(60px, 15vw, 70px);
-    height: clamp(60px, 15vw, 70px);
+    width: 70px;
+    height: 70px;
     background: #2B2F36;
     border: 2px solid #FF5500;
     border-radius: 50%;
@@ -2338,8 +2324,8 @@ input:-webkit-autofill:active {
 }
 
 .teammate-avatar .tg-avatar-svg {
-    width: clamp(45px, 12vw, 50px);
-    height: clamp(45px, 12vw, 50px);
+    width: 50px;
+    height: 50px;
     background: #2B2F36;
     border: 2px solid #4A4F5A;
     border-radius: 50%;
@@ -2356,8 +2342,8 @@ input:-webkit-autofill:active {
 
 /* Активное состояние (оба приняли) */
 .swipe-card.both-accepted .teammate-avatar .tg-avatar-svg {
-    width: clamp(60px, 15vw, 70px);
-    height: clamp(60px, 15vw, 70px);
+    width: 70px;
+    height: 70px;
     border-color: #4CAF50;
 }
 
@@ -2382,7 +2368,7 @@ input:-webkit-autofill:active {
 
 /* Линия соединения */
 .connection-line {
-    width: clamp(50px, 15vw, 80px);
+    width: 80px;
     height: 2px;
     background: linear-gradient(90deg, #FF5500, #9BA1B0);
     position: relative;
@@ -2402,8 +2388,138 @@ input:-webkit-autofill:active {
 
 @keyframes pulse {
     0% { transform: translateX(0) scale(1); opacity: 1; }
-    50% { transform: translateX(calc(clamp(50px, 15vw, 80px) - 10px)) scale(1.5); opacity: 0.5; }
+    50% { transform: translateX(70px) scale(1.5); opacity: 0.5; }
     100% { transform: translateX(0) scale(1); opacity: 1; }
+}
+
+/* Статус в карточке */
+.connection-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    font-size: 16px;
+    color: #9BA1B0;
+    margin: 10px 0;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.status-icon {
+    animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Информация о тиммейте в карточке */
+.teammate-info {
+    text-align: center;
+    margin: 10px 0;
+    font-size: 15px;
+}
+
+.teammate-nick {
+    color: #F5F5F5;
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+.teammate-rating {
+    color: #FF5500;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.heart-icon-small {
+    animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Таймер в карточке */
+.connection-timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    font-size: 18px;
+    color: #FF5500;
+    margin: 20px 0;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.timer-icon {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+/* Анимация отказа */
+.swipe-card.rejected .connection-line {
+    background: linear-gradient(90deg, #FF5500, #B00000);
+    animation: rejectPulse 0.5s ease;
+}
+
+.swipe-card.rejected .teammate-avatar {
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+}
+
+.swipe-card.rejected .connection-status {
+    color: #B00000;
+}
+
+@keyframes rejectPulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* Адаптивность */
+@media (max-width: 400px) {
+    .swipe-card {
+        padding: 16px 14px;
+    }
+    
+    .swipe-avatar,
+    .swipe-avatar .tg-avatar-svg {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .swipe-avatar .tg-avatar-svg svg {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .swipe-player-nick {
+        font-size: 18px;
+    }
+    
+    .swipe-rating-value {
+        font-size: 18px;
+    }
+    
+    .connection-line {
+        width: 60px;
+    }
+    
+    @keyframes pulse {
+        0% { transform: translateX(0) scale(1); opacity: 1; }
+        50% { transform: translateX(50px) scale(1.5); opacity: 0.5; }
+        100% { transform: translateX(0) scale(1); opacity: 1; }
+    }
 }
 
 /* Статус в карточке */
@@ -2512,4 +2628,5 @@ input:-webkit-autofill:active {
         100% { transform: translateX(0) scale(1); opacity: 1; }
     }
 }
+
 
