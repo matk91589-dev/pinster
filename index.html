@@ -15,9 +15,9 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- CSS с версионированием -->
-    <link rel="stylesheet" href="css/style.css?v=20260306">
-    <link rel="stylesheet" href="css/shop-cases.css?v=20260306">
-    <link rel="stylesheet" href="css/animations.css?v=20260306">
+    <link rel="stylesheet" href="css/style.css?v=20260307">
+    <link rel="stylesheet" href="css/shop-cases.css?v=20260307">
+    <link rel="stylesheet" href="css/animations.css?v=20260307">
     
     <!-- Дополнительные стили для плавности -->
     <style>
@@ -122,7 +122,7 @@
             <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
                 <div class="start-avatar-square" id="startAvatar">
-                    <img src="pingster_logo.svg?v=20260306" alt="Pingster">
+                    <img src="pingster_logo.svg?v=20260307" alt="Pingster">
                 </div>
                 <div class="start-description-box">
                     <div class="start-description">
@@ -162,7 +162,7 @@
                     <div class="cases-grid">
                         <!-- ТВОИ КЕЙСЫ - ТЕПЕРЬ С НАСТОЯЩИМИ КАРТИНКАМИ -->
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/common_case.png?v=20260306" alt="common case"></div>
+                            <div class="case-icon"><img src="cases/common_case.png?v=20260307" alt="common case"></div>
                             <div class="case-info">
                                 <div class="case-name">Базовый кейс</div>
                                 <div class="case-price-row">
@@ -172,7 +172,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/rare_case.png?v=20260306" alt="rare case"></div>
+                            <div class="case-icon"><img src="cases/rare_case.png?v=20260307" alt="rare case"></div>
                             <div class="case-info">
                                 <div class="case-name">Редкий кейс</div>
                                 <div class="case-price-row">
@@ -182,7 +182,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/premium_case.png?v=20260306" alt="premium case"></div>
+                            <div class="case-icon"><img src="cases/premium_case.png?v=20260307" alt="premium case"></div>
                             <div class="case-info">
                                 <div class="case-name">Легендарный кейс</div>
                                 <div class="case-price-row">
@@ -192,7 +192,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/secret_case.png?v=20260306" alt="secret case"></div>
+                            <div class="case-icon"><img src="cases/secret_case.png?v=20260307" alt="secret case"></div>
                             <div class="case-info">
                                 <div class="case-name">Секретный кейс</div>
                                 <div class="case-price-row">
@@ -309,9 +309,8 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН СВАЙП-КАРТОЧЕК (ОБНОВЛЕННЫЙ) -->
+            <!-- ЭКРАН СВАЙП-КАРТОЧЕК -->
             <div id="swipeScreen" class="screen swipe-screen">
-                <!-- Хедер с заголовком и подсказкой -->
                 <div class="swipe-header">
                     <div class="swipe-title">Поиск тиммейтов</div>
                     <div class="swipe-subtitle">
@@ -321,19 +320,13 @@
                     </div>
                 </div>
 
-                <!-- Контейнер для карточек -->
                 <div class="swipe-container" id="swipeContainer">
-                    <!-- Карточка игрока -->
                     <div class="swipe-card" id="swipeCard">
-                        <!-- Лейблы для свайпа -->
                         <div class="swipe-label swipe-label-left" id="swipeLabelLeft">SKIP</div>
                         <div class="swipe-label swipe-label-right" id="swipeLabelRight">INVITE</div>
                         
-                        <!-- Контент карточки -->
                         <div class="swipe-card-content">
-                            <!-- Верхний блок: аватарка + ник + рейтинг -->
                             <div class="swipe-player-row">
-                                <!-- Аватарка 70x70 -->
                                 <div class="swipe-avatar">
                                     <div class="tg-avatar-svg" style="width: 70px; height: 70px;">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="35" height="35">
@@ -343,13 +336,11 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Блок с ником и рейтингом -->
                                 <div class="swipe-name-block">
                                     <div class="swipe-player-id" id="swipePlayerId">80794177</div>
                                     <div class="swipe-player-nick" id="swipePlayerNick">Player123</div>
                                 </div>
                                 
-                                <!-- Рейтинг (число + сердечко) -->
                                 <div class="swipe-rating-block">
                                     <span class="swipe-rating-value" id="swipeRatingValue">1500</span>
                                     <span class="heart-icon">
@@ -360,10 +351,8 @@
                                 </div>
                             </div>
 
-                            <!-- Тонкая линия под рейтингом -->
                             <div class="swipe-rating-line"></div>
 
-                            <!-- ДВЕ ПЛАШКИ: ранг и возраст -->
                             <div class="swipe-stats-row">
                                 <div class="swipe-stat-item">
                                     <div class="swipe-stat-label">РАНГ</div>
@@ -375,19 +364,16 @@
                                 </div>
                             </div>
 
-                            <!-- КОНТЕЙНЕР ДЛЯ ССЫЛКИ STEAM -->
                             <div class="swipe-steam-container">
                                 <div class="swipe-link-label">Ссылка Steam</div>
                                 <div class="swipe-link-value" id="swipeSteamLink">steamcommunity.com/id/player123</div>
                             </div>
 
-                            <!-- КОНТЕЙНЕР ДЛЯ ССЫЛКИ FACEIT -->
                             <div class="swipe-faceit-container">
                                 <div class="swipe-link-label">Ссылка Faceit</div>
                                 <div class="swipe-link-value" id="swipeFaceitLink">faceit.com/player123</div>
                             </div>
 
-                            <!-- КОММЕНТАРИЙ -->
                             <div class="swipe-comment">
                                 <div class="swipe-comment-label">Комментарий</div>
                                 <div class="swipe-comment-text" id="swipeComment">ищу норм тиммейтов для каток, без токсиков</div>
@@ -396,60 +382,86 @@
                     </div>
                 </div>
 
-                <!-- Индикатор загрузки -->
                 <div class="swipe-loading" id="swipeLoading">
                     <div class="spinner-small"></div>
                 </div>
             </div>
 
-            <!-- ЭКРАН СОЕДИНЕНИЯ (НОВЫЙ) -->
+            <!-- ЭКРАН СОЕДИНЕНИЯ (ОБНОВЛЕННЫЙ) -->
             <div id="connectionScreen" class="screen connection-screen">
-                <!-- Хедер -->
-                <div class="mode-header" style="justify-content: center;">
-                    <div class="mode-title faceit">ПОИСК ТИММЕЙТА</div>
+                <!-- Хедер с заголовком -->
+                <div class="swipe-header">
+                    <div class="swipe-title">Тиммейт найден</div>
                 </div>
 
-                <!-- Контейнер с аватарками -->
-                <div class="connection-container">
-                    <!-- Твоя аватарка (яркая) -->
-                    <div class="connection-avatar self-avatar">
-                        <div class="tg-avatar-svg">
-                            <svg viewBox="0 0 24 24" width="35" height="35">
-                                <circle cx="12" cy="8" r="4" fill="#FF5500" stroke="#FF5500" stroke-width="2"/>
-                                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" fill="#FF5500" stroke="#FF5500" stroke-width="2"/>
-                            </svg>
+                <!-- Карточка соединения (того же размера что и свайп) -->
+                <div class="swipe-container" id="connectionContainer">
+                    <div class="swipe-card connection-card" id="connectionCard">
+                        <!-- Таймер в левом верхнем углу -->
+                        <div class="connection-timer-top" id="connectionTimer">⏳ 30с</div>
+                        
+                        <div class="swipe-card-content connection-mode">
+                            <!-- Аватарки -->
+                            <div class="connection-avatars">
+                                <!-- Твоя аватарка (яркая) -->
+                                <div class="connection-avatar self-avatar">
+                                    <div class="tg-avatar-svg">
+                                        <svg viewBox="0 0 24 24" width="35" height="35">
+                                            <circle cx="12" cy="8" r="4" fill="#FF5500" stroke="#FF5500" stroke-width="2"/>
+                                            <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" fill="#FF5500" stroke="#FF5500" stroke-width="2"/>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Линия соединения с анимацией -->
+                                <div class="connection-line-animated" id="connectionLine">
+                                    <div class="line-pulse"></div>
+                                </div>
+
+                                <!-- Аватарка тиммейта (уменьшенная) -->
+                                <div class="connection-avatar teammate-avatar-small" id="teammateAvatar">
+                                    <div class="tg-avatar-svg">
+                                        <svg viewBox="0 0 24 24" width="30" height="30">
+                                            <circle cx="12" cy="8" r="4" stroke="#9BA1B0" stroke-width="2" fill="none"/>
+                                            <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#9BA1B0" stroke-width="2" fill="none"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Статус -->
+                            <div class="connection-status" id="connectionStatus">
+                                <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10" stroke="#9BA1B0" stroke-width="2"/>
+                                    <path d="M12 8v4l3 3" stroke="#9BA1B0" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                Ожидаем ответа тиммейта...
+                            </div>
+
+                            <!-- Информация о тиммейте -->
+                            <div class="teammate-info">
+                                <span class="teammate-nick" id="teammateNick">Player123</span>
+                                <span class="teammate-rating" id="teammateRating">
+                                    1500
+                                    <svg class="heart-icon-small" width="14" height="14" viewBox="0 0 24 24">
+                                        <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#FF5500" stroke-width="2" fill="none"/>
+                                    </svg>
+                                </span>
+                            </div>
+
+                            <!-- Дополнительная информация (опционально) -->
+                            <div class="connection-rank-age">
+                                <span class="connection-rank" id="connectionRank">Gold Nova 3</span>
+                                <span class="connection-age" id="connectionAge">21 год</span>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- Линия соединения -->
-                    <div class="connection-line" id="connectionLine">
-                        <div class="line-pulse"></div>
-                    </div>
-
-                    <!-- Аватарка тиммейта (серая, уменьшенная) -->
-                    <div class="connection-avatar teammate-avatar" id="teammateAvatar">
-                        <div class="tg-avatar-svg" style="opacity: 0.6;">
-                            <svg viewBox="0 0 24 24" width="30" height="30">
-                                <circle cx="12" cy="8" r="4" stroke="#9BA1B0" stroke-width="2" fill="none"/>
-                                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#9BA1B0" stroke-width="2" fill="none"/>
-                            </svg>
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Статус -->
-                <div class="connection-status" id="connectionStatus">
-                    Ожидаем ответа тиммейта...
+                <!-- Индикатор загрузки (скрыт по умолчанию) -->
+                <div class="swipe-loading" id="connectionLoading">
+                    <div class="spinner-small"></div>
                 </div>
-
-                <!-- Информация о тиммейте -->
-                <div class="teammate-info">
-                    <span class="teammate-nick" id="teammateNick">Player123</span>
-                    <span class="teammate-rating" id="teammateRating">1500 ❤️</span>
-                </div>
-
-                <!-- Таймер -->
-                <div class="connection-timer" id="connectionTimer">⏳ 30с</div>
             </div>
 
             <!-- ЭКРАН НАСТРОЕК -->
@@ -728,17 +740,17 @@
     </div>
 
     <!-- ТВОИ JS ФАЙЛЫ С ВЕРСИОНИРОВАНИЕМ -->
-    <script src="js/config.js?v=20260306"></script>
-    <script src="js/globals.js?v=20260306"></script>
-    <script src="js/navigation.js?v=20260306"></script>
-    <script src="js/profile.js?v=20260306"></script>
-    <script src="js/avatar.js?v=20260306"></script>
-    <script src="js/friends.js?v=20260306"></script>
-    <script src="js/shop.js?v=20260306"></script>
-    <script src="js/search.js?v=20260306"></script>
-    <script src="js/logo.js?v=20260306"></script>
-    <script src="js/app.js?v=20260306"></script>
-    <script src="js/team.js?v=20260306"></script>
-    <script src="js/swipe.js?v=20260306"></script>
+    <script src="js/config.js?v=20260307"></script>
+    <script src="js/globals.js?v=20260307"></script>
+    <script src="js/navigation.js?v=20260307"></script>
+    <script src="js/profile.js?v=20260307"></script>
+    <script src="js/avatar.js?v=20260307"></script>
+    <script src="js/friends.js?v=20260307"></script>
+    <script src="js/shop.js?v=20260307"></script>
+    <script src="js/search.js?v=20260307"></script>
+    <script src="js/logo.js?v=20260307"></script>
+    <script src="js/app.js?v=20260307"></script>
+    <script src="js/team.js?v=20260307"></script>
+    <script src="js/swipe.js?v=20260307"></script>
 </body>
 </html>
