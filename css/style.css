@@ -36,7 +36,7 @@ body {
 .phone-frame {
     position: relative;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     max-width: 1000px;
     margin: 0 auto;
     background: #111317;
@@ -50,15 +50,14 @@ body {
     border: 1px solid rgba(245, 245, 245, 0.05);
 }
 
-/* ===== СКРОЛЛИРУЕМЫЙ КОНТЕНТ ===== */
+/* ===== СКРОЛЛИРУЕМЫЙ КОНТЕНТ - ИСПРАВЛЕНО ===== */
 .content {
     flex: 1;
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
+    min-height: 0;
+    overflow: hidden;
     position: relative;
     -webkit-overflow-scrolling: touch;
 }
@@ -278,7 +277,30 @@ body {
     flex: 1;
     width: 100%;
     min-height: 0;
-    height: 100%;
+    height: auto;
+}
+
+/* ===== ЭКРАНЫ С ПРОКРУТКОЙ ===== */
+.main-screen,
+.shop-screen,
+.profile-screen,
+.settings-screen,
+.faceit-screen,
+.premier-screen,
+.prime-screen,
+.public-screen,
+.search-screen,
+.start-screen,
+.friends-screen,
+.team-screen,
+.match-found-screen {
+    overflow-y: auto;
+}
+
+/* ===== ЭКРАН СВАЙПА БЕЗ ПРОКРУТКИ ===== */
+.swipe-screen,
+.connection-screen {
+    overflow-y: hidden;
 }
 
 /* ===== СТАРТОВЫЙ ЭКРАН ===== */
@@ -427,14 +449,14 @@ body:has(.connection-screen.active) .bottom-nav {
     width: 100%;
     flex: 1;
     min-height: 0;
-    height: 100%;
+    height: auto;
 }
 
 .screen.active {
     display: flex;
     flex-direction: column;
     flex: 1;
-    height: 100%;
+    height: auto;
 }
 
 /* ===== ГЛАВНЫЙ ЭКРАН ===== */
@@ -444,7 +466,7 @@ body:has(.connection-screen.active) .bottom-nav {
     flex-direction: column;
     flex: 1;
     min-height: 0;
-    height: 100%;
+    height: auto;
 }
 
 .main-screen .section-title {
@@ -522,7 +544,7 @@ body:has(.connection-screen.active) .bottom-nav {
     flex-direction: column;
     flex: 1;
     min-height: 0;
-    height: 100%;
+    height: auto;
 }
 
 .shop-screen .section-title {
@@ -714,7 +736,7 @@ body:has(.connection-screen.active) .bottom-nav {
     flex-direction: column;
     flex: 1;
     min-height: 0;
-    height: 100%;
+    height: auto;
 }
 
 .profile-screen .section-title {
@@ -1082,7 +1104,7 @@ body:has(.connection-screen.active) .bottom-nav {
     flex-direction: column;
     flex: 1;
     min-height: 0;
-    height: 100%;
+    height: auto;
 }
 
 .team-header {
@@ -1264,7 +1286,7 @@ body:has(.connection-screen.active) .bottom-nav {
     flex-direction: column;
     flex: 1;
     min-height: 0;
-    height: 100%;
+    height: auto;
 }
 
 .friends-page-header {
@@ -1440,7 +1462,7 @@ body:has(.connection-screen.active) .bottom-nav {
     flex-direction: column;
     flex: 1;
     min-height: 0;
-    height: 100%;
+    height: auto;
 }
 
 .settings-screen .section-title {
@@ -1527,7 +1549,7 @@ input:checked + .slider:before {
     flex-direction: column;
     flex: 1;
     min-height: 0;
-    height: 100%;
+    height: auto;
 }
 
 .mode-header {
@@ -1748,7 +1770,7 @@ input:checked + .slider:before {
     flex-direction: column;
     flex: 1;
     min-height: 0;
-    height: 100%;
+    height: auto;
 }
 
 .search-header {
@@ -1999,6 +2021,8 @@ input:-webkit-autofill:active {
     flex: 1;
     display: flex;
     flex-direction: column;
+    min-height: 0;
+    overflow-y: hidden;
 }
 
 .swipe-container {
@@ -2008,6 +2032,7 @@ input:-webkit-autofill:active {
     justify-content: center;
     margin: 0;
     padding: 0;
+    min-height: 0;
 }
 
 .swipe-card {
@@ -2399,136 +2424,6 @@ input:-webkit-autofill:active {
     justify-content: center;
     gap: 8px;
     text-align: center;
-    font-size: 16px;
-    color: #9BA1B0;
-    margin: 10px 0;
-    font-weight: 500;
-    letter-spacing: 0.3px;
-}
-
-.status-icon {
-    animation: rotate 2s linear infinite;
-}
-
-@keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* Информация о тиммейте в карточке */
-.teammate-info {
-    text-align: center;
-    margin: 10px 0;
-    font-size: 15px;
-}
-
-.teammate-nick {
-    color: #F5F5F5;
-    font-weight: 600;
-    margin-right: 10px;
-}
-
-.teammate-rating {
-    color: #FF5500;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.heart-icon-small {
-    animation: heartbeat 1.5s ease-in-out infinite;
-}
-
-@keyframes heartbeat {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-/* Таймер в карточке */
-.connection-timer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-align: center;
-    font-size: 18px;
-    color: #FF5500;
-    margin: 20px 0;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-
-.timer-icon {
-    animation: pulse 1s ease-in-out infinite;
-}
-
-/* Анимация отказа */
-.swipe-card.rejected .connection-line {
-    background: linear-gradient(90deg, #FF5500, #B00000);
-    animation: rejectPulse 0.5s ease;
-}
-
-.swipe-card.rejected .teammate-avatar {
-    opacity: 0;
-    transform: scale(0);
-    transition: all 0.3s ease;
-}
-
-.swipe-card.rejected .connection-status {
-    color: #B00000;
-}
-
-@keyframes rejectPulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
-
-/* Адаптивность */
-@media (max-width: 400px) {
-    .swipe-card {
-        padding: 16px 14px;
-    }
-    
-    .swipe-avatar,
-    .swipe-avatar .tg-avatar-svg {
-        width: 60px;
-        height: 60px;
-    }
-    
-    .swipe-avatar .tg-avatar-svg svg {
-        width: 30px;
-        height: 30px;
-    }
-    
-    .swipe-player-nick {
-        font-size: 18px;
-    }
-    
-    .swipe-rating-value {
-        font-size: 18px;
-    }
-    
-    .connection-line {
-        width: 60px;
-    }
-    
-    @keyframes pulse {
-        0% { transform: translateX(0) scale(1); opacity: 1; }
-        50% { transform: translateX(50px) scale(1.5); opacity: 0.5; }
-        100% { transform: translateX(0) scale(1); opacity: 1; }
-    }
-}
-
-/* Статус в карточке */
-.connection-status {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-align: center;
     font-size: clamp(14px, 4vw, 16px);
     color: #9BA1B0;
     margin: 10px 0;
@@ -2616,8 +2511,31 @@ input:-webkit-autofill:active {
     100% { opacity: 1; }
 }
 
-/* Убираем старые медиа-запросы - они больше не нужны */
+/* Адаптивность */
 @media (max-width: 400px) {
+    .swipe-card {
+        padding: 16px 14px;
+    }
+    
+    .swipe-avatar,
+    .swipe-avatar .tg-avatar-svg {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .swipe-avatar .tg-avatar-svg svg {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .swipe-player-nick {
+        font-size: 18px;
+    }
+    
+    .swipe-rating-value {
+        font-size: 18px;
+    }
+    
     .connection-line {
         width: 60px;
     }
@@ -2628,5 +2546,3 @@ input:-webkit-autofill:active {
         100% { transform: translateX(0) scale(1); opacity: 1; }
     }
 }
-
-
