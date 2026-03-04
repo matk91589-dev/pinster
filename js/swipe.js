@@ -19,10 +19,10 @@ const Swipe = {
     
     // Константы
     SWIPE_THRESHOLD: 0.25, // 25% ширины экрана
-    MAX_ROTATE: 6, // УМЕНЬШИЛИ с 8 до 6 градусов
+    MAX_ROTATE: 6,
     ANIMATION_DURATION: 250,
     AUTO_COMPLETE_DURATION: 300,
-    MIN_THRESHOLD_PX: 150, // минимальный порог в пикселях
+    MIN_THRESHOLD_PX: 150,
     
     // Данные
     currentPlayer: null,
@@ -66,12 +66,23 @@ const Swipe = {
     },
     
     setupEventListeners() {
+        // Запрещаем скролл страницы при свайпе
+        document.body.addEventListener('touchmove', this.preventDefaultScroll, { passive: false });
+        document.body.addEventListener('mousewheel', this.preventDefaultScroll, { passive: false });
+        
         this.card.addEventListener('pointerdown', this.onDragStart.bind(this));
         this.card.addEventListener('pointermove', this.onDragMove.bind(this));
         this.card.addEventListener('pointerup', this.onDragEnd.bind(this));
         this.card.addEventListener('pointercancel', this.onDragEnd.bind(this));
         this.card.addEventListener('dragstart', (e) => e.preventDefault());
         console.log('✅ Обработчики событий установлены');
+    },
+    
+    // Запрет скролла страницы
+    preventDefaultScroll(e) {
+        if (Swipe.isDragging) {
+            e.preventDefault();
+        }
     },
     
     // Унифицированное получение координат для ПК и мобильных
@@ -133,33 +144,32 @@ const Swipe = {
         
         this.isDragging = false;
         this.card.style.cursor = 'grab';
-        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.25, 0.8, 0.25, 1)`;
         
         const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
         
         if (Math.abs(this.currentX) > threshold) {
-            // АВТОДОВОДКА - УМЕНЬШИЛИ УГОЛ с 12 до 8 градусов
-            this.autoComplete = true;
+            // АВТОДОВОДКА
+            this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.25, 0.8, 0.25, 1)`;
             
             if (this.currentX > 0) {
                 this.card.style.transform = `translateX(200%) rotate(8deg) scale(1)`;
                 setTimeout(() => {
-                    this.autoComplete = false;
                     this.acceptPlayer();
                 }, this.ANIMATION_DURATION);
             } else {
                 this.card.style.transform = `translateX(-200%) rotate(-8deg) scale(1)`;
                 setTimeout(() => {
-                    this.autoComplete = false;
                     this.rejectPlayer();
                 }, this.ANIMATION_DURATION);
             }
         } else {
+            // Возврат в исходное положение
             this.resetCardPosition();
         }
     },
     
     resetCardPosition() {
+        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.25, 0.8, 0.25, 1)`;
         this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
         this.currentX = 0;
         
@@ -179,6 +189,7 @@ const Swipe = {
         this.currentMatchId = Math.floor(100000 + Math.random() * 900000);
         
         // Плавное исчезновение старого контента
+        this.card.style.transition = 'opacity 0.2s ease';
         this.card.style.opacity = '0';
         
         setTimeout(() => {
@@ -326,11 +337,16 @@ const Swipe = {
         if (this.labelRight) this.labelRight.style.display = 'block';
         if (this.hint) this.hint.style.display = 'block';
         
+        this.card.style.transition = 'opacity 0.2s ease';
         this.card.style.opacity = '0';
         
         setTimeout(() => {
             this.card.innerHTML = this.getOriginalCardHTML();
+            this.card.style.transition = 'opacity 0.2s ease';
             this.card.style.opacity = '1';
+            setTimeout(() => {
+                this.card.style.transition = 'none';
+            }, 200);
         }, 200);
     },
     
@@ -633,6 +649,10 @@ const Swipe = {
     },
     
     destroy() {
+        // Убираем обработчики скролла
+        document.body.removeEventListener('touchmove', this.preventDefaultScroll);
+        document.body.removeEventListener('mousewheel', this.preventDefaultScroll);
+        
         if (this.card) {
             this.card.removeEventListener('pointerdown', this.onDragStart);
             this.card.removeEventListener('pointermove', this.onDragMove);
