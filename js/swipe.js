@@ -50,6 +50,9 @@ const Swipe = {
             return;
         }
         
+        // Жестко блокируем скролл на весь экран свайпа
+        this.blockScroll();
+        
         // Показываем подсказку
         this.showHintOnce();
         
@@ -65,11 +68,46 @@ const Swipe = {
         console.log('✅ Swipe инициализирован');
     },
     
-    setupEventListeners() {
-        // Запрещаем скролл страницы при свайпе
-        document.body.addEventListener('touchmove', this.preventDefaultScroll, { passive: false });
-        document.body.addEventListener('mousewheel', this.preventDefaultScroll, { passive: false });
+    // Полная блокировка скролла
+    blockScroll() {
+        // Блокируем на body
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+        document.body.style.height = '100%';
+        document.body.style.touchAction = 'none';
         
+        // Блокируем на контейнере
+        if (this.container) {
+            this.container.style.overflow = 'hidden';
+            this.container.style.touchAction = 'none';
+        }
+        
+        // Глобальные обработчики
+        window.addEventListener('scroll', this.preventDefaultScroll, { passive: false });
+        document.addEventListener('touchmove', this.preventDefaultScroll, { passive: false });
+        document.addEventListener('mousewheel', this.preventDefaultScroll, { passive: false });
+    },
+    
+    // Восстановление скролла
+    unblockScroll() {
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.height = '';
+        document.body.style.touchAction = '';
+        
+        if (this.container) {
+            this.container.style.overflow = '';
+            this.container.style.touchAction = '';
+        }
+        
+        window.removeEventListener('scroll', this.preventDefaultScroll);
+        document.removeEventListener('touchmove', this.preventDefaultScroll);
+        document.removeEventListener('mousewheel', this.preventDefaultScroll);
+    },
+    
+    setupEventListeners() {
         this.card.addEventListener('pointerdown', this.onDragStart.bind(this));
         this.card.addEventListener('pointermove', this.onDragMove.bind(this));
         this.card.addEventListener('pointerup', this.onDragEnd.bind(this));
@@ -78,14 +116,13 @@ const Swipe = {
         console.log('✅ Обработчики событий установлены');
     },
     
-    // Запрет скролла страницы
-    preventDefaultScroll(e) {
-        if (Swipe.isDragging) {
-            e.preventDefault();
-        }
+    // Запрет скролла
+    preventScroll(e) {
+        e.preventDefault();
+        return false;
     },
     
-    // Унифицированное получение координат для ПК и мобильных
+    // Унифицированное получение координат
     getClientX(e) {
         return e.clientX ?? e.touches?.[0]?.clientX;
     },
@@ -109,6 +146,7 @@ const Swipe = {
         if (!this.isDragging || this.isConnectionMode) return;
         
         e.preventDefault();
+        e.stopPropagation();
         
         const clientX = this.getClientX(e);
         if (!clientX) return;
@@ -119,7 +157,6 @@ const Swipe = {
         const maxDistance = window.innerWidth * 0.5;
         this.currentX = Math.max(-maxDistance, Math.min(maxDistance, this.currentX));
         
-        // Динамический порог
         const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
         const progress = Math.min(Math.abs(this.currentX) / threshold, 1);
         const rotate = (this.currentX / maxDistance) * this.MAX_ROTATE;
@@ -148,7 +185,6 @@ const Swipe = {
         const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
         
         if (Math.abs(this.currentX) > threshold) {
-            // АВТОДОВОДКА
             this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.25, 0.8, 0.25, 1)`;
             
             if (this.currentX > 0) {
@@ -163,9 +199,10 @@ const Swipe = {
                 }, this.ANIMATION_DURATION);
             }
         } else {
-            // Возврат в исходное положение
             this.resetCardPosition();
         }
+        
+        e.preventDefault();
     },
     
     resetCardPosition() {
@@ -188,7 +225,6 @@ const Swipe = {
         
         this.currentMatchId = Math.floor(100000 + Math.random() * 900000);
         
-        // Плавное исчезновение старого контента
         this.card.style.transition = 'opacity 0.2s ease';
         this.card.style.opacity = '0';
         
@@ -234,20 +270,16 @@ const Swipe = {
     showConnectionMode() {
         this.isConnectionMode = true;
         
-        // Прячем лейблы
         if (this.labelLeft) this.labelLeft.style.display = 'none';
         if (this.labelRight) this.labelRight.style.display = 'none';
         if (this.hint) this.hint.style.display = 'none';
         
-        // Возвращаем карточку в центр
         this.card.style.transition = 'none';
         this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
         this.card.style.opacity = '1';
         
-        // Меняем содержимое с анимацией появления
         this.card.innerHTML = this.getConnectionHTML();
         
-        // Анимация появления аватарок
         const avatars = this.card.querySelectorAll('.connection-avatar');
         avatars.forEach((avatar, index) => {
             avatar.style.opacity = '0';
@@ -641,6 +673,9 @@ const Swipe = {
         this.playersQueue = [];
         this.isConnectionMode = false;
         
+        // Блокируем скролл при старте
+        this.blockScroll();
+        
         if (this.card) {
             this.loadNextPlayer();
         } else {
@@ -649,9 +684,8 @@ const Swipe = {
     },
     
     destroy() {
-        // Убираем обработчики скролла
-        document.body.removeEventListener('touchmove', this.preventDefaultScroll);
-        document.body.removeEventListener('mousewheel', this.preventDefaultScroll);
+        // Восстанавливаем скролл
+        this.unblockScroll();
         
         if (this.card) {
             this.card.removeEventListener('pointerdown', this.onDragStart);
