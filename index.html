@@ -396,9 +396,11 @@
 
                 <!-- Карточка соединения (того же размера что и свайп) -->
                 <div class="swipe-container" id="connectionContainer">
-                    <div class="swipe-card connection-card" id="connectionCard">
+                    <div class="swipe-card" id="connectionCard">
                         <!-- Таймер в левом верхнем углу -->
-                        <div class="connection-timer-top" id="connectionTimer">⏳ 30с</div>
+                        <div class="connection-timer" id="connectionTimer">
+                            <span class="timer-icon">⏳</span> 30с
+                        </div>
                         
                         <div class="swipe-card-content connection-mode">
                             <!-- Аватарки -->
@@ -414,12 +416,12 @@
                                 </div>
 
                                 <!-- Линия соединения с анимацией -->
-                                <div class="connection-line-animated" id="connectionLine">
+                                <div class="connection-line">
                                     <div class="line-pulse"></div>
                                 </div>
 
                                 <!-- Аватарка тиммейта (уменьшенная) -->
-                                <div class="connection-avatar teammate-avatar-small" id="teammateAvatar">
+                                <div class="connection-avatar teammate-avatar">
                                     <div class="tg-avatar-svg">
                                         <svg viewBox="0 0 24 24" width="30" height="30">
                                             <circle cx="12" cy="8" r="4" stroke="#9BA1B0" stroke-width="2" fill="none"/>
@@ -429,13 +431,13 @@
                                 </div>
                             </div>
 
-                            <!-- Статус -->
+                            <!-- Статус (теперь "Тиммейт найден") -->
                             <div class="connection-status" id="connectionStatus">
                                 <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                                     <circle cx="12" cy="12" r="10" stroke="#9BA1B0" stroke-width="2"/>
                                     <path d="M12 8v4l3 3" stroke="#9BA1B0" stroke-width="2" stroke-linecap="round"/>
                                 </svg>
-                                Ожидаем ответа тиммейта...
+                                Тиммейт найден
                             </div>
 
                             <!-- Информация о тиммейте -->
@@ -449,7 +451,7 @@
                                 </span>
                             </div>
 
-                            <!-- Дополнительная информация (опционально) -->
+                            <!-- Дополнительная информация -->
                             <div class="connection-rank-age">
                                 <span class="connection-rank" id="connectionRank">Gold Nova 3</span>
                                 <span class="connection-age" id="connectionAge">21 год</span>
