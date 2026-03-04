@@ -2380,10 +2380,10 @@ input:-webkit-autofill:active {
     stroke: #FF5500;
 }
 
-/* --- Уменьшенный аватар тиммейта (по умолчанию) --- */
+/* Уменьшенный аватар тиммейта (по умолчанию) */
 .teammate-avatar .tg-avatar-svg {
-    width: 50px; /* Уменьшили с 70px до 50px */
-    height: 50px; /* Уменьшили с 70px до 50px */
+    width: 50px;
+    height: 50px;
     background: #2B2F36;
     border: 2px solid #4A4F5A;
     border-radius: 50%;
@@ -2400,8 +2400,8 @@ input:-webkit-autofill:active {
 
 /* Активное состояние (оба приняли) - тиммейт снова увеличивается */
 .swipe-card.both-accepted .teammate-avatar .tg-avatar-svg {
-    width: 70px; /* Возвращаем к исходному размеру */
-    height: 70px; /* Возвращаем к исходному размеру */
+    width: 70px;
+    height: 70px;
     border-color: #4CAF50;
 }
 
@@ -2431,10 +2431,10 @@ input:-webkit-autofill:active {
     background: linear-gradient(90deg, #FF5500, #9BA1B0);
     position: relative;
     border-radius: 2px;
-    overflow: hidden; /* Чтобы шарик не выходил за границы при анимации */
+    overflow: hidden;
 }
 
-/* Анимированный шарик на линии */
+/* Анимированный шарик на линии (бегает туда-сюда) */
 .line-pulse {
     position: absolute;
     top: -4px;
@@ -2442,13 +2442,13 @@ input:-webkit-autofill:active {
     height: 10px;
     background: #FF5500;
     border-radius: 50%;
-    animation: moveAlongLine 1.8s ease-in-out infinite; /* Бегает туда-сюда */
+    animation: moveAlongLine 1.8s ease-in-out infinite;
 }
 
 @keyframes moveAlongLine {
     0% { transform: translateX(0) scale(1); opacity: 1; left: 0; }
-    50% { transform: translateX(70px) scale(1.2); opacity: 0.7; left: 0; } /* Сдвигаем вправо */
-    100% { transform: translateX(0) scale(1); opacity: 1; left: 0; } /* Возвращаем обратно */
+    50% { transform: translateX(70px) scale(1.2); opacity: 0.7; left: 0; }
+    100% { transform: translateX(0) scale(1); opacity: 1; left: 0; }
 }
 
 /* Статус в карточке */
@@ -2508,8 +2508,8 @@ input:-webkit-autofill:active {
 /* Таймер в левом верхнем углу карточки */
 .connection-timer {
     position: absolute;
-    top: 10px;      /* Отступ сверху */
-    left: 18px;     /* Отступ слева */
+    top: 10px;
+    left: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2518,15 +2518,32 @@ input:-webkit-autofill:active {
     color: #FF5500;
     font-weight: 700;
     letter-spacing: 0.5px;
-    background: rgba(0,0,0,0.3); /* Легкий фон для читаемости */
+    background: rgba(0,0,0,0.3);
     padding: 4px 8px;
     border-radius: 20px;
     backdrop-filter: blur(2px);
-    z-index: 15; /* Чтобы был поверх других элементов */
+    z-index: 15;
 }
 
 .timer-icon {
     animation: pulse 1s ease-in-out infinite;
+}
+
+/* Дополнительная информация */
+.connection-rank-age {
+    display: flex;
+    gap: 15px;
+    margin-top: 5px;
+    font-size: 13px;
+    color: #9BA1B0;
+}
+
+.connection-rank,
+.connection-age {
+    background: rgba(255,85,0,0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,85,0,0.3);
 }
 
 /* Анимация отказа */
