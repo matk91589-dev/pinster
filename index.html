@@ -309,17 +309,16 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН СВАЙП-КАРТОЧЕК -->
+            <!-- ЭКРАН СВАЙП-КАРТОЧЕК (ОБНОВЛЕННЫЙ) -->
             <div id="swipeScreen" class="screen swipe-screen">
-                <!-- Хедер экрана -->
-                <div class="mode-header" style="justify-content: center; margin-bottom: 10px;">
-                    <div class="mode-title faceit" style="position: static; margin: 0;">ПОИСК ТИММЕЙТА</div>
-                </div>
-                <div class="mode-subtitle" style="margin-bottom: 20px;">← отклонить | принять →</div>
-
-                <!-- Подсказка (показывается только один раз) -->
-                <div class="swipe-hint" id="swipeHint">
-                    Свайп вправо — пригласить · влево — пропустить
+                <!-- Хедер с заголовком и подсказкой -->
+                <div class="swipe-header">
+                    <div class="swipe-title">Поиск тиммейтов</div>
+                    <div class="swipe-subtitle">
+                        <span class="swipe-subtitle-left">← отклонить</span>
+                        <span class="swipe-subtitle-divider">|</span>
+                        <span class="swipe-subtitle-right">принять →</span>
+                    </div>
                 </div>
 
                 <!-- Контейнер для карточек -->
@@ -743,4 +742,3 @@
     <script src="js/swipe.js?v=20260306"></script>
 </body>
 </html>
-
