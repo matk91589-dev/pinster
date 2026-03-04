@@ -19,7 +19,7 @@ const Swipe = {
     
     // Константы
     SWIPE_THRESHOLD: 0.25, // 25% ширины экрана
-    MAX_ROTATE: 8,
+    MAX_ROTATE: 6, // УМЕНЬШИЛИ с 8 до 6 градусов
     ANIMATION_DURATION: 250,
     AUTO_COMPLETE_DURATION: 300,
     MIN_THRESHOLD_PX: 150, // минимальный порог в пикселях
@@ -138,17 +138,17 @@ const Swipe = {
         const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
         
         if (Math.abs(this.currentX) > threshold) {
-            // АВТОДОВОДКА
+            // АВТОДОВОДКА - УМЕНЬШИЛИ УГОЛ с 12 до 8 градусов
             this.autoComplete = true;
             
             if (this.currentX > 0) {
-                this.card.style.transform = `translateX(200%) rotate(12deg) scale(1)`;
+                this.card.style.transform = `translateX(200%) rotate(8deg) scale(1)`;
                 setTimeout(() => {
                     this.autoComplete = false;
                     this.acceptPlayer();
                 }, this.ANIMATION_DURATION);
             } else {
-                this.card.style.transform = `translateX(-200%) rotate(-12deg) scale(1)`;
+                this.card.style.transform = `translateX(-200%) rotate(-8deg) scale(1)`;
                 setTimeout(() => {
                     this.autoComplete = false;
                     this.rejectPlayer();
