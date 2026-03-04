@@ -2340,14 +2340,26 @@ input:-webkit-autofill:active {
     background-color: rgba(200, 60, 60, 0.05);
 }
 
-/* ===== ЭКРАН СОЕДИНЕНИЯ (В КАРТОЧКЕ) ===== */
+/* ===== ЭКРАН СОЕДИНЕНИЯ - ИСПРАВЛЕННАЯ ВЕРСИЯ ===== */
+.connection-screen .swipe-card {
+    width: min(90%, 380px);
+    margin: 0 auto;
+    background: #1A1D24;
+    border-radius: 20px;
+    padding: 20px 18px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border: 1px solid #2A2F3A;
+    position: relative;
+    z-index: 10;
+}
+
 .connection-mode {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 400px;
-    padding: 20px 0;
+    gap: 16px;
+    width: 100%;
 }
 
 .connection-avatars {
@@ -2355,7 +2367,7 @@ input:-webkit-autofill:active {
     align-items: center;
     justify-content: center;
     gap: 25px;
-    margin: 20px 0 30px 0;
+    margin: 5px 0 10px 0;
 }
 
 .connection-avatar {
@@ -2380,7 +2392,7 @@ input:-webkit-autofill:active {
     stroke: #FF5500;
 }
 
-/* Уменьшенный аватар тиммейта (по умолчанию) */
+/* Уменьшенный аватар тиммейта */
 .teammate-avatar .tg-avatar-svg {
     width: 50px;
     height: 50px;
@@ -2398,32 +2410,6 @@ input:-webkit-autofill:active {
     stroke: #9BA1B0;
 }
 
-/* Активное состояние (оба приняли) - тиммейт снова увеличивается */
-.swipe-card.both-accepted .teammate-avatar .tg-avatar-svg {
-    width: 70px;
-    height: 70px;
-    border-color: #4CAF50;
-}
-
-.swipe-card.both-accepted .teammate-avatar .tg-avatar-svg svg circle,
-.swipe-card.both-accepted .teammate-avatar .tg-avatar-svg svg path {
-    stroke: #4CAF50;
-    fill: #4CAF50;
-}
-
-.swipe-card.both-accepted .self-avatar .tg-avatar-svg {
-    border-color: #4CAF50;
-}
-
-.swipe-card.both-accepted .connection-line {
-    background: linear-gradient(90deg, #FF5500, #4CAF50);
-}
-
-.swipe-card.both-accepted .line-pulse {
-    background: #4CAF50;
-    box-shadow: 0 0 10px #4CAF50;
-}
-
 /* Линия соединения */
 .connection-line {
     width: 80px;
@@ -2434,7 +2420,7 @@ input:-webkit-autofill:active {
     overflow: hidden;
 }
 
-/* Анимированный шарик на линии (бегает туда-сюда) */
+/* Анимированный шарик */
 .line-pulse {
     position: absolute;
     top: -4px;
@@ -2451,7 +2437,7 @@ input:-webkit-autofill:active {
     100% { transform: translateX(0) scale(1); opacity: 1; left: 0; }
 }
 
-/* Статус в карточке */
+/* Статус */
 .connection-status {
     display: flex;
     align-items: center;
@@ -2460,9 +2446,8 @@ input:-webkit-autofill:active {
     text-align: center;
     font-size: clamp(14px, 4vw, 16px);
     color: #9BA1B0;
-    margin: 10px 0;
+    margin: 5px 0;
     font-weight: 500;
-    letter-spacing: 0.3px;
 }
 
 .status-icon {
@@ -2474,10 +2459,10 @@ input:-webkit-autofill:active {
     to { transform: rotate(360deg); }
 }
 
-/* Информация о тиммейте в карточке */
+/* Информация о тиммейте */
 .teammate-info {
     text-align: center;
-    margin: 10px 0;
+    margin: 5px 0;
     font-size: clamp(13px, 3.8vw, 15px);
 }
 
@@ -2505,7 +2490,7 @@ input:-webkit-autofill:active {
     100% { transform: scale(1); }
 }
 
-/* Таймер в левом верхнем углу карточки */
+/* Таймер в левом верхнем углу */
 .connection-timer {
     position: absolute;
     top: 10px;
@@ -2517,7 +2502,6 @@ input:-webkit-autofill:active {
     font-size: clamp(14px, 4vw, 16px);
     color: #FF5500;
     font-weight: 700;
-    letter-spacing: 0.5px;
     background: rgba(0,0,0,0.3);
     padding: 4px 8px;
     border-radius: 20px;
@@ -2544,6 +2528,32 @@ input:-webkit-autofill:active {
     padding: 4px 12px;
     border-radius: 20px;
     border: 1px solid rgba(255,85,0,0.3);
+}
+
+/* Активное состояние (оба приняли) */
+.swipe-card.both-accepted .teammate-avatar .tg-avatar-svg {
+    width: 70px;
+    height: 70px;
+    border-color: #4CAF50;
+}
+
+.swipe-card.both-accepted .teammate-avatar .tg-avatar-svg svg circle,
+.swipe-card.both-accepted .teammate-avatar .tg-avatar-svg svg path {
+    stroke: #4CAF50;
+    fill: #4CAF50;
+}
+
+.swipe-card.both-accepted .self-avatar .tg-avatar-svg {
+    border-color: #4CAF50;
+}
+
+.swipe-card.both-accepted .connection-line {
+    background: linear-gradient(90deg, #FF5500, #4CAF50);
+}
+
+.swipe-card.both-accepted .line-pulse {
+    background: #4CAF50;
+    box-shadow: 0 0 10px #4CAF50;
 }
 
 /* Анимация отказа */
@@ -2597,11 +2607,6 @@ input:-webkit-autofill:active {
         width: 60px;
     }
     
-    .swipe-subtitle {
-        gap: 10px;
-    }
-    
-    /* Корректируем анимацию шарика под меньшую ширину линии */
     @keyframes moveAlongLine {
         0% { transform: translateX(0) scale(1); opacity: 1; left: 0; }
         50% { transform: translateX(50px) scale(1.2); opacity: 0.7; left: 0; }
