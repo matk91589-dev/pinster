@@ -1994,7 +1994,7 @@ input:-webkit-autofill:active {
     transition: none;
 }
 
-/* ===== НОВЫЙ ЭКРАН СВАЙП-КАРТОЧЕК (ДИНАМИЧЕСКИЕ РАЗМЕРЫ) ===== */
+/* ===== НОВЫЙ ЭКРАН СВАЙП-КАРТОЧЕК ===== */
 .swipe-screen {
     padding: 0;
     display: flex;
@@ -2006,25 +2006,26 @@ input:-webkit-autofill:active {
     overflow: hidden;
 }
 
-/* Контейнер для карточки - идеальное центрирование */
+/* Контейнер для карточки - жесткое центрирование */
 .swipe-container {
     flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: center !important;
+    justify-content: center !important;
     position: relative;
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
     min-height: 0;
     height: 100%;
 }
 
-/* Карточка с динамическими размерами */
+/* Карточка - без единого отступа */
 .swipe-card {
     width: min(90%, 380px);
+    margin: 0 auto !important;
     background: #1A1D24;
-    border-radius: clamp(16px, 4vw, 20px);
-    padding: clamp(16px, 4vw, 20px) clamp(14px, 3.5vw, 18px);
+    border-radius: 20px;
+    padding: 20px 18px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
     border: 1px solid #2A2F3A;
     cursor: grab;
@@ -2033,7 +2034,6 @@ input:-webkit-autofill:active {
     touch-action: pan-y pinch-zoom;
     position: relative;
     z-index: 10;
-    margin: 0;
 }
 
 .swipe-card:active {
@@ -2512,3 +2512,4 @@ input:-webkit-autofill:active {
         100% { transform: translateX(0) scale(1); opacity: 1; }
     }
 }
+
