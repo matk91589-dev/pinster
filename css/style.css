@@ -2023,8 +2023,50 @@ input:-webkit-autofill:active {
     flex-direction: column;
     min-height: 0;
     overflow-y: hidden;
+    position: relative;
 }
 
+/* Хедер с заголовком и подсказкой */
+.swipe-header {
+    flex-shrink: 0;
+    padding: 10px 0 20px 0;
+    text-align: center;
+}
+
+.swipe-title {
+    font-size: clamp(20px, 6vw, 24px);
+    font-weight: 700;
+    color: #F5F5F5;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+}
+
+.swipe-subtitle {
+    font-size: clamp(13px, 3.5vw, 15px);
+    color: #9BA1B0;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.swipe-subtitle-left {
+    color: rgba(200, 60, 60, 0.9);
+    font-weight: 600;
+}
+
+.swipe-subtitle-right {
+    color: rgba(60, 180, 90, 0.9);
+    font-weight: 600;
+}
+
+.swipe-subtitle-divider {
+    color: #4A4F5A;
+    font-weight: 400;
+}
+
+/* Контейнер для карточки */
 .swipe-container {
     flex: 1;
     display: flex;
@@ -2055,7 +2097,7 @@ input:-webkit-autofill:active {
     cursor: grabbing;
 }
 
-/* Лейблы для свайпа */
+/* Лейблы для свайпа (оставляем для анимации) */
 .swipe-label {
     position: absolute;
     top: 20px;
@@ -2263,22 +2305,9 @@ input:-webkit-autofill:active {
     line-height: 1.5;
 }
 
-/* Подсказка */
+/* Подсказка (скрываем старую, будем использовать новую в хедере) */
 .swipe-hint {
-    text-align: center;
-    font-size: 13px;
-    color: #6C7483;
-    padding: 10px 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
-}
-
-.swipe-hint.fade-out {
-    opacity: 0;
+    display: none;
 }
 
 /* Индикатор загрузки */
@@ -2543,10 +2572,145 @@ input:-webkit-autofill:active {
         width: 60px;
     }
     
+    .swipe-subtitle {
+        gap: 10px;
+    }
+    
     @keyframes pulse {
         0% { transform: translateX(0) scale(1); opacity: 1; }
         50% { transform: translateX(50px) scale(1.5); opacity: 0.5; }
         100% { transform: translateX(0) scale(1); opacity: 1; }
     }
 }
+
+/* Статус в карточке */
+.connection-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    font-size: clamp(14px, 4vw, 16px);
+    color: #9BA1B0;
+    margin: 10px 0;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.status-icon {
+    animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Информация о тиммейте в карточке */
+.teammate-info {
+    text-align: center;
+    margin: 10px 0;
+    font-size: clamp(13px, 3.8vw, 15px);
+}
+
+.teammate-nick {
+    color: #F5F5F5;
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+.teammate-rating {
+    color: #FF5500;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.heart-icon-small {
+    animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Таймер в карточке */
+.connection-timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    font-size: clamp(16px, 5vw, 18px);
+    color: #FF5500;
+    margin: 20px 0;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.timer-icon {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+/* Анимация отказа */
+.swipe-card.rejected .connection-line {
+    background: linear-gradient(90deg, #FF5500, #B00000);
+    animation: rejectPulse 0.5s ease;
+}
+
+.swipe-card.rejected .teammate-avatar {
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+}
+
+.swipe-card.rejected .connection-status {
+    color: #B00000;
+}
+
+@keyframes rejectPulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* Адаптивность */
+@media (max-width: 400px) {
+    .swipe-card {
+        padding: 16px 14px;
+    }
+    
+    .swipe-avatar,
+    .swipe-avatar .tg-avatar-svg {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .swipe-avatar .tg-avatar-svg svg {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .swipe-player-nick {
+        font-size: 18px;
+    }
+    
+    .swipe-rating-value {
+        font-size: 18px;
+    }
+    
+    .connection-line {
+        width: 60px;
+    }
+    
+    @keyframes pulse {
+        0% { transform: translateX(0) scale(1); opacity: 1; }
+        50% { transform: translateX(50px) scale(1.5); opacity: 0.5; }
+        100% { transform: translateX(0) scale(1); opacity: 1; }
+    }
+}
+
 
