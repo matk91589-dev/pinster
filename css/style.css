@@ -2269,7 +2269,10 @@ input:-webkit-autofill:active {
     font-size: 13px;
     color: #6C7483;
     padding: 10px 0;
-    margin-bottom: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     opacity: 0.8;
     transition: opacity 0.3s ease;
 }
@@ -2546,3 +2549,4 @@ input:-webkit-autofill:active {
         100% { transform: translateX(0) scale(1); opacity: 1; }
     }
 }
+
