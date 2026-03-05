@@ -16,7 +16,6 @@ html, body {
     height: 100%;
     width: 100%;
     max-width: 100%;
-    overflow: hidden;
     margin: 0;
     padding: 0;
     background: #0D0F15;
@@ -27,7 +26,8 @@ html, body {
 
 body {
     display: block;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     overscroll-behavior-x: none;
     padding-bottom: env(safe-area-inset-bottom);
 }
@@ -36,7 +36,8 @@ body {
 .phone-frame {
     position: relative;
     width: 100%;
-    height: 100vh;
+    height: 100%;
+    min-height: 100vh;
     max-width: 1000px;
     margin: 0 auto;
     background: #111317;
@@ -57,9 +58,7 @@ body {
     flex-direction: column;
     width: 100%;
     min-height: 0;
-    overflow: hidden;
     position: relative;
-    -webkit-overflow-scrolling: touch;
 }
 
 /* ===== ХЕДЕР ===== */
@@ -256,28 +255,20 @@ body {
     text-align: center;
 }
 
-/* ===== ЕДИНАЯ СТРУКТУРА ДЛЯ ВСЕХ ЭКРАНОВ ===== */
-.main-screen,
-.shop-screen,
-.profile-screen,
-.settings-screen,
-.faceit-screen,
-.premier-screen,
-.prime-screen,
-.public-screen,
-.search-screen,
-.start-screen,
-.friends-screen,
-.team-screen,
-.match-found-screen,
-.swipe-screen,
-.connection-screen {
+/* ===== ЭКРАНЫ ===== */
+.screen {
+    display: none;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.screen.active {
     display: flex;
     flex-direction: column;
-    flex: 1;
-    width: 100%;
-    min-height: 0;
-    height: auto;
+    z-index: 2;
 }
 
 /* ===== ЭКРАНЫ С ПРОКРУТКОЙ ===== */
@@ -295,12 +286,14 @@ body {
 .team-screen,
 .match-found-screen {
     overflow-y: auto;
+    padding: 0;
 }
 
 /* ===== ЭКРАН СВАЙПА БЕЗ ПРОКРУТКИ ===== */
 .swipe-screen,
 .connection-screen {
     overflow-y: hidden;
+    padding: 0;
 }
 
 /* ===== СТАРТОВЫЙ ЭКРАН ===== */
@@ -389,22 +382,6 @@ body {
     flex-shrink: 0;
 }
 
-/* Скрываем навигацию на стартовом экране, экране поиска и экране команды */
-.start-screen.active ~ .bottom-nav,
-.search-screen.active ~ .bottom-nav,
-.team-screen.active ~ .bottom-nav,
-.match-found-screen.active ~ .bottom-nav,
-.swipe-screen.active ~ .bottom-nav,
-.connection-screen.active ~ .bottom-nav,
-body:has(.start-screen.active) .bottom-nav,
-body:has(.search-screen.active) .bottom-nav,
-body:has(.team-screen.active) .bottom-nav,
-body:has(.match-found-screen.active) .bottom-nav,
-body:has(.swipe-screen.active) .bottom-nav,
-body:has(.connection-screen.active) .bottom-nav {
-    display: none !important;
-}
-
 .nav-item {
     display: flex;
     flex-direction: column;
@@ -443,32 +420,7 @@ body:has(.connection-screen.active) .bottom-nav {
     color: #F5F5F5;
 }
 
-/* ===== ЭКРАНЫ ===== */
-.screen {
-    display: none;
-    width: 100%;
-    flex: 1;
-    min-height: 0;
-    height: auto;
-}
-
-.screen.active {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    height: auto;
-}
-
 /* ===== ГЛАВНЫЙ ЭКРАН ===== */
-.main-screen {
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-    height: auto;
-}
-
 .main-screen .section-title {
     margin: 5vh 0 0.5vh 0;
     flex-shrink: 0;
@@ -538,15 +490,6 @@ body:has(.connection-screen.active) .bottom-nav {
 }
 
 /* ===== МАГАЗИН ===== */
-.shop-screen {
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-    height: auto;
-}
-
 .shop-screen .section-title {
     margin: 0;
 }
@@ -730,15 +673,6 @@ body:has(.connection-screen.active) .bottom-nav {
 }
 
 /* ===== ПРОФИЛЬ ===== */
-.profile-screen {
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-    height: auto;
-}
-
 .profile-screen .section-title {
     margin: 0;
 }
@@ -1098,15 +1032,6 @@ body:has(.connection-screen.active) .bottom-nav {
 }
 
 /* ===== ЭКРАН КОМАНДА ===== */
-.team-screen {
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-    height: auto;
-}
-
 .team-header {
     display: flex;
     align-items: center;
@@ -1280,15 +1205,6 @@ body:has(.connection-screen.active) .bottom-nav {
 }
 
 /* ===== ЭКРАН ДРУЗЕЙ ===== */
-.friends-screen {
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-    height: auto;
-}
-
 .friends-page-header {
     display: flex;
     align-items: center;
@@ -1456,15 +1372,6 @@ body:has(.connection-screen.active) .bottom-nav {
 }
 
 /* ===== ЭКРАН НАСТРОЕК ===== */
-.settings-screen {
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-    height: auto;
-}
-
 .settings-screen .section-title {
     margin: 0 0 3vh 0;
 }
@@ -1540,18 +1447,6 @@ input:checked + .slider:before {
 }
 
 /* ===== ЭКРАНЫ РЕЖИМОВ ===== */
-.faceit-screen,
-.premier-screen,
-.prime-screen,
-.public-screen {
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-    height: auto;
-}
-
 .mode-header {
     display: flex;
     align-items: center;
@@ -1764,15 +1659,6 @@ input:checked + .slider:before {
 }
 
 /* ===== ЭКРАН ПОИСКА ===== */
-.search-screen {
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-    height: auto;
-}
-
 .search-header {
     display: flex;
     justify-content: space-between;
@@ -1855,16 +1741,6 @@ input:checked + .slider:before {
 /* =========================
    ЭКРАН СВАЙП-КАРТОЧЕК 
    ========================= */
-.swipe-screen {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    overflow-y: hidden;
-    position: relative;
-}
-
-/* Хедер с заголовком и подсказкой */
 .swipe-header {
     flex-shrink: 0;
     padding: 10px 0 20px 0;
@@ -1879,7 +1755,6 @@ input:checked + .slider:before {
     margin-bottom: 8px;
 }
 
-/* Подсказки для свайпа */
 .swipe-subtitle {
     font-size: clamp(13px, 3.5vw, 15px);
     color: #9BA1B0;
@@ -1905,7 +1780,6 @@ input:checked + .slider:before {
     font-weight: 400;
 }
 
-/* Контейнер для карточки */
 .swipe-container {
     flex: 1;
     display: flex;
@@ -1936,7 +1810,6 @@ input:checked + .slider:before {
     cursor: grabbing;
 }
 
-/* Лейблы для свайпа */
 .swipe-label {
     position: absolute;
     top: 24px;
@@ -1961,7 +1834,6 @@ input:checked + .slider:before {
     transform: rotate(5deg);
 }
 
-/* Контент карточки */
 .swipe-card-content {
     display: flex;
     flex-direction: column;
@@ -2041,7 +1913,6 @@ input:checked + .slider:before {
     stroke: #F5F5F5;
 }
 
-/* Тонкая линия под рейтингом */
 .swipe-rating-line {
     width: 100%;
     height: 1px;
@@ -2050,7 +1921,6 @@ input:checked + .slider:before {
     margin: 2px 0 8px 0;
 }
 
-/* Плашки ранга и возраста */
 .swipe-stats-row {
     display: flex;
     gap: 12px;
@@ -2087,7 +1957,6 @@ input:checked + .slider:before {
     text-overflow: ellipsis;
 }
 
-/* Ссылки */
 .swipe-steam-container,
 .swipe-faceit-container {
     margin: 0;
@@ -2116,7 +1985,6 @@ input:checked + .slider:before {
     text-overflow: ellipsis;
 }
 
-/* Комментарий */
 .swipe-comment {
     margin: 0;
 }
@@ -2144,7 +2012,6 @@ input:checked + .slider:before {
     line-height: 1.5;
 }
 
-/* Индикатор загрузки */
 .swipe-loading {
     display: none;
     align-items: center;
@@ -2165,7 +2032,6 @@ input:checked + .slider:before {
     display: flex;
 }
 
-/* Таймер на экране поиска */
 .search-timer-card {
     position: absolute;
     top: 12px;
@@ -2184,7 +2050,6 @@ input:checked + .slider:before {
     z-index: 15;
 }
 
-/* Цветовые эффекты при свайпе */
 .swipe-card.right-swipe {
     background-color: rgba(60, 180, 90, 0.05);
 }
@@ -2196,15 +2061,6 @@ input:checked + .slider:before {
 /* =========================
    ЭКРАН СОЕДИНЕНИЯ - 10/10 UX
    ========================= */
-.connection-screen {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    overflow-y: hidden;
-    position: relative;
-}
-
 .connection-screen .swipe-card {
     width: min(92%, 420px);
     margin: 0 auto;
@@ -2217,7 +2073,6 @@ input:checked + .slider:before {
     z-index: 10;
 }
 
-/* Анимация появления карточки */
 .connection-mode {
     animation: connectionAppear 0.4s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
 }
@@ -2233,7 +2088,6 @@ input:checked + .slider:before {
     }
 }
 
-/* Заголовок на экране соединения */
 .connection-screen .swipe-header {
     margin-bottom: 5px;
 }
@@ -2254,9 +2108,6 @@ input:checked + .slider:before {
     margin-top: 0;
 }
 
-/* =========================
-   AVATARS - УЛУЧШЕННЫЕ
-   ========================= */
 .connection-avatars {
     display: flex;
     align-items: center;
@@ -2267,7 +2118,6 @@ input:checked + .slider:before {
     position: relative;
 }
 
-/* Общий стиль аватаров */
 .connection-avatar {
     width: 72px;
     height: 72px;
@@ -2280,7 +2130,6 @@ input:checked + .slider:before {
     position: relative;
 }
 
-/* Твой аватар - с пульсацией */
 .self-avatar {
     border: 2px solid #FF5500;
     box-shadow: 0 0 0 0 rgba(255, 85, 0, 0.5);
@@ -2303,7 +2152,6 @@ input:checked + .slider:before {
     stroke: #FF5500;
 }
 
-/* Аватар тиммейта - по умолчанию меньше и с фильтром */
 .teammate-avatar {
     width: 56px;
     height: 56px;
@@ -2328,7 +2176,6 @@ input:checked + .slider:before {
     stroke: #9BA1B0;
 }
 
-/* Когда тиммейт принял */
 .teammate-avatar.connected {
     width: 72px;
     height: 72px;
@@ -2349,7 +2196,6 @@ input:checked + .slider:before {
     stroke: #FF5500;
 }
 
-/* Пульс твоего аватара */
 @keyframes selfPulse {
     0% {
         box-shadow: 0 0 0 0 rgba(255, 85, 0, 0.6);
@@ -2362,9 +2208,6 @@ input:checked + .slider:before {
     }
 }
 
-/* =========================
-   CONNECTION LINE - УЛУЧШЕННАЯ
-   ========================= */
 .connection-line-container {
     position: relative;
     width: 120px;
@@ -2383,7 +2226,6 @@ input:checked + .slider:before {
     overflow: hidden;
 }
 
-/* Линия ожидания - бегущий огонек */
 .line-pulse {
     position: absolute;
     height: 3px;
@@ -2406,7 +2248,6 @@ input:checked + .slider:before {
     }
 }
 
-/* Когда соединение произошло */
 .connection-line.connected {
     background: #FF5500;
     animation: lineFlash 0.6s ease;
@@ -2428,9 +2269,6 @@ input:checked + .slider:before {
     }
 }
 
-/* =========================
-   STATUS TEXT
-   ========================= */
 .connection-status {
     font-size: 15px;
     color: #9BA1B0;
@@ -2440,21 +2278,16 @@ input:checked + .slider:before {
     font-weight: 500;
 }
 
-/* Когда оба приняли */
 .both-accepted .connection-status {
     color: #FF5500;
     font-weight: 600;
     text-shadow: 0 0 8px rgba(255, 85, 0, 0.3);
 }
 
-/* Когда отказ */
 .rejected .connection-status {
     color: #FF3B30;
 }
 
-/* =========================
-   TEAMMATE INFO
-   ========================= */
 .teammate-info {
     display: flex;
     flex-direction: column;
@@ -2475,9 +2308,6 @@ input:checked + .slider:before {
     font-weight: 500;
 }
 
-/* =========================
-   TIMER
-   ========================= */
 .connection-timer {
     position: absolute;
     top: 12px;
@@ -2504,9 +2334,6 @@ input:checked + .slider:before {
     50% { opacity: 0.7; }
 }
 
-/* =========================
-   КНОПКИ ДЕЙСТВИЙ
-   ========================= */
 .connection-actions {
     display: flex;
     gap: 15px;
@@ -2561,7 +2388,6 @@ input:checked + .slider:before {
     transform: scale(0.97);
 }
 
-/* Эффект ряби при клике */
 .connection-btn::after {
     content: '';
     position: absolute;
@@ -2670,7 +2496,6 @@ input:-webkit-autofill:active {
     box-shadow: inset 0 0 20px 20px #1A1D24 !important;
 }
 
-/* Компактное поле для редактирования ника */
 .profile-name-row input[type="text"] {
     width: 100%;
     background: transparent;
@@ -2689,7 +2514,6 @@ input:-webkit-autofill:active {
     outline: none;
 }
 
-/* ===== ПУСТЫЕ СОСТОЯНИЯ ===== */
 .empty-friends {
     display: flex;
     flex-direction: column;
@@ -2708,7 +2532,6 @@ input:-webkit-autofill:active {
     color: #5D6472;
 }
 
-/* ===== TOAST УВЕДОМЛЕНИЯ ===== */
 .profile-toast {
     position: fixed;
     top: 20px;
@@ -2738,7 +2561,6 @@ input:-webkit-autofill:active {
     opacity: 1;
 }
 
-/* ===== СТИЛИ ДЛЯ ОШИБОК В ПРОФИЛЕ ===== */
 .stat-value.error,
 .profile-stat-value.error {
     border-color: #B00000 !important;
