@@ -1,5 +1,6 @@
 // ============================================
 // ПОИСК (Telegram Mini App версия) - 10/10 UX
+// ИСПРАВЛЕННАЯ ВЕРСИЯ
 // ============================================
 
 const Search = {
@@ -32,6 +33,11 @@ const Search = {
         }
     },
     
+    // Безопасное получение Telegram ID
+    getTelegramId() {
+        return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
+    },
+    
     setStyle(style, element) {
         const parent = element.parentElement;
         const options = parent.querySelectorAll('.style-option');
@@ -49,7 +55,6 @@ const Search = {
         // Проверяем не заблокирован ли поиск
         if (this.blockUntil && Date.now() < this.blockUntil) {
             const waitSeconds = Math.ceil((this.blockUntil - Date.now()) / 1000);
-            // Вместо alert - просто показываем на экране поиска
             const statusEl = document.getElementById('searchStatus');
             if (statusEl) {
                 statusEl.textContent = `⏳ Подождите ${waitSeconds} сек`;
@@ -62,6 +67,9 @@ const Search = {
         this.waitingForPartner = false;
         this.myResponse = null;
         this.isSearching = true;
+        
+        // Очищаем processedMatchIds при новом поиске
+        this.processedMatchIds.clear();
         
         // Сохраняем текущий режим
         this.currentMode = mode;
@@ -119,16 +127,27 @@ const Search = {
         return data;
     },
     
+    // ИСПРАВЛЕНО: защита от множественных polling
     startPolling() {
-        if (this.pollingInterval) clearInterval(this.pollingInterval);
-        console.log('Запуск polling (каждые 2 сек)');
+        if (this.pollingInterval) {
+            console.log('Polling уже запущен, пропускаем');
+            return;
+        }
+        
+        console.log('Polling started (каждые 2 сек)');
         this.pollingInterval = setInterval(() => this.checkMatchStatus(), 2000);
     },
     
+    // ИСПРАВЛЕНО: добавлены проверки состояния
     checkMatchStatus() {
+        // Если не ищем и не ждем партнера - выходим
+        if (!this.isSearching && !this.waitingForPartner) {
+            return;
+        }
+        
         console.log('Checking match status...');
         
-        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        const telegram_id = this.getTelegramId();
         if (!telegram_id) return;
         
         fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/check', {
@@ -142,7 +161,8 @@ const Search = {
         .then(data => {
             console.log('Match check response:', data);
             
-            if (data.match_found) {
+            // ИСПРАВЛЕНО: защита от повторного показа мэтча
+            if (data.match_found && !this.currentMatchId) {
                 console.log('Мэтч найден!');
                 
                 // Проверяем не обрабатывали ли мы уже этот мэтч
@@ -236,6 +256,9 @@ const Search = {
             this.matchTimerInterval = null;
         }
         
+        // ИСПРАВЛЕНО: останавливаем polling
+        this.stopPolling();
+        
         // Добавляем эффект both-accepted
         document.querySelector('.connection-screen')?.classList.add('both-accepted');
         
@@ -269,6 +292,9 @@ const Search = {
     
     // ПОКАЗАТЬ ЭКРАН НАЙДЕННОГО ТИММЕЙТА
     showMatchScreen(data) {
+        // ИСПРАВЛЕНО: останавливаем polling перед показом
+        this.stopPolling();
+        
         this.currentMatchId = data.match_id;
         this.myResponse = null;
         this.isSearching = false;
@@ -279,11 +305,14 @@ const Search = {
         const mode = data.opponent.mode || this.currentMode || 'PREMIER';
         console.log('Режим для отображения:', mode);
         
-        // Получаем карточку свайпа
+        // ИСПРАВЛЕНО: проверка существования DOM элементов
         const swipeCard = document.querySelector('.swipe-card');
         const swipeContent = document.querySelector('.swipe-card-content');
         
-        if (!swipeCard || !swipeContent) return;
+        if (!swipeCard || !swipeContent) {
+            console.warn('Swipe card not found');
+            return;
+        }
         
         // Добавляем класс для анимации появления
         swipeCard.classList.add('connection-mode');
@@ -291,9 +320,8 @@ const Search = {
         // Меняем содержимое карточки на экран соединения
         swipeContent.innerHTML = this.getConnectionHTML(data.opponent);
         
-        // Показываем экран соединения
-        document.querySelector('.swipe-screen')?.classList.remove('active');
-        document.querySelector('.connection-screen')?.classList.add('active');
+        // ИСПРАВЛЕНО: используем App.showScreen вместо прямых манипуляций
+        App.showScreen('connectionScreen', true);
         
         // Запускаем таймер на 30 секунд
         this.startMatchTimer();
@@ -417,7 +445,7 @@ const Search = {
             return;
         }
         
-        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        const telegram_id = this.getTelegramId();
         const matchId = this.currentMatchId;
         
         // Показываем уведомление о таймауте
@@ -480,7 +508,7 @@ const Search = {
             }, 200);
         }
         
-        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        const telegram_id = this.getTelegramId();
         this.myResponse = 'accept';
         
         fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
@@ -524,6 +552,11 @@ const Search = {
         .catch(error => {
             console.error('Error accepting match:', error);
         });
+        
+        // UX УЛУЧШЕНИЕ: вибрация при успехе
+        if (window.Telegram?.WebApp?.HapticFeedback) {
+            Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+        }
     },
     
     rejectMatch() {
@@ -543,7 +576,7 @@ const Search = {
             }, 200);
         }
         
-        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        const telegram_id = this.getTelegramId();
         const matchId = this.currentMatchId;
         
         // Показываем статус отказа
@@ -565,6 +598,9 @@ const Search = {
             clearInterval(this.matchTimerInterval);
             this.matchTimerInterval = null;
         }
+        
+        // ИСПРАВЛЕНО: останавливаем polling
+        this.stopPolling();
         
         this.myResponse = 'reject';
         
@@ -599,6 +635,11 @@ const Search = {
                 App.showScreen('mainScreen', true);
             }, 2000);
         });
+        
+        // UX УЛУЧШЕНИЕ: вибрация при отказе
+        if (window.Telegram?.WebApp?.HapticFeedback) {
+            Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+        }
     },
     
     createGame() {
@@ -621,6 +662,9 @@ const Search = {
         .then(res => res.json())
         .then(data => {
             console.log('Game create response:', data);
+            
+            // ИСПРАВЛЕНО: очищаем processedMatchIds
+            this.processedMatchIds.clear();
             
             // Сбрасываем флаги
             this.waitingForPartner = false;
@@ -651,7 +695,7 @@ const Search = {
         this.currentMatchId = null;
         
         // Получаем Telegram ID для отправки запроса
-        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        const telegram_id = this.getTelegramId();
         
         // Собираем данные для поиска
         const data = this.collectSearchData(mode);
@@ -740,7 +784,10 @@ const Search = {
         this.isSearching = false;
         this.currentMatchId = null;
         
-        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        // ИСПРАВЛЕНО: очищаем processedMatchIds при отмене
+        this.processedMatchIds.clear();
+        
+        const telegram_id = this.getTelegramId();
         
         fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/search/stop', {
             method: 'POST',
