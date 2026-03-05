@@ -1852,7 +1852,9 @@ input:checked + .slider:before {
     transform: scale(1.01);
 }
 
-/* ===== ЭКРАН СВАЙП-КАРТОЧЕК ===== */
+/* =========================
+   ЭКРАН СВАЙП-КАРТОЧЕК 
+   ========================= */
 .swipe-screen {
     flex: 1;
     display: flex;
@@ -2191,7 +2193,9 @@ input:checked + .slider:before {
     background-color: rgba(200, 60, 60, 0.05);
 }
 
-/* ===== ЭКРАН СОЕДИНЕНИЯ - ИСПРАВЛЕННАЯ ВЕРСИЯ ===== */
+/* =========================
+   ЭКРАН СОЕДИНЕНИЯ - 10/10 UX
+   ========================= */
 .connection-screen {
     flex: 1;
     display: flex;
@@ -2213,53 +2217,84 @@ input:checked + .slider:before {
     z-index: 10;
 }
 
-/* Заголовок на экране соединения */
-.connection-screen .swipe-header {
-    margin-bottom: 10px;
+/* Анимация появления карточки */
+.connection-mode {
+    animation: connectionAppear 0.4s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
 }
 
-.connection-screen .swipe-title {
-    font-size: clamp(20px, 6vw, 24px);
-    font-weight: 700;
-    color: #FF5500;
-    letter-spacing: -0.5px;
+@keyframes connectionAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.96) translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Заголовок на экране соединения */
+.connection-screen .swipe-header {
     margin-bottom: 5px;
 }
 
+.connection-screen .swipe-title {
+    font-size: clamp(22px, 6vw, 26px);
+    font-weight: 700;
+    color: #FF5500;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+    text-shadow: 0 0 10px rgba(255, 85, 0, 0.3);
+}
+
 .connection-screen .swipe-subtitle {
-    font-size: clamp(12px, 3.5vw, 14px);
+    font-size: clamp(13px, 3.5vw, 15px);
     color: #9BA1B0;
     font-weight: 500;
     margin-top: 0;
 }
 
-/* Контейнер для аватаров и анимационной линии */
+/* =========================
+   AVATARS - УЛУЧШЕННЫЕ
+   ========================= */
 .connection-avatars {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
-    margin: 15px 0 25px 0;
+    gap: 24px;
+    margin: 20px 0 25px 0;
     width: 100%;
     position: relative;
 }
 
-/* Левый аватар (свой) - всегда большой и оранжевый */
-.self-avatar {
-    position: relative;
-    z-index: 2;
-}
-
-.self-avatar .tg-avatar-svg {
-    width: 80px;
-    height: 80px;
-    background: #2B2F36;
-    border: 3px solid #FF5500;
+/* Общий стиль аватаров */
+.connection-avatar {
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 15px rgba(255, 85, 0, 0.3);
+    background: #1E2129;
+    transition: all 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
+    position: relative;
+}
+
+/* Твой аватар - с пульсацией */
+.self-avatar {
+    border: 2px solid #FF5500;
+    box-shadow: 0 0 0 0 rgba(255, 85, 0, 0.5);
+    animation: selfPulse 2s infinite ease-in-out;
+}
+
+.self-avatar .tg-avatar-svg {
+    width: 68px;
+    height: 68px;
+    background: #2B2F36;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .self-avatar .tg-avatar-svg svg circle,
@@ -2268,22 +2303,24 @@ input:checked + .slider:before {
     stroke: #FF5500;
 }
 
-/* Правый аватар (тиммейт) - по умолчанию меньше и серый */
+/* Аватар тиммейта - по умолчанию меньше и с фильтром */
 .teammate-avatar {
-    position: relative;
-    z-index: 2;
+    width: 56px;
+    height: 56px;
+    opacity: 0.65;
+    filter: grayscale(0.6);
+    transition: all 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
 }
 
 .teammate-avatar .tg-avatar-svg {
-    width: 60px;
-    height: 60px;
+    width: 52px;
+    height: 52px;
     background: #2B2F36;
-    border: 3px solid #4A4F5A;
+    border: 2px solid #4A4F5A;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
 }
 
 .teammate-avatar .tg-avatar-svg svg circle,
@@ -2291,159 +2328,222 @@ input:checked + .slider:before {
     stroke: #9BA1B0;
 }
 
-/* Активное состояние (когда тиммейт зашел) - становится таким же как левый */
-.teammate-avatar.active .tg-avatar-svg {
-    width: 80px;
-    height: 80px;
-    border-color: #FF5500;
-    box-shadow: 0 0 15px rgba(255, 85, 0, 0.3);
+/* Когда тиммейт принял */
+.teammate-avatar.connected {
+    width: 72px;
+    height: 72px;
+    opacity: 1;
+    filter: grayscale(0);
 }
 
-.teammate-avatar.active .tg-avatar-svg svg circle,
-.teammate-avatar.active .tg-avatar-svg svg path {
+.teammate-avatar.connected .tg-avatar-svg {
+    width: 68px;
+    height: 68px;
+    border: 2px solid #FF5500;
+    box-shadow: 0 0 20px rgba(255, 85, 0, 0.5);
+}
+
+.teammate-avatar.connected .tg-avatar-svg svg circle,
+.teammate-avatar.connected .tg-avatar-svg svg path {
     fill: #FF5500;
     stroke: #FF5500;
 }
 
-/* Контейнер для линии - теперь как отрезок с кружками-концами */
+/* Пульс твоего аватара */
+@keyframes selfPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 85, 0, 0.6);
+    }
+    70% {
+        box-shadow: 0 0 0 12px rgba(255, 85, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 85, 0, 0);
+    }
+}
+
+/* =========================
+   CONNECTION LINE - УЛУЧШЕННАЯ
+   ========================= */
 .connection-line-container {
+    position: relative;
+    width: 120px;
+    height: 40px;
     display: flex;
     align-items: center;
-    gap: 0;
-    flex: 0 1 140px;
-    height: 40px;
-    position: relative;
+    justify-content: center;
 }
 
-/* Левый кружок (всегда оранжевый) */
-.line-start-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #FF5500;
-    box-shadow: 0 0 8px #FF5500;
-    flex-shrink: 0;
-    z-index: 3;
-}
-
-/* Линия - тонкая полоска */
 .connection-line {
-    flex: 1;
-    height: 2px;
-    background: linear-gradient(90deg, #FF5500, #9BA1B0);
     position: relative;
-    border-radius: 2px;
+    width: 120px;
+    height: 3px;
+    background: #2B2F38;
+    border-radius: 20px;
     overflow: hidden;
-    margin: 0 -2px;
 }
 
-/* Правый кружок (серый по умолчанию) */
-.line-end-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #9BA1B0;
-    box-shadow: none;
-    flex-shrink: 0;
-    z-index: 3;
-    transition: all 0.3s ease;
-}
-
-/* Активное состояние для правого кружка (когда тиммейт зашел) */
-.connection-screen.active-match .line-end-dot {
-    background: #FF5500;
-    box-shadow: 0 0 8px #FF5500;
-}
-
-/* Анимированный шарик, бегущий по линии (только в режиме ожидания) */
+/* Линия ожидания - бегущий огонек */
 .line-pulse {
     position: absolute;
-    top: -4px;
-    width: 10px;
-    height: 10px;
+    height: 3px;
+    width: 36px;
     background: #FF5500;
-    border-radius: 50%;
-    animation: moveAlongLine 1.5s ease-in-out infinite;
-    z-index: 4;
+    border-radius: 20px;
+    animation: lineMove 1.3s infinite cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 0 10px #FF5500;
-    left: 0;
 }
 
-@keyframes moveAlongLine {
-    0% { 
-        transform: translateX(0) scale(1); 
-        opacity: 0.8; 
-        left: 0;
+@keyframes lineMove {
+    0% {
+        left: -20px;
     }
-    50% { 
-        transform: translateX(120px) scale(1.1); 
-        opacity: 1; 
+    50% {
+        left: 60px;
     }
-    100% { 
-        transform: translateX(0) scale(1); 
-        opacity: 0.8; 
-        left: 0;
+    100% {
+        left: 120px;
     }
 }
 
-/* Таймер на экране соединения */
+/* Когда соединение произошло */
+.connection-line.connected {
+    background: #FF5500;
+    animation: lineFlash 0.6s ease;
+}
+
+.connection-line.connected .line-pulse {
+    display: none;
+}
+
+@keyframes lineFlash {
+    0% {
+        box-shadow: 0 0 0 rgba(255, 85, 0, 0);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 85, 0, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 0 rgba(255, 85, 0, 0);
+    }
+}
+
+/* =========================
+   STATUS TEXT
+   ========================= */
+.connection-status {
+    font-size: 15px;
+    color: #9BA1B0;
+    text-align: center;
+    letter-spacing: 0.3px;
+    margin: 15px 0 10px 0;
+    font-weight: 500;
+}
+
+/* Когда оба приняли */
+.both-accepted .connection-status {
+    color: #FF5500;
+    font-weight: 600;
+    text-shadow: 0 0 8px rgba(255, 85, 0, 0.3);
+}
+
+/* Когда отказ */
+.rejected .connection-status {
+    color: #FF3B30;
+}
+
+/* =========================
+   TEAMMATE INFO
+   ========================= */
+.teammate-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin: 5px 0;
+}
+
+.teammate-nick {
+    font-size: 17px;
+    font-weight: 600;
+    color: #F5F5F5;
+}
+
+.teammate-rating {
+    font-size: 15px;
+    color: #FF5500;
+    font-weight: 500;
+}
+
+/* =========================
+   TIMER
+   ========================= */
 .connection-timer {
     position: absolute;
     top: 12px;
     left: 18px;
-    padding: 4px 10px;
     font-size: 14px;
-    color: #FF5500;
+    color: #7A808E;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 6px 14px;
+    border-radius: 30px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     font-weight: 600;
-    background: rgba(0,0,0,0.3);
-    border-radius: 20px;
-    backdrop-filter: blur(2px);
+    letter-spacing: 0.5px;
     z-index: 15;
 }
 
-/* Статус соединения */
-.connection-status {
-    text-align: center;
-    font-size: 14px;
-    color: #9BA1B0;
-    margin: 10px 0 15px 0;
-    font-weight: 500;
-}
-
-.connection-status .highlight {
+.connection-timer.warning {
     color: #FF5500;
-    font-weight: 600;
+    animation: timerPulse 1s infinite;
 }
 
-/* Кнопки действий на экране соединения */
+@keyframes timerPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* =========================
+   КНОПКИ ДЕЙСТВИЙ
+   ========================= */
 .connection-actions {
     display: flex;
     gap: 15px;
-    margin: 15px 0 5px 0;
+    margin: 20px 0 5px 0;
     justify-content: center;
 }
 
 .connection-btn {
     flex: 1;
     max-width: 140px;
-    padding: 12px 0;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: 600;
+    padding: 14px 0;
+    border-radius: 40px;
+    font-size: 15px;
+    font-weight: 700;
     text-align: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
 }
 
 .connection-btn.accept {
     background: #FF5500;
     color: white;
     border: none;
+    box-shadow: 0 4px 15px rgba(255, 85, 0, 0.3);
 }
 
 .connection-btn.accept:hover {
     background: #FF6B4A;
-    transform: scale(1.02);
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(255, 85, 0, 0.4);
+}
+
+.connection-btn.accept:active {
+    transform: scale(0.97);
 }
 
 .connection-btn.decline {
@@ -2454,11 +2554,41 @@ input:checked + .slider:before {
 
 .connection-btn.decline:hover {
     background: rgba(255, 85, 0, 0.1);
-    transform: scale(1.02);
+    transform: scale(1.03);
 }
 
-.connection-btn:active {
+.connection-btn.decline:active {
     transform: scale(0.97);
+}
+
+/* Эффект ряби при клике */
+.connection-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(20, 20);
+        opacity: 0;
+    }
+}
+
+.connection-btn:active::after {
+    animation: ripple 0.4s ease-out;
 }
 
 /* ===== АНИМАЦИИ ===== */
@@ -2540,7 +2670,7 @@ input:-webkit-autofill:active {
     box-shadow: inset 0 0 20px 20px #1A1D24 !important;
 }
 
-/* Компактное поле для редактирования ника (как возраст) */
+/* Компактное поле для редактирования ника */
 .profile-name-row input[type="text"] {
     width: 100%;
     background: transparent;
@@ -2578,7 +2708,7 @@ input:-webkit-autofill:active {
     color: #5D6472;
 }
 
-/* ===== TOAST УВЕДОМЛЕНИЯ (НА ВСЮ ШИРИНУ) ===== */
+/* ===== TOAST УВЕДОМЛЕНИЯ ===== */
 .profile-toast {
     position: fixed;
     top: 20px;
