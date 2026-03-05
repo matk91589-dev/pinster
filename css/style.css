@@ -2041,7 +2041,7 @@ input:-webkit-autofill:active {
     margin-bottom: 8px;
 }
 
-/* Подсказки для свайпа - возвращаем как было */
+/* Подсказки для свайпа */
 .swipe-subtitle {
     font-size: clamp(13px, 3.5vw, 15px);
     color: #9BA1B0;
@@ -2327,7 +2327,7 @@ input:-webkit-autofill:active {
     display: flex;
 }
 
-/* Таймер на экране поиска (в правом верхнем углу карточки) */
+/* Таймер на экране поиска */
 .search-timer-card {
     position: absolute;
     top: 12px;
@@ -2355,7 +2355,7 @@ input:-webkit-autofill:active {
     background-color: rgba(200, 60, 60, 0.05);
 }
 
-/* ===== ЭКРАН СОЕДИНЕНИЯ ===== */
+/* ===== ЭКРАН СОЕДИНЕНИЯ - ИСПРАВЛЕННАЯ ВЕРСИЯ ===== */
 .connection-screen .swipe-card {
     width: min(92%, 420px);
     margin: 0 auto;
@@ -2368,6 +2368,25 @@ input:-webkit-autofill:active {
     z-index: 10;
 }
 
+/* Заголовок на экране соединения - принудительно меняем текст */
+.connection-screen .swipe-header .swipe-title {
+    font-size: 0 !important;
+    position: relative;
+}
+
+.connection-screen .swipe-header .swipe-title::before {
+    content: "Тиммейт найден";
+    font-size: clamp(20px, 6vw, 24px);
+    font-weight: 700;
+    color: #FF5500;
+    letter-spacing: -0.5px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    text-align: center;
+}
+
 .connection-mode {
     display: flex;
     flex-direction: column;
@@ -2377,16 +2396,20 @@ input:-webkit-autofill:active {
     width: 100%;
 }
 
+/* Новая структура линии с кружками */
 .connection-avatars {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 30px;
-    margin: 5px 0 15px 0;
+    gap: 15px;
+    margin: 10px 0 20px 0;
+    width: 100%;
 }
 
 .connection-avatar {
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
 }
 
 .self-avatar .tg-avatar-svg {
@@ -2437,14 +2460,43 @@ input:-webkit-autofill:active {
     stroke: #FF5500;
 }
 
-/* Линия соединения */
+/* Линия соединения с кружками по краям */
+.connection-line-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    max-width: 120px;
+}
+
 .connection-line {
-    width: 90px;
+    flex: 1;
     height: 3px;
     background: linear-gradient(90deg, #FF5500, #9BA1B0);
     position: relative;
     border-radius: 3px;
     overflow: hidden;
+}
+
+/* Кружки по краям линии */
+.line-start-dot, .line-end-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #FF5500;
+    box-shadow: 0 0 10px #FF5500;
+    flex-shrink: 0;
+}
+
+.line-end-dot {
+    background: #9BA1B0;
+    box-shadow: none;
+}
+
+/* Активное состояние для правого кружка */
+.connection-screen.active-match .line-end-dot {
+    background: #FF5500;
+    box-shadow: 0 0 10px #FF5500;
 }
 
 /* Анимированный шарик */
@@ -2456,190 +2508,12 @@ input:-webkit-autofill:active {
     background: #FF5500;
     border-radius: 50%;
     animation: moveAlongLine 1.8s ease-in-out infinite;
+    z-index: 3;
 }
 
 @keyframes moveAlongLine {
     0% { transform: translateX(0) scale(1); opacity: 1; left: 0; }
-    50% { transform: translateX(80px) scale(1.2); opacity: 0.7; left: 0; }
-    100% { transform: translateX(0) scale(1); opacity: 1; left: 0; }
-}
-
-/* Статус */
-.connection-status {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    text-align: center;
-    margin: 10px 0 5px 0;
-}
-
-.status-main {
-    font-size: clamp(18px, 5vw, 20px);
-    color: #FF5500;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-}
-
-.status-sub {
-    font-size: clamp(13px, 3.8vw, 15px);
-    color: #9BA1B0;
-    font-weight: 500;
-}
-
-/* Информация о тиммейте */
-.teammate-info {
-    text-align: center;
-    margin: 5px 0;
-    font-size: clamp(14px, 4vw, 16px);
-}
-
-.teammate-nick {
-    color: #F5F5F5;
-    font-weight: 600;
-    margin-right: 10px;
-}
-
-.teammate-rating {
-    color: #FF5500;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.heart-icon-small {
-    animation: heartbeat 1.5s ease-in-out infinite;
-}
-
-@keyframes heartbeat {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-/* Таймер в левом верхнем углу - с большим отступом */
-.connection-timer {
-    position: absolute;
-    top: 15px;
-    left: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    font-size: clamp(15px, 4.5vw, 17px);
-    color: #FF5500;
-    font-weight: 700;
-    background: rgba(0,0,0,0.3);
-    padding: 6px 12px;
-    border-radius: 20px;
-    backdrop-filter: blur(2px);
-    z-index: 15;
-}
-
-/* Дополнительная информация */
-.connection-rank-age {
-    display: flex;
-    gap: 15px;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #9BA1B0;
-}
-
-.connection-rank,
-.connection-age {
-    background: rgba(255,85,0,0.1);
-    padding: 5px 14px;
-    border-radius: 20px;
-    border: 1px solid rgba(255,85,0,0.3);
-}
-
-/* Активное состояние (оба приняли) */
-.swipe-card.both-accepted .teammate-avatar .tg-avatar-svg {
-    width: 75px;
-    height: 75px;
-    border-color: #4CAF50;
-}
-
-.swipe-card.both-accepted .teammate-avatar .tg-avatar-svg svg circle,
-.swipe-card.both-accepted .teammate-avatar .tg-avatar-svg svg path {
-    stroke: #4CAF50;
-    fill: #4CAF50;
-}
-
-.swipe-card.both-accepted .self-avatar .tg-avatar-svg {
-    border-color: #4CAF50;
-}
-
-.swipe-card.both-accepted .connection-line {
-    background: linear-gradient(90deg, #FF5500, #4CAF50);
-}
-
-.swipe-card.both-accepted .line-pulse {
-    background: #4CAF50;
-    box-shadow: 0 0 10px #4CAF50;
-}
-
-/* Анимация отказа */
-.swipe-card.rejected .connection-line {
-    background: linear-gradient(90deg, #FF5500, #B00000);
-    animation: rejectPulse 0.5s ease;
-}
-
-.swipe-card.rejected .teammate-avatar {
-    opacity: 0;
-    transform: scale(0);
-    transition: all 0.3s ease;
-}
-
-.swipe-card.rejected .status-main {
-    color: #B00000;
-}
-
-@keyframes rejectPulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
-
-/* Адаптивность */
-@media (max-width: 400px) {
-    .swipe-card {
-        padding: 20px 18px;
-    }
-    
-    .swipe-avatar,
-    .swipe-avatar .tg-avatar-svg {
-        width: 60px;
-        height: 60px;
-    }
-    
-    .swipe-avatar .tg-avatar-svg svg {
-        width: 30px;
-        height: 30px;
-    }
-    
-    .swipe-player-nick {
-        font-size: 18px;
-    }
-    
-    .swipe-rating-value {
-        font-size: 18px;
-    }
-    
-    .connection-line {
-        width: 70px;
-    }
-    
-    .swipe-subtitle {
-        gap: 10px;
-    }
-    
-    @keyframes moveAlongLine {
-        0% { transform: translateX(0) scale(1); opacity: 1; left: 0; }
-        50% { transform: translateX(60px) scale(1.2); opacity: 0.7; left: 0; }
-        100% { transform: translateX(0) scale(1); opacity: 1; left: 0; }
+    50% { transform: translateX(100px) scale(1.2); opacity: 0.7; left: 0; }
     }
     
     .connection-timer {
