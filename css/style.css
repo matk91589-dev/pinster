@@ -271,7 +271,8 @@ body {
 .team-screen,
 .match-found-screen,
 .swipe-screen,
-.connection-screen {
+.waiting-screen,
+.accept-screen {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -297,9 +298,10 @@ body {
     overflow-y: auto;
 }
 
-/* ===== ЭКРАН СВАЙПА БЕЗ ПРОКРУТКИ ===== */
+/* ===== ЭКРАНЫ БЕЗ ПРОКРУТКИ ===== */
 .swipe-screen,
-.connection-screen {
+.waiting-screen,
+.accept-screen {
     overflow-y: hidden;
 }
 
@@ -389,19 +391,21 @@ body {
     flex-shrink: 0;
 }
 
-/* Скрываем навигацию на стартовом экране, экране поиска и экране команды */
+/* Скрываем навигацию на определенных экранах */
 .start-screen.active ~ .bottom-nav,
 .search-screen.active ~ .bottom-nav,
 .team-screen.active ~ .bottom-nav,
 .match-found-screen.active ~ .bottom-nav,
 .swipe-screen.active ~ .bottom-nav,
-.connection-screen.active ~ .bottom-nav,
+.waiting-screen.active ~ .bottom-nav,
+.accept-screen.active ~ .bottom-nav,
 body:has(.start-screen.active) .bottom-nav,
 body:has(.search-screen.active) .bottom-nav,
 body:has(.team-screen.active) .bottom-nav,
 body:has(.match-found-screen.active) .bottom-nav,
 body:has(.swipe-screen.active) .bottom-nav,
-body:has(.connection-screen.active) .bottom-nav {
+body:has(.waiting-screen.active) .bottom-nav,
+body:has(.accept-screen.active) .bottom-nav {
     display: none !important;
 }
 
@@ -1862,7 +1866,6 @@ input:checked + .slider:before {
     position: relative;
 }
 
-/* Хедер с заголовком и подсказкой */
 .swipe-header {
     flex-shrink: 0;
     padding: 10px 0 20px 0;
@@ -1877,7 +1880,6 @@ input:checked + .slider:before {
     margin-bottom: 8px;
 }
 
-/* Подсказки для свайпа */
 .swipe-subtitle {
     font-size: clamp(13px, 3.5vw, 15px);
     color: #9BA1B0;
@@ -1903,7 +1905,6 @@ input:checked + .slider:before {
     font-weight: 400;
 }
 
-/* Контейнер для карточки */
 .swipe-container {
     flex: 1;
     display: flex;
@@ -1934,7 +1935,6 @@ input:checked + .slider:before {
     cursor: grabbing;
 }
 
-/* Лейблы для свайпа */
 .swipe-label {
     position: absolute;
     top: 24px;
@@ -1959,7 +1959,6 @@ input:checked + .slider:before {
     transform: rotate(5deg);
 }
 
-/* Контент карточки */
 .swipe-card-content {
     display: flex;
     flex-direction: column;
@@ -2039,7 +2038,6 @@ input:checked + .slider:before {
     stroke: #F5F5F5;
 }
 
-/* Тонкая линия под рейтингом */
 .swipe-rating-line {
     width: 100%;
     height: 1px;
@@ -2048,7 +2046,6 @@ input:checked + .slider:before {
     margin: 2px 0 8px 0;
 }
 
-/* Плашки ранга и возраста */
 .swipe-stats-row {
     display: flex;
     gap: 12px;
@@ -2085,7 +2082,6 @@ input:checked + .slider:before {
     text-overflow: ellipsis;
 }
 
-/* Ссылки */
 .swipe-steam-container,
 .swipe-faceit-container {
     margin: 0;
@@ -2114,7 +2110,6 @@ input:checked + .slider:before {
     text-overflow: ellipsis;
 }
 
-/* Комментарий */
 .swipe-comment {
     margin: 0;
 }
@@ -2142,7 +2137,6 @@ input:checked + .slider:before {
     line-height: 1.5;
 }
 
-/* Индикатор загрузки */
 .swipe-loading {
     display: none;
     align-items: center;
@@ -2163,7 +2157,6 @@ input:checked + .slider:before {
     display: flex;
 }
 
-/* Таймер на экране поиска */
 .search-timer-card {
     position: absolute;
     top: 12px;
@@ -2182,7 +2175,6 @@ input:checked + .slider:before {
     z-index: 15;
 }
 
-/* Цветовые эффекты при свайпе */
 .swipe-card.right-swipe {
     background-color: rgba(60, 180, 90, 0.05);
 }
@@ -2191,8 +2183,8 @@ input:checked + .slider:before {
     background-color: rgba(200, 60, 60, 0.05);
 }
 
-/* ===== ЭКРАН СОЕДИНЕНИЯ - ИСПРАВЛЕННАЯ ВЕРСИЯ ===== */
-.connection-screen {
+/* ===== ЭКРАН ОЖИДАНИЯ (ПОСЛЕ СВАЙПА) ===== */
+.waiting-screen {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -2201,7 +2193,7 @@ input:checked + .slider:before {
     position: relative;
 }
 
-.connection-screen .swipe-card {
+.waiting-screen .swipe-card {
     width: min(92%, 420px);
     margin: 0 auto;
     background: #1A1D24;
@@ -2213,20 +2205,19 @@ input:checked + .slider:before {
     z-index: 10;
 }
 
-/* Заголовок на экране соединения */
-.connection-screen .swipe-header {
+.waiting-screen .swipe-header {
     margin-bottom: 10px;
 }
 
-.connection-screen .swipe-title {
+.waiting-screen .swipe-title {
     font-size: clamp(20px, 6vw, 24px);
     font-weight: 700;
-    color: #FF5500;
+    color: #F5F5F5;
     letter-spacing: -0.5px;
     margin-bottom: 5px;
 }
 
-.connection-screen .swipe-subtitle {
+.waiting-screen .swipe-subtitle {
     font-size: clamp(12px, 3.5vw, 14px);
     color: #9BA1B0;
     font-weight: 500;
@@ -2234,7 +2225,7 @@ input:checked + .slider:before {
 }
 
 /* Контейнер для аватаров и анимационной линии */
-.connection-avatars {
+.waiting-screen .connection-avatars {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2245,12 +2236,12 @@ input:checked + .slider:before {
 }
 
 /* Левый аватар (свой) - всегда большой и оранжевый */
-.self-avatar {
+.waiting-screen .self-avatar {
     position: relative;
     z-index: 2;
 }
 
-.self-avatar .tg-avatar-svg {
+.waiting-screen .self-avatar .tg-avatar-svg {
     width: 80px;
     height: 80px;
     background: #2B2F36;
@@ -2262,19 +2253,19 @@ input:checked + .slider:before {
     box-shadow: 0 0 15px rgba(255, 85, 0, 0.3);
 }
 
-.self-avatar .tg-avatar-svg svg circle,
-.self-avatar .tg-avatar-svg svg path {
+.waiting-screen .self-avatar .tg-avatar-svg svg circle,
+.waiting-screen .self-avatar .tg-avatar-svg svg path {
     fill: #FF5500;
     stroke: #FF5500;
 }
 
-/* Правый аватар (тиммейт) - по умолчанию меньше и серый */
-.teammate-avatar {
+/* Правый аватар (тиммейт) - меньше и серый */
+.waiting-screen .teammate-avatar {
     position: relative;
     z-index: 2;
 }
 
-.teammate-avatar .tg-avatar-svg {
+.waiting-screen .teammate-avatar .tg-avatar-svg {
     width: 60px;
     height: 60px;
     background: #2B2F36;
@@ -2286,27 +2277,13 @@ input:checked + .slider:before {
     transition: all 0.3s ease;
 }
 
-.teammate-avatar .tg-avatar-svg svg circle,
-.teammate-avatar .tg-avatar-svg svg path {
+.waiting-screen .teammate-avatar .tg-avatar-svg svg circle,
+.waiting-screen .teammate-avatar .tg-avatar-svg svg path {
     stroke: #9BA1B0;
 }
 
-/* Активное состояние (когда тиммейт зашел) - становится таким же как левый */
-.teammate-avatar.active .tg-avatar-svg {
-    width: 80px;
-    height: 80px;
-    border-color: #FF5500;
-    box-shadow: 0 0 15px rgba(255, 85, 0, 0.3);
-}
-
-.teammate-avatar.active .tg-avatar-svg svg circle,
-.teammate-avatar.active .tg-avatar-svg svg path {
-    fill: #FF5500;
-    stroke: #FF5500;
-}
-
-/* Контейнер для линии - теперь как отрезок с кружками-концами */
-.connection-line-container {
+/* Контейнер для линии */
+.waiting-screen .connection-line-container {
     display: flex;
     align-items: center;
     gap: 0;
@@ -2315,8 +2292,8 @@ input:checked + .slider:before {
     position: relative;
 }
 
-/* Левый кружок (всегда оранжевый) */
-.line-start-dot {
+/* Левый кружок (оранжевый) */
+.waiting-screen .line-start-dot {
     width: 12px;
     height: 12px;
     border-radius: 50%;
@@ -2326,8 +2303,8 @@ input:checked + .slider:before {
     z-index: 3;
 }
 
-/* Линия - тонкая полоска */
-.connection-line {
+/* Линия */
+.waiting-screen .connection-line {
     flex: 1;
     height: 2px;
     background: linear-gradient(90deg, #FF5500, #9BA1B0);
@@ -2337,8 +2314,8 @@ input:checked + .slider:before {
     margin: 0 -2px;
 }
 
-/* Правый кружок (серый по умолчанию) */
-.line-end-dot {
+/* Правый кружок (серый) */
+.waiting-screen .line-end-dot {
     width: 12px;
     height: 12px;
     border-radius: 50%;
@@ -2346,17 +2323,10 @@ input:checked + .slider:before {
     box-shadow: none;
     flex-shrink: 0;
     z-index: 3;
-    transition: all 0.3s ease;
 }
 
-/* Активное состояние для правого кружка (когда тиммейт зашел) */
-.connection-screen.active-match .line-end-dot {
-    background: #FF5500;
-    box-shadow: 0 0 8px #FF5500;
-}
-
-/* Анимированный шарик, бегущий по линии (только в режиме ожидания) */
-.line-pulse {
+/* Анимированный шарик */
+.waiting-screen .line-pulse {
     position: absolute;
     top: -4px;
     width: 10px;
@@ -2386,7 +2356,234 @@ input:checked + .slider:before {
     }
 }
 
-/* Таймер на экране соединения */
+/* Кнопки на экране ожидания */
+.waiting-screen .connection-actions {
+    display: flex;
+    gap: 15px;
+    margin: 15px 0 5px 0;
+    justify-content: center;
+}
+
+.waiting-screen .connection-btn {
+    flex: 1;
+    max-width: 140px;
+    padding: 12px 0;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.waiting-screen .connection-btn.accept {
+    background: #FF5500;
+    color: white;
+    border: none;
+}
+
+.waiting-screen .connection-btn.accept:hover {
+    background: #FF6B4A;
+    transform: scale(1.02);
+}
+
+.waiting-screen .connection-btn.decline {
+    background: transparent;
+    color: #FF5500;
+    border: 2px solid #FF5500;
+}
+
+.waiting-screen .connection-btn.decline:hover {
+    background: rgba(255, 85, 0, 0.1);
+    transform: scale(1.02);
+}
+
+.waiting-screen .connection-btn:active {
+    transform: scale(0.97);
+}
+
+/* ===== ЭКРАН ПРИНЯТИЯ (ТИММЕЙТ НАЙДЕН) ===== */
+.accept-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: hidden;
+    position: relative;
+}
+
+.accept-screen .swipe-card {
+    width: min(92%, 420px);
+    margin: 0 auto;
+    background: #1A1D24;
+    border-radius: 20px;
+    padding: 24px 22px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border: 1px solid #2A2F3A;
+    position: relative;
+    z-index: 10;
+}
+
+.accept-screen .swipe-header {
+    margin-bottom: 10px;
+}
+
+.accept-screen .swipe-title {
+    font-size: clamp(20px, 6vw, 24px);
+    font-weight: 700;
+    color: #FF5500;
+    letter-spacing: -0.5px;
+    margin-bottom: 5px;
+}
+
+.accept-screen .swipe-subtitle {
+    font-size: clamp(12px, 3.5vw, 14px);
+    color: #9BA1B0;
+    font-weight: 500;
+    margin-top: 0;
+}
+
+/* Контейнер для аватаров */
+.accept-screen .connection-avatars {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 15px 0 25px 0;
+    width: 100%;
+    position: relative;
+}
+
+/* Левый аватар (свой) */
+.accept-screen .self-avatar .tg-avatar-svg {
+    width: 80px;
+    height: 80px;
+    background: #2B2F36;
+    border: 3px solid #FF5500;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(255, 85, 0, 0.3);
+}
+
+.accept-screen .self-avatar .tg-avatar-svg svg circle,
+.accept-screen .self-avatar .tg-avatar-svg svg path {
+    fill: #FF5500;
+    stroke: #FF5500;
+}
+
+/* Правый аватар (тиммейт) - теперь большой и оранжевый */
+.accept-screen .teammate-avatar .tg-avatar-svg {
+    width: 80px;
+    height: 80px;
+    background: #2B2F36;
+    border: 3px solid #FF5500;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(255, 85, 0, 0.3);
+}
+
+.accept-screen .teammate-avatar .tg-avatar-svg svg circle,
+.accept-screen .teammate-avatar .tg-avatar-svg svg path {
+    fill: #FF5500;
+    stroke: #FF5500;
+}
+
+/* Контейнер для линии */
+.accept-screen .connection-line-container {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: 0 1 140px;
+    height: 40px;
+    position: relative;
+}
+
+/* Оба кружка оранжевые */
+.accept-screen .line-start-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #FF5500;
+    box-shadow: 0 0 8px #FF5500;
+    flex-shrink: 0;
+    z-index: 3;
+}
+
+.accept-screen .connection-line {
+    flex: 1;
+    height: 2px;
+    background: #FF5500;
+    position: relative;
+    border-radius: 2px;
+    margin: 0 -2px;
+}
+
+.accept-screen .line-end-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #FF5500;
+    box-shadow: 0 0 8px #FF5500;
+    flex-shrink: 0;
+    z-index: 3;
+}
+
+/* Нет анимации на экране принятия */
+.accept-screen .line-pulse {
+    display: none;
+}
+
+/* Кнопки на экране принятия */
+.accept-screen .connection-actions {
+    display: flex;
+    gap: 15px;
+    margin: 15px 0 5px 0;
+    justify-content: center;
+}
+
+.accept-screen .connection-btn {
+    flex: 1;
+    max-width: 140px;
+    padding: 12px 0;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.accept-screen .connection-btn.accept {
+    background: #FF5500;
+    color: white;
+    border: none;
+}
+
+.accept-screen .connection-btn.accept:hover {
+    background: #FF6B4A;
+    transform: scale(1.02);
+}
+
+.accept-screen .connection-btn.decline {
+    background: transparent;
+    color: #FF5500;
+    border: 2px solid #FF5500;
+}
+
+.accept-screen .connection-btn.decline:hover {
+    background: rgba(255, 85, 0, 0.1);
+    transform: scale(1.02);
+}
+
+.accept-screen .connection-btn:active {
+    transform: scale(0.97);
+}
+
+/* Таймер */
 .connection-timer {
     position: absolute;
     top: 12px;
@@ -2399,66 +2596,6 @@ input:checked + .slider:before {
     border-radius: 20px;
     backdrop-filter: blur(2px);
     z-index: 15;
-}
-
-/* Статус соединения */
-.connection-status {
-    text-align: center;
-    font-size: 14px;
-    color: #9BA1B0;
-    margin: 10px 0 15px 0;
-    font-weight: 500;
-}
-
-.connection-status .highlight {
-    color: #FF5500;
-    font-weight: 600;
-}
-
-/* Кнопки действий на экране соединения */
-.connection-actions {
-    display: flex;
-    gap: 15px;
-    margin: 15px 0 5px 0;
-    justify-content: center;
-}
-
-.connection-btn {
-    flex: 1;
-    max-width: 140px;
-    padding: 12px 0;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.connection-btn.accept {
-    background: #FF5500;
-    color: white;
-    border: none;
-}
-
-.connection-btn.accept:hover {
-    background: #FF6B4A;
-    transform: scale(1.02);
-}
-
-.connection-btn.decline {
-    background: transparent;
-    color: #FF5500;
-    border: 2px solid #FF5500;
-}
-
-.connection-btn.decline:hover {
-    background: rgba(255, 85, 0, 0.1);
-    transform: scale(1.02);
-}
-
-.connection-btn:active {
-    transform: scale(0.97);
 }
 
 /* ===== АНИМАЦИИ ===== */
@@ -2540,7 +2677,6 @@ input:-webkit-autofill:active {
     box-shadow: inset 0 0 20px 20px #1A1D24 !important;
 }
 
-/* Компактное поле для редактирования ника (как возраст) */
 .profile-name-row input[type="text"] {
     width: 100%;
     background: transparent;
@@ -2578,7 +2714,7 @@ input:-webkit-autofill:active {
     color: #5D6472;
 }
 
-/* ===== TOAST УВЕДОМЛЕНИЯ (НА ВСЮ ШИРИНУ) ===== */
+/* ===== TOAST УВЕДОМЛЕНИЯ ===== */
 .profile-toast {
     position: fixed;
     top: 20px;
