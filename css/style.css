@@ -9,6 +9,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent; /* убираем серый тап на мобилках */
 }
 
 /* ===== БАЗОВЫЕ СТИЛИ ДЛЯ TELEGRAM MINI APP ===== */
@@ -57,8 +58,8 @@ body {
     display: flex;
     flex-direction: column;
     width: 100%;
-    min-height: 0;
-    position: relative;
+    height: 100%;
+    overflow: hidden;
 }
 
 /* ===== ХЕДЕР ===== */
@@ -80,6 +81,7 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     display: inline-block;
+    will-change: transform;
 }
 
 .logo:hover {
@@ -259,16 +261,12 @@ body {
 .screen {
     display: none;
     width: 100%;
-    flex: 1;
-    min-height: 0;
-    position: relative;
-    z-index: 1;
+    height: 100%;
+    flex-direction: column;
 }
 
 .screen.active {
     display: flex;
-    flex-direction: column;
-    z-index: 2;
 }
 
 /* ===== ЭКРАНЫ С ПРОКРУТКОЙ ===== */
@@ -286,6 +284,7 @@ body {
 .team-screen,
 .match-found-screen {
     overflow-y: auto;
+    flex: 1;
     padding: 0;
 }
 
@@ -391,6 +390,7 @@ body {
     opacity: 0.6;
     padding: 4px 10px;
     transition: all 0.2s;
+    will-change: transform;
 }
 
 .nav-item:hover {
@@ -458,6 +458,7 @@ body {
     position: relative;
     transition: all 0.2s;
     flex-shrink: 0;
+    will-change: transform;
 }
 
 .mode-btn:hover {
@@ -554,6 +555,7 @@ body {
     border: 1px solid #2A2F3A;
     border-radius: 12px;
     transition: border-color 0.2s;
+    will-change: transform;
 }
 
 .case-item:hover {
@@ -651,6 +653,7 @@ body {
     padding: 2vh 1vw;
     cursor: pointer;
     transition: border-color 0.2s;
+    will-change: transform;
 }
 
 .inventory-item:hover {
@@ -1322,6 +1325,7 @@ body {
     margin-bottom: 10px;
     cursor: pointer;
     transition: all 0.2s;
+    will-change: transform;
 }
 
 .friend-item:hover {
@@ -1741,6 +1745,17 @@ input:checked + .slider:before {
 /* =========================
    ЭКРАН СВАЙП-КАРТОЧЕК 
    ========================= */
+
+/* Контейнер для карточки свайпа */
+.swipe-card-container {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
 .swipe-header {
     flex-shrink: 0;
     padding: 10px 0 20px 0;
@@ -1780,6 +1795,7 @@ input:checked + .slider:before {
     font-weight: 400;
 }
 
+/* Контейнер для карточки (старый, оставлен для совместимости) */
 .swipe-container {
     flex: 1;
     display: flex;
@@ -1790,18 +1806,18 @@ input:checked + .slider:before {
     min-height: 0;
 }
 
+/* Новая карточка игрока */
 .swipe-card {
-    width: min(92%, 420px);
-    margin: 0 auto;
+    width: 100%;
+    max-width: 420px;
     background: #1A1D24;
-    border-radius: 20px;
-    padding: 24px 22px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border-radius: 16px;
     border: 1px solid #2A2F3A;
-    cursor: grab;
-    transition: box-shadow 0.2s ease;
+    padding: 20px;
+    transition: transform 0.25s ease;
+    touch-action: pan-y;
     will-change: transform;
-    touch-action: pan-y pinch-zoom;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
     position: relative;
     z-index: 10;
 }
@@ -1810,6 +1826,16 @@ input:checked + .slider:before {
     cursor: grabbing;
 }
 
+/* Эффекты при свайпе */
+.swipe-card.swiping-right {
+    background: linear-gradient(to right, rgba(76,175,80,0.15), #1A1D24);
+}
+
+.swipe-card.swiping-left {
+    background: linear-gradient(to left, rgba(176,0,0,0.15), #1A1D24);
+}
+
+/* Лейблы для свайпа */
 .swipe-label {
     position: absolute;
     top: 24px;
@@ -1834,6 +1860,7 @@ input:checked + .slider:before {
     transform: rotate(5deg);
 }
 
+/* Контент карточки */
 .swipe-card-content {
     display: flex;
     flex-direction: column;
@@ -2012,6 +2039,7 @@ input:checked + .slider:before {
     line-height: 1.5;
 }
 
+/* Индикатор загрузки */
 .swipe-loading {
     display: none;
     align-items: center;
@@ -2032,6 +2060,7 @@ input:checked + .slider:before {
     display: flex;
 }
 
+/* Таймер на экране поиска */
 .search-timer-card {
     position: absolute;
     top: 12px;
@@ -2050,19 +2079,21 @@ input:checked + .slider:before {
     z-index: 15;
 }
 
-.swipe-card.right-swipe {
-    background-color: rgba(60, 180, 90, 0.05);
-}
-
-.swipe-card.left-swipe {
-    background-color: rgba(200, 60, 60, 0.05);
+/* Подсказка свайпа */
+.swipe-hint {
+    text-align: center;
+    font-size: 12px;
+    color: #6B7280;
+    margin-top: 10px;
+    user-select: none;
 }
 
 /* =========================
    ЭКРАН СОЕДИНЕНИЯ - 10/10 UX
    ========================= */
 .connection-screen .swipe-card {
-    width: min(92%, 420px);
+    width: 100%;
+    max-width: 420px;
     margin: 0 auto;
     background: #1A1D24;
     border-radius: 20px;
@@ -2354,6 +2385,7 @@ input:checked + .slider:before {
     letter-spacing: 0.5px;
     position: relative;
     overflow: hidden;
+    will-change: transform;
 }
 
 .connection-btn.accept {
