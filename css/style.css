@@ -2041,9 +2041,30 @@ input:-webkit-autofill:active {
     margin-bottom: 8px;
 }
 
-/* Убираем подсказки свайпа на всех экранах, кроме свайпа */
+/* Подсказки для свайпа - возвращаем как было */
 .swipe-subtitle {
-    display: none;
+    font-size: clamp(13px, 3.5vw, 15px);
+    color: #9BA1B0;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.swipe-subtitle-left {
+    color: rgba(200, 60, 60, 0.9);
+    font-weight: 600;
+}
+
+.swipe-subtitle-right {
+    color: rgba(60, 180, 90, 0.9);
+    font-weight: 600;
+}
+
+.swipe-subtitle-divider {
+    color: #4A4F5A;
+    font-weight: 400;
 }
 
 /* Контейнер для карточки */
@@ -2065,18 +2086,41 @@ input:-webkit-autofill:active {
     padding: 20px 18px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
     border: 1px solid #2A2F3A;
+    cursor: grab;
+    transition: box-shadow 0.2s ease;
+    will-change: transform;
+    touch-action: pan-y pinch-zoom;
     position: relative;
     z-index: 10;
-    /* Убираем лишние анимации курсора */
-    cursor: default;
-    transition: none;
-    will-change: auto;
-    touch-action: auto;
 }
 
-/* Лейблы для свайпа скрыты по умолчанию */
+.swipe-card:active {
+    cursor: grabbing;
+}
+
+/* Лейблы для свайпа */
 .swipe-label {
-    display: none;
+    position: absolute;
+    top: 20px;
+    font-size: clamp(18px, 6vw, 24px);
+    font-weight: 800;
+    letter-spacing: 2px;
+    opacity: 0;
+    transition: opacity 0.1s ease;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.swipe-label-left {
+    left: 25px;
+    color: rgba(200, 60, 60, 0.9);
+    transform: rotate(-5deg);
+}
+
+.swipe-label-right {
+    right: 25px;
+    color: rgba(60, 180, 90, 0.9);
+    transform: rotate(5deg);
 }
 
 /* Контент карточки */
@@ -2283,8 +2327,8 @@ input:-webkit-autofill:active {
     display: flex;
 }
 
-/* Таймер для экрана поиска (в правом верхнем углу карточки) */
-.swipe-timer {
+/* Таймер на экране поиска (в правом верхнем углу карточки) */
+.search-timer-card {
     position: absolute;
     top: 10px;
     right: 18px;
@@ -2302,11 +2346,16 @@ input:-webkit-autofill:active {
     z-index: 15;
 }
 
-.timer-icon {
-    animation: pulse 1s ease-in-out infinite;
+/* Цветовые эффекты при свайпе */
+.swipe-card.right-swipe {
+    background-color: rgba(60, 180, 90, 0.05);
 }
 
-/* ===== ЭКРАН СОЕДИНЕНИЯ - ИСПРАВЛЕННАЯ ВЕРСИЯ ===== */
+.swipe-card.left-swipe {
+    background-color: rgba(200, 60, 60, 0.05);
+}
+
+/* ===== ЭКРАН СОЕДИНЕНИЯ ===== */
 .connection-screen .swipe-card {
     width: min(90%, 380px);
     margin: 0 auto;
@@ -2377,13 +2426,13 @@ input:-webkit-autofill:active {
 }
 
 /* Активное состояние (когда тиммейт зашел) */
-.connection-screen .teammate-avatar.active .tg-avatar-svg {
+.teammate-avatar.active .tg-avatar-svg {
     border-color: #FF5500;
     box-shadow: 0 0 15px rgba(255, 85, 0, 0.3);
 }
 
-.connection-screen .teammate-avatar.active .tg-avatar-svg svg circle,
-.connection-screen .teammate-avatar.active .tg-avatar-svg svg path {
+.teammate-avatar.active .tg-avatar-svg svg circle,
+.teammate-avatar.active .tg-avatar-svg svg path {
     fill: #FF5500;
     stroke: #FF5500;
 }
@@ -2544,7 +2593,7 @@ input:-webkit-autofill:active {
     transition: all 0.3s ease;
 }
 
-.swipe-card.rejected .connection-status .status-main {
+.swipe-card.rejected .status-main {
     color: #B00000;
 }
 
@@ -2581,6 +2630,10 @@ input:-webkit-autofill:active {
     
     .connection-line {
         width: 60px;
+    }
+    
+    .swipe-subtitle {
+        gap: 10px;
     }
     
     @keyframes moveAlongLine {
