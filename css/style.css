@@ -2079,11 +2079,11 @@ input:-webkit-autofill:active {
 }
 
 .swipe-card {
-    width: min(90%, 380px);
+    width: min(92%, 420px);
     margin: 0 auto;
     background: #1A1D24;
     border-radius: 20px;
-    padding: 20px 18px;
+    padding: 24px 22px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
     border: 1px solid #2A2F3A;
     cursor: grab;
@@ -2101,7 +2101,7 @@ input:-webkit-autofill:active {
 /* Лейблы для свайпа */
 .swipe-label {
     position: absolute;
-    top: 20px;
+    top: 24px;
     font-size: clamp(18px, 6vw, 24px);
     font-weight: 800;
     letter-spacing: 2px;
@@ -2330,8 +2330,8 @@ input:-webkit-autofill:active {
 /* Таймер на экране поиска (в правом верхнем углу карточки) */
 .search-timer-card {
     position: absolute;
-    top: 10px;
-    right: 18px;
+    top: 12px;
+    right: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2340,7 +2340,7 @@ input:-webkit-autofill:active {
     color: #FF5500;
     font-weight: 700;
     background: rgba(0,0,0,0.3);
-    padding: 4px 8px;
+    padding: 6px 12px;
     border-radius: 20px;
     backdrop-filter: blur(2px);
     z-index: 15;
@@ -2357,11 +2357,11 @@ input:-webkit-autofill:active {
 
 /* ===== ЭКРАН СОЕДИНЕНИЯ ===== */
 .connection-screen .swipe-card {
-    width: min(90%, 380px);
+    width: min(92%, 420px);
     margin: 0 auto;
     background: #1A1D24;
     border-radius: 20px;
-    padding: 20px 18px;
+    padding: 24px 22px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
     border: 1px solid #2A2F3A;
     position: relative;
@@ -2373,7 +2373,7 @@ input:-webkit-autofill:active {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 16px;
+    gap: 18px;
     width: 100%;
 }
 
@@ -2381,8 +2381,8 @@ input:-webkit-autofill:active {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 25px;
-    margin: 5px 0 10px 0;
+    gap: 30px;
+    margin: 5px 0 15px 0;
 }
 
 .connection-avatar {
@@ -2390,10 +2390,10 @@ input:-webkit-autofill:active {
 }
 
 .self-avatar .tg-avatar-svg {
-    width: 70px;
-    height: 70px;
+    width: 75px;
+    height: 75px;
     background: #2B2F36;
-    border: 2px solid #FF5500;
+    border: 3px solid #FF5500;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -2409,10 +2409,10 @@ input:-webkit-autofill:active {
 
 /* Уменьшенный аватар тиммейта */
 .teammate-avatar .tg-avatar-svg {
-    width: 50px;
-    height: 50px;
+    width: 55px;
+    height: 55px;
     background: #2B2F36;
-    border: 2px solid #4A4F5A;
+    border: 3px solid #4A4F5A;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -2439,11 +2439,11 @@ input:-webkit-autofill:active {
 
 /* Линия соединения */
 .connection-line {
-    width: 80px;
-    height: 2px;
+    width: 90px;
+    height: 3px;
     background: linear-gradient(90deg, #FF5500, #9BA1B0);
     position: relative;
-    border-radius: 2px;
+    border-radius: 3px;
     overflow: hidden;
 }
 
@@ -2451,8 +2451,8 @@ input:-webkit-autofill:active {
 .line-pulse {
     position: absolute;
     top: -4px;
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     background: #FF5500;
     border-radius: 50%;
     animation: moveAlongLine 1.8s ease-in-out infinite;
@@ -2460,7 +2460,7 @@ input:-webkit-autofill:active {
 
 @keyframes moveAlongLine {
     0% { transform: translateX(0) scale(1); opacity: 1; left: 0; }
-    50% { transform: translateX(70px) scale(1.2); opacity: 0.7; left: 0; }
+    50% { transform: translateX(80px) scale(1.2); opacity: 0.7; left: 0; }
     100% { transform: translateX(0) scale(1); opacity: 1; left: 0; }
 }
 
@@ -2470,20 +2470,20 @@ input:-webkit-autofill:active {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 6px;
     text-align: center;
-    margin: 5px 0;
+    margin: 10px 0 5px 0;
 }
 
 .status-main {
-    font-size: clamp(16px, 4.5vw, 18px);
+    font-size: clamp(18px, 5vw, 20px);
     color: #FF5500;
     font-weight: 700;
     letter-spacing: 0.5px;
 }
 
 .status-sub {
-    font-size: clamp(12px, 3.5vw, 14px);
+    font-size: clamp(13px, 3.8vw, 15px);
     color: #9BA1B0;
     font-weight: 500;
 }
@@ -2492,7 +2492,7 @@ input:-webkit-autofill:active {
 .teammate-info {
     text-align: center;
     margin: 5px 0;
-    font-size: clamp(13px, 3.8vw, 15px);
+    font-size: clamp(14px, 4vw, 16px);
 }
 
 .teammate-nick {
@@ -2519,20 +2519,20 @@ input:-webkit-autofill:active {
     100% { transform: scale(1); }
 }
 
-/* Таймер в левом верхнем углу */
+/* Таймер в левом верхнем углу - с большим отступом */
 .connection-timer {
     position: absolute;
-    top: 10px;
-    left: 18px;
+    top: 15px;
+    left: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    font-size: clamp(14px, 4vw, 16px);
+    gap: 6px;
+    font-size: clamp(15px, 4.5vw, 17px);
     color: #FF5500;
     font-weight: 700;
     background: rgba(0,0,0,0.3);
-    padding: 4px 8px;
+    padding: 6px 12px;
     border-radius: 20px;
     backdrop-filter: blur(2px);
     z-index: 15;
@@ -2542,23 +2542,23 @@ input:-webkit-autofill:active {
 .connection-rank-age {
     display: flex;
     gap: 15px;
-    margin-top: 5px;
-    font-size: 13px;
+    margin-top: 10px;
+    font-size: 14px;
     color: #9BA1B0;
 }
 
 .connection-rank,
 .connection-age {
     background: rgba(255,85,0,0.1);
-    padding: 4px 12px;
+    padding: 5px 14px;
     border-radius: 20px;
     border: 1px solid rgba(255,85,0,0.3);
 }
 
 /* Активное состояние (оба приняли) */
 .swipe-card.both-accepted .teammate-avatar .tg-avatar-svg {
-    width: 70px;
-    height: 70px;
+    width: 75px;
+    height: 75px;
     border-color: #4CAF50;
 }
 
@@ -2606,7 +2606,7 @@ input:-webkit-autofill:active {
 /* Адаптивность */
 @media (max-width: 400px) {
     .swipe-card {
-        padding: 16px 14px;
+        padding: 20px 18px;
     }
     
     .swipe-avatar,
@@ -2629,7 +2629,7 @@ input:-webkit-autofill:active {
     }
     
     .connection-line {
-        width: 60px;
+        width: 70px;
     }
     
     .swipe-subtitle {
@@ -2638,7 +2638,14 @@ input:-webkit-autofill:active {
     
     @keyframes moveAlongLine {
         0% { transform: translateX(0) scale(1); opacity: 1; left: 0; }
-        50% { transform: translateX(50px) scale(1.2); opacity: 0.7; left: 0; }
+        50% { transform: translateX(60px) scale(1.2); opacity: 0.7; left: 0; }
         100% { transform: translateX(0) scale(1); opacity: 1; left: 0; }
+    }
+    
+    .connection-timer {
+        top: 12px;
+        left: 18px;
+        padding: 4px 10px;
+        font-size: 14px;
     }
 }
