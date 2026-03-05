@@ -1,5 +1,5 @@
 // ============================================
-// ПОИСК (Telegram Mini App версия) - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// ПОИСК (Telegram Mini App версия) - 10/10 UX
 // ============================================
 
 const Search = {
@@ -196,8 +196,35 @@ const Search = {
         this.isSearching = true;
         this.currentMatchId = null;
         
-        // Возвращаемся на экран поиска
-        this.showSearchScreen(this.currentMode);
+        // Показываем уведомление об отказе
+        this.showRejectNotification();
+        
+        // Возвращаемся на экран поиска через 2 секунды
+        setTimeout(() => {
+            this.showSearchScreen(this.currentMode);
+        }, 2000);
+    },
+    
+    showRejectNotification() {
+        const swipeCard = document.querySelector('.swipe-card');
+        if (!swipeCard) return;
+        
+        // Добавляем класс rejected
+        swipeCard.classList.add('rejected');
+        
+        // Меняем статус
+        const statusEl = document.getElementById('connectionStatus');
+        if (statusEl) {
+            statusEl.textContent = '❌ Игрок отклонил приглашение';
+            statusEl.style.color = '#FF3B30';
+        }
+        
+        // Убираем кнопки
+        const buttons = document.querySelector('.connection-actions');
+        if (buttons) {
+            buttons.style.opacity = '0.5';
+            buttons.style.pointerEvents = 'none';
+        }
     },
     
     handleBothAccepted() {
@@ -209,12 +236,27 @@ const Search = {
             this.matchTimerInterval = null;
         }
         
-        // Сбрасываем флаги
-        this.waitingForPartner = false;
-        this.isSearching = false;
+        // Добавляем эффект both-accepted
+        document.querySelector('.connection-screen')?.classList.add('both-accepted');
         
-        // Создаем игру
-        this.createGame();
+        // Меняем статус
+        const statusEl = document.getElementById('connectionStatus');
+        if (statusEl) {
+            statusEl.textContent = '✅ Тиммейт принял приглашение! Создаем игру...';
+            statusEl.style.color = '#FF5500';
+        }
+        
+        // Скрываем кнопки
+        const buttons = document.querySelector('.connection-actions');
+        if (buttons) {
+            buttons.style.opacity = '0';
+            buttons.style.pointerEvents = 'none';
+        }
+        
+        // Создаем игру через небольшую паузу
+        setTimeout(() => {
+            this.createGame();
+        }, 1000);
     },
     
     stopPolling() {
@@ -237,118 +279,89 @@ const Search = {
         const mode = data.opponent.mode || this.currentMode || 'PREMIER';
         console.log('Режим для отображения:', mode);
         
-        // Показываем кнопки (на случай если они были скрыты)
-        const buttons = document.querySelector('.match-buttons');
-        if (buttons) buttons.style.display = 'flex';
+        // Получаем карточку свайпа
+        const swipeCard = document.querySelector('.swipe-card');
+        const swipeContent = document.querySelector('.swipe-card-content');
         
-        // Заполняем данные с проверкой существования элементов
-        const playerIdEl = document.getElementById('matchPlayerId');
-        if (playerIdEl) playerIdEl.textContent = data.opponent.player_id || '???';
+        if (!swipeCard || !swipeContent) return;
         
-        const playerNickEl = document.getElementById('matchPlayerNick');
-        if (playerNickEl) playerNickEl.textContent = data.opponent.nick || 'Игрок';
+        // Добавляем класс для анимации появления
+        swipeCard.classList.add('connection-mode');
         
-        // Рейтинг - просто число из профиля
-        const ratingValueEl = document.getElementById('matchRatingValue');
-        if (ratingValueEl) {
-            ratingValueEl.textContent = data.opponent.rating || '0';
-        }
+        // Меняем содержимое карточки на экран соединения
+        swipeContent.innerHTML = this.getConnectionHTML(data.opponent);
         
-        const ageEl = document.getElementById('matchAge');
-        if (ageEl) {
-            if (ageEl.tagName === 'INPUT' || ageEl.tagName === 'TEXTAREA') {
-                ageEl.value = data.opponent.age + ' лет' || '? лет';
-            } else {
-                ageEl.textContent = data.opponent.age + ' лет' || '? лет';
-            }
-        }
-        
-        const rankEl = document.getElementById('matchRank');
-        if (rankEl) {
-            if (rankEl.tagName === 'INPUT' || rankEl.tagName === 'TEXTAREA') {
-                rankEl.value = data.opponent.rank || 'Не указан';
-            } else {
-                rankEl.textContent = data.opponent.rank || 'Не указан';
-            }
-        }
-        
-        // Получаем элементы ссылок и их контейнеры
-        const steamContainer = document.querySelector('.match-steam-container');
-        const faceitContainer = document.querySelector('.match-faceit-container');
-        
-        const steamLinkEl = document.getElementById('matchSteamLink');
-        const faceitLinkEl = document.getElementById('matchFaceitLink');
-        
-        // Для FACEIT показываем только ссылку Faceit, Steam скрываем
-        if (mode === 'FACEIT') {
-            console.log('FACEIT режим: показываем только Faceit ссылку');
-            
-            // Скрываем Steam контейнер
-            if (steamContainer) {
-                steamContainer.style.display = 'none';
-            }
-            
-            // Показываем и заполняем Faceit
-            if (faceitContainer) {
-                faceitContainer.style.display = 'block';
-            }
-            
-            if (faceitLinkEl) {
-                if (faceitLinkEl.tagName === 'INPUT' || faceitLinkEl.tagName === 'TEXTAREA') {
-                    faceitLinkEl.value = data.opponent.faceit_link || 'Не указана';
-                } else {
-                    faceitLinkEl.textContent = data.opponent.faceit_link || 'Не указана';
-                }
-            }
-        } 
-        // Для остальных режимов показываем только ссылку Steam, Faceit скрываем
-        else {
-            console.log('Другой режим: показываем только Steam ссылку');
-            
-            // Показываем и заполняем Steam
-            if (steamContainer) {
-                steamContainer.style.display = 'block';
-            }
-            
-            if (steamLinkEl) {
-                if (steamLinkEl.tagName === 'INPUT' || steamLinkEl.tagName === 'TEXTAREA') {
-                    steamLinkEl.value = data.opponent.steam_link || 'Не указана';
-                } else {
-                    steamLinkEl.textContent = data.opponent.steam_link || 'Не указана';
-                }
-            }
-            
-            // Скрываем Faceit контейнер
-            if (faceitContainer) {
-                faceitContainer.style.display = 'none';
-            }
-        }
-        
-        // Комментарий
-        const commentEl = document.getElementById('matchComment');
-        if (commentEl) {
-            if (commentEl.tagName === 'TEXTAREA' || commentEl.tagName === 'INPUT') {
-                commentEl.value = data.opponent.comment || 'Нет комментария';
-            } else {
-                commentEl.textContent = data.opponent.comment || 'Нет комментария';
-            }
-        }
-        
-        // Показываем экран свайп-карточек
-        App.showScreen('swipeScreen', true);
-        // Запускаем свайп с текущим режимом
-        Swipe.startSwipe(mode); // mode = 'FACEIT' или 'PREMIER' и т.д.
-        
-        this.resetTimer();
-        this.stopPolling();
+        // Показываем экран соединения
+        document.querySelector('.swipe-screen')?.classList.remove('active');
+        document.querySelector('.connection-screen')?.classList.add('active');
         
         // Запускаем таймер на 30 секунд
         this.startMatchTimer();
     },
     
+    // HTML для карточки соединения
+    getConnectionHTML(opponent) {
+        return `
+            <div class="swipe-card-content connection-mode">
+                <div class="connection-avatars">
+                    <!-- Твой аватар (всегда оранжевый с пульсацией) -->
+                    <div class="connection-avatar self-avatar" id="selfAvatar">
+                        <div class="tg-avatar-svg">
+                            <svg width="35" height="35" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M5 20V19C5 15.6863 7.68629 13 11 13H13C16.3137 13 19 15.6863 19 19V20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- Линия соединения -->
+                    <div class="connection-line-container">
+                        <div class="connection-line" id="connectionLine">
+                            <div class="line-pulse" id="linePulse"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Аватар тиммейта (сначала серый) -->
+                    <div class="teammate-avatar" id="teammateAvatar">
+                        <div class="tg-avatar-svg">
+                            <svg width="35" height="35" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M5 20V19C5 15.6863 7.68629 13 11 13H13C16.3137 13 19 15.6863 19 19V20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Информация о тиммейте -->
+                <div class="teammate-info">
+                    <span class="teammate-nick">${opponent.nick || 'Игрок'}</span>
+                    <span class="teammate-rating">${opponent.rating || '0'} ❤️</span>
+                </div>
+                
+                <!-- Статус соединения -->
+                <div class="connection-status" id="connectionStatus">
+                    Ожидание ответа игрока...
+                </div>
+                
+                <!-- Кнопки действий -->
+                <div class="connection-actions">
+                    <button class="connection-btn accept" onclick="Search.acceptMatch()">✓ Принять</button>
+                    <button class="connection-btn decline" onclick="Search.rejectMatch()">✗ Отклонить</button>
+                </div>
+            </div>
+        `;
+    },
+    
     startMatchTimer() {
         const timerElement = document.getElementById('matchTimer');
-        if (!timerElement) return;
+        
+        // Создаем или обновляем таймер
+        let connectionTimer = document.querySelector('.connection-timer');
+        if (!connectionTimer) {
+            connectionTimer = document.createElement('div');
+            connectionTimer.className = 'connection-timer';
+            document.querySelector('.connection-screen')?.appendChild(connectionTimer);
+        }
         
         // Очищаем предыдущий таймер если был
         if (this.matchTimerInterval) {
@@ -367,18 +380,26 @@ const Search = {
             const now = Date.now();
             const diff = Math.max(0, Math.floor((endTime - now) / 1000));
             
+            // Форматируем время (MM:SS)
+            const minutes = Math.floor(diff / 60);
+            const seconds = diff % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            connectionTimer.textContent = timeString;
+            
             if (diff <= 0) {
-                timerElement.textContent = '0с';
+                connectionTimer.textContent = '00:00';
                 clearInterval(this.matchTimerInterval);
                 this.matchTimerInterval = null;
                 this.matchTimeout();
                 return;
             }
             
-            timerElement.textContent = `⏳ ${diff}с`;
-            
+            // Если осталось меньше 10 секунд - добавляем класс warning
             if (diff < 10) {
-                timerElement.style.color = '#FF5500';
+                connectionTimer.classList.add('warning');
+            } else {
+                connectionTimer.classList.remove('warning');
             }
         };
         
@@ -399,6 +420,20 @@ const Search = {
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         const matchId = this.currentMatchId;
         
+        // Показываем уведомление о таймауте
+        const statusEl = document.getElementById('connectionStatus');
+        if (statusEl) {
+            statusEl.textContent = '⏰ Время ожидания истекло';
+            statusEl.style.color = '#FF3B30';
+        }
+        
+        // Скрываем кнопки
+        const buttons = document.querySelector('.connection-actions');
+        if (buttons) {
+            buttons.style.opacity = '0.5';
+            buttons.style.pointerEvents = 'none';
+        }
+        
         // Сначала сбрасываем флаги, чтобы предотвратить повторные вызовы
         this.waitingForPartner = false;
         this.myResponse = null;
@@ -415,12 +450,16 @@ const Search = {
             })
         })
         .then(() => {
-            // Тот кто не нажал - на главный экран
-            App.showScreen('mainScreen', true);
+            // Через 2 секунды на главный экран
+            setTimeout(() => {
+                App.showScreen('mainScreen', true);
+            }, 2000);
         })
         .catch(error => {
             console.error('Error timing out match:', error);
-            App.showScreen('mainScreen', true);
+            setTimeout(() => {
+                App.showScreen('mainScreen', true);
+            }, 2000);
         });
     },
     
@@ -430,6 +469,15 @@ const Search = {
         if (!this.currentMatchId) {
             console.log('Нет активного мэтча');
             return;
+        }
+        
+        // Визуальная обратная связь
+        const acceptBtn = document.querySelector('.connection-btn.accept');
+        if (acceptBtn) {
+            acceptBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                acceptBtn.style.transform = '';
+            }, 200);
         }
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
@@ -456,14 +504,17 @@ const Search = {
                 // Ждем ответа второго игрока
                 this.waitingForPartner = true;
                 
-                // Скрываем кнопки, показываем статус ожидания
-                const buttons = document.querySelector('.match-buttons');
-                if (buttons) buttons.style.display = 'none';
+                // Меняем статус
+                const statusEl = document.getElementById('connectionStatus');
+                if (statusEl) {
+                    statusEl.textContent = '✅ Вы приняли, ожидаем ответа тиммейта...';
+                }
                 
-                const timer = document.getElementById('matchTimer');
-                if (timer) {
-                    timer.innerHTML = '⏳ Ожидаем ответа тиммейта...';
-                    timer.style.color = '#FF5500';
+                // Скрываем кнопки
+                const buttons = document.querySelector('.connection-actions');
+                if (buttons) {
+                    buttons.style.opacity = '0.5';
+                    buttons.style.pointerEvents = 'none';
                 }
                 
                 // Продолжаем проверять статус
@@ -483,8 +534,31 @@ const Search = {
             return;
         }
         
+        // Визуальная обратная связь
+        const declineBtn = document.querySelector('.connection-btn.decline');
+        if (declineBtn) {
+            declineBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                declineBtn.style.transform = '';
+            }, 200);
+        }
+        
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         const matchId = this.currentMatchId;
+        
+        // Показываем статус отказа
+        const statusEl = document.getElementById('connectionStatus');
+        if (statusEl) {
+            statusEl.textContent = '❌ Вы отклонили приглашение';
+            statusEl.style.color = '#FF3B30';
+        }
+        
+        // Скрываем кнопки
+        const buttons = document.querySelector('.connection-actions');
+        if (buttons) {
+            buttons.style.opacity = '0.5';
+            buttons.style.pointerEvents = 'none';
+        }
         
         // Очищаем таймер
         if (this.matchTimerInterval) {
@@ -514,12 +588,16 @@ const Search = {
             this.isSearching = true;
             this.currentMatchId = null;
             
-            // Возвращаемся на экран поиска
-            this.showSearchScreen(this.currentMode);
+            // Через 2 секунды на главный экран
+            setTimeout(() => {
+                App.showScreen('mainScreen', true);
+            }, 2000);
         })
         .catch(error => {
             console.error('Error rejecting match:', error);
-            this.showSearchScreen(this.currentMode);
+            setTimeout(() => {
+                App.showScreen('mainScreen', true);
+            }, 2000);
         });
     },
     
@@ -690,4 +768,3 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.Search = Search;
-
