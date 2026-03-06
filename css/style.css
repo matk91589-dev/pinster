@@ -84,20 +84,17 @@ body {
     overflow: hidden;
 }
 
-/* ===== ХЕДЕР ===== */
+/* ===== ХЕДЕР (базовый, будет перезаписан патчем) ===== */
 .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 4px 14px 4px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    margin-bottom: 14px;
+    padding: 4px 0 12px 0;
+    border-bottom: 1px solid #1E2128;
+    margin-bottom: 12px;
     flex-shrink: 0;
-
-    backdrop-filter: blur(14px);
-    background: rgba(12,16,22,0.75);
-
-    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+    backdrop-filter: blur(10px);
+    background: rgba(17, 19, 23, 0.85);
 }
 
 .logo {
@@ -145,8 +142,6 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     background: transparent;
-
-    margin-right: 4px
 }
 
 .icon-settings:hover {
@@ -412,10 +407,8 @@ body {
     margin-top: auto;
     border-top: 1px solid rgba(255,255,255,0.05);
     flex-shrink: 0;
-
     backdrop-filter: blur(14px);
     background: rgba(12,16,22,0.80);
-
     box-shadow: 0 -6px 20px rgba(0,0,0,0.35);
 }
 
@@ -2703,22 +2696,31 @@ input:-webkit-autofill:active {
     width: 100%;
     margin-left: -20px;
     margin-right: -20px;
-    padding: 18px 22px;
+    padding: 18px 10px;  /* боковые отступы 10px */
     border-radius: 0;
-    background:
-        linear-gradient(
-            180deg,
-            rgba(15,18,24,0.96) 0%,
-            rgba(15,18,24,0.75) 100%
-        );
-    backdrop-filter: blur(18px);
+    background: rgba(12,16,22,0.80);  /* как у нижнего бара */
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);  /* зеркально нижнему бару (у него border-top) */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
 }
 
-/* красивый accent underline */
+/* красивый accent underline (оставим как было) */
 .header::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
     width: 120px;
     height: 2px;
-    opacity: .7;
+    transform: translateX(-50%);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--accent),
+        transparent
+    );
+    opacity: 0.7;
+    filter: blur(0.3px);
 }
 
 /* ================================= */
@@ -2727,14 +2729,18 @@ input:-webkit-autofill:active {
 .logo {
     font-weight: 800;
     letter-spacing: -0.4px;
-
-    margin-left: 6px
+    /* margin-left: 6px — убрали, чтобы отступ был ровно padding header */
 }
 
 .logo .ping {
     color: #FF5500;
     text-shadow:
         0 0 10px rgba(255,85,0,.35);
+}
+
+/* иконка настроек */
+.icon-settings {
+    /* margin-right: 4px — убрали, отступ задаётся padding header */
 }
 
 /* ================================= */
