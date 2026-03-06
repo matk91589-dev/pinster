@@ -67,7 +67,7 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 12px 20px 8px 20px;
+    padding: 0 20px 0 20px;
     box-sizing: border-box;
     border-radius: 16px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
@@ -84,7 +84,7 @@ body {
     overflow: hidden;
 }
 
-/* ===== ХЕДЕР ===== */
+/* ===== НОВЫЙ PREMIUM HEADER ===== */
 .header {
     position: sticky;
     top: 0;
@@ -100,10 +100,9 @@ body {
     backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255,255,255,0.05);
     z-index: 50;
-    margin-bottom: 12px;
-    flex-shrink: 0;
 }
 
+/* Фирменная линия Pingster */
 .header::after {
     content: "";
     position: absolute;
@@ -113,10 +112,10 @@ body {
     height: 2px;
     background: linear-gradient(
         90deg,
-        var(--accent),
+        #FF5500,
         transparent
     );
-    opacity: 0.8;
+    opacity: .8;
 }
 
 .logo {
@@ -336,7 +335,7 @@ body {
 .match-found-screen {
     overflow-y: auto;
     flex: 1;
-    padding: 0;
+    padding: 12px 0 0 0;
 }
 
 /* ===== ЭКРАН СВАЙПА БЕЗ ПРОКРУТКИ ===== */
@@ -420,7 +419,7 @@ body {
     box-shadow: 0 2px 12px rgba(255,85,0,0.3);
 }
 
-/* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
+/* ===== НОВЫЙ PREMIUM BOTTOM NAV ===== */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -437,8 +436,6 @@ body {
     backdrop-filter: blur(14px);
     border-top: 1px solid rgba(255,255,255,0.06);
     z-index: 50;
-    max-width: 1000px;
-    margin: 0 auto;
 }
 
 .nav-item {
@@ -450,7 +447,7 @@ body {
     cursor: pointer;
     opacity: 0.6;
     padding: 4px 10px;
-    transition: transform 0.2s ease, color 0.2s ease;
+    transition: transform .2s ease, color .2s ease;
     will-change: transform;
 }
 
@@ -461,15 +458,12 @@ body {
 
 .nav-item.active {
     opacity: 1;
-    color: var(--accent);
+    color: #FF5500;
     transform: translateY(-2px);
-    text-shadow: 0 0 8px var(--accent-glow);
+    text-shadow: 0 0 8px rgba(255,85,0,0.7);
 }
 
-.nav-item.active svg {
-    stroke: var(--accent);
-}
-
+/* Glow под активной иконкой */
 .nav-item.active::after {
     content: "";
     position: absolute;
@@ -477,10 +471,14 @@ body {
     left: 50%;
     width: 22px;
     height: 4px;
-    background: var(--accent);
+    background: #FF5500;
     border-radius: 10px;
     transform: translateX(-50%);
     box-shadow: 0 0 10px rgba(255,85,0,0.6);
+}
+
+.nav-item.active svg {
+    stroke: #FF5500;
 }
 
 .nav-icon svg {
@@ -497,30 +495,7 @@ body {
     color: inherit;
 }
 
-/* ===== ГЛАВНЫЙ ЭКРАН ===== */
-.main-screen .section-title {
-    margin: 5vh 0 0.5vh 0;
-    flex-shrink: 0;
-}
-
-.main-screen .section-subtitle {
-    margin: 0 0 2vh 0;
-    flex-shrink: 0;
-}
-
-.mode-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 2vh;
-    margin: 0;
-    margin-top: -3vh;
-    width: 100%;
-    min-height: 0;
-}
-
-/* Каскадная анимация для кнопок режимов */
+/* ===== АНИМАЦИЯ КАСКАДА ДЛЯ ГЛАВНОГО ЭКРАНА ===== */
 .mode-btn {
     width: 100%;
     padding: 2.5vh 4vw;
@@ -538,28 +513,20 @@ body {
     flex-shrink: 0;
     will-change: transform;
     opacity: 0;
-    transform: translateY(20px);
-    animation: slideIn 0.4s ease forwards;
+    animation: cascadeAppear 0.4s ease forwards;
 }
 
-.mode-btn.faceit {
-    animation-delay: 0ms;
-}
+.mode-btn:nth-child(1) { animation-delay: 0ms; }
+.mode-btn:nth-child(2) { animation-delay: 80ms; }
+.mode-btn:nth-child(3) { animation-delay: 160ms; }
+.mode-btn:nth-child(4) { animation-delay: 240ms; }
 
-.mode-btn.premier {
-    animation-delay: 80ms;
-}
-
-.mode-btn.prime {
-    animation-delay: 160ms;
-}
-
-.mode-btn.public {
-    animation-delay: 240ms;
-}
-
-@keyframes slideIn {
-    to {
+@keyframes cascadeAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
         opacity: 1;
         transform: translateY(0);
     }
