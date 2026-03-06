@@ -89,12 +89,15 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px 0 12px 0;
-    border-bottom: 1px solid #1E2128;
-    margin-bottom: 12px;
+    padding: 8px 4px 14px 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    margin-bottom: 14px;
     flex-shrink: 0;
-    backdrop-filter: blur(10px);
-    background: rgba(17, 19, 23, 0.85);
+
+    backdrop-filter: blur(14px);
+    background: rgba(12,16,22,0.75);
+
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
 }
 
 .logo {
@@ -142,6 +145,8 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     background: transparent;
+
+    margin-right: 4px
 }
 
 .icon-settings:hover {
@@ -403,12 +408,15 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 1vh 0 0.5vh 0;
+    padding: 1.2vh 0 0.6vh 0;
     margin-top: auto;
-    border-top: 1px solid #1E2128;
+    border-top: 1px solid rgba(255,255,255,0.05);
     flex-shrink: 0;
-    backdrop-filter: blur(10px);
-    background: rgba(17, 19, 23, 0.85);
+
+    backdrop-filter: blur(14px);
+    background: rgba(12,16,22,0.80);
+
+    box-shadow: 0 -6px 20px rgba(0,0,0,0.35);
 }
 
 .nav-item {
@@ -432,7 +440,7 @@ body {
 .nav-item.active {
     opacity: 1;
     color: var(--accent);
-    text-shadow: 0 0 8px var(--accent-glow);
+    text-shadow: 0 0 12px var(--accent-glow);
 }
 
 .nav-item.active svg {
@@ -497,7 +505,8 @@ body {
 .mode-btn:hover {
     border-color: var(--accent);
     background: #1E2128;
-    transform: none;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
 }
 
 .mode-btn.faceit,
@@ -2718,6 +2727,8 @@ input:-webkit-autofill:active {
 .logo {
     font-weight: 800;
     letter-spacing: -0.4px;
+
+    margin-left: 6px
 }
 
 .logo .ping {
@@ -2851,4 +2862,20 @@ html {
             inset 0 1px 0 rgba(255,255,255,.04),
             0 6px 20px rgba(0,0,0,.35);
     }
+}
+
+.mode-btn:active {
+    transform: scale(0.97);
+}
+
+button {
+    transition: all 0.2s ease;
+}
+
+.mode-btn::after {
+    transition: transform 0.2s ease;
+}
+
+.mode-btn:hover::after {
+    transform: translateY(-50%) translateX(3px);
 }
