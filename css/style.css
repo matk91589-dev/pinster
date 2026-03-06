@@ -89,7 +89,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 4px 14px 4px;
+    padding: 8px 0 14px 0;
     border-bottom: 1px solid rgba(255,255,255,0.05);
     margin-bottom: 14px;
     flex-shrink: 0;
@@ -144,7 +144,7 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     background: transparent;
-    margin-right: 4px;
+    margin-right: 6px;
 }
 
 .icon-settings:hover {
@@ -406,7 +406,7 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 1.2vh 0 0.6vh 0;
+    padding: 1.2vh 0 0.8vh 0;
     margin-top: auto;
     border-top: 1px solid rgba(255,255,255,0.05);
     flex-shrink: 0;
