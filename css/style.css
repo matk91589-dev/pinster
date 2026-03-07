@@ -3014,42 +3014,18 @@ radial-gradient(circle at 80% 100%, rgba(255,85,0,0.05), transparent 45%);
 -moz-osx-font-smoothing: grayscale;
 }
 
-/* ===== ГЛАВНЫЙ ЭКРАН - ИСПРАВЛЕННЫЙ ВЕРТИКАЛЬНЫЙ РИТМ ===== */
-.main-screen .section-title {
-    margin: 4vh 0 2vh 0;  /* было 4vh 0 1vh 0, увеличил нижний отступ */
-    flex-shrink: 0;
-}
-
-.main-screen .section-subtitle {
-    margin: 0 0 4vh 0;  /* оставляем как есть, нормально */
-    flex-shrink: 0;
-}
-
-/* Расстояние от заголовка до первой кнопки = расстояние от последней кнопки до низа */
-.mode-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 2vh;
-    margin: 0;
-    margin-top: -2vh;  /* было -3vh, уменьшил чтобы не съезжало */
-    margin-bottom: 2vh;  /* добавил отступ снизу */
-    width: 100%;
-    min-height: 0;
-}
-
-/* ===== ЭКРАНЫ РЕЖИМОВ (FACEIT, PREMIER, PRIME, PUBLIC) ===== */
+/* ===== ЭКРАНЫ РЕЖИМОВ - ИДЕАЛЬНАЯ СИММЕТРИЯ ===== */
 .faceit-screen,
 .premier-screen,
 .prime-screen,
 .public-screen {
     display: flex;
     flex-direction: column;
-    padding: 2vh 0 0 0;  /* убрал нижний паддинг, он будет от кнопки */
+    height: 100%;
+    padding: 0;
 }
 
-/* Контейнер для формы ввода */
+/* Контейнер контента - занимает всю высоту */
 .faceit-screen .mode-content,
 .premier-screen .mode-content,
 .prime-screen .mode-content,
@@ -3058,9 +3034,24 @@ radial-gradient(circle at 80% 100%, rgba(255,85,0,0.05), transparent 45%);
     display: flex;
     flex-direction: column;
     width: 100%;
+    height: 100%;
 }
 
-/* Растягиваем форму на всю высоту */
+/* Верхний блок с заголовком - фиксированные отступы */
+.faceit-screen .mode-header,
+.premier-screen .mode-header,
+.prime-screen .mode-header,
+.public-screen .mode-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3vw;
+    margin: 2.5vh 0 1.5vh 0;  /* ОТСТУП ОТ ХЕДЕРА = 2.5vh */
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* Все элементы формы - сжимаются */
 .faceit-screen .play-style,
 .faceit-screen .input-label,
 .faceit-screen .search-input-field,
@@ -3082,20 +3073,22 @@ radial-gradient(circle at 80% 100%, rgba(255,85,0,0.05), transparent 45%);
 .public-screen .rank-select,
 .public-screen .comment-section {
     flex-shrink: 0;
+    margin-bottom: 1.2vh;
 }
 
-/* Пустое пространство, которое толкает кнопку вниз */
+/* СПЕЙСЕР - толкает кнопку вниз */
 .faceit-screen .mode-content .spacer,
 .premier-screen .mode-content .spacer,
 .prime-screen .mode-content .spacer,
 .public-screen .mode-content .spacer {
     flex: 1;
+    min-height: 2vh;
 }
 
-/* Кнопка поиска - прижата к низу */
+/* Кнопка поиска - с фиксированным отступом снизу */
 .mode-search-btn {
     width: min(280px, 80%);
-    padding: 2vh 0;
+    padding: 2.2vh 0;
     background: var(--accent);
     border: none;
     border-radius: 30px;
@@ -3104,82 +3097,23 @@ radial-gradient(circle at 80% 100%, rgba(255,85,0,0.05), transparent 45%);
     color: var(--text-primary);
     text-transform: uppercase;
     cursor: pointer;
-    margin: 2vh auto 2vh auto;  /* одинаковые отступы сверху и снизу */
+    margin: 2vh auto 2.5vh auto;  /* НИЖНИЙ ОТСТУП = 2.5vh (до нижнего хедера) */
     transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
     letter-spacing: 0.5px;
     box-shadow: 0 0 0 1px rgba(255,85,0,0.2), 0 6px 20px rgba(255,85,0,0.25);
     flex-shrink: 0;
 }
 
-/* ===== МАГАЗИН - УВЕЛИЧИЛ ОТСТУП ===== */
-.shop-screen .section-title {
-    margin: 2.5vh 0 1vh 0;  /* было margin-top: 1.5vh, увеличил до 2.5vh (+10px примерно) */
-}
-
-.shop-tabs {
-    display: flex;
-    gap: 2vw;
-    margin: 2vh 0;
-    flex-shrink: 0;
-}
-
-/* ===== ПРОФИЛЬ - УВЕЛИЧИЛ ОТСТУП ===== */
-.profile-screen .section-title {
-    margin: 2.5vh 0 1vh 0;  /* добавил отступ сверху как в магазине */
-}
-
-.profile-header {
-    display: flex;
-    align-items: center;
-    gap: 3vw;
-    margin: 2.5vh 0 2vh 0;  /* было 1.8vh 0 2vh 0, увеличил верхний отступ */
-    padding: 0;
-    flex-shrink: 0;
-}
-
-/* ===== ЭКРАНЫ СВАЙПА - ВЫРАВНИВАНИЕ ===== */
-.swipe-screen .swipe-header {
-    flex-shrink: 0;
-    padding: 2vh 0 3vh 0;  /* настроил отступы */
-    text-align: center;
-}
-
-/* ===== ЭКРАН ПОИСКА - ВЫРАВНИВАНИЕ ===== */
-.search-screen {
-    padding: 2vh 0 0 0;
-}
-
-.search-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2vh 0 3vh 0;
-    border-bottom: 1px solid #1E2128;
-    margin-bottom: 3vh;
-    flex-shrink: 0;
-    gap: 3vw;
-}
-
-.search-loading {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 2vh;
-}
-
-.cancel-search-btn {
-    width: 100%;
-    padding: 2.5vh 0;
-    background: transparent;
-    border: 2px solid var(--accent);
-    border-radius: 12px;
-    color: var(--accent);
-    font-size: clamp(16px, 5vw, 18px);
-    font-weight: 700;
-    text-transform: uppercase;
-    cursor: pointer;
-    margin: 2vh auto 2vh auto;  /* одинаковые отступы */
-    transition: all 0.2s;
-    flex-shrink: 0;
+/* На мобилках - фиксированные отступы в пикселях */
+@media (max-width: 600px) {
+    .faceit-screen .mode-header,
+    .premier-screen .mode-header,
+    .prime-screen .mode-header,
+    .public-screen .mode-header {
+        margin: 16px 0 12px 0;  /* Отступ от хедера ~16px */
+    }
+    
+    .mode-search-btn {
+        margin: 12px auto 16px auto;  /* Отступ до нижнего хедера ~16px */
+    }
 }
