@@ -67,7 +67,7 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 12px 20px 8px 20px;
+    padding: 0;
     box-sizing: border-box;
     border-radius: 16px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
@@ -82,38 +82,28 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    
+    padding: 12px 20px 8px 20px;
 }
 
-/* ===== ХЕДЕР (базовый, будет перезаписан патчем) ===== */
-/* ================================= */
-/* ===== HEADER FULL WIDTH ===== */
-/* ================================= */
-/* ================================= */
 /* ================================= */
 /* ===== HEADER FULL WIDTH ===== */
 /* ================================= */
 .header {
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 12px 20px;
-    border-radius: 0;
-    background: rgba(12,16,22,0.80);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
-    
-    /* Фиксим display flex для правильного расположения внутри */
+    width: 100%;
+    padding: 12px 0;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-sizing: border-box;
-}
 
-/* Контейнер для контента внутри хедера */
-.header > * {
-    flex-shrink: 0;
+    background: rgba(12,16,22,0.80);
+    backdrop-filter: blur(14px);
+
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+
+    box-sizing: border-box;
 }
 
 /* Логотип — фиксируем отступ слева */
@@ -2940,6 +2930,7 @@ button {
 .mode-btn:hover::after {
     transform: translateY(-50%) translateX(3px);
 }
+
 
 
 
