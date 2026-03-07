@@ -503,6 +503,11 @@ body {
 }
 
 /* ===== ГЛАВНЫЙ ЭКРАН ===== */
+.main-screen {
+    display: flex;
+    flex-direction: column;
+}
+
 .main-screen .section-title {
     margin: 0 0 2px 0;
     flex-shrink: 0;
@@ -518,6 +523,8 @@ body {
     flex-direction: column;
     gap: 1.6vh;
     width: 100%;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .mode-btn {
@@ -1498,14 +1505,17 @@ body {
 
 /* ===== ЭКРАН НАСТРОЕК ===== */
 .settings-screen .section-title {
-    margin: 0 0 3vh 0;
+    margin: 0 0 1.5vh 0;
 }
 
 .settings-content {
-    margin: 2vh 0;
+    margin: 0;
     flex: 1;
     overflow-y: auto;
     min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
 }
 
 .settings-item {
@@ -1516,7 +1526,6 @@ body {
     background: var(--surface);
     border: 1px solid #2A2F3A;
     border-radius: 8px;
-    margin-bottom: 1.5vh;
     transition: background 0.2s ease;
 }
 
@@ -1577,12 +1586,20 @@ input:checked + .slider:before {
 }
 
 /* ===== ЭКРАНЫ РЕЖИМОВ ===== */
+.faceit-screen,
+.premier-screen,
+.prime-screen,
+.public-screen {
+    display: flex;
+    flex-direction: column;
+}
+
 .mode-header {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 3vw;
-    margin-bottom: 1.5vh;
+    margin-bottom: 2vh;
     position: relative;
     flex-shrink: 0;
 }
@@ -1641,7 +1658,7 @@ input:checked + .slider:before {
     font-size: clamp(10px, 3vw, 12px);
     color: var(--text-secondary);
     text-align: center;
-    margin-bottom: 1.5vh;
+    margin-bottom: 2vh;
     font-weight: 500;
     flex-shrink: 0;
 }
@@ -1776,7 +1793,7 @@ input:checked + .slider:before {
     color: var(--text-primary);
     text-transform: uppercase;
     cursor: pointer;
-    margin: 1.5vh auto 1vh auto;
+    margin: 2vh auto 1vh auto;
     transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
     letter-spacing: 0.5px;
     box-shadow: 0 0 0 1px rgba(255,85,0,0.2), 0 6px 20px rgba(255,85,0,0.25);
@@ -2948,58 +2965,4 @@ body::before {
 * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-/* ===== ВЕРТИКАЛЬНЫЕ КОРРЕКТИРОВКИ ===== */
-
-/* верхний отступ для всех экранов */
-.main-screen::before,
-.shop-screen::before,
-.profile-screen::before,
-.faceit-screen::before,
-.premier-screen::before,
-.prime-screen::before,
-.public-screen::before,
-.settings-screen::before {
-    content: "";
-    display: block;
-    height: 8px;
-    flex-shrink: 0;
-}
-
-/* нижний отступ для всех экранов */
-.main-screen::after,
-.shop-screen::after,
-.profile-screen::after,
-.faceit-screen::after,
-.premier-screen::after,
-.prime-screen::after,
-.public-screen::after,
-.settings-screen::after {
-    content: "";
-    display: block;
-    height: 16px;
-    flex-shrink: 0;
-}
-
-/* магазин - меньший верхний отступ */
-.shop-screen::before {
-    height: 4px;
-}
-
-/* главный экран - меньший верхний отступ */
-.main-screen::before {
-    height: 4px;
-}
-
-/* настройки - корректные отступы */
-.settings-screen .section-title {
-    margin: 0 0 2vh 0;
-}
-
-.settings-content {
-    margin: 0;
-    flex: 1;
-    overflow-y: auto;
-    min-height: 0;
 }
