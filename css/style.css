@@ -56,8 +56,8 @@ body {
 .phone-frame {
     position: relative;
     width: 100%;
-    height: 100%;
-    min-height: 100vh;
+    min-height: 100dvh;  /* dvh — идеально для Telegram */
+    height: auto;         /* убираем фиксированную высоту */
     max-width: 1000px;
     margin: 0 auto;
     background:
@@ -80,7 +80,7 @@ body {
     display: flex;
     flex-direction: column;
     width: 100%;
-    overflow: hidden;
+    overflow: visible;    /* меняем с hidden на visible для правильного скролла */
     padding: 12px 20px 8px 20px;
 }
 
@@ -328,7 +328,7 @@ body {
 .screen {
     display: none;
     width: 100%;
-    flex: 1;
+    flex: 1;              /* вместо height:100% */
     flex-direction: column;
     opacity: 0;
     transform: translateY(8px) scale(0.98);
@@ -352,14 +352,13 @@ body {
 .prime-screen,
 .public-screen,
 .search-screen,
-.start-screen,
 .friends-screen,
 .team-screen,
 .match-found-screen {
     overflow-y: auto;
     flex: 1;
     padding: 0;
-    min-height: 0;
+    min-height: 0;        /* фикс для скролла во flex-контейнере */
 }
 
 /* ===== ЭКРАН СВАЙПА БЕЗ ПРОКРУТКИ ===== */
@@ -373,7 +372,7 @@ body {
 .start-screen {
     align-items: center;
     justify-content: flex-start;
-    padding: clamp(40px, 8vh, 80px) 0 0 0;
+    padding: clamp(40px, 8vh, 80px) 0 0 0;  /* защита от скачков vh */
 }
 
 .start-screen .section-title {
@@ -504,6 +503,8 @@ body {
 
 /* ===== ГЛАВНЫЙ ЭКРАН ===== */
 .main-screen {
+    overflow-y: auto;
+    min-height: 0;        /* фикс для скролла */
     display: flex;
     flex-direction: column;
 }
@@ -1585,11 +1586,13 @@ input:checked + .slider:before {
     transform: translateX(clamp(18px, 5vw, 24px));
 }
 
-/* ===== ЭКРАНЫ РЕЖИМОВ ===== */
+/* ===== ЭКРАНЫ РЕЖИМОВ (где кнопка "Начать поиск") ===== */
 .faceit-screen,
 .premier-screen,
 .prime-screen,
 .public-screen {
+    overflow-y: auto;
+    min-height: 0;
     display: flex;
     flex-direction: column;
 }
