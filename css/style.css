@@ -88,19 +88,51 @@ body {
 /* ================================= */
 /* ===== HEADER FULL WIDTH ===== */
 /* ================================= */
+/* ================================= */
+/* ===== HEADER FULL WIDTH ===== */
+/* ================================= */
 .header {
-    position: relative;
-    left: 0;
-    right: 0;
     width: 100vw;
-    margin-left: calc(-50vw + 50%);
-    margin-right: calc(-50vw + 50%);
-    padding: 18px 20px;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    padding: 12px 20px;  /* Уменьшил вертикальные паддинги с 18px до 12px */
     border-radius: 0;
     background: rgba(12,16,22,0.80);
     backdrop-filter: blur(14px);
     border-bottom: 1px solid rgba(255,255,255,0.05);
     box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+    
+    /* Фиксим display flex для правильного расположения внутри */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+/* Контейнер для контента внутри хедера */
+.header > * {
+    flex-shrink: 0;
+}
+
+/* Логотип — фиксируем отступ слева */
+.logo {
+    margin-left: 0; /* Убеждаемся, что нет лишних отступов */
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    line-height: 1; /* Фикс высоты */
+}
+
+/* Иконка настроек — фиксируем отступ справа */
+.icon-settings {
+    margin-right: 0; /* Убеждаемся, что нет лишних отступов */
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .logo {
@@ -2891,6 +2923,7 @@ button {
 .mode-btn:hover::after {
     transform: translateY(-50%) translateX(3px);
 }
+
 
 
 
