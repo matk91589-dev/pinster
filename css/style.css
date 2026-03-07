@@ -56,8 +56,8 @@ body {
 .phone-frame {
     position: relative;
     width: 100%;
-    min-height: 100dvh; /* Используем dvh вместо vh */
-    height: auto;       /* Убираем фиксированную высоту */
+    height: 100%;            /* родитель (body) имеет height:100%, поэтому работает */
+    min-height: 100vh;       /* подстраховка на случай изменения viewport */
     max-width: 1000px;
     margin: 0 auto;
     background:
@@ -76,12 +76,11 @@ body {
 
 /* ===== СКРОЛЛИРУЕМЫЙ КОНТЕНТ ===== */
 .content {
-    flex: 1;                    /* Растягиваемся внутри flex-родителя */
+    flex: 1;                 /* растягиваемся внутри flex-родителя */
     display: flex;
     flex-direction: column;
     width: 100%;
-    /* height: 100% УДАЛЯЕМ — ломает flex-геометрию */
-    overflow: visible;          /* Меняем с hidden на visible */
+    overflow: hidden;        /* скрываем выходящее, скролл будет внутри экранов */
     padding: 12px 20px 8px 20px;
 }
 
@@ -329,12 +328,12 @@ body {
 .screen {
     display: none;
     width: 100%;
-    flex: 1;                    /* Вместо height: 100% */
+    flex: 1;                 /* вместо height:100% */
     flex-direction: column;
     opacity: 0;
     transform: translateY(8px) scale(0.98);
     transition: opacity 0.25s ease, transform 0.25s ease;
-    min-height: 0;              /* Важно для скролла внутри flex-контейнера */
+    min-height: 0;           /* важно для скролла внутри flex */
 }
 
 .screen.active {
@@ -357,11 +356,10 @@ body {
 .friends-screen,
 .team-screen,
 .match-found-screen {
-    overflow-y: auto;           /* Включаем скролл */
-    overflow-x: hidden;
+    overflow-y: auto;
     flex: 1;
     padding: 0;
-    min-height: 0;              /* Критически важно для скролла */
+    min-height: 0;           /* фикс для скролла во flex-контейнере */
 }
 
 /* ===== ЭКРАН СВАЙПА БЕЗ ПРОКРУТКИ ===== */
@@ -375,7 +373,7 @@ body {
 .start-screen {
     align-items: center;
     justify-content: flex-start;
-    padding: clamp(40px, 8vh, 80px) 0 0 0;  /* Защита от скачков vh */
+    padding: clamp(40px, 8vh, 80px) 0 0 0;  /* защита от скачков vh */
 }
 
 .start-screen .section-title {
