@@ -558,6 +558,11 @@ body {
     flex-shrink: 0;
 }
 
+/* Добавляем отступ между подзаголовком и кнопками, равный верхнему отступу */
+.main-screen .section-subtitle {
+    margin-bottom: calc(16px + 1.2vh);
+}
+
 .mode-container {
     display: flex;
     flex-direction: column;
@@ -644,6 +649,10 @@ body {
 }
 
 /* ===== МАГАЗИН ===== */
+.shop-screen {
+    padding-top: 5px;
+}
+
 .shop-screen .section-title {
     margin: 0;
 }
@@ -832,6 +841,10 @@ body {
 }
 
 /* ===== ПРОФИЛЬ ===== */
+.profile-screen {
+    padding-top: 5px;
+}
+
 .profile-screen .section-title {
     margin: 0;
 }
