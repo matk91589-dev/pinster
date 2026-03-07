@@ -2947,44 +2947,6 @@ button {
     }
 }
 
-/* ===== ЭКРАНЫ РЕЖИМОВ - СИММЕТРИЯ ===== */
-.faceit-screen,
-.premier-screen,
-.prime-screen,
-.public-screen {
-    padding-top: 2vh;
-    padding-bottom: 2vh;
-}
-
-.mode-search-btn {
-    margin-top: auto;
-    margin-bottom: 2vh;
-}
-
-/* ===== SUBTLE ACCENT BACKGROUND GLOW ===== */
-
-body::before{
-content:"";
-position:fixed;
-inset:0;
-
-background:
-radial-gradient(
-circle at 20% 10%,
-rgba(255,85,0,0.08),
-transparent 45%
-),
-
-radial-gradient(
-circle at 80% 90%,
-rgba(255,85,0,0.05),
-transparent 45%
-);
-
-pointer-events:none;
-z-index:-1;
-}
-
 /* ===== TELEGRAM MINI APP POLISH ===== */
 
 *{
