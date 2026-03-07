@@ -85,13 +85,16 @@ body {
 }
 
 /* ===== ХЕДЕР (базовый, будет перезаписан патчем) ===== */
+/* ================================= */
+/* ===== HEADER FULL WIDTH ===== */
+/* ================================= */
 .header {
-    width: 100vw;
     position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
+    left: 0;
+    right: 0;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
     padding: 18px 20px;
     border-radius: 0;
     background: rgba(12,16,22,0.80);
@@ -2888,5 +2891,6 @@ button {
 .mode-btn:hover::after {
     transform: translateY(-50%) translateX(3px);
 }
+
 
 
