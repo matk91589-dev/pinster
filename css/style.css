@@ -3009,15 +3009,3 @@ radial-gradient(circle at 80% 100%, rgba(255,85,0,0.05), transparent 45%);
 .main-screen::before {
     height: 4px;
 }
-
-
-/* ===== МАГАЗИН - КОРРЕКТИРОВКА ===== */
-.shop-screen::before {
-    min-height: 4px;  /* Уменьшаем верхний отступ для магазина */
-}
-
-/* ===== ГЛАВНЫЙ ЭКРАН - КОРРЕКТИРОВКА ===== */
-.main-screen::before {
-    min-height: 4px;  /* Ещё меньше отступ для главного */
-}
-
