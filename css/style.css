@@ -325,23 +325,6 @@ body {
     text-align: center;
 }
 
-/* ===== ЭКРАНЫ ===== */
-.screen {
-    display: none;
-    width: 100%;
-    height: 100%;
-    flex-direction: column;
-    opacity: 0;
-    transform: translateY(8px) scale(0.98);
-    transition: opacity 0.25s ease, transform 0.25s ease;
-}
-
-.screen.active {
-    display: flex;
-    opacity: 1;
-    transform: translateY(0) scale(1);
-}
-
 /* ===== ЭКРАНЫ С ПРОКРУТКОЙ ===== */
 .main-screen,
 .shop-screen,
@@ -2975,9 +2958,19 @@ radial-gradient(circle at 80% 100%, rgba(255,85,0,0.05), transparent 45%);
 /* ================================= */
 
 .screen {
-    display: flex;
+    display: none;
+    width: 100%;
+    height: 100%;
     flex-direction: column;
-    min-height: 100%;
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.screen.active {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }
 
 /* верхний spacer */
@@ -3019,3 +3012,12 @@ radial-gradient(circle at 80% 100%, rgba(255,85,0,0.05), transparent 45%);
     margin-top: auto;
 }
 
+/* ===== МАГАЗИН - КОРРЕКТИРОВКА ===== */
+.shop-screen::before {
+    min-height: 4px;  /* Уменьшаем верхний отступ для магазина */
+}
+
+/* ===== ГЛАВНЫЙ ЭКРАН - КОРРЕКТИРОВКА ===== */
+.main-screen::before {
+    min-height: 4px;  /* Ещё меньше отступ для главного */
+}
