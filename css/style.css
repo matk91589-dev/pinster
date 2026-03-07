@@ -89,12 +89,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px 0 12px 0;
-    border-bottom: 1px solid #1E2128;
-    margin-bottom: 12px;
     flex-shrink: 0;
-    backdrop-filter: blur(10px);
-    background: rgba(17, 19, 23, 0.85);
 }
 
 .logo {
@@ -2885,3 +2880,4 @@ button {
 .mode-btn:hover::after {
     transform: translateY(-50%) translateX(3px);
 }
+
