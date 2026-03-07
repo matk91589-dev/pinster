@@ -94,24 +94,27 @@ body {
     z-index: 20;
 
     width: 100%;
-    padding: 12px 20px;
+    padding: calc(12px + env(safe-area-inset-top)) 20px 12px 20px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    background: rgba(16, 18, 24, 0.55);
+    background: rgba(16, 18, 24, 0.65);
 
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(22px) saturate(140%);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
 
     border-bottom: 1px solid rgba(255,255,255,0.06);
 
     box-shadow:
-        0 8px 30px rgba(0,0,0,0.45),
-        inset 0 1px 0 rgba(255,255,255,0.04);
+        0 10px 35px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        inset 0 -1px 0 rgba(255,255,255,0.03);
 
     box-sizing: border-box;
+
+    will-change: backdrop-filter;
 }
 
 /* Логотип */
@@ -444,13 +447,16 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 1.2vh 0 0.6vh 0;
+    padding: 1.4vh 0 0.8vh 0;
     margin-top: auto;
-    border-top: 1px solid rgba(255,255,255,0.05);
+    border-top: 1px solid rgba(255,255,255,0.06);
     flex-shrink: 0;
-    backdrop-filter: blur(14px);
-    background: rgba(12,16,22,0.80);
-    box-shadow: 0 -6px 20px rgba(0,0,0,0.35);
+    backdrop-filter: blur(22px) saturate(140%);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    background: rgba(16,18,24,0.65);
+    box-shadow:
+        0 -10px 35px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
 .nav-item {
@@ -497,12 +503,12 @@ body {
 
 /* ===== ГЛАВНЫЙ ЭКРАН ===== */
 .main-screen .section-title {
-    margin: 5vh 0 0.5vh 0;
+    margin: 4vh 0 1vh 0;
     flex-shrink: 0;
 }
 
 .main-screen .section-subtitle {
-    margin: 0 0 2vh 0;
+    margin: 0 0 4vh 0;
     flex-shrink: 0;
 }
 
@@ -520,7 +526,8 @@ body {
 
 .mode-btn {
     width: 100%;
-    padding: 2.6vh 4vw;
+    padding: 3.1vh 4.5vw;
+    min-height: 64px;
 
     background:
         linear-gradient(
@@ -566,6 +573,10 @@ body {
 .mode-btn.premier {
     border-left: 4px solid var(--accent);
     color: var(--accent);
+    box-shadow:
+        0 6px 20px rgba(0,0,0,0.35),
+        0 0 0 1px rgba(255,85,0,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
 .mode-btn.prime,
@@ -594,6 +605,7 @@ body {
 /* ===== МАГАЗИН ===== */
 .shop-screen .section-title {
     margin: 0;
+    margin-top: 1.5vh;
 }
 
 .shop-tabs {
@@ -788,7 +800,7 @@ body {
     display: flex;
     align-items: center;
     gap: 3vw;
-    margin: 1vh 0 2vh 0;
+    margin: 1.8vh 0 2vh 0;
     padding: 0;
     flex-shrink: 0;
 }
@@ -2927,4 +2939,77 @@ button {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* ===== ЭКРАНЫ РЕЖИМОВ - СИММЕТРИЯ ===== */
+.faceit-screen,
+.premier-screen,
+.prime-screen,
+.public-screen {
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+}
+
+.mode-search-btn {
+    margin-top: auto;
+    margin-bottom: 2vh;
+}
+
+/* ===== SUBTLE ACCENT BACKGROUND GLOW ===== */
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+
+background:
+radial-gradient(
+circle at 20% 10%,
+rgba(255,85,0,0.08),
+transparent 45%
+),
+
+radial-gradient(
+circle at 80% 90%,
+rgba(255,85,0,0.05),
+transparent 45%
+);
+
+pointer-events:none;
+z-index:-1;
+}
+
+/* ===== TELEGRAM MINI APP POLISH ===== */
+
+*{
+-webkit-tap-highlight-color: transparent;
+}
+
+button{
+touch-action: manipulation;
+}
+
+html, body{
+overscroll-behavior: none;
+}
+
+/* ===== SUBTLE APP GLOW ===== */
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+pointer-events:none;
+z-index:-1;
+
+background:
+radial-gradient(circle at 20% 0%, rgba(255,85,0,0.08), transparent 40%),
+radial-gradient(circle at 80% 100%, rgba(255,85,0,0.05), transparent 45%);
+}
+
+/* ===== SMOOTH UI ===== */
+
+*{
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
 }
