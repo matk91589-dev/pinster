@@ -325,6 +325,23 @@ body {
     text-align: center;
 }
 
+/* ===== ЭКРАНЫ ===== */
+.screen {
+    display: none;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.screen.active {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
 /* ===== ЭКРАНЫ С ПРОКРУТКОЙ ===== */
 .main-screen,
 .shop-screen,
@@ -2951,66 +2968,48 @@ radial-gradient(circle at 80% 100%, rgba(255,85,0,0.05), transparent 45%);
 *{
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
-}
-
-/* ================================= */
-/* ===== UNIVERSAL VERTICAL BALANCE SYSTEM ===== */
+}/* ================================= */
+/* ===== ВЕРТИКАЛЬНЫЕ КОРРЕКТИРОВКИ ===== */
 /* ================================= */
 
-.screen {
-    display: none;
-    width: 100%;
-    height: 100%;
-    flex-direction: column;
-    opacity: 0;
-    transform: translateY(8px) scale(0.98);
-    transition: opacity 0.25s ease, transform 0.25s ease;
-}
-
-.screen.active {
-    display: flex;
-    opacity: 1;
-    transform: translateY(0) scale(1);
-}
-
-/* верхний spacer */
-.screen::before {
+/* верхний отступ для всех экранов */
+.main-screen::before,
+.shop-screen::before,
+.profile-screen::before,
+.faceit-screen::before,
+.premier-screen::before,
+.prime-screen::before,
+.public-screen::before {
     content: "";
-    flex: 1;
-    min-height: 8px;
+    display: block;
+    height: 8px;
+    flex-shrink: 0;
 }
 
-/* нижний spacer */
-.screen::after {
+/* нижний отступ для всех экранов */
+.main-screen::after,
+.shop-screen::after,
+.profile-screen::after,
+.faceit-screen::after,
+.premier-screen::after,
+.prime-screen::after,
+.public-screen::after {
     content: "";
-    flex: 1;
-    min-height: 16px;
+    display: block;
+    height: 16px;
+    flex-shrink: 0;
 }
 
-/* контейнер для контента экранов */
-.screen-inner {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2vh;
+/* магазин - меньший верхний отступ */
+.shop-screen::before {
+    height: 4px;
 }
 
-/* ===== ЭКРАНЫ РЕЖИМОВ - ЛЕЙАУТ ===== */
-.mode-screen-layout {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 2vh;
+/* главный экран - меньший верхний отступ */
+.main-screen::before {
+    height: 4px;
 }
 
-.mode-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.6vh;
-}
-
-.start-search-btn {
-    margin-top: auto;
-}
 
 /* ===== МАГАЗИН - КОРРЕКТИРОВКА ===== */
 .shop-screen::before {
@@ -3021,3 +3020,4 @@ radial-gradient(circle at 80% 100%, rgba(255,85,0,0.05), transparent 45%);
 .main-screen::before {
     min-height: 4px;  /* Ещё меньше отступ для главного */
 }
+
