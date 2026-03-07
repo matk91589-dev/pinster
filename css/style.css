@@ -56,8 +56,8 @@ body {
 .phone-frame {
     position: relative;
     width: 100%;
-    height: 100%;            /* родитель (body) имеет height:100%, поэтому работает */
-    min-height: 100vh;       /* подстраховка на случай изменения viewport */
+    height: 100%;
+    min-height: 100vh;
     max-width: 1000px;
     margin: 0 auto;
     background:
@@ -76,11 +76,11 @@ body {
 
 /* ===== СКРОЛЛИРУЕМЫЙ КОНТЕНТ ===== */
 .content {
-    flex: 1;                 /* растягиваемся внутри flex-родителя */
+    flex: 1;
     display: flex;
     flex-direction: column;
     width: 100%;
-    overflow: hidden;        /* скрываем выходящее, скролл будет внутри экранов */
+    overflow: hidden;
     padding: 12px 20px 8px 20px;
 }
 
@@ -328,12 +328,12 @@ body {
 .screen {
     display: none;
     width: 100%;
-    flex: 1;                 /* вместо height:100% */
+    flex: 1;
     flex-direction: column;
     opacity: 0;
     transform: translateY(8px) scale(0.98);
     transition: opacity 0.25s ease, transform 0.25s ease;
-    min-height: 0;           /* важно для скролла внутри flex */
+    min-height: 0;
 }
 
 .screen.active {
@@ -359,7 +359,7 @@ body {
     overflow-y: auto;
     flex: 1;
     padding: 0;
-    min-height: 0;           /* фикс для скролла во flex-контейнере */
+    min-height: 0;
 }
 
 /* ===== ЭКРАН СВАЙПА БЕЗ ПРОКРУТКИ ===== */
@@ -373,7 +373,7 @@ body {
 .start-screen {
     align-items: center;
     justify-content: flex-start;
-    padding: clamp(40px, 8vh, 80px) 0 0 0;  /* защита от скачков vh */
+    padding: clamp(40px, 8vh, 80px) 0 0 0;
 }
 
 .start-screen .section-title {
@@ -2950,9 +2950,7 @@ body::before {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* ================================= */
 /* ===== ВЕРТИКАЛЬНЫЕ КОРРЕКТИРОВКИ ===== */
-/* ================================= */
 
 /* верхний отступ для всех экранов */
 .main-screen::before,
@@ -2961,7 +2959,8 @@ body::before {
 .faceit-screen::before,
 .premier-screen::before,
 .prime-screen::before,
-.public-screen::before {
+.public-screen::before,
+.settings-screen::before {
     content: "";
     display: block;
     height: 8px;
@@ -2975,7 +2974,8 @@ body::before {
 .faceit-screen::after,
 .premier-screen::after,
 .prime-screen::after,
-.public-screen::after {
+.public-screen::after,
+.settings-screen::after {
     content: "";
     display: block;
     height: 16px;
@@ -2990,4 +2990,16 @@ body::before {
 /* главный экран - меньший верхний отступ */
 .main-screen::before {
     height: 4px;
+}
+
+/* настройки - корректные отступы */
+.settings-screen .section-title {
+    margin: 0 0 2vh 0;
+}
+
+.settings-content {
+    margin: 0;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
 }
