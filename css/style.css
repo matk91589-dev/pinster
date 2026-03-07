@@ -56,8 +56,8 @@ body {
 .phone-frame {
     position: relative;
     width: 100%;
-    min-height: 100dvh;  /* dvh — идеально для Telegram */
-    height: auto;         /* убираем фиксированную высоту */
+    height: 100%;
+    min-height: 100vh;
     max-width: 1000px;
     margin: 0 auto;
     background:
@@ -80,7 +80,7 @@ body {
     display: flex;
     flex-direction: column;
     width: 100%;
-    overflow: visible;    /* меняем с hidden на visible для правильного скролла */
+    overflow: hidden;
     padding: 12px 20px 8px 20px;
 }
 
@@ -328,7 +328,7 @@ body {
 .screen {
     display: none;
     width: 100%;
-    flex: 1;              /* вместо height:100% */
+    flex: 1;
     flex-direction: column;
     opacity: 0;
     transform: translateY(8px) scale(0.98);
@@ -352,13 +352,14 @@ body {
 .prime-screen,
 .public-screen,
 .search-screen,
+.start-screen,
 .friends-screen,
 .team-screen,
 .match-found-screen {
     overflow-y: auto;
     flex: 1;
     padding: 0;
-    min-height: 0;        /* фикс для скролла во flex-контейнере */
+    min-height: 0;
 }
 
 /* ===== ЭКРАН СВАЙПА БЕЗ ПРОКРУТКИ ===== */
@@ -372,7 +373,7 @@ body {
 .start-screen {
     align-items: center;
     justify-content: flex-start;
-    padding: clamp(40px, 8vh, 80px) 0 0 0;  /* защита от скачков vh */
+    padding: clamp(40px, 8vh, 80px) 0 0 0;
 }
 
 .start-screen .section-title {
@@ -501,21 +502,59 @@ body {
     color: inherit;
 }
 
-/* ===== ГЛАВНЫЙ ЭКРАН ===== */
-.main-screen {
-    overflow-y: auto;
-    min-height: 0;        /* фикс для скролла */
+/* ================================= */
+/* ===== UNIVERSAL VERTICAL BALANCE SYSTEM ===== */
+/* ================================= */
+
+/* Применяем только к главному экрану и экранам режимов */
+.main-screen,
+.faceit-screen,
+.premier-screen,
+.prime-screen,
+.public-screen {
     display: flex;
     flex-direction: column;
+    min-height: 100%;
 }
 
+/* верхний spacer */
+.main-screen::before,
+.faceit-screen::before,
+.premier-screen::before,
+.prime-screen::before,
+.public-screen::before {
+    content: "";
+    flex: 1;
+    min-height: 16px;
+}
+
+/* нижний spacer */
+.main-screen::after,
+.faceit-screen::after,
+.premier-screen::after,
+.prime-screen::after,
+.public-screen::after {
+    content: "";
+    flex: 1;
+    min-height: 16px;
+}
+
+/* контейнер для контента */
+.screen-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2vh;
+    width: 100%;
+}
+
+/* ===== ГЛАВНЫЙ ЭКРАН ===== */
 .main-screen .section-title {
     margin: 0 0 2px 0;
     flex-shrink: 0;
 }
 
 .main-screen .section-subtitle {
-    margin: 0 0 2vh 0;
+    margin: 0 0 2px 0;
     flex-shrink: 0;
 }
 
@@ -524,8 +563,6 @@ body {
     flex-direction: column;
     gap: 1.6vh;
     width: 100%;
-    margin-top: auto;
-    margin-bottom: auto;
 }
 
 .mode-btn {
@@ -1586,23 +1623,13 @@ input:checked + .slider:before {
     transform: translateX(clamp(18px, 5vw, 24px));
 }
 
-/* ===== ЭКРАНЫ РЕЖИМОВ (где кнопка "Начать поиск") ===== */
-.faceit-screen,
-.premier-screen,
-.prime-screen,
-.public-screen {
-    overflow-y: auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-}
-
+/* ===== ЭКРАНЫ РЕЖИМОВ ===== */
 .mode-header {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 3vw;
-    margin-bottom: 2vh;
+    margin-bottom: 0;
     position: relative;
     flex-shrink: 0;
 }
@@ -1661,9 +1688,27 @@ input:checked + .slider:before {
     font-size: clamp(10px, 3vw, 12px);
     color: var(--text-secondary);
     text-align: center;
-    margin-bottom: 2vh;
+    margin-bottom: 0;
     font-weight: 500;
     flex-shrink: 0;
+}
+
+/* layout для экранов режимов */
+.mode-screen-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 2vh;
+}
+
+.mode-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6vh;
+}
+
+.start-search-btn {
+    margin-top: auto;
 }
 
 .input-label {
@@ -1796,7 +1841,7 @@ input:checked + .slider:before {
     color: var(--text-primary);
     text-transform: uppercase;
     cursor: pointer;
-    margin: 2vh auto 1vh auto;
+    margin: 1.5vh auto 1vh auto;
     transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
     letter-spacing: 0.5px;
     box-shadow: 0 0 0 1px rgba(255,85,0,0.2), 0 6px 20px rgba(255,85,0,0.25);
