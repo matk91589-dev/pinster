@@ -165,6 +165,34 @@ const App = {
     },
     
     showScreen(screenId, showNav = true) {
+        console.log('Переход с экрана:', this.currentScreen, 'на экран:', screenId);
+        
+        // ВАЖНО: Если уходим с экрана поиска - останавливаем поиск
+        if (this.currentScreen === 'searchScreen' && screenId !== 'searchScreen') {
+            console.log('⚠️ Уходим с экрана поиска, принудительно останавливаем поиск');
+            if (typeof Search !== 'undefined' && Search.cancel) {
+                Search.cancel();
+            } else {
+                // Если Search не определен, отправляем прямой запрос на остановку
+                const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+                if (telegram_id) {
+                    fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/search/stop', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ telegram_id: telegram_id })
+                    }).catch(e => console.error('Ошибка остановки поиска:', e));
+                }
+            }
+        }
+        
+        // Если уходим с экрана свайпа - чистим данные
+        if (this.currentScreen === 'swipeScreen' && screenId !== 'swipeScreen') {
+            console.log('⚠️ Уходим с экрана свайпа, чистим данные');
+            if (typeof Swipe !== 'undefined' && Swipe.destroy) {
+                Swipe.destroy();
+            }
+        }
+        
         // Скрываем все экраны
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
@@ -181,9 +209,7 @@ const App = {
                 Profile.loadSavedValues();
             } else if (screenId === 'shopScreen' && typeof Shop !== 'undefined') {
                 Shop.renderShop();
-            } 
-            // ИСПРАВЛЕНО: свайп инициализируется ТОЛЬКО из Search, не автоматически
-            // Убираем автоматическую инициализацию свайпа
+            }
             
             // Хаптик
             this.hapticFeedback('light');
