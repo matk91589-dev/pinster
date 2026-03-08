@@ -2724,6 +2724,28 @@ input:checked + .slider:before {
     animation: ripple 0.4s ease-out;
 }
 
+/* ===== ТАЙМЕР НА КАРТОЧКЕ СВАЙПА ===== */
+.swipe-timer {
+    position: absolute;
+    top: 12px;
+    left: 18px;
+    font-size: 14px;
+    color: #7A808E;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 6px 14px;
+    border-radius: 30px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    z-index: 15;
+}
+
+.swipe-timer.warning {
+    color: var(--accent);
+    animation: timerPulse 1s infinite;
+}
+
 /* ===== АНИМАЦИИ ===== */
 .primary-btn,
 .mode-search-btn,
@@ -3137,4 +3159,5 @@ left:120%;
 html{
 scroll-behavior:smooth;
 }
+
 
