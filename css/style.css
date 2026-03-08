@@ -1,3140 +1,1409 @@
-/* Подключаем шрифт Montserrat */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
-
-/* ===== CSS VARIABLES ===== */
-:root {
-    --accent: #FF5500;
-    --accent-soft: #FF6A33;
-    --accent-glow: rgba(255, 85, 0, 0.35);
-    --surface: #181B21;
-    --surface-hover: #1F232B;
-    --bg-deep: #111317;
-    --text-primary: #F5F5F5;
-    --text-secondary: #9BA1B0;
-    --border-color: #2A2F3A;
-}
-
-/* Глобальное сглаживание для всего текста */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-    -webkit-tap-highlight-color: transparent;
-}
-
-/* Фирменное выделение */
-::selection {
-    background: var(--accent-glow);
-    color: var(--text-primary);
-}
-
-/* ===== БАЗОВЫЕ СТИЛИ ДЛЯ TELEGRAM MINI APP ===== */
-html, body {
-    height: 100%;
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-    background: #0D0F15;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
-    color: var(--text-primary);
-}
-
-body {
-    display: block;
-    overflow-x: hidden;
-    overflow-y: auto;
-    overscroll-behavior-x: none;
-    padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* ===== ОСНОВНОЙ КОНТЕЙНЕР ===== */
-.phone-frame {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    min-height: 100vh;
-    max-width: 1000px;
-    margin: 0 auto;
-    background:
-        radial-gradient(circle at 20% 0%, #1C1F26 0%, transparent 40%),
-        radial-gradient(circle at 80% 100%, #1A1D23 0%, transparent 50%),
-        var(--bg-deep);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    padding: 0;
-    box-sizing: border-box;
-    border-radius: 16px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-    border: 1px solid rgba(245, 245, 245, 0.05);
-}
-
-/* ===== СКРОЛЛИРУЕМЫЙ КОНТЕНТ ===== */
-.content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    overflow: hidden;
-    padding: 12px 20px 8px 20px;
-}
-
-/* ================================= */
-/* ===== HEADER FULL WIDTH ===== */
-/* ================================= */
-.header{
-position:sticky;
-top:0;
-z-index:20;
-
-width:100%;
-padding:calc(12px + env(safe-area-inset-top)) 20px 12px 20px;
-
-display:flex;
-align-items:center;
-justify-content:space-between;
-
-/* стекло */
-background:rgba(20,22,28,0.45);
-
-backdrop-filter:
-blur(28px)
-saturate(160%)
-brightness(1.1);
-
--webkit-backdrop-filter:
-blur(28px)
-saturate(160%)
-brightness(1.1);
-
-/* стеклянная граница */
-border-bottom:1px solid rgba(255,255,255,0.08);
-
-/* глубина */
-box-shadow:
-0 10px 40px rgba(0,0,0,0.65),
-inset 0 1px 0 rgba(255,255,255,0.10),
-inset 0 -1px 0 rgba(255,255,255,0.04);
-
-box-sizing:border-box;
-
-will-change:backdrop-filter;
-}
-
-.header::before{
-content:"";
-position:absolute;
-top:0;
-left:0;
-right:0;
-height:100%;
-
-background:linear-gradient(
-180deg,
-rgba(255,255,255,0.08),
-rgba(255,255,255,0.02) 40%,
-transparent
-);
-
-pointer-events:none;
-}
-
-/* Логотип */
-.logo {
-    font-size: clamp(20px, 5vw, 24px);
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
-    display: inline-block;
-    will-change: transform;
-    line-height: 1;
-}
-
-.logo:hover {
-    transform: scale(1.02);
-}
-
-.logo .ping {
-    color: var(--accent);
-    transition: color 0.2s ease;
-    font-weight: 800;
-    text-shadow: 0 0 10px rgba(255,85,0,.35);
-}
-
-.logo:hover .ping {
-    color: var(--accent);
-    opacity: 0.8;
-}
-
-.logo .ster {
-    color: var(--text-primary);
-    font-weight: 400;
-    opacity: 0.9;
-}
-
-.logo:active {
-    transform: scale(0.97);
-}
-
-/* Иконка настроек */
-.icon-settings {
-    width: clamp(32px, 8vw, 36px);
-    height: clamp(32px, 8vw, 36px);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: transparent;
-}
-
-.icon-settings:hover {
-    background: var(--surface-hover);
-    transform: scale(1.02);
-}
-
-.icon-settings svg {
-    width: clamp(18px, 5vw, 22px);
-    height: clamp(18px, 5vw, 22px);
-    stroke: var(--text-primary);
-    stroke-width: 2;
-    fill: none;
-    transition: stroke 0.2s;
-}
-
-.icon-settings.active svg {
-    stroke: var(--accent);
-}
-
-/* красивый accent underline */
-.header::after {
-    content: "";
-    position: absolute;
-    bottom: -1px;
-    left: 50%;
-    width: 120px;
-    height: 2px;
-    transform: translateX(-50%);
-    background: linear-gradient(
-        90deg,
-        transparent,
-        var(--accent),
-        transparent
-    );
-    opacity: 0.7;
-    filter: blur(0.3px);
-}
-
-/* Скрываем логотип только на стартовом экране */
-.start-screen .logo {
-    display: none;
-}
-
-.title-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    min-height: 32px;
-    padding: 0;
-}
-
-.title-left {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.title-left .section-title {
-    margin-bottom: 0;
-    line-height: 1;
-    font-size: clamp(18px, 5vw, 22px);
-}
-
-.edit-controls {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.edit-title-icon {
-    width: clamp(22px, 6vw, 26px);
-    height: clamp(22px, 6vw, 26px);
-    background: transparent;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-.edit-title-icon:hover {
-    transform: scale(1.05);
-}
-
-.edit-title-icon svg {
-    width: clamp(14px, 4vw, 18px);
-    height: clamp(14px, 4vw, 18px);
-    stroke: var(--text-secondary);
-    stroke-width: 2;
-    fill: none;
-    transition: stroke 0.1s;
-}
-
-.edit-title-icon.active svg {
-    stroke: var(--accent);
-}
-
-.apply-btn {
-    background: transparent;
-    border: 1px solid var(--accent);
-    border-radius: 6px;
-    padding: 3px 8px;
-    color: var(--accent);
-    font-size: clamp(10px, 2.5vw, 11px);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.apply-btn.visible {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-/* Кнопка скрыта принудительно (после сохранения) */
-.apply-btn.hidden {
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
-
-.apply-btn:hover {
-    background: var(--accent);
-    color: var(--text-primary);
-    transform: scale(1.02);
-}
-
-.coins-header {
-    background: #1A1D24;
-    border-radius: 8px;
-    padding: 5px 10px;
-    font-size: clamp(10px, 3vw, 12px);
-    color: var(--text-primary);
-    border: none;
-    font-weight: 600;
-}
-
-/* ===== ГЛОБАЛЬНЫЕ ЗАГОЛОВКИ ===== */
-.section-title {
-    font-size: clamp(20px, 6vw, 24px);
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.5px;
-    text-align: center;
-    margin: 0;
-}
-
-.section-subtitle {
-    font-size: clamp(12px, 3.5vw, 14px);
-    color: var(--text-secondary);
-    font-weight: 500;
-    text-align: center;
-}
-
-/* ===== ЭКРАНЫ ===== */
-.screen {
-    display: none;
-    width: 100%;
-    flex: 1;
-    flex-direction: column;
-    opacity: 0;
-    transform: translateY(8px) scale(0.98);
-    transition: opacity 0.25s ease, transform 0.25s ease;
-    min-height: 0;
-}
-
-.screen.active {
-    display: flex;
-    opacity: 1;
-    transform: translateY(0) scale(1);
-}
-
-/* ===== ЭКРАНЫ С ПРОКРУТКОЙ ===== */
-.main-screen,
-.shop-screen,
-.profile-screen,
-.settings-screen,
-.faceit-screen,
-.premier-screen,
-.prime-screen,
-.public-screen,
-.search-screen,
-.start-screen,
-.friends-screen,
-.team-screen,
-.match-found-screen {
-    overflow-y: auto;
-    flex: 1;
-    padding: 0;
-    min-height: 0;
-}
-
-/* ===== ЭКРАН СВАЙПА БЕЗ ПРОКРУТКИ ===== */
-.swipe-screen,
-.connection-screen {
-    overflow-y: hidden;
-    padding: 0;
-}
-
-/* ===== СТАРТОВЫЙ ЭКРАН ===== */
-.start-screen {
-    align-items: center;
-    justify-content: flex-start;
-    padding: clamp(40px, 8vh, 80px) 0 0 0;
-}
-
-.start-screen .section-title {
-    margin: 4vh 0 0.5vh 0;
-}
-
-.start-avatar-square {
-    width: min(320px, 75vw);
-    height: auto;
-    aspect-ratio: 4 / 3;
-    margin: 0 auto;
-    border: none;
-    border-radius: 20px 20px 0 0;
-    overflow: hidden;
-    background: #1A1D24;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-}
-
-.start-avatar-square img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.start-description-box {
-    width: min(320px, 75vw);
-    border: 3px solid var(--accent);
-    border-radius: 0 0 20px 20px;
-    padding: 4vh 4vw 3vh;
-    margin: -2vh auto 0 auto;
-    background: #1A1D24;
-}
-
-.start-description {
-    font-size: clamp(12px, 3.5vw, 14px);
-    line-height: 1.5;
-    text-align: center;
-}
-
-/* ===== КНОПКА СТАРТОВОГО ЭКРАНА ===== */
-.primary-btn {
-    width: min(280px, 80%);
-    padding: 2vh 0;
-    background: var(--accent);
-    border: none;
-    border-radius: 12px;
-    font-size: clamp(16px, 5vw, 18px);
-    font-weight: 700;
-    color: var(--text-primary);
-    text-transform: uppercase;
-    cursor: pointer;
-    margin: 5vh auto 0 auto;
-    transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
-    letter-spacing: 0.5px;
-    box-shadow: 0 0 0 1px rgba(255,85,0,0.2), 0 6px 20px rgba(255,85,0,0.25);
-
-    position:relative;
-    overflow:hidden;
-}
-
-.primary-btn:hover {
-    background: var(--accent-soft);
-    transform: translateY(-1px);
-    box-shadow: 0 8px 22px rgba(255,85,0,0.35), 0 0 0 1px rgba(255,85,0,0.3);
-}
-
-.primary-btn:active {
-    transform: translateY(1px);
-    opacity: 0.9;
-    box-shadow: 0 2px 12px rgba(255,85,0,0.3);
-}
-
-/* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
-.bottom-nav {
-    position:sticky;
-    bottom:0;
-    z-index:20;
-
-    width:100%;
-    padding:12px 20px calc(12px + env(safe-area-inset-bottom)) 20px;
-
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-
-    background:rgba(20,22,28,0.45);
-
-    backdrop-filter:blur(28px) saturate(160%) brightness(1.1);
-    -webkit-backdrop-filter:blur(28px) saturate(160%) brightness(1.1);
-
-    border-top:1px solid rgba(255,255,255,0.08);
-
-    box-shadow:
-        0 -10px 40px rgba(0,0,0,0.65),
-        inset 0 1px 0 rgba(255,255,255,0.04),
-        inset 0 -1px 0 rgba(255,255,255,0.10);
-
-    box-sizing:border-box;
-    will-change:backdrop-filter;
-}
-
-.bottom-nav::before{
-    content:"";
-    position:absolute;
-    bottom:0;
-    left:0;
-    right:0;
-    height:100%;
-
-    background:linear-gradient(
-    0deg,
-    rgba(255,255,255,0.08),
-    rgba(255,255,255,0.02) 40%,
-    transparent
-);
-
-pointer-events:none;
-}
-
-.nav-item {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    cursor: pointer;
-    opacity: 0.6;
-    padding: 4px 10px;
-    transition: color 0.2s ease, opacity 0.2s, transform 0.2s;
-    will-change: transform;
-}
-
-.nav-item:hover {
-    opacity: 1;
-    transform: scale(1.02);
-}
-
-.nav-item.active{
-    color:var(--accent);
-
-    text-shadow:
-        0 0 10px rgba(255,85,0,0.35),
-        0 0 18px rgba(255,85,0,0.25);
-}
-
-.nav-item.active svg {
-    stroke: var(--accent);
-}
-
-.nav-icon svg {
-    width: clamp(18px, 5vw, 20px);
-    height: clamp(18px, 5vw, 20px);
-    stroke: var(--text-primary);
-    stroke-width: 2;
-    fill: none;
-}
-
-.nav-label {
-    font-size: clamp(8px, 2.5vw, 9px);
-    font-weight: 600;
-    color: inherit;
-}
-
-/* ================================= */
-/* ===== UNIVERSAL VERTICAL BALANCE SYSTEM ===== */
-/* ================================= */
-
-/* Применяем только к главному экрану и экранам режимов */
-.main-screen,
-.faceit-screen,
-.premier-screen,
-.prime-screen,
-.public-screen {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-}
-
-/* верхний spacer */
-.main-screen::before,
-.faceit-screen::before,
-.premier-screen::before,
-.prime-screen::before,
-.public-screen::before {
-    content: "";
-    flex: 1;
-    min-height: 12px; /* Уменьшил для лучшего баланса */
-}
-
-/* нижний spacer */
-.main-screen::after,
-.faceit-screen::after,
-.premier-screen::after,
-.prime-screen::after,
-.public-screen::after {
-    content: "";
-    flex: 1;
-    min-height: 12px; /* Уменьшил для лучшего баланса */
-}
-
-/* контейнер для контента */
-.screen-inner {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2vh;
-    width: 100%;
-}
-
-/* ===== ГЛАВНЫЙ ЭКРАН ===== */
-.main-screen .section-title {
-    margin: 0 0 2px 0;
-    flex-shrink: 0;
-}
-
-.main-screen .section-subtitle {
-    margin: 0 0 16px 0; /* Увеличил отступ до кнопок */
-    flex-shrink: 0;
-}
-
-/* Убрал дублирующий margin-bottom */
-
-.mode-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1.4vh; /* Немного уменьшил gap между кнопками */
-    width: 100%;
-}
-
-.mode-btn {
-    width: 100%;
-    padding: 3vh 4.5vw; /* Немного уменьшил вертикальный паддинг */
-    min-height: 60px; /* Уменьшил минимальную высоту */
-
-    background:
-        linear-gradient(
-            180deg,
-            rgba(255,255,255,0.02),
-            rgba(0,0,0,0.08)
-        ),
-        #1A1D24;
-
-    border: 1px solid #2A2F3A;
-    border-radius: 14px;
-
-    color: #E5E7EB;
-    font-size: clamp(16px, 4.5vw, 18px);
-    font-weight: 600;
-
-    text-transform: uppercase;
-    cursor: pointer;
-    text-align: left;
-
-    position: relative;
-
-    transition:
-        transform .25s cubic-bezier(.22,.61,.36,1),
-        box-shadow .25s cubic-bezier(.22,.61,.36,1),
-        border-color .2s ease,
-        background .25s ease;
-
-    box-shadow:
-        0 6px 20px rgba(0,0,0,0.35),
-        inset 0 1px 0 rgba(255,255,255,0.03);
-
-    will-change: transform;
-}
-
-.mode-btn:hover{
-border-color:var(--accent);
-background:#1E2128;
-
-transform:translateY(-3px);
-
-box-shadow:
-0 12px 35px rgba(0,0,0,0.55),
-0 0 0 1px rgba(255,85,0,0.25),
-0 0 25px rgba(255,85,0,0.15);
-}
-
-.mode-btn.faceit,
-.mode-btn.premier {
-    border-left: 4px solid var(--accent);
-    color: var(--accent);
-    box-shadow:
-        0 6px 20px rgba(0,0,0,0.35),
-        0 0 0 1px rgba(255,85,0,0.18),
-        inset 0 1px 0 rgba(255,255,255,0.04);
-}
-
-.mode-btn.prime,
-.mode-btn.public {
-    border-left: 4px solid var(--text-primary);
-    text-transform: none;
-    font-size: clamp(14px, 4vw, 16px);
-}
-
-.mode-btn::after {
-    content: '→';
-    position: absolute;
-    right: 4vw;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: clamp(18px, 5vw, 20px);
-    color: #6B7280;
-    transition: transform .18s ease, color .18s ease;
-}
-
-.mode-btn:hover::after {
-    transform: translate(4px,-50%);
-    color: var(--accent);
-}
-
-/* ===== МАГАЗИН ===== */
-.shop-screen {
-    padding-top: 8px; /* Увеличил отступ сверху для лучшего баланса */
-}
-
-.shop-screen .section-title {
-    margin: 0;
-}
-
-.shop-tabs {
-    display: flex;
-    gap: 2vw;
-    margin: 1.5vh 0; /* Уменьшил отступ */
-    flex-shrink: 0;
-}
-
-.shop-tab {
-    flex: 1;
-    padding: 1.5vh 2vw;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    cursor: pointer;
-    color: #9BA1B0;
-    font-weight: 600;
-    font-size: clamp(11px, 3.5vw, 13px);
-    text-align: center;
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
-}
-
-.shop-tab:hover {
-    transform: none;
-}
-
-.shop-tab.active {
-    background: var(--accent);
-    color: white;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px rgba(255,85,0,0.2), 0 6px 20px rgba(255,85,0,0.25);
-}
-
-.cases-section {
-    margin: 1.5vh 0; /* Уменьшил отступ */
-    flex: 1;
-    overflow-y: auto;
-    min-height: 0;
-}
-
-.inventory-section {
-    margin: 1.5vh 0; /* Уменьшил отступ */
-    flex: 1;
-    overflow-y: auto;
-    min-height: 0;
-}
-
-.cases-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5vh;
-}
-
-.case-item {
-    display: flex;
-    align-items: center;
-    gap: 3vw;
-    padding: 1.5vh 2vw;
-    background: var(--surface);
-    border: 1px solid #2A2F3A;
-    border-radius: 12px;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.25s ease;
-    will-change: transform;
-}
-
-.case-item:hover {
-    border-color: var(--accent);
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,85,0,0.2);
-}
-
-.case-icon {
-    width: clamp(40px, 12vw, 48px);
-    height: clamp(40px, 12vw, 48px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    background: transparent !important;
-}
-
-.case-icon img {
-    display: block !important;
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-.case-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8vh;
-    min-width: 0;
-}
-
-.case-name {
-    font-size: clamp(13px, 4vw, 15px);
-    font-weight: 700;
-    color: var(--text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.case-price-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 2vw;
-}
-
-.price-value {
-    font-size: clamp(11px, 3.5vw, 13px);
-    font-weight: 600;
-    color: var(--text-primary);
-    white-space: nowrap;
-}
-
-.price-value::after {
-    content: ' PC';
-    color: var(--text-primary);
-}
-
-.buy-btn-simple {
-    background: #B00000;
-    border: none;
-    border-radius: 30px;
-    padding: 0.8vh 3vw;
-    color: var(--text-primary);
-    font-size: clamp(10px, 3vw, 11px);
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-    white-space: nowrap;
-}
-
-.buy-btn-simple:hover {
-    background: #8B0000;
-    transform: none;
-}
-
-.inventory-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2vw;
-}
-
-.inventory-item {
-    aspect-ratio: 1;
-    background: var(--surface);
-    border: 1px solid #2A2F3A;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2vh 1vw;
-    cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.25s ease;
-    will-change: transform;
-}
-
-.inventory-item:hover {
-    border-color: var(--accent);
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,85,0,0.2);
-}
-
-.inventory-item .item-icon {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.inventory-item .item-icon img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-/* ===== ПРОФИЛЬ ===== */
-.profile-screen {
-    padding-top: 8px; /* Увеличил отступ сверху для лучшего баланса */
-}
-
-.profile-screen .section-title {
-    margin: 0;
-}
-
-.profile-header {
-    display: flex;
-    align-items: center;
-    gap: 3vw;
-    margin: 0.5vh 0 1.5vh 0; /* Уменьшил отступы */
-    padding: 0;
-    flex-shrink: 0;
-}
-
-.profile-avatar {
-    width: clamp(50px, 15vw, 60px);
-    height: clamp(50px, 15vw, 60px);
-    border-radius: 50%;
-    background: #1A1D24;
-    border: 2px solid #2A2F3A;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: clamp(24px, 7vw, 28px);
-    color: var(--text-secondary);
-    cursor: pointer;
-    overflow: hidden;
-    flex-shrink: 0;
-}
-
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.profile-avatar.editable {
-    border-color: var(--accent);
-    border-width: 3px;
-}
-
-.profile-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8vh;
-    min-width: 0;
-}
-
-.profile-name-label {
-    font-size: clamp(9px, 2.8vw, 11px);
-    color: var(--text-secondary);
-    font-weight: 500;
-    margin-bottom: 2px;
-}
-
-/* ===== РЕДАКТИРОВАНИЕ НИКА ===== */
-.profile-name-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    width: 100%;
-}
-
-.profile-name {
-    font-size: clamp(16px, 5vw, 20px);
-    font-weight: 600;
-    color: var(--text-primary);
-    cursor: pointer;
-    display: inline-block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-    padding: 4px 0;
-    transition: color 0.2s ease;
-    background: transparent !important;
-    border: none !important;
-}
-
-.profile-name.editable {
-    color: var(--accent) !important;
-}
-
-.profile-name.editable:hover {
-    color: var(--accent-soft);
-}
-
-.edit-name-input {
-    width: 100%;
-    padding: 8px 12px;
-    background: #1A1D24;
-    border: 2px solid var(--accent);
-    border-radius: 8px;
-    color: var(--text-primary);
-    font-size: 18px;
-    font-weight: 600;
-    font-family: 'Montserrat', sans-serif;
-    outline: none;
-    margin: 0;
-    box-sizing: border-box;
-}
-
-.edit-name-input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(255, 85, 0, 0.2);
-}
-
-.profile-status {
-    color: #4CAF50;
-    font-size: clamp(9px, 2.8vw, 11px);
-    font-weight: 600;
-    background: rgba(76, 175, 80, 0.15);
-    padding: 0.5vh 2vw;
-    border-radius: 12px;
-    border: 1px solid rgba(76, 175, 80, 0.4);
-    letter-spacing: 0.3px;
-    display: inline-block;
-    white-space: nowrap;
-}
-
-/* ===== СТАТИСТИКА ===== */
-.stats-row {
-    display: flex;
-    gap: 3vw;
-    margin: 0.8vh 0; /* Уменьшил отступ */
-    flex-shrink: 0;
-}
-
-.stat-card {
-    flex: 1;
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    min-width: 0;
-}
-
-.stat-label {
-    font-size: clamp(8px, 2.5vw, 10px);
-    color: var(--text-secondary);
-    font-weight: 600;
-    margin-bottom: 0.8vh;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
-.stat-value {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 1.5vh 3vw;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 2vw;
-    transition: background 0.2s ease;
-}
-
-.stat-value:hover {
-    background: var(--surface-hover);
-}
-
-.stat-value input {
-    width: 100%;
-    background: transparent;
-    border: none;
-    color: var(--text-primary);
-    font-size: clamp(11px, 3.5vw, 13px);
-    font-weight: 500;
-    outline: none;
-    font-family: 'Montserrat', sans-serif;
-    padding: 0;
-    margin: 0;
-    min-width: 0;
-}
-
-.stat-value input:focus {
-    outline: none;
-}
-
-.stat-value input::placeholder {
-    color: #5D6472;
-    font-weight: 600;
-    font-size: clamp(10px, 3vw, 12px);
-    opacity: 1;
-}
-
-.heart-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    margin-left: 2vw;
-    flex-shrink: 0;
-}
-
-.heart-icon svg {
-    width: clamp(14px, 4vw, 16px);
-    height: clamp(14px, 4vw, 16px);
-    stroke: var(--accent);
-    stroke-width: 2;
-    fill: none;
-    display: block;
-}
-
-/* ===== ПОЛЯ ВВОДА ДЛЯ ССЫЛОК ===== */
-.profile-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5vh; /* Уменьшил отступ */
-    margin-bottom: 1vh;
-    flex-shrink: 0;
-}
-
-.profile-stat-card {
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-}
-
-.profile-stat-label {
-    font-size: clamp(8px, 2.5vw, 10px);
-    color: var(--text-secondary);
-    font-weight: 600;
-    margin-bottom: 0.8vh;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
-.profile-stat-value,
-.input-field {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 1.5vh 3vw;
-    color: var(--text-primary);
-    font-size: clamp(11px, 3.5vw, 13px);
-    font-weight: 500;
-    outline: none;
-    font-family: 'Montserrat', sans-serif;
-    transition: background 0.2s ease;
-}
-
-.profile-stat-value:hover,
-.input-field:hover {
-    background: var(--surface-hover);
-}
-
-.profile-stat-value:focus,
-.input-field:focus {
-    border-color: var(--accent);
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(255,85,0,0.15), 0 4px 12px rgba(0,0,0,0.35);
-}
-
-/* ===== ПОДСВЕТКА ПОЛЕЙ В РЕЖИМЕ РЕДАКТИРОВАНИЯ ===== */
-.profile-screen.editable .stats-row .stat-card:last-child .stat-value {
-    border-color: var(--accent) !important;
-    border-width: 2px !important;
-    background: rgba(255, 85, 0, 0.05) !important;
-}
-
-.profile-screen.editable .stats-row .stat-card:first-child .stat-value {
-    border-color: #2A2F3A !important;
-    border-width: 1px !important;
-    background: var(--surface) !important;
-}
-
-.profile-screen.editable .profile-stat-value {
-    border-color: var(--accent) !important;
-    border-width: 2px !important;
-    background: rgba(255, 85, 0, 0.05) !important;
-}
-
-.profile-screen.editable .stat-value input,
-.profile-screen.editable .profile-stat-value {
-    background: transparent;
-}
-
-.profile-screen.editable .stat-value input:focus,
-.profile-screen.editable .profile-stat-value:focus {
-    border-color: var(--accent);
-    outline: none;
-}
-
-/* ===== ДРУЗЬЯ ===== */
-.friends-section {
-    width: 100%;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    margin: 1.5vh 0 0.5vh 0;
-}
-
-.friends-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1vh;
-    flex-shrink: 0;
-}
-
-.friends-title {
-    font-size: clamp(14px, 4vw, 16px);
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.friends-actions {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.friends-arrow {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border-radius: 50%;
-    transition: background 0.2s;
-}
-
-.friends-arrow:hover {
-    background: rgba(255, 85, 0, 0.1);
-}
-
-.friends-arrow svg {
-    width: 20px;
-    height: 20px;
-    stroke: var(--accent);
-    stroke-width: 2;
-}
-
-.friends-list {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 1vw;
-    min-height: 0;
-}
-
-.friends-list::-webkit-scrollbar {
-    width: 3px;
-}
-
-.friends-list::-webkit-scrollbar-track {
-    background: #1A1D24;
-    border-radius: 10px;
-}
-
-.friends-list::-webkit-scrollbar-thumb {
-    background: var(--accent);
-    border-radius: 10px;
-}
-
-/* ===== ЭКРАН КОМАНДА ===== */
-.team-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 0 20px 0;
-    flex-shrink: 0;
-}
-
-.team-back {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border-radius: 50%;
-    transition: background 0.2s;
-    color: var(--accent);
-    font-size: 24px;
-    font-weight: 600;
-}
-
-.team-back:hover {
-    background: rgba(255, 85, 0, 0.1);
-}
-
-.team-title {
-    font-size: clamp(20px, 6vw, 24px);
-    font-weight: 700;
-    color: var(--accent);
-    text-align: center;
-}
-
-.team-requests {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    width: 55px;
-    margin-right: -8px;
-    padding-right: 0;
-}
-
-.team-requests .tg-help-minimal {
-    font-size: 20px;
-    color: #8c97a8;
-    font-weight: 600;
-    transition: opacity 0.2s ease;
-}
-
-.team-requests:hover .tg-help-minimal {
-    opacity: 0.6;
-}
-
-.team-requests span:last-child {
-    font-size: 10px;
-    color: #8c97a8;
-    margin-top: 2px;
-    white-space: nowrap;
-}
-
-/* ===== ТАБЫ КОМАНДЫ ===== */
-.team-tabs {
-    display: flex;
-    gap: 8px;
-    margin: 0 0 15px 0;
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    position: relative;
-}
-
-.team-tab {
-    flex: 1;
-    text-align: center;
-    padding: 8px 12px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
-    color: var(--text-secondary);
-    transition: all 0.2s;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    background: transparent;
-    border: 1px solid transparent;
-    position: relative;
-}
-
-.team-tab.active {
-    background: transparent;
-    color: var(--accent);
-    border: 1px solid var(--accent);
-    box-shadow: 0 0 0 1px rgba(255,85,0,0.2), 0 6px 20px rgba(255,85,0,0.25);
-}
-
-.team-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-}
-
-.team-search-container {
-    margin: 0 0 20px 0;
-    flex-shrink: 0;
-}
-
-.team-search-box {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.team-search-input {
-    flex: 1;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 12px 15px;
-    color: var(--text-primary);
-    font-size: clamp(14px, 4vw, 16px);
-    font-family: 'Montserrat', sans-serif;
-    outline: none;
-}
-
-.team-search-input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(255,85,0,0.15), 0 4px 12px rgba(0,0,0,0.35);
-}
-
-.team-search-input::placeholder {
-    color: #5D6472;
-    font-weight: 400;
-}
-
-.team-search-btn {
-    background: var(--accent);
-    border: none;
-    border-radius: 8px;
-    padding: 12px 20px;
-    color: white;
-    font-size: clamp(14px, 4vw, 16px);
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-    white-space: nowrap;
-}
-
-.team-search-btn:hover {
-    background: var(--accent-soft);
-}
-
-.team-list {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 5px;
-    min-height: 0;
-}
-
-.team-list::-webkit-scrollbar {
-    width: 4px;
-}
-
-.team-list::-webkit-scrollbar-track {
-    background: #1A1D24;
-    border-radius: 10px;
-}
-
-.team-list::-webkit-scrollbar-thumb {
-    background: var(--accent);
-    border-radius: 10px;
-}
-
-/* ===== ЭКРАН ДРУЗЕЙ ===== */
-.friends-page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 0 20px 0;
-    position: relative;
-    flex-shrink: 0;
-}
-
-.friends-page-title {
-    font-size: clamp(20px, 6vw, 24px);
-    font-weight: 700;
-    color: var(--accent);
-    text-align: center;
-}
-
-.friends-search-container {
-    margin: 0 0 25px 0;
-    flex-shrink: 0;
-}
-
-.friends-search-label {
-    font-size: clamp(12px, 3.5vw, 14px);
-    color: var(--text-secondary);
-    margin-bottom: 10px;
-    font-weight: 500;
-}
-
-.friends-search-box {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.friends-search-input {
-    flex: 1;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 12px 15px;
-    color: var(--text-primary);
-    font-size: clamp(14px, 4vw, 16px);
-    font-family: 'Montserrat', sans-serif;
-    outline: none;
-}
-
-.friends-search-input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(255,85,0,0.15), 0 4px 12px rgba(0,0,0,0.35);
-}
-
-.friends-search-input::placeholder {
-    color: #5D6472;
-    font-weight: 400;
-}
-
-.friends-search-btn {
-    background: var(--accent);
-    border: none;
-    border-radius: 8px;
-    padding: 12px 20px;
-    color: white;
-    font-size: clamp(14px, 4vw, 16px);
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-    white-space: nowrap;
-}
-
-.friends-search-btn:hover {
-    background: var(--accent-soft);
-}
-
-.friends-list-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-}
-
-.friends-list-title {
-    font-size: clamp(16px, 4.5vw, 18px);
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 15px;
-}
-
-.friends-page-list {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 5px;
-    min-height: 0;
-}
-
-.friends-page-list::-webkit-scrollbar {
-    width: 4px;
-}
-
-.friends-page-list::-webkit-scrollbar-track {
-    background: #1A1D24;
-    border-radius: 10px;
-}
-
-.friends-page-list::-webkit-scrollbar-thumb {
-    background: var(--accent);
-    border-radius: 10px;
-}
-
-.friend-item {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 12px 15px;
-    background: var(--surface);
-    border: 1px solid #2A2F3A;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.25s ease;
-    will-change: transform;
-}
-
-.friend-item:hover {
-    border-color: var(--accent);
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,85,0,0.2);
-}
-
-.friend-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #2A2F3A;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-}
-
-.friend-details {
-    flex: 1;
-    min-width: 0;
-}
-
-.friend-name {
-    font-size: clamp(14px, 4vw, 16px);
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.friend-id {
-    font-size: clamp(10px, 3vw, 12px);
-    color: var(--accent);
-    font-family: monospace;
-}
-
-.friend-status {
-    font-size: clamp(10px, 3vw, 12px);
-    color: #4CAF50;
-    background: rgba(76, 175, 80, 0.1);
-    padding: 4px 8px;
-    border-radius: 12px;
-    white-space: nowrap;
-}
-
-/* ===== ЭКРАН НАСТРОЕК ===== */
-.settings-screen .section-title {
-    margin: 0 0 1.5vh 0;
-}
-
-.settings-content {
-    margin: 0;
-    flex: 1;
-    overflow-y: auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5vh;
-}
-
-.settings-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 2vh 3vw;
-    background: var(--surface);
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    transition: background 0.2s ease;
-}
-
-.settings-item:hover {
-    background: var(--surface-hover);
-}
-
-.settings-label {
-    font-size: clamp(12px, 3.5vw, 14px);
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.switch {
-    position: relative;
-    display: inline-block;
-    width: clamp(40px, 12vw, 50px);
-    height: clamp(20px, 6vw, 26px);
-    flex-shrink: 0;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #2A2F3A;
-    transition: 0.2s;
-    border-radius: 34px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: clamp(16px, 5vw, 20px);
-    width: clamp(16px, 5vw, 20px);
-    left: 3px;
-    bottom: 2px;
-    background-color: #F5F5F5;
-    transition: 0.2s;
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: var(--accent);
-}
-
-input:checked + .slider:before {
-    transform: translateX(clamp(18px, 5vw, 24px));
-}
-
-/* ===== ЭКРАНЫ РЕЖИМОВ ===== */
-.mode-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 3vw;
-    margin-bottom: 0;
-    position: relative;
-    flex-shrink: 0;
-}
-
-.back-btn {
-    position: absolute;
-    left: 0;
-    top: 2px;
-    width: 40px;
-    height: 40px;
-    background: transparent;
-    border: none;
-    color: var(--accent);
-    font-size: 24px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    flex-shrink: 0;
-}
-
-.back-btn:hover {
-    opacity: 0.8;
-}
-
-.back-btn:active {
-    transform: scale(0.95);
-}
-
-.mode-title {
-    font-size: clamp(20px, 6vw, 24px);
-    font-weight: 700;
-    text-align: center;
-    margin: 0;
-    line-height: 1.2;
-    max-width: 80%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.mode-title.faceit,
-.mode-title.premier {
-    color: var(--accent);
-}
-
-.mode-title.prime,
-.mode-title.public {
-    color: var(--text-primary);
-    text-transform: none;
-}
-
-.mode-subtitle {
-    font-size: clamp(10px, 3vw, 12px);
-    color: var(--text-secondary);
-    text-align: center;
-    margin-bottom: 0;
-    font-weight: 500;
-    flex-shrink: 0;
-}
-
-/* layout для экранов режимов */
-.mode-screen-layout {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 2vh;
-}
-
-.mode-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.6vh;
-}
-
-.start-search-btn {
-    margin-top: auto;
-}
-
-.input-label {
-    font-size: clamp(10px, 3vw, 12px);
-    color: var(--text-secondary);
-    margin-bottom: 0.5vh;
-    font-weight: 500;
-}
-
-.search-input-field {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 1.5vh 3vw;
-    color: var(--text-primary);
-    font-size: clamp(12px, 3.5vw, 14px);
-    margin: 0.5vh 0 1.5vh 0;
-    font-weight: 500;
-    outline: none;
-}
-
-.search-input-field:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(255,85,0,0.15), 0 4px 12px rgba(0,0,0,0.35);
-}
-
-.search-input-field::placeholder {
-    color: #5D6472;
-    font-weight: 600;
-    font-size: clamp(10px, 3vw, 12px);
-}
-
-.rank-select {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    color: var(--text-primary);
-    font-size: clamp(12px, 3.5vw, 14px);
-    padding: 1.5vh 3vw;
-    margin: 0.5vh 0 1.5vh 0;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF5500' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 3vw center;
-    background-size: clamp(12px, 3.5vw, 16px);
-    font-weight: 500;
-}
-
-.rank-select:hover,
-.rank-select:focus {
-    border-color: var(--accent);
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(255,85,0,0.15), 0 4px 12px rgba(0,0,0,0.35);
-}
-
-.play-style {
-    display: flex;
-    gap: 2vw;
-    margin: 1.5vh 0;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 0.5vh 1vw;
-}
-
-.style-option {
-    flex: 1;
-    text-align: center;
-    padding: 1.5vh 2vw;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: clamp(11px, 3.2vw, 13px);
-    color: var(--text-secondary);
-    font-weight: 600;
-    transition: all 0.2s;
-    white-space: nowrap;
-}
-
-.style-option:hover {
-    transform: none;
-}
-
-.style-option.active {
-    background: var(--accent);
-    color: var(--text-primary);
-}
-
-.comment-section {
-    width: 100%;
-    margin: 1vh 0;
-}
-
-.comment-label {
-    font-size: clamp(10px, 3vw, 12px);
-    color: var(--text-secondary);
-    margin-bottom: 0.5vh;
-    font-weight: 500;
-}
-
-.comment-input {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 1.5vh 3vw;
-    color: var(--text-primary);
-    font-size: clamp(11px, 3.2vw, 13px);
-    resize: none;
-    height: 10vh;
-    font-weight: 500;
-    outline: none;
-}
-
-.comment-input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(255,85,0,0.15), 0 4px 12px rgba(0,0,0,0.35);
-}
-
-.mode-search-btn {
-    width: min(280px, 80%);
-    padding: 2vh 0;
-    background: var(--accent);
-    border: none;
-    border-radius: 30px;
-    font-size: clamp(14px, 4vw, 16px);
-    font-weight: 700;
-    color: var(--text-primary);
-    text-transform: uppercase;
-    cursor: pointer;
-    margin: 1.5vh auto 1vh auto;
-    transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
-    letter-spacing: 0.5px;
-    box-shadow: 0 0 0 1px rgba(255,85,0,0.2), 0 6px 20px rgba(255,85,0,0.25);
-}
-
-.mode-search-btn:hover {
-    background: var(--accent-soft);
-    transform: scale(1.02);
-    box-shadow: 0 8px 22px rgba(255,85,0,0.35);
-}
-
-.mode-search-btn:active {
-    transform: scale(0.97);
-}
-
-/* ===== ЭКРАН ПОИСКА ===== */
-.search-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2.5vh 0 3vh 0;
-    border-bottom: 1px solid #1E2128;
-    margin-bottom: 3vh;
-    flex-shrink: 0;
-    gap: 3vw;
-}
-
-.search-title {
-    font-size: clamp(20px, 6vw, 24px);
-    font-weight: 700;
-    color: var(--accent);
-    white-space: nowrap;
-}
-
-.search-timer {
-    font-size: clamp(16px, 5vw, 20px);
-    font-weight: 600;
-    color: var(--text-primary);
-    background: #1A1D24;
-    padding: 1vh 4vw;
-    border-radius: 8px;
-    border: 1px solid #2A2F3A;
-    white-space: nowrap;
-}
-
-.search-status {
-    text-align: center;
-    font-size: clamp(14px, 4vw, 16px);
-    color: var(--text-secondary);
-    margin: 3vh 0 5vh 0;
-    font-weight: 500;
-    flex-shrink: 0;
-}
-
-.search-loading {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.spinner {
-    width: clamp(40px, 12vw, 50px);
-    height: clamp(40px, 12vw, 50px);
-    border: 4px solid #1A1D24;
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-.cancel-search-btn {
-    width: 100%;
-    padding: 2.5vh 0;
-    background: transparent;
-    border: 2px solid var(--accent);
-    border-radius: 12px;
-    color: var(--accent);
-    font-size: clamp(16px, 5vw, 18px);
-    font-weight: 700;
-    text-transform: uppercase;
-    cursor: pointer;
-    margin: 3vh 0 1.5vh 0;
-    transition: all 0.2s;
-    flex-shrink: 0;
-}
-
-.cancel-search-btn:hover {
-    background: rgba(255, 85, 0, 0.1);
-    transform: scale(1.01);
-}
-
-/* =========================
-   ЭКРАН СВАЙП-КАРТОЧЕК 
-   ========================= */
-
-/* Контейнер для карточки свайпа */
-.swipe-card-container {
-    flex: 1;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    min-height: 0;
-}
-
-.swipe-header {
-    flex-shrink: 0;
-    padding: 10px 0 20px 0;
-    text-align: center;
-}
-
-.swipe-title {
-    font-size: clamp(20px, 6vw, 24px);
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.5px;
-    margin-bottom: 8px;
-}
-
-.swipe-subtitle {
-    font-size: clamp(13px, 3.5vw, 15px);
-    color: var(--text-secondary);
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-}
-
-.swipe-subtitle-left {
-    color: rgba(200, 60, 60, 0.9);
-    font-weight: 600;
-}
-
-.swipe-subtitle-right {
-    color: rgba(60, 180, 90, 0.9);
-    font-weight: 600;
-}
-
-.swipe-subtitle-divider {
-    color: #4A4F5A;
-    font-weight: 400;
-}
-
-/* Контейнер для карточки (старый, оставлен для совместимости) */
-.swipe-container {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-    min-height: 0;
-}
-
-/* Новая карточка игрока */
-.swipe-card {
-    width: 100%;
-    max-width: 420px;
-    background: var(--surface);
-    border-radius: 16px;
-    border: 1px solid #2A2F3A;
-    padding: 20px;
-    transition: transform 0.25s ease;
-    touch-action: pan-y;
-    will-change: transform;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    position: relative;
-    z-index: 10;
-}
-
-.swipe-card:active {
-    cursor: grabbing;
-}
-
-/* Эффекты при свайпе */
-.swipe-card.swiping-right {
-    background: linear-gradient(to right, rgba(76,175,80,0.15), var(--surface));
-}
-
-.swipe-card.swiping-left {
-    background: linear-gradient(to left, rgba(176,0,0,0.15), var(--surface));
-}
-
-/* Лейблы для свайпа */
-.swipe-label {
-    position: absolute;
-    top: 24px;
-    font-size: clamp(18px, 6vw, 24px);
-    font-weight: 800;
-    letter-spacing: 2px;
-    opacity: 0;
-    transition: opacity 0.1s ease;
-    z-index: 20;
-    pointer-events: none;
-}
-
-.swipe-label-left {
-    left: 25px;
-    color: rgba(200, 60, 60, 0.9);
-    transform: rotate(-5deg);
-}
-
-.swipe-label-right {
-    right: 25px;
-    color: rgba(60, 180, 90, 0.9);
-    transform: rotate(5deg);
-}
-
-/* Контент карточки */
-.swipe-card-content {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-.swipe-player-row {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.swipe-avatar {
-    width: 70px;
-    height: 70px;
-    flex-shrink: 0;
-}
-
-.swipe-avatar .tg-avatar-svg {
-    width: 70px;
-    height: 70px;
-    background: #2B2F36;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.swipe-avatar .tg-avatar-svg svg {
-    width: 35px;
-    height: 35px;
-}
-
-.swipe-name-block {
-    flex: 1;
-    min-width: 0;
-}
-
-.swipe-player-id {
-    font-size: 12px;
-    color: var(--accent);
-    font-family: monospace;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.swipe-player-nick {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.swipe-rating-block {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex-shrink: 0;
-    padding: 5px 0;
-}
-
-.swipe-rating-value {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-.swipe-rating-block .heart-icon {
-    margin-left: 0;
-}
-
-.swipe-rating-block .heart-icon svg {
-    width: 18px;
-    height: 18px;
-    stroke: var(--text-primary);
-}
-
-.swipe-rating-line {
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--text-primary), transparent);
-    opacity: 0.3;
-    margin: 2px 0 8px 0;
-}
-
-.swipe-stats-row {
-    display: flex;
-    gap: 12px;
-    margin: 0;
-}
-
-.swipe-stat-item {
-    flex: 1;
-    background: transparent;
-    border: none;
-    padding: 0;
-}
-
-.swipe-stat-label {
-    font-size: 10px;
-    color: var(--text-secondary);
-    font-weight: 600;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.swipe-stat-value {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 12px 14px;
-    color: var(--text-primary);
-    font-size: 14px;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.swipe-steam-container,
-.swipe-faceit-container {
-    margin: 0;
-}
-
-.swipe-link-label {
-    font-size: 10px;
-    color: var(--text-secondary);
-    font-weight: 600;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.swipe-link-value {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 12px 14px;
-    color: var(--text-primary);
-    font-size: 13px;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.swipe-comment {
-    margin: 0;
-}
-
-.swipe-comment-label {
-    font-size: 10px;
-    color: var(--text-secondary);
-    font-weight: 600;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.swipe-comment-text {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 12px 14px;
-    color: var(--text-primary);
-    font-size: 13px;
-    font-weight: 500;
-    min-height: 70px;
-    word-wrap: break-word;
-    line-height: 1.5;
-}
-
-/* Индикатор загрузки */
-.swipe-loading {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px 0;
-}
-
-.spinner-small {
-    width: 30px;
-    height: 30px;
-    border: 3px solid #1A1D24;
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-.swipe-loading.active {
-    display: flex;
-}
-
-/* Таймер на экране поиска */
-.search-timer-card {
-    position: absolute;
-    top: 12px;
-    right: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    font-size: clamp(14px, 4vw, 16px);
-    color: var(--accent);
-    font-weight: 700;
-    background: rgba(0,0,0,0.3);
-    padding: 6px 12px;
-    border-radius: 20px;
-    backdrop-filter: blur(2px);
-    z-index: 15;
-}
-
-/* Подсказка свайпа */
-.swipe-hint {
-    text-align: center;
-    font-size: 12px;
-    color: #6B7280;
-    margin-top: 10px;
-    user-select: none;
-}
-
-/* =========================
-   ЭКРАН СОЕДИНЕНИЯ - 10/10 UX
-   ========================= */
-.connection-screen .swipe-card {
-    width: 100%;
-    max-width: 420px;
-    margin: 0 auto;
-    background: var(--surface);
-    border-radius: 20px;
-    padding: 24px 22px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    border: 1px solid #2A2F3A;
-    position: relative;
-    z-index: 10;
-}
-
-.connection-mode {
-    animation: connectionAppear 0.4s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
-}
-
-@keyframes connectionAppear {
-    0% {
-        opacity: 0;
-        transform: scale(0.96) translateY(10px);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-.connection-screen .swipe-header {
-    margin-bottom: 5px;
-}
-
-.connection-screen .swipe-title {
-    font-size: clamp(22px, 6vw, 26px);
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: -0.5px;
-    margin-bottom: 4px;
-    text-shadow: 0 0 10px rgba(255, 85, 0, 0.3);
-}
-
-.connection-screen .swipe-subtitle {
-    font-size: clamp(13px, 3.5vw, 15px);
-    color: var(--text-secondary);
-    font-weight: 500;
-    margin-top: 0;
-}
-
-.connection-avatars {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-    margin: 20px 0 25px 0;
-    width: 100%;
-    position: relative;
-}
-
-.connection-avatar {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #1E2129;
-    transition: all 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
-    position: relative;
-}
-
-.self-avatar {
-    border: 2px solid var(--accent);
-    box-shadow: 0 0 0 0 rgba(255, 85, 0, 0.5);
-    animation: selfPulse 2s infinite ease-in-out;
-}
-
-.self-avatar .tg-avatar-svg {
-    width: 68px;
-    height: 68px;
-    background: #2B2F36;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.self-avatar .tg-avatar-svg svg circle,
-.self-avatar .tg-avatar-svg svg path {
-    fill: var(--accent);
-    stroke: var(--accent);
-}
-
-.teammate-avatar {
-    width: 56px;
-    height: 56px;
-    opacity: 0.65;
-    filter: grayscale(0.6);
-    transition: all 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
-}
-
-.teammate-avatar .tg-avatar-svg {
-    width: 52px;
-    height: 52px;
-    background: #2B2F36;
-    border: 2px solid #4A4F5A;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.teammate-avatar .tg-avatar-svg svg circle,
-.teammate-avatar .tg-avatar-svg svg path {
-    stroke: var(--text-secondary);
-}
-
-.teammate-avatar.connected {
-    width: 72px;
-    height: 72px;
-    opacity: 1;
-    filter: grayscale(0);
-}
-
-.teammate-avatar.connected .tg-avatar-svg {
-    width: 68px;
-    height: 68px;
-    border: 2px solid var(--accent);
-    box-shadow: 0 0 20px rgba(255, 85, 0, 0.5);
-}
-
-.teammate-avatar.connected .tg-avatar-svg svg circle,
-.teammate-avatar.connected .tg-avatar-svg svg path {
-    fill: var(--accent);
-    stroke: var(--accent);
-}
-
-@keyframes selfPulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(255, 85, 0, 0.6);
-    }
-    70% {
-        box-shadow: 0 0 0 12px rgba(255, 85, 0, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(255, 85, 0, 0);
-    }
-}
-
-.connection-line-container {
-    position: relative;
-    width: 120px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.connection-line {
-    position: relative;
-    width: 120px;
-    height: 3px;
-    background: #2B2F38;
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-.line-pulse {
-    position: absolute;
-    height: 3px;
-    width: 36px;
-    background: var(--accent);
-    border-radius: 20px;
-    animation: lineMove 1.3s infinite cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 10px var(--accent);
-}
-
-@keyframes lineMove {
-    0% {
-        left: -20px;
-    }
-    50% {
-        left: 60px;
-    }
-    100% {
-        left: 120px;
-    }
-}
-
-.connection-line.connected {
-    background: var(--accent);
-    animation: lineFlash 0.6s ease;
-}
-
-.connection-line.connected .line-pulse {
-    display: none;
-}
-
-@keyframes lineFlash {
-    0% {
-        box-shadow: 0 0 0 rgba(255, 85, 0, 0);
-    }
-    50% {
-        box-shadow: 0 0 20px var(--accent-glow);
-    }
-    100% {
-        box-shadow: 0 0 0 rgba(255, 85, 0, 0);
-    }
-}
-
-.connection-status {
-    font-size: 15px;
-    color: var(--text-secondary);
-    text-align: center;
-    letter-spacing: 0.3px;
-    margin: 15px 0 10px 0;
-    font-weight: 500;
-}
-
-.both-accepted .connection-status {
-    color: var(--accent);
-    font-weight: 600;
-    text-shadow: 0 0 8px rgba(255, 85, 0, 0.3);
-}
-
-.rejected .connection-status {
-    color: #FF3B30;
-}
-
-.teammate-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    margin: 5px 0;
-}
-
-.teammate-nick {
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.teammate-rating {
-    font-size: 15px;
-    color: var(--accent);
-    font-weight: 500;
-}
-
-.connection-timer {
-    position: absolute;
-    top: 12px;
-    left: 18px;
-    font-size: 14px;
-    color: #7A808E;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 6px 14px;
-    border-radius: 30px;
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    z-index: 15;
-}
-
-.connection-timer.warning {
-    color: var(--accent);
-    animation: timerPulse 1s infinite;
-}
-
-@keyframes timerPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-}
-
-.connection-actions {
-    display: flex;
-    gap: 15px;
-    margin: 20px 0 5px 0;
-    justify-content: center;
-}
-
-.connection-btn {
-    flex: 1;
-    max-width: 140px;
-    padding: 14px 0;
-    border-radius: 40px;
-    font-size: 15px;
-    font-weight: 700;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
-    letter-spacing: 0.5px;
-    position: relative;
-    overflow: hidden;
-    will-change: transform;
-}
-
-.connection-btn.accept {
-    background: var(--accent);
-    color: white;
-    border: none;
-    box-shadow: 0 4px 15px rgba(255, 85, 0, 0.3);
-}
-
-.connection-btn.accept:hover {
-    background: var(--accent-soft);
-    transform: scale(1.03);
-    box-shadow: 0 6px 20px rgba(255, 85, 0, 0.4);
-}
-
-.connection-btn.accept:active {
-    transform: scale(0.97);
-}
-
-.connection-btn.decline {
-    background: transparent;
-    color: var(--accent);
-    border: 2px solid var(--accent);
-}
-
-.connection-btn.decline:hover {
-    background: rgba(255, 85, 0, 0.1);
-    transform: scale(1.03);
-}
-
-.connection-btn.decline:active {
-    transform: scale(0.97);
-}
-
-.connection-btn::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 5px;
-    height: 5px;
-    background: rgba(255, 255, 255, 0.5);
-    opacity: 0;
-    border-radius: 100%;
-    transform: scale(1, 1) translate(-50%);
-    transform-origin: 50% 50%;
-}
-
-@keyframes ripple {
-    0% {
-        transform: scale(0, 0);
-        opacity: 0.5;
-    }
-    100% {
-        transform: scale(20, 20);
-        opacity: 0;
-    }
-}
-
-.connection-btn:active::after {
-    animation: ripple 0.4s ease-out;
-}
-
-/* ===== АНИМАЦИИ ===== */
-.primary-btn,
-.mode-search-btn,
-.cancel-search-btn,
-.nav-item,
-.logo,
-.icon-settings,
-.mode-btn,
-.edit-title-icon,
-.apply-btn,
-.back-btn,
-.shop-tab,
-.buy-btn-simple,
-.inventory-item,
-.friend-item,
-.connection-btn {
-    transition: all 0.2s ease;
-}
-
-.primary-btn:hover,
-.mode-search-btn:hover,
-.cancel-search-btn:hover,
-.nav-item:hover,
-.logo:hover,
-.icon-settings:hover,
-.edit-title-icon:hover,
-.apply-btn:hover,
-.back-btn:hover,
-.connection-btn:hover {
-    transform: scale(1.02);
-}
-
-.mode-btn.faceit:hover,
-.mode-btn.premier:hover,
-.mode-btn.prime:hover,
-.mode-btn.public:hover,
-.shop-tab:hover,
-.buy-btn-simple:hover,
-.inventory-item:hover {
-    transform: none;
-}
-
-.primary-btn:active,
-.mode-search-btn:active,
-.cancel-search-btn:active,
-.logo:active,
-.icon-settings:active,
-.mode-btn:active,
-.edit-title-icon:active,
-.apply-btn:active,
-.back-btn:active,
-.shop-tab:active,
-.buy-btn-simple:active,
-.inventory-item:active,
-.friend-item:active,
-.connection-btn:active {
-    transform: scale(0.97);
-}
-
-/* ===== ФИКСЫ ИНПУТОВ ===== */
-input {
-    background: transparent;
-    color: var(--text-primary);
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(255,85,0,0.15), 0 4px 12px rgba(0,0,0,0.35);
-}
-
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: var(--text-primary) !important;
-    transition: background-color 5000s ease-in-out 0s;
-    box-shadow: inset 0 0 20px 20px #1A1D24 !important;
-}
-
-.profile-name-row input[type="text"] {
-    width: 100%;
-    background: transparent;
-    border: none;
-    color: var(--accent);
-    font-size: clamp(16px, 5vw, 20px);
-    font-weight: 600;
-    font-family: 'Montserrat', sans-serif;
-    outline: none;
-    padding: 4px 0;
-    margin: 0;
-}
-
-.profile-name-row input[type="text"]:focus {
-    border: none;
-    outline: none;
-}
-
-.empty-friends {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 15px;
-    text-align: center;
-    color: var(--text-secondary);
-    height: 100%;
-    min-height: 80px;
-}
-
-.empty-friends-text {
-    font-size: 14px;
-    font-weight: 400;
-    color: #5D6472;
-}
-
-.profile-toast {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    right: 20px;
-    transform: translateY(-100px);
-    background: #1A1D24;
-    border: 2px solid #B00000;
-    border-radius: 12px;
-    padding: 16px 20px;
-    color: var(--text-primary);
-    font-size: 15px;
-    font-weight: 600;
-    text-align: center;
-    z-index: 2000;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    opacity: 0;
-    transition: all 0.3s ease;
-    width: auto;
-    line-height: 1.4;
-    word-wrap: break-word;
-    white-space: normal;
-}
-
-.profile-toast.show {
-    transform: translateY(0);
-    opacity: 1;
-}
-
-.stat-value.error,
-.profile-stat-value.error {
-    border-color: #B00000 !important;
-    border-width: 2px !important;
-    background: rgba(176, 0, 0, 0.05) !important;
-    transition: none !important;
-}
-
-.error-message {
-    color: #B00000;
-    font-size: 12px;
-    font-weight: 500;
-    margin-top: 4px;
-    margin-left: 4px;
-    text-align: left;
-    animation: none;
-    transition: none;
-}
-
-/* ================================= */
-/* ===== PINGSTER PREMIUM PATCH ===== */
-/* ================================= */
-
-/* ===== PHONE FRAME FIX ===== */
-.phone-frame {
-    padding: 0;
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
-}
-
-/* делаем контент нормальным */
-.content {
-    padding: 0 20px;
-}
-
-/* ================================= */
-/* ===== MODE BUTTONS PREMIUM ===== */
-/* ================================= */
-.mode-btn {
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,.05);
-    background:
-        linear-gradient(
-            180deg,
-            #1C2028 0%,
-            #171A20 100%
-        );
-    box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.04),
-        0 6px 20px rgba(0,0,0,.35);
-    transition:
-        transform .2s ease,
-        box-shadow .2s ease,
-        border .2s ease;
-}
-
-.mode-btn:hover {
-    transform: translateY(-2px);
-    border-color: rgba(255,85,0,.35);
-    box-shadow:
-        0 10px 28px rgba(0,0,0,.55),
-        0 0 0 1px rgba(255,85,0,.2);
-}
-
-.mode-btn::after {
-    opacity: .6;
-    font-weight: 600;
-}
-
-/* ================================= */
-/* ===== SECTION TITLE IMPROVE ===== */
-/* ================================= */
-.section-title {
-    letter-spacing: -0.6px;
-}
-
-.section-subtitle {
-    opacity: .85;
-}
-
-/* ================================= */
-/* ===== BOTTOM NAV PREMIUM ===== */
-/* ================================= */
-.bottom-nav {
-    height: 58px;
-    padding: 6px 0;
-    backdrop-filter: blur(22px);
-    border-top: 1px solid rgba(255,255,255,.04);
-}
-
-.nav-icon svg {
-    width: 18px;
-    height: 18px;
-}
-
-.nav-label {
-    font-size: 9px;
-    opacity: .8;
-}
-
-.nav-item.active {
-    transform: translateY(-1px);
-}
-
-.nav-item.active::after {
-    bottom: -4px;
-    height: 3px;
-    width: 20px;
-}
-
-/* ================================= */
-/* ===== SMOOTH GLOBAL UI ===== */
-/* ================================= */
-button,
-.mode-btn,
-.nav-item {
-    transition:
-        transform .18s ease,
-        background .18s ease,
-        border .18s ease,
-        box-shadow .18s ease;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-.bottom-nav {
-    padding-bottom: calc(6px + env(safe-area-inset-bottom));
-}
-
-.section-subtitle {
-    margin-bottom: 12px;
-}
-
-@media (hover:none) {
-    .mode-btn:hover {
-        transform: none;
-        box-shadow:
-            inset 0 1px 0 rgba(255,255,255,.04),
-            0 6px 20px rgba(0,0,0,.35);
-    }
-}
-
-.mode-btn:active {
-    transform: scale(0.97);
-}
-
-button {
-    transition: all 0.2s ease;
-}
-
-.mode-btn::after {
-    transition: transform 0.2s ease;
-}
-
-.mode-btn:hover::after {
-    transform: translateY(-50%) translateX(3px);
-}
-
-/* ===== MODE BUTTON ANIMATION ===== */
-.mode-btn {
-    opacity: 0;
-    transform: translateY(12px);
-    animation: modeFade 0.45s ease forwards;
-}
-
-.mode-btn:nth-child(1) {
-    animation-delay: 0.08s;
-}
-
-.mode-btn:nth-child(2) {
-    animation-delay: 0.16s;
-}
-
-.mode-btn:nth-child(3) {
-    animation-delay: 0.24s;
-}
-
-.mode-btn:nth-child(4) {
-    animation-delay: 0.32s;
-}
-
-@keyframes modeFade {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ===== TELEGRAM MINI APP POLISH ===== */
-* {
-    -webkit-tap-highlight-color: transparent;
-}
-
-button {
-    touch-action: manipulation;
-}
-
-html, body {
-    overscroll-behavior: none;
-}
-
-/* ===== SUBTLE APP GLOW ===== */
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: -1;
-    background:
-        radial-gradient(circle at 20% 0%, rgba(255,85,0,0.08), transparent 40%),
-        radial-gradient(circle at 80% 100%, rgba(255,85,0,0.05), transparent 45%);
-}
-
-/* ===== SMOOTH UI ===== */
-* {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-button:active{
-transform:scale(0.96);
-}
-
-.mode-btn:active{
-transform:scale(0.97);
-}
-
-.nav-item:active{
-transform:scale(0.92);
-}
-
-.primary-btn::before{
-content:"";
-position:absolute;
-
-top:0;
-left:-120%;
-
-width:120%;
-height:100%;
-
-background:linear-gradient(
-90deg,
-transparent,
-rgba(255,255,255,0.18),
-transparent
-);
-
-transition:0.7s;
-}
-
-.primary-btn:hover::before{
-left:120%;
-}
-
-*{
--webkit-overflow-scrolling:touch;
-}
-
-html{
-scroll-behavior:smooth;
-}
-
+import sys
+import os
+
+sys.path.append('/app/.local/lib/python3.14/site-packages')
+sys.path.append(os.path.expanduser('~/.local/lib/python3.14/site-packages'))
+
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import psycopg2
+import psycopg2.extras
+import random
+from datetime import datetime, timedelta, timezone
+import logging
+
+# Настройка логирования
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+app = Flask(__name__)
+CORS(app)
+
+def get_db():
+    logger.debug("Подключение к базе данных...")
+    return psycopg2.connect(
+        host="85.239.33.182",
+        database="pingster_db",
+        user="gen_user",
+        password="{,@~:5my>jvOAj",
+        port=5432
+    )
+
+def get_player_id(telegram_id):
+    """Получает player_id по telegram_id"""
+    logger.debug(f"Поиск player_id по telegram_id: {telegram_id}")
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT player_id FROM users WHERE telegram_id = %s", (telegram_id,))
+    result = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    if result:
+        logger.debug(f"Найден player_id: {result[0]}")
+        return result[0]
+    logger.debug("Пользователь не найден")
+    return None
+
+def generate_player_id():
+    player_id = str(random.randint(10000000, 99999999))
+    logger.debug(f"Сгенерирован player_id: {player_id}")
+    return player_id
+
+def generate_random_nick():
+    chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    nick = ''.join(random.choice(chars) for _ in range(6))
+    logger.debug(f"Сгенерирован nick: {nick}")
+    return nick
+
+# Конвертация рангов в числа
+RANK_TO_VALUE = {
+    'Silver 1': 1000, 'Silver 2': 1100, 'Silver 3': 1200, 'Silver 4': 1300,
+    'Silver Elite': 1400, 'Gold Nova 1': 1500, 'Gold Nova 2': 1600,
+    'Gold Nova 3': 1700, 'Gold Nova Master': 1800, 'Master Guardian 1': 1900,
+    'Master Guardian 2': 2000, 'Master Guardian Elite': 2100,
+    'Distinguished Master Guardian': 2200, 'Legendary Eagle': 2300,
+    'Legendary Eagle Master': 2400, 'Supreme Master First Class': 2500,
+    'Global Elite': 2600
+}
+
+# ============================================
+# ГЛАВНАЯ
+# ============================================
+@app.route('/', methods=['GET'])
+def home():
+    logger.info("GET /")
+    return jsonify({"message": "Pingster backend is running!", "status": "ok"})
+
+@app.route('/api', methods=['GET'])
+def api_root():
+    logger.info("GET /api")
+    return jsonify({"message": "Pingster API is running!", "status": "ok"})
+
+# ============================================
+# ИНИЦИАЛИЗАЦИЯ ПОЛЬЗОВАТЕЛЯ
+# ============================================
+@app.route('/api/user/init', methods=['POST'])
+def init_user():
+    logger.info("POST /api/user/init")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'telegram_id' not in data:
+        logger.error("Missing telegram_id")
+        return jsonify({"error": "Missing telegram_id"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        # Проверяем пользователя
+        logger.debug(f"Поиск пользователя с telegram_id: {data['telegram_id']}")
+        cursor.execute("SELECT player_id FROM users WHERE telegram_id = %s", (data['telegram_id'],))
+        result = cursor.fetchone()
+        logger.debug(f"Результат поиска: {result}")
+        
+        if not result:
+            logger.info("Создание нового пользователя")
+            # Создаём пользователя
+            player_id = generate_player_id()
+            cursor.execute("""
+                INSERT INTO users (telegram_id, username, player_id, last_active, is_online)
+                VALUES (%s, %s, %s, NOW(), true)
+                RETURNING player_id
+            """, (data['telegram_id'], data.get('username', 'no_username'), player_id))
+            player_id = cursor.fetchone()[0]
+            logger.info(f"Создан пользователь с player_id: {player_id}")
+            
+            # Создаём профиль
+            nick = generate_random_nick()
+            logger.debug(f"Создание профиля для player_id: {player_id}, nick: {nick}")
+            cursor.execute("""
+                INSERT INTO profiles (player_id, nick, pingcoins, telegram_id)
+                VALUES (%s, %s, 1000, %s)
+            """, (player_id, nick, data['telegram_id']))
+            logger.info("Профиль создан")
+            
+            conn.commit()
+            logger.info("Данные сохранены в БД")
+            
+            return jsonify({
+                "status": "ok", 
+                "new_user": True, 
+                "player_id": player_id,
+                "nick": nick,
+                "pingcoins": 1000
+            })
+        else:
+            player_id = result[0]
+            logger.info(f"Существующий пользователь player_id: {player_id}")
+            
+            # Обновляем last_active
+            cursor.execute("""
+                UPDATE users SET last_active = NOW(), is_online = true
+                WHERE player_id = %s
+            """, (player_id,))
+            logger.debug(f"Обновлен last_active для player_id: {player_id}")
+            
+            # Проверяем, есть ли профиль
+            logger.debug(f"Поиск профиля для player_id: {player_id}")
+            cursor.execute("SELECT nick, pingcoins FROM profiles WHERE player_id = %s", (player_id,))
+            profile = cursor.fetchone()
+            logger.debug(f"Профиль найден: {profile}")
+            
+            if not profile:
+                logger.warning(f"Профиль не найден для player_id: {player_id}, создаем новый")
+                nick = generate_random_nick()
+                cursor.execute("""
+                    INSERT INTO profiles (player_id, nick, pingcoins, telegram_id)
+                    VALUES (%s, %s, 1000, %s)
+                """, (player_id, nick, data['telegram_id']))
+                conn.commit()
+                logger.info(f"Создан недостающий профиль для player_id={player_id}")
+                
+                return jsonify({
+                    "status": "ok", 
+                    "new_user": False, 
+                    "player_id": player_id,
+                    "nick": nick,
+                    "pingcoins": 1000
+                })
+            
+            conn.commit()
+            logger.info("Данные обновлены")
+            
+            return jsonify({
+                "status": "ok", 
+                "new_user": False, 
+                "player_id": player_id,
+                "nick": profile[0],
+                "pingcoins": profile[1]
+            })
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА: {e}", exc_info=True)
+        if conn:
+            conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+        logger.debug("Завершение запроса")
+
+# ============================================
+# ПОЛУЧИТЬ ПРОФИЛЬ
+# ============================================
+@app.route('/api/profile/get', methods=['POST'])
+def get_profile():
+    logger.info("POST /api/profile/get")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'telegram_id' not in data:
+        logger.error("Missing telegram_id")
+        return jsonify({"error": "Missing telegram_id"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        player_id = get_player_id(data['telegram_id'])
+        if not player_id:
+            logger.error(f"User not found for telegram_id: {data['telegram_id']}")
+            return jsonify({"error": "User not found"}), 404
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        logger.debug(f"Получение профиля для player_id: {player_id}")
+        cursor.execute("""
+            SELECT nick, age, steam_link, faceit_link, avatar, pingcoins
+            FROM profiles WHERE player_id = %s
+        """, (player_id,))
+        profile = cursor.fetchone()
+        logger.debug(f"Профиль: {profile}")
+        
+        if not profile:
+            logger.error(f"Profile not found for player_id: {player_id}")
+            return jsonify({"error": "Profile not found"}), 404
+        
+        return jsonify({
+            "status": "ok",
+            "player_id": player_id,
+            "nick": profile[0],
+            "age": profile[1],
+            "steam_link": profile[2],
+            "faceit_link": profile[3],
+            "avatar": profile[4],
+            "pingcoins": profile[5]
+        })
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ============================================
+# ОБНОВИТЬ ПРОФИЛЬ
+# ============================================
+@app.route('/api/profile/update', methods=['POST'])
+def update_profile():
+    logger.info("POST /api/profile/update")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'telegram_id' not in data:
+        logger.error("Missing telegram_id")
+        return jsonify({"error": "Missing telegram_id"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        player_id = get_player_id(data['telegram_id'])
+        if not player_id:
+            logger.error(f"User not found for telegram_id: {data['telegram_id']}")
+            return jsonify({"error": "User not found"}), 404
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        logger.debug(f"Обновление профиля для player_id: {player_id}")
+        cursor.execute("""
+            UPDATE profiles 
+            SET nick = COALESCE(%s, nick),
+                age = COALESCE(%s, age),
+                steam_link = COALESCE(%s, steam_link),
+                faceit_link = COALESCE(%s, faceit_link),
+                updated_at = NOW()
+            WHERE player_id = %s
+        """, (
+            data.get('nick'),
+            data.get('age'),
+            data.get('steam_link'),
+            data.get('faceit_link'),
+            player_id
+        ))
+        
+        conn.commit()
+        logger.info("Профиль обновлен")
+        
+        return jsonify({"status": "ok"})
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА: {e}", exc_info=True)
+        if conn:
+            conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ============================================
+# СОХРАНИТЬ АВАТАРКУ
+# ============================================
+@app.route('/api/avatar/save', methods=['POST'])
+def save_avatar():
+    logger.info("POST /api/avatar/save")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'telegram_id' not in data:
+        logger.error("Missing telegram_id")
+        return jsonify({"error": "Missing telegram_id"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        player_id = get_player_id(data['telegram_id'])
+        if not player_id:
+            logger.error(f"User not found for telegram_id: {data['telegram_id']}")
+            return jsonify({"error": "User not found"}), 404
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        logger.debug(f"Сохранение аватарки для player_id: {player_id}")
+        cursor.execute("""
+            UPDATE profiles SET avatar = %s WHERE player_id = %s
+        """, (data.get('avatar'), player_id))
+        
+        conn.commit()
+        logger.info("Аватарка сохранена")
+        
+        return jsonify({"status": "ok"})
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА: {e}", exc_info=True)
+        if conn:
+            conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ============================================
+# ПОЛУЧИТЬ БАЛАНС
+# ============================================
+@app.route('/api/user/balance', methods=['POST'])
+def get_balance():
+    logger.info("POST /api/user/balance")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'telegram_id' not in data:
+        logger.error("Missing telegram_id")
+        return jsonify({"error": "Missing telegram_id"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        player_id = get_player_id(data['telegram_id'])
+        if not player_id:
+            logger.error(f"User not found for telegram_id: {data['telegram_id']}")
+            return jsonify({"error": "User not found"}), 404
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        logger.debug(f"Получение баланса для player_id: {player_id}")
+        cursor.execute("SELECT pingcoins FROM profiles WHERE player_id = %s", (player_id,))
+        result = cursor.fetchone()
+        balance = result[0] if result else 0
+        logger.debug(f"Баланс: {balance}")
+        
+        return jsonify({"status": "ok", "balance": balance})
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ============================================
+# КУПИТЬ КЕЙС
+# ============================================
+@app.route('/api/shop/buy', methods=['POST'])
+def buy_case():
+    logger.info("POST /api/shop/buy")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'telegram_id' not in data:
+        logger.error("Missing telegram_id")
+        return jsonify({"error": "Missing telegram_id"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        player_id = get_player_id(data['telegram_id'])
+        if not player_id:
+            logger.error(f"User not found for telegram_id: {data['telegram_id']}")
+            return jsonify({"error": "User not found"}), 404
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        # Проверяем баланс
+        logger.debug(f"Проверка баланса для player_id: {player_id}")
+        cursor.execute("SELECT pingcoins FROM profiles WHERE player_id = %s", (player_id,))
+        result = cursor.fetchone()
+        if not result:
+            logger.error(f"Profile not found for player_id: {player_id}")
+            return jsonify({"error": "Profile not found"}), 404
+        
+        coins = result[0]
+        price = data.get('price', 0)
+        logger.debug(f"Баланс: {coins}, цена: {price}")
+        
+        if coins < price:
+            logger.warning(f"Недостаточно монет: {coins} < {price}")
+            return jsonify({"error": "Not enough coins"}), 400
+        
+        # Списываем монеты
+        logger.debug(f"Списываем {price} монет")
+        cursor.execute("UPDATE profiles SET pingcoins = pingcoins - %s WHERE player_id = %s", 
+                      (price, player_id))
+        
+        logger.debug(f"Добавление кейса в инвентарь для player_id: {player_id}, case: {data.get('case_id')}")
+        cursor.execute("""
+            INSERT INTO inventory (player_id, case_id, case_name, unique_id, status_case)
+            VALUES (%s, %s, %s, %s, 'new')
+        """, (player_id, data.get('case_id'), data.get('case_name'), data.get('unique_id')))
+        
+        conn.commit()
+        logger.info("Покупка совершена")
+        
+        # Получаем новый баланс
+        cursor.execute("SELECT pingcoins FROM profiles WHERE player_id = %s", (player_id,))
+        new_balance = cursor.fetchone()[0]
+        logger.debug(f"Новый баланс: {new_balance}")
+        
+        return jsonify({"status": "ok", "new_balance": new_balance})
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА: {e}", exc_info=True)
+        if conn:
+            conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ============================================
+# ПОЛУЧИТЬ ИНВЕНТАРЬ
+# ============================================
+@app.route('/api/inventory/get', methods=['POST'])
+def get_inventory():
+    logger.info("POST /api/inventory/get")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'telegram_id' not in data:
+        logger.error("Missing telegram_id")
+        return jsonify({"error": "Missing telegram_id"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        player_id = get_player_id(data['telegram_id'])
+        if not player_id:
+            logger.error(f"User not found for telegram_id: {data['telegram_id']}")
+            return jsonify({"error": "User not found"}), 404
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        logger.debug(f"Получение инвентаря для player_id: {player_id}")
+        cursor.execute("""
+            SELECT case_id, case_name, unique_id, status_case, 
+                   item_id, item_name, status_item
+            FROM inventory 
+            WHERE player_id = %s
+            ORDER BY 
+                CASE WHEN status_case = 'new' THEN 0 ELSE 1 END,
+                CASE WHEN status_item = 'new' THEN 0 ELSE 1 END,
+                unique_id DESC
+        """, (player_id,))
+        
+        items = cursor.fetchall()
+        logger.debug(f"Найдено предметов: {len(items)}")
+        
+        inventory_list = []
+        for item in items:
+            inventory_list.append({
+                "case_id": item[0],
+                "case_name": item[1],
+                "unique_id": item[2],
+                "status_case": item[3],
+                "item_id": item[4],
+                "item_name": item[5],
+                "status_item": item[6]
+            })
+        
+        return jsonify({"status": "ok", "inventory": inventory_list})
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ============================================
+# ОТКРЫТЬ КЕЙС
+# ============================================
+@app.route('/api/case/open', methods=['POST'])
+def open_case():
+    logger.info("POST /api/case/open")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'telegram_id' not in data:
+        logger.error("Missing telegram_id")
+        return jsonify({"error": "Missing telegram_id"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        player_id = get_player_id(data['telegram_id'])
+        if not player_id:
+            logger.error(f"User not found for telegram_id: {data['telegram_id']}")
+            return jsonify({"error": "User not found"}), 404
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        logger.debug(f"Открытие кейса для player_id: {player_id}, unique_id: {data.get('unique_id')}")
+        cursor.execute("""
+            UPDATE inventory 
+            SET status_case = 'opened',
+                item_id = %s,
+                item_name = %s,
+                status_item = 'new'
+            WHERE unique_id = %s AND player_id = %s
+            RETURNING case_id, case_name
+        """, (data.get('item_id'), data.get('item_name'), data.get('unique_id'), player_id))
+        
+        result = cursor.fetchone()
+        if not result:
+            logger.error(f"Case not found: {data.get('unique_id')}")
+            return jsonify({"error": "Case not found"}), 404
+        
+        conn.commit()
+        logger.info("Кейс открыт")
+        
+        return jsonify({
+            "status": "ok", 
+            "case_id": result[0],
+            "case_name": result[1],
+            "item_id": data.get('item_id'),
+            "item_name": data.get('item_name')
+        })
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА: {e}", exc_info=True)
+        if conn:
+            conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ============================================
+# ОБНОВИТЬ СТАТУС ПРЕДМЕТА
+# ============================================
+@app.route('/api/item/update_status', methods=['POST'])
+def update_item_status():
+    logger.info("POST /api/item/update_status")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'telegram_id' not in data:
+        logger.error("Missing telegram_id")
+        return jsonify({"error": "Missing telegram_id"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        player_id = get_player_id(data['telegram_id'])
+        if not player_id:
+            logger.error(f"User not found for telegram_id: {data['telegram_id']}")
+            return jsonify({"error": "User not found"}), 404
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        logger.debug(f"Обновление статуса предмета: {data.get('unique_id')} -> {data.get('status')}")
+        cursor.execute("""
+            UPDATE inventory 
+            SET status_item = %s
+            WHERE unique_id = %s AND player_id = %s
+            RETURNING item_id, item_name
+        """, (data.get('status'), data.get('unique_id'), player_id))
+        
+        result = cursor.fetchone()
+        if not result:
+            logger.error(f"Item not found: {data.get('unique_id')}")
+            return jsonify({"error": "Item not found"}), 404
+        
+        conn.commit()
+        logger.info("Статус обновлен")
+        
+        return jsonify({
+            "status": "ok",
+            "item_id": result[0],
+            "item_name": result[1],
+            "new_status": data.get('status')
+        })
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА: {e}", exc_info=True)
+        if conn:
+            conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ============================================
+# УДАЛИТЬ ПРЕДМЕТ
+# ============================================
+@app.route('/api/item/delete', methods=['POST'])
+def delete_item():
+    logger.info("POST /api/item/delete")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'telegram_id' not in data:
+        logger.error("Missing telegram_id")
+        return jsonify({"error": "Missing telegram_id"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        player_id = get_player_id(data['telegram_id'])
+        if not player_id:
+            logger.error(f"User not found for telegram_id: {data['telegram_id']}")
+            return jsonify({"error": "User not found"}), 404
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        logger.debug(f"Удаление предмета: {data.get('unique_id')}")
+        cursor.execute("""
+            DELETE FROM inventory 
+            WHERE unique_id = %s AND player_id = %s
+            RETURNING item_id, item_name
+        """, (data.get('unique_id'), player_id))
+        
+        result = cursor.fetchone()
+        if not result:
+            logger.error(f"Item not found: {data.get('unique_id')}")
+            return jsonify({"error": "Item not found"}), 404
+        
+        conn.commit()
+        logger.info("Предмет удален")
+        
+        return jsonify({"status": "ok", "deleted": result[0]})
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА: {e}", exc_info=True)
+        if conn:
+            conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ============================================
+# НАЧАТЬ ПОИСК - С БАКЕТАМИ
+# ============================================
+@app.route('/api/search/start', methods=['POST'])
+def start_search():
+    logger.info("POST /api/search/start")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'telegram_id' not in data:
+        logger.error("Missing telegram_id")
+        return jsonify({"error": "Missing telegram_id"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        # Получаем player_id
+        player_id = get_player_id(data['telegram_id'])
+        if not player_id:
+            logger.error(f"User not found for telegram_id: {data['telegram_id']}")
+            return jsonify({"error": "User not found"}), 404
+        
+        logger.debug(f"Найден player_id: {player_id}")
+        
+        # Проверка возраста
+        if data.get('age') and (data['age'] < 16 or data['age'] > 100):
+            return jsonify({"error": "Возраст должен быть от 16 до 100 лет"}), 400
+        
+        # Определяем режим
+        mode = data.get('mode', '').lower()
+        
+        # Получаем значение ранга
+        rank_value = data.get('rating_value', '0')
+        
+        # Преобразуем в число
+        rating_number = 0
+        if mode in ['faceit', 'premier']:
+            try:
+                rating_number = int(rank_value)
+            except:
+                rating_number = 0
+        else:
+            rating_number = RANK_TO_VALUE.get(rank_value, 1000)
+        
+        # Вычисляем бакет рейтинга (группировка по 100 единиц)
+        rating_bucket = rating_number // 100
+        
+        logger.debug(f"Рейтинг: {rating_number}, бакет: {rating_bucket}")
+        
+        # Удаляем старые записи этого игрока (только если они не в матче)
+        cursor.execute("""
+            DELETE FROM search_queue 
+            WHERE player_id = %s AND status = 'waiting'
+        """, (player_id,))
+        deleted_old = cursor.rowcount
+        logger.debug(f"Удалено старых записей: {deleted_old}")
+        
+        # Создаем новую запись в очереди
+        cursor.execute("""
+            INSERT INTO search_queue 
+            (player_id, mode, rank, rating_bucket, style, age, steam_link, faceit_link, comment, joined_at, expires_at, status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW() + INTERVAL '5 minutes', 'waiting')
+            RETURNING id
+        """, (
+            player_id, 
+            mode, 
+            str(rating_number), 
+            rating_bucket,
+            data.get('style'), 
+            data.get('age'),
+            data.get('steam_link'), 
+            data.get('faceit_link'),
+            data.get('comment')
+        ))
+        
+        queue_id = cursor.fetchone()[0]
+        conn.commit()
+        logger.info(f"Добавлен в очередь с ID: {queue_id}, player_id: {player_id}, бакет: {rating_bucket}")
+        
+        return jsonify({"status": "searching", "message": "В очереди"})
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА: {e}", exc_info=True)
+        if conn:
+            conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ============================================
+# ПРОВЕРИТЬ МЭТЧ - ИСПРАВЛЕНО С FOR UPDATE SKIP LOCKED
+# ============================================
+@app.route('/api/match/check', methods=['POST'])
+def check_match():
+    logger.info("POST /api/match/check")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'telegram_id' not in data:
+        logger.error("Missing telegram_id")
+        return jsonify({"error": "Missing telegram_id"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        player_id = get_player_id(data['telegram_id'])
+        if not player_id:
+            logger.error(f"User not found for telegram_id: {data['telegram_id']}")
+            return jsonify({"error": "User not found"}), 404
+        
+        conn = get_db()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        
+        logger.debug(f"Найден player_id: {player_id}")
+        
+        # Проверяем, есть ли активный матч
+        cursor.execute("""
+            SELECT id, player1_id, player2_id, mode, compatibility_score, 
+                   expires_at, player1_response, player2_response, status
+            FROM matches 
+            WHERE (player1_id = %s OR player2_id = %s) 
+            AND status = 'pending'
+            ORDER BY id DESC LIMIT 1
+        """, (player_id, player_id))
+        
+        match = cursor.fetchone()
+        
+        if match:
+            logger.info(f"Найден активный матч ID={match['id']}")
+            
+            # Определяем оппонента
+            other_id = match['player2_id'] if match['player1_id'] == player_id else match['player1_id']
+            player_response = match['player1_response'] if match['player1_id'] == player_id else match['player2_response']
+            
+            # Получаем данные оппонента из очереди
+            cursor.execute("""
+                SELECT style, rank, comment
+                FROM search_queue 
+                WHERE player_id = %s 
+                ORDER BY joined_at DESC LIMIT 1
+            """, (other_id,))
+            
+            queue_data = cursor.fetchone()
+            
+            # Получаем данные из профиля
+            cursor.execute("""
+                SELECT nick, age, steam_link, faceit_link
+                FROM profiles WHERE player_id = %s
+            """, (other_id,))
+            
+            profile = cursor.fetchone()
+            
+            if profile:
+                opponent = {
+                    "player_id": other_id,
+                    "nick": profile['nick'],
+                    "age": profile['age'],
+                    "style": queue_data['style'] if queue_data else "fan",
+                    "rating": queue_data['rank'] if queue_data else "0",
+                    "steam_link": profile['steam_link'] if profile['steam_link'] else "Не указана",
+                    "faceit_link": profile['faceit_link'] if profile['faceit_link'] else "Не указана",
+                    "comment": queue_data['comment'] if queue_data and queue_data['comment'] else "Нет комментария"
+                }
+                
+                server_time = datetime.now(timezone.utc)
+                
+                return jsonify({
+                    "match_found": True,
+                    "match_id": match['id'],
+                    "opponent": opponent,
+                    "your_response": player_response,
+                    "expires_at": match['expires_at'].isoformat() if match['expires_at'] else None,
+                    "server_time": server_time.isoformat()
+                })
+        
+        # Если нет активного матча, ищем кандидатов с блокировкой
+        logger.debug("Поиск кандидатов в очереди")
+        
+        # Получаем данные текущего игрока из очереди
+        cursor.execute("""
+            SELECT rating_bucket, mode FROM search_queue 
+            WHERE player_id = %s AND status = 'waiting' AND expires_at > NOW()
+            ORDER BY joined_at DESC LIMIT 1
+        """, (player_id,))
+        
+        current = cursor.fetchone()
+        
+        if not current:
+            logger.debug("Игрок не в очереди")
+            return jsonify({"match_found": False})
+        
+        bucket, mode = current['rating_bucket'], current['mode']
+        min_bucket = bucket - 1
+        max_bucket = bucket + 1
+        
+        logger.debug(f"Поиск кандидатов: режим={mode}, бакет от {min_bucket} до {max_bucket}")
+        
+        # Ищем подходящих кандидатов с блокировкой строки
+        cursor.execute("""
+            SELECT player_id, style, age, rank, comment
+            FROM search_queue 
+            WHERE mode = %s 
+            AND status = 'waiting'
+            AND rating_bucket BETWEEN %s AND %s
+            AND player_id != %s
+            AND expires_at > NOW()
+            ORDER BY joined_at
+            LIMIT 1
+            FOR UPDATE SKIP LOCKED
+        """, (mode, min_bucket, max_bucket, player_id))
+        
+        candidate = cursor.fetchone()
+        
+        if candidate:
+            logger.info(f"Найден кандидат: player_id={candidate['player_id']}")
+            
+            # Создаем матч
+            cursor.execute("""
+                INSERT INTO matches 
+                (player1_id, player2_id, mode, compatibility_score, created_at, expires_at, status)
+                VALUES (%s, %s, %s, 0, NOW(), NOW() + INTERVAL '30 seconds', 'pending')
+                RETURNING id, expires_at
+            """, (player_id, candidate['player_id'], mode))
+            
+            match_result = cursor.fetchone()
+            match_id = match_result['id']
+            expires_at = match_result['expires_at']
+            
+            logger.info(f"Создан матч ID: {match_id}")
+            
+            # Обновляем статус в очереди
+            cursor.execute("""
+                UPDATE search_queue 
+                SET status = 'matched', match_id = %s
+                WHERE player_id IN (%s, %s)
+            """, (match_id, player_id, candidate['player_id']))
+            
+            conn.commit()
+            
+            # Получаем данные кандидата из профиля
+            cursor.execute("""
+                SELECT nick, age, steam_link, faceit_link
+                FROM profiles WHERE player_id = %s
+            """, (candidate['player_id'],))
+            
+            profile = cursor.fetchone()
+            
+            if profile:
+                opponent = {
+                    "player_id": candidate['player_id'],
+                    "nick": profile['nick'],
+                    "age": profile['age'],
+                    "style": candidate['style'] if candidate['style'] else "fan",
+                    "rating": candidate['rank'] if candidate['rank'] else "0",
+                    "steam_link": profile['steam_link'] if profile['steam_link'] else "Не указана",
+                    "faceit_link": profile['faceit_link'] if profile['faceit_link'] else "Не указана",
+                    "comment": candidate['comment'] if candidate['comment'] else "Нет комментария"
+                }
+                
+                server_time = datetime.now(timezone.utc)
+                
+                return jsonify({
+                    "match_found": True,
+                    "match_id": match_id,
+                    "opponent": opponent,
+                    "your_response": None,
+                    "expires_at": expires_at.isoformat(),
+                    "server_time": server_time.isoformat()
+                })
+        
+        logger.debug("Кандидатов не найдено")
+        return jsonify({"match_found": False})
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА в check_match: {e}", exc_info=True)
+        if conn:
+            conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ============================================
+# ОТВЕТИТЬ НА МЭТЧ - ИСПРАВЛЕНО С TIMEZONE
+# ============================================
+@app.route('/api/match/respond', methods=['POST'])
+def respond_match():
+    logger.info("POST /api/match/respond")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'telegram_id' not in data or 'match_id' not in data or 'response' not in data:
+        logger.error("Missing required fields")
+        return jsonify({"error": "Missing telegram_id, match_id or response"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        player_id = get_player_id(data['telegram_id'])
+        if not player_id:
+            logger.error(f"User not found for telegram_id: {data['telegram_id']}")
+            return jsonify({"error": "User not found"}), 404
+        
+        conn = get_db()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        
+        logger.debug(f"Найден player_id: {player_id}")
+        
+        # Получаем информацию о матче
+        cursor.execute("""
+            SELECT player1_id, player2_id, player1_response, player2_response, expires_at, status
+            FROM matches WHERE id = %s
+        """, (data['match_id'],))
+        
+        match = cursor.fetchone()
+        
+        if not match:
+            logger.error(f"Match not found: {data['match_id']}")
+            return jsonify({"error": "Match not found"}), 404
+        
+        # Проверяем не истекло ли время (используем timezone.utcnow)
+        current_time = datetime.now(timezone.utc)
+        if match['expires_at'] and current_time > match['expires_at']:
+            logger.warning(f"Match {data['match_id']} expired")
+            
+            # Сбрасываем ответы и статус
+            cursor.execute("""
+                UPDATE matches 
+                SET status = 'expired', player1_response = NULL, player2_response = NULL 
+                WHERE id = %s
+            """, (data['match_id'],))
+            
+            # Возвращаем игроков в очередь
+            cursor.execute("""
+                UPDATE search_queue 
+                SET status = 'waiting', match_id = NULL
+                WHERE player_id IN (%s, %s)
+            """, (match['player1_id'], match['player2_id']))
+            
+            conn.commit()
+            return jsonify({"status": "expired", "message": "Время истекло"})
+        
+        if data['response'] == 'timeout':
+            cursor.execute("""
+                UPDATE matches 
+                SET status = 'expired', player1_response = NULL, player2_response = NULL 
+                WHERE id = %s
+            """, (data['match_id'],))
+            
+            # Возвращаем игроков в очередь
+            cursor.execute("""
+                UPDATE search_queue 
+                SET status = 'waiting', match_id = NULL
+                WHERE player_id IN (%s, %s)
+            """, (match['player1_id'], match['player2_id']))
+            
+            conn.commit()
+            logger.info(f"Мэтч {data['match_id']} закрыт по таймауту")
+            return jsonify({"status": "timeout", "message": "Время вышло"})
+        
+        # Обновляем ответ игрока
+        if str(match['player1_id']) == str(player_id):
+            if match['player1_response'] is not None:
+                logger.warning(f"Player {player_id} already responded")
+                return jsonify({"status": "already_responded"})
+            cursor.execute("UPDATE matches SET player1_response = %s WHERE id = %s",
+                          (data['response'], data['match_id']))
+            logger.debug("Обновлен ответ player1")
+        elif str(match['player2_id']) == str(player_id):
+            if match['player2_response'] is not None:
+                logger.warning(f"Player {player_id} already responded")
+                return jsonify({"status": "already_responded"})
+            cursor.execute("UPDATE matches SET player2_response = %s WHERE id = %s",
+                          (data['response'], data['match_id']))
+            logger.debug("Обновлен ответ player2")
+        else:
+            logger.error("User not in this match")
+            return jsonify({"error": "User not in this match"}), 403
+        
+        # Проверяем ответы обоих
+        cursor.execute("SELECT player1_response, player2_response, expires_at FROM matches WHERE id = %s", 
+                      (data['match_id'],))
+        responses = cursor.fetchone()
+        
+        if responses['player1_response'] == 'accept' and responses['player2_response'] == 'accept':
+            # Оба приняли
+            cursor.execute("UPDATE matches SET status = 'accepted' WHERE id = %s", (data['match_id'],))
+            conn.commit()
+            logger.info("Мэтч принят обоими")
+            return jsonify({"status": "accepted", "both_accepted": True})
+        
+        elif responses['player1_response'] == 'reject' or responses['player2_response'] == 'reject':
+            # Кто-то отклонил
+            cursor.execute("""
+                UPDATE matches 
+                SET status = 'rejected', player1_response = NULL, player2_response = NULL 
+                WHERE id = %s
+            """, (data['match_id'],))
+            
+            # Возвращаем игроков в очередь
+            cursor.execute("""
+                UPDATE search_queue 
+                SET status = 'waiting', match_id = NULL
+                WHERE player_id IN (%s, %s)
+            """, (match['player1_id'], match['player2_id']))
+            
+            conn.commit()
+            logger.info("Мэтч отклонен")
+            return jsonify({"status": "rejected", "both_accepted": False})
+        
+        else:
+            # Ждем второго
+            conn.commit()
+            time_left = 0
+            if responses['expires_at']:
+                time_left = max(0, int((responses['expires_at'] - datetime.now(timezone.utc)).total_seconds()))
+            return jsonify({
+                "status": "waiting", 
+                "both_accepted": False,
+                "time_left": time_left
+            })
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА: {e}", exc_info=True)
+        if conn:
+            conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ============================================
+# ОСТАНОВИТЬ ПОИСК
+# ============================================
+@app.route('/api/search/stop', methods=['POST'])
+def stop_search():
+    logger.info("POST /api/search/stop")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'telegram_id' not in data:
+        logger.error("Missing telegram_id")
+        return jsonify({"error": "Missing telegram_id"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        player_id = get_player_id(data['telegram_id'])
+        if not player_id:
+            logger.error(f"User not found for telegram_id: {data['telegram_id']}")
+            return jsonify({"error": "User not found"}), 404
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        logger.debug(f"Найден player_id: {player_id}")
+        
+        cursor.execute("DELETE FROM search_queue WHERE player_id = %s AND status = 'waiting'", (player_id,))
+        deleted = cursor.rowcount
+        conn.commit()
+        logger.info(f"Поиск остановлен, удалено записей: {deleted}")
+        
+        return jsonify({"status": "stopped", "deleted": deleted})
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА: {e}", exc_info=True)
+        if conn:
+            conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ============================================
+# СОЗДАТЬ ИГРУ
+# ============================================
+@app.route('/api/game/create', methods=['POST'])
+def create_game():
+    logger.info("POST /api/game/create")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'match_id' not in data:
+        logger.error("Missing match_id")
+        return jsonify({"error": "Missing match_id"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT player1_id, player2_id FROM matches WHERE id = %s AND status = 'accepted'", 
+                      (data['match_id'],))
+        match = cursor.fetchone()
+        
+        if not match:
+            logger.error(f"Match not found or not accepted: {data['match_id']}")
+            return jsonify({"error": "Match not found or not accepted"}), 404
+        
+        chat_id = random.randint(1000000, 9999999)
+        chat_link = f"https://t.me/+{random.randint(1000000, 9999999)}"
+        
+        cursor.execute("""
+            INSERT INTO games (match_id, player1_id, player2_id, telegram_chat_id, telegram_chat_link, status, created_at)
+            VALUES (%s, %s, %s, %s, %s, 'active', NOW())
+            RETURNING id
+        """, (data['match_id'], match[0], match[1], chat_id, chat_link))
+        
+        game_id = cursor.fetchone()[0]
+        
+        # Удаляем игроков из очереди
+        cursor.execute("DELETE FROM search_queue WHERE player_id IN (%s, %s)", (match[0], match[1]))
+        
+        conn.commit()
+        logger.info(f"Создана игра ID: {game_id}, чат: {chat_link}")
+        
+        return jsonify({
+            "status": "ok",
+            "game_id": game_id,
+            "chat_id": chat_id,
+            "chat_link": chat_link
+        })
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА: {e}", exc_info=True)
+        if conn:
+            conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ============================================
+# ОЦЕНИТЬ ИГРОКА
+# ============================================
+@app.route('/api/game/vote', methods=['POST'])
+def vote_player():
+    logger.info("POST /api/game/vote")
+    
+    if not request.json:
+        logger.error("No JSON data")
+        return jsonify({"error": "No JSON data"}), 400
+    
+    data = request.json
+    logger.info(f"Получены данные: {data}")
+    
+    if 'game_id' not in data or 'player_id' not in data or 'vote' not in data:
+        logger.error("Missing required fields")
+        return jsonify({"error": "Missing game_id, player_id or vote"}), 400
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        if data['player_id'] == data['voter_id']:
+            logger.error("User cannot vote for themselves")
+            return jsonify({"error": "Cannot vote for yourself"}), 400
+        
+        cursor.execute("""
+            UPDATE games 
+            SET player1_vote = CASE WHEN player1_id = %s THEN %s ELSE player1_vote END,
+                player2_vote = CASE WHEN player2_id = %s THEN %s ELSE player2_vote END,
+                completed_at = CASE 
+                    WHEN player1_vote IS NOT NULL AND player2_vote IS NOT NULL 
+                    THEN NOW() ELSE completed_at 
+                END
+            WHERE id = %s
+        """, (data['voter_id'], data['vote'], data['voter_id'], data['vote'], data['game_id']))
+        
+        conn.commit()
+        logger.info("Голос записан")
+        
+        return jsonify({"status": "ok"})
+    
+    except Exception as e:
+        logger.error(f"ОШИБКА: {e}", exc_info=True)
+        if conn:
+            conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+# ============================================
+# ЗАПУСК
+# ============================================
+if __name__ == '__main__':
+    print("🔥 Pingster backend с бакетированием запускается...")
+    print("🚀 Новая архитектура:")
+    print("   - search_queue с rating_bucket")
+    print("   - FOR UPDATE SKIP LOCKED для защиты от race condition")
+    print("   - Синхронизация времени через server_time")
+    print("   - Сброс ответов при reject/expire")
+    print("\nЭндпоинты:")
+    print("   - /api/user/init")
+    print("   - /api/profile/get")
+    print("   - /api/profile/update")
+    print("   - /api/avatar/save")
+    print("   - /api/user/balance")
+    print("   - /api/shop/buy")
+    print("   - /api/inventory/get")
+    print("   - /api/case/open")
+    print("   - /api/item/update_status")
+    print("   - /api/item/delete")
+    print("   - /api/search/start")
+    print("   - /api/search/stop")
+    print("   - /api/match/check")
+    print("   - /api/match/respond")
+    print("   - /api/game/create")
+    print("   - /api/game/vote")
+    print("\nСервер запущен на порту 5000")
+    app.run(host='0.0.0.0', port=5000, debug=True)
