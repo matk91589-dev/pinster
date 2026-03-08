@@ -10,7 +10,7 @@ const Swipe = {
     loading: null,
     labelLeft: null,
     labelRight: null,
-    timerElement: null,          // элемент таймера на карточке (swipeTimer)
+    timerElement: null,
     
     // Переменные для drag
     isDragging: false,
@@ -19,7 +19,7 @@ const Swipe = {
     initialX: 0,
     
     // Константы
-    SWIPE_THRESHOLD: 0.25, // 25% ширины экрана
+    SWIPE_THRESHOLD: 0.25,
     MAX_ROTATE: 6,
     ANIMATION_DURATION: 250,
     AUTO_COMPLETE_DURATION: 300,
@@ -31,13 +31,16 @@ const Swipe = {
     playersQueue: [],
     mode: 'PREMIER',
     isInitialized: false,
-    connectionTimer: null,        // таймер для экрана соединения
-    cardTimerInterval: null,      // таймер для карточки свайпа
+    connectionTimer: null,
+    cardTimerInterval: null,
     connectionEndTime: null,
     isConnectionMode: false,
-    matchExpiresAt: null, // время истечения мэтча с сервера
-    serverTime: null,     // серверное время для синхронизации
-    bothAcceptedCheckInterval: null, // интервал для проверки both_accepted
+    matchExpiresAt: null,
+    serverTime: null,
+    matchPolling: null,
+    gameCreated: false,
+    matchDuration: null,        // длительность матча в мс
+    matchStartTime: null,       // точное время старта по серверу
     
     init(mode) {
         console.log('Swipe.init() with mode:', mode);
@@ -55,16 +58,10 @@ const Swipe = {
             return;
         }
         
-        // Жестко блокируем скролл на весь экран свайпа
         this.blockScroll();
-        
-        // Показываем подсказку
         this.showHintOnce();
-        
-        // Загружаем первого игрока
         this.loadNextPlayer();
         
-        // Устанавливаем обработчики
         if (!this.isInitialized) {
             this.setupEventListeners();
             this.isInitialized = true;
@@ -73,33 +70,33 @@ const Swipe = {
         console.log('✅ Swipe инициализирован');
     },
     
-    // НОВЫЙ МЕТОД: запуск с данными оппонента из поиска
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
         console.log('🔄 Swipe.startWithOpponent() вызван');
-        console.log('👤 Оппонент:', opponent);
-        console.log('🎯 matchId:', matchId);
-        console.log('⏰ expiresAt (raw):', expiresAt);
-        console.log('🕐 serverTime (raw):', serverTime);
         
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
         this.isConnectionMode = false;
         this.mode = opponent.mode || 'PREMIER';
+        this.gameCreated = false;
         
-        // Сохраняем серверное время и время истечения
         if (serverTime) {
             this.serverTime = new Date(serverTime).getTime();
-            console.log('🕐 serverTime преобразован:', new Date(this.serverTime).toLocaleString());
         }
         
         if (expiresAt) {
             if (typeof expiresAt === 'string') {
                 this.matchExpiresAt = new Date(expiresAt).getTime();
-                console.log('⏰ expiresAt преобразован из ISO строки:', new Date(this.matchExpiresAt).toLocaleString());
             }
         }
         
-        // Получаем ссылки на элементы
+        // Вычисляем точную длительность матча
+        if (this.matchExpiresAt && this.serverTime) {
+            this.matchDuration = this.matchExpiresAt - this.serverTime;
+            this.matchStartTime = this.serverTime; // время старта по серверу
+            console.log(`📊 Длительность матча: ${this.matchDuration/1000}с`);
+            console.log(`📊 Старт по серверу: ${new Date(this.matchStartTime).toLocaleString()}`);
+        }
+        
         this.card = document.getElementById('swipeCard');
         this.container = document.getElementById('swipeContainer');
         this.hint = document.getElementById('swipeHint');
@@ -112,25 +109,16 @@ const Swipe = {
             return;
         }
         
-        // Сбрасываем состояние карточки
         this.card.style.transition = 'none';
         this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
         this.card.style.opacity = '1';
         this.card.classList.remove('both-accepted', 'rejected', 'right-swipe', 'left-swipe');
         
-        // Показываем карточку с данными оппонента
         this.showPlayer(opponent);
-        
-        // Запускаем таймер на карточке
         this.startCardTimer();
-        
-        // Блокируем скролл
         this.blockScroll();
-        
-        // Показываем подсказку
         this.showHintOnce();
         
-        // Устанавливаем обработчики
         if (!this.isInitialized) {
             this.setupEventListeners();
             this.isInitialized = true;
@@ -139,7 +127,7 @@ const Swipe = {
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
     },
     
-    // ИСПРАВЛЕННЫЙ МЕТОД: таймер на карточке свайпа
+    // ИСПРАВЛЕННЫЙ МЕТОД: идеально синхронизированный таймер
     startCardTimer() {
         console.log('⏱️ Запуск таймера на карточке');
         
@@ -149,33 +137,32 @@ const Swipe = {
         }
         
         const timerElement = document.getElementById('swipeTimer');
-        if (!timerElement) {
-            console.warn('swipeTimer element not found');
-            return;
-        }
+        if (!timerElement) return;
         
-        if (!this.matchExpiresAt || !this.serverTime) {
-            console.warn('⚠️ Нет данных для синхронизации таймера');
+        if (!this.matchDuration) {
+            console.warn('⚠️ Нет данных для таймера');
             timerElement.innerHTML = '30с';
             return;
         }
         
-        // Вычисляем длительность матча (всегда 30 секунд)
-        const matchDuration = this.matchExpiresAt - this.serverTime;
-        const startTime = Date.now();
-        
-        console.log(`📊 Длительность матча: ${matchDuration/1000}с`);
+        // Вычисляем смещение времени клиента относительно сервера
+        const clientTimeOffset = Date.now() - (this.serverTime || Date.now());
         
         const updateTimer = () => {
-            const elapsed = Date.now() - startTime;
-            const timeLeft = Math.max(0, Math.floor((matchDuration - elapsed) / 1000));
+            // Текущее время с учетом серверной синхронизации
+            const now = Date.now() - clientTimeOffset;
+            
+            // Сколько прошло с момента старта матча
+            const elapsed = now - this.matchStartTime;
+            
+            // Осталось времени
+            const timeLeft = Math.max(0, Math.floor((this.matchDuration - elapsed) / 1000));
             
             if (timeLeft <= 0) {
                 timerElement.innerHTML = '0с';
                 timerElement.classList.add('warning');
                 clearInterval(this.cardTimerInterval);
                 this.cardTimerInterval = null;
-                console.log('⏰ Таймер на карточке истек');
                 return;
             }
             
@@ -188,11 +175,13 @@ const Swipe = {
             timerElement.innerHTML = timeLeft + 'с';
         };
         
-        updateTimer();
-        this.cardTimerInterval = setInterval(updateTimer, 1000);
+        // Первое обновление через небольшую задержку для точности
+        setTimeout(() => {
+            updateTimer();
+            this.cardTimerInterval = setInterval(updateTimer, 1000);
+        }, 100 - (Date.now() % 1000)); // синхронизация с началом секунды
     },
     
-    // Полная блокировка скролла
     blockScroll() {
         document.body.style.overflow = 'hidden';
         document.body.style.position = 'fixed';
@@ -210,7 +199,6 @@ const Swipe = {
         document.addEventListener('mousewheel', this.preventDefaultScroll, { passive: false });
     },
     
-    // Восстановление скролла
     unblockScroll() {
         document.body.style.overflow = '';
         document.body.style.position = '';
@@ -380,22 +368,18 @@ const Swipe = {
         .then(data => {
             console.log('📦 Accept response:', data);
             
+            this.startMatchStatusPolling(this.currentMatchId);
+            
             if (data.both_accepted) {
-                console.log('🎉 Оба приняли!');
-                this.handleBothAccepted();
+                console.log('🎉 Оба приняли (мгновенно)!');
             } else if (data.status === 'rejected') {
                 console.log('❌ Отклонено');
                 this.handleRejection();
             } else if (data.status === 'waiting') {
                 console.log('⏳ Ожидаем ответа');
                 this.startSyncedTimer();
-                // Запускаем проверку статуса
-                this.startBothAcceptedCheck();
             } else if (data.status === 'already_responded') {
-                console.log('⚠️ Уже ответили, проверяем статус');
-                this.startBothAcceptedCheck();
-            } else {
-                console.log('❓ Неизвестный статус:', data);
+                console.log('⚠️ Уже ответили, проверяем статус через polling');
             }
         })
         .catch(error => {
@@ -407,46 +391,44 @@ const Swipe = {
         });
     },
     
-    // НОВЫЙ МЕТОД для периодической проверки статуса матча
-    startBothAcceptedCheck() {
-        console.log('🔄 Запускаем проверку статуса матча через /api/match/status');
+    startMatchStatusPolling(matchId) {
+        console.log('🔄 Запускаем polling статуса матча для ID:', matchId);
         
-        if (this.bothAcceptedCheckInterval) {
-            clearInterval(this.bothAcceptedCheckInterval);
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
         }
         
-        this.bothAcceptedCheckInterval = setInterval(() => {
-            this.checkMatchStatus();
-        }, 2000);
-    },
-    
-    // НОВЫЙ МЕТОД для проверки статуса через специальный эндпоинт
-    checkMatchStatus() {
-        if (!this.currentMatchId) return;
-        
-        console.log(`🔍 Проверяем статус матча ${this.currentMatchId} через /api/match/status`);
-        
-        fetch(`https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/status/${this.currentMatchId}`)
-        .then(res => res.json())
-        .then(data => {
-            console.log('📦 Status response:', data);
-            
-            if (data.status === 'both_accepted') {
-                console.log('🎉 Оба приняли (подтверждено статусом)!');
-                this.clearBothAcceptedCheck();
-                this.handleBothAccepted();
+        this.matchPolling = setInterval(async () => {
+            try {
+                const res = await fetch(`https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/status/${matchId}`);
+                const data = await res.json();
+                
+                console.log('📦 Polling status response:', data);
+                
+                if (data.status === 'both_accepted') {
+                    console.log('🎉 Оба приняли (через polling)!');
+                    clearInterval(this.matchPolling);
+                    this.matchPolling = null;
+                    this.handleBothAccepted();
+                }
+                
+                if (data.status === 'rejected' || data.status === 'expired') {
+                    console.log(`❌ Матч ${data.status}`);
+                    clearInterval(this.matchPolling);
+                    this.matchPolling = null;
+                    
+                    if (data.status === 'rejected') {
+                        this.handleRejection();
+                    } else if (data.status === 'expired') {
+                        this.connectionTimeout();
+                    }
+                }
+                
+            } catch (error) {
+                console.error('❌ Error in match polling:', error);
             }
-        })
-        .catch(error => {
-            console.error('❌ Error checking match status:', error);
-        });
-    },
-    
-    clearBothAcceptedCheck() {
-        if (this.bothAcceptedCheckInterval) {
-            clearInterval(this.bothAcceptedCheckInterval);
-            this.bothAcceptedCheckInterval = null;
-        }
+        }, 2000);
     },
     
     rejectPlayer() {
@@ -458,7 +440,10 @@ const Swipe = {
             this.cardTimerInterval = null;
         }
         
-        this.clearBothAcceptedCheck();
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         
@@ -482,7 +467,7 @@ const Swipe = {
         }, 300);
     },
     
-    // ИСПРАВЛЕННЫЙ МЕТОД: синхронизированный таймер
+    // ИСПРАВЛЕННЫЙ МЕТОД: синхронизированный таймер для экрана соединения
     startSyncedTimer() {
         console.log('⏱️ Запуск синхронизированного таймера (connection mode)');
         
@@ -492,22 +477,20 @@ const Swipe = {
         }
         
         const timerElement = document.getElementById('cardConnectionTimer');
-        if (!timerElement) {
-            console.error('❌ Таймер не найден');
+        if (!timerElement) return;
+        
+        if (!this.matchDuration) {
+            console.warn('⚠️ Нет данных для таймера');
             return;
         }
         
-        if (!this.matchExpiresAt || !this.serverTime) {
-            console.warn('⚠️ Нет данных для синхронизации таймера');
-            return;
-        }
-        
-        const matchDuration = this.matchExpiresAt - this.serverTime;
-        const startTime = Date.now();
+        // Используем то же смещение времени, что и для карточки
+        const clientTimeOffset = Date.now() - (this.serverTime || Date.now());
         
         const updateTimer = () => {
-            const elapsed = Date.now() - startTime;
-            const timeLeft = Math.max(0, Math.floor((matchDuration - elapsed) / 1000));
+            const now = Date.now() - clientTimeOffset;
+            const elapsed = now - this.matchStartTime;
+            const timeLeft = Math.max(0, Math.floor((this.matchDuration - elapsed) / 1000));
             
             if (timeLeft <= 0) {
                 timerElement.innerHTML = `
@@ -519,7 +502,13 @@ const Swipe = {
                     <span>0с</span>
                 `;
                 clearInterval(this.connectionTimer);
-                this.clearBothAcceptedCheck();
+                this.connectionTimer = null;
+                
+                if (this.matchPolling) {
+                    clearInterval(this.matchPolling);
+                    this.matchPolling = null;
+                }
+                
                 this.connectionTimeout();
                 return;
             }
@@ -539,8 +528,11 @@ const Swipe = {
             `;
         };
         
-        updateTimer();
-        this.connectionTimer = setInterval(updateTimer, 1000);
+        // Синхронизируем с началом секунды
+        setTimeout(() => {
+            updateTimer();
+            this.connectionTimer = setInterval(updateTimer, 1000);
+        }, 100 - (Date.now() % 1000));
     },
     
     showConnectionMode() {
@@ -569,10 +561,7 @@ const Swipe = {
         });
         
         this.setupConnectionMode();
-        
-        if (this.matchExpiresAt) {
-            this.startSyncedTimer();
-        }
+        this.startSyncedTimer();
     },
     
     getConnectionHTML() {
@@ -644,16 +633,24 @@ const Swipe = {
     },
     
     handleBothAccepted() {
+        if (this.gameCreated) {
+            console.log('⚠️ Игра уже создана, пропускаем');
+            return;
+        }
+        
         console.log('🎉 Оба приняли! Запускаем визуальные изменения');
-        console.log('👤 Текущий игрок:', this.currentPlayer);
-        console.log('🎯 matchId:', this.currentMatchId);
+        
+        this.gameCreated = true;
         
         if (this.connectionTimer) {
             clearInterval(this.connectionTimer);
             this.connectionTimer = null;
         }
         
-        this.clearBothAcceptedCheck();
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
         
         this.card.classList.add('both-accepted');
         
@@ -663,16 +660,7 @@ const Swipe = {
         const statusEl = document.getElementById('cardConnectionStatus');
         const timerEl = document.getElementById('cardConnectionTimer');
         
-        console.log('📊 Элементы DOM:', {
-            selfAvatar: !!selfAvatar,
-            teammateAvatar: !!teammateAvatar,
-            connectionLine: !!connectionLine,
-            statusEl: !!statusEl,
-            timerEl: !!timerEl
-        });
-        
         if (selfAvatar && teammateAvatar) {
-            console.log('🔄 Увеличиваем аватарки');
             selfAvatar.style.width = '72px';
             selfAvatar.style.height = '72px';
             teammateAvatar.style.width = '72px';
@@ -681,18 +669,15 @@ const Swipe = {
         }
         
         if (connectionLine) {
-            console.log('🔄 Меняем цвет линии');
             connectionLine.classList.add('connected');
         }
         
         if (timerEl) {
-            console.log('🔄 Скрываем таймер');
             timerEl.style.opacity = '0';
             timerEl.style.transition = 'opacity 0.3s ease';
         }
         
         if (statusEl) {
-            console.log('🔄 Меняем статус');
             statusEl.innerHTML = `
                 <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <circle cx="12" cy="12" r="10" stroke="#4CAF50" stroke-width="2"/>
@@ -703,7 +688,6 @@ const Swipe = {
         }
         
         setTimeout(() => {
-            console.log('⏰ Через 2 секунды: показываем "Матч создан"');
             if (statusEl) {
                 statusEl.innerHTML = `
                     <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -723,7 +707,10 @@ const Swipe = {
         console.log('🔄 Выход из режима соединения');
         this.isConnectionMode = false;
         
-        this.clearBothAcceptedCheck();
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
         
         if (this.labelLeft) this.labelLeft.style.display = 'block';
         if (this.labelRight) this.labelRight.style.display = 'block';
@@ -745,6 +732,9 @@ const Swipe = {
         this.currentPlayer = null;
         this.matchExpiresAt = null;
         this.serverTime = null;
+        this.matchDuration = null;
+        this.matchStartTime = null;
+        this.gameCreated = false;
         
         if (this.cardTimerInterval) {
             clearInterval(this.cardTimerInterval);
@@ -754,7 +744,10 @@ const Swipe = {
             clearInterval(this.connectionTimer);
             this.connectionTimer = null;
         }
-        this.clearBothAcceptedCheck();
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
         
         App.showScreen('mainScreen', true);
     },
@@ -828,7 +821,10 @@ const Swipe = {
     connectionTimeout() {
         console.log('⏰ Время истекло');
         
-        this.clearBothAcceptedCheck();
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
         
         this.card.classList.add('rejected');
         const statusEl = document.getElementById('cardConnectionStatus');
@@ -856,7 +852,10 @@ const Swipe = {
             this.connectionTimer = null;
         }
         
-        this.clearBothAcceptedCheck();
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
         
         this.card.classList.add('rejected');
         const statusEl = document.getElementById('cardConnectionStatus');
@@ -1025,7 +1024,11 @@ const Swipe = {
             clearInterval(this.cardTimerInterval);
             this.cardTimerInterval = null;
         }
-        this.clearBothAcceptedCheck();
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
+        this.gameCreated = false;
     }
 };
 
