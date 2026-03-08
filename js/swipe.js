@@ -37,6 +37,7 @@ const Swipe = {
     isConnectionMode: false,
     matchExpiresAt: null, // время истечения мэтча с сервера
     serverTime: null,     // серверное время для синхронизации
+    bothAcceptedCheckInterval: null, // интервал для проверки both_accepted
     
     init(mode) {
         console.log('Swipe.init() with mode:', mode);
@@ -424,6 +425,11 @@ const Swipe = {
             } else if (data.status === 'waiting') {
                 console.log('⏳ Ожидаем ответа');
                 this.startSyncedTimer();
+                // Запускаем проверку статуса
+                this.startBothAcceptedCheck();
+            } else if (data.status === 'already_responded') {
+                console.log('⚠️ Уже ответили, проверяем статус');
+                this.startBothAcceptedCheck();
             } else {
                 console.log('❓ Неизвестный статус:', data);
             }
@@ -437,6 +443,62 @@ const Swipe = {
         });
     },
     
+    // Новый метод для периодической проверки both_accepted
+    startBothAcceptedCheck() {
+        console.log('🔄 Запускаем проверку статуса матча');
+        
+        if (this.bothAcceptedCheckInterval) {
+            clearInterval(this.bothAcceptedCheckInterval);
+        }
+        
+        this.bothAcceptedCheckInterval = setInterval(() => {
+            this.checkBothAccepted();
+        }, 2000); // Проверяем каждые 2 секунды
+    },
+    
+    // Новый метод для проверки статуса матча
+    checkBothAccepted() {
+        console.log('🔍 Проверяем статус матча для matchId:', this.currentMatchId);
+        
+        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        
+        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/check', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                telegram_id: telegram_id
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log('📦 Check response:', data);
+            
+            if (data.match_found && data.your_response === 'accept') {
+                // Проверяем, принял ли второй игрок
+                // В данных ответа нужно смотреть статус оппонента
+                // Это зависит от того, что возвращает сервер
+                if (data.opponent_response === 'accept') {
+                    console.log('🎉 Оба приняли (подтверждено проверкой)!');
+                    if (this.bothAcceptedCheckInterval) {
+                        clearInterval(this.bothAcceptedCheckInterval);
+                        this.bothAcceptedCheckInterval = null;
+                    }
+                    this.handleBothAccepted();
+                }
+            } else if (!data.match_found) {
+                // Матч больше не активен, останавливаем проверку
+                console.log('⏹️ Матч больше не активен, останавливаем проверку');
+                if (this.bothAcceptedCheckInterval) {
+                    clearInterval(this.bothAcceptedCheckInterval);
+                    this.bothAcceptedCheckInterval = null;
+                }
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error checking match:', error);
+        });
+    },
+    
     rejectPlayer() {
         console.log('❌ Пропущен игрок:', this.currentPlayer);
         console.log('🎯 matchId:', this.currentMatchId);
@@ -444,6 +506,11 @@ const Swipe = {
         if (this.cardTimerInterval) {
             clearInterval(this.cardTimerInterval);
             this.cardTimerInterval = null;
+        }
+        
+        if (this.bothAcceptedCheckInterval) {
+            clearInterval(this.bothAcceptedCheckInterval);
+            this.bothAcceptedCheckInterval = null;
         }
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
@@ -504,6 +571,10 @@ const Swipe = {
                     <span>0с</span>
                 `;
                 clearInterval(this.connectionTimer);
+                if (this.bothAcceptedCheckInterval) {
+                    clearInterval(this.bothAcceptedCheckInterval);
+                    this.bothAcceptedCheckInterval = null;
+                }
                 this.connectionTimeout();
                 return;
             }
@@ -642,6 +713,11 @@ const Swipe = {
             this.connectionTimer = null;
         }
         
+        if (this.bothAcceptedCheckInterval) {
+            clearInterval(this.bothAcceptedCheckInterval);
+            this.bothAcceptedCheckInterval = null;
+        }
+        
         this.card.classList.add('both-accepted');
         
         // Находим элементы
@@ -717,6 +793,11 @@ const Swipe = {
         console.log('🔄 Выход из режима соединения');
         this.isConnectionMode = false;
         
+        if (this.bothAcceptedCheckInterval) {
+            clearInterval(this.bothAcceptedCheckInterval);
+            this.bothAcceptedCheckInterval = null;
+        }
+        
         if (this.labelLeft) this.labelLeft.style.display = 'block';
         if (this.labelRight) this.labelRight.style.display = 'block';
         if (this.hint) this.hint.style.display = 'block';
@@ -745,6 +826,10 @@ const Swipe = {
         if (this.connectionTimer) {
             clearInterval(this.connectionTimer);
             this.connectionTimer = null;
+        }
+        if (this.bothAcceptedCheckInterval) {
+            clearInterval(this.bothAcceptedCheckInterval);
+            this.bothAcceptedCheckInterval = null;
         }
         
         App.showScreen('mainScreen', true);
@@ -819,6 +904,11 @@ const Swipe = {
     connectionTimeout() {
         console.log('⏰ Время истекло');
         
+        if (this.bothAcceptedCheckInterval) {
+            clearInterval(this.bothAcceptedCheckInterval);
+            this.bothAcceptedCheckInterval = null;
+        }
+        
         this.card.classList.add('rejected');
         const statusEl = document.getElementById('cardConnectionStatus');
         if (statusEl) {
@@ -843,6 +933,11 @@ const Swipe = {
         if (this.connectionTimer) {
             clearInterval(this.connectionTimer);
             this.connectionTimer = null;
+        }
+        
+        if (this.bothAcceptedCheckInterval) {
+            clearInterval(this.bothAcceptedCheckInterval);
+            this.bothAcceptedCheckInterval = null;
         }
         
         this.card.classList.add('rejected');
@@ -1011,6 +1106,10 @@ const Swipe = {
         if (this.cardTimerInterval) {
             clearInterval(this.cardTimerInterval);
             this.cardTimerInterval = null;
+        }
+        if (this.bothAcceptedCheckInterval) {
+            clearInterval(this.bothAcceptedCheckInterval);
+            this.bothAcceptedCheckInterval = null;
         }
     }
 };
