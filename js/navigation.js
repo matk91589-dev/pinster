@@ -1,5 +1,5 @@
 // ============================================
-// НАВИГАЦИЯ (Telegram Mini App версия) - ИСПРАВЛЕНО
+// НАВИГАЦИЯ (Telegram Mini App версия)
 // ============================================
 
 const App = {
@@ -31,6 +31,9 @@ const App = {
         // Настраиваем BackButton
         this.setupBackButton();
         
+        // Устанавливаем обработчики для кнопок режимов
+        this.setupModeButtons();
+        
         // Показываем стартовый экран
         this.showScreen('startScreen', false);
     },
@@ -40,6 +43,29 @@ const App = {
         
         this.tg.BackButton.onClick(() => {
             this.handleBack();
+        });
+    },
+    
+    setupModeButtons() {
+        // Обработчики для кнопок режимов на главном экране
+        document.querySelector('.mode-btn.faceit')?.addEventListener('click', () => {
+            localStorage.setItem('currentMode', 'FACEIT');
+            this.showScreen('swipeScreen', false);
+        });
+        
+        document.querySelector('.mode-btn.premier')?.addEventListener('click', () => {
+            localStorage.setItem('currentMode', 'PREMIER');
+            this.showScreen('swipeScreen', false);
+        });
+        
+        document.querySelector('.mode-btn.prime')?.addEventListener('click', () => {
+            localStorage.setItem('currentMode', 'PRIME');
+            this.showScreen('swipeScreen', false);
+        });
+        
+        document.querySelector('.mode-btn.public')?.addEventListener('click', () => {
+            localStorage.setItem('currentMode', 'PUBLIC');
+            this.showScreen('swipeScreen', false);
         });
     },
     
@@ -61,7 +87,7 @@ const App = {
         const screensWithBack = [
             'profileScreen', 'shopScreen', 'settingsScreen',
             'faceitScreen', 'premierScreen', 'primeScreen', 
-            'publicScreen', 'searchScreen'
+            'publicScreen', 'searchScreen', 'swipeScreen'
         ];
         
         if (screensWithBack.includes(this.currentScreen)) {
@@ -71,7 +97,6 @@ const App = {
         }
     },
     
-    // НОВЫЙ МЕТОД: обновление активной кнопки в навигации
     updateNavHighlight(screenId) {
         // Убираем active у всех кнопок
         document.querySelectorAll('.nav-item').forEach(item => {
@@ -91,7 +116,7 @@ const App = {
             // Для настроек ничего не подсвечиваем или можно главную
             activeNavId = 'navMain';
         } else {
-            // Для остальных экранов (faceit, premier, prime, public, search)
+            // Для остальных экранов (faceit, premier, prime, public, search, swipe)
             // оставляем подсветку на главной
             activeNavId = 'navMain';
         }
@@ -115,7 +140,7 @@ const App = {
         if (this.tg) {
             this.tg.showAlert(message);
         } else {
-            alert(message); // fallback
+            alert(message);
         }
     },
     
@@ -125,16 +150,14 @@ const App = {
                 callback(confirmed);
             });
         } else {
-            callback(confirm(message)); // fallback
+            callback(confirm(message));
         }
     },
     
-    // ИСПРАВЛЕННЫЙ МЕТОД showPopup с поддержкой колбэка
     showPopup(params, callback) {
         if (this.tg) {
             this.tg.showPopup(params, callback);
         } else {
-            // fallback для браузера
             if (params.buttons && params.buttons.length > 0) {
                 const result = confirm(params.message || 'Подтвердите действие');
                 if (callback) {
@@ -161,12 +184,24 @@ const App = {
                 Profile.loadSavedValues();
             } else if (screenId === 'shopScreen' && typeof Shop !== 'undefined') {
                 Shop.renderShop();
+            } 
+            // ВАЖНО: Инициализация свайпа при переходе на его экран
+            else if (screenId === 'swipeScreen' && typeof Swipe !== 'undefined') {
+                console.log('Инициализация свайпа при переходе на экран');
+                
+                // Получаем текущий режим из localStorage
+                const mode = localStorage.getItem('currentMode') || 'PREMIER';
+                
+                // Небольшая задержка для гарантии, что DOM обновился
+                setTimeout(() => {
+                    Swipe.startSwipe(mode);
+                }, 100);
             }
             
             // Хаптик
             this.hapticFeedback('light');
             
-            // ОБНОВЛЯЕМ ПОДСВЕТКУ НАВИГАЦИИ
+            // Обновляем подсветку навигации
             this.updateNavHighlight(screenId);
         }
         
