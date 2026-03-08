@@ -1,6 +1,6 @@
 // ============================================
 // СВАЙП-КАРТОЧКИ с автодоводкой и соединением в карточке
-// ИСПРАВЛЕННАЯ ВЕРСИЯ: таймер синхронизируется при переходе на экран ожидания
+// ИСПРАВЛЕННАЯ ВЕРСИЯ: таймер синхронизируется после ответа сервера
 // ============================================
 
 const Swipe = {
@@ -189,7 +189,7 @@ const Swipe = {
                 const now = Date.now();
                 
                 // Пересчитываем оставшееся время
-                this.matchDuration = serverExpiresAt - now;
+                this.matchDuration = Math.max(0, serverExpiresAt - now);
                 this.matchStartTime = now;
                 this.serverTime = now;
                 
@@ -352,8 +352,8 @@ const Swipe = {
         }, this.ANIMATION_DURATION);
     },
     
-    // ИСПРАВЛЕННЫЙ МЕТОД: с синхронизацией времени
-    async acceptPlayer() {
+    // ИСПРАВЛЕННЫЙ МЕТОД: синхронизация ПОСЛЕ ответа сервера
+    acceptPlayer() {
         console.log('✅ Принят игрок:', this.currentPlayer);
         console.log('🎯 matchId:', this.currentMatchId);
         
@@ -368,14 +368,9 @@ const Swipe = {
             return;
         }
         
+        // Показываем анимацию исчезновения карточки
         this.card.style.transition = 'opacity 0.2s ease';
         this.card.style.opacity = '0';
-        
-        setTimeout(async () => {
-            // СИНХРОНИЗИРУЕМ ВРЕМЯ ПЕРЕД ПОКАЗОМ ЭКРАНА ОЖИДАНИЯ
-            await this.syncTimeWithServer();
-            this.showConnectionMode();
-        }, 200);
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         
@@ -389,8 +384,16 @@ const Swipe = {
             })
         })
         .then(res => res.json())
-        .then(data => {
+        .then(async (data) => {
             console.log('📦 Accept response:', data);
+            
+            // СИНХРОНИЗИРУЕМ ВРЕМЯ ПОСЛЕ ОТВЕТА СЕРВЕРА
+            await this.syncTimeWithServer();
+            
+            // Показываем экран ожидания
+            setTimeout(() => {
+                this.showConnectionMode();
+            }, 200);
             
             this.startMatchStatusPolling(this.currentMatchId);
             
@@ -401,7 +404,6 @@ const Swipe = {
                 this.handleRejection();
             } else if (data.status === 'waiting') {
                 console.log('⏳ Ожидаем ответа');
-                // Таймер уже запущен в showConnectionMode с синхронизированным временем
             } else if (data.status === 'already_responded') {
                 console.log('⚠️ Уже ответили, проверяем статус через polling');
             }
@@ -491,7 +493,6 @@ const Swipe = {
         }, 300);
     },
     
-    // ИСПРАВЛЕННЫЙ МЕТОД: с проверкой наличия данных
     startSyncedTimer() {
         console.log('⏱️ Запуск синхронизированного таймера (connection mode)');
         
@@ -503,22 +504,39 @@ const Swipe = {
         const timerElement = document.getElementById('cardConnectionTimer');
         if (!timerElement) return;
         
-        // Если нет данных о времени, показываем загрузку и пробуем синхронизировать
+        // Если нет данных о времени, показываем стандартный таймер
         if (!this.matchDuration || !this.matchStartTime) {
-            console.warn('⚠️ Нет данных для таймера, синхронизируем...');
-            timerElement.innerHTML = `
-                <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke="#FF5500" stroke-width="2"/>
-                    <circle cx="12" cy="12" r="3" fill="#FF5500">
-                        <animate attributeName="r" values="3;5;3" dur="1s" repeatCount="indefinite"/>
-                    </circle>
-                </svg>
-                <span>...</span>
-            `;
+            console.warn('⚠️ Нет данных для таймера, используем 30с');
+            let timeLeft = 30;
             
-            this.syncTimeWithServer().then(() => {
-                this.startSyncedTimer();
-            });
+            const updateFallbackTimer = () => {
+                if (timeLeft <= 0) {
+                    timerElement.innerHTML = `
+                        <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke="#B00000" stroke-width="2"/>
+                            <line x1="12" y1="8" x2="12" y2="12" stroke="#B00000" stroke-width="2"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16" stroke="#B00000" stroke-width="2"/>
+                        </svg>
+                        <span>0с</span>
+                    `;
+                    clearInterval(this.connectionTimer);
+                    this.connectionTimer = null;
+                    this.connectionTimeout();
+                    return;
+                }
+                
+                timerElement.innerHTML = `
+                    <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="${timeLeft < 10 ? '#B00000' : '#FF5500'}" stroke-width="2"/>
+                        <polyline points="12 6 12 12 16 14" stroke="${timeLeft < 10 ? '#B00000' : '#FF5500'}" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span>${timeLeft}с</span>
+                `;
+                timeLeft--;
+            };
+            
+            updateFallbackTimer();
+            this.connectionTimer = setInterval(updateFallbackTimer, 1000);
             return;
         }
         
