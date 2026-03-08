@@ -33,6 +33,7 @@ const Swipe = {
     connectionTimer: null,
     connectionEndTime: null,
     isConnectionMode: false,
+    matchExpiresAt: null, // время истечения мэтча с сервера
     
     init(mode) {
         console.log('Swipe.init() with mode:', mode);
@@ -69,13 +70,19 @@ const Swipe = {
     },
     
     // НОВЫЙ МЕТОД: запуск с данными оппонента из поиска
-    startWithOpponent(opponent, matchId) {
+    startWithOpponent(opponent, matchId, expiresAt) {
         console.log('Swipe.startWithOpponent()', opponent);
         
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
         this.isConnectionMode = false;
         this.mode = opponent.mode || 'PREMIER';
+        
+        // Сохраняем время истечения мэтча с сервера
+        if (expiresAt) {
+            this.matchExpiresAt = new Date(expiresAt).getTime();
+            console.log('Мэтч истекает в:', new Date(this.matchExpiresAt).toLocaleTimeString());
+        }
         
         // Получаем ссылки на элементы
         this.card = document.getElementById('swipeCard');
@@ -158,7 +165,6 @@ const Swipe = {
         this.onDragStartBound = this.onDragStart.bind(this);
         this.onDragMoveBound = this.onDragMove.bind(this);
         this.onDragEndBound = this.onDragEnd.bind(this);
-        this.onDragStartBound = this.onDragStart.bind(this);
         
         this.card.addEventListener('pointerdown', this.onDragStartBound);
         this.card.addEventListener('pointermove', this.onDragMoveBound);
@@ -275,7 +281,7 @@ const Swipe = {
     acceptPlayer() {
         console.log('✅ Принят игрок:', this.currentPlayer);
         
-        // Если нет currentMatchId, создаем новый
+        // Если нет currentMatchId, создаем новый (для тестов)
         if (!this.currentMatchId) {
             this.currentMatchId = Math.floor(100000 + Math.random() * 900000);
         }
@@ -302,13 +308,21 @@ const Swipe = {
         .then(data => {
             console.log('Accept response:', data);
             
+            // Если сервер вернул время истечения, обновляем
+            if (data.expires_at) {
+                this.matchExpiresAt = new Date(data.expires_at).getTime();
+            }
+            
             if (data.both_accepted) {
                 this.handleBothAccepted();
             } else if (data.status === 'rejected') {
                 this.handleRejection();
-            } else {
+            } else if (data.status === 'waiting') {
                 console.log('Ожидаем ответа');
-                this.startConnectionTimer();
+                // Запускаем таймер с синхронизированным временем
+                this.startSyncedTimer(data.time_left);
+            } else {
+                console.log('Неизвестный статус:', data);
             }
         })
         .catch(error => {
@@ -345,6 +359,69 @@ const Swipe = {
         }, 300);
     },
     
+    // НОВЫЙ МЕТОД: синхронизированный таймер с сервером
+    startSyncedTimer(initialSeconds) {
+        if (this.connectionTimer) {
+            clearInterval(this.connectionTimer);
+            this.connectionTimer = null;
+        }
+        
+        const timerElement = document.getElementById('cardConnectionTimer');
+        if (!timerElement) return;
+        
+        // Если есть время истечения с сервера, используем его
+        if (this.matchExpiresAt) {
+            this.connectionEndTime = this.matchExpiresAt;
+            console.log('Таймер синхронизирован, истекает в:', new Date(this.connectionEndTime).toLocaleTimeString());
+        } 
+        // Если есть начальное значение, используем его
+        else if (initialSeconds !== undefined) {
+            this.connectionEndTime = Date.now() + (initialSeconds * 1000);
+            console.log('Таймер установлен на', initialSeconds, 'секунд');
+        }
+        // Иначе стандартные 30 секунд
+        else {
+            this.connectionEndTime = Date.now() + 30000;
+        }
+        
+        const updateTimer = () => {
+            const now = Date.now();
+            const diff = Math.max(0, Math.floor((this.connectionEndTime - now) / 1000));
+            
+            if (diff <= 0) {
+                timerElement.innerHTML = `
+                    <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="#B00000" stroke-width="2"/>
+                        <line x1="12" y1="8" x2="12" y2="12" stroke="#B00000" stroke-width="2"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16" stroke="#B00000" stroke-width="2"/>
+                    </svg>
+                    <span>0с</span>
+                `;
+                clearInterval(this.connectionTimer);
+                this.connectionTimeout();
+                return;
+            }
+            
+            // Меняем цвет на красный, если осталось меньше 10 секунд
+            if (diff < 10) {
+                timerElement.classList.add('warning');
+            } else {
+                timerElement.classList.remove('warning');
+            }
+            
+            timerElement.innerHTML = `
+                <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" stroke="${diff < 10 ? '#B00000' : '#FF5500'}" stroke-width="2"/>
+                    <polyline points="12 6 12 12 16 14" stroke="${diff < 10 ? '#B00000' : '#FF5500'}" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>${diff}с</span>
+            `;
+        };
+        
+        updateTimer();
+        this.connectionTimer = setInterval(updateTimer, 1000);
+    },
+    
     showConnectionMode() {
         this.isConnectionMode = true;
         
@@ -370,6 +447,11 @@ const Swipe = {
         });
         
         this.setupConnectionMode();
+        
+        // Если есть синхронизированное время, запускаем таймер
+        if (this.matchExpiresAt) {
+            this.startSyncedTimer();
+        }
     },
     
     getConnectionHTML() {
@@ -462,6 +544,7 @@ const Swipe = {
         this.isConnectionMode = false;
         this.currentMatchId = null;
         this.currentPlayer = null;
+        this.matchExpiresAt = null;
         App.showScreen('mainScreen', true);
     },
     
@@ -530,40 +613,8 @@ const Swipe = {
     },
     
     startConnectionTimer() {
-        const timerElement = document.getElementById('cardConnectionTimer');
-        if (!timerElement) return;
-        
-        this.connectionEndTime = Date.now() + 30000;
-        
-        const updateTimer = () => {
-            const now = Date.now();
-            const diff = Math.max(0, Math.floor((this.connectionEndTime - now) / 1000));
-            
-            if (diff <= 0) {
-                timerElement.innerHTML = `
-                    <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10" stroke="#B00000" stroke-width="2"/>
-                        <line x1="12" y1="8" x2="12" y2="12" stroke="#B00000" stroke-width="2"/>
-                        <line x1="12" y1="16" x2="12.01" y2="16" stroke="#B00000" stroke-width="2"/>
-                    </svg>
-                    <span>0с</span>
-                `;
-                clearInterval(this.connectionTimer);
-                this.connectionTimeout();
-                return;
-            }
-            
-            timerElement.innerHTML = `
-                <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke="#FF5500" stroke-width="2"/>
-                    <polyline points="12 6 12 12 16 14" stroke="#FF5500" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                <span>${diff}с</span>
-            `;
-        };
-        
-        updateTimer();
-        this.connectionTimer = setInterval(updateTimer, 1000);
+        // Устаревший метод, используем startSyncedTimer
+        this.startSyncedTimer();
     },
     
     connectionTimeout() {
