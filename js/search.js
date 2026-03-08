@@ -184,24 +184,30 @@ const Search = {
         });
     },
     
-    // ИСПРАВЛЕНО: показываем экран свайпа с карточкой и временем истечения
+    // ИСПРАВЛЕНО: показываем экран свайпа с карточкой, временем истечения и серверным временем
     showSwipeScreen(data) {
         console.log('Показываем экран свайпа для match_id:', data.match_id);
-        
+        console.log('Данные от сервера:', data); // для отладки
+    
         this.currentMatchId = data.match_id;
         this.myResponse = null;
         this.isSearching = false;
-        
+    
         // Сохраняем данные оппонента
         localStorage.setItem('opponentData', JSON.stringify(data.opponent));
-        
+    
         // Переходим на экран свайпа
         App.showScreen('swipeScreen', false);
-        
-        // Инициализируем свайп с данными оппонента и временем истечения
+    
+        // Инициализируем свайп с данными оппонента, временем истечения и серверным временем
         if (typeof Swipe !== 'undefined') {
             setTimeout(() => {
-                Swipe.startWithOpponent(data.opponent, this.currentMatchId, data.expires_at);
+                Swipe.startWithOpponent(
+                    data.opponent, 
+                    this.currentMatchId, 
+                    data.expires_at,
+                    data.server_time  // ← добавляем server_time для синхронизации таймера
+                );
             }, 100);
         }
     },
