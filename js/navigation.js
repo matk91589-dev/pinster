@@ -1,5 +1,5 @@
 // ============================================
-// НАВИГАЦИЯ (Telegram Mini App версия)
+// НАВИГАЦИЯ (Telegram Mini App версия) - ИСПРАВЛЕНО
 // ============================================
 
 const App = {
@@ -47,25 +47,25 @@ const App = {
     },
     
     setupModeButtons() {
-        // Обработчики для кнопок режимов на главном экране
+        // ИСПРАВЛЕНО: теперь показываем экраны с формами, а не сразу свайп
         document.querySelector('.mode-btn.faceit')?.addEventListener('click', () => {
             localStorage.setItem('currentMode', 'FACEIT');
-            this.showScreen('swipeScreen', false);
+            this.showScreen('faceitScreen', false);
         });
         
         document.querySelector('.mode-btn.premier')?.addEventListener('click', () => {
             localStorage.setItem('currentMode', 'PREMIER');
-            this.showScreen('swipeScreen', false);
+            this.showScreen('premierScreen', false);
         });
         
         document.querySelector('.mode-btn.prime')?.addEventListener('click', () => {
-            localStorage.setItem('currentMode', 'PRIME');
-            this.showScreen('swipeScreen', false);
+            localStorage.setItem('currentMode', 'MM PRIME');
+            this.showScreen('primeScreen', false);
         });
         
         document.querySelector('.mode-btn.public')?.addEventListener('click', () => {
-            localStorage.setItem('currentMode', 'PUBLIC');
-            this.showScreen('swipeScreen', false);
+            localStorage.setItem('currentMode', 'MM PUBLIC');
+            this.showScreen('publicScreen', false);
         });
     },
     
@@ -113,11 +113,8 @@ const App = {
         } else if (screenId === 'profileScreen') {
             activeNavId = 'navProfile';
         } else if (screenId === 'settingsScreen') {
-            // Для настроек ничего не подсвечиваем или можно главную
             activeNavId = 'navMain';
         } else {
-            // Для остальных экранов (faceit, premier, prime, public, search, swipe)
-            // оставляем подсветку на главной
             activeNavId = 'navMain';
         }
         
@@ -185,18 +182,8 @@ const App = {
             } else if (screenId === 'shopScreen' && typeof Shop !== 'undefined') {
                 Shop.renderShop();
             } 
-            // ВАЖНО: Инициализация свайпа при переходе на его экран
-            else if (screenId === 'swipeScreen' && typeof Swipe !== 'undefined') {
-                console.log('Инициализация свайпа при переходе на экран');
-                
-                // Получаем текущий режим из localStorage
-                const mode = localStorage.getItem('currentMode') || 'PREMIER';
-                
-                // Небольшая задержка для гарантии, что DOM обновился
-                setTimeout(() => {
-                    Swipe.startSwipe(mode);
-                }, 100);
-            }
+            // ИСПРАВЛЕНО: свайп инициализируется ТОЛЬКО из Search, не автоматически
+            // Убираем автоматическую инициализацию свайпа
             
             // Хаптик
             this.hapticFeedback('light');
