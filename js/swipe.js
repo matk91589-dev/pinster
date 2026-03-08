@@ -72,7 +72,7 @@ const Swipe = {
     // НОВЫЙ МЕТОД: запуск с данными оппонента из поиска
     startWithOpponent(opponent, matchId, expiresAt) {
         console.log('Swipe.startWithOpponent()', opponent);
-        console.log('Срок истечения:', expiresAt);
+        console.log('Срок истечения (raw):', expiresAt);
         
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
@@ -81,13 +81,25 @@ const Swipe = {
         
         // Сохраняем время истечения мэтча с сервера
         if (expiresAt) {
-            this.matchExpiresAt = new Date(expiresAt).getTime();
-            console.log('Мэтч истекает в:', new Date(this.matchExpiresAt).toLocaleTimeString());
-        } else {
-            // Если время не пришло, ставим 30 секунд от текущего момента
-            this.matchExpiresAt = Date.now() + 30000;
-            console.log('Время не получено, ставим 30 секунд');
+            // Если это строка в формате ISO (как в логах)
+            if (typeof expiresAt === 'string') {
+                this.matchExpiresAt = new Date(expiresAt).getTime();
+                console.log('Преобразовано из ISO строки:', new Date(this.matchExpiresAt).toLocaleString());
+            }
+            // Если это число (timestamp)
+            else if (typeof expiresAt === 'number') {
+                this.matchExpiresAt = expiresAt;
+            }
         }
+        
+        // Если время не удалось получить, ставим 30 секунд
+        if (!this.matchExpiresAt || isNaN(this.matchExpiresAt)) {
+            this.matchExpiresAt = Date.now() + 30000;
+            console.log('Время не получено или неверное, ставим 30 секунд');
+        }
+        
+        console.log('Мэтч истекает в:', new Date(this.matchExpiresAt).toLocaleTimeString());
+        console.log('До истечения:', Math.round((this.matchExpiresAt - Date.now())/1000), 'сек');
         
         // Получаем ссылки на элементы
         this.card = document.getElementById('swipeCard');
@@ -313,11 +325,6 @@ const Swipe = {
         .then(data => {
             console.log('Accept response:', data);
             
-            // Если сервер вернул время истечения, обновляем
-            if (data.expires_at) {
-                this.matchExpiresAt = new Date(data.expires_at).getTime();
-            }
-            
             if (data.both_accepted) {
                 this.handleBothAccepted();
             } else if (data.status === 'rejected') {
@@ -325,7 +332,7 @@ const Swipe = {
             } else if (data.status === 'waiting') {
                 console.log('Ожидаем ответа');
                 // Запускаем таймер с синхронизированным временем
-                this.startSyncedTimer(data.time_left);
+                this.startSyncedTimer();
             } else {
                 console.log('Неизвестный статус:', data);
             }
@@ -365,8 +372,8 @@ const Swipe = {
     },
     
     // НОВЫЙ МЕТОД: синхронизированный таймер с сервером
-    startSyncedTimer(initialSeconds) {
-        console.log('Запуск синхронизированного таймера', initialSeconds);
+    startSyncedTimer() {
+        console.log('Запуск синхронизированного таймера');
         
         if (this.connectionTimer) {
             clearInterval(this.connectionTimer);
@@ -384,14 +391,10 @@ const Swipe = {
             this.connectionEndTime = this.matchExpiresAt;
             console.log('Таймер синхронизирован, истекает в:', new Date(this.connectionEndTime).toLocaleTimeString());
         } 
-        // Если есть начальное значение, используем его
-        else if (initialSeconds !== undefined) {
-            this.connectionEndTime = Date.now() + (initialSeconds * 1000);
-            console.log('Таймер установлен на', initialSeconds, 'секунд');
-        }
         // Иначе стандартные 30 секунд
         else {
             this.connectionEndTime = Date.now() + 30000;
+            console.log('Время не получено, ставим 30 секунд');
         }
         
         const updateTimer = () => {
