@@ -36,6 +36,7 @@ const Swipe = {
     connectionEndTime: null,
     isConnectionMode: false,
     matchExpiresAt: null, // время истечения мэтча с сервера
+    serverTime: null,     // серверное время для синхронизации
     
     init(mode) {
         console.log('Swipe.init() with mode:', mode);
@@ -72,14 +73,20 @@ const Swipe = {
     },
     
     // НОВЫЙ МЕТОД: запуск с данными оппонента из поиска
-    startWithOpponent(opponent, matchId, expiresAt) {
+    startWithOpponent(opponent, matchId, expiresAt, serverTime) {
         console.log('Swipe.startWithOpponent()', opponent);
         console.log('Срок истечения (raw):', expiresAt);
+        console.log('Серверное время:', serverTime);
         
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
         this.isConnectionMode = false;
         this.mode = opponent.mode || 'PREMIER';
+        
+        // Сохраняем серверное время для синхронизации
+        if (serverTime) {
+            this.serverTime = new Date(serverTime).getTime();
+        }
         
         // Сохраняем время истечения мэтча с сервера
         if (expiresAt) {
@@ -168,11 +175,9 @@ const Swipe = {
             
             if (diff <= 0) {
                 timerElement.innerHTML = '0с';
-                timerElement.classList.add('warning'); // делаем красным
+                timerElement.classList.add('warning');
                 clearInterval(this.cardTimerInterval);
                 this.cardTimerInterval = null;
-                // Можно добавить действие по истечению времени (например, автоматический reject)
-                // Пока ничего не делаем, просто таймер показывает 0.
                 return;
             }
             
@@ -192,20 +197,17 @@ const Swipe = {
     
     // Полная блокировка скролла
     blockScroll() {
-        // Блокируем на body
         document.body.style.overflow = 'hidden';
         document.body.style.position = 'fixed';
         document.body.style.width = '100%';
         document.body.style.height = '100%';
         document.body.style.touchAction = 'none';
         
-        // Блокируем на контейнере
         if (this.container) {
             this.container.style.overflow = 'hidden';
             this.container.style.touchAction = 'none';
         }
         
-        // Глобальные обработчики
         window.addEventListener('scroll', this.preventDefaultScroll, { passive: false });
         document.addEventListener('touchmove', this.preventDefaultScroll, { passive: false });
         document.addEventListener('mousewheel', this.preventDefaultScroll, { passive: false });
@@ -230,7 +232,6 @@ const Swipe = {
     },
     
     setupEventListeners() {
-        // Сохраняем привязанные функции для возможности удаления
         this.onDragStartBound = this.onDragStart.bind(this);
         this.onDragMoveBound = this.onDragMove.bind(this);
         this.onDragEndBound = this.onDragEnd.bind(this);
@@ -243,13 +244,11 @@ const Swipe = {
         console.log('✅ Обработчики событий установлены');
     },
     
-    // Запрет скролла
     preventScroll(e) {
         e.preventDefault();
         return false;
     },
     
-    // Унифицированное получение координат
     getClientX(e) {
         return e.clientX ?? e.touches?.[0]?.clientX;
     },
@@ -350,13 +349,11 @@ const Swipe = {
     acceptPlayer() {
         console.log('✅ Принят игрок:', this.currentPlayer);
         
-        // Останавливаем таймер карточки перед переходом в режим соединения
         if (this.cardTimerInterval) {
             clearInterval(this.cardTimerInterval);
             this.cardTimerInterval = null;
         }
         
-        // Если нет currentMatchId, создаем новый (для тестов)
         if (!this.currentMatchId) {
             this.currentMatchId = Math.floor(100000 + Math.random() * 900000);
         }
@@ -389,7 +386,6 @@ const Swipe = {
                 this.handleRejection();
             } else if (data.status === 'waiting') {
                 console.log('Ожидаем ответа');
-                // Запускаем таймер с синхронизированным временем (для экрана соединения)
                 this.startSyncedTimer();
             } else {
                 console.log('Неизвестный статус:', data);
@@ -407,13 +403,11 @@ const Swipe = {
     rejectPlayer() {
         console.log('❌ Пропущен игрок:', this.currentPlayer);
         
-        // Останавливаем таймер карточки
         if (this.cardTimerInterval) {
             clearInterval(this.cardTimerInterval);
             this.cardTimerInterval = null;
         }
         
-        // Отправляем отказ на сервер
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         
         if (this.currentMatchId) {
@@ -429,13 +423,11 @@ const Swipe = {
             .catch(error => console.error('Error rejecting:', error));
         }
         
-        // Возвращаемся на главный экран
         setTimeout(() => {
             this.exitSwipeMode();
         }, 300);
     },
     
-    // НОВЫЙ МЕТОД: синхронизированный таймер с сервером (для экрана соединения)
     startSyncedTimer() {
         console.log('Запуск синхронизированного таймера (connection mode)');
         
@@ -450,13 +442,10 @@ const Swipe = {
             return;
         }
         
-        // Если есть время истечения с сервера, используем его
         if (this.matchExpiresAt) {
             this.connectionEndTime = this.matchExpiresAt;
             console.log('Таймер синхронизирован, истекает в:', new Date(this.connectionEndTime).toLocaleTimeString());
-        } 
-        // Иначе стандартные 30 секунд
-        else {
+        } else {
             this.connectionEndTime = Date.now() + 30000;
             console.log('Время не получено, ставим 30 секунд');
         }
@@ -479,7 +468,6 @@ const Swipe = {
                 return;
             }
             
-            // Меняем цвет на красный, если осталось меньше 10 секунд
             if (diff < 10) {
                 timerElement.classList.add('warning');
             } else {
@@ -525,7 +513,6 @@ const Swipe = {
         
         this.setupConnectionMode();
         
-        // Если есть синхронизированное время, запускаем таймер
         if (this.matchExpiresAt) {
             this.startSyncedTimer();
         }
@@ -599,6 +586,73 @@ const Swipe = {
         this.card.classList.remove('both-accepted', 'rejected', 'right-swipe', 'left-swipe');
     },
     
+    // ОБНОВЛЕННЫЙ МЕТОД: обработка both_accepted с визуальными изменениями
+    handleBothAccepted() {
+        console.log('✅ Оба приняли! Запускаем визуальные изменения');
+        
+        if (this.connectionTimer) {
+            clearInterval(this.connectionTimer);
+            this.connectionTimer = null;
+        }
+        
+        this.card.classList.add('both-accepted');
+        
+        // Находим элементы
+        const selfAvatar = document.querySelector('.self-avatar');
+        const teammateAvatar = document.querySelector('.teammate-avatar');
+        const connectionLine = document.querySelector('.connection-line');
+        const statusEl = document.getElementById('cardConnectionStatus');
+        const timerEl = document.getElementById('cardConnectionTimer');
+        
+        // Увеличиваем аватарки до одинакового размера (оба становятся как self-avatar)
+        if (selfAvatar && teammateAvatar) {
+            selfAvatar.style.width = '72px';
+            selfAvatar.style.height = '72px';
+            teammateAvatar.style.width = '72px';
+            teammateAvatar.style.height = '72px';
+            teammateAvatar.classList.add('connected');
+        }
+        
+        // Меняем цвет линии на зелёный
+        if (connectionLine) {
+            connectionLine.classList.add('connected');
+        }
+        
+        // Скрываем таймер
+        if (timerEl) {
+            timerEl.style.opacity = '0';
+            timerEl.style.transition = 'opacity 0.3s ease';
+        }
+        
+        // Меняем статус
+        if (statusEl) {
+            statusEl.innerHTML = `
+                <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="#4CAF50" stroke-width="2"/>
+                    <path d="M8 12L11 15L16 9" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                ✅ Оба приняли приглашение!
+            `;
+        }
+        
+        // Через 2 секунды показываем сообщение о создании матча
+        setTimeout(() => {
+            if (statusEl) {
+                statusEl.innerHTML = `
+                    <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="#4CAF50" stroke-width="2"/>
+                        <path d="M8 12L11 15L16 9" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    🎮 Матч создан!
+                `;
+            }
+            
+            // Здесь потом будет создание игры
+            // this.createGame();
+            
+        }, 2000);
+    },
+    
     exitConnectionMode() {
         this.isConnectionMode = false;
         
@@ -610,20 +664,18 @@ const Swipe = {
         this.card.style.opacity = '0';
         
         setTimeout(() => {
-            // Возвращаемся на главный экран
             this.exitSwipeMode();
         }, 200);
     },
     
-    // НОВЫЙ МЕТОД: выход из свайпа
     exitSwipeMode() {
         this.unblockScroll();
         this.isConnectionMode = false;
         this.currentMatchId = null;
         this.currentPlayer = null;
         this.matchExpiresAt = null;
+        this.serverTime = null;
         
-        // Останавливаем все таймеры
         if (this.cardTimerInterval) {
             clearInterval(this.cardTimerInterval);
             this.cardTimerInterval = null;
@@ -644,7 +696,6 @@ const Swipe = {
             <div class="swipe-label swipe-label-right" id="swipeLabelRight">INVITE</div>
             
             <div class="swipe-card-content">
-                <!-- Таймер в левом верхнем углу карточки -->
                 <div class="swipe-timer" id="swipeTimer">30с</div>
                 
                 <div class="swipe-player-row">
@@ -703,11 +754,6 @@ const Swipe = {
         `;
     },
     
-    startConnectionTimer() {
-        // Устаревший метод, используем startSyncedTimer
-        this.startSyncedTimer();
-    },
-    
     connectionTimeout() {
         console.log('⏰ Время истекло');
         
@@ -727,31 +773,6 @@ const Swipe = {
         setTimeout(() => {
             this.exitSwipeMode();
         }, 2000);
-    },
-    
-    handleBothAccepted() {
-        console.log('✅ Оба приняли!');
-        
-        if (this.connectionTimer) {
-            clearInterval(this.connectionTimer);
-            this.connectionTimer = null;
-        }
-        
-        this.card.classList.add('both-accepted');
-        const statusEl = document.getElementById('cardConnectionStatus');
-        if (statusEl) {
-            statusEl.innerHTML = `
-                <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="#4CAF50" stroke-width="2"/>
-                    <path d="M8 12L11 15L16 9" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                ✅ Тиммейт принял приглашение!
-            `;
-        }
-        
-        setTimeout(() => {
-            this.createGame();
-        }, 1500);
     },
     
     handleRejection() {
@@ -813,8 +834,6 @@ const Swipe = {
     },
     
     loadNextPlayer() {
-        // Этот метод теперь не используется при реальном поиске,
-        // оставлен для тестирования
         if (this.loading) this.loading.classList.add('active');
         
         setTimeout(() => {
@@ -904,7 +923,6 @@ const Swipe = {
         this.playersQueue = [];
         this.isConnectionMode = false;
         
-        // Блокируем скролл при старте
         this.blockScroll();
         
         if (this.card) {
@@ -915,7 +933,6 @@ const Swipe = {
     },
     
     destroy() {
-        // Восстанавливаем скролл
         this.unblockScroll();
         
         if (this.card) {
