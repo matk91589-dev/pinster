@@ -1,6 +1,5 @@
 // ============================================
-// ПОИСК (Telegram Mini App версия) - 10/10 UX
-// ИСПРАВЛЕННАЯ ВЕРСИЯ
+// ПОИСК (Telegram Mini App версия) - ИСПРАВЛЕНО
 // ============================================
 
 const Search = {
@@ -127,7 +126,6 @@ const Search = {
         return data;
     },
     
-    // ИСПРАВЛЕНО: защита от множественных polling
     startPolling() {
         if (this.pollingInterval) {
             console.log('Polling уже запущен, пропускаем');
@@ -138,7 +136,6 @@ const Search = {
         this.pollingInterval = setInterval(() => this.checkMatchStatus(), 2000);
     },
     
-    // ИСПРАВЛЕНО: добавлены проверки состояния
     checkMatchStatus() {
         // Если не ищем и не ждем партнера - выходим
         if (!this.isSearching && !this.waitingForPartner) {
@@ -161,7 +158,6 @@ const Search = {
         .then(data => {
             console.log('Match check response:', data);
             
-            // ИСПРАВЛЕНО: защита от повторного показа мэтча
             if (data.match_found && !this.currentMatchId) {
                 console.log('Мэтч найден!');
                 
@@ -177,15 +173,38 @@ const Search = {
                 if (this.waitingForPartner) {
                     this.updateWaitingStatus(data);
                 } else {
-                    // Показываем экран мэтча
+                    // Показываем экран свайпа
                     this.stopPolling();
-                    this.showMatchScreen(data);
+                    this.showSwipeScreen(data);
                 }
             }
         })
         .catch(error => {
             console.error('Error checking match:', error);
         });
+    },
+    
+    // НОВЫЙ МЕТОД: показываем экран свайпа с карточкой
+    showSwipeScreen(data) {
+        console.log('Показываем экран свайпа для match_id:', data.match_id);
+        
+        this.currentMatchId = data.match_id;
+        this.myResponse = null;
+        this.isSearching = false;
+        
+        // Сохраняем данные оппонента
+        localStorage.setItem('opponentData', JSON.stringify(data.opponent));
+        
+        // Переходим на экран свайпа
+        App.showScreen('swipeScreen', false);
+        
+        // Инициализируем свайп с данными оппонента
+        if (typeof Swipe !== 'undefined') {
+            // Передаем данные оппонента в свайп
+            setTimeout(() => {
+                Swipe.startWithOpponent(data.opponent, this.currentMatchId);
+            }, 100);
+        }
     },
     
     updateWaitingStatus(data) {
@@ -256,7 +275,6 @@ const Search = {
             this.matchTimerInterval = null;
         }
         
-        // ИСПРАВЛЕНО: останавливаем polling
         this.stopPolling();
         
         // Добавляем эффект both-accepted
@@ -290,403 +308,7 @@ const Search = {
         }
     },
     
-    // ПОКАЗАТЬ ЭКРАН НАЙДЕННОГО ТИММЕЙТА
-    showMatchScreen(data) {
-        // ИСПРАВЛЕНО: останавливаем polling перед показом
-        this.stopPolling();
-        
-        this.currentMatchId = data.match_id;
-        this.myResponse = null;
-        this.isSearching = false;
-        console.log('Показываем экран для match_id:', data.match_id);
-        console.log('Данные оппонента:', data.opponent);
-        
-        // Определяем режим из данных оппонента или из сохраненного
-        const mode = data.opponent.mode || this.currentMode || 'PREMIER';
-        console.log('Режим для отображения:', mode);
-        
-        // ИСПРАВЛЕНО: проверка существования DOM элементов
-        const swipeCard = document.querySelector('.swipe-card');
-        const swipeContent = document.querySelector('.swipe-card-content');
-        
-        if (!swipeCard || !swipeContent) {
-            console.warn('Swipe card not found');
-            return;
-        }
-        
-        // Добавляем класс для анимации появления
-        swipeCard.classList.add('connection-mode');
-        
-        // Меняем содержимое карточки на экран соединения
-        swipeContent.innerHTML = this.getConnectionHTML(data.opponent);
-        
-        // ИСПРАВЛЕНО: используем App.showScreen вместо прямых манипуляций
-        App.showScreen('connectionScreen', true);
-        
-        // Запускаем таймер на 30 секунд
-        this.startMatchTimer();
-    },
-    
-    // HTML для карточки соединения
-    getConnectionHTML(opponent) {
-        return `
-            <div class="swipe-card-content connection-mode">
-                <div class="connection-avatars">
-                    <!-- Твой аватар (всегда оранжевый с пульсацией) -->
-                    <div class="connection-avatar self-avatar" id="selfAvatar">
-                        <div class="tg-avatar-svg">
-                            <svg width="35" height="35" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/>
-                                <path d="M5 20V19C5 15.6863 7.68629 13 11 13H13C16.3137 13 19 15.6863 19 19V20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <!-- Линия соединения -->
-                    <div class="connection-line-container">
-                        <div class="connection-line" id="connectionLine">
-                            <div class="line-pulse" id="linePulse"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Аватар тиммейта (сначала серый) -->
-                    <div class="teammate-avatar" id="teammateAvatar">
-                        <div class="tg-avatar-svg">
-                            <svg width="35" height="35" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/>
-                                <path d="M5 20V19C5 15.6863 7.68629 13 11 13H13C16.3137 13 19 15.6863 19 19V20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Информация о тиммейте -->
-                <div class="teammate-info">
-                    <span class="teammate-nick">${opponent.nick || 'Игрок'}</span>
-                    <span class="teammate-rating">${opponent.rating || '0'} ❤️</span>
-                </div>
-                
-                <!-- Статус соединения -->
-                <div class="connection-status" id="connectionStatus">
-                    Ожидание ответа игрока...
-                </div>
-                
-                <!-- Кнопки действий -->
-                <div class="connection-actions">
-                    <button class="connection-btn accept" onclick="Search.acceptMatch()">✓ Принять</button>
-                    <button class="connection-btn decline" onclick="Search.rejectMatch()">✗ Отклонить</button>
-                </div>
-            </div>
-        `;
-    },
-    
-    startMatchTimer() {
-        const timerElement = document.getElementById('matchTimer');
-        
-        // Создаем или обновляем таймер
-        let connectionTimer = document.querySelector('.connection-timer');
-        if (!connectionTimer) {
-            connectionTimer = document.createElement('div');
-            connectionTimer.className = 'connection-timer';
-            document.querySelector('.connection-screen')?.appendChild(connectionTimer);
-        }
-        
-        // Очищаем предыдущий таймер если был
-        if (this.matchTimerInterval) {
-            clearInterval(this.matchTimerInterval);
-            this.matchTimerInterval = null;
-        }
-        
-        // ВАЖНО: Всегда 30 секунд от МОМЕНТА ЗАПУСКА
-        const startTime = Date.now();
-        const endTime = startTime + 30000; // ровно 30 секунд
-        this.matchEndTime = endTime;
-        
-        console.log('✅ Таймер запущен, до:', new Date(endTime).toLocaleTimeString());
-        
-        const updateTimer = () => {
-            const now = Date.now();
-            const diff = Math.max(0, Math.floor((endTime - now) / 1000));
-            
-            // Форматируем время (MM:SS)
-            const minutes = Math.floor(diff / 60);
-            const seconds = diff % 60;
-            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
-            connectionTimer.textContent = timeString;
-            
-            if (diff <= 0) {
-                connectionTimer.textContent = '00:00';
-                clearInterval(this.matchTimerInterval);
-                this.matchTimerInterval = null;
-                this.matchTimeout();
-                return;
-            }
-            
-            // Если осталось меньше 10 секунд - добавляем класс warning
-            if (diff < 10) {
-                connectionTimer.classList.add('warning');
-            } else {
-                connectionTimer.classList.remove('warning');
-            }
-        };
-        
-        updateTimer();
-        this.matchTimerInterval = setInterval(updateTimer, 1000);
-    },
-    
-    // ТАЙМАУТ - не нажали кнопки
-    matchTimeout() {
-        console.log('⏰ Время вышло, отменяем мэтч');
-        
-        // Если уже нет текущего мэтча - выходим
-        if (!this.currentMatchId) {
-            console.log('Нет активного мэтча');
-            return;
-        }
-        
-        const telegram_id = this.getTelegramId();
-        const matchId = this.currentMatchId;
-        
-        // Показываем уведомление о таймауте
-        const statusEl = document.getElementById('connectionStatus');
-        if (statusEl) {
-            statusEl.textContent = '⏰ Время ожидания истекло';
-            statusEl.style.color = '#FF3B30';
-        }
-        
-        // Скрываем кнопки
-        const buttons = document.querySelector('.connection-actions');
-        if (buttons) {
-            buttons.style.opacity = '0.5';
-            buttons.style.pointerEvents = 'none';
-        }
-        
-        // Сначала сбрасываем флаги, чтобы предотвратить повторные вызовы
-        this.waitingForPartner = false;
-        this.myResponse = null;
-        this.isSearching = false;
-        this.currentMatchId = null;
-        
-        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                telegram_id: telegram_id,
-                match_id: matchId,
-                response: 'timeout'
-            })
-        })
-        .then(() => {
-            // Через 2 секунды на главный экран
-            setTimeout(() => {
-                App.showScreen('mainScreen', true);
-            }, 2000);
-        })
-        .catch(error => {
-            console.error('Error timing out match:', error);
-            setTimeout(() => {
-                App.showScreen('mainScreen', true);
-            }, 2000);
-        });
-    },
-    
-    acceptMatch() {
-        console.log('✅ Принимаем мэтч:', this.currentMatchId);
-        
-        if (!this.currentMatchId) {
-            console.log('Нет активного мэтча');
-            return;
-        }
-        
-        // Визуальная обратная связь
-        const acceptBtn = document.querySelector('.connection-btn.accept');
-        if (acceptBtn) {
-            acceptBtn.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                acceptBtn.style.transform = '';
-            }, 200);
-        }
-        
-        const telegram_id = this.getTelegramId();
-        this.myResponse = 'accept';
-        
-        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                telegram_id: telegram_id,
-                match_id: this.currentMatchId,
-                response: 'accept'
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            console.log('Accept response:', data);
-            
-            if (data.both_accepted) {
-                // Оба приняли!
-                this.handleBothAccepted();
-            } 
-            else if (data.status === 'waiting') {
-                // Ждем ответа второго игрока
-                this.waitingForPartner = true;
-                
-                // Меняем статус
-                const statusEl = document.getElementById('connectionStatus');
-                if (statusEl) {
-                    statusEl.textContent = '✅ Вы приняли, ожидаем ответа тиммейта...';
-                }
-                
-                // Скрываем кнопки
-                const buttons = document.querySelector('.connection-actions');
-                if (buttons) {
-                    buttons.style.opacity = '0.5';
-                    buttons.style.pointerEvents = 'none';
-                }
-                
-                // Продолжаем проверять статус
-                this.startPolling();
-            }
-        })
-        .catch(error => {
-            console.error('Error accepting match:', error);
-        });
-        
-        // UX УЛУЧШЕНИЕ: вибрация при успехе
-        if (window.Telegram?.WebApp?.HapticFeedback) {
-            Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-        }
-    },
-    
-    rejectMatch() {
-        console.log('❌ Отклоняем мэтч:', this.currentMatchId);
-        
-        if (!this.currentMatchId) {
-            console.log('Нет активного мэтча');
-            return;
-        }
-        
-        // Визуальная обратная связь
-        const declineBtn = document.querySelector('.connection-btn.decline');
-        if (declineBtn) {
-            declineBtn.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                declineBtn.style.transform = '';
-            }, 200);
-        }
-        
-        const telegram_id = this.getTelegramId();
-        const matchId = this.currentMatchId;
-        
-        // Показываем статус отказа
-        const statusEl = document.getElementById('connectionStatus');
-        if (statusEl) {
-            statusEl.textContent = '❌ Вы отклонили приглашение';
-            statusEl.style.color = '#FF3B30';
-        }
-        
-        // Скрываем кнопки
-        const buttons = document.querySelector('.connection-actions');
-        if (buttons) {
-            buttons.style.opacity = '0.5';
-            buttons.style.pointerEvents = 'none';
-        }
-        
-        // Очищаем таймер
-        if (this.matchTimerInterval) {
-            clearInterval(this.matchTimerInterval);
-            this.matchTimerInterval = null;
-        }
-        
-        // ИСПРАВЛЕНО: останавливаем polling
-        this.stopPolling();
-        
-        this.myResponse = 'reject';
-        
-        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                telegram_id: telegram_id,
-                match_id: matchId,
-                response: 'reject'
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            console.log('Reject response:', data);
-            
-            // Устанавливаем блокировку на 2 секунды
-            this.blockUntil = Date.now() + 2000;
-            this.waitingForPartner = false;
-            this.myResponse = null;
-            this.isSearching = true;
-            this.currentMatchId = null;
-            
-            // Через 2 секунды на главный экран
-            setTimeout(() => {
-                App.showScreen('mainScreen', true);
-            }, 2000);
-        })
-        .catch(error => {
-            console.error('Error rejecting match:', error);
-            setTimeout(() => {
-                App.showScreen('mainScreen', true);
-            }, 2000);
-        });
-        
-        // UX УЛУЧШЕНИЕ: вибрация при отказе
-        if (window.Telegram?.WebApp?.HapticFeedback) {
-            Telegram.WebApp.HapticFeedback.notificationOccurred('error');
-        }
-    },
-    
-    createGame() {
-        console.log('Создаем игру для match_id:', this.currentMatchId);
-        
-        if (!this.currentMatchId) {
-            console.log('Нет активного мэтча');
-            return;
-        }
-        
-        const matchId = this.currentMatchId;
-        
-        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/game/create', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                match_id: matchId
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            console.log('Game create response:', data);
-            
-            // ИСПРАВЛЕНО: очищаем processedMatchIds
-            this.processedMatchIds.clear();
-            
-            // Сбрасываем флаги
-            this.waitingForPartner = false;
-            this.myResponse = null;
-            this.isSearching = false;
-            this.currentMatchId = null;
-            
-            // Открываем ссылку в Telegram
-            if (window.Telegram?.WebApp?.openTelegramLink && data.chat_link) {
-                window.Telegram.WebApp.openTelegramLink(data.chat_link);
-            }
-            
-            // Переходим на главный экран
-            App.showScreen('mainScreen', true);
-        })
-        .catch(error => {
-            console.error('Error creating game:', error);
-            App.showScreen('mainScreen', true);
-        });
-    },
-    
-    // НОВАЯ ФУНКЦИЯ для показа экрана поиска
+    // ПОКАЗАТЬ ЭКРАН ПОИСКА
     showSearchScreen(mode) {
         this.currentMode = mode;
         this.waitingForPartner = false;
@@ -739,7 +361,7 @@ const Search = {
             } 
             else if (data.status === 'match_found') {
                 console.log('Мэтч найден сразу!', data);
-                this.showMatchScreen(data);
+                this.showSwipeScreen(data);
             }
         })
         .catch(error => {
@@ -784,7 +406,6 @@ const Search = {
         this.isSearching = false;
         this.currentMatchId = null;
         
-        // ИСПРАВЛЕНО: очищаем processedMatchIds при отмене
         this.processedMatchIds.clear();
         
         const telegram_id = this.getTelegramId();
@@ -804,6 +425,77 @@ const Search = {
         })
         .catch(error => {
             console.error('Error stopping search:', error);
+            App.showScreen('mainScreen', true);
+        });
+    },
+    
+    // ПОКАЗАТЬ ЭКРАН НАЙДЕННОГО ТИММЕЙТА (ТЕПЕРЬ ЭТОТ МЕТОД НЕ ИСПОЛЬЗУЕТСЯ)
+    // Оставлен для обратной совместимости, но показываем через showSwipeScreen
+    showMatchScreen(data) {
+        console.log('showMatchScreen вызван, перенаправляем на showSwipeScreen');
+        this.showSwipeScreen(data);
+    },
+    
+    startMatchTimer() {
+        // Этот метод больше не нужен, таймер управляется в Swipe
+        console.log('startMatchTimer - устаревший метод');
+    },
+    
+    matchTimeout() {
+        console.log('matchTimeout - устаревший метод');
+    },
+    
+    acceptMatch() {
+        console.log('acceptMatch - устаревший метод, используйте Swipe.acceptPlayer()');
+    },
+    
+    rejectMatch() {
+        console.log('rejectMatch - устаревший метод, используйте Swipe.rejectPlayer()');
+    },
+    
+    getConnectionHTML(opponent) {
+        // Этот метод больше не нужен, HTML генерируется в Swipe
+        return '';
+    },
+    
+    createGame() {
+        console.log('Создаем игру для match_id:', this.currentMatchId);
+        
+        if (!this.currentMatchId) {
+            console.log('Нет активного мэтча');
+            return;
+        }
+        
+        const matchId = this.currentMatchId;
+        
+        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/game/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                match_id: matchId
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log('Game create response:', data);
+            
+            this.processedMatchIds.clear();
+            
+            this.waitingForPartner = false;
+            this.myResponse = null;
+            this.isSearching = false;
+            this.currentMatchId = null;
+            
+            // Открываем ссылку в Telegram
+            if (window.Telegram?.WebApp?.openTelegramLink && data.chat_link) {
+                window.Telegram.WebApp.openTelegramLink(data.chat_link);
+            }
+            
+            // Переходим на главный экран
+            App.showScreen('mainScreen', true);
+        })
+        .catch(error => {
+            console.error('Error creating game:', error);
             App.showScreen('mainScreen', true);
         });
     }
