@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ с ЕДИНЫМ таймером для обоих игроков
+// СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
 // ============================================
 
 const Swipe = {
@@ -34,13 +34,13 @@ const Swipe = {
     connectionTimer: null,
     cardTimerInterval: null,
     isConnectionMode: false,
-    matchExpiresAt: null,      // ЕДИНОЕ время истечения для обоих игроков
+    matchExpiresAt: null,
     serverTime: null,
     matchPolling: null,
     gameCreated: false,
     
     init(mode) {
-        console.log('Swipe.init() with mode:', mode);
+        console.log('🔥 Swipe.init() with mode:', mode);
         
         this.mode = mode || 'PREMIER';
         this.card = document.getElementById('swipeCard');
@@ -51,7 +51,7 @@ const Swipe = {
         this.labelRight = document.getElementById('swipeLabelRight');
         
         if (!this.card) {
-            console.error('Swipe card not found!');
+            console.error('❌ Swipe card not found!');
             return;
         }
         
@@ -63,13 +63,14 @@ const Swipe = {
             this.setupEventListeners();
             this.isInitialized = true;
         }
-        
-        console.log('✅ Swipe инициализирован');
     },
     
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
         console.log('🔄 Swipe.startWithOpponent() вызван');
-        console.log('⏰ expiresAt с сервера:', expiresAt);
+        console.log('📦 opponent:', opponent);
+        console.log('📦 matchId:', matchId);
+        console.log('📦 expiresAt:', expiresAt);
+        console.log('📦 serverTime:', serverTime);
         
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
@@ -77,13 +78,18 @@ const Swipe = {
         this.mode = opponent.mode || 'PREMIER';
         this.gameCreated = false;
         
-        // Сохраняем ЕДИНОЕ время истечения с сервера
+        // СОХРАНЯЕМ ВРЕМЯ С СЕРВЕРА
         if (expiresAt) {
             if (typeof expiresAt === 'string') {
                 this.matchExpiresAt = new Date(expiresAt).getTime();
             } else {
                 this.matchExpiresAt = expiresAt;
             }
+            console.log('✅ matchExpiresAt установлен:', new Date(this.matchExpiresAt).toLocaleString());
+        } else {
+            // Если нет времени с сервера, ставим 30 секунд от текущего момента
+            this.matchExpiresAt = Date.now() + 30000;
+            console.log('⚠️ expiresAt не получен, ставим 30с от сейчас');
         }
         
         if (serverTime) {
@@ -92,9 +98,15 @@ const Swipe = {
             this.serverTime = Date.now();
         }
         
-        console.log(`📊 Матч истекает: ${new Date(this.matchExpiresAt).toLocaleString()}`);
-        console.log(`📊 Время сервера: ${new Date(this.serverTime).toLocaleString()}`);
-        console.log(`📊 Осталось: ${Math.floor((this.matchExpiresAt - this.serverTime)/1000)}с`);
+        // ПРОВЕРЯЕМ СКОЛЬКО ОСТАЛОСЬ
+        const timeLeft = Math.floor((this.matchExpiresAt - Date.now()) / 1000);
+        console.log(`⏰ Осталось времени: ${timeLeft}с`);
+        
+        if (timeLeft <= 0) {
+            console.warn('⚠️ Матч уже истек!');
+            this.exitSwipeMode();
+            return;
+        }
         
         this.card = document.getElementById('swipeCard');
         this.container = document.getElementById('swipeContainer');
@@ -114,7 +126,7 @@ const Swipe = {
         this.card.classList.remove('both-accepted', 'rejected', 'right-swipe', 'left-swipe');
         
         this.showPlayer(opponent);
-        this.startCardTimer(); // Запускаем таймер на карточке
+        this.startCardTimer();
         this.blockScroll();
         this.showHintOnce();
         
@@ -126,9 +138,11 @@ const Swipe = {
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
     },
     
-    // ЕДИНЫЙ метод для расчета оставшегося времени
     getTimeLeft() {
-        if (!this.matchExpiresAt) return 0;
+        if (!this.matchExpiresAt) {
+            console.warn('⚠️ matchExpiresAt не установлен');
+            return 30; // fallback
+        }
         
         const now = Date.now();
         const timeLeft = Math.max(0, Math.floor((this.matchExpiresAt - now) / 1000));
@@ -144,7 +158,22 @@ const Swipe = {
         }
         
         const timerElement = document.getElementById('swipeTimer');
-        if (!timerElement) return;
+        if (!timerElement) {
+            console.warn('⚠️ timerElement не найден');
+            return;
+        }
+        
+        // Первое обновление
+        const initialTimeLeft = this.getTimeLeft();
+        console.log(`⏰ Первоначальное время: ${initialTimeLeft}с`);
+        
+        if (initialTimeLeft <= 0) {
+            timerElement.innerHTML = '0с';
+            this.exitSwipeMode();
+            return;
+        }
+        
+        timerElement.innerHTML = initialTimeLeft + 'с';
         
         const updateTimer = () => {
             const timeLeft = this.getTimeLeft();
@@ -154,8 +183,6 @@ const Swipe = {
                 timerElement.classList.add('warning');
                 clearInterval(this.cardTimerInterval);
                 this.cardTimerInterval = null;
-                
-                // Время вышло - возвращаемся
                 this.exitSwipeMode();
                 return;
             }
@@ -169,8 +196,6 @@ const Swipe = {
             timerElement.innerHTML = timeLeft + 'с';
         };
         
-        // Первое обновление
-        updateTimer();
         this.cardTimerInterval = setInterval(updateTimer, 1000);
     },
     
@@ -356,7 +381,6 @@ const Swipe = {
         .then((data) => {
             console.log('📦 Accept response:', data);
             
-            // Показываем экран ожидания с тем же expiresAt
             setTimeout(() => {
                 this.showConnectionMode();
             }, 200);
@@ -459,10 +483,8 @@ const Swipe = {
         }, 300);
     },
     
-    // Запуск таймера на экране ожидания (использует тот же expiresAt)
     startConnectionTimer() {
         console.log('⏱️ Запуск таймера на экране ожидания');
-        console.log('⏰ Текущий expiresAt:', new Date(this.matchExpiresAt).toLocaleString());
         
         if (this.connectionTimer) {
             clearInterval(this.connectionTimer);
@@ -471,6 +493,14 @@ const Swipe = {
         
         const timerElement = document.getElementById('cardConnectionTimer');
         if (!timerElement) return;
+        
+        const initialTimeLeft = this.getTimeLeft();
+        console.log(`⏰ Время на экране ожидания: ${initialTimeLeft}с`);
+        
+        if (initialTimeLeft <= 0) {
+            this.connectionTimeout();
+            return;
+        }
         
         const updateTimer = () => {
             const timeLeft = this.getTimeLeft();
@@ -541,10 +571,11 @@ const Swipe = {
         });
         
         this.setupConnectionMode();
-        this.startConnectionTimer(); // Запускаем таймер с тем же expiresAt
+        this.startConnectionTimer();
     },
     
     getConnectionHTML() {
+        const timeLeft = this.getTimeLeft();
         return `
             <div class="swipe-card-content connection-mode">
                 <div class="connection-avatars">
@@ -594,7 +625,7 @@ const Swipe = {
                         <circle cx="12" cy="12" r="10" stroke="#FF5500" stroke-width="2"/>
                         <polyline points="12 6 12 12 16 14" stroke="#FF5500" stroke-width="2" stroke-linecap="round"/>
                     </svg>
-                    <span>${this.getTimeLeft()}с</span>
+                    <span>${timeLeft}с</span>
                 </div>
             </div>
         `;
@@ -733,12 +764,14 @@ const Swipe = {
     getOriginalCardHTML() {
         if (!this.currentPlayer) return '';
         
+        const timeLeft = this.getTimeLeft();
+        
         return `
             <div class="swipe-label swipe-label-left" id="swipeLabelLeft">SKIP</div>
             <div class="swipe-label swipe-label-right" id="swipeLabelRight">INVITE</div>
             
             <div class="swipe-card-content">
-                <div class="swipe-timer" id="swipeTimer">${this.getTimeLeft()}с</div>
+                <div class="swipe-timer" id="swipeTimer">${timeLeft}с</div>
                 
                 <div class="swipe-player-row">
                     <div class="swipe-avatar">
