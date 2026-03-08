@@ -72,6 +72,7 @@ const Swipe = {
     // НОВЫЙ МЕТОД: запуск с данными оппонента из поиска
     startWithOpponent(opponent, matchId, expiresAt) {
         console.log('Swipe.startWithOpponent()', opponent);
+        console.log('Срок истечения:', expiresAt);
         
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
@@ -82,6 +83,10 @@ const Swipe = {
         if (expiresAt) {
             this.matchExpiresAt = new Date(expiresAt).getTime();
             console.log('Мэтч истекает в:', new Date(this.matchExpiresAt).toLocaleTimeString());
+        } else {
+            // Если время не пришло, ставим 30 секунд от текущего момента
+            this.matchExpiresAt = Date.now() + 30000;
+            console.log('Время не получено, ставим 30 секунд');
         }
         
         // Получаем ссылки на элементы
@@ -361,13 +366,18 @@ const Swipe = {
     
     // НОВЫЙ МЕТОД: синхронизированный таймер с сервером
     startSyncedTimer(initialSeconds) {
+        console.log('Запуск синхронизированного таймера', initialSeconds);
+        
         if (this.connectionTimer) {
             clearInterval(this.connectionTimer);
             this.connectionTimer = null;
         }
         
         const timerElement = document.getElementById('cardConnectionTimer');
-        if (!timerElement) return;
+        if (!timerElement) {
+            console.error('Таймер не найден');
+            return;
+        }
         
         // Если есть время истечения с сервера, используем его
         if (this.matchExpiresAt) {
