@@ -1,6 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ с автодоводкой и соединением в карточке
-// ИСПРАВЛЕННАЯ ВЕРСИЯ: таймер синхронизируется после ответа сервера
+// СВАЙП-КАРТОЧКИ с ЕДИНЫМ таймером для обоих игроков
 // ============================================
 
 const Swipe = {
@@ -34,14 +33,11 @@ const Swipe = {
     isInitialized: false,
     connectionTimer: null,
     cardTimerInterval: null,
-    connectionEndTime: null,
     isConnectionMode: false,
-    matchExpiresAt: null,
+    matchExpiresAt: null,      // ЕДИНОЕ время истечения для обоих игроков
     serverTime: null,
     matchPolling: null,
     gameCreated: false,
-    matchDuration: null,
-    matchStartTime: null,
     
     init(mode) {
         console.log('Swipe.init() with mode:', mode);
@@ -73,6 +69,7 @@ const Swipe = {
     
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
         console.log('🔄 Swipe.startWithOpponent() вызван');
+        console.log('⏰ expiresAt с сервера:', expiresAt);
         
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
@@ -80,23 +77,24 @@ const Swipe = {
         this.mode = opponent.mode || 'PREMIER';
         this.gameCreated = false;
         
-        if (serverTime) {
-            this.serverTime = new Date(serverTime).getTime();
-        }
-        
+        // Сохраняем ЕДИНОЕ время истечения с сервера
         if (expiresAt) {
             if (typeof expiresAt === 'string') {
                 this.matchExpiresAt = new Date(expiresAt).getTime();
+            } else {
+                this.matchExpiresAt = expiresAt;
             }
         }
         
-        // Вычисляем точную длительность матча
-        if (this.matchExpiresAt && this.serverTime) {
-            this.matchDuration = this.matchExpiresAt - this.serverTime;
-            this.matchStartTime = this.serverTime;
-            console.log(`📊 Длительность матча: ${this.matchDuration/1000}с`);
-            console.log(`📊 Старт по серверу: ${new Date(this.matchStartTime).toLocaleString()}`);
+        if (serverTime) {
+            this.serverTime = new Date(serverTime).getTime();
+        } else {
+            this.serverTime = Date.now();
         }
+        
+        console.log(`📊 Матч истекает: ${new Date(this.matchExpiresAt).toLocaleString()}`);
+        console.log(`📊 Время сервера: ${new Date(this.serverTime).toLocaleString()}`);
+        console.log(`📊 Осталось: ${Math.floor((this.matchExpiresAt - this.serverTime)/1000)}с`);
         
         this.card = document.getElementById('swipeCard');
         this.container = document.getElementById('swipeContainer');
@@ -116,7 +114,7 @@ const Swipe = {
         this.card.classList.remove('both-accepted', 'rejected', 'right-swipe', 'left-swipe');
         
         this.showPlayer(opponent);
-        this.startCardTimer();
+        this.startCardTimer(); // Запускаем таймер на карточке
         this.blockScroll();
         this.showHintOnce();
         
@@ -126,6 +124,15 @@ const Swipe = {
         }
         
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
+    },
+    
+    // ЕДИНЫЙ метод для расчета оставшегося времени
+    getTimeLeft() {
+        if (!this.matchExpiresAt) return 0;
+        
+        const now = Date.now();
+        const timeLeft = Math.max(0, Math.floor((this.matchExpiresAt - now) / 1000));
+        return timeLeft;
     },
     
     startCardTimer() {
@@ -139,25 +146,17 @@ const Swipe = {
         const timerElement = document.getElementById('swipeTimer');
         if (!timerElement) return;
         
-        if (!this.matchDuration) {
-            console.warn('⚠️ Нет данных для таймера');
-            timerElement.innerHTML = '30с';
-            return;
-        }
-        
-        // Вычисляем смещение времени клиента относительно сервера
-        const clientTimeOffset = Date.now() - (this.serverTime || Date.now());
-        
         const updateTimer = () => {
-            const now = Date.now() - clientTimeOffset;
-            const elapsed = now - this.matchStartTime;
-            const timeLeft = Math.max(0, Math.floor((this.matchDuration - elapsed) / 1000));
+            const timeLeft = this.getTimeLeft();
             
             if (timeLeft <= 0) {
                 timerElement.innerHTML = '0с';
                 timerElement.classList.add('warning');
                 clearInterval(this.cardTimerInterval);
                 this.cardTimerInterval = null;
+                
+                // Время вышло - возвращаемся
+                this.exitSwipeMode();
                 return;
             }
             
@@ -170,37 +169,9 @@ const Swipe = {
             timerElement.innerHTML = timeLeft + 'с';
         };
         
-        setTimeout(() => {
-            updateTimer();
-            this.cardTimerInterval = setInterval(updateTimer, 1000);
-        }, 100 - (Date.now() % 1000));
-    },
-    
-    // НОВЫЙ МЕТОД: синхронизация времени с сервером
-    async syncTimeWithServer() {
-        console.log('🔄 Синхронизация времени с сервером');
-        
-        try {
-            const response = await fetch(`https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/status/${this.currentMatchId}`);
-            const data = await response.json();
-            
-            if (data.expires_at) {
-                const serverExpiresAt = new Date(data.expires_at).getTime();
-                const now = Date.now();
-                
-                // Пересчитываем оставшееся время
-                this.matchDuration = Math.max(0, serverExpiresAt - now);
-                this.matchStartTime = now;
-                this.serverTime = now;
-                
-                console.log(`✅ Время синхронизировано: осталось ${this.matchDuration/1000}с`);
-                return true;
-            }
-        } catch (error) {
-            console.error('❌ Ошибка синхронизации времени:', error);
-        }
-        
-        return false;
+        // Первое обновление
+        updateTimer();
+        this.cardTimerInterval = setInterval(updateTimer, 1000);
     },
     
     blockScroll() {
@@ -352,7 +323,6 @@ const Swipe = {
         }, this.ANIMATION_DURATION);
     },
     
-    // ИСПРАВЛЕННЫЙ МЕТОД: синхронизация ПОСЛЕ ответа сервера
     acceptPlayer() {
         console.log('✅ Принят игрок:', this.currentPlayer);
         console.log('🎯 matchId:', this.currentMatchId);
@@ -368,7 +338,6 @@ const Swipe = {
             return;
         }
         
-        // Показываем анимацию исчезновения карточки
         this.card.style.transition = 'opacity 0.2s ease';
         this.card.style.opacity = '0';
         
@@ -384,13 +353,10 @@ const Swipe = {
             })
         })
         .then(res => res.json())
-        .then(async (data) => {
+        .then((data) => {
             console.log('📦 Accept response:', data);
             
-            // СИНХРОНИЗИРУЕМ ВРЕМЯ ПОСЛЕ ОТВЕТА СЕРВЕРА
-            await this.syncTimeWithServer();
-            
-            // Показываем экран ожидания
+            // Показываем экран ожидания с тем же expiresAt
             setTimeout(() => {
                 this.showConnectionMode();
             }, 200);
@@ -493,8 +459,10 @@ const Swipe = {
         }, 300);
     },
     
-    startSyncedTimer() {
-        console.log('⏱️ Запуск синхронизированного таймера (connection mode)');
+    // Запуск таймера на экране ожидания (использует тот же expiresAt)
+    startConnectionTimer() {
+        console.log('⏱️ Запуск таймера на экране ожидания');
+        console.log('⏰ Текущий expiresAt:', new Date(this.matchExpiresAt).toLocaleString());
         
         if (this.connectionTimer) {
             clearInterval(this.connectionTimer);
@@ -504,48 +472,8 @@ const Swipe = {
         const timerElement = document.getElementById('cardConnectionTimer');
         if (!timerElement) return;
         
-        // Если нет данных о времени, показываем стандартный таймер
-        if (!this.matchDuration || !this.matchStartTime) {
-            console.warn('⚠️ Нет данных для таймера, используем 30с');
-            let timeLeft = 30;
-            
-            const updateFallbackTimer = () => {
-                if (timeLeft <= 0) {
-                    timerElement.innerHTML = `
-                        <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
-                            <circle cx="12" cy="12" r="10" stroke="#B00000" stroke-width="2"/>
-                            <line x1="12" y1="8" x2="12" y2="12" stroke="#B00000" stroke-width="2"/>
-                            <line x1="12" y1="16" x2="12.01" y2="16" stroke="#B00000" stroke-width="2"/>
-                        </svg>
-                        <span>0с</span>
-                    `;
-                    clearInterval(this.connectionTimer);
-                    this.connectionTimer = null;
-                    this.connectionTimeout();
-                    return;
-                }
-                
-                timerElement.innerHTML = `
-                    <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10" stroke="${timeLeft < 10 ? '#B00000' : '#FF5500'}" stroke-width="2"/>
-                        <polyline points="12 6 12 12 16 14" stroke="${timeLeft < 10 ? '#B00000' : '#FF5500'}" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    <span>${timeLeft}с</span>
-                `;
-                timeLeft--;
-            };
-            
-            updateFallbackTimer();
-            this.connectionTimer = setInterval(updateFallbackTimer, 1000);
-            return;
-        }
-        
-        const clientTimeOffset = Date.now() - (this.serverTime || Date.now());
-        
         const updateTimer = () => {
-            const now = Date.now() - clientTimeOffset;
-            const elapsed = now - this.matchStartTime;
-            const timeLeft = Math.max(0, Math.floor((this.matchDuration - elapsed) / 1000));
+            const timeLeft = this.getTimeLeft();
             
             if (timeLeft <= 0) {
                 timerElement.innerHTML = `
@@ -583,10 +511,8 @@ const Swipe = {
             `;
         };
         
-        setTimeout(() => {
-            updateTimer();
-            this.connectionTimer = setInterval(updateTimer, 1000);
-        }, 100 - (Date.now() % 1000));
+        updateTimer();
+        this.connectionTimer = setInterval(updateTimer, 1000);
     },
     
     showConnectionMode() {
@@ -615,7 +541,7 @@ const Swipe = {
         });
         
         this.setupConnectionMode();
-        this.startSyncedTimer();
+        this.startConnectionTimer(); // Запускаем таймер с тем же expiresAt
     },
     
     getConnectionHTML() {
@@ -668,7 +594,7 @@ const Swipe = {
                         <circle cx="12" cy="12" r="10" stroke="#FF5500" stroke-width="2"/>
                         <polyline points="12 6 12 12 16 14" stroke="#FF5500" stroke-width="2" stroke-linecap="round"/>
                     </svg>
-                    <span>30с</span>
+                    <span>${this.getTimeLeft()}с</span>
                 </div>
             </div>
         `;
@@ -786,8 +712,6 @@ const Swipe = {
         this.currentPlayer = null;
         this.matchExpiresAt = null;
         this.serverTime = null;
-        this.matchDuration = null;
-        this.matchStartTime = null;
         this.gameCreated = false;
         
         if (this.cardTimerInterval) {
@@ -814,7 +738,7 @@ const Swipe = {
             <div class="swipe-label swipe-label-right" id="swipeLabelRight">INVITE</div>
             
             <div class="swipe-card-content">
-                <div class="swipe-timer" id="swipeTimer">30с</div>
+                <div class="swipe-timer" id="swipeTimer">${this.getTimeLeft()}с</div>
                 
                 <div class="swipe-player-row">
                     <div class="swipe-avatar">
