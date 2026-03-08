@@ -1,5 +1,5 @@
 // ============================================
-// НАВИГАЦИЯ (Telegram Mini App версия) - ИСПРАВЛЕНО
+// НАВИГАЦИЯ (Telegram Mini App версия) - ФИНАЛ
 // ============================================
 
 const App = {
@@ -37,8 +37,14 @@ const App = {
         // Устанавливаем обработчик для логотипа
         this.setupLogoHandler();
         
-        // Показываем стартовый экран
-        this.showScreen('startScreen', false);
+        // Проверяем существование startScreen
+        const startScreen = document.getElementById('startScreen');
+        if (startScreen) {
+            this.showScreen('startScreen', false);
+        } else {
+            console.log('startScreen не найден, показываем mainScreen');
+            this.showScreen('mainScreen', true);
+        }
     },
     
     setupBackButton() {
@@ -50,7 +56,7 @@ const App = {
     },
     
     setupModeButtons() {
-        // ИСПРАВЛЕНО: теперь показываем экраны с формами, а не сразу свайп
+        // Показываем экраны с формами
         document.querySelector('.mode-btn.faceit')?.addEventListener('click', () => {
             localStorage.setItem('currentMode', 'FACEIT');
             this.showScreen('faceitScreen', false);
@@ -73,7 +79,6 @@ const App = {
     },
     
     setupLogoHandler() {
-        // Обработчик для логотипа Pingster
         const logo = document.querySelector('.logo');
         if (logo) {
             logo.addEventListener('click', () => {
@@ -105,8 +110,6 @@ const App = {
                             .catch(e => console.error('Ошибка остановки поиска:', e));
                         }
                     }
-                } else {
-                    console.log('Пользователь отменил действие');
                 }
             });
         } 
@@ -269,6 +272,44 @@ const App = {
             } else if (screenId === 'shopScreen' && typeof Shop !== 'undefined') {
                 Shop.renderShop();
             }
+            
+            // ========== ВАЖНО: Инициализация Swipe при переходе на экран свайпа ==========
+            if (screenId === 'swipeScreen') {
+                console.log('🚀 Запуск Swipe.init() при переходе на swipeScreen');
+                
+                // Получаем режим из localStorage
+                const mode = localStorage.getItem('currentMode') || 'PREMIER';
+                
+                // Проверяем, есть ли данные оппонента (если пришли с поиска)
+                const opponentData = localStorage.getItem('opponentData');
+                
+                if (typeof Swipe !== 'undefined') {
+                    if (opponentData) {
+                        // Если есть данные оппонента - используем startWithOpponent
+                        try {
+                            const opponent = JSON.parse(opponentData);
+                            const matchId = Search?.currentMatchId || null;
+                            console.log('Запускаем Swipe с оппонентом:', opponent);
+                            
+                            // Немного задерживаем для гарантии рендера
+                            setTimeout(() => {
+                                Swipe.startWithOpponent(opponent, matchId);
+                            }, 100);
+                        } catch (e) {
+                            console.error('Ошибка парсинга opponentData:', e);
+                            Swipe.init(mode);
+                        }
+                    } else {
+                        // Если нет данных - обычная инициализация
+                        setTimeout(() => {
+                            Swipe.init(mode);
+                        }, 100);
+                    }
+                } else {
+                    console.error('❌ Swipe не найден! Проверь порядок подключения скриптов');
+                }
+            }
+            // =========================================================================
             
             // Хаптик
             this.hapticFeedback('light');
