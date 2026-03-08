@@ -379,8 +379,9 @@ const Swipe = {
         }
         
         if (!this.currentMatchId) {
-            this.currentMatchId = Math.floor(100000 + Math.random() * 900000);
-            console.log('⚠️ Создан новый matchId:', this.currentMatchId);
+            console.error('❌ Нет currentMatchId!');
+            this.exitSwipeMode();
+            return;
         }
         
         this.card.style.transition = 'opacity 0.2s ease';
@@ -463,22 +464,11 @@ const Swipe = {
             console.log('📦 Match check response:', data);
             
             if (data.match_found) {
-                // Определяем, кто из игроков - текущий
-                const isPlayer1 = data.player1_id === this.currentPlayer?.player_id;
-                
-                // Проверяем ответы обоих игроков
-                if (isPlayer1) {
-                    if (data.player1_response === 'accept' && data.player2_response === 'accept') {
-                        console.log('🎉 Оба приняли (подтверждено проверкой)!');
-                        this.clearBothAcceptedCheck();
-                        this.handleBothAccepted();
-                    }
-                } else {
-                    if (data.player2_response === 'accept' && data.player1_response === 'accept') {
-                        console.log('🎉 Оба приняли (подтверждено проверкой)!');
-                        this.clearBothAcceptedCheck();
-                        this.handleBothAccepted();
-                    }
+                // Проверяем, что оба игрока приняли
+                if (data.player1_response === 'accept' && data.player2_response === 'accept') {
+                    console.log('🎉 Оба приняли (подтверждено проверкой)!');
+                    this.clearBothAcceptedCheck();
+                    this.handleBothAccepted();
                 }
             } else {
                 console.log('⏹️ Матч больше не активен, останавливаем проверку');
