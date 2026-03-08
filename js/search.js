@@ -184,7 +184,7 @@ const Search = {
         });
     },
     
-    // НОВЫЙ МЕТОД: показываем экран свайпа с карточкой
+    // ИСПРАВЛЕНО: показываем экран свайпа с карточкой и временем истечения
     showSwipeScreen(data) {
         console.log('Показываем экран свайпа для match_id:', data.match_id);
         
@@ -198,11 +198,10 @@ const Search = {
         // Переходим на экран свайпа
         App.showScreen('swipeScreen', false);
         
-        // Инициализируем свайп с данными оппонента
+        // Инициализируем свайп с данными оппонента и временем истечения
         if (typeof Swipe !== 'undefined') {
-            // Передаем данные оппонента в свайп
             setTimeout(() => {
-                Swipe.startWithOpponent(data.opponent, this.currentMatchId);
+                Swipe.startWithOpponent(data.opponent, this.currentMatchId, data.expires_at);
             }, 100);
         }
     },
