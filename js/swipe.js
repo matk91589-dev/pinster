@@ -1,5 +1,6 @@
 // ============================================
 // СВАЙП-КАРТОЧКИ с автодоводкой и соединением в карточке
+// ИСПРАВЛЕННАЯ ВЕРСИЯ: таймер синхронизируется при переходе на экран ожидания
 // ============================================
 
 const Swipe = {
@@ -39,8 +40,8 @@ const Swipe = {
     serverTime: null,
     matchPolling: null,
     gameCreated: false,
-    matchDuration: null,        // длительность матча в мс
-    matchStartTime: null,       // точное время старта по серверу
+    matchDuration: null,
+    matchStartTime: null,
     
     init(mode) {
         console.log('Swipe.init() with mode:', mode);
@@ -92,7 +93,7 @@ const Swipe = {
         // Вычисляем точную длительность матча
         if (this.matchExpiresAt && this.serverTime) {
             this.matchDuration = this.matchExpiresAt - this.serverTime;
-            this.matchStartTime = this.serverTime; // время старта по серверу
+            this.matchStartTime = this.serverTime;
             console.log(`📊 Длительность матча: ${this.matchDuration/1000}с`);
             console.log(`📊 Старт по серверу: ${new Date(this.matchStartTime).toLocaleString()}`);
         }
@@ -127,7 +128,6 @@ const Swipe = {
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
     },
     
-    // ИСПРАВЛЕННЫЙ МЕТОД: идеально синхронизированный таймер
     startCardTimer() {
         console.log('⏱️ Запуск таймера на карточке');
         
@@ -149,13 +149,8 @@ const Swipe = {
         const clientTimeOffset = Date.now() - (this.serverTime || Date.now());
         
         const updateTimer = () => {
-            // Текущее время с учетом серверной синхронизации
             const now = Date.now() - clientTimeOffset;
-            
-            // Сколько прошло с момента старта матча
             const elapsed = now - this.matchStartTime;
-            
-            // Осталось времени
             const timeLeft = Math.max(0, Math.floor((this.matchDuration - elapsed) / 1000));
             
             if (timeLeft <= 0) {
@@ -175,11 +170,37 @@ const Swipe = {
             timerElement.innerHTML = timeLeft + 'с';
         };
         
-        // Первое обновление через небольшую задержку для точности
         setTimeout(() => {
             updateTimer();
             this.cardTimerInterval = setInterval(updateTimer, 1000);
-        }, 100 - (Date.now() % 1000)); // синхронизация с началом секунды
+        }, 100 - (Date.now() % 1000));
+    },
+    
+    // НОВЫЙ МЕТОД: синхронизация времени с сервером
+    async syncTimeWithServer() {
+        console.log('🔄 Синхронизация времени с сервером');
+        
+        try {
+            const response = await fetch(`https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/status/${this.currentMatchId}`);
+            const data = await response.json();
+            
+            if (data.expires_at) {
+                const serverExpiresAt = new Date(data.expires_at).getTime();
+                const now = Date.now();
+                
+                // Пересчитываем оставшееся время
+                this.matchDuration = serverExpiresAt - now;
+                this.matchStartTime = now;
+                this.serverTime = now;
+                
+                console.log(`✅ Время синхронизировано: осталось ${this.matchDuration/1000}с`);
+                return true;
+            }
+        } catch (error) {
+            console.error('❌ Ошибка синхронизации времени:', error);
+        }
+        
+        return false;
     },
     
     blockScroll() {
@@ -331,7 +352,8 @@ const Swipe = {
         }, this.ANIMATION_DURATION);
     },
     
-    acceptPlayer() {
+    // ИСПРАВЛЕННЫЙ МЕТОД: с синхронизацией времени
+    async acceptPlayer() {
         console.log('✅ Принят игрок:', this.currentPlayer);
         console.log('🎯 matchId:', this.currentMatchId);
         
@@ -349,7 +371,9 @@ const Swipe = {
         this.card.style.transition = 'opacity 0.2s ease';
         this.card.style.opacity = '0';
         
-        setTimeout(() => {
+        setTimeout(async () => {
+            // СИНХРОНИЗИРУЕМ ВРЕМЯ ПЕРЕД ПОКАЗОМ ЭКРАНА ОЖИДАНИЯ
+            await this.syncTimeWithServer();
             this.showConnectionMode();
         }, 200);
         
@@ -377,7 +401,7 @@ const Swipe = {
                 this.handleRejection();
             } else if (data.status === 'waiting') {
                 console.log('⏳ Ожидаем ответа');
-                this.startSyncedTimer();
+                // Таймер уже запущен в showConnectionMode с синхронизированным временем
             } else if (data.status === 'already_responded') {
                 console.log('⚠️ Уже ответили, проверяем статус через polling');
             }
@@ -467,7 +491,7 @@ const Swipe = {
         }, 300);
     },
     
-    // ИСПРАВЛЕННЫЙ МЕТОД: синхронизированный таймер для экрана соединения
+    // ИСПРАВЛЕННЫЙ МЕТОД: с проверкой наличия данных
     startSyncedTimer() {
         console.log('⏱️ Запуск синхронизированного таймера (connection mode)');
         
@@ -479,12 +503,25 @@ const Swipe = {
         const timerElement = document.getElementById('cardConnectionTimer');
         if (!timerElement) return;
         
-        if (!this.matchDuration) {
-            console.warn('⚠️ Нет данных для таймера');
+        // Если нет данных о времени, показываем загрузку и пробуем синхронизировать
+        if (!this.matchDuration || !this.matchStartTime) {
+            console.warn('⚠️ Нет данных для таймера, синхронизируем...');
+            timerElement.innerHTML = `
+                <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" stroke="#FF5500" stroke-width="2"/>
+                    <circle cx="12" cy="12" r="3" fill="#FF5500">
+                        <animate attributeName="r" values="3;5;3" dur="1s" repeatCount="indefinite"/>
+                    </circle>
+                </svg>
+                <span>...</span>
+            `;
+            
+            this.syncTimeWithServer().then(() => {
+                this.startSyncedTimer();
+            });
             return;
         }
         
-        // Используем то же смещение времени, что и для карточки
         const clientTimeOffset = Date.now() - (this.serverTime || Date.now());
         
         const updateTimer = () => {
@@ -528,7 +565,6 @@ const Swipe = {
             `;
         };
         
-        // Синхронизируем с началом секунды
         setTimeout(() => {
             updateTimer();
             this.connectionTimer = setInterval(updateTimer, 1000);
