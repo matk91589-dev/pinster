@@ -10,6 +10,7 @@ const Swipe = {
     loading: null,
     labelLeft: null,
     labelRight: null,
+    timerElement: null,          // элемент таймера на карточке (swipeTimer)
     
     // Переменные для drag
     isDragging: false,
@@ -30,7 +31,8 @@ const Swipe = {
     playersQueue: [],
     mode: 'PREMIER',
     isInitialized: false,
-    connectionTimer: null,
+    connectionTimer: null,        // таймер для экрана соединения
+    cardTimerInterval: null,      // таймер для карточки свайпа
     connectionEndTime: null,
     isConnectionMode: false,
     matchExpiresAt: null, // время истечения мэтча с сервера
@@ -123,6 +125,9 @@ const Swipe = {
         // Показываем карточку с данными оппонента
         this.showPlayer(opponent);
         
+        // Запускаем таймер на карточке
+        this.startCardTimer();
+        
         // Блокируем скролл
         this.blockScroll();
         
@@ -136,6 +141,53 @@ const Swipe = {
         }
         
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
+    },
+    
+    // НОВЫЙ МЕТОД: таймер на карточке свайпа
+    startCardTimer() {
+        // Останавливаем предыдущий таймер, если был
+        if (this.cardTimerInterval) {
+            clearInterval(this.cardTimerInterval);
+            this.cardTimerInterval = null;
+        }
+        
+        const timerElement = document.getElementById('swipeTimer');
+        if (!timerElement) {
+            console.warn('swipeTimer element not found');
+            return;
+        }
+        
+        // Если время истечения не задано, ставим 30 секунд от текущего момента
+        if (!this.matchExpiresAt) {
+            this.matchExpiresAt = Date.now() + 30000;
+        }
+        
+        const updateTimer = () => {
+            const now = Date.now();
+            const diff = Math.max(0, Math.floor((this.matchExpiresAt - now) / 1000));
+            
+            if (diff <= 0) {
+                timerElement.innerHTML = '0с';
+                timerElement.classList.add('warning'); // делаем красным
+                clearInterval(this.cardTimerInterval);
+                this.cardTimerInterval = null;
+                // Можно добавить действие по истечению времени (например, автоматический reject)
+                // Пока ничего не делаем, просто таймер показывает 0.
+                return;
+            }
+            
+            // Меняем цвет, если осталось меньше 10 секунд
+            if (diff < 10) {
+                timerElement.classList.add('warning');
+            } else {
+                timerElement.classList.remove('warning');
+            }
+            
+            timerElement.innerHTML = diff + 'с';
+        };
+        
+        updateTimer();
+        this.cardTimerInterval = setInterval(updateTimer, 1000);
     },
     
     // Полная блокировка скролла
@@ -298,6 +350,12 @@ const Swipe = {
     acceptPlayer() {
         console.log('✅ Принят игрок:', this.currentPlayer);
         
+        // Останавливаем таймер карточки перед переходом в режим соединения
+        if (this.cardTimerInterval) {
+            clearInterval(this.cardTimerInterval);
+            this.cardTimerInterval = null;
+        }
+        
         // Если нет currentMatchId, создаем новый (для тестов)
         if (!this.currentMatchId) {
             this.currentMatchId = Math.floor(100000 + Math.random() * 900000);
@@ -331,7 +389,7 @@ const Swipe = {
                 this.handleRejection();
             } else if (data.status === 'waiting') {
                 console.log('Ожидаем ответа');
-                // Запускаем таймер с синхронизированным временем
+                // Запускаем таймер с синхронизированным временем (для экрана соединения)
                 this.startSyncedTimer();
             } else {
                 console.log('Неизвестный статус:', data);
@@ -348,6 +406,12 @@ const Swipe = {
     
     rejectPlayer() {
         console.log('❌ Пропущен игрок:', this.currentPlayer);
+        
+        // Останавливаем таймер карточки
+        if (this.cardTimerInterval) {
+            clearInterval(this.cardTimerInterval);
+            this.cardTimerInterval = null;
+        }
         
         // Отправляем отказ на сервер
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
@@ -371,9 +435,9 @@ const Swipe = {
         }, 300);
     },
     
-    // НОВЫЙ МЕТОД: синхронизированный таймер с сервером
+    // НОВЫЙ МЕТОД: синхронизированный таймер с сервером (для экрана соединения)
     startSyncedTimer() {
-        console.log('Запуск синхронизированного таймера');
+        console.log('Запуск синхронизированного таймера (connection mode)');
         
         if (this.connectionTimer) {
             clearInterval(this.connectionTimer);
@@ -558,6 +622,17 @@ const Swipe = {
         this.currentMatchId = null;
         this.currentPlayer = null;
         this.matchExpiresAt = null;
+        
+        // Останавливаем все таймеры
+        if (this.cardTimerInterval) {
+            clearInterval(this.cardTimerInterval);
+            this.cardTimerInterval = null;
+        }
+        if (this.connectionTimer) {
+            clearInterval(this.connectionTimer);
+            this.connectionTimer = null;
+        }
+        
         App.showScreen('mainScreen', true);
     },
     
@@ -569,6 +644,9 @@ const Swipe = {
             <div class="swipe-label swipe-label-right" id="swipeLabelRight">INVITE</div>
             
             <div class="swipe-card-content">
+                <!-- Таймер в левом верхнем углу карточки -->
+                <div class="swipe-timer" id="swipeTimer">30с</div>
+                
                 <div class="swipe-player-row">
                     <div class="swipe-avatar">
                         <div class="tg-avatar-svg" style="width: 70px; height: 70px;">
@@ -850,6 +928,10 @@ const Swipe = {
         if (this.connectionTimer) {
             clearInterval(this.connectionTimer);
             this.connectionTimer = null;
+        }
+        if (this.cardTimerInterval) {
+            clearInterval(this.cardTimerInterval);
+            this.cardTimerInterval = null;
         }
     }
 };
