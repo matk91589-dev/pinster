@@ -34,6 +34,9 @@ const App = {
         // Устанавливаем обработчики для кнопок режимов
         this.setupModeButtons();
         
+        // Устанавливаем обработчик для логотипа
+        this.setupLogoHandler();
+        
         // Показываем стартовый экран
         this.showScreen('startScreen', false);
     },
@@ -67,6 +70,62 @@ const App = {
             localStorage.setItem('currentMode', 'MM PUBLIC');
             this.showScreen('publicScreen', false);
         });
+    },
+    
+    setupLogoHandler() {
+        // Обработчик для логотипа Pingster
+        const logo = document.querySelector('.logo');
+        if (logo) {
+            logo.addEventListener('click', () => {
+                this.handleLogoClick();
+            });
+        }
+    },
+    
+    handleLogoClick() {
+        console.log('Клик по логотипу, текущий экран:', this.currentScreen);
+        
+        // Если мы на экране поиска - спрашиваем подтверждение
+        if (this.currentScreen === 'searchScreen') {
+            this.showConfirm('Вы точно хотите отменить поиск?', (confirmed) => {
+                if (confirmed) {
+                    console.log('Пользователь подтвердил отмену поиска');
+                    if (typeof Search !== 'undefined' && Search.cancel) {
+                        Search.cancel();
+                    } else {
+                        // Прямой запрос на остановку
+                        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+                        if (telegram_id) {
+                            fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/search/stop', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ telegram_id: telegram_id })
+                            })
+                            .then(() => this.showScreen('mainScreen', true))
+                            .catch(e => console.error('Ошибка остановки поиска:', e));
+                        }
+                    }
+                } else {
+                    console.log('Пользователь отменил действие');
+                }
+            });
+        } 
+        // Если мы на экране свайпа - тоже можем спросить
+        else if (this.currentScreen === 'swipeScreen') {
+            this.showConfirm('Вы точно хотите выйти из поиска?', (confirmed) => {
+                if (confirmed) {
+                    console.log('Пользователь подтвердил выход со свайпа');
+                    if (typeof Swipe !== 'undefined' && Swipe.destroy) {
+                        Swipe.destroy();
+                    }
+                    this.showScreen('mainScreen', true);
+                }
+            });
+        }
+        // В остальных случаях просто переходим на главную
+        else if (this.currentScreen !== 'mainScreen') {
+            this.showScreen('mainScreen', true);
+        }
     },
     
     handleBack() {
@@ -167,9 +226,9 @@ const App = {
     showScreen(screenId, showNav = true) {
         console.log('Переход с экрана:', this.currentScreen, 'на экран:', screenId);
         
-        // ВАЖНО: Если уходим с экрана поиска - останавливаем поиск
-        if (this.currentScreen === 'searchScreen' && screenId !== 'searchScreen') {
-            console.log('⚠️ Уходим с экрана поиска, принудительно останавливаем поиск');
+        // ВАЖНО: Если уходим с экрана поиска НЕ на свайп - останавливаем поиск
+        if (this.currentScreen === 'searchScreen' && screenId !== 'searchScreen' && screenId !== 'swipeScreen') {
+            console.log('⚠️ Уходим с экрана поиска (не на свайп), принудительно останавливаем поиск');
             if (typeof Search !== 'undefined' && Search.cancel) {
                 Search.cancel();
             } else {
