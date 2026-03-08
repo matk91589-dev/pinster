@@ -86,35 +86,18 @@ const Swipe = {
         this.isConnectionMode = false;
         this.mode = opponent.mode || 'PREMIER';
         
-        // Сохраняем серверное время для синхронизации
+        // Сохраняем серверное время и время истечения
         if (serverTime) {
             this.serverTime = new Date(serverTime).getTime();
             console.log('🕐 serverTime преобразован:', new Date(this.serverTime).toLocaleString());
-        } else {
-            console.warn('⚠️ serverTime не получен!');
         }
         
-        // Сохраняем время истечения мэтча с сервера
         if (expiresAt) {
             if (typeof expiresAt === 'string') {
                 this.matchExpiresAt = new Date(expiresAt).getTime();
                 console.log('⏰ expiresAt преобразован из ISO строки:', new Date(this.matchExpiresAt).toLocaleString());
             }
-            else if (typeof expiresAt === 'number') {
-                this.matchExpiresAt = expiresAt;
-                console.log('⏰ expiresAt число:', new Date(this.matchExpiresAt).toLocaleString());
-            }
-        } else {
-            console.warn('⚠️ expiresAt не получен!');
         }
-        
-        if (!this.matchExpiresAt || isNaN(this.matchExpiresAt)) {
-            this.matchExpiresAt = Date.now() + 30000;
-            console.log('⚠️ Время не получено или неверное, ставим 30 секунд от текущего');
-        }
-        
-        console.log('📊 Мэтч истекает в:', new Date(this.matchExpiresAt).toLocaleTimeString());
-        console.log('⏳ До истечения:', Math.round((this.matchExpiresAt - Date.now())/1000), 'сек');
         
         // Получаем ссылки на элементы
         this.card = document.getElementById('swipeCard');
@@ -156,7 +139,7 @@ const Swipe = {
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
     },
     
-    // НОВЫЙ МЕТОД: таймер на карточке свайпа
+    // ИСПРАВЛЕННЫЙ МЕТОД: таймер на карточке свайпа
     startCardTimer() {
         console.log('⏱️ Запуск таймера на карточке');
         
@@ -171,32 +154,23 @@ const Swipe = {
             return;
         }
         
-        // Корректируем время с учетом серверного времени
-        if (this.serverTime) {
-            const timeDiff = Date.now() - this.serverTime;
-            console.log('📊 Разница клиент-сервер:', timeDiff, 'мс');
-            
-            if (this.matchExpiresAt) {
-                const correctedExpiresAt = this.matchExpiresAt + timeDiff;
-                console.log('📊 Было:', new Date(this.matchExpiresAt).toLocaleString());
-                console.log('📊 Скорректировано:', new Date(correctedExpiresAt).toLocaleString());
-                this.matchExpiresAt = correctedExpiresAt;
-            }
+        if (!this.matchExpiresAt || !this.serverTime) {
+            console.warn('⚠️ Нет данных для синхронизации таймера');
+            timerElement.innerHTML = '30с';
+            return;
         }
         
-        if (!this.matchExpiresAt) {
-            this.matchExpiresAt = Date.now() + 30000;
-            console.log('⚠️ matchExpiresAt не задан, ставим 30с от текущего');
-        }
+        // Вычисляем длительность матча (всегда 30 секунд)
+        const matchDuration = this.matchExpiresAt - this.serverTime;
+        const startTime = Date.now();
         
-        console.log('🎯 matchExpiresAt:', new Date(this.matchExpiresAt).toLocaleString());
-        console.log('⏳ Осталось:', Math.round((this.matchExpiresAt - Date.now())/1000), 'сек');
+        console.log(`📊 Длительность матча: ${matchDuration/1000}с`);
         
         const updateTimer = () => {
-            const now = Date.now();
-            const diff = Math.max(0, Math.floor((this.matchExpiresAt - now) / 1000));
+            const elapsed = Date.now() - startTime;
+            const timeLeft = Math.max(0, Math.floor((matchDuration - elapsed) / 1000));
             
-            if (diff <= 0) {
+            if (timeLeft <= 0) {
                 timerElement.innerHTML = '0с';
                 timerElement.classList.add('warning');
                 clearInterval(this.cardTimerInterval);
@@ -205,13 +179,13 @@ const Swipe = {
                 return;
             }
             
-            if (diff < 10) {
+            if (timeLeft < 10) {
                 timerElement.classList.add('warning');
             } else {
                 timerElement.classList.remove('warning');
             }
             
-            timerElement.innerHTML = diff + 'с';
+            timerElement.innerHTML = timeLeft + 'с';
         };
         
         updateTimer();
@@ -433,9 +407,9 @@ const Swipe = {
         });
     },
     
-    // Новый метод для периодической проверки both_accepted
+    // НОВЫЙ МЕТОД для периодической проверки статуса матча
     startBothAcceptedCheck() {
-        console.log('🔄 Запускаем проверку статуса матча');
+        console.log('🔄 Запускаем проверку статуса матча через /api/match/status');
         
         if (this.bothAcceptedCheckInterval) {
             clearInterval(this.bothAcceptedCheckInterval);
@@ -446,37 +420,25 @@ const Swipe = {
         }, 2000);
     },
     
-    // Новый метод для проверки статуса матча
+    // НОВЫЙ МЕТОД для проверки статуса через специальный эндпоинт
     checkMatchStatus() {
-        console.log('🔍 Проверяем статус матча для matchId:', this.currentMatchId);
+        if (!this.currentMatchId) return;
         
-        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        console.log(`🔍 Проверяем статус матча ${this.currentMatchId} через /api/match/status`);
         
-        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/check', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                telegram_id: telegram_id
-            })
-        })
+        fetch(`https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/status/${this.currentMatchId}`)
         .then(res => res.json())
         .then(data => {
-            console.log('📦 Match check response:', data);
+            console.log('📦 Status response:', data);
             
-            if (data.match_found) {
-                // Проверяем, что оба игрока приняли
-                if (data.player1_response === 'accept' && data.player2_response === 'accept') {
-                    console.log('🎉 Оба приняли (подтверждено проверкой)!');
-                    this.clearBothAcceptedCheck();
-                    this.handleBothAccepted();
-                }
-            } else {
-                console.log('⏹️ Матч больше не активен, останавливаем проверку');
+            if (data.status === 'both_accepted') {
+                console.log('🎉 Оба приняли (подтверждено статусом)!');
                 this.clearBothAcceptedCheck();
+                this.handleBothAccepted();
             }
         })
         .catch(error => {
-            console.error('❌ Error checking match:', error);
+            console.error('❌ Error checking match status:', error);
         });
     },
     
@@ -520,6 +482,7 @@ const Swipe = {
         }, 300);
     },
     
+    // ИСПРАВЛЕННЫЙ МЕТОД: синхронизированный таймер
     startSyncedTimer() {
         console.log('⏱️ Запуск синхронизированного таймера (connection mode)');
         
@@ -534,19 +497,19 @@ const Swipe = {
             return;
         }
         
-        if (this.matchExpiresAt) {
-            this.connectionEndTime = this.matchExpiresAt;
-            console.log('📊 Таймер синхронизирован, истекает в:', new Date(this.connectionEndTime).toLocaleTimeString());
-        } else {
-            this.connectionEndTime = Date.now() + 30000;
-            console.log('⚠️ Время не получено, ставим 30 секунд');
+        if (!this.matchExpiresAt || !this.serverTime) {
+            console.warn('⚠️ Нет данных для синхронизации таймера');
+            return;
         }
         
+        const matchDuration = this.matchExpiresAt - this.serverTime;
+        const startTime = Date.now();
+        
         const updateTimer = () => {
-            const now = Date.now();
-            const diff = Math.max(0, Math.floor((this.connectionEndTime - now) / 1000));
+            const elapsed = Date.now() - startTime;
+            const timeLeft = Math.max(0, Math.floor((matchDuration - elapsed) / 1000));
             
-            if (diff <= 0) {
+            if (timeLeft <= 0) {
                 timerElement.innerHTML = `
                     <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10" stroke="#B00000" stroke-width="2"/>
@@ -561,7 +524,7 @@ const Swipe = {
                 return;
             }
             
-            if (diff < 10) {
+            if (timeLeft < 10) {
                 timerElement.classList.add('warning');
             } else {
                 timerElement.classList.remove('warning');
@@ -569,10 +532,10 @@ const Swipe = {
             
             timerElement.innerHTML = `
                 <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke="${diff < 10 ? '#B00000' : '#FF5500'}" stroke-width="2"/>
-                    <polyline points="12 6 12 12 16 14" stroke="${diff < 10 ? '#B00000' : '#FF5500'}" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="12" cy="12" r="10" stroke="${timeLeft < 10 ? '#B00000' : '#FF5500'}" stroke-width="2"/>
+                    <polyline points="12 6 12 12 16 14" stroke="${timeLeft < 10 ? '#B00000' : '#FF5500'}" stroke-width="2" stroke-linecap="round"/>
                 </svg>
-                <span>${diff}с</span>
+                <span>${timeLeft}с</span>
             `;
         };
         
