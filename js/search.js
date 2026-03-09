@@ -136,6 +136,7 @@ const Search = {
         this.pollingInterval = setInterval(() => this.checkMatchStatus(), 2000);
     },
     
+    // ИСПРАВЛЕННАЯ ФУНКЦИЯ
     checkMatchStatus() {
         // Если не ищем и не ждем партнера - выходим
         if (!this.isSearching && !this.waitingForPartner) {
@@ -158,7 +159,7 @@ const Search = {
         .then(data => {
             console.log('Match check response:', data);
             
-            if (data.match_found && !this.currentMatchId) {
+            if (data.match_found) {
                 console.log('Мэтч найден!');
                 
                 // Проверяем не обрабатывали ли мы уже этот мэтч
@@ -176,6 +177,7 @@ const Search = {
                     // Показываем экран свайпа
                     this.stopPolling();
                     this.showSwipeScreen(data);
+                    this.currentMatchId = data.match_id;
                 }
             }
         })
@@ -512,7 +514,11 @@ const Search = {
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
-    Search.init();
+    console.log('Swipe: DOM загружен');
+    window.Search = Search;
 });
 
-window.Search = Search;
+if (document.getElementById('searchScreen')?.classList.contains('active')) {
+    console.log('Search экран уже активен, инициализируем');
+    setTimeout(() => Search.init(), 100);
+}
