@@ -309,7 +309,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН СВАЙП-КАРТОЧЕК -->
+            <!-- ЭКРАН СВАЙП-КАРТОЧЕК (ИСПРАВЛЕННЫЙ) -->
             <div id="swipeScreen" class="screen swipe-screen">
                 <div class="swipe-header">
                     <div class="swipe-title">Поиск тиммейтов</div>
@@ -356,7 +356,8 @@
 
                             <div class="swipe-rating-line"></div>
 
-                            <div class="swipe-stats-row">
+                            <!-- ТРИ КОЛОНКИ: РАНГ | ВОЗРАСТ | СТИЛЬ -->
+                            <div class="swipe-stats-row three-cols">
                                 <div class="swipe-stat-item">
                                     <div class="swipe-stat-label">РАНГ</div>
                                     <div class="swipe-stat-value" id="swipeRank">Gold Nova 3</div>
@@ -364,6 +365,10 @@
                                 <div class="swipe-stat-item">
                                     <div class="swipe-stat-label">ВОЗРАСТ</div>
                                     <div class="swipe-stat-value" id="swipeAge">21 год</div>
+                                </div>
+                                <div class="swipe-stat-item">
+                                    <div class="swipe-stat-label">СТИЛЬ</div>
+                                    <div class="swipe-stat-value" id="swipeStyle" data-style="fan">🔄 Fan</div>
                                 </div>
                             </div>
 
@@ -390,14 +395,14 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН СОЕДИНЕНИЯ (ОБНОВЛЕННЫЙ) -->
+            <!-- ЭКРАН СОЕДИНЕНИЯ -->
             <div id="connectionScreen" class="screen connection-screen">
                 <!-- Хедер с заголовком -->
                 <div class="swipe-header">
                     <div class="swipe-title">Тиммейт найден</div>
                 </div>
 
-                <!-- Карточка соединения (того же размера что и свайп) -->
+                <!-- Карточка соединения -->
                 <div class="swipe-container" id="connectionContainer">
                     <div class="swipe-card" id="connectionCard">
                         <!-- Таймер в левом верхнем углу -->
@@ -434,7 +439,7 @@
                                 </div>
                             </div>
 
-                            <!-- Статус (теперь "Тиммейт найден") -->
+                            <!-- Статус -->
                             <div class="connection-status" id="connectionStatus">
                                 <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                                     <circle cx="12" cy="12" r="10" stroke="#9BA1B0" stroke-width="2"/>
@@ -463,7 +468,7 @@
                     </div>
                 </div>
 
-                <!-- Индикатор загрузки (скрыт по умолчанию) -->
+                <!-- Индикатор загрузки -->
                 <div class="swipe-loading" id="connectionLoading">
                     <div class="spinner-small"></div>
                 </div>
