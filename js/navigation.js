@@ -1,10 +1,12 @@
 // ============================================
-// НАВИГАЦИЯ (Telegram Mini App версия) - ФИНАЛ
+// НАВИГАЦИЯ (Telegram Mini App версия) - ИСПРАВЛЕНО
+// с защитой от случайного выхода на экране свайпа
 // ============================================
 
 const App = {
     currentScreen: null,
     tg: window.Telegram?.WebApp,
+    backButtonPressed: false, // флаг для защиты от двойного нажатия
     
     init() {
         // Инициализация Telegram
@@ -51,6 +53,20 @@ const App = {
         if (!this.tg) return;
         
         this.tg.BackButton.onClick(() => {
+            console.log('🔙 Нажата кнопка назад на экране:', this.currentScreen);
+            
+            // Защита от двойного нажатия
+            if (this.backButtonPressed) {
+                console.log('⏳ Уже обрабатываем нажатие, игнорируем');
+                return;
+            }
+            this.backButtonPressed = true;
+            
+            // Сбрасываем флаг через секунду
+            setTimeout(() => {
+                this.backButtonPressed = false;
+            }, 1000);
+            
             this.handleBack();
         });
     },
@@ -113,7 +129,7 @@ const App = {
                 }
             });
         } 
-        // Если мы на экране свайпа - тоже можем спросить
+        // Если мы на экране свайпа - спрашиваем подтверждение
         else if (this.currentScreen === 'swipeScreen') {
             this.showConfirm('Вы точно хотите выйти из поиска?', (confirmed) => {
                 if (confirmed) {
@@ -132,13 +148,54 @@ const App = {
     },
     
     handleBack() {
-        // Логика возврата
+        console.log('🔙 Обработка кнопки назад на экране:', this.currentScreen);
+        
+        // Если мы на экране свайпа - спрашиваем подтверждение
+        if (this.currentScreen === 'swipeScreen') {
+            console.log('⚠️ На экране свайпа, спрашиваем подтверждение');
+            this.showConfirm('Вы точно хотите выйти из поиска?', (confirmed) => {
+                if (confirmed) {
+                    console.log('✅ Пользователь подтвердил выход');
+                    if (typeof Swipe !== 'undefined' && Swipe.destroy) {
+                        Swipe.destroy();
+                    }
+                    this.showScreen('mainScreen', true);
+                } else {
+                    console.log('❌ Пользователь отменил выход');
+                }
+            });
+            return; // НЕ ВЫХОДИМ, ПОКА ПОЛЬЗОВАТЕЛЬ НЕ ПОДТВЕРДИТ
+        }
+        
+        // Если мы на экране поиска - спрашиваем подтверждение
+        if (this.currentScreen === 'searchScreen') {
+            console.log('⚠️ На экране поиска, спрашиваем подтверждение');
+            this.showConfirm('Вы точно хотите отменить поиск?', (confirmed) => {
+                if (confirmed) {
+                    console.log('✅ Пользователь подтвердил отмену поиска');
+                    if (typeof Search !== 'undefined' && Search.cancel) {
+                        Search.cancel();
+                    } else {
+                        this.showScreen('mainScreen', true);
+                    }
+                }
+            });
+            return;
+        }
+        
+        // Логика возврата для остальных экранов
         if (this.currentScreen === 'profileScreen' || 
             this.currentScreen === 'shopScreen' || 
-            this.currentScreen === 'settingsScreen') {
+            this.currentScreen === 'settingsScreen' ||
+            this.currentScreen === 'faceitScreen' ||
+            this.currentScreen === 'premierScreen' ||
+            this.currentScreen === 'primeScreen' ||
+            this.currentScreen === 'publicScreen') {
+            console.log('🔙 Возврат на главный экран');
             this.showScreen('mainScreen', true);
         } else if (this.currentScreen !== 'startScreen' && 
                    this.currentScreen !== 'mainScreen') {
+            console.log('🔙 Возврат на главный экран (по умолчанию)');
             this.showScreen('mainScreen', true);
         }
     },
@@ -146,10 +203,18 @@ const App = {
     updateBackButton() {
         if (!this.tg) return;
         
+        // На экране свайпа - всегда прячем кнопку назад, 
+        // чтобы избежать случайного выхода
+        if (this.currentScreen === 'swipeScreen') {
+            console.log('🚫 Прячем кнопку назад на экране свайпа');
+            this.tg.BackButton.hide();
+            return;
+        }
+        
         const screensWithBack = [
             'profileScreen', 'shopScreen', 'settingsScreen',
             'faceitScreen', 'premierScreen', 'primeScreen', 
-            'publicScreen', 'searchScreen', 'swipeScreen'
+            'publicScreen', 'searchScreen'
         ];
         
         if (screensWithBack.includes(this.currentScreen)) {
@@ -288,7 +353,7 @@ const App = {
             this.updateNavHighlight(screenId);
         }
         
-        // Обновляем BackButton
+        // Обновляем BackButton (ВАЖНО: после смены экрана)
         this.updateBackButton();
         
         // Обновляем иконку настроек
