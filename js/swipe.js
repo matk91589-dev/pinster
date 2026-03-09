@@ -1,6 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ПОЛНОСТЬЮ ГОТОВАЯ ВЕРСИЯ
-// с тремя колонками: РАНГ | ВОЗРАСТ | СТИЛЬ
+// СВАЙП-КАРТОЧКИ
 // ============================================
 
 const Swipe = {
@@ -801,7 +800,8 @@ const Swipe = {
         if (!this.currentPlayer) return '';
         
         const timeLeft = this.getTimeLeft();
-        const styleText = this.currentPlayer.style === 'fan' ? '🔄 Fan' : '⚡ Tryhard';
+        const styleText = this.currentPlayer.style === 'fan' ? 'Fan' : 'Tryhard';
+        const styleIcon = this.currentPlayer.style === 'fan' ? '🔄' : '⚡';
         
         return `
             <div class="swipe-label swipe-label-left" id="swipeLabelLeft">SKIP</div>
@@ -848,7 +848,7 @@ const Swipe = {
                     </div>
                     <div class="swipe-stat-item">
                         <div class="swipe-stat-label">СТИЛЬ</div>
-                        <div class="swipe-stat-value" id="swipeStyle">${styleText}</div>
+                        <div class="swipe-stat-value" id="swipeStyle" data-style="${this.currentPlayer.style || 'fan'}">${styleIcon} ${styleText}</div>
                     </div>
                 </div>
 
@@ -982,7 +982,10 @@ const Swipe = {
             
             const styleEl = document.getElementById('swipeStyle');
             if (styleEl) {
-                styleEl.textContent = player.style === 'fan' ? '🔄 Fan' : '⚡ Tryhard';
+                const styleIcon = player.style === 'fan' ? '🔄' : '⚡';
+                const styleText = player.style === 'fan' ? 'Fan' : 'Tryhard';
+                styleEl.innerHTML = `${styleIcon} ${styleText}`;
+                styleEl.setAttribute('data-style', player.style || 'fan');
             }
             
             const steamLinkEl = document.getElementById('swipeSteamLink');
