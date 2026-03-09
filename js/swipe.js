@@ -801,14 +801,13 @@ const Swipe = {
         if (!this.currentPlayer) return '';
         
         const timeLeft = this.getTimeLeft();
-        const styleIcon = this.currentPlayer.style === 'fan' ? '🔄' : '⚡';
         const styleText = this.currentPlayer.style === 'fan' ? 'Fan' : 'Tryhard';
         
         return `
             <div class="swipe-label swipe-label-left" id="swipeLabelLeft">SKIP</div>
             <div class="swipe-label swipe-label-right" id="swipeLabelRight">INVITE</div>
             
-            <div class="swipe-card-content">
+            <div class="swipe-card-content" style="gap: 8px;">
                 <div class="swipe-timer" id="swipeTimer">${timeLeft}с</div>
                 
                 <div class="swipe-player-row">
@@ -836,20 +835,21 @@ const Swipe = {
                     </div>
                 </div>
 
-                <div class="swipe-rating-line"></div>
+                <div class="swipe-rating-line" style="margin: 0 0 4px 0;"></div>
 
-                <div class="swipe-stats-row three-cols">
+                <!-- ТРИ КОЛОНКИ: РАНГ | ВОЗРАСТ | СТИЛЬ (без иконок) -->
+                <div class="swipe-stats-row three-cols" style="margin: 0 0 8px 0;">
                     <div class="swipe-stat-item">
                         <div class="swipe-stat-label">РАНГ</div>
                         <div class="swipe-stat-value" id="swipeRank">${this.currentPlayer.rank || 'Нет'}</div>
                     </div>
                     <div class="swipe-stat-item">
                         <div class="swipe-stat-label">ВОЗРАСТ</div>
-                        <div class="swipe-stat-value" id="swipeAge">${this.currentPlayer.age || '?'} лет</div>
+                        <div class="swipe-stat-value" id="swipeAge">${this.currentPlayer.age || '?'}</div>
                     </div>
                     <div class="swipe-stat-item">
                         <div class="swipe-stat-label">СТИЛЬ</div>
-                        <div class="swipe-stat-value" id="swipeStyle" data-style="${this.currentPlayer.style || 'fan'}">${styleIcon} ${styleText}</div>
+                        <div class="swipe-stat-value" id="swipeStyle" data-style="${this.currentPlayer.style || 'fan'}">${styleText}</div>
                     </div>
                 </div>
 
@@ -979,13 +979,12 @@ const Swipe = {
             if (rankEl) rankEl.textContent = player.rank || 'Нет';
             
             const ageEl = document.getElementById('swipeAge');
-            if (ageEl) ageEl.textContent = (player.age || '?') + ' лет';
+            if (ageEl) ageEl.textContent = (player.age || '?');
             
             const styleEl = document.getElementById('swipeStyle');
             if (styleEl) {
-                const styleIcon = player.style === 'fan' ? '🔄' : '⚡';
                 const styleText = player.style === 'fan' ? 'Fan' : 'Tryhard';
-                styleEl.innerHTML = `${styleIcon} ${styleText}`;
+                styleEl.textContent = styleText;
                 styleEl.setAttribute('data-style', player.style || 'fan');
             }
             
@@ -1080,4 +1079,4 @@ document.addEventListener('DOMContentLoaded', () => {
 if (document.getElementById('swipeScreen')?.classList.contains('active')) {
     console.log('Swipe экран уже активен, инициализируем');
     setTimeout(() => Swipe.init(), 100);
-}
+} 
