@@ -3160,4 +3160,67 @@ html{
 scroll-behavior:smooth;
 }
 
+/* ================================= */
+/* ===== ТРИ КОЛОНКИ НА КАРТОЧКЕ ===== */
+/* ================================= */
 
+/* Контейнер для трех колонок */
+.swipe-stats-row.three-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin: 10px 0 16px 0;
+}
+
+/* Адаптация для маленьких экранов */
+@media (max-width: 360px) {
+    .swipe-stats-row.three-cols {
+        gap: 4px;
+    }
+    
+    .swipe-stat-item .swipe-stat-label {
+        font-size: 9px;
+        white-space: nowrap;
+    }
+    
+    .swipe-stat-item .swipe-stat-value {
+        font-size: 12px;
+        padding: 10px 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* Стиль для иконок Fan/Tryhard */
+#swipeStyle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+#swipeStyle::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    margin-right: 4px;
+}
+
+/* Fan - зеленый оттенок */
+#swipeStyle:contains("Fan") {
+    color: #4CAF50;
+}
+
+/* Tryhard - оранжевый/красный оттенок */
+#swipeStyle:contains("Tryhard") {
+    color: #FF5500;
+}
+
+/* Убедимся что старые стили не мешают */
+.swipe-stats-row:not(.three-cols) {
+    display: none;
+}
