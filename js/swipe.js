@@ -1,6 +1,6 @@
 // ============================================
 // СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
-// с правильной синхронизацией времени и без фейк-игроков
+// с защитой от повторных вызовов и логированием
 // ============================================
 
 const Swipe = {
@@ -59,7 +59,6 @@ const Swipe = {
         this.blockScroll();
         this.showHintOnce();
         
-        // Убираем loadNextPlayer() - теперь только реальные игроки
         // Просто показываем заглушку загрузки
         if (this.loading) this.loading.classList.add('active');
         
@@ -70,6 +69,17 @@ const Swipe = {
     },
     
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
+        // Защита от повторного вызова с тем же matchId
+        if (this.currentMatchId === matchId) {
+            console.log('⚠️ startWithOpponent: уже показываем этот матч, игнорируем');
+            return;
+        }
+        // Если уже есть активный матч, но другой, выходим из предыдущего
+        if (this.currentMatchId && this.currentMatchId !== matchId) {
+            console.warn('⚠️ startWithOpponent: заменяем текущий матч', this.currentMatchId, 'на', matchId);
+            this.exitSwipeMode('замена матча');
+        }
+
         console.log('🔄 Swipe.startWithOpponent() вызван');
         console.log('📦 opponent:', opponent);
         console.log('📦 matchId:', matchId);
@@ -98,12 +108,11 @@ const Swipe = {
             this.serverTime = Date.now();
         }
         
-        // ИСПРАВЛЕНИЕ: синхронизируем время клиента с сервером
+        // Синхронизируем время клиента с сервером
         const clientNow = Date.now();
         const serverNow = this.serverTime;
-        const timeDiff = clientNow - serverNow; // положительное = клиент спешит, отрицательное = отстает
+        const timeDiff = clientNow - serverNow; // положительное = клиент спешит
         
-        // Корректируем текущее время
         const correctedNow = clientNow - timeDiff;
         const timeLeft = Math.floor((this.matchExpiresAt - correctedNow) / 1000);
         
@@ -113,18 +122,17 @@ const Swipe = {
         console.log(`⏰ Осталось времени (скорректировано): ${timeLeft}с`);
         
         if (timeLeft <= 0) {
-            console.warn('⚠️ Матч уже истек!');
-            this.exitSwipeMode();
+            console.warn('⚠️ Матч уже истек! timeLeft =', timeLeft);
+            this.exitSwipeMode('timeLeft <= 0 в startWithOpponent');
             return;
         }
         
-        if (timeLeft > 35) { // Защита от совсем диких значений
+        if (timeLeft > 35) {
             console.warn('⚠️ Слишком много времени, возможно ошибка синхронизации');
-            // Используем время клиента как fallback
             const fallbackTimeLeft = Math.floor((this.matchExpiresAt - clientNow) / 1000);
             if (fallbackTimeLeft <= 0 || fallbackTimeLeft > 35) {
                 console.error('❌ Критическая ошибка времени');
-                this.exitSwipeMode();
+                this.exitSwipeMode('критическая ошибка времени');
                 return;
             }
         }
@@ -162,7 +170,7 @@ const Swipe = {
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
     },
     
-    // ИСПРАВЛЕННЫЙ МЕТОД с синхронизацией времени
+    // Метод с синхронизацией времени
     getTimeLeft() {
         if (!this.matchExpiresAt) {
             console.warn('⚠️ matchExpiresAt не установлен');
@@ -192,19 +200,19 @@ const Swipe = {
             return;
         }
         
-        // Первое обновление
         const initialTimeLeft = this.getTimeLeft();
         console.log(`⏰ Первоначальное время: ${initialTimeLeft}с`);
         
         if (initialTimeLeft <= 0) {
+            console.warn('⚠️ startCardTimer: initialTimeLeft <= 0', initialTimeLeft);
             timerElement.innerHTML = '0с';
-            this.exitSwipeMode();
+            this.exitSwipeMode('таймер с нуля');
             return;
         }
         
         if (initialTimeLeft > 35) {
-            console.error('❌ Некорректное время таймера:', initialTimeLeft);
-            this.exitSwipeMode();
+            console.error('❌ startCardTimer: некорректное время', initialTimeLeft);
+            this.exitSwipeMode('таймер >35');
             return;
         }
         
@@ -218,7 +226,7 @@ const Swipe = {
                 timerElement.classList.add('warning');
                 clearInterval(this.cardTimerInterval);
                 this.cardTimerInterval = null;
-                this.exitSwipeMode();
+                this.exitSwipeMode('таймер истек на карточке');
                 return;
             }
             
@@ -394,7 +402,7 @@ const Swipe = {
         
         if (!this.currentMatchId) {
             console.error('❌ Нет currentMatchId!');
-            this.exitSwipeMode();
+            this.exitSwipeMode('acceptPlayer: нет matchId');
             return;
         }
         
@@ -513,7 +521,7 @@ const Swipe = {
         }
         
         setTimeout(() => {
-            this.exitSwipeMode();
+            this.exitSwipeMode('rejectPlayer');
         }, 300);
     },
     
@@ -765,12 +773,12 @@ const Swipe = {
         this.card.style.opacity = '0';
         
         setTimeout(() => {
-            this.exitSwipeMode();
+            this.exitSwipeMode('exitConnectionMode');
         }, 200);
     },
     
-    exitSwipeMode() {
-        console.log('🔄 Выход из режима свайпа');
+    exitSwipeMode(reason = 'неизвестно') {
+        console.log(`🔄 Выход из режима свайпа. Причина: ${reason}`);
         this.unblockScroll();
         this.isConnectionMode = false;
         this.currentMatchId = null;
@@ -885,7 +893,7 @@ const Swipe = {
         }
         
         setTimeout(() => {
-            this.exitSwipeMode();
+            this.exitSwipeMode('connectionTimeout');
         }, 2000);
     },
     
@@ -916,7 +924,7 @@ const Swipe = {
         }
         
         setTimeout(() => {
-            this.exitSwipeMode();
+            this.exitSwipeMode('handleRejection');
         }, 2000);
     },
     
@@ -925,7 +933,7 @@ const Swipe = {
         
         if (!this.currentMatchId) {
             console.log('Нет active match');
-            this.exitSwipeMode();
+            this.exitSwipeMode('createGame: нет matchId');
             return;
         }
         
@@ -944,11 +952,11 @@ const Swipe = {
                 window.Telegram.WebApp.openTelegramLink(data.chat_link);
             }
             
-            this.exitSwipeMode();
+            this.exitSwipeMode('game created');
         })
         .catch(error => {
             console.error('Error creating game:', error);
-            this.exitSwipeMode();
+            this.exitSwipeMode('createGame error');
         });
     },
     
