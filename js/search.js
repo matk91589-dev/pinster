@@ -187,28 +187,32 @@ const Search = {
     // ИСПРАВЛЕНО: показываем экран свайпа с карточкой, временем истечения и серверным временем
     showSwipeScreen(data) {
         console.log('Показываем экран свайпа для match_id:', data.match_id);
-        console.log('Данные от сервера:', data); // для отладки
+        console.log('Данные от сервера:', data);
     
         this.currentMatchId = data.match_id;
         this.myResponse = null;
         this.isSearching = false;
     
-        // Сохраняем данные оппонента
+        // Сохраняем данные оппонента (на всякий случай)
         localStorage.setItem('opponentData', JSON.stringify(data.opponent));
+        localStorage.setItem('matchExpiresAt', data.expires_at);
+        localStorage.setItem('serverTime', data.server_time);
+        localStorage.setItem('currentMatchId', data.match_id);
     
         // Переходим на экран свайпа
         App.showScreen('swipeScreen', false);
     
         // Инициализируем свайп с данными оппонента, временем истечения и серверным временем
         if (typeof Swipe !== 'undefined') {
-            setTimeout(() => {
-                Swipe.startWithOpponent(
-                    data.opponent, 
-                    this.currentMatchId, 
-                    data.expires_at,
-                    data.server_time  // ← добавляем server_time для синхронизации таймера
-                );
-            }, 100);
+            // УБИРАЕМ setTimeout - вызываем сразу после перехода
+            Swipe.startWithOpponent(
+                data.opponent, 
+                this.currentMatchId, 
+                data.expires_at,
+                data.server_time
+            );
+        } else {
+            console.error('❌ Swipe не найден!');
         }
     },
     
