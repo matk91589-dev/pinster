@@ -1,6 +1,6 @@
 // ============================================
 // СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
-// с защитой от повторных вызовов и логированием
+// с работающим таймером на карточке
 // ============================================
 
 const Swipe = {
@@ -39,6 +39,7 @@ const Swipe = {
     serverTime: null,
     matchPolling: null,
     gameCreated: false,
+    timeDiff: 0, // Добавляем смещение времени для постоянного использования
     
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
@@ -108,17 +109,17 @@ const Swipe = {
             this.serverTime = Date.now();
         }
         
-        // Синхронизируем время клиента с сервером
+        // ВЫЧИСЛЯЕМ И СОХРАНЯЕМ РАЗНИЦУ ВРЕМЕНИ МЕЖДУ КЛИЕНТОМ И СЕРВЕРОМ
         const clientNow = Date.now();
         const serverNow = this.serverTime;
-        const timeDiff = clientNow - serverNow; // положительное = клиент спешит
+        this.timeDiff = clientNow - serverNow; // положительное = клиент спешит
         
-        const correctedNow = clientNow - timeDiff;
+        const correctedNow = clientNow - this.timeDiff;
         const timeLeft = Math.floor((this.matchExpiresAt - correctedNow) / 1000);
         
         console.log(`⏰ Серверное время: ${new Date(serverNow).toLocaleString()}`);
         console.log(`⏰ Клиентское время: ${new Date(clientNow).toLocaleString()}`);
-        console.log(`⏰ Разница: ${timeDiff}мс`);
+        console.log(`⏰ Разница времени (сохранена): ${this.timeDiff}мс`);
         console.log(`⏰ Осталось времени (скорректировано): ${timeLeft}с`);
         
         if (timeLeft <= 0) {
@@ -170,19 +171,24 @@ const Swipe = {
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
     },
     
-    // Метод с синхронизацией времени
+    // ИСПРАВЛЕННЫЙ МЕТОД: всегда использует сохраненную разницу времени
     getTimeLeft() {
         if (!this.matchExpiresAt) {
             console.warn('⚠️ matchExpiresAt не установлен');
             return 30;
         }
         
+        // Используем сохраненную разницу времени для коррекции
         const clientNow = Date.now();
-        const serverNow = this.serverTime || clientNow;
-        const timeDiff = clientNow - serverNow;
-        const correctedNow = clientNow - timeDiff;
+        const correctedNow = clientNow - this.timeDiff;
         
         const timeLeft = Math.max(0, Math.floor((this.matchExpiresAt - correctedNow) / 1000));
+        
+        // Логируем каждый 5-й вызов для отладки (не засоряем консоль)
+        if (Math.random() < 0.05) {
+            console.log(`⏰ getTimeLeft: ${timeLeft}с (expires: ${new Date(this.matchExpiresAt).toLocaleTimeString()}, сейчас: ${new Date(correctedNow).toLocaleTimeString()})`);
+        }
+        
         return timeLeft;
     },
     
@@ -200,29 +206,37 @@ const Swipe = {
             return;
         }
         
-        const initialTimeLeft = this.getTimeLeft();
-        console.log(`⏰ Первоначальное время: ${initialTimeLeft}с`);
+        // Проверяем начальное время
+        const checkTime = () => {
+            const currentTimeLeft = this.getTimeLeft();
+            console.log(`⏰ Текущее время на карточке: ${currentTimeLeft}с`);
+            
+            if (currentTimeLeft <= 0) {
+                console.warn('⚠️ startCardTimer: время истекло', currentTimeLeft);
+                timerElement.innerHTML = '0с';
+                this.exitSwipeMode('таймер с нуля');
+                return false;
+            }
+            
+            if (currentTimeLeft > 35) {
+                console.error('❌ startCardTimer: некорректное время', currentTimeLeft);
+                this.exitSwipeMode('таймер >35');
+                return false;
+            }
+            
+            return true;
+        };
         
-        if (initialTimeLeft <= 0) {
-            console.warn('⚠️ startCardTimer: initialTimeLeft <= 0', initialTimeLeft);
-            timerElement.innerHTML = '0с';
-            this.exitSwipeMode('таймер с нуля');
-            return;
-        }
+        // Первая проверка
+        if (!checkTime()) return;
         
-        if (initialTimeLeft > 35) {
-            console.error('❌ startCardTimer: некорректное время', initialTimeLeft);
-            this.exitSwipeMode('таймер >35');
-            return;
-        }
-        
-        timerElement.innerHTML = initialTimeLeft + 'с';
-        
+        // Функция обновления таймера
         const updateTimer = () => {
             const timeLeft = this.getTimeLeft();
             
+            timerElement.innerHTML = timeLeft + 'с';
+            
             if (timeLeft <= 0) {
-                timerElement.innerHTML = '0с';
                 timerElement.classList.add('warning');
                 clearInterval(this.cardTimerInterval);
                 this.cardTimerInterval = null;
@@ -235,10 +249,12 @@ const Swipe = {
             } else {
                 timerElement.classList.remove('warning');
             }
-            
-            timerElement.innerHTML = timeLeft + 'с';
         };
         
+        // Первое обновление
+        updateTimer();
+        
+        // Запускаем интервал
         this.cardTimerInterval = setInterval(updateTimer, 1000);
     },
     
@@ -536,13 +552,18 @@ const Swipe = {
         const timerElement = document.getElementById('cardConnectionTimer');
         if (!timerElement) return;
         
-        const initialTimeLeft = this.getTimeLeft();
-        console.log(`⏰ Время на экране ожидания: ${initialTimeLeft}с`);
+        const checkTime = () => {
+            const initialTimeLeft = this.getTimeLeft();
+            console.log(`⏰ Время на экране ожидания: ${initialTimeLeft}с`);
+            
+            if (initialTimeLeft <= 0) {
+                this.connectionTimeout();
+                return false;
+            }
+            return true;
+        };
         
-        if (initialTimeLeft <= 0) {
-            this.connectionTimeout();
-            return;
-        }
+        if (!checkTime()) return;
         
         const updateTimer = () => {
             const timeLeft = this.getTimeLeft();
@@ -695,10 +716,8 @@ const Swipe = {
         
         this.gameCreated = true;
         
-        if (this.connectionTimer) {
-            clearInterval(this.connectionTimer);
-            this.connectionTimer = null;
-        }
+        // НЕ ОСТАНАВЛИВАЕМ ТАЙМЕР, просто показываем анимацию
+        // Таймер продолжит тикать, но мы его скроем через opacity
         
         if (this.matchPolling) {
             clearInterval(this.matchPolling);
@@ -786,6 +805,7 @@ const Swipe = {
         this.matchExpiresAt = null;
         this.serverTime = null;
         this.gameCreated = false;
+        this.timeDiff = 0;
         
         if (this.cardTimerInterval) {
             clearInterval(this.cardTimerInterval);
