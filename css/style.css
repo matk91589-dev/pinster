@@ -3161,70 +3161,150 @@ scroll-behavior:smooth;
 }
 
 /* ================================= */
-/* ===== ТРИ КОЛОНКИ НА КАРТОЧКЕ ===== */
+/* ===== ТРИ КОЛОНКИ ===== */
 /* ================================= */
 
-/* Убираем старый двухколоночный вариант */
-.swipe-stats-row {
-    display: none !important;
-}
-
-/* Новый контейнер для трех колонок */
 .swipe-stats-row.three-cols {
     display: grid !important;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 6px;
-    margin: 4px 0 10px 0;
+    margin: 0 0 12px 0;
 }
 
-/* Стили для элементов внутри трех колонок */
 .swipe-stats-row.three-cols .swipe-stat-item {
-    flex: unset;
+    position: relative;
     width: 100%;
-    min-width: 0;
+    margin: 0;
+    padding: 0;
 }
 
+/* НАДПИСЬ (РАНГ/ВОЗРАСТ/СТИЛЬ) - В ЛЕВОМ ВЕРХНЕМ УГЛУ */
 .swipe-stats-row.three-cols .swipe-stat-label {
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text-secondary);
-    font-weight: 600;
-    margin-bottom: 4px;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    text-align: center;
+    letter-spacing: 0.3px;
+    
+    position: absolute;
+    top: -14px;
+    left: 0; /* СДВИНУЛ ВЛЕВО */
+    
+    margin: 0;
+    padding: 0;
+    line-height: 1;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    opacity: 0.8;
 }
 
+/* ПЛАШКА - сразу под надписью */
 .swipe-stats-row.three-cols .swipe-stat-value {
     width: 100%;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
-    padding: 8px 6px;
+    padding: 12px 8px;
+    
     color: var(--text-primary);
     font-size: 14px;
     font-weight: 500;
     text-align: center;
+    
+    margin: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Адаптация для маленьких экранов */
-@media (max-width: 360px) {
-    .swipe-stats-row.three-cols {
-        gap: 4px;
-    }
+/* ================================= */
+/* ===== STEAM И FACEIT ===== */
+/* ================================= */
+
+.swipe-steam-container,
+.swipe-faceit-container {
+    position: relative;
+    margin: 0 0 12px 0;
+    width: 100%;
+}
+
+/* НАДПИСЬ (Ссылка Steam / Ссылка Faceit) - В ЛЕВОМ ВЕРХНЕМ УГЛУ */
+.swipe-link-label {
+    font-size: 9px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
     
-    .swipe-stats-row.three-cols .swipe-stat-label {
-        font-size: 9px;
-        margin-bottom: 3px;
-    }
+    position: absolute;
+    top: -14px;
+    left: 0; /* СДВИНУЛ ВЛЕВО */
     
-    .swipe-stats-row.three-cols .swipe-stat-value {
-        font-size: 12px;
-        padding: 6px 4px;
-    }
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0.8;
+}
+
+/* ПЛАШКА */
+.swipe-link-value {
+    width: 100%;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 8px;
+    padding: 12px 14px;
+    
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 500;
+    
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ================================= */
+/* ===== КОММЕНТАРИЙ (уже правильно) ===== */
+/* ================================= */
+
+.swipe-comment {
+    position: relative;
+    margin: 0;
+    width: 100%;
+}
+
+.swipe-comment-label {
+    font-size: 9px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    
+    position: absolute;
+    top: -14px;
+    left: 0;
+    
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0.8;
+}
+
+.swipe-comment-text {
+    width: 100%;
+    background: #1A1D24;
+    border: 1px solid #2A2F3A;
+    border-radius: 8px;
+    padding: 12px 14px;
+    
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 500;
+    
+    margin: 0;
+    min-height: 70px;
+    word-wrap: break-word;
+    line-height: 1.5;
 }
