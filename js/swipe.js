@@ -1,6 +1,6 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
-// с работающим таймером на карточке
+// СВАЙП-КАРТОЧКИ - ПОЛНОСТЬЮ ГОТОВАЯ ВЕРСИЯ
+// с тремя колонками: РАНГ | ВОЗРАСТ | СТИЛЬ
 // ============================================
 
 const Swipe = {
@@ -39,7 +39,7 @@ const Swipe = {
     serverTime: null,
     matchPolling: null,
     gameCreated: false,
-    timeDiff: 0, // Добавляем смещение времени для постоянного использования
+    timeDiff: 0,
     
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
@@ -60,7 +60,6 @@ const Swipe = {
         this.blockScroll();
         this.showHintOnce();
         
-        // Просто показываем заглушку загрузки
         if (this.loading) this.loading.classList.add('active');
         
         if (!this.isInitialized) {
@@ -70,12 +69,10 @@ const Swipe = {
     },
     
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
-        // Защита от повторного вызова с тем же matchId
         if (this.currentMatchId === matchId) {
             console.log('⚠️ startWithOpponent: уже показываем этот матч, игнорируем');
             return;
         }
-        // Если уже есть активный матч, но другой, выходим из предыдущего
         if (this.currentMatchId && this.currentMatchId !== matchId) {
             console.warn('⚠️ startWithOpponent: заменяем текущий матч', this.currentMatchId, 'на', matchId);
             this.exitSwipeMode('замена матча');
@@ -93,7 +90,6 @@ const Swipe = {
         this.mode = opponent.mode || 'PREMIER';
         this.gameCreated = false;
         
-        // СОХРАНЯЕМ ВРЕМЯ С СЕРВЕРА
         if (expiresAt) {
             if (typeof expiresAt === 'string') {
                 this.matchExpiresAt = new Date(expiresAt).getTime();
@@ -109,10 +105,9 @@ const Swipe = {
             this.serverTime = Date.now();
         }
         
-        // ВЫЧИСЛЯЕМ И СОХРАНЯЕМ РАЗНИЦУ ВРЕМЕНИ МЕЖДУ КЛИЕНТОМ И СЕРВЕРОМ
         const clientNow = Date.now();
         const serverNow = this.serverTime;
-        this.timeDiff = clientNow - serverNow; // положительное = клиент спешит
+        this.timeDiff = clientNow - serverNow;
         
         const correctedNow = clientNow - this.timeDiff;
         const timeLeft = Math.floor((this.matchExpiresAt - correctedNow) / 1000);
@@ -150,7 +145,6 @@ const Swipe = {
             return;
         }
         
-        // Скрываем загрузку
         if (this.loading) this.loading.classList.remove('active');
         
         this.card.style.transition = 'none';
@@ -171,23 +165,14 @@ const Swipe = {
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
     },
     
-    // ИСПРАВЛЕННЫЙ МЕТОД: всегда использует сохраненную разницу времени
     getTimeLeft() {
         if (!this.matchExpiresAt) {
-            console.warn('⚠️ matchExpiresAt не установлен');
             return 30;
         }
         
-        // Используем сохраненную разницу времени для коррекции
         const clientNow = Date.now();
         const correctedNow = clientNow - this.timeDiff;
-        
         const timeLeft = Math.max(0, Math.floor((this.matchExpiresAt - correctedNow) / 1000));
-        
-        // Логируем каждый 5-й вызов для отладки (не засоряем консоль)
-        if (Math.random() < 0.05) {
-            console.log(`⏰ getTimeLeft: ${timeLeft}с (expires: ${new Date(this.matchExpiresAt).toLocaleTimeString()}, сейчас: ${new Date(correctedNow).toLocaleTimeString()})`);
-        }
         
         return timeLeft;
     },
@@ -206,10 +191,8 @@ const Swipe = {
             return;
         }
         
-        // Проверяем начальное время
         const checkTime = () => {
             const currentTimeLeft = this.getTimeLeft();
-            console.log(`⏰ Текущее время на карточке: ${currentTimeLeft}с`);
             
             if (currentTimeLeft <= 0) {
                 console.warn('⚠️ startCardTimer: время истекло', currentTimeLeft);
@@ -227,10 +210,8 @@ const Swipe = {
             return true;
         };
         
-        // Первая проверка
         if (!checkTime()) return;
         
-        // Функция обновления таймера
         const updateTimer = () => {
             const timeLeft = this.getTimeLeft();
             
@@ -251,10 +232,7 @@ const Swipe = {
             }
         };
         
-        // Первое обновление
         updateTimer();
-        
-        // Запускаем интервал
         this.cardTimerInterval = setInterval(updateTimer, 1000);
     },
     
@@ -554,7 +532,6 @@ const Swipe = {
         
         const checkTime = () => {
             const initialTimeLeft = this.getTimeLeft();
-            console.log(`⏰ Время на экране ожидания: ${initialTimeLeft}с`);
             
             if (initialTimeLeft <= 0) {
                 this.connectionTimeout();
@@ -716,9 +693,6 @@ const Swipe = {
         
         this.gameCreated = true;
         
-        // НЕ ОСТАНАВЛИВАЕМ ТАЙМЕР, просто показываем анимацию
-        // Таймер продолжит тикать, но мы его скроем через opacity
-        
         if (this.matchPolling) {
             clearInterval(this.matchPolling);
             this.matchPolling = null;
@@ -827,6 +801,7 @@ const Swipe = {
         if (!this.currentPlayer) return '';
         
         const timeLeft = this.getTimeLeft();
+        const styleText = this.currentPlayer.style === 'fan' ? '🔄 Fan' : '⚡ Tryhard';
         
         return `
             <div class="swipe-label swipe-label-left" id="swipeLabelLeft">SKIP</div>
@@ -862,7 +837,7 @@ const Swipe = {
 
                 <div class="swipe-rating-line"></div>
 
-                <div class="swipe-stats-row">
+                <div class="swipe-stats-row three-cols">
                     <div class="swipe-stat-item">
                         <div class="swipe-stat-label">РАНГ</div>
                         <div class="swipe-stat-value" id="swipeRank">${this.currentPlayer.rank || 'Нет'}</div>
@@ -870,6 +845,10 @@ const Swipe = {
                     <div class="swipe-stat-item">
                         <div class="swipe-stat-label">ВОЗРАСТ</div>
                         <div class="swipe-stat-value" id="swipeAge">${this.currentPlayer.age || '?'} лет</div>
+                    </div>
+                    <div class="swipe-stat-item">
+                        <div class="swipe-stat-label">СТИЛЬ</div>
+                        <div class="swipe-stat-value" id="swipeStyle">${styleText}</div>
                     </div>
                 </div>
 
@@ -980,9 +959,6 @@ const Swipe = {
         });
     },
     
-    // Убрал loadNextPlayer с фейковыми игроками
-    // Теперь только реальные игроки приходят через startWithOpponent
-    
     showPlayer(player) {
         this.currentPlayer = player;
         
@@ -1003,6 +979,11 @@ const Swipe = {
             
             const ageEl = document.getElementById('swipeAge');
             if (ageEl) ageEl.textContent = (player.age || '?') + ' лет';
+            
+            const styleEl = document.getElementById('swipeStyle');
+            if (styleEl) {
+                styleEl.textContent = player.style === 'fan' ? '🔄 Fan' : '⚡ Tryhard';
+            }
             
             const steamLinkEl = document.getElementById('swipeSteamLink');
             if (steamLinkEl) steamLinkEl.textContent = player.steam_link || 'не указана';
@@ -1055,7 +1036,6 @@ const Swipe = {
         this.blockScroll();
         
         if (this.card) {
-            // Показываем загрузку вместо фейковых игроков
             if (this.loading) this.loading.classList.add('active');
         } else {
             this.init(mode);
