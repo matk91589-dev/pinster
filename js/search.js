@@ -14,16 +14,14 @@ const Search = {
     matchEndTime: null,
     myResponse: null,
     isSearching: false,
-    processedMatchIds: new Set(), // храним ID обработанных мэтчей
+    processedMatchIds: new Set(),
     
     init() {
         this.resetTimer();
         console.log('Search.init()');
         
-        // Сразу начинаем проверять мэтчи при загрузке
         setTimeout(() => this.startPolling(), 1000);
         
-        // Добавляем проверку при фокусе на приложение
         if (window.Telegram?.WebApp) {
             window.Telegram.WebApp.onEvent('activated', () => {
                 console.log('App activated, checking match...');
@@ -32,7 +30,6 @@ const Search = {
         }
     },
     
-    // Безопасное получение Telegram ID
     getTelegramId() {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
     },
@@ -47,11 +44,9 @@ const Search = {
         }
     },
     
-    // НАЧАТЬ ПОИСК
     start(mode, value) {
         console.log('Search.start called with mode:', mode);
         
-        // Проверяем не заблокирован ли поиск
         if (this.blockUntil && Date.now() < this.blockUntil) {
             const waitSeconds = Math.ceil((this.blockUntil - Date.now()) / 1000);
             const statusEl = document.getElementById('searchStatus');
@@ -62,18 +57,12 @@ const Search = {
             return;
         }
         
-        // Сбрасываем флаги
         this.waitingForPartner = false;
         this.myResponse = null;
         this.isSearching = true;
-        
-        // Очищаем processedMatchIds при новом поиске
         this.processedMatchIds.clear();
-        
-        // Сохраняем текущий режим
         this.currentMode = mode;
         
-        // Показываем экран поиска
         this.showSearchScreen(mode);
     },
     
@@ -87,13 +76,11 @@ const Search = {
             comment: ''
         };
         
-        // Определяем стиль
         const activeStyle = document.querySelector('.style-option.active');
         if (activeStyle) {
             data.style = activeStyle.classList.contains('fan') ? 'fan' : 'tryhard';
         }
         
-        // Собираем данные в зависимости от режима
         if (mode === 'FACEIT') {
             data.rating_value = parseInt(document.getElementById('faceitELOInput')?.value) || 0;
             data.age = parseInt(document.getElementById('faceitAgeValue')?.value) || 21;
@@ -136,9 +123,8 @@ const Search = {
         this.pollingInterval = setInterval(() => this.checkMatchStatus(), 2000);
     },
     
-    // ИСПРАВЛЕННАЯ ФУНКЦИЯ - УБРАЛ ПРОВЕРКУ processedMatchIds
+    // ИСПРАВЛЕННАЯ ФУНКЦИЯ С ПРОВЕРКОЙ ОШИБОК
     checkMatchStatus() {
-        // Если не ищем и не ждем партнера - выходим
         if (!this.isSearching && !this.waitingForPartner) {
             return;
         }
@@ -155,21 +141,29 @@ const Search = {
                 telegram_id: telegram_id
             })
         })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) {
+                console.error('HTTP ошибка:', res.status, res.statusText);
+                return null;
+            }
+            return res.json();
+        })
         .then(data => {
+            if (!data) {
+                console.log('Пустой ответ от сервера');
+                return;
+            }
+            
             console.log('Match check response:', data);
             
             if (data.match_found) {
                 console.log('Мэтч найден!');
                 
-                // Просто добавляем в processedMatchIds, но НЕ ПРОВЕРЯЕМ
                 this.processedMatchIds.add(data.match_id);
                 
-                // Если мы уже ждем ответа партнера, обновляем статус
                 if (this.waitingForPartner) {
                     this.updateWaitingStatus(data);
                 } else {
-                    // Показываем экран свайпа
                     this.stopPolling();
                     this.showSwipeScreen(data);
                     this.currentMatchId = data.match_id;
@@ -181,7 +175,6 @@ const Search = {
         });
     },
     
-    // ИСПРАВЛЕНО: показываем экран свайпа с карточкой, временем истечения и серверным временем
     showSwipeScreen(data) {
         console.log('Показываем экран свайпа для match_id:', data.match_id);
         console.log('Данные от сервера:', data);
@@ -190,18 +183,14 @@ const Search = {
         this.myResponse = null;
         this.isSearching = false;
     
-        // Сохраняем данные оппонента (на всякий случай)
         localStorage.setItem('opponentData', JSON.stringify(data.opponent));
         localStorage.setItem('matchExpiresAt', data.expires_at);
         localStorage.setItem('serverTime', data.server_time);
         localStorage.setItem('currentMatchId', data.match_id);
     
-        // Переходим на экран свайпа
         App.showScreen('swipeScreen', false);
     
-        // Инициализируем свайп с данными оппонента, временем истечения и серверным временем
         if (typeof Swipe !== 'undefined') {
-            // УБИРАЕМ setTimeout - вызываем сразу после перехода
             Swipe.startWithOpponent(
                 data.opponent, 
                 this.currentMatchId, 
@@ -216,12 +205,9 @@ const Search = {
     updateWaitingStatus(data) {
         console.log('Обновление статуса ожидания:', data);
         
-        // Проверяем ответ оппонента
         if (data.opponent_response === 'reject') {
-            // Оппонент отклонил
             this.handlePartnerReject();
         } else if (data.opponent_response === 'accept' && this.myResponse === 'accept') {
-            // Оба приняли
             this.handleBothAccepted();
         }
     },
@@ -229,22 +215,18 @@ const Search = {
     handlePartnerReject() {
         console.log('Партнер отклонил мэтч');
         
-        // Очищаем таймер
         if (this.matchTimerInterval) {
             clearInterval(this.matchTimerInterval);
             this.matchTimerInterval = null;
         }
         
-        // Сбрасываем флаги
         this.waitingForPartner = false;
         this.myResponse = null;
         this.isSearching = true;
         this.currentMatchId = null;
         
-        // Показываем уведомление об отказе
         this.showRejectNotification();
         
-        // Возвращаемся на экран поиска через 2 секунды
         setTimeout(() => {
             this.showSearchScreen(this.currentMode);
         }, 2000);
@@ -254,17 +236,14 @@ const Search = {
         const swipeCard = document.querySelector('.swipe-card');
         if (!swipeCard) return;
         
-        // Добавляем класс rejected
         swipeCard.classList.add('rejected');
         
-        // Меняем статус
         const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
             statusEl.textContent = '❌ Игрок отклонил приглашение';
             statusEl.style.color = '#FF3B30';
         }
         
-        // Убираем кнопки
         const buttons = document.querySelector('.connection-actions');
         if (buttons) {
             buttons.style.opacity = '0.5';
@@ -275,7 +254,6 @@ const Search = {
     handleBothAccepted() {
         console.log('Оба приняли!');
         
-        // Очищаем таймер
         if (this.matchTimerInterval) {
             clearInterval(this.matchTimerInterval);
             this.matchTimerInterval = null;
@@ -283,24 +261,20 @@ const Search = {
         
         this.stopPolling();
         
-        // Добавляем эффект both-accepted
         document.querySelector('.connection-screen')?.classList.add('both-accepted');
         
-        // Меняем статус
         const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
             statusEl.textContent = '✅ Тиммейт принял приглашение! Создаем игру...';
             statusEl.style.color = '#FF5500';
         }
         
-        // Скрываем кнопки
         const buttons = document.querySelector('.connection-actions');
         if (buttons) {
             buttons.style.opacity = '0';
             buttons.style.pointerEvents = 'none';
         }
         
-        // Создаем игру через небольшую паузу
         setTimeout(() => {
             this.createGame();
         }, 1000);
@@ -314,7 +288,6 @@ const Search = {
         }
     },
     
-    // ПОКАЗАТЬ ЭКРАН ПОИСКА
     showSearchScreen(mode) {
         this.currentMode = mode;
         this.waitingForPartner = false;
@@ -322,17 +295,12 @@ const Search = {
         this.isSearching = true;
         this.currentMatchId = null;
         
-        // Получаем Telegram ID для отправки запроса
         const telegram_id = this.getTelegramId();
-        
-        // Собираем данные для поиска
         const data = this.collectSearchData(mode);
         
-        // Показываем экран поиска
         App.showScreen('searchScreen', true);
         document.getElementById('searchModeTitle').textContent = mode;
         
-        // Сбрасываем статус
         const statusEl = document.getElementById('searchStatus');
         if (statusEl) {
             statusEl.textContent = 'Поиск тиммейта начат';
@@ -342,7 +310,6 @@ const Search = {
         this.resetTimer();
         this.startTimer();
         
-        // Отправляем запрос на поиск
         fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/search/start', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -357,8 +324,16 @@ const Search = {
                 comment: data.comment || ''
             })
         })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) {
+                console.error('HTTP ошибка при старте поиска:', res.status);
+                return null;
+            }
+            return res.json();
+        })
         .then(data => {
+            if (!data) return;
+            
             console.log('Search start response:', data);
             
             if (data.status === 'searching') {
@@ -435,15 +410,12 @@ const Search = {
         });
     },
     
-    // ПОКАЗАТЬ ЭКРАН НАЙДЕННОГО ТИММЕЙТА (ТЕПЕРЬ ЭТОТ МЕТОД НЕ ИСПОЛЬЗУЕТСЯ)
-    // Оставлен для обратной совместимости, но показываем через showSwipeScreen
     showMatchScreen(data) {
         console.log('showMatchScreen вызван, перенаправляем на showSwipeScreen');
         this.showSwipeScreen(data);
     },
     
     startMatchTimer() {
-        // Этот метод больше не нужен, таймер управляется в Swipe
         console.log('startMatchTimer - устаревший метод');
     },
     
@@ -460,7 +432,6 @@ const Search = {
     },
     
     getConnectionHTML(opponent) {
-        // Этот метод больше не нужен, HTML генерируется в Swipe
         return '';
     },
     
@@ -481,8 +452,16 @@ const Search = {
                 match_id: matchId
             })
         })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) {
+                console.error('HTTP ошибка при создании игры:', res.status);
+                return null;
+            }
+            return res.json();
+        })
         .then(data => {
+            if (!data) return;
+            
             console.log('Game create response:', data);
             
             this.processedMatchIds.clear();
@@ -492,12 +471,10 @@ const Search = {
             this.isSearching = false;
             this.currentMatchId = null;
             
-            // Открываем ссылку в Telegram
             if (window.Telegram?.WebApp?.openTelegramLink && data.chat_link) {
                 window.Telegram.WebApp.openTelegramLink(data.chat_link);
             }
             
-            // Переходим на главный экран
             App.showScreen('mainScreen', true);
         })
         .catch(error => {
@@ -509,7 +486,7 @@ const Search = {
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Swipe: DOM загружен');
+    console.log('Search: DOM загружен');
     window.Search = Search;
 });
 
