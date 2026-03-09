@@ -1,5 +1,6 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ
+// СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// с тремя колонками: РАНГ | ВОЗРАСТ | СТИЛЬ
 // ============================================
 
 const Swipe = {
@@ -800,8 +801,8 @@ const Swipe = {
         if (!this.currentPlayer) return '';
         
         const timeLeft = this.getTimeLeft();
-        const styleText = this.currentPlayer.style === 'fan' ? 'Fan' : 'Tryhard';
         const styleIcon = this.currentPlayer.style === 'fan' ? '🔄' : '⚡';
+        const styleText = this.currentPlayer.style === 'fan' ? 'Fan' : 'Tryhard';
         
         return `
             <div class="swipe-label swipe-label-left" id="swipeLabelLeft">SKIP</div>
