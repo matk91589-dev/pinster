@@ -3173,22 +3173,22 @@ scroll-behavior:smooth;
 .swipe-stats-row.three-cols {
     display: grid !important;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    margin: 10px 0 16px 0;
+    gap: 6px;
+    margin: 4px 0 10px 0;
 }
 
 /* Стили для элементов внутри трех колонок */
 .swipe-stats-row.three-cols .swipe-stat-item {
     flex: unset;
     width: 100%;
-    min-width: 0; /* Для корректного схлопывания текста */
+    min-width: 0;
 }
 
 .swipe-stats-row.three-cols .swipe-stat-label {
     font-size: 10px;
     color: var(--text-secondary);
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     text-align: center;
@@ -3202,7 +3202,7 @@ scroll-behavior:smooth;
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
-    padding: 12px 8px;
+    padding: 8px 6px;
     color: var(--text-primary);
     font-size: 14px;
     font-weight: 500;
@@ -3210,35 +3210,6 @@ scroll-behavior:smooth;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-/* Стиль для ячейки со стилем игры */
-.swipe-stats-row.three-cols .swipe-stat-value#swipeStyle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-}
-
-/* Точка перед текстом стиля */
-.swipe-stats-row.three-cols .swipe-stat-value#swipeStyle::before {
-    content: '';
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: currentColor;
-    flex-shrink: 0;
-}
-
-/* Fan - зеленый */
-.swipe-stats-row.three-cols .swipe-stat-value#swipeStyle[data-style="fan"] {
-    color: #4CAF50;
-}
-
-/* Tryhard - оранжевый */
-.swipe-stats-row.three-cols .swipe-stat-value#swipeStyle[data-style="tryhard"] {
-    color: #FF5500;
 }
 
 /* Адаптация для маленьких экранов */
@@ -3249,11 +3220,11 @@ scroll-behavior:smooth;
     
     .swipe-stats-row.three-cols .swipe-stat-label {
         font-size: 9px;
+        margin-bottom: 3px;
     }
     
     .swipe-stats-row.three-cols .swipe-stat-value {
         font-size: 12px;
-        padding: 8px 4px;
+        padding: 6px 4px;
     }
 }
-
