@@ -1,6 +1,6 @@
 // ============================================
 // СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
-// с тремя колонками: РАНГ | ВОЗРАСТ | СТИЛЬ
+// с тремя колонками и ЯРКОЙ подсветкой
 // ============================================
 
 const Swipe = {
@@ -25,6 +25,10 @@ const Swipe = {
     ANIMATION_DURATION: 250,
     AUTO_COMPLETE_DURATION: 300,
     MIN_THRESHOLD_PX: 150,
+    
+    // Цвета для подсветки
+    BRIGHT_GREEN: 'rgba(76, 175, 80, 0.25)',
+    BRIGHT_RED: 'rgba(244, 67, 54, 0.25)',
     
     // Данные
     currentPlayer: null,
@@ -326,17 +330,34 @@ const Swipe = {
         const progress = Math.min(Math.abs(this.currentX) / threshold, 1);
         const rotate = (this.currentX / maxDistance) * this.MAX_ROTATE;
         
-        this.card.style.transform = `translateX(${this.currentX}px) rotate(${rotate}deg) scale(1.02)`;
+        // Более плавная трансформация с увеличением
+        this.card.style.transform = `translateX(${this.currentX}px) rotate(${rotate}deg) scale(${1 + progress * 0.02})`;
         
+        // ЯРКАЯ подсветка
         if (this.currentX > 0) {
+            // Свайп вправо (принять) - зеленый
             this.card.classList.add('right-swipe');
             this.card.classList.remove('left-swipe');
-            if (this.labelRight) this.labelRight.style.opacity = progress * 0.9;
+            
+            // Зеленый градиент
+            this.card.style.background = `linear-gradient(145deg, 
+                ${this.BRIGHT_GREEN}, 
+                var(--surface) ${Math.min(30 + progress * 40, 70)}%)`;
+            
+            if (this.labelRight) this.labelRight.style.opacity = progress;
             if (this.labelLeft) this.labelLeft.style.opacity = 0;
+            
         } else if (this.currentX < 0) {
+            // Свайп влево (отклонить) - красный
             this.card.classList.add('left-swipe');
             this.card.classList.remove('right-swipe');
-            if (this.labelLeft) this.labelLeft.style.opacity = progress * 0.9;
+            
+            // Красный градиент
+            this.card.style.background = `linear-gradient(145deg, 
+                ${this.BRIGHT_RED}, 
+                var(--surface) ${Math.min(30 + progress * 40, 70)}%)`;
+            
+            if (this.labelLeft) this.labelLeft.style.opacity = progress;
             if (this.labelRight) this.labelRight.style.opacity = 0;
         }
     },
@@ -350,15 +371,20 @@ const Swipe = {
         const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
         
         if (Math.abs(this.currentX) > threshold) {
-            this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.25, 0.8, 0.25, 1)`;
+            // Анимация улета
+            this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
             
             if (this.currentX > 0) {
-                this.card.style.transform = `translateX(200%) rotate(8deg) scale(1)`;
+                // Зеленый при принятии
+                this.card.style.background = `linear-gradient(145deg, ${this.BRIGHT_GREEN}, var(--surface) 40%)`;
+                this.card.style.transform = `translateX(200%) rotate(12deg) scale(0.9)`;
                 setTimeout(() => {
                     this.acceptPlayer();
                 }, this.ANIMATION_DURATION);
             } else {
-                this.card.style.transform = `translateX(-200%) rotate(-8deg) scale(1)`;
+                // Красный при отклонении
+                this.card.style.background = `linear-gradient(145deg, ${this.BRIGHT_RED}, var(--surface) 40%)`;
+                this.card.style.transform = `translateX(-200%) rotate(-12deg) scale(0.9)`;
                 setTimeout(() => {
                     this.rejectPlayer();
                 }, this.ANIMATION_DURATION);
@@ -371,8 +397,9 @@ const Swipe = {
     },
     
     resetCardPosition() {
-        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.25, 0.8, 0.25, 1)`;
+        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.25, 0.8, 0.25, 1), background 0.2s ease`;
         this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
+        this.card.style.background = ''; // Сбрасываем фон
         this.currentX = 0;
         
         if (this.labelLeft) this.labelLeft.style.opacity = 0;
@@ -1079,4 +1106,4 @@ document.addEventListener('DOMContentLoaded', () => {
 if (document.getElementById('swipeScreen')?.classList.contains('active')) {
     console.log('Swipe экран уже активен, инициализируем');
     setTimeout(() => Swipe.init(), 100);
-} 
+}
