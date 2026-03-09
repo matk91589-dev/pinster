@@ -1,5 +1,6 @@
 // ============================================
 // СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// с правильной синхронизацией времени и без фейк-игроков
 // ============================================
 
 const Swipe = {
@@ -57,7 +58,10 @@ const Swipe = {
         
         this.blockScroll();
         this.showHintOnce();
-        this.loadNextPlayer();
+        
+        // Убираем loadNextPlayer() - теперь только реальные игроки
+        // Просто показываем заглушку загрузки
+        if (this.loading) this.loading.classList.add('active');
         
         if (!this.isInitialized) {
             this.setupEventListeners();
@@ -86,10 +90,6 @@ const Swipe = {
                 this.matchExpiresAt = expiresAt;
             }
             console.log('✅ matchExpiresAt установлен:', new Date(this.matchExpiresAt).toLocaleString());
-        } else {
-            // Если нет времени с сервера, ставим 30 секунд от текущего момента
-            this.matchExpiresAt = Date.now() + 30000;
-            console.log('⚠️ expiresAt не получен, ставим 30с от сейчас');
         }
         
         if (serverTime) {
@@ -98,14 +98,35 @@ const Swipe = {
             this.serverTime = Date.now();
         }
         
-        // ПРОВЕРЯЕМ СКОЛЬКО ОСТАЛОСЬ
-        const timeLeft = Math.floor((this.matchExpiresAt - Date.now()) / 1000);
-        console.log(`⏰ Осталось времени: ${timeLeft}с`);
+        // ИСПРАВЛЕНИЕ: синхронизируем время клиента с сервером
+        const clientNow = Date.now();
+        const serverNow = this.serverTime;
+        const timeDiff = clientNow - serverNow; // положительное = клиент спешит, отрицательное = отстает
+        
+        // Корректируем текущее время
+        const correctedNow = clientNow - timeDiff;
+        const timeLeft = Math.floor((this.matchExpiresAt - correctedNow) / 1000);
+        
+        console.log(`⏰ Серверное время: ${new Date(serverNow).toLocaleString()}`);
+        console.log(`⏰ Клиентское время: ${new Date(clientNow).toLocaleString()}`);
+        console.log(`⏰ Разница: ${timeDiff}мс`);
+        console.log(`⏰ Осталось времени (скорректировано): ${timeLeft}с`);
         
         if (timeLeft <= 0) {
             console.warn('⚠️ Матч уже истек!');
             this.exitSwipeMode();
             return;
+        }
+        
+        if (timeLeft > 35) { // Защита от совсем диких значений
+            console.warn('⚠️ Слишком много времени, возможно ошибка синхронизации');
+            // Используем время клиента как fallback
+            const fallbackTimeLeft = Math.floor((this.matchExpiresAt - clientNow) / 1000);
+            if (fallbackTimeLeft <= 0 || fallbackTimeLeft > 35) {
+                console.error('❌ Критическая ошибка времени');
+                this.exitSwipeMode();
+                return;
+            }
         }
         
         this.card = document.getElementById('swipeCard');
@@ -119,6 +140,9 @@ const Swipe = {
             console.error('❌ Swipe card not found in startWithOpponent!');
             return;
         }
+        
+        // Скрываем загрузку
+        if (this.loading) this.loading.classList.remove('active');
         
         this.card.style.transition = 'none';
         this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
@@ -138,14 +162,19 @@ const Swipe = {
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
     },
     
+    // ИСПРАВЛЕННЫЙ МЕТОД с синхронизацией времени
     getTimeLeft() {
         if (!this.matchExpiresAt) {
             console.warn('⚠️ matchExpiresAt не установлен');
-            return 30; // fallback
+            return 30;
         }
         
-        const now = Date.now();
-        const timeLeft = Math.max(0, Math.floor((this.matchExpiresAt - now) / 1000));
+        const clientNow = Date.now();
+        const serverNow = this.serverTime || clientNow;
+        const timeDiff = clientNow - serverNow;
+        const correctedNow = clientNow - timeDiff;
+        
+        const timeLeft = Math.max(0, Math.floor((this.matchExpiresAt - correctedNow) / 1000));
         return timeLeft;
     },
     
@@ -169,6 +198,12 @@ const Swipe = {
         
         if (initialTimeLeft <= 0) {
             timerElement.innerHTML = '0с';
+            this.exitSwipeMode();
+            return;
+        }
+        
+        if (initialTimeLeft > 35) {
+            console.error('❌ Некорректное время таймера:', initialTimeLeft);
             this.exitSwipeMode();
             return;
         }
@@ -402,7 +437,6 @@ const Swipe = {
             console.error('❌ Error:', error);
             setTimeout(() => {
                 this.exitConnectionMode();
-                this.loadNextPlayer();
             }, 1000);
         });
     },
@@ -918,26 +952,8 @@ const Swipe = {
         });
     },
     
-    loadNextPlayer() {
-        if (this.loading) this.loading.classList.add('active');
-        
-        setTimeout(() => {
-            const testPlayer = {
-                player_id: Math.floor(10000000 + Math.random() * 90000000),
-                nick: 'Player' + Math.floor(Math.random() * 1000),
-                rating: Math.floor(1000 + Math.random() * 1500),
-                rank: ['Silver 3', 'Gold Nova 2', 'Master Guardian 1', 'Legendary Eagle'][Math.floor(Math.random() * 4)],
-                age: Math.floor(16 + Math.random() * 15),
-                steam_link: 'steamcommunity.com/id/player' + Math.floor(Math.random() * 1000),
-                faceit_link: 'faceit.com/player' + Math.floor(Math.random() * 1000),
-                comment: 'ищу норм тиммейтов, без токсиков'
-            };
-            
-            this.showPlayer(testPlayer);
-            
-            if (this.loading) this.loading.classList.remove('active');
-        }, 500);
-    },
+    // Убрал loadNextPlayer с фейковыми игроками
+    // Теперь только реальные игроки приходят через startWithOpponent
     
     showPlayer(player) {
         this.currentPlayer = player;
@@ -1011,7 +1027,8 @@ const Swipe = {
         this.blockScroll();
         
         if (this.card) {
-            this.loadNextPlayer();
+            // Показываем загрузку вместо фейковых игроков
+            if (this.loading) this.loading.classList.add('active');
         } else {
             this.init(mode);
         }
