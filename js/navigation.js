@@ -275,39 +275,9 @@ const App = {
             
             // ========== ВАЖНО: Инициализация Swipe при переходе на экран свайпа ==========
             if (screenId === 'swipeScreen') {
-                console.log('🚀 Запуск Swipe.init() при переходе на swipeScreen');
-                
-                // Получаем режим из localStorage
-                const mode = localStorage.getItem('currentMode') || 'PREMIER';
-                
-                // Проверяем, есть ли данные оппонента (если пришли с поиска)
-                const opponentData = localStorage.getItem('opponentData');
-                
-                if (typeof Swipe !== 'undefined') {
-                    if (opponentData) {
-                        // Если есть данные оппонента - используем startWithOpponent
-                        try {
-                            const opponent = JSON.parse(opponentData);
-                            const matchId = Search?.currentMatchId || null;
-                            console.log('Запускаем Swipe с оппонентом:', opponent);
-                            
-                            // Немного задерживаем для гарантии рендера
-                            setTimeout(() => {
-                                Swipe.startWithOpponent(opponent, matchId);
-                            }, 100);
-                        } catch (e) {
-                            console.error('Ошибка парсинга opponentData:', e);
-                            Swipe.init(mode);
-                        }
-                    } else {
-                        // Если нет данных - обычная инициализация
-                        setTimeout(() => {
-                            Swipe.init(mode);
-                        }, 100);
-                    }
-                } else {
-                    console.error('❌ Swipe не найден! Проверь порядок подключения скриптов');
-                }
+                console.log('🚀 Экран свайпа показан, инициализация будет в Search');
+                // УБИРАЕМ ВЫЗОВ Swipe.startWithOpponent() ОТСЮДА!
+                // Теперь инициализация только в Search.showSwipeScreen()
             }
             // =========================================================================
             
