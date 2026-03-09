@@ -136,7 +136,7 @@ const Search = {
         this.pollingInterval = setInterval(() => this.checkMatchStatus(), 2000);
     },
     
-    // ИСПРАВЛЕННАЯ ФУНКЦИЯ
+    // ИСПРАВЛЕННАЯ ФУНКЦИЯ - УБРАЛ ПРОВЕРКУ processedMatchIds
     checkMatchStatus() {
         // Если не ищем и не ждем партнера - выходим
         if (!this.isSearching && !this.waitingForPartner) {
@@ -162,12 +162,7 @@ const Search = {
             if (data.match_found) {
                 console.log('Мэтч найден!');
                 
-                // Проверяем не обрабатывали ли мы уже этот мэтч
-                if (this.processedMatchIds.has(data.match_id)) {
-                    console.log('Мэтч уже обработан, пропускаем');
-                    return;
-                }
-                
+                // Просто добавляем в processedMatchIds, но НЕ ПРОВЕРЯЕМ
                 this.processedMatchIds.add(data.match_id);
                 
                 // Если мы уже ждем ответа партнера, обновляем статус
