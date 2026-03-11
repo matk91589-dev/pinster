@@ -1,6 +1,6 @@
 // ============================================
 // СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
-// с тремя колонками и ЯРКОЙ подсветкой
+// с тремя колонками, ЯРКОЙ подсветкой и экраном подтверждения
 // ============================================
 
 const Swipe = {
@@ -453,6 +453,10 @@ const Swipe = {
             
             if (data.both_accepted) {
                 console.log('🎉 Оба приняли (мгновенно)!');
+                // Не показываем connection mode, сразу обрабатываем
+                clearInterval(this.matchPolling);
+                this.matchPolling = null;
+                this.handleBothAccepted();
             } else if (data.status === 'rejected') {
                 console.log('❌ Отклонено');
                 this.handleRejection();
@@ -725,6 +729,12 @@ const Swipe = {
             this.matchPolling = null;
         }
         
+        if (this.connectionTimer) {
+            clearInterval(this.connectionTimer);
+            this.connectionTimer = null;
+        }
+        
+        // Показываем анимацию подтверждения
         this.card.classList.add('both-accepted');
         
         const selfAvatar = document.querySelector('.self-avatar');
@@ -767,13 +777,13 @@ const Swipe = {
                         <circle cx="12" cy="12" r="10" stroke="#4CAF50" stroke-width="2"/>
                         <path d="M8 12L11 15L16 9" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
                     </svg>
-                    🎮 Матч создан!
+                    🎮 Создаем игру...
                 `;
             }
             
             this.createGame();
             
-        }, 2000);
+        }, 1500);
     },
     
     exitConnectionMode() {
@@ -821,7 +831,12 @@ const Swipe = {
             this.matchPolling = null;
         }
         
-        App.showScreen('mainScreen', true);
+        // Возвращаемся на главный экран
+        if (window.App) {
+            App.showScreen('mainScreen', true);
+        } else {
+            window.location.href = '/';
+        }
     },
     
     getOriginalCardHTML() {
@@ -975,11 +990,23 @@ const Swipe = {
         .then(data => {
             console.log('Game create response:', data);
             
-            if (window.Telegram?.WebApp?.openTelegramLink && data.chat_link) {
-                window.Telegram.WebApp.openTelegramLink(data.chat_link);
+            // Сохраняем информацию о сопернике и ссылку на чат
+            if (data.status === 'ok' && data.chat_link) {
+                // Показываем экран подтверждения матча
+                if (window.MatchAccepted) {
+                    const teammateInfo = {
+                        nick: this.currentPlayer?.nick || 'Соперник',
+                        rating: this.currentPlayer?.rating || '0',
+                        rank: this.currentPlayer?.rank || 'Нет ранга'
+                    };
+                    window.MatchAccepted.show(teammateInfo, data.chat_link);
+                } else {
+                    // Fallback - просто открываем ссылку
+                    window.location.href = data.chat_link;
+                }
+            } else {
+                this.exitSwipeMode('createGame error: no chat_link');
             }
-            
-            this.exitSwipeMode('game created');
         })
         .catch(error => {
             console.error('Error creating game:', error);
@@ -1095,6 +1122,45 @@ const Swipe = {
             this.matchPolling = null;
         }
         this.gameCreated = false;
+    }
+};
+
+// Объект для управления экраном подтверждения матча
+window.MatchAccepted = {
+    chatLink: null,
+    teammateInfo: null,
+
+    show(teammateInfo, chatLink) {
+        console.log('🎯 MatchAccepted.show()', teammateInfo, chatLink);
+        this.teammateInfo = teammateInfo;
+        this.chatLink = chatLink;
+        
+        // Заполняем информацию
+        const nickEl = document.getElementById('matchTeammateNick');
+        const ratingEl = document.getElementById('matchTeammateRating');
+        const rankEl = document.getElementById('matchTeammateRank');
+        
+        if (nickEl) nickEl.textContent = teammateInfo.nick || '-';
+        if (ratingEl) ratingEl.textContent = teammateInfo.rating || '-';
+        if (rankEl) rankEl.textContent = teammateInfo.rank || '-';
+        
+        // Показываем экран
+        if (window.App) {
+            App.showScreen('matchAcceptedScreen', true);
+        }
+    },
+
+    goToChat() {
+        if (this.chatLink) {
+            window.location.href = this.chatLink;
+        } else {
+            alert('Ссылка на чат не найдена');
+        }
+    },
+
+    clear() {
+        this.chatLink = null;
+        this.teammateInfo = null;
     }
 };
 
