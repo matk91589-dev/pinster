@@ -1144,7 +1144,7 @@ const Swipe = {
     }
 };
 
-// ========== ИСПРАВЛЕННЫЙ MatchAccepted С ЛОГАМИ ==========
+// ========== ИСПРАВЛЕННЫЙ MatchAccepted С РАБОЧИМ ОТКРЫТИЕМ ==========
 window.MatchAccepted = {
     chatLink: null,
     teammateInfo: null,
@@ -1203,6 +1203,7 @@ window.MatchAccepted = {
         }
     },
 
+    // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ goToChat ==========
     goToChat() {
         console.log('🚀 goToChat() вызван');
         console.log('📌 Текущий chatLink в объекте:', this.chatLink);
@@ -1220,16 +1221,9 @@ window.MatchAccepted = {
         if (link) {
             console.log('✅ Ссылка найдена, открываем:', link);
             
-            // Способ 1: через Telegram WebApp
-            if (window.Telegram?.WebApp?.openTelegramLink) {
-                console.log('📱 Открываем через Telegram.WebApp.openTelegramLink()');
-                window.Telegram.WebApp.openTelegramLink(link);
-            } 
-            // Способ 2: открыть в новой вкладке
-            else {
-                console.log('🌐 Открываем через window.open()');
-                window.open(link, '_blank');
-            }
+            // ПРОСТОЕ РАБОЧЕЕ РЕШЕНИЕ - открываем в новой вкладке
+            window.open(link, '_blank');
+            
         } else {
             console.error('❌ Ссылка не найдена ни в объекте, ни в localStorage');
             alert('Ссылка на чат не найдена');
