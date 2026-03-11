@@ -1247,6 +1247,46 @@ window.MatchAccepted = {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Swipe: DOM загружен');
     window.Swipe = Swipe;
+    
+    // ===== ПРИНУДИТЕЛЬНАЯ ПРИВЯЗКА КНОПКИ =====
+    console.log('🔧 Принудительная привязка кнопки...');
+    
+    const chatBtn = document.getElementById('goToChatBtn');
+    if (chatBtn) {
+        console.log('✅ Кнопка найдена, привязываем обработчик');
+        
+        // Убираем старый onclick и ставим новый
+        chatBtn.onclick = function() {
+            console.log('👆 Кнопка нажата!');
+            if (window.MatchAccepted) {
+                window.MatchAccepted.goToChat();
+            } else {
+                console.error('❌ MatchAccepted не найден');
+                alert('Ошибка: функция перехода не найдена');
+            }
+        };
+        
+        // Добавляем атрибут, чтобы не привязать дважды
+        chatBtn.setAttribute('data-bound', 'true');
+    } else {
+        console.error('❌ Кнопка goToChatBtn не найдена!');
+    }
+});
+
+// Дополнительная привязка после полной загрузки страницы
+window.addEventListener('load', function() {
+    console.log('🔧 Дополнительная привязка после load...');
+    const chatBtn = document.getElementById('goToChatBtn');
+    if (chatBtn && !chatBtn.hasAttribute('data-bound')) {
+        console.log('✅ Кнопка найдена в load, привязываем');
+        chatBtn.setAttribute('data-bound', 'true');
+        chatBtn.onclick = function() {
+            console.log('👆 Кнопка нажата (load)');
+            if (window.MatchAccepted) {
+                window.MatchAccepted.goToChat();
+            }
+        };
+    }
 });
 
 if (document.getElementById('swipeScreen')?.classList.contains('active')) {
