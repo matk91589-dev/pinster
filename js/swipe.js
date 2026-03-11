@@ -1,6 +1,6 @@
 // ============================================
 // СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
-// с кнопкой Telegram на экране соединения
+// с кнопкой Telegram на экране соединения и двойной ссылкой
 // ============================================
 
 const Swipe = {
@@ -45,7 +45,8 @@ const Swipe = {
     gameCreated: false,
     timeDiff: 0,
     gameCreating: false,
-    chatLink: null, // Ссылка на чат
+    chatLink: null, // Ссылка на тему
+    inviteLink: null, // Ссылка-приглашение в группу
     
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
@@ -97,6 +98,7 @@ const Swipe = {
         this.gameCreated = false;
         this.gameCreating = false;
         this.chatLink = null;
+        this.inviteLink = null;
         
         if (expiresAt) {
             if (typeof expiresAt === 'string') {
@@ -640,15 +642,15 @@ const Swipe = {
         this.startConnectionTimer();
     },
     
-    // Новая функция для обновления кнопки чата
-    updateChatButton(active, link = null) {
+    // Функция для обновления кнопки чата
+    updateChatButton(active, chatLink = null, inviteLink = null) {
         const button = document.getElementById('tgChatButton');
         const buttonText = document.getElementById('tgChatButtonText');
         const tooltip = document.getElementById('connectionTooltip');
         
         if (!button || !buttonText || !tooltip) return;
         
-        if (active && link) {
+        if (active && chatLink) {
             // Активируем кнопку
             button.classList.add('active');
             button.disabled = false;
@@ -656,9 +658,13 @@ const Swipe = {
             tooltip.textContent = 'Матч создан';
             tooltip.classList.add('active');
             
-            // Сохраняем ссылку
-            this.chatLink = link;
-            localStorage.setItem('currentChatLink', link); // Сохраняем в localStorage на всякий случай
+            // Сохраняем ссылки
+            this.chatLink = chatLink;
+            this.inviteLink = inviteLink;
+            localStorage.setItem('currentChatLink', chatLink);
+            if (inviteLink) {
+                localStorage.setItem('currentInviteLink', inviteLink);
+            }
             
             // Добавляем обработчик клика
             button.onclick = () => {
@@ -677,33 +683,48 @@ const Swipe = {
         }
     },
     
-    // Новая функция для открытия ссылки (работает на телефоне)
+    // ========== ОБНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ ОТКРЫТИЯ ССЫЛКИ ==========
     openChatLink() {
-        let link = this.chatLink || localStorage.getItem('currentChatLink');
+        let chatLink = this.chatLink || localStorage.getItem('currentChatLink');
+        let inviteLink = this.inviteLink || localStorage.getItem('currentInviteLink');
         
-        if (link) {
-            console.log('✅ Открываем ссылку:', link);
+        console.log('🚀 openChatLink() вызван');
+        console.log('📌 chatLink:', chatLink);
+        console.log('📌 inviteLink:', inviteLink);
+        
+        if (chatLink) {
+            console.log('✅ Открываем чат:', chatLink);
             
-            // Способ 1: через Telegram WebApp (должен работать в Mini App)
-            if (window.Telegram?.WebApp?.openTelegramLink) {
-                console.log('📱 Открываем через Telegram.WebApp.openTelegramLink()');
-                window.Telegram.WebApp.openTelegramLink(link);
-            } 
-            // Способ 2: через window.location (работает везде)
-            else {
-                console.log('🌐 Открываем через window.location.href');
-                window.location.href = link;
-            }
+            // Проверяем, есть ли Telegram WebApp
+            const tg = window.Telegram?.WebApp;
             
-            // Дополнительный fallback для телефонов
-            setTimeout(() => {
-                try {
-                    window.open(link, '_blank');
-                } catch (e) {
-                    console.error('❌ Ошибка при открытии ссылки:', e);
+            if (inviteLink) {
+                // Двойная ссылка: сначала invite, потом чат
+                if (tg?.openTelegramLink) {
+                    // Открываем приглашение
+                    console.log('📱 Открываем invite link через Telegram');
+                    tg.openTelegramLink(inviteLink);
+                    
+                    // Через 1.5 секунды открываем тему
+                    setTimeout(() => {
+                        console.log('⏱️ Открываем тему через 1.5 сек');
+                        tg.openTelegramLink(chatLink);
+                    }, 1500);
+                } else {
+                    // Fallback через window.open
+                    window.open(inviteLink, '_blank');
+                    setTimeout(() => {
+                        window.open(chatLink, '_blank');
+                    }, 1500);
                 }
-            }, 100);
-            
+            } else {
+                // Только ссылка на чат
+                if (tg?.openTelegramLink) {
+                    tg.openTelegramLink(chatLink);
+                } else {
+                    window.open(chatLink, '_blank');
+                }
+            }
         } else {
             console.error('❌ Ссылка не найдена');
             alert('Ссылка на чат не найдена');
@@ -776,6 +797,7 @@ const Swipe = {
         this.gameCreated = false;
         this.gameCreating = false;
         this.chatLink = null;
+        this.inviteLink = null;
         this.timeDiff = 0;
         
         if (this.cardTimerInterval) {
@@ -830,8 +852,8 @@ const Swipe = {
             console.log('Game create response:', data);
             
             if (data.status === 'ok' && data.chat_link) {
-                // Активируем кнопку чата
-                this.updateChatButton(true, data.chat_link);
+                // Активируем кнопку чата с обеими ссылками
+                this.updateChatButton(true, data.chat_link, data.invite_link);
                 
                 // Обновляем статус
                 const statusEl = document.getElementById('connectionStatus');
@@ -846,6 +868,9 @@ const Swipe = {
                 }
                 
                 console.log('✅ Кнопка чата активирована');
+                if (data.invite_link) {
+                    console.log('🔗 Invite link получен:', data.invite_link);
+                }
             } else {
                 console.error('createGame error: no chat_link', data);
                 this.updateChatButton(false);
@@ -973,6 +998,7 @@ const Swipe = {
         this.gameCreated = false;
         this.gameCreating = false;
         this.chatLink = null;
+        this.inviteLink = null;
     },
     
     connectionTimeout() {
