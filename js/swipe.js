@@ -1144,51 +1144,103 @@ const Swipe = {
     }
 };
 
-// ========== ИСПРАВЛЕННЫЙ MatchAccepted ==========
+// ========== ИСПРАВЛЕННЫЙ MatchAccepted С ЛОГАМИ ==========
 window.MatchAccepted = {
     chatLink: null,
     teammateInfo: null,
 
     show(teammateInfo, chatLink) {
-        console.log('🎯 MatchAccepted.show()', teammateInfo, chatLink);
+        console.log('🎯 MatchAccepted.show() вызван');
+        console.log('👤 Информация о сопернике:', teammateInfo);
+        console.log('🔗 Получена ссылка на чат:', chatLink);
+        
+        if (!chatLink) {
+            console.error('❌ chatLink = null или undefined!');
+            alert('Ошибка: ссылка на чат не получена');
+            return;
+        }
+        
         this.teammateInfo = teammateInfo;
         this.chatLink = chatLink;
+        
+        // Сохраняем в localStorage на всякий случай
+        localStorage.setItem('currentChatLink', chatLink);
+        console.log('💾 Ссылка сохранена в localStorage');
         
         // Заполняем информацию
         const nickEl = document.getElementById('matchTeammateNick');
         const ratingEl = document.getElementById('matchTeammateRating');
         const rankEl = document.getElementById('matchTeammateRank');
         
-        if (nickEl) nickEl.textContent = teammateInfo.nick || '-';
-        if (ratingEl) ratingEl.textContent = teammateInfo.rating || '-';
-        if (rankEl) rankEl.textContent = teammateInfo.rank || '-';
+        if (nickEl) {
+            nickEl.textContent = teammateInfo.nick || '-';
+            console.log('📝 Заполнен ник:', nickEl.textContent);
+        } else {
+            console.warn('⚠️ Элемент matchTeammateNick не найден');
+        }
+        
+        if (ratingEl) {
+            ratingEl.textContent = teammateInfo.rating || '-';
+            console.log('📝 Заполнен рейтинг:', ratingEl.textContent);
+        } else {
+            console.warn('⚠️ Элемент matchTeammateRating не найден');
+        }
+        
+        if (rankEl) {
+            rankEl.textContent = teammateInfo.rank || '-';
+            console.log('📝 Заполнен ранг:', rankEl.textContent);
+        } else {
+            console.warn('⚠️ Элемент matchTeammateRank не найден');
+        }
         
         // Показываем экран
+        console.log('🎬 Переключаемся на экран matchAcceptedScreen');
         if (window.App) {
             App.showScreen('matchAcceptedScreen', true);
+            console.log('✅ Экран matchAcceptedScreen показан');
+        } else {
+            console.error('❌ App не найден!');
         }
     },
 
     goToChat() {
-        if (this.chatLink) {
-            console.log('Открываем чат:', this.chatLink);
+        console.log('🚀 goToChat() вызван');
+        console.log('📌 Текущий chatLink в объекте:', this.chatLink);
+        
+        // Пробуем взять ссылку
+        let link = this.chatLink;
+        
+        // Если нет - берем из localStorage
+        if (!link) {
+            console.log('🔍 Ссылка в объекте не найдена, пробуем из localStorage');
+            link = localStorage.getItem('currentChatLink');
+            console.log('📦 Ссылка из localStorage:', link);
+        }
+        
+        if (link) {
+            console.log('✅ Ссылка найдена, открываем:', link);
             
-            // Способ 1: через Telegram WebApp (правильно для мини-аппа)
+            // Способ 1: через Telegram WebApp
             if (window.Telegram?.WebApp?.openTelegramLink) {
-                window.Telegram.WebApp.openTelegramLink(this.chatLink);
+                console.log('📱 Открываем через Telegram.WebApp.openTelegramLink()');
+                window.Telegram.WebApp.openTelegramLink(link);
             } 
-            // Способ 2: открыть в новой вкладке (fallback)
+            // Способ 2: открыть в новой вкладке
             else {
-                window.open(this.chatLink, '_blank');
+                console.log('🌐 Открываем через window.open()');
+                window.open(link, '_blank');
             }
         } else {
+            console.error('❌ Ссылка не найдена ни в объекте, ни в localStorage');
             alert('Ссылка на чат не найдена');
         }
     },
 
     clear() {
+        console.log('🧹 Очистка данных MatchAccepted');
         this.chatLink = null;
         this.teammateInfo = null;
+        localStorage.removeItem('currentChatLink');
     }
 };
 
