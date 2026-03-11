@@ -1,6 +1,6 @@
 // ============================================
 // СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
-// с тремя колонками, ЯРКОЙ подсветкой и экраном подтверждения
+// с защитой от двойного создания чата и правильным открытием ссылок
 // ============================================
 
 const Swipe = {
@@ -44,6 +44,7 @@ const Swipe = {
     matchPolling: null,
     gameCreated: false,
     timeDiff: 0,
+    gameCreating: false, // Флаг защиты от двойного создания
     
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
@@ -93,6 +94,7 @@ const Swipe = {
         this.isConnectionMode = false;
         this.mode = opponent.mode || 'PREMIER';
         this.gameCreated = false;
+        this.gameCreating = false; // Сбрасываем флаг
         
         if (expiresAt) {
             if (typeof expiresAt === 'string') {
@@ -816,6 +818,7 @@ const Swipe = {
         this.matchExpiresAt = null;
         this.serverTime = null;
         this.gameCreated = false;
+        this.gameCreating = false; // Сбрасываем флаг
         this.timeDiff = 0;
         
         if (this.cardTimerInterval) {
@@ -970,7 +973,14 @@ const Swipe = {
         }, 2000);
     },
     
+    // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ createGame ==========
     createGame() {
+        // Защита от двойного вызова
+        if (this.gameCreating) {
+            console.log('⚠️ Игра уже создается, пропускаем');
+            return;
+        }
+        
         console.log('Создаем игру для match_id:', this.currentMatchId);
         
         if (!this.currentMatchId) {
@@ -978,6 +988,8 @@ const Swipe = {
             this.exitSwipeMode('createGame: нет matchId');
             return;
         }
+        
+        this.gameCreating = true;
         
         fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/game/create', {
             method: 'POST',
@@ -990,7 +1002,6 @@ const Swipe = {
         .then(data => {
             console.log('Game create response:', data);
             
-            // Сохраняем информацию о сопернике и ссылку на чат
             if (data.status === 'ok' && data.chat_link) {
                 // Показываем экран подтверждения матча
                 if (window.MatchAccepted) {
@@ -1001,16 +1012,23 @@ const Swipe = {
                     };
                     window.MatchAccepted.show(teammateInfo, data.chat_link);
                 } else {
-                    // Fallback - просто открываем ссылку
-                    window.location.href = data.chat_link;
+                    console.error('MatchAccepted не найден');
+                    this.exitSwipeMode('createGame error: no MatchAccepted');
                 }
             } else {
+                console.error('createGame error: no chat_link', data);
                 this.exitSwipeMode('createGame error: no chat_link');
             }
         })
         .catch(error => {
             console.error('Error creating game:', error);
             this.exitSwipeMode('createGame error');
+        })
+        .finally(() => {
+            // Сбрасываем флаг через 3 секунды
+            setTimeout(() => {
+                this.gameCreating = false;
+            }, 3000);
         });
     },
     
@@ -1122,10 +1140,11 @@ const Swipe = {
             this.matchPolling = null;
         }
         this.gameCreated = false;
+        this.gameCreating = false;
     }
 };
 
-// Объект для управления экраном подтверждения матча
+// ========== ИСПРАВЛЕННЫЙ MatchAccepted ==========
 window.MatchAccepted = {
     chatLink: null,
     teammateInfo: null,
@@ -1152,7 +1171,16 @@ window.MatchAccepted = {
 
     goToChat() {
         if (this.chatLink) {
-            window.location.href = this.chatLink;
+            console.log('Открываем чат:', this.chatLink);
+            
+            // Способ 1: через Telegram WebApp (правильно для мини-аппа)
+            if (window.Telegram?.WebApp?.openTelegramLink) {
+                window.Telegram.WebApp.openTelegramLink(this.chatLink);
+            } 
+            // Способ 2: открыть в новой вкладке (fallback)
+            else {
+                window.open(this.chatLink, '_blank');
+            }
         } else {
             alert('Ссылка на чат не найдена');
         }
