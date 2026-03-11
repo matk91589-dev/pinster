@@ -1,5 +1,6 @@
 // ============================================
 // ПОИСК (Telegram Mini App версия) - ИСПРАВЛЕНО
+// с поддержкой экрана подтверждения матча
 // ============================================
 
 const Search = {
@@ -16,9 +17,37 @@ const Search = {
     isSearching: false,
     processedMatchIds: new Set(),
     
+    // Добавлена функция проверки MatchAccepted
+    ensureMatchAccepted() {
+        if (!window.MatchAccepted) {
+            console.warn('MatchAccepted не найден, создаем заглушку');
+            window.MatchAccepted = {
+                chatLink: null,
+                teammateInfo: null,
+                show(teammateInfo, chatLink) {
+                    console.log('MatchAccepted.show (заглушка)', teammateInfo, chatLink);
+                    if (window.Telegram?.WebApp?.openTelegramLink && chatLink) {
+                        window.Telegram.WebApp.openTelegramLink(chatLink);
+                    }
+                    App.showScreen('mainScreen', true);
+                },
+                goToChat() {
+                    if (this.chatLink) {
+                        window.location.href = this.chatLink;
+                    }
+                },
+                clear() {
+                    this.chatLink = null;
+                    this.teammateInfo = null;
+                }
+            };
+        }
+    },
+    
     init() {
         this.resetTimer();
         console.log('Search.init()');
+        this.ensureMatchAccepted(); // Добавлен вызов
         
         setTimeout(() => this.startPolling(), 1000);
         
@@ -435,6 +464,7 @@ const Search = {
         return '';
     },
     
+    // ИСПРАВЛЕННАЯ ФУНКЦИЯ createGame
     createGame() {
         console.log('Создаем игру для match_id:', this.currentMatchId);
         
@@ -471,11 +501,35 @@ const Search = {
             this.isSearching = false;
             this.currentMatchId = null;
             
-            if (window.Telegram?.WebApp?.openTelegramLink && data.chat_link) {
-                window.Telegram.WebApp.openTelegramLink(data.chat_link);
+            // === ИСПРАВЛЕНИЕ: Показываем экран подтверждения вместо главного ===
+            if (data.status === 'ok' && data.chat_link) {
+                // Получаем данные соперника из localStorage
+                const opponentData = JSON.parse(localStorage.getItem('opponentData') || '{}');
+                
+                // Сохраняем ссылку в localStorage на всякий случай
+                localStorage.setItem('currentChatLink', data.chat_link);
+                
+                // Показываем экран подтверждения матча
+                if (window.MatchAccepted) {
+                    window.MatchAccepted.show({
+                        nick: opponentData.nick || 'Соперник',
+                        rating: opponentData.rating || '0',
+                        rank: opponentData.rank || 'Нет ранга'
+                    }, data.chat_link);
+                } else {
+                    // Fallback - просто открываем ссылку
+                    console.warn('MatchAccepted не найден, открываем ссылку напрямую');
+                    if (window.Telegram?.WebApp?.openTelegramLink) {
+                        window.Telegram.WebApp.openTelegramLink(data.chat_link);
+                    } else {
+                        window.open(data.chat_link, '_blank');
+                    }
+                    App.showScreen('mainScreen', true);
+                }
+            } else {
+                console.error('Ошибка создания игры:', data);
+                App.showScreen('mainScreen', true);
             }
-            
-            App.showScreen('mainScreen', true);
         })
         .catch(error => {
             console.error('Error creating game:', error);
