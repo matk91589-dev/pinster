@@ -1,6 +1,6 @@
 // ============================================
 // СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
-// с защитой от двойного создания чата и правильным открытием ссылок
+// с кнопкой Telegram на экране соединения
 // ============================================
 
 const Swipe = {
@@ -44,7 +44,8 @@ const Swipe = {
     matchPolling: null,
     gameCreated: false,
     timeDiff: 0,
-    gameCreating: false, // Флаг защиты от двойного создания
+    gameCreating: false,
+    chatLink: null, // Ссылка на чат
     
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
@@ -94,7 +95,8 @@ const Swipe = {
         this.isConnectionMode = false;
         this.mode = opponent.mode || 'PREMIER';
         this.gameCreated = false;
-        this.gameCreating = false; // Сбрасываем флаг
+        this.gameCreating = false;
+        this.chatLink = null;
         
         if (expiresAt) {
             if (typeof expiresAt === 'string') {
@@ -560,7 +562,7 @@ const Swipe = {
             this.connectionTimer = null;
         }
         
-        const timerElement = document.getElementById('cardConnectionTimer');
+        const timerElement = document.getElementById('connectionTimer');
         if (!timerElement) return;
         
         const checkTime = () => {
@@ -580,12 +582,7 @@ const Swipe = {
             
             if (timeLeft <= 0) {
                 timerElement.innerHTML = `
-                    <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10" stroke="#B00000" stroke-width="2"/>
-                        <line x1="12" y1="8" x2="12" y2="12" stroke="#B00000" stroke-width="2"/>
-                        <line x1="12" y1="16" x2="12.01" y2="16" stroke="#B00000" stroke-width="2"/>
-                    </svg>
-                    <span>0с</span>
+                    <span class="timer-icon">⏳</span> 0с
                 `;
                 clearInterval(this.connectionTimer);
                 this.connectionTimer = null;
@@ -606,11 +603,7 @@ const Swipe = {
             }
             
             timerElement.innerHTML = `
-                <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke="${timeLeft < 10 ? '#B00000' : '#FF5500'}" stroke-width="2"/>
-                    <polyline points="12 6 12 12 16 14" stroke="${timeLeft < 10 ? '#B00000' : '#FF5500'}" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                <span>${timeLeft}с</span>
+                <span class="timer-icon">⏳</span> ${timeLeft}с
             `;
         };
         
@@ -626,94 +619,64 @@ const Swipe = {
         if (this.labelRight) this.labelRight.style.display = 'none';
         if (this.hint) this.hint.style.display = 'none';
         
-        this.card.style.transition = 'none';
-        this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
-        this.card.style.opacity = '1';
+        // Показываем connectionScreen
+        document.getElementById('swipeScreen').classList.remove('active');
+        document.getElementById('connectionScreen').classList.add('active');
         
-        this.card.innerHTML = this.getConnectionHTML();
-        
-        const avatars = this.card.querySelectorAll('.connection-avatar');
-        avatars.forEach((avatar, index) => {
-            avatar.style.opacity = '0';
-            avatar.style.transform = 'scale(0.8)';
-            setTimeout(() => {
-                avatar.style.transition = 'all 0.3s ease';
-                avatar.style.opacity = '1';
-                avatar.style.transform = 'scale(1)';
-            }, 50 + index * 100);
-        });
-        
-        this.setupConnectionMode();
-        this.startConnectionTimer();
-    },
-    
-    getConnectionHTML() {
-        const timeLeft = this.getTimeLeft();
-        return `
-            <div class="swipe-card-content connection-mode">
-                <div class="connection-avatars">
-                    <div class="connection-avatar self-avatar">
-                        <div class="tg-avatar-svg">
-                            <svg viewBox="0 0 24 24" width="35" height="35">
-                                <circle cx="12" cy="8" r="4" fill="#FF5500" stroke="#FF5500" stroke-width="2"/>
-                                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" fill="#FF5500" stroke="#FF5500" stroke-width="2"/>
-                            </svg>
-                        </div>
-                    </div>
-
-                    <div class="connection-line" id="cardConnectionLine">
-                        <div class="line-pulse"></div>
-                    </div>
-
-                    <div class="connection-avatar teammate-avatar" id="cardTeammateAvatar">
-                        <div class="tg-avatar-svg">
-                            <svg viewBox="0 0 24 24" width="30" height="30">
-                                <circle cx="12" cy="8" r="4" stroke="#9BA1B0" stroke-width="2" fill="none"/>
-                                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#9BA1B0" stroke-width="2" fill="none"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="connection-status" id="cardConnectionStatus">
-                    <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <circle cx="12" cy="12" r="10" stroke="#9BA1B0" stroke-width="2"/>
-                        <path d="M12 8v4l3 3" stroke="#9BA1B0" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    Ожидаем ответа тиммейта...
-                </div>
-
-                <div class="teammate-info">
-                    <span class="teammate-nick" id="cardTeammateNick">${this.currentPlayer?.nick || 'Игрок'}</span>
-                    <span class="teammate-rating" id="cardTeammateRating">
-                        ${this.currentPlayer?.rating || '0'}
-                        <svg class="heart-icon-small" width="14" height="14" viewBox="0 0 24 24">
-                            <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#FF5500" stroke-width="2" fill="none"/>
-                        </svg>
-                    </span>
-                </div>
-
-                <div class="connection-timer" id="cardConnectionTimer">
-                    <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10" stroke="#FF5500" stroke-width="2"/>
-                        <polyline points="12 6 12 12 16 14" stroke="#FF5500" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    <span>${timeLeft}с</span>
-                </div>
-            </div>
-        `;
-    },
-    
-    setupConnectionMode() {
-        document.getElementById('cardTeammateNick').textContent = this.currentPlayer?.nick || 'Игрок';
-        document.getElementById('cardTeammateRating').innerHTML = `
+        // Заполняем данные соперника
+        document.getElementById('teammateNick').textContent = this.currentPlayer?.nick || 'Игрок';
+        document.getElementById('teammateRating').innerHTML = `
             ${this.currentPlayer?.rating || '0'}
             <svg class="heart-icon-small" width="14" height="14" viewBox="0 0 24 24">
                 <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#FF5500" stroke-width="2" fill="none"/>
             </svg>
         `;
+        document.getElementById('connectionRank').textContent = this.currentPlayer?.rank || 'Нет ранга';
+        document.getElementById('connectionAge').textContent = (this.currentPlayer?.age || '?') + ' лет';
         
-        this.card.classList.remove('both-accepted', 'rejected', 'right-swipe', 'left-swipe');
+        // Сбрасываем кнопку в неактивное состояние
+        this.updateChatButton(false);
+        
+        this.startConnectionTimer();
+    },
+    
+    // Новая функция для обновления кнопки чата
+    updateChatButton(active, link = null) {
+        const button = document.getElementById('tgChatButton');
+        const buttonText = document.getElementById('tgChatButtonText');
+        const tooltip = document.getElementById('connectionTooltip');
+        
+        if (!button || !buttonText || !tooltip) return;
+        
+        if (active && link) {
+            // Активируем кнопку
+            button.classList.add('active');
+            button.disabled = false;
+            buttonText.textContent = 'Перейти в чат';
+            tooltip.textContent = 'Матч создан';
+            tooltip.classList.add('active');
+            
+            // Сохраняем ссылку
+            this.chatLink = link;
+            
+            // Добавляем обработчик клика
+            button.onclick = () => {
+                console.log('👆 Кнопка чата нажата, ссылка:', this.chatLink);
+                if (this.chatLink) {
+                    window.open(this.chatLink, '_blank');
+                }
+            };
+        } else {
+            // Деактивируем кнопку
+            button.classList.remove('active');
+            button.disabled = true;
+            buttonText.textContent = 'Ожидание тиммейта';
+            tooltip.textContent = 'Ожидаем второго игрока';
+            tooltip.classList.remove('active');
+            
+            // Убираем обработчик
+            button.onclick = null;
+        }
     },
     
     handleBothAccepted() {
@@ -736,56 +699,22 @@ const Swipe = {
             this.connectionTimer = null;
         }
         
-        // Показываем анимацию подтверждения
-        this.card.classList.add('both-accepted');
-        
-        const selfAvatar = document.querySelector('.self-avatar');
-        const teammateAvatar = document.querySelector('.teammate-avatar');
-        const connectionLine = document.querySelector('.connection-line');
-        const statusEl = document.getElementById('cardConnectionStatus');
-        const timerEl = document.getElementById('cardConnectionTimer');
-        
-        if (selfAvatar && teammateAvatar) {
-            selfAvatar.style.width = '72px';
-            selfAvatar.style.height = '72px';
-            teammateAvatar.style.width = '72px';
-            teammateAvatar.style.height = '72px';
-            teammateAvatar.classList.add('connected');
-        }
-        
-        if (connectionLine) {
-            connectionLine.classList.add('connected');
-        }
-        
-        if (timerEl) {
-            timerEl.style.opacity = '0';
-            timerEl.style.transition = 'opacity 0.3s ease';
-        }
-        
+        // Обновляем статус на экране соединения
+        const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
             statusEl.innerHTML = `
                 <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <circle cx="12" cy="12" r="10" stroke="#4CAF50" stroke-width="2"/>
                     <path d="M8 12L11 15L16 9" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
                 </svg>
-                ✅ Оба приняли приглашение!
+                Матч создан
             `;
         }
         
+        // Создаем игру
         setTimeout(() => {
-            if (statusEl) {
-                statusEl.innerHTML = `
-                    <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <circle cx="12" cy="12" r="10" stroke="#4CAF50" stroke-width="2"/>
-                        <path d="M8 12L11 15L16 9" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    🎮 Создаем игру...
-                `;
-            }
-            
             this.createGame();
-            
-        }, 1500);
+        }, 500);
     },
     
     exitConnectionMode() {
@@ -801,12 +730,8 @@ const Swipe = {
         if (this.labelRight) this.labelRight.style.display = 'block';
         if (this.hint) this.hint.style.display = 'block';
         
-        this.card.style.transition = 'opacity 0.2s ease';
-        this.card.style.opacity = '0';
-        
-        setTimeout(() => {
-            this.exitSwipeMode('exitConnectionMode');
-        }, 200);
+        // Возвращаемся на главный экран
+        this.exitSwipeMode('exitConnectionMode');
     },
     
     exitSwipeMode(reason = 'неизвестно') {
@@ -818,7 +743,8 @@ const Swipe = {
         this.matchExpiresAt = null;
         this.serverTime = null;
         this.gameCreated = false;
-        this.gameCreating = false; // Сбрасываем флаг
+        this.gameCreating = false;
+        this.chatLink = null;
         this.timeDiff = 0;
         
         if (this.cardTimerInterval) {
@@ -834,143 +760,13 @@ const Swipe = {
             this.matchPolling = null;
         }
         
-        // Возвращаемся на главный экран
+        // Скрываем connectionScreen и показываем главный
+        document.getElementById('connectionScreen').classList.remove('active');
         if (window.App) {
             App.showScreen('mainScreen', true);
         } else {
             window.location.href = '/';
         }
-    },
-    
-    getOriginalCardHTML() {
-        if (!this.currentPlayer) return '';
-        
-        const timeLeft = this.getTimeLeft();
-        const styleText = this.currentPlayer.style === 'fan' ? 'Fan' : 'Tryhard';
-        
-        return `
-            <div class="swipe-label swipe-label-left" id="swipeLabelLeft">SKIP</div>
-            <div class="swipe-label swipe-label-right" id="swipeLabelRight">INVITE</div>
-            
-            <div class="swipe-card-content" style="gap: 8px;">
-                <div class="swipe-timer" id="swipeTimer">${timeLeft}с</div>
-                
-                <div class="swipe-player-row">
-                    <div class="swipe-avatar">
-                        <div class="tg-avatar-svg" style="width: 70px; height: 70px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="35" height="35">
-                                <circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/>
-                                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <div class="swipe-name-block">
-                        <div class="swipe-player-id" id="swipePlayerId">${this.currentPlayer.player_id || 'ID'}</div>
-                        <div class="swipe-player-nick" id="swipePlayerNick">${this.currentPlayer.nick || 'Игрок'}</div>
-                    </div>
-                    
-                    <div class="swipe-rating-block">
-                        <span class="swipe-rating-value" id="swipeRatingValue">${this.currentPlayer.rating || '0'}</span>
-                        <span class="heart-icon">
-                            <svg viewBox="0 0 24 24" width="18" height="18">
-                                <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#F5F5F5" stroke-width="2" fill="none"/>
-                            </svg>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="swipe-rating-line" style="margin: 0 0 4px 0;"></div>
-
-                <!-- ТРИ КОЛОНКИ: РАНГ | ВОЗРАСТ | СТИЛЬ (без иконок) -->
-                <div class="swipe-stats-row three-cols" style="margin: 0 0 8px 0;">
-                    <div class="swipe-stat-item">
-                        <div class="swipe-stat-label">РАНГ</div>
-                        <div class="swipe-stat-value" id="swipeRank">${this.currentPlayer.rank || 'Нет'}</div>
-                    </div>
-                    <div class="swipe-stat-item">
-                        <div class="swipe-stat-label">ВОЗРАСТ</div>
-                        <div class="swipe-stat-value" id="swipeAge">${this.currentPlayer.age || '?'}</div>
-                    </div>
-                    <div class="swipe-stat-item">
-                        <div class="swipe-stat-label">СТИЛЬ</div>
-                        <div class="swipe-stat-value" id="swipeStyle" data-style="${this.currentPlayer.style || 'fan'}">${styleText}</div>
-                    </div>
-                </div>
-
-                <div class="swipe-steam-container">
-                    <div class="swipe-link-label">Ссылка Steam</div>
-                    <div class="swipe-link-value" id="swipeSteamLink">${this.currentPlayer.steam_link || 'не указана'}</div>
-                </div>
-
-                <div class="swipe-faceit-container">
-                    <div class="swipe-link-label">Ссылка Faceit</div>
-                    <div class="swipe-link-value" id="swipeFaceitLink">${this.currentPlayer.faceit_link || 'не указана'}</div>
-                </div>
-
-                <div class="swipe-comment">
-                    <div class="swipe-comment-label">Комментарий</div>
-                    <div class="swipe-comment-text" id="swipeComment">${this.currentPlayer.comment || 'нет комментария'}</div>
-                </div>
-            </div>
-        `;
-    },
-    
-    connectionTimeout() {
-        console.log('⏰ Время истекло');
-        
-        if (this.matchPolling) {
-            clearInterval(this.matchPolling);
-            this.matchPolling = null;
-        }
-        
-        this.card.classList.add('rejected');
-        const statusEl = document.getElementById('cardConnectionStatus');
-        if (statusEl) {
-            statusEl.innerHTML = `
-                <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="#B00000" stroke-width="2"/>
-                    <line x1="15" y1="9" x2="9" y2="15" stroke="#B00000" stroke-width="2"/>
-                    <line x1="9" y1="9" x2="15" y2="15" stroke="#B00000" stroke-width="2"/>
-                </svg>
-                ⏰ Время ожидания истекло
-            `;
-        }
-        
-        setTimeout(() => {
-            this.exitSwipeMode('connectionTimeout');
-        }, 2000);
-    },
-    
-    handleRejection() {
-        console.log('❌ Тиммейт отклонил');
-        
-        if (this.connectionTimer) {
-            clearInterval(this.connectionTimer);
-            this.connectionTimer = null;
-        }
-        
-        if (this.matchPolling) {
-            clearInterval(this.matchPolling);
-            this.matchPolling = null;
-        }
-        
-        this.card.classList.add('rejected');
-        const statusEl = document.getElementById('cardConnectionStatus');
-        if (statusEl) {
-            statusEl.innerHTML = `
-                <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="#B00000" stroke-width="2"/>
-                    <line x1="15" y1="9" x2="9" y2="15" stroke="#B00000" stroke-width="2"/>
-                    <line x1="9" y1="9" x2="15" y2="15" stroke="#B00000" stroke-width="2"/>
-                </svg>
-                ❌ Тиммейт отклонил приглашение
-            `;
-        }
-        
-        setTimeout(() => {
-            this.exitSwipeMode('handleRejection');
-        }, 2000);
     },
     
     // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ createGame ==========
@@ -1003,26 +799,30 @@ const Swipe = {
             console.log('Game create response:', data);
             
             if (data.status === 'ok' && data.chat_link) {
-                // Показываем экран подтверждения матча
-                if (window.MatchAccepted) {
-                    const teammateInfo = {
-                        nick: this.currentPlayer?.nick || 'Соперник',
-                        rating: this.currentPlayer?.rating || '0',
-                        rank: this.currentPlayer?.rank || 'Нет ранга'
-                    };
-                    window.MatchAccepted.show(teammateInfo, data.chat_link);
-                } else {
-                    console.error('MatchAccepted не найден');
-                    this.exitSwipeMode('createGame error: no MatchAccepted');
+                // Активируем кнопку чата
+                this.updateChatButton(true, data.chat_link);
+                
+                // Обновляем статус
+                const statusEl = document.getElementById('connectionStatus');
+                if (statusEl) {
+                    statusEl.innerHTML = `
+                        <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="#4CAF50" stroke-width="2"/>
+                            <path d="M8 12L11 15L16 9" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Чат готов
+                    `;
                 }
+                
+                console.log('✅ Кнопка чата активирована');
             } else {
                 console.error('createGame error: no chat_link', data);
-                this.exitSwipeMode('createGame error: no chat_link');
+                this.updateChatButton(false);
             }
         })
         .catch(error => {
             console.error('Error creating game:', error);
-            this.exitSwipeMode('createGame error');
+            this.updateChatButton(false);
         })
         .finally(() => {
             // Сбрасываем флаг через 3 секунды
@@ -1051,7 +851,7 @@ const Swipe = {
             if (rankEl) rankEl.textContent = player.rank || 'Нет';
             
             const ageEl = document.getElementById('swipeAge');
-            if (ageEl) ageEl.textContent = (player.age || '?');
+            if (ageEl) ageEl.textContent = (player.age || '?') + ' лет';
             
             const styleEl = document.getElementById('swipeStyle');
             if (styleEl) {
@@ -1141,146 +941,68 @@ const Swipe = {
         }
         this.gameCreated = false;
         this.gameCreating = false;
-    }
-};
-
-// ========== ИСПРАВЛЕННЫЙ MatchAccepted С РАБОЧИМ ОТКРЫТИЕМ ==========
-window.MatchAccepted = {
-    chatLink: null,
-    teammateInfo: null,
-
-    show(teammateInfo, chatLink) {
-        console.log('🎯 MatchAccepted.show() вызван');
-        console.log('👤 Информация о сопернике:', teammateInfo);
-        console.log('🔗 Получена ссылка на чат:', chatLink);
-        
-        if (!chatLink) {
-            console.error('❌ chatLink = null или undefined!');
-            alert('Ошибка: ссылка на чат не получена');
-            return;
-        }
-        
-        this.teammateInfo = teammateInfo;
-        this.chatLink = chatLink;
-        
-        // Сохраняем в localStorage на всякий случай
-        localStorage.setItem('currentChatLink', chatLink);
-        console.log('💾 Ссылка сохранена в localStorage');
-        
-        // Заполняем информацию
-        const nickEl = document.getElementById('matchTeammateNick');
-        const ratingEl = document.getElementById('matchTeammateRating');
-        const rankEl = document.getElementById('matchTeammateRank');
-        
-        if (nickEl) {
-            nickEl.textContent = teammateInfo.nick || '-';
-            console.log('📝 Заполнен ник:', nickEl.textContent);
-        } else {
-            console.warn('⚠️ Элемент matchTeammateNick не найден');
-        }
-        
-        if (ratingEl) {
-            ratingEl.textContent = teammateInfo.rating || '-';
-            console.log('📝 Заполнен рейтинг:', ratingEl.textContent);
-        } else {
-            console.warn('⚠️ Элемент matchTeammateRating не найден');
-        }
-        
-        if (rankEl) {
-            rankEl.textContent = teammateInfo.rank || '-';
-            console.log('📝 Заполнен ранг:', rankEl.textContent);
-        } else {
-            console.warn('⚠️ Элемент matchTeammateRank не найден');
-        }
-        
-        // Показываем экран
-        console.log('🎬 Переключаемся на экран matchAcceptedScreen');
-        if (window.App) {
-            App.showScreen('matchAcceptedScreen', true);
-            console.log('✅ Экран matchAcceptedScreen показан');
-        } else {
-            console.error('❌ App не найден!');
-        }
-    },
-
-    // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ goToChat ==========
-    goToChat() {
-        console.log('🚀 goToChat() вызван');
-        console.log('📌 Текущий chatLink в объекте:', this.chatLink);
-        
-        // Пробуем взять ссылку
-        let link = this.chatLink;
-        
-        // Если нет - берем из localStorage
-        if (!link) {
-            console.log('🔍 Ссылка в объекте не найдена, пробуем из localStorage');
-            link = localStorage.getItem('currentChatLink');
-            console.log('📦 Ссылка из localStorage:', link);
-        }
-        
-        if (link) {
-            console.log('✅ Ссылка найдена, открываем:', link);
-            
-            // ПРОСТОЕ РАБОЧЕЕ РЕШЕНИЕ - открываем в новой вкладке
-            window.open(link, '_blank');
-            
-        } else {
-            console.error('❌ Ссылка не найдена ни в объекте, ни в localStorage');
-            alert('Ссылка на чат не найдена');
-        }
-    },
-
-    clear() {
-        console.log('🧹 Очистка данных MatchAccepted');
         this.chatLink = null;
-        this.teammateInfo = null;
-        localStorage.removeItem('currentChatLink');
+    },
+    
+    connectionTimeout() {
+        console.log('⏰ Время истекло');
+        
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
+        
+        const statusEl = document.getElementById('connectionStatus');
+        if (statusEl) {
+            statusEl.innerHTML = `
+                <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="#B00000" stroke-width="2"/>
+                    <line x1="15" y1="9" x2="9" y2="15" stroke="#B00000" stroke-width="2"/>
+                    <line x1="9" y1="9" x2="15" y2="15" stroke="#B00000" stroke-width="2"/>
+                </svg>
+                ⏰ Время ожидания истекло
+            `;
+        }
+        
+        setTimeout(() => {
+            this.exitSwipeMode('connectionTimeout');
+        }, 2000);
+    },
+    
+    handleRejection() {
+        console.log('❌ Тиммейт отклонил');
+        
+        if (this.connectionTimer) {
+            clearInterval(this.connectionTimer);
+            this.connectionTimer = null;
+        }
+        
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
+        
+        const statusEl = document.getElementById('connectionStatus');
+        if (statusEl) {
+            statusEl.innerHTML = `
+                <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="#B00000" stroke-width="2"/>
+                    <line x1="15" y1="9" x2="9" y2="15" stroke="#B00000" stroke-width="2"/>
+                    <line x1="9" y1="9" x2="15" y2="15" stroke="#B00000" stroke-width="2"/>
+                </svg>
+                ❌ Тиммейт отклонил приглашение
+            `;
+        }
+        
+        setTimeout(() => {
+            this.exitSwipeMode('handleRejection');
+        }, 2000);
     }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Swipe: DOM загружен');
     window.Swipe = Swipe;
-    
-    // ===== ПРИНУДИТЕЛЬНАЯ ПРИВЯЗКА КНОПКИ =====
-    console.log('🔧 Принудительная привязка кнопки...');
-    
-    const chatBtn = document.getElementById('goToChatBtn');
-    if (chatBtn) {
-        console.log('✅ Кнопка найдена, привязываем обработчик');
-        
-        // Убираем старый onclick и ставим новый
-        chatBtn.onclick = function() {
-            console.log('👆 Кнопка нажата!');
-            if (window.MatchAccepted) {
-                window.MatchAccepted.goToChat();
-            } else {
-                console.error('❌ MatchAccepted не найден');
-                alert('Ошибка: функция перехода не найдена');
-            }
-        };
-        
-        // Добавляем атрибут, чтобы не привязать дважды
-        chatBtn.setAttribute('data-bound', 'true');
-    } else {
-        console.error('❌ Кнопка goToChatBtn не найдена!');
-    }
-});
-
-// Дополнительная привязка после полной загрузки страницы
-window.addEventListener('load', function() {
-    console.log('🔧 Дополнительная привязка после load...');
-    const chatBtn = document.getElementById('goToChatBtn');
-    if (chatBtn && !chatBtn.hasAttribute('data-bound')) {
-        console.log('✅ Кнопка найдена в load, привязываем');
-        chatBtn.setAttribute('data-bound', 'true');
-        chatBtn.onclick = function() {
-            console.log('👆 Кнопка нажата (load)');
-            if (window.MatchAccepted) {
-                window.MatchAccepted.goToChat();
-            }
-        };
-    }
 });
 
 if (document.getElementById('swipeScreen')?.classList.contains('active')) {
