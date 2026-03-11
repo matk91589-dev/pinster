@@ -82,7 +82,7 @@
             height: 42px;
         }
         
-        /* Диагностический блок (будет виден только при проблемах) */
+        /* Диагностический блок */
         #diagnostic-badge {
             position: fixed;
             bottom: 10px;
@@ -94,6 +94,125 @@
             font-size: 12px;
             z-index: 9999;
             display: none;
+        }
+
+        /* СТИЛИ ДЛЯ ЭКРАНА ПОДТВЕРЖДЕНИЯ МАТЧА */
+        .match-accepted-screen {
+            background: #1a1a1a;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .match-accepted-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 30px 20px;
+            background: #2B2F36;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .match-checkmark {
+            font-size: 80px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+            background: rgba(76, 175, 80, 0.1);
+            width: 120px;
+            height: 120px;
+            line-height: 120px;
+            border-radius: 60px;
+            margin: 0 auto 30px auto;
+        }
+
+        .match-accepted-container h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #FF5500;
+        }
+
+        .match-accepted-container p {
+            color: #9BA1B0;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .match-teammate-info {
+            background: #1A1D24;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #3A3F48;
+        }
+
+        .match-teammate-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #3A3F48;
+        }
+
+        .match-teammate-label {
+            color: #9BA1B0;
+            font-size: 14px;
+        }
+
+        .match-teammate-value {
+            color: #FF5500;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .match-chat-button {
+            background: #0088cc;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto;
+            display: block;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,136,204,0.3);
+        }
+
+        .match-chat-button:hover {
+            background: #0077b5;
+            transform: scale(1.05);
+        }
+
+        .match-note {
+            color: #666;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        .match-loading {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255,85,0,0.3);
+            border-radius: 50%;
+            border-top-color: #FF5500;
+            animation: spin 1s ease-in-out infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -160,7 +279,6 @@
                 </div>
                 <div class="cases-section">
                     <div class="cases-grid">
-                        <!-- ТВОИ КЕЙСЫ - ТЕПЕРЬ С НАСТОЯЩИМИ КАРТИНКАМИ -->
                         <div class="case-item">
                             <div class="case-icon"><img src="cases/common_case.png?v=20260307" alt="common case"></div>
                             <div class="case-info">
@@ -228,7 +346,6 @@
                 </div>
 
                 <div class="profile-header">
-                    <!-- НОВАЯ SVG АВАТАРКА -->
                     <div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()">
                         <div class="tg-avatar-svg">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
@@ -288,7 +405,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН КОМАНДА (НОВЫЙ) -->
+            <!-- ЭКРАН КОМАНДА -->
             <div id="teamScreen" class="screen team-screen">
                 <div class="team-header">
                     <div class="team-back" onclick="Team.goBack()">←</div>
@@ -304,12 +421,10 @@
                     <div class="team-tab" onclick="Team.switchTab('search', this)">ПОИСК ИГРОКА</div>
                 </div>
 
-                <div class="team-content" id="teamContent">
-                    <!-- Сюда будет подгружаться контент через JS -->
-                </div>
+                <div class="team-content" id="teamContent"></div>
             </div>
 
-            <!-- ЭКРАН СВАЙП-КАРТОЧЕК (ИСПРАВЛЕННЫЙ) -->
+            <!-- ЭКРАН СВАЙП-КАРТОЧЕК -->
             <div id="swipeScreen" class="screen swipe-screen">
                 <div class="swipe-header">
                     <div class="swipe-title">Поиск тиммейтов</div>
@@ -326,7 +441,6 @@
                         <div class="swipe-label swipe-label-right" id="swipeLabelRight">INVITE</div>
                         
                         <div class="swipe-card-content">
-                            <!-- Таймер в левом верхнем углу карточки -->
                             <div class="swipe-timer" id="swipeTimer">30с</div>
                             
                             <div class="swipe-player-row">
@@ -356,7 +470,6 @@
 
                             <div class="swipe-rating-line"></div>
 
-                            <!-- ТРИ КОЛОНКИ: РАНГ | ВОЗРАСТ | СТИЛЬ -->
                             <div class="swipe-stats-row three-cols">
                                 <div class="swipe-stat-item">
                                     <div class="swipe-stat-label">РАНГ</div>
@@ -397,23 +510,18 @@
 
             <!-- ЭКРАН СОЕДИНЕНИЯ -->
             <div id="connectionScreen" class="screen connection-screen">
-                <!-- Хедер с заголовком -->
                 <div class="swipe-header">
                     <div class="swipe-title">Тиммейт найден</div>
                 </div>
 
-                <!-- Карточка соединения -->
                 <div class="swipe-container" id="connectionContainer">
                     <div class="swipe-card" id="connectionCard">
-                        <!-- Таймер в левом верхнем углу -->
                         <div class="connection-timer" id="connectionTimer">
                             <span class="timer-icon">⏳</span> 30с
                         </div>
                         
                         <div class="swipe-card-content connection-mode">
-                            <!-- Аватарки -->
                             <div class="connection-avatars">
-                                <!-- Твоя аватарка (яркая) -->
                                 <div class="connection-avatar self-avatar">
                                     <div class="tg-avatar-svg">
                                         <svg viewBox="0 0 24 24" width="35" height="35">
@@ -423,12 +531,10 @@
                                     </div>
                                 </div>
 
-                                <!-- Линия соединения с анимацией -->
                                 <div class="connection-line">
                                     <div class="line-pulse"></div>
                                 </div>
 
-                                <!-- Аватарка тиммейта (уменьшенная) -->
                                 <div class="connection-avatar teammate-avatar">
                                     <div class="tg-avatar-svg">
                                         <svg viewBox="0 0 24 24" width="30" height="30">
@@ -439,7 +545,6 @@
                                 </div>
                             </div>
 
-                            <!-- Статус -->
                             <div class="connection-status" id="connectionStatus">
                                 <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                                     <circle cx="12" cy="12" r="10" stroke="#9BA1B0" stroke-width="2"/>
@@ -448,7 +553,6 @@
                                 Тиммейт найден
                             </div>
 
-                            <!-- Информация о тиммейте -->
                             <div class="teammate-info">
                                 <span class="teammate-nick" id="teammateNick">Player123</span>
                                 <span class="teammate-rating" id="teammateRating">
@@ -459,7 +563,6 @@
                                 </span>
                             </div>
 
-                            <!-- Дополнительная информация -->
                             <div class="connection-rank-age">
                                 <span class="connection-rank" id="connectionRank">Gold Nova 3</span>
                                 <span class="connection-age" id="connectionAge">21 год</span>
@@ -468,9 +571,41 @@
                     </div>
                 </div>
 
-                <!-- Индикатор загрузки -->
                 <div class="swipe-loading" id="connectionLoading">
                     <div class="spinner-small"></div>
+                </div>
+            </div>
+
+            <!-- НОВЫЙ ЭКРАН ПОДТВЕРЖДЕНИЯ МАТЧА -->
+            <div id="matchAcceptedScreen" class="screen">
+                <div class="match-accepted-screen">
+                    <div class="match-accepted-container">
+                        <div class="match-checkmark">✅</div>
+                        <h2>Матч подтвержден!</h2>
+                        <p>Вы и ваш соперник готовы к игре</p>
+                        
+                        <div class="match-teammate-info" id="matchTeammateInfo">
+                            <div class="match-teammate-row">
+                                <span class="match-teammate-label">Соперник:</span>
+                                <span class="match-teammate-value" id="matchTeammateNick">-</span>
+                            </div>
+                            <div class="match-teammate-row">
+                                <span class="match-teammate-label">Рейтинг:</span>
+                                <span class="match-teammate-value" id="matchTeammateRating">-</span>
+                            </div>
+                            <div class="match-teammate-row">
+                                <span class="match-teammate-label">Ранг:</span>
+                                <span class="match-teammate-value" id="matchTeammateRank">-</span>
+                            </div>
+                        </div>
+                        
+                        <button class="match-chat-button" onclick="MatchAccepted.goToChat()" id="goToChatBtn">
+                            💬 Перейти в чат
+                        </button>
+                        
+                        <p class="match-note">Чат создан в Telegram. Нажмите кнопку, чтобы перейти</p>
+                        <div id="matchLoading" class="match-loading" style="display: none;"></div>
+                    </div>
                 </div>
             </div>
 
@@ -762,5 +897,98 @@
     <script src="js/app.js?v=20260307"></script>
     <script src="js/team.js?v=20260307"></script>
     <script src="js/swipe.js?v=20260307"></script>
+
+    <!-- НОВЫЙ JS ДЛЯ ЭКРАНА ПОДТВЕРЖДЕНИЯ -->
+    <script>
+        // Объект для управления экраном подтверждения матча
+        const MatchAccepted = {
+            chatLink: null,
+            teammateInfo: null,
+
+            // Показать экран с информацией о сопернике
+            show(teammateInfo, chatLink) {
+                this.teammateInfo = teammateInfo;
+                this.chatLink = chatLink;
+                
+                // Заполняем информацию
+                document.getElementById('matchTeammateNick').textContent = teammateInfo.nick || '-';
+                document.getElementById('matchTeammateRating').textContent = teammateInfo.rating || '-';
+                document.getElementById('matchTeammateRank').textContent = teammateInfo.rank || '-';
+                
+                // Показываем экран
+                App.showScreen('matchAcceptedScreen', true);
+            },
+
+            // Переход в чат
+            goToChat() {
+                if (this.chatLink) {
+                    window.location.href = this.chatLink;
+                } else {
+                    alert('Ссылка на чат не найдена');
+                }
+            },
+
+            // Очистка данных
+            clear() {
+                this.chatLink = null;
+                this.teammateInfo = null;
+            }
+        };
+
+        // Модифицируем функцию respondToMatch в search.js
+        const originalRespondToMatch = window.respondToMatch;
+        window.respondToMatch = async function(matchId, response) {
+            try {
+                const result = await apiRequest('/api/match/respond', {
+                    telegram_id: window.telegramId,
+                    match_id: matchId,
+                    response: response
+                });
+                
+                console.log('Respond result:', result);
+                
+                if (result.both_accepted) {
+                    // Показываем загрузку
+                    document.getElementById('matchLoading').style.display = 'block';
+                    
+                    // Создаем игру
+                    const gameResult = await apiRequest('/api/game/create', {
+                        match_id: matchId
+                    });
+                    
+                    document.getElementById('matchLoading').style.display = 'none';
+                    
+                    if (gameResult.status === 'ok') {
+                        // Получаем информацию о сопернике (она должна быть где-то сохранена)
+                        const teammateInfo = {
+                            nick: document.getElementById('teammateNick')?.textContent || 'Соперник',
+                            rating: document.getElementById('teammateRating')?.textContent || '1500',
+                            rank: document.getElementById('connectionRank')?.textContent || 'Gold Nova 3'
+                        };
+                        
+                        // Показываем экран с кнопкой
+                        MatchAccepted.show(teammateInfo, gameResult.chat_link);
+                    } else {
+                        alert('Ошибка создания игры');
+                    }
+                } else if (result.status === 'rejected') {
+                    alert('Соперник отклонил приглашение');
+                    App.showScreen('mainScreen', true);
+                } else if (result.status === 'expired') {
+                    alert('Время матча истекло');
+                    App.showScreen('mainScreen', true);
+                } else if (result.status === 'already_responded') {
+                    console.log('Уже ответили');
+                } else {
+                    console.log('Ожидаем ответа соперника...');
+                }
+                
+                return result;
+            } catch (error) {
+                console.error('Error in respondToMatch:', error);
+                document.getElementById('matchLoading').style.display = 'none';
+            }
+        };
+    </script>
 </body>
 </html>
