@@ -12,6 +12,11 @@
     --text-primary: #F5F5F5;
     --text-secondary: #9BA1B0;
     --border-color: #2A2F3A;
+    
+    /* Telegram цвета */
+    --tg-blue: #37AEE2;
+    --tg-blue-hover: #2E9AC9;
+    --tg-gray: rgba(255, 255, 255, 0.2);
 }
 
 /* Глобальное сглаживание для всего текста */
@@ -2775,6 +2780,66 @@ input:checked + .slider:before {
     animation: timerPulse 1s infinite;
 }
 
+/* ===== НОВЫЕ СТИЛИ ДЛЯ TELEGRAM-КНОПКИ ===== */
+.connection-button {
+    width: 100%;
+    margin-top: 24px;
+    padding: 0;
+}
+
+.tg-chat-button {
+    width: 100%;
+    height: 52px;
+    border-radius: 12px;
+    border: none;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.5);
+    pointer-events: none;
+}
+
+.tg-chat-button.active {
+    background: var(--tg-blue);
+    border: none;
+    color: white;
+    pointer-events: auto;
+    box-shadow: 0 4px 12px rgba(55, 174, 226, 0.3);
+}
+
+.tg-chat-button.active:hover {
+    background: var(--tg-blue-hover);
+    transform: scale(1.02);
+}
+
+.tg-chat-button svg {
+    width: 22px;
+    height: 22px;
+}
+
+.tg-chat-button.active svg {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.connection-tooltip {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.3);
+    text-align: center;
+    margin-top: 8px;
+    transition: color 0.2s ease;
+}
+
+.connection-tooltip.active {
+    color: var(--tg-blue);
+}
+
 /* ===== АНИМАЦИИ ===== */
 .primary-btn,
 .mode-search-btn,
@@ -2790,7 +2855,8 @@ input:checked + .slider:before {
 .buy-btn-simple,
 .inventory-item,
 .friend-item,
-.connection-btn {
+.connection-btn,
+.tg-chat-button {
     transition: all 0.2s ease;
 }
 
@@ -2803,7 +2869,8 @@ input:checked + .slider:before {
 .edit-title-icon:hover,
 .apply-btn:hover,
 .back-btn:hover,
-.connection-btn:hover {
+.connection-btn:hover,
+.tg-chat-button.active:hover {
     transform: scale(1.02);
 }
 
@@ -2830,7 +2897,8 @@ input:checked + .slider:before {
 .buy-btn-simple:active,
 .inventory-item:active,
 .friend-item:active,
-.connection-btn:active {
+.connection-btn:active,
+.tg-chat-button.active:active {
     transform: scale(0.97);
 }
 
@@ -3337,5 +3405,3 @@ scroll-behavior:smooth;
     word-wrap: break-word;
     line-height: 1.5;
 }
-
-
