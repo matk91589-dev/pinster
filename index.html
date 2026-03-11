@@ -96,123 +96,64 @@
             display: none;
         }
 
-        /* СТИЛИ ДЛЯ ЭКРАНА ПОДТВЕРЖДЕНИЯ МАТЧА */
-        .match-accepted-screen {
-            background: #1a1a1a;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .match-accepted-container {
-            max-width: 400px;
+        /* Стили для кнопки на экране соединения */
+        .connection-button {
             width: 100%;
-            padding: 30px 20px;
-            background: #2B2F36;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-top: 24px;
+            padding: 0 16px;
         }
 
-        .match-checkmark {
-            font-size: 80px;
-            color: #4CAF50;
-            margin-bottom: 20px;
-            background: rgba(76, 175, 80, 0.1);
-            width: 120px;
-            height: 120px;
-            line-height: 120px;
-            border-radius: 60px;
-            margin: 0 auto 30px auto;
-        }
-
-        .match-accepted-container h2 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #FF5500;
-        }
-
-        .match-accepted-container p {
-            color: #9BA1B0;
-            font-size: 16px;
-            margin-bottom: 30px;
-            line-height: 1.5;
-        }
-
-        .match-teammate-info {
-            background: #1A1D24;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 30px;
-            border: 1px solid #3A3F48;
-        }
-
-        .match-teammate-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #3A3F48;
-        }
-
-        .match-teammate-label {
-            color: #9BA1B0;
-            font-size: 14px;
-        }
-
-        .match-teammate-value {
-            color: #FF5500;
+        .tg-chat-button {
+            width: 100%;
+            height: 52px;
+            border-radius: 12px;
+            border: none;
             font-size: 18px;
             font-weight: 600;
-        }
-
-        .match-chat-button {
-            background: #0088cc;
-            color: white;
-            border: none;
-            padding: 20px 40px;
-            font-size: 24px;
-            font-weight: 600;
-            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             cursor: pointer;
-            width: 100%;
-            max-width: 300px;
-            margin: 20px auto;
-            display: block;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,136,204,0.3);
+            transition: all 0.2s ease;
+            background: transparent;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.5);
+            pointer-events: none;
         }
 
-        .match-chat-button:hover {
-            background: #0077b5;
-            transform: scale(1.05);
+        .tg-chat-button.active {
+            background: #37AEE2;
+            border: none;
+            color: white;
+            pointer-events: auto;
+            box-shadow: 0 4px 12px rgba(55, 174, 226, 0.3);
         }
 
-        .match-note {
-            color: #666;
-            font-size: 14px;
-            margin-top: 20px;
+        .tg-chat-button.active:hover {
+            background: #2E9AC9;
+            transform: scale(1.02);
         }
 
-        .match-loading {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid rgba(255,85,0,0.3);
-            border-radius: 50%;
-            border-top-color: #FF5500;
-            animation: spin 1s ease-in-out infinite;
-            margin: 20px auto;
+        .tg-chat-button svg {
+            width: 22px;
+            height: 22px;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .tg-chat-button.active svg {
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .connection-tooltip {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.3);
+            text-align: center;
+            margin-top: 8px;
+            transition: color 0.2s ease;
+        }
+
+        .connection-tooltip.active {
+            color: #37AEE2;
         }
     </style>
 </head>
@@ -508,7 +449,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН СОЕДИНЕНИЯ -->
+            <!-- ЭКРАН СОЕДИНЕНИЯ - ОБНОВЛЕННЫЙ -->
             <div id="connectionScreen" class="screen connection-screen">
                 <div class="swipe-header">
                     <div class="swipe-title">Тиммейт найден</div>
@@ -567,45 +508,26 @@
                                 <span class="connection-rank" id="connectionRank">Gold Nova 3</span>
                                 <span class="connection-age" id="connectionAge">21 год</span>
                             </div>
+
+                            <!-- НОВАЯ КНОПКА -->
+                            <div class="connection-button">
+                                <button class="tg-chat-button" id="tgChatButton" disabled>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                                        <circle cx="128" cy="128" r="128" fill="#37AEE2"/>
+                                        <path fill="#FFFFFF" d="M94.7 173.3c-1.3 0-2.7-.2-4-1-3.6-1.7-6.3-5.4-6.3-9.6 0-2.5 1-4.7 2.6-6.4l93.2-79.1c2.5-2.1 6.2-2.4 9-.6 2.8 1.9 4 5.3 3 8.4l-37.4 92.2-59.5-3.9zm59.8-2.1l26.1-64.3L107.5 142.7l46.9 28.5z"/>
+                                    </svg>
+                                    <span id="tgChatButtonText">Ожидание тиммейта</span>
+                                </button>
+                                <div class="connection-tooltip" id="connectionTooltip">
+                                    Ожидаем второго игрока
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="swipe-loading" id="connectionLoading">
                     <div class="spinner-small"></div>
-                </div>
-            </div>
-
-            <!-- НОВЫЙ ЭКРАН ПОДТВЕРЖДЕНИЯ МАТЧА -->
-            <div id="matchAcceptedScreen" class="screen">
-                <div class="match-accepted-screen">
-                    <div class="match-accepted-container">
-                        <div class="match-checkmark">✅</div>
-                        <h2>Матч подтвержден!</h2>
-                        <p>Вы и ваш соперник готовы к игре</p>
-                        
-                        <div class="match-teammate-info" id="matchTeammateInfo">
-                            <div class="match-teammate-row">
-                                <span class="match-teammate-label">Соперник:</span>
-                                <span class="match-teammate-value" id="matchTeammateNick">-</span>
-                            </div>
-                            <div class="match-teammate-row">
-                                <span class="match-teammate-label">Рейтинг:</span>
-                                <span class="match-teammate-value" id="matchTeammateRating">-</span>
-                            </div>
-                            <div class="match-teammate-row">
-                                <span class="match-teammate-label">Ранг:</span>
-                                <span class="match-teammate-value" id="matchTeammateRank">-</span>
-                            </div>
-                        </div>
-                        
-                        <button class="match-chat-button" onclick="MatchAccepted.goToChat()" id="goToChatBtn">
-                            💬 Перейти в чат
-                        </button>
-                        
-                        <p class="match-note">Чат создан в Telegram. Нажмите кнопку, чтобы перейти</p>
-                        <div id="matchLoading" class="match-loading" style="display: none;"></div>
-                    </div>
                 </div>
             </div>
 
@@ -897,98 +819,5 @@
     <script src="js/app.js?v=20260307"></script>
     <script src="js/team.js?v=20260307"></script>
     <script src="js/swipe.js?v=20260307"></script>
-
-    <!-- НОВЫЙ JS ДЛЯ ЭКРАНА ПОДТВЕРЖДЕНИЯ -->
-    <script>
-        // Объект для управления экраном подтверждения матча
-        const MatchAccepted = {
-            chatLink: null,
-            teammateInfo: null,
-
-            // Показать экран с информацией о сопернике
-            show(teammateInfo, chatLink) {
-                this.teammateInfo = teammateInfo;
-                this.chatLink = chatLink;
-                
-                // Заполняем информацию
-                document.getElementById('matchTeammateNick').textContent = teammateInfo.nick || '-';
-                document.getElementById('matchTeammateRating').textContent = teammateInfo.rating || '-';
-                document.getElementById('matchTeammateRank').textContent = teammateInfo.rank || '-';
-                
-                // Показываем экран
-                App.showScreen('matchAcceptedScreen', true);
-            },
-
-            // Переход в чат
-            goToChat() {
-                if (this.chatLink) {
-                    window.location.href = this.chatLink;
-                } else {
-                    alert('Ссылка на чат не найдена');
-                }
-            },
-
-            // Очистка данных
-            clear() {
-                this.chatLink = null;
-                this.teammateInfo = null;
-            }
-        };
-
-        // Модифицируем функцию respondToMatch в search.js
-        const originalRespondToMatch = window.respondToMatch;
-        window.respondToMatch = async function(matchId, response) {
-            try {
-                const result = await apiRequest('/api/match/respond', {
-                    telegram_id: window.telegramId,
-                    match_id: matchId,
-                    response: response
-                });
-                
-                console.log('Respond result:', result);
-                
-                if (result.both_accepted) {
-                    // Показываем загрузку
-                    document.getElementById('matchLoading').style.display = 'block';
-                    
-                    // Создаем игру
-                    const gameResult = await apiRequest('/api/game/create', {
-                        match_id: matchId
-                    });
-                    
-                    document.getElementById('matchLoading').style.display = 'none';
-                    
-                    if (gameResult.status === 'ok') {
-                        // Получаем информацию о сопернике (она должна быть где-то сохранена)
-                        const teammateInfo = {
-                            nick: document.getElementById('teammateNick')?.textContent || 'Соперник',
-                            rating: document.getElementById('teammateRating')?.textContent || '1500',
-                            rank: document.getElementById('connectionRank')?.textContent || 'Gold Nova 3'
-                        };
-                        
-                        // Показываем экран с кнопкой
-                        MatchAccepted.show(teammateInfo, gameResult.chat_link);
-                    } else {
-                        alert('Ошибка создания игры');
-                    }
-                } else if (result.status === 'rejected') {
-                    alert('Соперник отклонил приглашение');
-                    App.showScreen('mainScreen', true);
-                } else if (result.status === 'expired') {
-                    alert('Время матча истекло');
-                    App.showScreen('mainScreen', true);
-                } else if (result.status === 'already_responded') {
-                    console.log('Уже ответили');
-                } else {
-                    console.log('Ожидаем ответа соперника...');
-                }
-                
-                return result;
-            } catch (error) {
-                console.error('Error in respondToMatch:', error);
-                document.getElementById('matchLoading').style.display = 'none';
-            }
-        };
-    </script>
 </body>
 </html>
