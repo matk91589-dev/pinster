@@ -47,7 +47,7 @@ const Search = {
     init() {
         this.resetTimer();
         console.log('Search.init()');
-        this.ensureMatchAccepted(); // Добавлен вызов
+        this.ensureMatchAccepted();
         
         setTimeout(() => this.startPolling(), 1000);
         
@@ -152,7 +152,6 @@ const Search = {
         this.pollingInterval = setInterval(() => this.checkMatchStatus(), 2000);
     },
     
-    // ИСПРАВЛЕННАЯ ФУНКЦИЯ С ПРОВЕРКОЙ ОШИБОК
     checkMatchStatus() {
         if (!this.isSearching && !this.waitingForPartner) {
             return;
@@ -464,12 +463,13 @@ const Search = {
         return '';
     },
     
-    // ИСПРАВЛЕННАЯ ФУНКЦИЯ createGame
+    // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ createGame ==========
     createGame() {
         console.log('Создаем игру для match_id:', this.currentMatchId);
         
         if (!this.currentMatchId) {
             console.log('Нет активного мэтча');
+            App.showScreen('mainScreen', true);
             return;
         }
         
@@ -490,49 +490,78 @@ const Search = {
             return res.json();
         })
         .then(data => {
-            if (!data) return;
+            if (!data) {
+                App.showScreen('mainScreen', true);
+                return;
+            }
             
             console.log('Game create response:', data);
             
             this.processedMatchIds.clear();
-            
             this.waitingForPartner = false;
             this.myResponse = null;
             this.isSearching = false;
             this.currentMatchId = null;
             
-            // === ИСПРАВЛЕНИЕ: Показываем экран подтверждения вместо главного ===
+            // ✅ ГЛАВНОЕ ИСПРАВЛЕНИЕ: показываем экран подтверждения
             if (data.status === 'ok' && data.chat_link) {
                 // Получаем данные соперника из localStorage
                 const opponentData = JSON.parse(localStorage.getItem('opponentData') || '{}');
                 
-                // Сохраняем ссылку в localStorage на всякий случай
+                // Сохраняем ссылку в localStorage
                 localStorage.setItem('currentChatLink', data.chat_link);
                 
-                // Показываем экран подтверждения матча
+                console.log('✅ Показываем экран подтверждения матча');
+                console.log('👤 Соперник:', opponentData);
+                console.log('🔗 Ссылка на чат:', data.chat_link);
+                
+                // Проверяем, что MatchAccepted существует
                 if (window.MatchAccepted) {
+                    // Показываем экран подтверждения матча
                     window.MatchAccepted.show({
                         nick: opponentData.nick || 'Соперник',
                         rating: opponentData.rating || '0',
                         rank: opponentData.rank || 'Нет ранга'
                     }, data.chat_link);
                 } else {
-                    // Fallback - просто открываем ссылку
-                    console.warn('MatchAccepted не найден, открываем ссылку напрямую');
-                    if (window.Telegram?.WebApp?.openTelegramLink) {
-                        window.Telegram.WebApp.openTelegramLink(data.chat_link);
+                    console.error('❌ MatchAccepted не найден! Проверь порядок подключения скриптов');
+                    // Fallback - пытаемся найти экран и показать его вручную
+                    const matchScreen = document.getElementById('matchAcceptedScreen');
+                    if (matchScreen) {
+                        // Заполняем данные вручную
+                        const nickEl = document.getElementById('matchTeammateNick');
+                        const ratingEl = document.getElementById('matchTeammateRating');
+                        const rankEl = document.getElementById('matchTeammateRank');
+                        const chatBtn = document.getElementById('goToChatBtn');
+                        
+                        if (nickEl) nickEl.textContent = opponentData.nick || 'Соперник';
+                        if (ratingEl) ratingEl.textContent = opponentData.rating || '0';
+                        if (rankEl) rankEl.textContent = opponentData.rank || 'Нет ранга';
+                        if (chatBtn) {
+                            chatBtn.onclick = () => {
+                                window.location.href = data.chat_link;
+                            };
+                        }
+                        
+                        // Показываем экран
+                        App.showScreen('matchAcceptedScreen', true);
                     } else {
-                        window.open(data.chat_link, '_blank');
+                        // Если ничего не работает - открываем ссылку напрямую
+                        if (window.Telegram?.WebApp?.openTelegramLink) {
+                            window.Telegram.WebApp.openTelegramLink(data.chat_link);
+                        } else {
+                            window.open(data.chat_link, '_blank');
+                        }
+                        App.showScreen('mainScreen', true);
                     }
-                    App.showScreen('mainScreen', true);
                 }
             } else {
-                console.error('Ошибка создания игры:', data);
+                console.error('❌ Ошибка создания игры:', data);
                 App.showScreen('mainScreen', true);
             }
         })
         .catch(error => {
-            console.error('Error creating game:', error);
+            console.error('❌ Error creating game:', error);
             App.showScreen('mainScreen', true);
         });
     }
