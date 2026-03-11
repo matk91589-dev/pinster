@@ -658,13 +658,11 @@ const Swipe = {
             
             // Сохраняем ссылку
             this.chatLink = link;
+            localStorage.setItem('currentChatLink', link); // Сохраняем в localStorage на всякий случай
             
             // Добавляем обработчик клика
             button.onclick = () => {
-                console.log('👆 Кнопка чата нажата, ссылка:', this.chatLink);
-                if (this.chatLink) {
-                    window.open(this.chatLink, '_blank');
-                }
+                this.openChatLink();
             };
         } else {
             // Деактивируем кнопку
@@ -676,6 +674,39 @@ const Swipe = {
             
             // Убираем обработчик
             button.onclick = null;
+        }
+    },
+    
+    // Новая функция для открытия ссылки (работает на телефоне)
+    openChatLink() {
+        let link = this.chatLink || localStorage.getItem('currentChatLink');
+        
+        if (link) {
+            console.log('✅ Открываем ссылку:', link);
+            
+            // Способ 1: через Telegram WebApp (должен работать в Mini App)
+            if (window.Telegram?.WebApp?.openTelegramLink) {
+                console.log('📱 Открываем через Telegram.WebApp.openTelegramLink()');
+                window.Telegram.WebApp.openTelegramLink(link);
+            } 
+            // Способ 2: через window.location (работает везде)
+            else {
+                console.log('🌐 Открываем через window.location.href');
+                window.location.href = link;
+            }
+            
+            // Дополнительный fallback для телефонов
+            setTimeout(() => {
+                try {
+                    window.open(link, '_blank');
+                } catch (e) {
+                    console.error('❌ Ошибка при открытии ссылки:', e);
+                }
+            }, 100);
+            
+        } else {
+            console.error('❌ Ссылка не найдена');
+            alert('Ссылка на чат не найдена');
         }
     },
     
