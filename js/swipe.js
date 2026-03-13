@@ -123,12 +123,6 @@ const Swipe = {
             return;
         }
         
-        // Если времени больше 60 секунд - обрезаем до 30 (на случай ошибки)
-        if (timeLeft > 60) {
-            console.warn(`⚠️ Подозрительно много времени: ${timeLeft}с, устанавливаем 30с`);
-            this.matchExpiresAt = clientNow + 30000;
-        }
-        
         this.card = document.getElementById('swipeCard');
         this.container = document.getElementById('swipeContainer');
         this.hint = document.getElementById('swipeHint');
