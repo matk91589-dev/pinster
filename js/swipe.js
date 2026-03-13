@@ -368,6 +368,7 @@ const Swipe = {
         }, this.ANIMATION_DURATION);
     },
     
+    // ========== ИСПРАВЛЕННЫЙ acceptPlayer ==========
     acceptPlayer() {
         console.log('✅ Принят игрок:', this.currentPlayer);
         console.log('🎯 matchId:', this.currentMatchId);
@@ -401,20 +402,22 @@ const Swipe = {
         .then((data) => {
             console.log('📦 Accept response:', data);
             
-            // ========== ИСПРАВЛЕНИЕ 1: правильная логика для обоих игроков ==========
+            // ========== НОВАЯ ЛОГИКА: ВСЕГДА ПОКАЗЫВАЕМ ЭКРАН ОЖИДАНИЯ ==========
+            
+            // Показываем экран соединения ВСЕГДА (кроме случая когда оба приняли мгновенно)
+            if (!data.both_accepted) {
+                this.showConnectionMode();
+            }
+            
+            // Запускаем polling для отслеживания статуса матча
+            this.startMatchStatusPolling(this.currentMatchId);
+            
             if (data.both_accepted) {
                 console.log('🎉 Оба приняли (мгновенно)!');
                 clearInterval(this.matchPolling);
                 this.matchPolling = null;
                 this.handleBothAccepted();
-                return;
-            }
-            
-            // Всегда показываем экран ожидания для любого ответа (waiting или already_responded)
-            this.showConnectionMode();
-            this.startMatchStatusPolling(this.currentMatchId);
-            
-            if (data.status === 'rejected') {
+            } else if (data.status === 'rejected') {
                 console.log('❌ Отклонено');
                 this.handleRejection();
             } else if (data.status === 'waiting') {
@@ -431,6 +434,7 @@ const Swipe = {
         });
     },
     
+    // ========== УЛУЧШЕННЫЙ POLLING ==========
     startMatchStatusPolling(matchId) {
         console.log('🔄 Запускаем polling статуса матча для ID:', matchId);
         
@@ -439,12 +443,25 @@ const Swipe = {
             this.matchPolling = null;
         }
         
+        let attempts = 0;
+        const MAX_ATTEMPTS = 60; // 60 попыток * 1500мс = 90 секунд
+        
         this.matchPolling = setInterval(async () => {
+            attempts++;
+            
+            if (attempts > MAX_ATTEMPTS) {
+                console.log('⏰ Polling превысил лимит попыток, останавливаем');
+                clearInterval(this.matchPolling);
+                this.matchPolling = null;
+                this.connectionTimeout();
+                return;
+            }
+            
             try {
                 const res = await fetch(`https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/status/${matchId}`);
                 const data = await res.json();
                 
-                console.log('📦 Polling status response:', data);
+                console.log(`📦 Polling status response (${attempts}):`, data);
                 
                 if (data.status === 'both_accepted') {
                     console.log('🎉 Оба приняли (через polling)!');
@@ -468,7 +485,7 @@ const Swipe = {
             } catch (error) {
                 console.error('❌ Error in match polling:', error);
             }
-        }, 2000);
+        }, 1500); // Увеличил до 1500мс для меньшей нагрузки
     },
     
     rejectPlayer() {
@@ -653,7 +670,7 @@ const Swipe = {
         }
     },
     
-    // ========== ИСПРАВЛЕНИЕ 2: защита от двойного создания ==========
+    // ========== ИСПРАВЛЕННЫЙ handleBothAccepted ==========
     handleBothAccepted() {
         if (this.gameCreated) {
             console.log('⚠️ Игра уже создана, пропускаем');
@@ -746,6 +763,7 @@ const Swipe = {
         }
     },
     
+    // ========== ИСПРАВЛЕННЫЙ createGame ==========
     createGame() {
         if (this.gameCreating) {
             console.log('⚠️ Игра уже создается, пропускаем');
