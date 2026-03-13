@@ -1,6 +1,6 @@
 // ============================================
 // ПОИСК (Telegram Mini App версия) - ИСПРАВЛЕНО
-// с поддержкой экрана подтверждения матча
+// теперь Search только ищет и передает управление Swipe
 // ============================================
 
 const Search = {
@@ -17,7 +17,7 @@ const Search = {
     isSearching: false,
     processedMatchIds: new Set(),
     
-    // Добавлена функция проверки MatchAccepted
+    // Добавлена функция проверки MatchAccepted (заглушка, на случай если нужна)
     ensureMatchAccepted() {
         if (!window.MatchAccepted) {
             console.warn('MatchAccepted не найден, создаем заглушку');
@@ -185,16 +185,30 @@ const Search = {
             console.log('Match check response:', data);
             
             if (data.match_found) {
-                console.log('Мэтч найден!');
+                console.log('🎯 Мэтч найден!');
+                
+                // Проверяем, не обрабатывали ли мы уже этот матч
+                if (this.processedMatchIds.has(data.match_id)) {
+                    console.log('Матч уже обработан, пропускаем');
+                    return;
+                }
                 
                 this.processedMatchIds.add(data.match_id);
                 
                 if (this.waitingForPartner) {
                     this.updateWaitingStatus(data);
                 } else {
+                    // Останавливаем polling
                     this.stopPolling();
+                    
+                    // Сохраняем данные в localStorage
+                    localStorage.setItem('opponentData', JSON.stringify(data.opponent));
+                    localStorage.setItem('matchExpiresAt', data.expires_at);
+                    localStorage.setItem('serverTime', data.server_time);
+                    localStorage.setItem('currentMatchId', data.match_id);
+                    
+                    // Показываем экран свайпа с найденным игроком
                     this.showSwipeScreen(data);
-                    this.currentMatchId = data.match_id;
                 }
             }
         })
@@ -204,29 +218,37 @@ const Search = {
     },
     
     showSwipeScreen(data) {
-        console.log('Показываем экран свайпа для match_id:', data.match_id);
+        console.log('🔄 Показываем экран свайпа для match_id:', data.match_id);
         console.log('Данные от сервера:', data);
     
         this.currentMatchId = data.match_id;
         this.myResponse = null;
         this.isSearching = false;
+        this.waitingForPartner = false;
     
-        localStorage.setItem('opponentData', JSON.stringify(data.opponent));
-        localStorage.setItem('matchExpiresAt', data.expires_at);
-        localStorage.setItem('serverTime', data.server_time);
-        localStorage.setItem('currentMatchId', data.match_id);
+        // Скрываем экран поиска
+        document.getElementById('searchScreen')?.classList.remove('active');
+        
+        // Показываем экран свайпа
+        document.getElementById('swipeScreen')?.classList.add('active');
     
-        App.showScreen('swipeScreen', false);
-    
-        if (typeof Swipe !== 'undefined') {
-            Swipe.startWithOpponent(
-                data.opponent, 
-                this.currentMatchId, 
-                data.expires_at,
-                data.server_time
-            );
+        // Передаем управление Swipe
+        if (typeof Swipe !== 'undefined' && Swipe) {
+            console.log('✅ Передаем управление Swipe');
+            
+            // Немного задержки для плавности
+            setTimeout(() => {
+                Swipe.startWithOpponent(
+                    data.opponent, 
+                    this.currentMatchId, 
+                    data.expires_at,
+                    data.server_time
+                );
+            }, 100);
         } else {
             console.error('❌ Swipe не найден!');
+            // Фолбэк на главный экран
+            App.showScreen('mainScreen', true);
         }
     },
     
@@ -293,7 +315,7 @@ const Search = {
         
         const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
-            statusEl.textContent = '✅ Тиммейт принял приглашение! Создаем игру...';
+            statusEl.textContent = '✅ Тиммейт принял приглашение!';
             statusEl.style.color = '#FF5500';
         }
         
@@ -303,9 +325,8 @@ const Search = {
             buttons.style.pointerEvents = 'none';
         }
         
-        setTimeout(() => {
-            this.createGame();
-        }, 1000);
+        // Не создаем игру здесь - это делает Swipe
+        console.log('Ожидаем создания игры в Swipe');
     },
     
     stopPolling() {
@@ -463,79 +484,8 @@ const Search = {
         return '';
     },
     
-    // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ createGame ==========
-    createGame() {
-        console.log('Создаем игру для match_id:', this.currentMatchId);
-        
-        if (!this.currentMatchId) {
-            console.log('Нет активного мэтча');
-            App.showScreen('mainScreen', true);
-            return;
-        }
-        
-        const matchId = this.currentMatchId;
-        
-        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/game/create', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                match_id: matchId
-            })
-        })
-        .then(res => {
-            if (!res.ok) {
-                console.error('HTTP ошибка при создании игры:', res.status);
-                return null;
-            }
-            return res.json();
-        })
-        .then(data => {
-            if (!data) {
-                App.showScreen('mainScreen', true);
-                return;
-            }
-            
-            console.log('Game create response:', data);
-            
-            this.processedMatchIds.clear();
-            this.waitingForPartner = false;
-            this.myResponse = null;
-            this.isSearching = false;
-            this.currentMatchId = null;
-            
-            // ✅ ПОКАЗЫВАЕМ ЭКРАН ПОДТВЕРЖДЕНИЯ
-            if (data.status === 'ok' && data.chat_link) {
-                // Получаем данные соперника из localStorage
-                const opponentData = JSON.parse(localStorage.getItem('opponentData') || '{}');
-                
-                // Сохраняем ссылку в localStorage
-                localStorage.setItem('currentChatLink', data.chat_link);
-                
-                console.log('✅ Показываем экран подтверждения матча');
-                console.log('👤 Соперник:', opponentData);
-                console.log('🔗 Ссылка на чат:', data.chat_link);
-                
-                // Показываем экран подтверждения матча
-                if (window.MatchAccepted) {
-                    window.MatchAccepted.show({
-                        nick: opponentData.nick || 'Соперник',
-                        rating: opponentData.rating || '0',
-                        rank: opponentData.rank || 'Нет ранга'
-                    }, data.chat_link);
-                } else {
-                    console.error('❌ MatchAccepted не найден!');
-                    App.showScreen('mainScreen', true);
-                }
-            } else {
-                console.error('❌ Ошибка создания игры:', data);
-                App.showScreen('mainScreen', true);
-            }
-        })
-        .catch(error => {
-            console.error('❌ Error creating game:', error);
-            App.showScreen('mainScreen', true);
-        });
-    }
+    // ========== УДАЛЕНА ФУНКЦИЯ createGame ==========
+    // Вся логика создания игры теперь в Swipe
 };
 
 // Инициализация
