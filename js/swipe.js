@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - РАБОЧАЯ ВЕРСИЯ
+// СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
 // ============================================
 
 const Swipe = {
@@ -107,7 +107,7 @@ const Swipe = {
             console.log('✅ matchExpiresAt (timestamp):', this.matchExpiresAt);
         }
         
-        // ========== ПРОСТОЕ РЕШЕНИЕ: считаем разницу ==========
+        // Считаем разницу между expires_at и текущим временем
         const clientNow = Date.now();
         let timeLeft = Math.floor((this.matchExpiresAt - clientNow) / 1000);
         
@@ -401,18 +401,20 @@ const Swipe = {
         .then((data) => {
             console.log('📦 Accept response:', data);
             
-            setTimeout(() => {
-                this.showConnectionMode();
-            }, 200);
-            
-            this.startMatchStatusPolling(this.currentMatchId);
-            
+            // ========== ИСПРАВЛЕНИЕ: если оба приняли - не показываем экран ожидания ==========
             if (data.both_accepted) {
                 console.log('🎉 Оба приняли (мгновенно)!');
                 clearInterval(this.matchPolling);
                 this.matchPolling = null;
                 this.handleBothAccepted();
-            } else if (data.status === 'rejected') {
+                return; // Выходим, не показываем connectionMode
+            }
+            
+            // Если не оба приняли - показываем экран ожидания
+            this.showConnectionMode();
+            this.startMatchStatusPolling(this.currentMatchId);
+            
+            if (data.status === 'rejected') {
                 console.log('❌ Отклонено');
                 this.handleRejection();
             } else if (data.status === 'waiting') {
