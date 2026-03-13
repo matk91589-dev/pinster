@@ -12,7 +12,7 @@ const Swipe = {
     labelLeft: null,
     labelRight: null,
     timerElement: null,
-    
+
     // Переменные для drag
     isDragging: false,
     startX: 0,
