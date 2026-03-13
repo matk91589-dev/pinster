@@ -20,6 +20,63 @@
     <!-- Telegram Mini App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
+    <!-- ========== ЗАЩИТА ОТ ЧЕРНО-БЕЛОГО СПИСКА ========== -->
+    <style>
+        /* Скрываем всё до полной загрузки */
+        html, body {
+            background-color: #0D0F15 !important;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+        
+        /* Прячем все экраны изначально */
+        .screen {
+            display: none !important;
+            opacity: 0 !important;
+        }
+        
+        /* Показываем только после загрузки */
+        body.loaded .screen {
+            display: flex !important;
+        }
+        
+        body.loaded .screen:not(.active) {
+            display: none !important;
+        }
+        
+        /* Плавное появление */
+        body.loaded .phone-frame {
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Минимальный лоадер (не обязательно, но приятно) */
+        body:not(.loaded)::after {
+            content: "Pingster";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #FF5500;
+            font-size: 24px;
+            font-weight: bold;
+            opacity: 0.5;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.3; }
+        }
+    </style>
+    
     <!-- CSS (без версий, добавим через JS) -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/shop-cases.css">
@@ -164,6 +221,35 @@
     </style>
 </head>
 <body>
+    <!-- ========== СКРИПТ ДЛЯ УБИРАНИЯ ЧЕРНО-БЕЛОГО СПИСКА ========== -->
+    <script>
+        (function() {
+            // Устанавливаем цвет фона до загрузки всего
+            document.body.style.backgroundColor = '#0D0F15';
+            document.documentElement.style.backgroundColor = '#0D0F15';
+            
+            // Функция показа контента
+            function showContent() {
+                document.body.classList.add('loaded');
+                console.log('✅ Контент показан');
+            }
+            
+            // Показываем контент после полной загрузки
+            if (document.readyState === 'complete') {
+                // Если уже загружено
+                setTimeout(showContent, 50);
+            } else {
+                // Ждем загрузку
+                window.addEventListener('load', function() {
+                    setTimeout(showContent, 50);
+                });
+            }
+            
+            // Запасной вариант через 1 секунду (если что-то пошло не так)
+            setTimeout(showContent, 1000);
+        })();
+    </script>
+    
     <!-- Диагностический элемент -->
     <div id="diagnostic-badge">⚠️</div>
     
