@@ -1,6 +1,7 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - РАБОЧАЯ ВЕРСИЯ
-// Время жизни матча = 30 секунд (UTC)
+// СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// Таймер на принятие = 30 секунд
+// Таймер чата = 30 минут (на бэкенде)
 // ============================================
 
 const Swipe = {
@@ -108,26 +109,26 @@ const Swipe = {
             console.log('✅ matchExpiresAt (UTC):', new Date(this.matchExpiresAt).toUTCString());
         }
         
-        // ПРОСТОЕ РЕШЕНИЕ: считаем разницу между expires_at и текущим временем
+        // Считаем разницу между expires_at и текущим временем
         const clientNow = Date.now();
-        const timeLeft = Math.floor((this.matchExpiresAt - clientNow) / 1000);
+        let timeLeft = Math.floor((this.matchExpiresAt - clientNow) / 1000);
         
         console.log(`⏰ Текущее время (клиент): ${new Date(clientNow).toLocaleString()}`);
         console.log(`⏰ expires_at (UTC): ${new Date(this.matchExpiresAt).toUTCString()}`);
-        console.log(`⏰ Осталось секунд: ${timeLeft}`);
+        console.log(`⏰ Осталось секунд на принятие: ${timeLeft}`);
         
         // Если матч истек - выходим
         if (timeLeft <= 0) {
-            console.warn('⚠️ Матч истек');
-            this.exitSwipeMode('timeLeft <= 0');
+            console.warn('⚠️ Время на принятие истекло');
+            this.exitSwipeMode('timeout_accept');
             return;
         }
         
-        // Если времени больше 60 секунд - обрезаем до 30 (на случай ошибки)
-        if (timeLeft > 60) {
-            console.warn(`⚠️ Подозрительно много времени: ${timeLeft}с, устанавливаем 30с`);
-            // Корректируем expiresAt
-            this.matchExpiresAt = clientNow + 30000; // +30 секунд
+        // Если вдруг пришло больше 35 секунд (ошибка синхронизации)
+        if (timeLeft > 35) {
+            console.warn(`⚠️ Ошибка синхронизации: ${timeLeft}с, устанавливаем 30с`);
+            this.matchExpiresAt = clientNow + 30000;
+            timeLeft = 30;
         }
         
         this.card = document.getElementById('swipeCard');
@@ -170,12 +171,8 @@ const Swipe = {
         const clientNow = Date.now();
         const timeLeft = Math.max(0, Math.floor((this.matchExpiresAt - clientNow) / 1000));
         
-        // Не даем времени быть больше 30 секунд
-        if (timeLeft > 30) {
-            return 30;
-        }
-        
-        return timeLeft;
+        // Таймер на принятие не может быть больше 30 секунд
+        return Math.min(timeLeft, 30);
     },
     
     startCardTimer() {
