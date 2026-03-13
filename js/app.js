@@ -46,11 +46,17 @@
 })();
 
 // ============================================
-// ГЛОБАЛЬНЫЕ ФУНКЦИИ
+// ГЛОБАЛЬНЫЕ ФУНКЦИИ (ДОПОЛНЕНИЕ К App ИЗ navigation.js)
 // ============================================
 
-const App = {
-    // Показать экран
+// Проверяем, что App уже существует (из navigation.js)
+if (!window.App) {
+    window.App = {};
+}
+
+// Добавляем методы, которых нет в navigation.js
+Object.assign(window.App, {
+    // Показать экран (если вдруг не существует в navigation.js)
     showScreen: function(screenId, updateNav = true) {
         console.log('App.showScreen:', screenId);
         
@@ -107,7 +113,11 @@ const App = {
     
     // Показать уведомление
     showAlert: function(message) {
-        alert(message);
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert(message);
+        } else {
+            alert(message);
+        }
     },
     
     // Запуск приложения (со стартового экрана)
@@ -158,7 +168,7 @@ const App = {
             this.showAlert('Ошибка при подключении');
         });
     }
-};
+});
 
-// Делаем App глобальным
-window.App = App;
+// Делаем App глобальным (если вдруг перезаписалось)
+window.App = window.App;
