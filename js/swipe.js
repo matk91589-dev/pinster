@@ -1,6 +1,6 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
-// с правильной обработкой времени (без ошибок синхронизации)
+// СВАЙП-КАРТОЧКИ - РАБОЧАЯ ВЕРСИЯ
+// Время жизни матча = 30 секунд (UTC)
 // ============================================
 
 const Swipe = {
@@ -105,35 +105,29 @@ const Swipe = {
             } else {
                 this.matchExpiresAt = expiresAt;
             }
-            console.log('✅ matchExpiresAt установлен:', new Date(this.matchExpiresAt).toLocaleString());
+            console.log('✅ matchExpiresAt (UTC):', new Date(this.matchExpiresAt).toUTCString());
         }
         
-        if (serverTime) {
-            this.serverTime = new Date(serverTime).getTime();
-        } else {
-            this.serverTime = Date.now();
-        }
-        
-        // ⚠️ ИСПРАВЛЕНО: Не используем сложную синхронизацию времени
-        // Просто берем разницу между expires_at и текущим временем клиента
+        // ПРОСТОЕ РЕШЕНИЕ: считаем разницу между expires_at и текущим временем
         const clientNow = Date.now();
         const timeLeft = Math.floor((this.matchExpiresAt - clientNow) / 1000);
         
-        console.log(`⏰ Серверное время: ${serverTime ? new Date(serverTime).toLocaleString() : 'не указано'}`);
-        console.log(`⏰ Клиентское время: ${new Date(clientNow).toLocaleString()}`);
-        console.log(`⏰ expires_at: ${new Date(this.matchExpiresAt).toLocaleString()}`);
-        console.log(`⏰ Осталось времени: ${timeLeft}с`);
+        console.log(`⏰ Текущее время (клиент): ${new Date(clientNow).toLocaleString()}`);
+        console.log(`⏰ expires_at (UTC): ${new Date(this.matchExpiresAt).toUTCString()}`);
+        console.log(`⏰ Осталось секунд: ${timeLeft}`);
         
-        // ✅ МЯГКАЯ ПРОВЕРКА: матч может жить до 30 минут (1800 секунд)
+        // Если матч истек - выходим
         if (timeLeft <= 0) {
-            console.warn('⚠️ Матч истек:', timeLeft);
+            console.warn('⚠️ Матч истек');
             this.exitSwipeMode('timeLeft <= 0');
             return;
         }
         
-        // Просто предупреждаем, если времени слишком много, но не выходим
-        if (timeLeft > 1800) {
-            console.warn(`⚠️ Подозрительно много времени: ${timeLeft}с, но продолжаем`);
+        // Если времени больше 60 секунд - обрезаем до 30 (на случай ошибки)
+        if (timeLeft > 60) {
+            console.warn(`⚠️ Подозрительно много времени: ${timeLeft}с, устанавливаем 30с`);
+            // Корректируем expiresAt
+            this.matchExpiresAt = clientNow + 30000; // +30 секунд
         }
         
         this.card = document.getElementById('swipeCard');
@@ -170,17 +164,15 @@ const Swipe = {
     
     getTimeLeft() {
         if (!this.matchExpiresAt) {
-            return 30; // Значение по умолчанию
+            return 30;
         }
         
-        // ⚠️ ИСПРАВЛЕНО: Просто разница между expires_at и текущим временем
         const clientNow = Date.now();
         const timeLeft = Math.max(0, Math.floor((this.matchExpiresAt - clientNow) / 1000));
         
-        // Не даем времени быть больше 30 минут (на всякий случай)
-        if (timeLeft > 1800) {
-            console.warn(`getTimeLeft: обрезаем время с ${timeLeft}с до 1800с`);
-            return 1800;
+        // Не даем времени быть больше 30 секунд
+        if (timeLeft > 30) {
+            return 30;
         }
         
         return timeLeft;
@@ -200,7 +192,6 @@ const Swipe = {
             return;
         }
         
-        // ⚠️ ИСПРАВЛЕНО: Убрана жесткая проверка на 35 секунд
         const updateTimer = () => {
             const timeLeft = this.getTimeLeft();
             
@@ -988,7 +979,7 @@ const Swipe = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Swipe: DOM загружен');
+    console.log('✅ Swipe: DOM загружен, версия с 30 секундами');
     window.Swipe = Swipe;
 });
 
