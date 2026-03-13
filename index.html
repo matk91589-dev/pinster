@@ -11,13 +11,19 @@
     
     <title>Pingster — Telegram Mini App</title>
     
+    <!-- Глобальная версия (timestamp при загрузке) -->
+    <script>
+        window.BUILD_VERSION = Date.now();
+        console.log('🔄 Версия сборки:', window.BUILD_VERSION);
+    </script>
+    
     <!-- Telegram Mini App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- CSS с версионированием -->
-    <link rel="stylesheet" href="css/style.css?v=20260307">
-    <link rel="stylesheet" href="css/shop-cases.css?v=20260307">
-    <link rel="stylesheet" href="css/animations.css?v=20260307">
+    <!-- CSS (без версий, добавим через JS) -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/shop-cases.css">
+    <link rel="stylesheet" href="css/animations.css">
     
     <!-- Дополнительные стили для плавности -->
     <style>
@@ -182,7 +188,7 @@
             <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
                 <div class="start-avatar-square" id="startAvatar">
-                    <img src="pingster_logo.svg?v=20260307" alt="Pingster">
+                    <img src="pingster_logo.svg" alt="Pingster">
                 </div>
                 <div class="start-description-box">
                     <div class="start-description">
@@ -221,7 +227,7 @@
                 <div class="cases-section">
                     <div class="cases-grid">
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/common_case.png?v=20260307" alt="common case"></div>
+                            <div class="case-icon"><img src="cases/common_case.png" alt="common case"></div>
                             <div class="case-info">
                                 <div class="case-name">Базовый кейс</div>
                                 <div class="case-price-row">
@@ -231,7 +237,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/rare_case.png?v=20260307" alt="rare case"></div>
+                            <div class="case-icon"><img src="cases/rare_case.png" alt="rare case"></div>
                             <div class="case-info">
                                 <div class="case-name">Редкий кейс</div>
                                 <div class="case-price-row">
@@ -241,7 +247,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/premium_case.png?v=20260307" alt="premium case"></div>
+                            <div class="case-icon"><img src="cases/premium_case.png" alt="premium case"></div>
                             <div class="case-info">
                                 <div class="case-name">Легендарный кейс</div>
                                 <div class="case-price-row">
@@ -251,7 +257,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/secret_case.png?v=20260307" alt="secret case"></div>
+                            <div class="case-icon"><img src="cases/secret_case.png" alt="secret case"></div>
                             <div class="case-info">
                                 <div class="case-name">Секретный кейс</div>
                                 <div class="case-price-row">
@@ -806,18 +812,42 @@
         </nav>
     </div>
 
-        <!-- JS ФАЙЛЫ С АВТОМАТИЧЕСКОЙ ВЕРСИЕЙ -->
-    <script src="js/config.js?v={{ build_version }}"></script>
-    <script src="js/globals.js?v={{ build_version }}"></script>
-    <script src="js/navigation.js?v={{ build_version }}"></script>
-    <script src="js/profile.js?v={{ build_version }}"></script>
-    <script src="js/avatar.js?v={{ build_version }}"></script>
-    <script src="js/friends.js?v={{ build_version }}"></script>
-    <script src="js/shop.js?v={{ build_version }}"></script>
-    <script src="js/search.js?v={{ build_version }}"></script>
-    <script src="js/logo.js?v={{ build_version }}"></script>
-    <script src="js/app.js?v={{ build_version }}"></script>
-    <script src="js/team.js?v={{ build_version }}"></script>
-    <script src="js/swipe.js?v={{ build_version }}"></script>
+    <!-- JS ФАЙЛЫ (БЕЗ ВЕРСИЙ) -->
+    <script src="js/config.js"></script>
+    <script src="js/globals.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/avatar.js"></script>
+    <script src="js/friends.js"></script>
+    <script src="js/shop.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/logo.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/team.js"></script>
+    <script src="js/swipe.js"></script>
+
+    <!-- Скрипт для автоматического добавления версий -->
+    <script>
+    (function() {
+        // Версия = время загрузки страницы
+        const version = window.BUILD_VERSION || Date.now();
+        
+        // Добавляем версию ко всем CSS
+        document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+            if (link.href && !link.href.includes('telegram')) {
+                link.href = link.href.split('?')[0] + '?v=' + version;
+            }
+        });
+        
+        // Добавляем версию ко всем изображениям
+        document.querySelectorAll('img[src]').forEach(img => {
+            if (img.src && !img.src.includes('telegram') && !img.src.includes('data:')) {
+                img.src = img.src.split('?')[0] + '?v=' + version;
+            }
+        });
+        
+        console.log('✅ Версия для статики:', version);
+    })();
+    </script>
 </body>
 </html>
