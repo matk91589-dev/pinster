@@ -20,43 +20,29 @@
     <!-- Telegram Mini App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- ========== ЗАЩИТА ОТ ЧЕРНО-БЕЛОГО СПИСКА ========== -->
+    <!-- ========== ЗАЩИТА ОТ FOUC (черно-белого списка) ========== -->
     <style>
-        /* Скрываем всё до полной загрузки */
-        html, body {
-            background-color: #0D0F15 !important;
+        /* Базовые стили для body */
+        body {
+            background-color: #0D0F15;
             margin: 0;
             padding: 0;
-            height: 100%;
-            width: 100%;
+            opacity: 1;
+            transition: opacity 0.2s ease;
         }
         
-        /* Прячем все экраны изначально */
-        .screen {
-            display: none !important;
-            opacity: 0 !important;
+        /* Скрываем контент до полной загрузки */
+        body:not(.loaded) .phone-frame {
+            opacity: 0;
+            visibility: hidden;
         }
         
-        /* Показываем только после загрузки */
-        body.loaded .screen {
-            display: flex !important;
-        }
-        
-        body.loaded .screen:not(.active) {
-            display: none !important;
-        }
-        
-        /* Плавное появление */
         body.loaded .phone-frame {
-            animation: fadeIn 0.2s ease-in-out;
+            opacity: 1;
+            visibility: visible;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        /* Минимальный лоадер (не обязательно, но приятно) */
+        /* Минимальный лоадер */
         body:not(.loaded)::after {
             content: "Pingster";
             position: fixed;
@@ -77,7 +63,7 @@
         }
     </style>
     
-    <!-- CSS (без версий, добавим через JS) -->
+    <!-- CSS (без версий) -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
@@ -221,12 +207,11 @@
     </style>
 </head>
 <body>
-    <!-- ========== СКРИПТ ДЛЯ УБИРАНИЯ ЧЕРНО-БЕЛОГО СПИСКА ========== -->
+    <!-- Скрипт для убирания FOUC -->
     <script>
         (function() {
-            // Устанавливаем цвет фона до загрузки всего
+            // Устанавливаем цвет фона
             document.body.style.backgroundColor = '#0D0F15';
-            document.documentElement.style.backgroundColor = '#0D0F15';
             
             // Функция показа контента
             function showContent() {
@@ -234,18 +219,16 @@
                 console.log('✅ Контент показан');
             }
             
-            // Показываем контент после полной загрузки
+            // Показываем контент после загрузки
             if (document.readyState === 'complete') {
-                // Если уже загружено
                 setTimeout(showContent, 50);
             } else {
-                // Ждем загрузку
                 window.addEventListener('load', function() {
                     setTimeout(showContent, 50);
                 });
             }
             
-            // Запасной вариант через 1 секунду (если что-то пошло не так)
+            // Запасной вариант
             setTimeout(showContent, 1000);
         })();
     </script>
@@ -253,10 +236,10 @@
     <!-- Диагностический элемент -->
     <div id="diagnostic-badge">⚠️</div>
     
-    <!-- ОСНОВНОЙ КОНТЕЙНЕР С КЛАССОМ phone-frame -->
+    <!-- ОСНОВНОЙ КОНТЕЙНЕР -->
     <div class="phone-frame">
         
-        <!-- Хедер (один на всё приложение) -->
+        <!-- Хедер -->
         <header class="header">
             <div class="logo" onclick="Logo.handleClick()">
                 <span class="ping">Ping</span><span class="ster">ster</span>
@@ -269,7 +252,7 @@
             </div>
         </header>
 
-        <!-- Контент (скроллится) -->
+        <!-- Контент -->
         <main class="content">
             <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
@@ -541,7 +524,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН СОЕДИНЕНИЯ - ОБНОВЛЕННЫЙ -->
+            <!-- ЭКРАН СОЕДИНЕНИЯ -->
             <div id="connectionScreen" class="screen connection-screen">
                 <div class="swipe-header">
                     <div class="swipe-title">Тиммейт найден</div>
@@ -601,7 +584,7 @@
                                 <span class="connection-age" id="connectionAge">21 год</span>
                             </div>
 
-                            <!-- НОВАЯ КНОПКА -->
+                            <!-- КНОПКА ЧАТА -->
                             <div class="connection-button">
                                 <button class="tg-chat-button" id="tgChatButton" disabled>
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
@@ -898,7 +881,7 @@
         </nav>
     </div>
 
-    <!-- JS ФАЙЛЫ (БЕЗ ВЕРСИЙ) -->
+    <!-- JS ФАЙЛЫ -->
     <script src="js/config.js"></script>
     <script src="js/globals.js"></script>
     <script src="js/navigation.js"></script>
@@ -915,17 +898,14 @@
     <!-- Скрипт для автоматического добавления версий -->
     <script>
     (function() {
-        // Версия = время загрузки страницы
         const version = window.BUILD_VERSION || Date.now();
         
-        // Добавляем версию ко всем CSS
         document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
             if (link.href && !link.href.includes('telegram')) {
                 link.href = link.href.split('?')[0] + '?v=' + version;
             }
         });
         
-        // Добавляем версию ко всем изображениям
         document.querySelectorAll('img[src]').forEach(img => {
             if (img.src && !img.src.includes('telegram') && !img.src.includes('data:')) {
                 img.src = img.src.split('?')[0] + '?v=' + version;
