@@ -20,26 +20,25 @@
     <!-- Telegram Mini App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- ========== ЗАЩИТА ОТ FOUC (черно-белого списка) ========== -->
+    <!-- ========== УЛУЧШЕННАЯ ЗАЩИТА ОТ FOUC ========== -->
     <style>
-        /* Базовые стили для body */
-        body {
+        /* Полностью скрываем контент до загрузки */
+        html, body {
             background-color: #0D0F15;
             margin: 0;
             padding: 0;
-            opacity: 1;
-            transition: opacity 0.2s ease;
+            height: 100%;
+            width: 100%;
         }
         
-        /* Скрываем контент до полной загрузки */
+        /* Скрываем всё до загрузки */
         body:not(.loaded) .phone-frame {
-            opacity: 0;
-            visibility: hidden;
+            display: none !important;
         }
         
+        /* Показываем после загрузки */
         body.loaded .phone-frame {
-            opacity: 1;
-            visibility: visible;
+            display: block !important;
         }
         
         /* Минимальный лоадер */
@@ -54,6 +53,7 @@
             font-weight: bold;
             opacity: 0.5;
             animation: pulse 1.5s infinite;
+            z-index: 9999;
         }
         
         @keyframes pulse {
@@ -62,6 +62,11 @@
             100% { opacity: 0.3; }
         }
     </style>
+    
+    <!-- Preload CSS для ускорения загрузки -->
+    <link rel="preload" href="css/style.css" as="style">
+    <link rel="preload" href="css/shop-cases.css" as="style">
+    <link rel="preload" href="css/animations.css" as="style">
     
     <!-- CSS (без версий) -->
     <link rel="stylesheet" href="css/style.css">
@@ -207,11 +212,14 @@
     </style>
 </head>
 <body>
-    <!-- Скрипт для убирания FOUC -->
+    <!-- Скрипт для убирания FOUC (выполняется сразу) -->
     <script>
         (function() {
-            // Устанавливаем цвет фона
+            // Устанавливаем цвет фона мгновенно
+            document.documentElement.style.backgroundColor = '#0D0F15';
             document.body.style.backgroundColor = '#0D0F15';
+            document.body.style.margin = '0';
+            document.body.style.padding = '0';
             
             // Функция показа контента
             function showContent() {
@@ -219,17 +227,19 @@
                 console.log('✅ Контент показан');
             }
             
-            // Показываем контент после загрузки
+            // Показываем контент после полной загрузки
             if (document.readyState === 'complete') {
-                setTimeout(showContent, 50);
+                // Если уже загружено
+                setTimeout(showContent, 10);
             } else {
+                // Ждем загрузку
                 window.addEventListener('load', function() {
-                    setTimeout(showContent, 50);
+                    setTimeout(showContent, 10);
                 });
             }
             
-            // Запасной вариант
-            setTimeout(showContent, 1000);
+            // Запасной вариант через 800мс (если что-то пошло не так)
+            setTimeout(showContent, 800);
         })();
     </script>
     
@@ -252,7 +262,7 @@
             </div>
         </header>
 
-        <!-- Контент -->
+        <!-- Контент (весь твой существующий контент остается без изменений) -->
         <main class="content">
             <!-- СТАРТОВЫЙ ЭКРАН -->
             <div id="startScreen" class="screen start-screen">
