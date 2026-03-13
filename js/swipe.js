@@ -1,6 +1,6 @@
 // ============================================
 // СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
-// с кнопкой Telegram на экране соединения и двойной ссылкой
+// с правильной обработкой времени (без ошибок синхронизации)
 // ============================================
 
 const Swipe = {
@@ -43,10 +43,9 @@ const Swipe = {
     serverTime: null,
     matchPolling: null,
     gameCreated: false,
-    timeDiff: 0,
     gameCreating: false,
-    chatLink: null, // Ссылка на тему
-    inviteLink: null, // Ссылка-приглашение в группу
+    chatLink: null,
+    inviteLink: null,
     
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
@@ -115,32 +114,26 @@ const Swipe = {
             this.serverTime = Date.now();
         }
         
+        // ⚠️ ИСПРАВЛЕНО: Не используем сложную синхронизацию времени
+        // Просто берем разницу между expires_at и текущим временем клиента
         const clientNow = Date.now();
-        const serverNow = this.serverTime;
-        this.timeDiff = clientNow - serverNow;
+        const timeLeft = Math.floor((this.matchExpiresAt - clientNow) / 1000);
         
-        const correctedNow = clientNow - this.timeDiff;
-        const timeLeft = Math.floor((this.matchExpiresAt - correctedNow) / 1000);
-        
-        console.log(`⏰ Серверное время: ${new Date(serverNow).toLocaleString()}`);
+        console.log(`⏰ Серверное время: ${serverTime ? new Date(serverTime).toLocaleString() : 'не указано'}`);
         console.log(`⏰ Клиентское время: ${new Date(clientNow).toLocaleString()}`);
-        console.log(`⏰ Разница времени (сохранена): ${this.timeDiff}мс`);
-        console.log(`⏰ Осталось времени (скорректировано): ${timeLeft}с`);
+        console.log(`⏰ expires_at: ${new Date(this.matchExpiresAt).toLocaleString()}`);
+        console.log(`⏰ Осталось времени: ${timeLeft}с`);
         
+        // ✅ МЯГКАЯ ПРОВЕРКА: матч может жить до 30 минут (1800 секунд)
         if (timeLeft <= 0) {
-            console.warn('⚠️ Матч уже истек! timeLeft =', timeLeft);
-            this.exitSwipeMode('timeLeft <= 0 в startWithOpponent');
+            console.warn('⚠️ Матч истек:', timeLeft);
+            this.exitSwipeMode('timeLeft <= 0');
             return;
         }
         
-        if (timeLeft > 35) {
-            console.warn('⚠️ Слишком много времени, возможно ошибка синхронизации');
-            const fallbackTimeLeft = Math.floor((this.matchExpiresAt - clientNow) / 1000);
-            if (fallbackTimeLeft <= 0 || fallbackTimeLeft > 35) {
-                console.error('❌ Критическая ошибка времени');
-                this.exitSwipeMode('критическая ошибка времени');
-                return;
-            }
+        // Просто предупреждаем, если времени слишком много, но не выходим
+        if (timeLeft > 1800) {
+            console.warn(`⚠️ Подозрительно много времени: ${timeLeft}с, но продолжаем`);
         }
         
         this.card = document.getElementById('swipeCard');
@@ -177,12 +170,18 @@ const Swipe = {
     
     getTimeLeft() {
         if (!this.matchExpiresAt) {
-            return 30;
+            return 30; // Значение по умолчанию
         }
         
+        // ⚠️ ИСПРАВЛЕНО: Просто разница между expires_at и текущим временем
         const clientNow = Date.now();
-        const correctedNow = clientNow - this.timeDiff;
-        const timeLeft = Math.max(0, Math.floor((this.matchExpiresAt - correctedNow) / 1000));
+        const timeLeft = Math.max(0, Math.floor((this.matchExpiresAt - clientNow) / 1000));
+        
+        // Не даем времени быть больше 30 минут (на всякий случай)
+        if (timeLeft > 1800) {
+            console.warn(`getTimeLeft: обрезаем время с ${timeLeft}с до 1800с`);
+            return 1800;
+        }
         
         return timeLeft;
     },
@@ -201,27 +200,7 @@ const Swipe = {
             return;
         }
         
-        const checkTime = () => {
-            const currentTimeLeft = this.getTimeLeft();
-            
-            if (currentTimeLeft <= 0) {
-                console.warn('⚠️ startCardTimer: время истекло', currentTimeLeft);
-                timerElement.innerHTML = '0с';
-                this.exitSwipeMode('таймер с нуля');
-                return false;
-            }
-            
-            if (currentTimeLeft > 35) {
-                console.error('❌ startCardTimer: некорректное время', currentTimeLeft);
-                this.exitSwipeMode('таймер >35');
-                return false;
-            }
-            
-            return true;
-        };
-        
-        if (!checkTime()) return;
-        
+        // ⚠️ ИСПРАВЛЕНО: Убрана жесткая проверка на 35 секунд
         const updateTimer = () => {
             const timeLeft = this.getTimeLeft();
             
@@ -336,16 +315,12 @@ const Swipe = {
         const progress = Math.min(Math.abs(this.currentX) / threshold, 1);
         const rotate = (this.currentX / maxDistance) * this.MAX_ROTATE;
         
-        // Более плавная трансформация с увеличением
         this.card.style.transform = `translateX(${this.currentX}px) rotate(${rotate}deg) scale(${1 + progress * 0.02})`;
         
-        // ЯРКАЯ подсветка
         if (this.currentX > 0) {
-            // Свайп вправо (принять) - зеленый
             this.card.classList.add('right-swipe');
             this.card.classList.remove('left-swipe');
             
-            // Зеленый градиент
             this.card.style.background = `linear-gradient(145deg, 
                 ${this.BRIGHT_GREEN}, 
                 var(--surface) ${Math.min(30 + progress * 40, 70)}%)`;
@@ -354,11 +329,9 @@ const Swipe = {
             if (this.labelLeft) this.labelLeft.style.opacity = 0;
             
         } else if (this.currentX < 0) {
-            // Свайп влево (отклонить) - красный
             this.card.classList.add('left-swipe');
             this.card.classList.remove('right-swipe');
             
-            // Красный градиент
             this.card.style.background = `linear-gradient(145deg, 
                 ${this.BRIGHT_RED}, 
                 var(--surface) ${Math.min(30 + progress * 40, 70)}%)`;
@@ -377,18 +350,15 @@ const Swipe = {
         const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
         
         if (Math.abs(this.currentX) > threshold) {
-            // Анимация улета
             this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
             
             if (this.currentX > 0) {
-                // Зеленый при принятии
                 this.card.style.background = `linear-gradient(145deg, ${this.BRIGHT_GREEN}, var(--surface) 40%)`;
                 this.card.style.transform = `translateX(200%) rotate(12deg) scale(0.9)`;
                 setTimeout(() => {
                     this.acceptPlayer();
                 }, this.ANIMATION_DURATION);
             } else {
-                // Красный при отклонении
                 this.card.style.background = `linear-gradient(145deg, ${this.BRIGHT_RED}, var(--surface) 40%)`;
                 this.card.style.transform = `translateX(-200%) rotate(-12deg) scale(0.9)`;
                 setTimeout(() => {
@@ -405,7 +375,7 @@ const Swipe = {
     resetCardPosition() {
         this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.25, 0.8, 0.25, 1), background 0.2s ease`;
         this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
-        this.card.style.background = ''; // Сбрасываем фон
+        this.card.style.background = '';
         this.currentX = 0;
         
         if (this.labelLeft) this.labelLeft.style.opacity = 0;
@@ -459,7 +429,6 @@ const Swipe = {
             
             if (data.both_accepted) {
                 console.log('🎉 Оба приняли (мгновенно)!');
-                // Не показываем connection mode, сразу обрабатываем
                 clearInterval(this.matchPolling);
                 this.matchPolling = null;
                 this.handleBothAccepted();
@@ -567,18 +536,6 @@ const Swipe = {
         const timerElement = document.getElementById('connectionTimer');
         if (!timerElement) return;
         
-        const checkTime = () => {
-            const initialTimeLeft = this.getTimeLeft();
-            
-            if (initialTimeLeft <= 0) {
-                this.connectionTimeout();
-                return false;
-            }
-            return true;
-        };
-        
-        if (!checkTime()) return;
-        
         const updateTimer = () => {
             const timeLeft = this.getTimeLeft();
             
@@ -621,11 +578,9 @@ const Swipe = {
         if (this.labelRight) this.labelRight.style.display = 'none';
         if (this.hint) this.hint.style.display = 'none';
         
-        // Показываем connectionScreen
         document.getElementById('swipeScreen').classList.remove('active');
         document.getElementById('connectionScreen').classList.add('active');
         
-        // Заполняем данные соперника
         document.getElementById('teammateNick').textContent = this.currentPlayer?.nick || 'Игрок';
         document.getElementById('teammateRating').innerHTML = `
             ${this.currentPlayer?.rating || '0'}
@@ -636,13 +591,10 @@ const Swipe = {
         document.getElementById('connectionRank').textContent = this.currentPlayer?.rank || 'Нет ранга';
         document.getElementById('connectionAge').textContent = (this.currentPlayer?.age || '?') + ' лет';
         
-        // Сбрасываем кнопку в неактивное состояние
         this.updateChatButton(false);
-        
         this.startConnectionTimer();
     },
     
-    // Функция для обновления кнопки чата
     updateChatButton(active, chatLink = null, inviteLink = null) {
         const button = document.getElementById('tgChatButton');
         const buttonText = document.getElementById('tgChatButtonText');
@@ -651,14 +603,12 @@ const Swipe = {
         if (!button || !buttonText || !tooltip) return;
         
         if (active && chatLink) {
-            // Активируем кнопку
             button.classList.add('active');
             button.disabled = false;
             buttonText.textContent = 'Перейти в чат';
             tooltip.textContent = 'Матч создан';
             tooltip.classList.add('active');
             
-            // Сохраняем ссылки
             this.chatLink = chatLink;
             this.inviteLink = inviteLink;
             localStorage.setItem('currentChatLink', chatLink);
@@ -666,24 +616,20 @@ const Swipe = {
                 localStorage.setItem('currentInviteLink', inviteLink);
             }
             
-            // Добавляем обработчик клика
             button.onclick = () => {
                 this.openChatLink();
             };
         } else {
-            // Деактивируем кнопку
             button.classList.remove('active');
             button.disabled = true;
             buttonText.textContent = 'Ожидание тиммейта';
             tooltip.textContent = 'Ожидаем второго игрока';
             tooltip.classList.remove('active');
             
-            // Убираем обработчик
             button.onclick = null;
         }
     },
     
-    // ========== ОБНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ ОТКРЫТИЯ ССЫЛКИ ==========
     openChatLink() {
         let chatLink = this.chatLink || localStorage.getItem('currentChatLink');
         let inviteLink = this.inviteLink || localStorage.getItem('currentInviteLink');
@@ -695,30 +641,24 @@ const Swipe = {
         if (chatLink) {
             console.log('✅ Открываем чат:', chatLink);
             
-            // Проверяем, есть ли Telegram WebApp
             const tg = window.Telegram?.WebApp;
             
             if (inviteLink) {
-                // Двойная ссылка: сначала invite, потом чат
                 if (tg?.openTelegramLink) {
-                    // Открываем приглашение
                     console.log('📱 Открываем invite link через Telegram');
                     tg.openTelegramLink(inviteLink);
                     
-                    // Через 1.5 секунды открываем тему
                     setTimeout(() => {
                         console.log('⏱️ Открываем тему через 1.5 сек');
                         tg.openTelegramLink(chatLink);
                     }, 1500);
                 } else {
-                    // Fallback через window.open
                     window.open(inviteLink, '_blank');
                     setTimeout(() => {
                         window.open(chatLink, '_blank');
                     }, 1500);
                 }
             } else {
-                // Только ссылка на чат
                 if (tg?.openTelegramLink) {
                     tg.openTelegramLink(chatLink);
                 } else {
@@ -751,7 +691,6 @@ const Swipe = {
             this.connectionTimer = null;
         }
         
-        // Обновляем статус на экране соединения
         const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
             statusEl.innerHTML = `
@@ -763,7 +702,6 @@ const Swipe = {
             `;
         }
         
-        // Создаем игру
         setTimeout(() => {
             this.createGame();
         }, 500);
@@ -782,7 +720,6 @@ const Swipe = {
         if (this.labelRight) this.labelRight.style.display = 'block';
         if (this.hint) this.hint.style.display = 'block';
         
-        // Возвращаемся на главный экран
         this.exitSwipeMode('exitConnectionMode');
     },
     
@@ -798,7 +735,6 @@ const Swipe = {
         this.gameCreating = false;
         this.chatLink = null;
         this.inviteLink = null;
-        this.timeDiff = 0;
         
         if (this.cardTimerInterval) {
             clearInterval(this.cardTimerInterval);
@@ -813,7 +749,6 @@ const Swipe = {
             this.matchPolling = null;
         }
         
-        // Скрываем connectionScreen и показываем главный
         document.getElementById('connectionScreen').classList.remove('active');
         if (window.App) {
             App.showScreen('mainScreen', true);
@@ -822,9 +757,7 @@ const Swipe = {
         }
     },
     
-    // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ createGame ==========
     createGame() {
-        // Защита от двойного вызова
         if (this.gameCreating) {
             console.log('⚠️ Игра уже создается, пропускаем');
             return;
@@ -852,10 +785,8 @@ const Swipe = {
             console.log('Game create response:', data);
             
             if (data.status === 'ok' && data.chat_link) {
-                // Активируем кнопку чата с обеими ссылками
                 this.updateChatButton(true, data.chat_link, data.invite_link);
                 
-                // Обновляем статус
                 const statusEl = document.getElementById('connectionStatus');
                 if (statusEl) {
                     statusEl.innerHTML = `
@@ -881,7 +812,6 @@ const Swipe = {
             this.updateChatButton(false);
         })
         .finally(() => {
-            // Сбрасываем флаг через 3 секунды
             setTimeout(() => {
                 this.gameCreating = false;
             }, 3000);
