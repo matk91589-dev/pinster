@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ 
+// СВАЙП-КАРТОЧКИ - РАБОЧАЯ ВЕРСИЯ
 // ============================================
 
 const Swipe = {
@@ -104,15 +104,16 @@ const Swipe = {
             } else {
                 this.matchExpiresAt = expiresAt;
             }
-            console.log('✅ matchExpiresAt:', new Date(this.matchExpiresAt).toLocaleString());
+            console.log('✅ matchExpiresAt (timestamp):', this.matchExpiresAt);
         }
         
         // ========== ПРОСТОЕ РЕШЕНИЕ: считаем разницу ==========
         const clientNow = Date.now();
         let timeLeft = Math.floor((this.matchExpiresAt - clientNow) / 1000);
         
-        console.log(`⏰ Текущее время (клиент): ${new Date(clientNow).toLocaleString()}`);
-        console.log(`⏰ expires_at: ${new Date(this.matchExpiresAt).toLocaleString()}`);
+        console.log(`⏰ clientNow (timestamp): ${clientNow}`);
+        console.log(`⏰ expiresAt (timestamp): ${this.matchExpiresAt}`);
+        console.log(`⏰ Разница (мс): ${this.matchExpiresAt - clientNow}`);
         console.log(`⏰ Осталось секунд: ${timeLeft}`);
         
         // Если матч истек - выходим
@@ -122,10 +123,10 @@ const Swipe = {
             return;
         }
         
-        // Если времени больше 35 секунд - всё равно показываем карточку
-        // Сервер сам решает, сколько времени живет матч
-        if (timeLeft > 35) {
-            console.log(`⏱️ Матч живет ${timeLeft}с, это нормально`);
+        // Если времени больше 60 секунд - обрезаем до 30 (на случай ошибки)
+        if (timeLeft > 60) {
+            console.warn(`⚠️ Подозрительно много времени: ${timeLeft}с, устанавливаем 30с`);
+            this.matchExpiresAt = clientNow + 30000;
         }
         
         this.card = document.getElementById('swipeCard');
