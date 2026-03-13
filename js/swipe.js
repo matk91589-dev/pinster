@@ -401,16 +401,16 @@ const Swipe = {
         .then((data) => {
             console.log('📦 Accept response:', data);
             
-            // ========== ИСПРАВЛЕНИЕ: если оба приняли - не показываем экран ожидания ==========
+            // ========== ИСПРАВЛЕНИЕ 1: правильная логика для обоих игроков ==========
             if (data.both_accepted) {
                 console.log('🎉 Оба приняли (мгновенно)!');
                 clearInterval(this.matchPolling);
                 this.matchPolling = null;
                 this.handleBothAccepted();
-                return; // Выходим, не показываем connectionMode
+                return;
             }
             
-            // Если не оба приняли - показываем экран ожидания
+            // Всегда показываем экран ожидания для любого ответа (waiting или already_responded)
             this.showConnectionMode();
             this.startMatchStatusPolling(this.currentMatchId);
             
@@ -653,9 +653,16 @@ const Swipe = {
         }
     },
     
+    // ========== ИСПРАВЛЕНИЕ 2: защита от двойного создания ==========
     handleBothAccepted() {
         if (this.gameCreated) {
             console.log('⚠️ Игра уже создана, пропускаем');
+            return;
+        }
+        
+        // Проверяем, не создается ли уже игра
+        if (this.gameCreating) {
+            console.log('⚠️ Игра уже создается, ждем...');
             return;
         }
         
@@ -767,6 +774,11 @@ const Swipe = {
             console.log('Game create response:', data);
             
             if (data.status === 'ok' && data.chat_link) {
+                // Если игра уже существовала (вернулась с флагом already_exists), не создаем повторно
+                if (data.already_exists) {
+                    console.log('ℹ️ Игра уже существовала, используем существующую');
+                }
+                
                 this.updateChatButton(true, data.chat_link, data.invite_link);
                 
                 const statusEl = document.getElementById('connectionStatus');
