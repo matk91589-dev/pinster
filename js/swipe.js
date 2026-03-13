@@ -1,7 +1,7 @@
 // ============================================
 // СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// С синхронизацией времени между сервером и клиентом
 // Таймер на принятие = 30 секунд
-// Таймер чата = 30 минут (на бэкенде)
 // ============================================
 
 const Swipe = {
@@ -109,12 +109,24 @@ const Swipe = {
             console.log('✅ matchExpiresAt (UTC):', new Date(this.matchExpiresAt).toUTCString());
         }
         
-        // Считаем разницу между expires_at и текущим временем
+        // ========== ИСПРАВЛЕНИЕ: СИНХРОНИЗАЦИЯ ВРЕМЕНИ ==========
         const clientNow = Date.now();
-        let timeLeft = Math.floor((this.matchExpiresAt - clientNow) / 1000);
+        let serverOffset = 0;
         
-        console.log(`⏰ Текущее время (клиент): ${new Date(clientNow).toLocaleString()}`);
-        console.log(`⏰ expires_at (UTC): ${new Date(this.matchExpiresAt).toUTCString()}`);
+        if (serverTime) {
+            const serverNow = new Date(serverTime).getTime();
+            serverOffset = serverNow - clientNow;
+            
+            console.log("🕒 clientNow (локальное):", new Date(clientNow).toLocaleString());
+            console.log("🕒 serverNow (UTC):", new Date(serverNow).toUTCString());
+            console.log("🕒 offset (мс):", serverOffset);
+        }
+        
+        // Корректируем текущее время с учетом смещения
+        const correctedNow = clientNow + serverOffset;
+        let timeLeft = Math.floor((this.matchExpiresAt - correctedNow) / 1000);
+        
+        console.log(`🕒 correctedNow (скорректированное): ${new Date(correctedNow).toUTCString()}`);
         console.log(`⏰ Осталось секунд на принятие: ${timeLeft}`);
         
         // Если матч истек - выходим
@@ -124,10 +136,10 @@ const Swipe = {
             return;
         }
         
-        // Если вдруг пришло больше 35 секунд (ошибка синхронизации)
-        if (timeLeft > 35) {
-            console.warn(`⚠️ Ошибка синхронизации: ${timeLeft}с, устанавливаем 30с`);
-            this.matchExpiresAt = clientNow + 30000;
+        // Если времени больше 60 секунд - обрезаем до 30 (страховка)
+        if (timeLeft > 60) {
+            console.warn(`⚠️ Подозрительно много времени: ${timeLeft}с, устанавливаем 30с`);
+            this.matchExpiresAt = clientNow + 30000; // +30 секунд от клиента
             timeLeft = 30;
         }
         
@@ -169,6 +181,9 @@ const Swipe = {
         }
         
         const clientNow = Date.now();
+        
+        // Используем serverOffset если он есть, но в этом методе он недоступен
+        // Поэтому просто считаем разницу
         const timeLeft = Math.max(0, Math.floor((this.matchExpiresAt - clientNow) / 1000));
         
         // Таймер на принятие не может быть больше 30 секунд
@@ -976,7 +991,7 @@ const Swipe = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('✅ Swipe: DOM загружен, версия с 30 секундами');
+    console.log('✅ Swipe: DOM загружен, версия с синхронизацией времени');
     window.Swipe = Swipe;
 });
 
