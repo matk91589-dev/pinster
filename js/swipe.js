@@ -406,25 +406,21 @@ const Swipe = {
             
             // ВСЕГДА показываем экран соединения (кроме rejected)
             // Даже если оба приняли - показываем, потому что игра еще не создана
-            if (data.status !== 'rejected') {
-                this.showConnectionMode();
-            }
+            this.showConnectionMode();
             
             // Запускаем polling для отслеживания статуса матча
             this.startMatchStatusPolling(this.currentMatchId);
             
             if (data.both_accepted) {
                 console.log('🎉 Оба приняли (мгновенно)!');
-                clearInterval(this.matchPolling);
-                this.matchPolling = null;
-                this.handleBothAccepted();
+                // Не вызываем handleBothAccepted сразу, polling сам вызовет
             } else if (data.status === 'rejected') {
                 console.log('❌ Отклонено');
                 this.handleRejection();
             } else if (data.status === 'waiting') {
                 console.log('⏳ Ожидаем ответа');
             } else if (data.status === 'already_responded') {
-                console.log('⚠️ Уже ответили, проверяем статус через polling');
+                console.log('⚠️ Уже ответили, ждем через polling');
             }
         })
         .catch(error => {
