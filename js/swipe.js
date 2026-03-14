@@ -564,17 +564,49 @@ const Swipe = {
         this.connectionTimer = setInterval(updateTimer, 1000);
     },
     
+    // ========== ИСПРАВЛЕННЫЙ showConnectionMode ==========
     showConnectionMode() {
         console.log('🔄 Показываем экран соединения');
         this.isConnectionMode = true;
         
+        // Скрываем элементы свайпа
         if (this.labelLeft) this.labelLeft.style.display = 'none';
         if (this.labelRight) this.labelRight.style.display = 'none';
         if (this.hint) this.hint.style.display = 'none';
         
+        // ===== СБРАСЫВАЕМ ЭКРАН СОЕДИНЕНИЯ =====
+        // Сбрасываем статус
+        const statusEl = document.getElementById('connectionStatus');
+        if (statusEl) {
+            statusEl.innerHTML = `
+                <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="#FF5500" stroke-width="2" stroke-dasharray="2 2"/>
+                    <path d="M12 6V12L16 14" stroke="#FF5500" stroke-width="2"/>
+                </svg>
+                Ожидание игрока...
+            `;
+        }
+        
+        // Сбрасываем кнопку чата
+        this.updateChatButton(false);
+        
+        // Сбрасываем аватар тиммейта
+        const teammateAvatar = document.querySelector('.teammate-avatar');
+        if (teammateAvatar) {
+            teammateAvatar.classList.remove('connected');
+        }
+        
+        // Сбрасываем линию соединения
+        const connectionLine = document.querySelector('.connection-line');
+        if (connectionLine) {
+            connectionLine.classList.remove('connected');
+        }
+        
+        // Переключаем экраны
         document.getElementById('swipeScreen').classList.remove('active');
         document.getElementById('connectionScreen').classList.add('active');
         
+        // Обновляем данные игрока
         document.getElementById('teammateNick').textContent = this.currentPlayer?.nick || 'Игрок';
         document.getElementById('teammateRating').innerHTML = `
             ${this.currentPlayer?.rating || '0'}
@@ -585,16 +617,22 @@ const Swipe = {
         document.getElementById('connectionRank').textContent = this.currentPlayer?.rank || 'Нет ранга';
         document.getElementById('connectionAge').textContent = (this.currentPlayer?.age || '?') + ' лет';
         
-        this.updateChatButton(false);
+        // Запускаем таймер
         this.startConnectionTimer();
     },
     
+    // ========== ИСПРАВЛЕННЫЙ updateChatButton ==========
     updateChatButton(active, chatLink = null, inviteLink = null) {
         const button = document.getElementById('tgChatButton');
         const buttonText = document.getElementById('tgChatButtonText');
         const tooltip = document.getElementById('connectionTooltip');
         
         if (!button || !buttonText || !tooltip) return;
+        
+        // ===== СНАЧАЛА СБРАСЫВАЕМ ВСЕ =====
+        button.classList.remove('active');
+        button.disabled = true;
+        button.onclick = null;
         
         if (active && chatLink) {
             button.classList.add('active');
@@ -614,13 +652,9 @@ const Swipe = {
                 this.openChatLink();
             };
         } else {
-            button.classList.remove('active');
-            button.disabled = true;
             buttonText.textContent = 'Ожидание тиммейта';
             tooltip.textContent = 'Ожидаем второго игрока';
             tooltip.classList.remove('active');
-            
-            button.onclick = null;
         }
     },
     
