@@ -1,12 +1,11 @@
 // ============================================
 // НАВИГАЦИЯ (Telegram Mini App версия) - ИСПРАВЛЕНО
-// с защитой от случайного выхода на экране свайпа
 // ============================================
 
 const App = {
     currentScreen: null,
     tg: window.Telegram?.WebApp,
-    backButtonPressed: false, // флаг для защиты от двойного нажатия
+    backButtonPressed: false,
     
     init() {
         // Инициализация Telegram
@@ -14,32 +13,23 @@ const App = {
             this.tg.ready();
             this.tg.expand();
             
-            // Отключаем вертикальные свайпы
             if (this.tg.disableVerticalSwipes) {
                 this.tg.disableVerticalSwipes();
             }
             
-            // Устанавливаем тему
             document.body.style.backgroundColor = 
                 this.tg.themeParams.bg_color || "#0D0F15";
             
-            // Слушаем изменения темы
             this.tg.onEvent('themeChanged', () => {
                 document.body.style.backgroundColor =
                     this.tg.themeParams.bg_color || "#0D0F15";
             });
         }
         
-        // Настраиваем BackButton
         this.setupBackButton();
-        
-        // Устанавливаем обработчики для кнопок режимов
         this.setupModeButtons();
-        
-        // Устанавливаем обработчик для логотипа
         this.setupLogoHandler();
         
-        // Проверяем существование startScreen
         const startScreen = document.getElementById('startScreen');
         if (startScreen) {
             this.showScreen('startScreen', false);
@@ -55,14 +45,12 @@ const App = {
         this.tg.BackButton.onClick(() => {
             console.log('🔙 Нажата кнопка назад на экране:', this.currentScreen);
             
-            // Защита от двойного нажатия
             if (this.backButtonPressed) {
                 console.log('⏳ Уже обрабатываем нажатие, игнорируем');
                 return;
             }
             this.backButtonPressed = true;
             
-            // Сбрасываем флаг через секунду
             setTimeout(() => {
                 this.backButtonPressed = false;
             }, 1000);
@@ -72,7 +60,6 @@ const App = {
     },
     
     setupModeButtons() {
-        // Показываем экраны с формами
         document.querySelector('.mode-btn.faceit')?.addEventListener('click', () => {
             localStorage.setItem('currentMode', 'FACEIT');
             this.showScreen('faceitScreen', false);
@@ -106,7 +93,6 @@ const App = {
     handleLogoClick() {
         console.log('Клик по логотипу, текущий экран:', this.currentScreen);
         
-        // Если мы на экране поиска - спрашиваем подтверждение
         if (this.currentScreen === 'searchScreen') {
             this.showConfirm('Вы точно хотите отменить поиск?', (confirmed) => {
                 if (confirmed) {
@@ -114,7 +100,6 @@ const App = {
                     if (typeof Search !== 'undefined' && Search.cancel) {
                         Search.cancel();
                     } else {
-                        // Прямой запрос на остановку
                         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
                         if (telegram_id) {
                             fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/search/stop', {
@@ -129,7 +114,6 @@ const App = {
                 }
             });
         } 
-        // Если мы на экране свайпа - спрашиваем подтверждение
         else if (this.currentScreen === 'swipeScreen') {
             this.showConfirm('Вы точно хотите выйти из поиска?', (confirmed) => {
                 if (confirmed) {
@@ -141,7 +125,6 @@ const App = {
                 }
             });
         }
-        // В остальных случаях просто переходим на главную
         else if (this.currentScreen !== 'mainScreen') {
             this.showScreen('mainScreen', true);
         }
@@ -150,7 +133,6 @@ const App = {
     handleBack() {
         console.log('🔙 Обработка кнопки назад на экране:', this.currentScreen);
         
-        // Если мы на экране свайпа - спрашиваем подтверждение
         if (this.currentScreen === 'swipeScreen') {
             console.log('⚠️ На экране свайпа, спрашиваем подтверждение');
             this.showConfirm('Вы точно хотите выйти из поиска?', (confirmed) => {
@@ -164,10 +146,9 @@ const App = {
                     console.log('❌ Пользователь отменил выход');
                 }
             });
-            return; // НЕ ВЫХОДИМ, ПОКА ПОЛЬЗОВАТЕЛЬ НЕ ПОДТВЕРДИТ
+            return;
         }
         
-        // Если мы на экране поиска - спрашиваем подтверждение
         if (this.currentScreen === 'searchScreen') {
             console.log('⚠️ На экране поиска, спрашиваем подтверждение');
             this.showConfirm('Вы точно хотите отменить поиск?', (confirmed) => {
@@ -183,7 +164,6 @@ const App = {
             return;
         }
         
-        // Логика возврата для остальных экранов
         if (this.currentScreen === 'profileScreen' || 
             this.currentScreen === 'shopScreen' || 
             this.currentScreen === 'settingsScreen' ||
@@ -203,8 +183,6 @@ const App = {
     updateBackButton() {
         if (!this.tg) return;
         
-        // На экране свайпа - всегда прячем кнопку назад, 
-        // чтобы избежать случайного выхода
         if (this.currentScreen === 'swipeScreen') {
             console.log('🚫 Прячем кнопку назад на экране свайпа');
             this.tg.BackButton.hide();
@@ -225,12 +203,10 @@ const App = {
     },
     
     updateNavHighlight(screenId) {
-        // Убираем active у всех кнопок
         document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('active');
         });
         
-        // Определяем, какая кнопка должна быть активной
         let activeNavId = null;
         
         if (screenId === 'mainScreen') {
@@ -245,7 +221,6 @@ const App = {
             activeNavId = 'navMain';
         }
         
-        // Добавляем active нужной кнопке
         if (activeNavId) {
             const navItem = document.getElementById(activeNavId);
             if (navItem) {
@@ -294,13 +269,11 @@ const App = {
     showScreen(screenId, showNav = true) {
         console.log('Переход с экрана:', this.currentScreen, 'на экран:', screenId);
         
-        // ВАЖНО: Если уходим с экрана поиска НЕ на свайп - останавливаем поиск
         if (this.currentScreen === 'searchScreen' && screenId !== 'searchScreen' && screenId !== 'swipeScreen') {
             console.log('⚠️ Уходим с экрана поиска (не на свайп), принудительно останавливаем поиск');
             if (typeof Search !== 'undefined' && Search.cancel) {
                 Search.cancel();
             } else {
-                // Если Search не определен, отправляем прямой запрос на остановку
                 const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
                 if (telegram_id) {
                     fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/search/stop', {
@@ -312,7 +285,6 @@ const App = {
             }
         }
         
-        // Если уходим с экрана свайпа - чистим данные
         if (this.currentScreen === 'swipeScreen' && screenId !== 'swipeScreen') {
             console.log('⚠️ Уходим с экрана свайпа, чистим данные');
             if (typeof Swipe !== 'undefined' && Swipe.destroy) {
@@ -320,59 +292,40 @@ const App = {
             }
         }
         
-        // Скрываем все экраны
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
         });
         
-        // Показываем нужный
         const screen = document.getElementById(screenId);
         if (screen) {
             screen.classList.add('active');
             this.currentScreen = screenId;
             
-            // Загружаем данные если нужно
             if (screenId === 'profileScreen' && typeof Profile !== 'undefined') {
                 Profile.loadSavedValues();
             } else if (screenId === 'shopScreen' && typeof Shop !== 'undefined') {
                 Shop.renderShop();
             }
             
-            // ========== ВАЖНО: Инициализация Swipe при переходе на экран свайпа ==========
             if (screenId === 'swipeScreen') {
                 console.log('🚀 Экран свайпа показан, инициализация будет в Search');
-                // УБИРАЕМ ВЫЗОВ Swipe.startWithOpponent() ОТСЮДА!
-                // Теперь инициализация только в Search.showSwipeScreen()
             }
-            // =========================================================================
             
-            // Хаптик
             this.hapticFeedback('light');
-            
-            // Обновляем подсветку навигации
             this.updateNavHighlight(screenId);
         }
         
-        // Обновляем BackButton (ВАЖНО: после смены экрана)
         this.updateBackButton();
         
-        // Обновляем иконку настроек
         const settingsIcon = document.getElementById('settingsIcon');
         if (settingsIcon) {
             settingsIcon.classList.toggle('active', screenId === 'settingsScreen');
         }
-    },
-    
-    startApp() {
-        console.log('startApp вызвана');
-        this.showScreen('mainScreen', true);
     }
 };
 
-// Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', () => {
     App.init();
 });
 
-// Для обратной совместимости
 window.App = App;
