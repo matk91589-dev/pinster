@@ -406,19 +406,47 @@ const Swipe = {
         .then((data) => {
             console.log('📦 Accept response:', data);
             
-            // ========== ШАГ 3: запускаем polling ==========
-            this.startMatchStatusPolling(this.currentMatchId);
-            
+            // ========== ВАЖНО: НИЧЕГО НЕ ТРИГГЕРИМ СРАЗУ, ТОЛЬКО POLLING ==========
             if (data.both_accepted) {
-                console.log('🎉 Оба приняли (мгновенно)!');
-                // Не вызываем handleBothAccepted сразу, polling сам вызовет
+                console.log('🎉 Оба уже приняли, показываем полную анимацию');
+                
+                // Показываем что оба приняли (визуал)
+                const statusEl = document.getElementById('connectionStatus');
+                if (statusEl) {
+                    statusEl.innerHTML = `
+                        <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="#4CAF50" stroke-width="2"/>
+                            <path d="M8 12L11 15L16 9" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Матч создан!
+                    `;
+                }
+                
+                // Подсвечиваем аватар тиммейта
+                const teammateAvatar = document.querySelector('.teammate-avatar');
+                if (teammateAvatar) {
+                    teammateAvatar.classList.add('connected');
+                }
+                
+                // Линия полностью заполняется
+                const connectionLine = document.querySelector('.connection-line');
+                if (connectionLine) {
+                    connectionLine.classList.add('connected');
+                }
+                
+                // Сразу создаем игру, чтобы кнопка стала активной
+                this.createGame();
+                
             } else if (data.status === 'rejected') {
                 console.log('❌ Отклонено');
                 this.handleRejection();
             } else if (data.status === 'waiting') {
                 console.log('⏳ Ожидаем ответа');
+                // Запускаем polling
+                this.startMatchStatusPolling(this.currentMatchId);
             } else if (data.status === 'already_responded') {
                 console.log('⚠️ Уже ответили, ждем через polling');
+                this.startMatchStatusPolling(this.currentMatchId);
             }
         })
         .catch(error => {
@@ -462,7 +490,33 @@ const Swipe = {
                     console.log('🎉 Оба приняли (через polling)!');
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
-                    this.handleBothAccepted();
+                    
+                    // Показываем что оба приняли
+                    const statusEl = document.getElementById('connectionStatus');
+                    if (statusEl) {
+                        statusEl.innerHTML = `
+                            <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="#4CAF50" stroke-width="2"/>
+                                <path d="M8 12L11 15L16 9" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            Матч создан!
+                        `;
+                    }
+                    
+                    // Подсвечиваем аватар тиммейта
+                    const teammateAvatar = document.querySelector('.teammate-avatar');
+                    if (teammateAvatar) {
+                        teammateAvatar.classList.add('connected');
+                    }
+                    
+                    // Линия полностью заполняется
+                    const connectionLine = document.querySelector('.connection-line');
+                    if (connectionLine) {
+                        connectionLine.classList.add('connected');
+                    }
+                    
+                    // Создаем игру, чтобы кнопка стала активной
+                    this.createGame();
                 }
                 
                 if (data.status === 'rejected' || data.status === 'expired') {
@@ -596,7 +650,7 @@ const Swipe = {
             teammateAvatar.classList.remove('connected');
         }
         
-        // Сбрасываем линию соединения
+        // Сбрасываем линию соединения (возвращаем пульсацию)
         const connectionLine = document.querySelector('.connection-line');
         if (connectionLine) {
             connectionLine.classList.remove('connected');
@@ -699,99 +753,6 @@ const Swipe = {
         }
     },
     
-    // ========== ИСПРАВЛЕННЫЙ handleBothAccepted ==========
-    handleBothAccepted() {
-        if (this.gameCreated) {
-            console.log('⚠️ Игра уже создана, пропускаем');
-            return;
-        }
-        
-        // Проверяем, не создается ли уже игра
-        if (this.gameCreating) {
-            console.log('⚠️ Игра уже создается, ждем...');
-            return;
-        }
-        
-        console.log('🎉 Оба приняли! Запускаем визуальные изменения');
-        
-        this.gameCreated = true;
-        
-        if (this.matchPolling) {
-            clearInterval(this.matchPolling);
-            this.matchPolling = null;
-        }
-        
-        if (this.connectionTimer) {
-            clearInterval(this.connectionTimer);
-            this.connectionTimer = null;
-        }
-        
-        const statusEl = document.getElementById('connectionStatus');
-        if (statusEl) {
-            statusEl.innerHTML = `
-                <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="#4CAF50" stroke-width="2"/>
-                    <path d="M8 12L11 15L16 9" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                Матч создан
-            `;
-        }
-        
-        setTimeout(() => {
-            this.createGame();
-        }, 500);
-    },
-    
-    exitConnectionMode() {
-        console.log('🔄 Выход из режима соединения');
-        this.isConnectionMode = false;
-        
-        if (this.matchPolling) {
-            clearInterval(this.matchPolling);
-            this.matchPolling = null;
-        }
-        
-        if (this.labelLeft) this.labelLeft.style.display = 'block';
-        if (this.labelRight) this.labelRight.style.display = 'block';
-        if (this.hint) this.hint.style.display = 'block';
-        
-        this.exitSwipeMode('exitConnectionMode');
-    },
-    
-    exitSwipeMode(reason = 'неизвестно') {
-        console.log(`🔄 Выход из режима свайпа. Причина: ${reason}`);
-        this.unblockScroll();
-        this.isConnectionMode = false;
-        this.currentMatchId = null;
-        this.currentPlayer = null;
-        this.matchExpiresAt = null;
-        this.serverTime = null;
-        this.gameCreated = false;
-        this.gameCreating = false;
-        this.chatLink = null;
-        this.inviteLink = null;
-        
-        if (this.cardTimerInterval) {
-            clearInterval(this.cardTimerInterval);
-            this.cardTimerInterval = null;
-        }
-        if (this.connectionTimer) {
-            clearInterval(this.connectionTimer);
-            this.connectionTimer = null;
-        }
-        if (this.matchPolling) {
-            clearInterval(this.matchPolling);
-            this.matchPolling = null;
-        }
-        
-        document.getElementById('connectionScreen').classList.remove('active');
-        if (window.App) {
-            App.showScreen('mainScreen', true);
-        } else {
-            window.location.href = '/';
-        }
-    },
-    
     // ========== ИСПРАВЛЕННЫЙ createGame ==========
     createGame() {
         if (this.gameCreating) {
@@ -826,16 +787,18 @@ const Swipe = {
                     console.log('ℹ️ Игра уже существовала, используем существующую');
                 }
                 
+                // Активируем кнопку чата
                 this.updateChatButton(true, data.chat_link, data.invite_link);
                 
+                // Обновляем статус, если он еще не обновлен
                 const statusEl = document.getElementById('connectionStatus');
-                if (statusEl) {
+                if (statusEl && statusEl.innerHTML.indexOf('Матч создан') === -1) {
                     statusEl.innerHTML = `
                         <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                             <circle cx="12" cy="12" r="10" stroke="#4CAF50" stroke-width="2"/>
                             <path d="M8 12L11 15L16 9" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
                         </svg>
-                        Чат готов
+                        Матч создан!
                     `;
                 }
                 
@@ -843,6 +806,8 @@ const Swipe = {
                 if (data.invite_link) {
                     console.log('🔗 Invite link получен:', data.invite_link);
                 }
+                
+                this.gameCreated = true;
             } else {
                 console.error('createGame error: no chat_link', data);
                 this.updateChatButton(false);
