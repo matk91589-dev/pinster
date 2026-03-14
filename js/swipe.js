@@ -384,6 +384,10 @@ const Swipe = {
             return;
         }
         
+        // ========== ШАГ 1: СРАЗУ ПОКАЗЫВАЕМ ЭКРАН ОЖИДАНИЯ ==========
+        this.showConnectionMode();
+        
+        // ========== ШАГ 2: скрываем карточку ==========
         this.card.style.transition = 'opacity 0.2s ease';
         this.card.style.opacity = '0';
         
@@ -402,13 +406,7 @@ const Swipe = {
         .then((data) => {
             console.log('📦 Accept response:', data);
             
-            // ========== ИСПРАВЛЕННАЯ ЛОГИКА ==========
-            
-            // ВСЕГДА показываем экран соединения (кроме rejected)
-            // Даже если оба приняли - показываем, потому что игра еще не создана
-            this.showConnectionMode();
-            
-            // Запускаем polling для отслеживания статуса матча
+            // ========== ШАГ 3: запускаем polling ==========
             this.startMatchStatusPolling(this.currentMatchId);
             
             if (data.both_accepted) {
