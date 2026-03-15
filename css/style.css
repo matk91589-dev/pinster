@@ -3405,3 +3405,94 @@ scroll-behavior:smooth;
     word-wrap: break-word;
     line-height: 1.5;
 }
+
+/* ===== ЭКРАН ОЖИДАНИЯ - УПЛОТНЁННАЯ ВЕРСИЯ ===== */
+.connection-screen .swipe-card-content {
+    gap: 6px !important;
+}
+
+.connection-screen .teammate-info {
+    margin: 0 !important;
+    gap: 2px !important;
+}
+
+.connection-screen .teammate-nick {
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+}
+
+.connection-screen .teammate-rating {
+    font-size: 13px !important;
+    margin: 0 !important;
+}
+
+.connection-screen .connection-rank-age {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 2px 0 !important;
+}
+
+.connection-screen .connection-rank,
+.connection-screen .connection-age {
+    background: #1A1D24;
+    padding: 4px 10px !important;
+    border-radius: 6px;
+    border: 1px solid #2A2F3A;
+    font-size: 12px !important;
+}
+
+.connection-screen .connection-status {
+    margin: 4px 0 !important;
+    font-size: 13px !important;
+}
+
+.connection-screen .connection-avatars {
+    margin: 5px 0 10px 0 !important;
+    gap: 15px !important;
+}
+
+.connection-avatar {
+    width: 60px !important;
+    height: 60px !important;
+}
+
+.self-avatar .tg-avatar-svg {
+    width: 56px !important;
+    height: 56px !important;
+}
+
+.teammate-avatar {
+    width: 50px !important;
+    height: 50px !important;
+}
+
+.teammate-avatar.connected {
+    width: 60px !important;
+    height: 60px !important;
+}
+
+.teammate-avatar.connected .tg-avatar-svg {
+    width: 56px !important;
+    height: 56px !important;
+}
+
+.connection-line {
+    width: 80px !important;
+}
+
+.connection-timer {
+    padding: 4px 10px !important;
+    font-size: 12px !important;
+    top: 8px !important;
+    left: 12px !important;
+}
+
+.connection-button {
+    margin-top: 10px !important;
+}
+
+.tg-chat-button {
+    height: 44px !important;
+    font-size: 16px !important;
+}
