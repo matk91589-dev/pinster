@@ -457,7 +457,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН СОЕДИНЕНИЯ - ИСПРАВЛЕННЫЙ -->
+            <!-- ЭКРАН СОЕДИНЕНИЯ -->
             <div id="connectionScreen" class="screen connection-screen">
                 <div class="swipe-header">
                     <div class="swipe-title">Тиммейт найден</div>
@@ -494,12 +494,10 @@
                                 </div>
                             </div>
 
-                            <!-- СТАТУС - ПУСТОЙ (JS ЗАПОЛНИТ) -->
                             <div class="connection-status" id="connectionStatus"></div>
 
                             <div class="teammate-info">
                                 <span class="teammate-nick" id="teammateNick"></span>
-                                <!-- teвmmateRating ОСТАВЛЕН ДЛЯ JS -->
                                 <span class="teammate-rating" id="teammateRating"></span>
                             </div>
 
@@ -508,7 +506,6 @@
                                 <span class="connection-age" id="connectionAge"></span>
                             </div>
 
-                            <!-- КНОПКА ЧАТА -->
                             <div class="connection-button">
                                 <button class="tg-chat-button" id="tgChatButton" disabled>
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
@@ -530,15 +527,136 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН НАСТРОЕК -->
+            <!-- ============================================ -->
+            <!-- ЭКРАН НАСТРОЕК - ПОЛНАЯ ВЕРСИЯ -->
+            <!-- ============================================ -->
             <div id="settingsScreen" class="screen settings-screen">
-                <div class="title-row"><div class="title-left"><div class="section-title">Настройки</div></div></div>
-                <div class="settings-content">
-                    <div class="settings-item"><span class="settings-label">Звуки</span><label class="switch"><input type="checkbox" id="soundToggle" checked><span class="slider round"></span></label></div>
-                    <div class="settings-item"><span class="settings-label">Уведомления</span><label class="switch"><input type="checkbox" id="notificationsToggle" checked><span class="slider round"></span></label></div>
-                    <div class="settings-item"><span class="settings-label">Тёмная тема</span><label class="switch"><input type="checkbox" id="themeToggle" checked><span class="slider round"></span></label></div>
+                <div class="settings-header">
+                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
+                    <div class="settings-title">Настройки</div>
+                    <div class="settings-version">v1.0.0</div>
                 </div>
-                <button class="primary-btn" onclick="App.showScreen('mainScreen', true)" style="margin:20px 0;">На главную</button>
+                
+                <div class="settings-content">
+                    
+                    <!-- ===== ОСНОВНЫЕ ===== -->
+                    <div class="settings-group">
+                        <div class="settings-group-title">Основные</div>
+                        
+                        <div class="settings-item">
+                            <span class="settings-label">Звуки</span>
+                            <div class="square-toggle" data-setting="sound">
+                                <div class="square-toggle-switch"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-item with-slider">
+                            <span class="settings-label">Громкость</span>
+                            <input type="range" min="0" max="100" value="70" class="volume-slider" id="volumeSlider">
+                        </div>
+                        
+                        <div class="settings-item">
+                            <span class="settings-label">Уведомления</span>
+                            <div class="square-toggle" data-setting="notifications">
+                                <div class="square-toggle-switch"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- ===== ОФОРМЛЕНИЕ ===== -->
+                    <div class="settings-group">
+                        <div class="settings-group-title">Оформление</div>
+                        
+                        <div class="settings-item">
+                            <span class="settings-label">Тёмная тема</span>
+                            <div class="square-toggle" data-setting="theme">
+                                <div class="square-toggle-switch"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <span class="settings-label">Язык</span>
+                            <span class="settings-value">Русский</span>
+                        </div>
+                    </div>
+                    
+                    <!-- ===== ПРИВАТНОСТЬ ===== -->
+                    <div class="settings-group">
+                        <div class="settings-group-title">Приватность</div>
+                        
+                        <div class="settings-item">
+                            <span class="settings-label">Показывать возраст</span>
+                            <div class="square-toggle" data-setting="showAge">
+                                <div class="square-toggle-switch"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <span class="settings-label">Показывать Steam</span>
+                            <div class="square-toggle" data-setting="showSteam">
+                                <div class="square-toggle-switch"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <span class="settings-label">Показывать Faceit</span>
+                            <div class="square-toggle" data-setting="showFaceit">
+                                <div class="square-toggle-switch"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- ===== СОЦИАЛЬНЫЕ СЕТИ ===== -->
+                    <div class="settings-group">
+                        <div class="settings-group-title">Социальные сети</div>
+                        
+                        <a href="https://tiktok.com/@pingster" target="_blank" class="settings-link">
+                            <span class="settings-label">TikTok</span>
+                            <span class="settings-arrow">→</span>
+                        </a>
+                        
+                        <a href="https://t.me/pingster_channel" target="_blank" class="settings-link">
+                            <span class="settings-label">Telegram канал</span>
+                            <span class="settings-arrow">→</span>
+                        </a>
+                    </div>
+                    
+                    <!-- ===== ПОДДЕРЖКА ===== -->
+                    <div class="settings-group">
+                        <div class="settings-group-title">Поддержка</div>
+                        
+                        <a href="mailto:support@pingster.com" class="settings-link">
+                            <span class="settings-label">Gmail</span>
+                            <span class="settings-value">support@pingster.com</span>
+                        </a>
+                        
+                        <div class="settings-item">
+                            <span class="settings-label">Telegram</span>
+                            <span class="settings-value">@pingster_support</span>
+                        </div>
+                    </div>
+                    
+                    <!-- ===== ДРУГОЕ ===== -->
+                    <div class="settings-group">
+                        <div class="settings-group-title">Другое</div>
+                        
+                        <div class="settings-item clickable" onclick="App.showScreen('friendsScreen', true)">
+                            <span class="settings-label">Друзья</span>
+                            <span class="settings-arrow">→</span>
+                        </div>
+                        
+                        <div class="settings-item clickable" onclick="App.showScreen('shopScreen', true)">
+                            <span class="settings-label">Инвентарь</span>
+                            <span class="settings-arrow">→</span>
+                        </div>
+                        
+                        <div class="settings-item clickable" onclick="alert('Реферальная система появится скоро!')">
+                            <span class="settings-label">Реферальная система</span>
+                            <span class="settings-badge">Скоро</span>
+                        </div>
+                    </div>
+                    
+                </div>
             </div>
 
             <!-- ЭКРАН FACEIT -->
@@ -627,7 +745,7 @@
                 <button class="mode-search-btn" onclick="Search.start('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MM PRIME -->
+            <!-- ЭКРАН PRIME -->
             <div id="primeScreen" class="screen prime-screen">
                 <div class="mode-header">
                     <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
@@ -689,7 +807,7 @@
                 <button class="mode-search-btn" onclick="Search.start('PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
             </div>
 
-            <!-- ЭКРАН MM PUBLIC -->
+            <!-- ЭКРАН PUBLIC -->
             <div id="publicScreen" class="screen public-screen">
                 <div class="mode-header">
                     <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
@@ -810,6 +928,7 @@
     <script src="js/config.js"></script>
     <script src="js/globals.js"></script>
     <script src="js/navigation.js"></script>
+    <script src="js/settings.js"></script>
     <script src="js/profile.js"></script>
     <script src="js/avatar.js"></script>
     <script src="js/friends.js"></script>
