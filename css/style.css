@@ -3257,7 +3257,7 @@ html {
     box-shadow: 0 0 15px rgba(255, 85, 0, 0.5);
 }
 
-/* ===== НАСТРОЙКИ - ФИНАЛ (0 ОТСТУПОВ) ===== */
+/* ===== НАСТРОЙКИ - ТОЛЬКО ДЛЯ ЭТОГО ЭКРАНА ===== */
 .settings-screen {
     padding: 0 !important;
     margin: 0 !important;
@@ -3268,8 +3268,8 @@ html {
     scrollbar-color: #FF5500 #2A2F3A;
 }
 
-/* Убираем отступы у родительских контейнеров */
-.content {
+/* Убираем отступы ТОЛЬКО у контента внутри настроек */
+.settings-screen .content {
     padding: 0 !important;
 }
 
