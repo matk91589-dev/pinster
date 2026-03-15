@@ -2516,38 +2516,6 @@ input:checked + .slider:before {
     stroke: var(--text-secondary);
 }
 
-.teammate-avatar.connected {
-    width: 72px;
-    height: 72px;
-    opacity: 1;
-    filter: grayscale(0);
-}
-
-.teammate-avatar.connected .tg-avatar-svg {
-    width: 68px;
-    height: 68px;
-    border: 2px solid var(--accent);
-    box-shadow: 0 0 20px rgba(255, 85, 0, 0.5);
-}
-
-.teammate-avatar.connected .tg-avatar-svg svg circle,
-.teammate-avatar.connected .tg-avatar-svg svg path {
-    fill: var(--accent);
-    stroke: var(--accent);
-}
-
-@keyframes selfPulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(255, 85, 0, 0.6);
-    }
-    70% {
-        box-shadow: 0 0 0 12px rgba(255, 85, 0, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(255, 85, 0, 0);
-    }
-}
-
 .connection-line-container {
     position: relative;
     width: 120px;
@@ -2778,66 +2746,6 @@ input:checked + .slider:before {
 .swipe-timer.warning {
     color: var(--accent);
     animation: timerPulse 1s infinite;
-}
-
-/* ===== НОВЫЕ СТИЛИ ДЛЯ TELEGRAM-КНОПКИ ===== */
-.connection-button {
-    width: 100%;
-    margin-top: 24px;
-    padding: 0;
-}
-
-.tg-chat-button {
-    width: 100%;
-    height: 52px;
-    border-radius: 12px;
-    border: none;
-    font-size: 18px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background: transparent;
-    border: 1.5px solid rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.5);
-    pointer-events: none;
-}
-
-.tg-chat-button.active {
-    background: var(--tg-blue);
-    border: none;
-    color: white;
-    pointer-events: auto;
-    box-shadow: 0 4px 12px rgba(55, 174, 226, 0.3);
-}
-
-.tg-chat-button.active:hover {
-    background: var(--tg-blue-hover);
-    transform: scale(1.02);
-}
-
-.tg-chat-button svg {
-    width: 22px;
-    height: 22px;
-}
-
-.tg-chat-button.active svg {
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-}
-
-.connection-tooltip {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.3);
-    text-align: center;
-    margin-top: 8px;
-    transition: color 0.2s ease;
-}
-
-.connection-tooltip.active {
-    color: var(--tg-blue);
 }
 
 /* ===== АНИМАЦИИ ===== */
@@ -3407,10 +3315,6 @@ scroll-behavior:smooth;
 }
 
 /* ===== ЭКРАН ОЖИДАНИЯ - УПЛОТНЁННАЯ ВЕРСИЯ ===== */
-.connection-screen .swipe-card-content {
-    gap: 6px !important;
-}
-
 .connection-screen .teammate-info {
     margin: 0 !important;
     gap: 2px !important;
@@ -3504,7 +3408,7 @@ scroll-behavior:smooth;
     flex-direction: column;
     max-height: none !important;
     width: 100%;
-    max-width: 420px; /* Такой же как у свайпа */
+    max-width: 420px;
     margin: 0 auto;
 }
 
@@ -3513,5 +3417,151 @@ scroll-behavior:smooth;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 6px;
+    gap: 8px;
+}
+
+/* ===== ОБНОВЛЕННАЯ КНОПКА ЧАТА ===== */
+.connection-button {
+    width: 100%;
+    margin-top: 16px;
+    padding: 0 10px;
+}
+
+.tg-chat-button {
+    width: 100%;
+    height: 52px;
+    border-radius: 40px !important;
+    border: none;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.5);
+    pointer-events: none;
+}
+
+.tg-chat-button.active {
+    background: var(--tg-blue);
+    border: none;
+    color: white;
+    pointer-events: auto;
+    box-shadow: 0 4px 15px rgba(55, 174, 226, 0.4);
+}
+
+.tg-chat-button.active:hover {
+    background: var(--tg-blue-hover);
+    transform: scale(1.02);
+}
+
+.tg-chat-button svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+}
+
+.tg-chat-button.active svg {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+/* ===== ЭКРАН ОЖИДАНИЯ - УПРОЩЕННЫЙ ===== */
+.connection-screen .teammate-rating {
+    display: none !important;
+}
+
+.connection-screen .teammate-nick {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+    margin: 5px 0;
+}
+
+.connection-screen .connection-rank-age {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 5px 0 10px 0;
+}
+
+.connection-screen .connection-rank,
+.connection-screen .connection-age {
+    background: #1A1D24;
+    padding: 6px 16px;
+    border-radius: 30px;
+    border: 1px solid #2A2F3A;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+/* ===== НОВАЯ ПОДСВЕТКА АВАТАРОК ===== */
+@keyframes glowPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 85, 0, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 8px rgba(255, 85, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 85, 0, 0);
+    }
+}
+
+.self-avatar,
+.teammate-avatar {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.both-accepted .self-avatar,
+.both-accepted .teammate-avatar,
+.self-avatar.connected,
+.teammate-avatar.connected {
+    border: 2px solid var(--accent);
+    animation: glowPulse 2s infinite ease-in-out;
+    box-shadow: 0 0 0 2px rgba(255, 85, 0, 0.3);
+}
+
+/* ===== СТАТУС БЕЗ СМАЙЛИКОВ ===== */
+.connection-status {
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin: 5px 0;
+    font-weight: 500;
+}
+
+.both-accepted .connection-status {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.both-accepted .connection-status::before {
+    content: "●";
+    color: var(--accent);
+    margin-right: 6px;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* Таймер сверху */
+.connection-timer {
+    position: absolute;
+    top: 12px;
+    left: 18px;
+    font-size: 14px;
+    color: #7A808E;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 6px 14px;
+    border-radius: 30px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+    z-index: 15;
 }
