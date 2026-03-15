@@ -73,7 +73,7 @@ const Swipe = {
         }
     },
     
-    // ========== НОВАЯ ФУНКЦИЯ ДЛЯ АВТО-ПОДГОНА РАЗМЕРА ==========
+    // ========== ФУНКЦИЯ ДЛЯ АВТО-ПОДГОНА РАЗМЕРА ==========
     adjustCardSize() {
         if (!this.card || this.isConnectionMode) return;
         
@@ -95,38 +95,43 @@ const Swipe = {
             const headerTitleHeight = swipeHeader ? swipeHeader.offsetHeight : 80;
             
             // Доступная высота для карточки (с учетом отступов)
-            const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 40;
+            const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 30;
             
-            // Текущая ширина карточки
-            let cardWidth = this.card.offsetWidth;
+            // Максимальная ширина (не больше 420px)
+            const maxWidth = 420;
             
-            // Нужная высота для пропорции 4:3 (высота = ширина * 1.33)
-            const neededHeight = cardWidth * 1.33;
+            // Рассчитываем идеальную ширину для 4:3
+            let idealWidth = Math.min(maxWidth, window.innerWidth * 0.9);
             
-            console.log(`📐 Подгон карточки: экран=${screenHeight}, доступно=${availableHeight}, нужно=${neededHeight}, ширина=${cardWidth}`);
+            // Нужная высота для этой ширины
+            const neededHeight = idealWidth * 1.33;
+            
+            console.log(`📐 Подгон карточки: экран=${screenHeight}, доступно=${availableHeight}, нужно=${neededHeight}, ширина=${idealWidth}`);
             
             // Если нужная высота больше доступной
             if (neededHeight > availableHeight) {
-                // Уменьшаем ширину, чтобы вписаться
-                const newWidth = Math.min(availableHeight / 1.33, cardWidth);
+                // Уменьшаем ширину, чтобы вписаться, но не слишком сильно
+                const newWidth = Math.max(availableHeight / 1.33, 320); // Минимум 320px
                 
-                // Не делаем карточку слишком узкой
-                if (newWidth > 250) {
+                if (newWidth <= maxWidth) {
                     this.card.style.width = newWidth + 'px';
                     this.card.style.maxWidth = newWidth + 'px';
                     this.card.style.margin = '0 auto';
                     console.log(`✅ Карточка уменьшена до ${newWidth}px`);
                 } else {
-                    // Если совсем узко — оставляем минимум
-                    this.card.style.width = '280px';
-                    this.card.style.maxWidth = '280px';
+                    this.card.style.width = maxWidth + 'px';
+                    this.card.style.maxWidth = maxWidth + 'px';
                 }
             } else {
-                // Всё ок, оставляем как есть или ставим max-width
+                // Всё ок, ставим ширину на всю
                 this.card.style.width = '100%';
-                this.card.style.maxWidth = '420px';
+                this.card.style.maxWidth = maxWidth + 'px';
                 this.card.style.margin = '0 auto';
             }
+            
+            // Принудительно центрируем
+            this.card.style.marginLeft = 'auto';
+            this.card.style.marginRight = 'auto';
         }, 100);
     },
     
