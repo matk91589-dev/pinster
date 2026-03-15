@@ -2586,12 +2586,6 @@ input:checked + .slider:before {
     font-weight: 500;
 }
 
-.both-accepted .connection-status {
-    color: var(--accent);
-    font-weight: 600;
-    text-shadow: 0 0 8px rgba(255, 85, 0, 0.3);
-}
-
 .rejected .connection-status {
     color: #FF3B30;
 }
