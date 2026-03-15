@@ -73,7 +73,7 @@ const Swipe = {
         }
     },
     
-    // ========== ФУНКЦИЯ ДЛЯ АВТО-ПОДГОНА РАЗМЕРА ==========
+    // ========== ФУНКЦИЯ ДЛЯ АВТО-ПОДГОНА РАЗМЕРА КАРТОЧКИ СВАЙПА ==========
     adjustCardSize() {
         if (!this.card || this.isConnectionMode) return;
         
@@ -106,7 +106,7 @@ const Swipe = {
             // Нужная высота для этой ширины
             const neededHeight = idealWidth * 1.33;
             
-            console.log(`📐 Подгон карточки: экран=${screenHeight}, доступно=${availableHeight}, нужно=${neededHeight}, ширина=${idealWidth}`);
+            console.log(`📐 Подгон карточки свайпа: экран=${screenHeight}, доступно=${availableHeight}, нужно=${neededHeight}, ширина=${idealWidth}`);
             
             // Если нужная высота больше доступной
             if (neededHeight > availableHeight) {
@@ -117,7 +117,7 @@ const Swipe = {
                     this.card.style.width = newWidth + 'px';
                     this.card.style.maxWidth = newWidth + 'px';
                     this.card.style.margin = '0 auto';
-                    console.log(`✅ Карточка уменьшена до ${newWidth}px`);
+                    console.log(`✅ Карточка свайпа уменьшена до ${newWidth}px`);
                 } else {
                     this.card.style.width = maxWidth + 'px';
                     this.card.style.maxWidth = maxWidth + 'px';
@@ -132,6 +132,55 @@ const Swipe = {
             // Принудительно центрируем
             this.card.style.marginLeft = 'auto';
             this.card.style.marginRight = 'auto';
+        }, 100);
+    },
+    
+    // ========== ФУНКЦИЯ ДЛЯ АВТО-ПОДГОНА РАЗМЕРА КАРТОЧКИ ОЖИДАНИЯ ==========
+    adjustConnectionCardSize() {
+        const connectionCard = document.getElementById('connectionCard');
+        if (!connectionCard || !this.isConnectionMode) return;
+        
+        setTimeout(() => {
+            // Получаем высоту экрана
+            const screenHeight = window.innerHeight;
+            
+            // Высота header
+            const header = document.querySelector('.header');
+            const headerHeight = header ? header.offsetHeight : 60;
+            
+            // Высота bottom-nav
+            const bottomNav = document.querySelector('.bottom-nav');
+            const navHeight = bottomNav ? bottomNav.offsetHeight : 60;
+            
+            // Высота заголовка свайпа (если есть)
+            const swipeHeader = document.querySelector('.swipe-header');
+            const headerTitleHeight = swipeHeader ? swipeHeader.offsetHeight : 80;
+            
+            // Доступная высота для карточки
+            const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 30;
+            
+            // Максимальная ширина
+            const maxWidth = 420;
+            
+            // Рассчитываем идеальную ширину
+            let idealWidth = Math.min(maxWidth, window.innerWidth * 0.9);
+            
+            // Нужная высота для 4:3
+            const neededHeight = idealWidth * 1.33;
+            
+            console.log(`📐 Подгон карточки ожидания: доступно=${availableHeight}, нужно=${neededHeight}`);
+            
+            if (neededHeight > availableHeight) {
+                const newWidth = Math.max(availableHeight / 1.33, 320);
+                connectionCard.style.width = newWidth + 'px';
+                connectionCard.style.maxWidth = newWidth + 'px';
+                connectionCard.style.margin = '0 auto';
+                console.log(`✅ Карточка ожидания уменьшена до ${newWidth}px`);
+            } else {
+                connectionCard.style.width = '100%';
+                connectionCard.style.maxWidth = maxWidth + 'px';
+                connectionCard.style.margin = '0 auto';
+            }
         }, 100);
     },
     
@@ -719,6 +768,9 @@ const Swipe = {
         
         // Запускаем таймер
         this.startConnectionTimer();
+        
+        // ВАЖНО: Подгоняем размер карточки ожидания
+        this.adjustConnectionCardSize();
     },
     
     // ========== ИСПРАВЛЕННЫЙ updateChatButton ==========
@@ -1086,12 +1138,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (Swipe.card && !Swipe.isConnectionMode) {
             Swipe.adjustCardSize();
         }
+        if (Swipe.isConnectionMode) {
+            Swipe.adjustConnectionCardSize();
+        }
     });
     
     window.addEventListener('orientationchange', () => {
         setTimeout(() => {
             if (Swipe.card && !Swipe.isConnectionMode) {
                 Swipe.adjustCardSize();
+            }
+            if (Swipe.isConnectionMode) {
+                Swipe.adjustConnectionCardSize();
             }
         }, 200);
     });
