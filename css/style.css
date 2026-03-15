@@ -3257,24 +3257,23 @@ html {
     box-shadow: 0 0 15px rgba(255, 85, 0, 0.5);
 }
 
-/* ===== НАСТРОЙКИ - СТИЛЬ TELEGRAM ===== */
+/* ===== НАСТРОЙКИ - ПОЛНОСТЬЮ БЕЗ ОТСТУПОВ ===== */
 .settings-screen {
-    padding: 0; /* Убрал отступы по бокам */
-    width: 100%;
+    padding: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
 }
 
 .settings-header {
-    padding: 16px 16px 8px 16px; /* Отступы только у заголовка */
+    padding: 16px 16px 8px 16px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .settings-title {
     font-size: 28px;
     font-weight: 700;
     color: var(--text-primary);
-}
-
-.settings-content {
-    width: 100%;
 }
 
 .settings-section {
@@ -3289,18 +3288,21 @@ html {
     text-transform: uppercase;
     letter-spacing: 0.3px;
     margin-bottom: 8px;
-    padding-left: 16px; /* Отступ только для заголовка секции */
+    padding-left: 16px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .settings-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px; /* Отступы только у строк */
+    padding: 12px 16px;
     border-bottom: 1px solid rgba(255,255,255,0.05);
     cursor: pointer;
     width: 100%;
     box-sizing: border-box;
+    margin: 0;
 }
 
 .settings-row:last-child {
@@ -3311,13 +3313,14 @@ html {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px; /* Отступы только у строк */
+    padding: 12px 16px;
     border-bottom: 1px solid rgba(255,255,255,0.05);
     text-decoration: none;
     color: inherit;
     cursor: pointer;
     width: 100%;
     box-sizing: border-box;
+    margin: 0;
 }
 
 .settings-row-link:last-child {
@@ -3341,7 +3344,7 @@ html {
     font-weight: 300;
 }
 
-/* Переключатель как в Telegram */
+/* Переключатель */
 .toggle-switch {
     width: 46px;
     height: 26px;
