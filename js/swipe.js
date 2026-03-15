@@ -33,7 +33,8 @@ const Swipe = {
     currentPlayer: null,
     currentMatchId: null,
     playersQueue: [],
-    mode: 'PREMIER',
+    mode: 'PREMIER', // Режим ПОИСКА (сохраняем при старте)
+    playerMode: null, // Режим игрока (из БД)
     isInitialized: false,
     connectionTimer: null,
     cardTimerInterval: null,
@@ -53,7 +54,7 @@ const Swipe = {
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
         
-        this.mode = mode || 'PREMIER';
+        this.mode = mode || 'PREMIER'; // СОХРАНЯЕМ РЕЖИМ ПОИСКА
         this.card = document.getElementById('swipeCard');
         this.container = document.getElementById('swipeContainer');
         this.hint = document.getElementById('swipeHint');
@@ -213,7 +214,7 @@ const Swipe = {
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
         this.isConnectionMode = false;
-        this.mode = opponent.mode || 'PREMIER';
+        this.playerMode = opponent.mode || 'PREMIER'; // Сохраняем режим игрока, но НЕ ИСПОЛЬЗУЕМ для надписи
         this.gameCreated = false;
         this.gameCreating = false;
         this.chatLink = null;
@@ -883,16 +884,9 @@ const Swipe = {
             const ratingValueEl = document.getElementById('swipeRatingValue');
             if (ratingValueEl) ratingValueEl.textContent = player.trust_rating || '0';
             
-            // 🏆 ОПРЕДЕЛЯЕМ РЕЖИМ ТЕКУЩЕГО ПОИСКА
-            let currentMode = this.mode;
-            
-            // Если есть режим у игрока - используем его
-            if (player.mode) {
-                currentMode = player.mode;
-            }
-            
-            const modeUpper = currentMode ? currentMode.toUpperCase() : '';
-            console.log(`🎮 Текущий режим поиска: ${modeUpper}`);
+            // 🏆 ИСПОЛЬЗУЕМ РЕЖИМ ПОИСКА (this.mode) ДЛЯ НАДПИСИ
+            const modeUpper = this.mode ? this.mode.toUpperCase() : 'PREMIER';
+            console.log(`🎮 Режим поиска: ${modeUpper}`);
             
             // 🏆 МЕНЯЕМ НАДПИСЬ НАД ПЛАШКОЙ
             // Ищем все три плашки и берем первую (РАНГ)
@@ -991,7 +985,7 @@ const Swipe = {
     
     startSwipe(mode) {
         console.log('Swipe.startSwipe() called with mode:', mode);
-        this.mode = mode || 'PREMIER';
+        this.mode = mode || 'PREMIER'; // СОХРАНЯЕМ РЕЖИМ ПОИСКА
         this.playersQueue = [];
         this.isConnectionMode = false;
         
