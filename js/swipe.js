@@ -888,6 +888,8 @@ const Swipe = {
             if (rankLabelEl) {
                 const modeUpper = this.mode ? this.mode.toUpperCase() : '';
                 
+                console.log(`🎮 Режим поиска: ${modeUpper}`);
+                
                 if (modeUpper === 'FACEIT') {
                     rankLabelEl.textContent = 'ELO FACEIT';
                 } 
@@ -898,11 +900,11 @@ const Swipe = {
                     rankLabelEl.textContent = 'РАНГ';
                 }
                 else {
-                    rankLabelEl.textContent = 'РАНГ';
+                    rankLabelEl.textContent = 'CS RATING';
                 }
             }
             
-            // 🏆 ЗНАЧЕНИЕ В ПЛАШКЕ (только число/звание)
+            // 🏆 ЗНАЧЕНИЕ В ПЛАШКЕ (только число/звание без лишних слов)
             const rankEl = document.getElementById('swipeRank');
             if (rankEl) {
                 const modeUpper = this.mode ? this.mode.toUpperCase() : '';
