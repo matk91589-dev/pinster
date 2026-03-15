@@ -4,6 +4,7 @@
 
 const Avatar = {
     MAX_FILE_SIZE: 5 * 1024 * 1024, // 5MB
+    isPickerOpen: false, 
     
     select() {
         if (!Profile.editMode) {
@@ -13,11 +14,17 @@ const Avatar = {
             return;
         }
         
-        // 👇 УБИРАЕМ СООБЩЕНИЕ И СРАЗУ ОТКРЫВАЕМ ПРОВОДНИК
+        if (this.isPickerOpen) {
+            console.log('Проводник уже открыт');
+            return;
+        }
+        
         this.openFilePicker();
     },
     
     openFilePicker() {
+        this.isPickerOpen = true; 
+        
         // Создаем скрытый input для загрузки файла
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
@@ -26,10 +33,17 @@ const Avatar = {
         document.body.appendChild(fileInput);
         
         fileInput.onchange = (e) => {
+            this.isPickerOpen = false; 
             const file = e.target.files[0];
             if (file) {
                 this.handleFile(file);
             }
+            fileInput.remove();
+        };
+        
+        // Если пользователь закрыл окно без выбора
+        fileInput.oncancel = () => {
+            this.isPickerOpen = false; 
             fileInput.remove();
         };
         
@@ -79,16 +93,22 @@ const Avatar = {
         const avatarDiv = document.getElementById('profileAvatar');
         if (!avatarDiv) return;
         
-        avatarDiv.addEventListener('dragover', (e) => {
+        // Убираем старые обработчики, чтобы не было дублирования
+        avatarDiv.removeEventListener('dragover', this.dragOverHandler);
+        avatarDiv.removeEventListener('dragleave', this.dragLeaveHandler);
+        avatarDiv.removeEventListener('drop', this.dropHandler);
+        
+        // Создаем новые обработчики
+        this.dragOverHandler = (e) => {
             e.preventDefault();
             avatarDiv.style.border = '3px dashed #FF6B4A';
-        });
+        };
         
-        avatarDiv.addEventListener('dragleave', () => {
+        this.dragLeaveHandler = () => {
             avatarDiv.style.border = '';
-        });
+        };
         
-        avatarDiv.addEventListener('drop', (e) => {
+        this.dropHandler = (e) => {
             e.preventDefault();
             avatarDiv.style.border = '';
             
@@ -103,7 +123,11 @@ const Avatar = {
             if (file && file.type.startsWith('image/')) {
                 this.handleFile(file);
             }
-        });
+        };
+        
+        avatarDiv.addEventListener('dragover', this.dragOverHandler);
+        avatarDiv.addEventListener('dragleave', this.dragLeaveHandler);
+        avatarDiv.addEventListener('drop', this.dropHandler);
     }
 };
 
