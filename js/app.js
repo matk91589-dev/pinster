@@ -1,4 +1,4 @@
-// ============================================
+\// ============================================
 // ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
 // ============================================
 
@@ -39,6 +39,65 @@
         const settingsIcon = document.getElementById('settingsIcon');
         if (settingsIcon) {
             settingsIcon.classList.remove('active');
+        }
+        
+        // ПОЛУЧАЕМ TELEGRAM ID И СРАЗУ ПОКАЗЫВАЕМ ГЛАВНЫЙ ЭКРАН
+        const telegram_id = tg?.initDataUnsafe?.user?.id;
+        console.log('Telegram ID:', telegram_id);
+        
+        if (telegram_id) {
+            // Инициализируем пользователя на сервере
+            fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/user/init', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    telegram_id: telegram_id,
+                    username: tg?.initDataUnsafe?.user?.username || ''
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('User init response:', data);
+                
+                // Сохраняем данные
+                if (data.player_id) {
+                    localStorage.setItem('player_id', data.player_id);
+                    localStorage.setItem('nick', data.nick);
+                    localStorage.setItem('pingcoins', data.pingcoins);
+                }
+                
+                // СРАЗУ ПОКАЗЫВАЕМ ГЛАВНЫЙ ЭКРАН
+                if (window.App && App.showScreen) {
+                    App.showScreen('mainScreen', true);
+                } else {
+                    // Если App еще не загружен, показываем через запасной метод
+                    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                    document.getElementById('mainScreen')?.classList.add('active');
+                }
+                
+                // Проверяем мэтч при старте
+                setTimeout(() => {
+                    if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
+                        Search.checkMatchStatus();
+                    }
+                }, 1000);
+            })
+            .catch(error => {
+                console.error('Error initializing user:', error);
+                // Даже при ошибке показываем главный экран
+                if (window.App && App.showScreen) {
+                    App.showScreen('mainScreen', true);
+                } else {
+                    document.getElementById('mainScreen')?.classList.add('active');
+                }
+            });
+        } else {
+            console.warn('Нет Telegram ID, показываем главный экран');
+            if (window.App && App.showScreen) {
+                App.showScreen('mainScreen', true);
+            } else {
+                document.getElementById('mainScreen')?.classList.add('active');
+            }
         }
         
         console.log('Pingster готов к работе!');
@@ -118,56 +177,9 @@ Object.assign(window.App, {
         } else {
             alert(message);
         }
-    },
-    
-    // Запуск приложения (со стартового экрана)
-    startApp: function() {
-        console.log('App.startApp');
-        
-        // Получаем Telegram ID
-        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        console.log('Telegram ID:', telegram_id);
-        
-        if (!telegram_id) {
-            this.showAlert('Ошибка: не удалось получить Telegram ID');
-            return;
-        }
-        
-        // Инициализируем пользователя на сервере
-        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/user/init', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                telegram_id: telegram_id,
-                username: window.Telegram?.WebApp?.initDataUnsafe?.user?.username || ''
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            console.log('User init response:', data);
-            
-            // Сохраняем данные
-            if (data.player_id) {
-                localStorage.setItem('player_id', data.player_id);
-                localStorage.setItem('nick', data.nick);
-                localStorage.setItem('pingcoins', data.pingcoins);
-            }
-            
-            // Показываем главный экран
-            this.showScreen('mainScreen', true);
-            
-            // Проверяем мэтч при старте
-            setTimeout(() => {
-                if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
-                    Search.checkMatchStatus();
-                }
-            }, 1000);
-        })
-        .catch(error => {
-            console.error('Error initializing user:', error);
-            this.showAlert('Ошибка при подключении');
-        });
     }
+    
+    // МЕТОД startApp ПОЛНОСТЬЮ УДАЛЕН — БОЛЬШЕ НЕ НУЖЕН
 });
 
 // Делаем App глобальным (если вдруг перезаписалось)
