@@ -528,94 +528,70 @@
             </div>
 
             <!-- ============================================ -->
-            <!-- ЭКРАН НАСТРОЕК - ПОЛНАЯ ВЕРСИЯ -->
+            <!-- ЭКРАН НАСТРОЕК - МИНИМАЛИСТИЧНЫЙ -->
             <!-- ============================================ -->
             <div id="settingsScreen" class="screen settings-screen">
                 <div class="settings-header">
-                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
                     <div class="settings-title">Настройки</div>
-                    <div class="settings-version">v1.0.0</div>
                 </div>
                 
                 <div class="settings-content">
                     
                     <!-- ===== ОСНОВНЫЕ ===== -->
                     <div class="settings-group">
-                        <div class="settings-group-title">Основные</div>
+                        <div class="settings-group-title">ОСНОВНЫЕ</div>
                         
+                        <!-- Звук -->
                         <div class="settings-item">
-                            <span class="settings-label">Звуки</span>
-                            <div class="square-toggle" data-setting="sound">
-                                <div class="square-toggle-switch"></div>
+                            <span class="settings-label">Звук</span>
+                            <div class="toggle-switch">
+                                <div class="toggle-switch-handle"></div>
                             </div>
                         </div>
                         
-                        <div class="settings-item with-slider">
-                            <span class="settings-label">Громкость</span>
-                            <input type="range" min="0" max="100" value="70" class="volume-slider" id="volumeSlider">
+                        <!-- Реферальная система -->
+                        <div class="settings-item clickable">
+                            <span class="settings-label">Реферальная система</span>
+                            <span class="settings-arrow">→</span>
                         </div>
                         
-                        <div class="settings-item">
-                            <span class="settings-label">Уведомления</span>
-                            <div class="square-toggle" data-setting="notifications">
-                                <div class="square-toggle-switch"></div>
-                            </div>
+                        <!-- Друзья -->
+                        <div class="settings-item clickable" onclick="App.showScreen('friendsScreen', true)">
+                            <span class="settings-label">Друзья</span>
+                            <span class="settings-arrow">→</span>
+                        </div>
+                        
+                        <!-- Инвентарь -->
+                        <div class="settings-item clickable" onclick="App.showScreen('shopScreen', true)">
+                            <span class="settings-label">Инвентарь</span>
+                            <span class="settings-arrow">→</span>
                         </div>
                     </div>
                     
                     <!-- ===== ОФОРМЛЕНИЕ ===== -->
                     <div class="settings-group">
-                        <div class="settings-group-title">Оформление</div>
+                        <div class="settings-group-title">ОФОРМЛЕНИЕ</div>
                         
+                        <!-- Тема -->
                         <div class="settings-item">
-                            <span class="settings-label">Тёмная тема</span>
-                            <div class="square-toggle" data-setting="theme">
-                                <div class="square-toggle-switch"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="settings-item">
-                            <span class="settings-label">Язык</span>
-                            <span class="settings-value">Русский</span>
-                        </div>
-                    </div>
-                    
-                    <!-- ===== ПРИВАТНОСТЬ ===== -->
-                    <div class="settings-group">
-                        <div class="settings-group-title">Приватность</div>
-                        
-                        <div class="settings-item">
-                            <span class="settings-label">Показывать возраст</span>
-                            <div class="square-toggle" data-setting="showAge">
-                                <div class="square-toggle-switch"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="settings-item">
-                            <span class="settings-label">Показывать Steam</span>
-                            <div class="square-toggle" data-setting="showSteam">
-                                <div class="square-toggle-switch"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="settings-item">
-                            <span class="settings-label">Показывать Faceit</span>
-                            <div class="square-toggle" data-setting="showFaceit">
-                                <div class="square-toggle-switch"></div>
+                            <span class="settings-label">Тема</span>
+                            <div class="theme-selector">
+                                <span class="theme-option dark active">Тёмная</span>
+                                <span class="theme-option light">Светлая</span>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- ===== СОЦИАЛЬНЫЕ СЕТИ ===== -->
+                    <!-- ===== СОЦСЕТИ ===== -->
                     <div class="settings-group">
-                        <div class="settings-group-title">Социальные сети</div>
+                        <div class="settings-group-title">СОЦСЕТИ</div>
                         
-                        <a href="https://tiktok.com/@pingster" target="_blank" class="settings-link">
+                        <a href="#" class="settings-link">
                             <span class="settings-label">TikTok</span>
                             <span class="settings-arrow">→</span>
                         </a>
                         
-                        <a href="https://t.me/pingster_channel" target="_blank" class="settings-link">
+                        <a href="#" class="settings-link">
                             <span class="settings-label">Telegram канал</span>
                             <span class="settings-arrow">→</span>
                         </a>
@@ -623,7 +599,7 @@
                     
                     <!-- ===== ПОДДЕРЖКА ===== -->
                     <div class="settings-group">
-                        <div class="settings-group-title">Поддержка</div>
+                        <div class="settings-group-title">ПОДДЕРЖКА</div>
                         
                         <a href="mailto:support@pingster.com" class="settings-link">
                             <span class="settings-label">Gmail</span>
@@ -633,26 +609,6 @@
                         <div class="settings-item">
                             <span class="settings-label">Telegram</span>
                             <span class="settings-value">@pingster_support</span>
-                        </div>
-                    </div>
-                    
-                    <!-- ===== ДРУГОЕ ===== -->
-                    <div class="settings-group">
-                        <div class="settings-group-title">Другое</div>
-                        
-                        <div class="settings-item clickable" onclick="App.showScreen('friendsScreen', true)">
-                            <span class="settings-label">Друзья</span>
-                            <span class="settings-arrow">→</span>
-                        </div>
-                        
-                        <div class="settings-item clickable" onclick="App.showScreen('shopScreen', true)">
-                            <span class="settings-label">Инвентарь</span>
-                            <span class="settings-arrow">→</span>
-                        </div>
-                        
-                        <div class="settings-item clickable" onclick="alert('Реферальная система появится скоро!')">
-                            <span class="settings-label">Реферальная система</span>
-                            <span class="settings-badge">Скоро</span>
                         </div>
                     </div>
                     
