@@ -95,7 +95,7 @@ const Swipe = {
             const headerTitleHeight = swipeHeader ? swipeHeader.offsetHeight : 80;
             
             // Доступная высота для карточки (с учетом отступов)
-            const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 30;
+            const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 20;
             
             // Максимальная ширина (не больше 420px)
             const maxWidth = 420;
