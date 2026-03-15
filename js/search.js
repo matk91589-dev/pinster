@@ -124,14 +124,14 @@ const Search = {
             data.faceit_link = Profile?.savedFaceitLink || '';
             data.comment = document.getElementById('premierComment')?.value || '';
         }
-        else if (mode === 'MM PRIME') {
+        else if (mode === 'PRIME') {
             data.rating_value = document.getElementById('primeRankSelect')?.value || 'Silver 1';
             data.age = parseInt(document.getElementById('primeAgeValue')?.value) || 21;
             data.steam_link = document.getElementById('primeSteamInput')?.value || '';
             data.faceit_link = Profile?.savedFaceitLink || '';
             data.comment = document.getElementById('primeComment')?.value || '';
         }
-        else if (mode === 'MM PUBLIC') {
+        else if (mode === 'PUBLIC') {
             data.rating_value = document.getElementById('publicRankSelect')?.value || 'Silver 1';
             data.age = parseInt(document.getElementById('publicAgeValue')?.value) || 21;
             data.steam_link = document.getElementById('publicSteamInput')?.value || '';
@@ -348,6 +348,8 @@ const Search = {
         const data = this.collectSearchData(mode);
         
         App.showScreen('searchScreen', true);
+        
+        // ИЗМЕНЕНО: показываем PRIME и PUBLIC (без MM)
         document.getElementById('searchModeTitle').textContent = mode;
         
         const statusEl = document.getElementById('searchStatus');
@@ -364,7 +366,7 @@ const Search = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 telegram_id: telegram_id,
-                mode: mode,
+                mode: mode,  // Отправляем PRIME или PUBLIC
                 rating_value: data.rating_value,
                 style: data.style,
                 age: data.age,
