@@ -27,47 +27,45 @@ const Profile = {
     },
     
     getTelegramId() {
+        // Пробуем получить из tg
+        const tg = window.Telegram?.WebApp;
+        if (tg?.initDataUnsafe?.user?.id) {
+            return tg.initDataUnsafe.user.id;
+        }
+        // Если нет, пробуем из URL (для веб-версии)
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get('tg_id');
     },
     
     // Toast уведомление (только для режима редактирования)
     showToast(message) {
-        // Очищаем предыдущий таймер
         if (this.toastTimeout) {
             clearTimeout(this.toastTimeout);
         }
         
-        // Удаляем существующий тост
         const existingToast = document.querySelector('.profile-toast');
         if (existingToast) {
             existingToast.remove();
         }
         
-        // Создаем новый
         const toast = document.createElement('div');
         toast.className = 'profile-toast';
         toast.textContent = message;
         document.body.appendChild(toast);
         
-        // Запускаем анимацию
         setTimeout(() => toast.classList.add('show'), 10);
         
-        // Убираем через 1 секунду
         this.toastTimeout = setTimeout(() => {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
         }, 1000);
     },
     
-    // Вспомогательный метод для показа ошибки под полем
     showFieldError(container, message) {
         if (!container) return;
         
-        // Удаляем старое сообщение
         this.removeErrorMessage(container);
         
-        // Создаем новое
         const errorMsg = document.createElement('div');
         errorMsg.className = 'error-message';
         errorMsg.textContent = message;
@@ -75,7 +73,6 @@ const Profile = {
         container.parentNode.insertBefore(errorMsg, container.nextSibling);
     },
     
-    // Вспомогательный метод для удаления сообщения об ошибке
     removeErrorMessage(container) {
         if (!container) return;
         const nextEl = container.nextElementSibling;
@@ -84,7 +81,6 @@ const Profile = {
         }
     },
     
-    // Удалить все ошибки
     clearAllErrors() {
         document.querySelectorAll('.error-message').forEach(el => el.remove());
         document.querySelectorAll('.stat-value.error, .profile-stat-value.error').forEach(el => {
@@ -94,7 +90,12 @@ const Profile = {
     
     async loadProfileFromServer() {
         this.telegramId = this.getTelegramId();
-        if (!this.telegramId) return;
+        console.log('📥 Загрузка профиля для telegram_id:', this.telegramId);
+        
+        if (!this.telegramId) {
+            console.error('❌ Нет telegram_id');
+            return;
+        }
         
         try {
             const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/profile/get', {
@@ -108,30 +109,29 @@ const Profile = {
             });
             
             const data = await response.json();
+            console.log('📦 Данные профиля с сервера:', data);
             
             if (data.status === 'ok') {
+                // Сохраняем данные
                 this.savedName = data.nick || '-';
                 this.savedAge = data.age || '';
                 this.savedSteam = data.steam_link || '';
                 this.savedFaceitLink = data.faceit_link || '';
-                // Если с сервера приходит аватарка, используем её, иначе оставляем SVG
-                if (data.avatar) {
-                    this.savedAvatar = data.avatar;
-                }
                 
                 this.tempName = this.savedName;
                 this.tempAge = this.savedAge;
                 this.tempSteam = this.savedSteam;
                 this.tempFaceitLink = this.savedFaceitLink;
-                this.tempAvatar = this.savedAvatar;
                 
+                // Обновляем отображение
                 this.updateDisplay();
+                console.log('✅ Профиль обновлен');
+            } else {
+                console.error('❌ Ошибка в ответе сервера:', data);
             }
             
-            // ВАЖНО: После загрузки профиля проверяем мэтч
             setTimeout(() => {
                 if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
-                    console.log('Проверяем мэтч после загрузки профиля');
                     Search.checkMatchStatus();
                 }
             }, 1000);
@@ -142,24 +142,37 @@ const Profile = {
     },
     
     updateDisplay() {
+        console.log('🔄 Обновление отображения профиля');
+        
         const profileNameEl = document.getElementById('profileName');
-        if (profileNameEl) profileNameEl.textContent = this.savedName;
+        if (profileNameEl) {
+            profileNameEl.textContent = this.savedName;
+            console.log('  ник:', this.savedName);
+        }
         
         const ageValueEl = document.getElementById('ageValue');
-        if (ageValueEl) ageValueEl.value = this.savedAge || '';
+        if (ageValueEl) {
+            ageValueEl.value = this.savedAge || '';
+            console.log('  возраст:', this.savedAge);
+        }
         
         const steamDisplayEl = document.getElementById('steamDisplay');
-        if (steamDisplayEl) steamDisplayEl.value = this.savedSteam || '';
+        if (steamDisplayEl) {
+            steamDisplayEl.value = this.savedSteam || '';
+            console.log('  steam:', this.savedSteam);
+        }
         
         const faceitLinkDisplayEl = document.getElementById('faceitLinkDisplay');
-        if (faceitLinkDisplayEl) faceitLinkDisplayEl.value = this.savedFaceitLink || '';
+        if (faceitLinkDisplayEl) {
+            faceitLinkDisplayEl.value = this.savedFaceitLink || '';
+            console.log('  faceit:', this.savedFaceitLink);
+        }
         
         const avatarDiv = document.getElementById('profileAvatar');
         if (avatarDiv) {
             avatarDiv.innerHTML = this.savedAvatar;
         }
         
-        // Очищаем ошибки при обновлении
         this.clearAllErrors();
     },
     
@@ -174,46 +187,37 @@ const Profile = {
         const steamInput = document.getElementById('steamDisplay');
         const faceitInput = document.getElementById('faceitLinkDisplay');
         
-        // Очищаем ошибки при переключении режима
         this.clearAllErrors();
         
         if (this.editMode) {
-            // ВКЛЮЧАЕМ режим редактирования
             profileScreen.classList.add('editable');
             if (editToggle) editToggle.classList.add('active');
             
-            // ПОКАЗЫВАЕМ кнопку "Применить"
             if (applyBtn) {
                 applyBtn.classList.add('visible');
                 applyBtn.style.display = 'inline-block';
             }
             
-            // Делаем поля редактируемыми
             if (ageInput) ageInput.readOnly = false;
             if (steamInput) steamInput.readOnly = false;
             if (faceitInput) faceitInput.readOnly = false;
             
-            // Подсвечиваем ник оранжевым
             if (profileName) {
                 profileName.classList.add('editable');
             }
         } else {
-            // ВЫКЛЮЧАЕМ режим редактирования
             profileScreen.classList.remove('editable');
             if (editToggle) editToggle.classList.remove('active');
             
-            // ПОЛНОСТЬЮ СКРЫВАЕМ кнопку "Применить"
             if (applyBtn) {
                 applyBtn.classList.remove('visible');
                 applyBtn.style.display = 'none';
             }
             
-            // Делаем поля только для чтения
             if (ageInput) ageInput.readOnly = true;
             if (steamInput) steamInput.readOnly = true;
             if (faceitInput) faceitInput.readOnly = true;
             
-            // Убираем подсветку с ника
             if (profileName) {
                 profileName.classList.remove('editable');
             }
@@ -224,10 +228,8 @@ const Profile = {
         const ageInput = document.getElementById('ageValue');
         const container = ageInput?.closest('.stat-value');
         
-        // Удаляем старые сообщения об ошибках
         this.removeErrorMessage(container);
         
-        // Разрешаем пустую строку
         if (ageStr === '') {
             this.tempAge = '';
             container?.classList.remove('error');
@@ -259,10 +261,8 @@ const Profile = {
         const steamInput = document.getElementById('steamDisplay');
         const container = steamInput?.closest('.profile-stat-value');
         
-        // Удаляем старые сообщения об ошибках
         this.removeErrorMessage(container);
         
-        // Разрешаем пустую строку
         if (link === '') {
             this.tempSteam = '';
             container?.classList.remove('error');
@@ -284,10 +284,8 @@ const Profile = {
         const faceitInput = document.getElementById('faceitLinkDisplay');
         const container = faceitInput?.closest('.profile-stat-value');
         
-        // Удаляем старые сообщения об ошибках
         this.removeErrorMessage(container);
         
-        // Разрешаем пустую строку
         if (link === '') {
             this.tempFaceitLink = '';
             container?.classList.remove('error');
@@ -306,14 +304,12 @@ const Profile = {
     },
     
     async applyChanges() {
-        // Блокируем кнопку на время отправки
         const applyBtn = document.getElementById('applyBtn');
         if (applyBtn) {
             applyBtn.style.pointerEvents = 'none';
             applyBtn.style.opacity = '0.5';
         }
         
-        // Очищаем все ошибки перед отправкой
         this.clearAllErrors();
         
         if (!this.telegramId) {
@@ -383,13 +379,11 @@ const Profile = {
                     profileName.textContent = this.savedName;
                 }
                 
-                // ВЫКЛЮЧАЕМ режим редактирования (кнопка скроется)
                 this.toggleEditMode();
             }
         } catch (error) {
             console.error('❌ Ошибка отправки:', error);
         } finally {
-            // Разблокируем кнопку (она уже будет скрыта)
             if (applyBtn) {
                 applyBtn.style.pointerEvents = 'auto';
                 applyBtn.style.opacity = '1';
@@ -397,7 +391,6 @@ const Profile = {
         }
     },
     
-    // Редактирование ника без плашки - просто в строку
     editName() {
         if (!this.editMode) {
             this.showToast('Для изменений перейдите в режим редактирования');
@@ -407,7 +400,6 @@ const Profile = {
         const profileName = document.getElementById('profileName');
         if (!profileName) return;
         
-        // Создаем компактное поле ввода прямо на месте текста
         const tempInput = document.createElement('input');
         tempInput.type = 'text';
         tempInput.value = this.tempName;
@@ -425,14 +417,11 @@ const Profile = {
             margin: 0;
         `;
         
-        // Заменяем текст на поле ввода
         profileName.style.display = 'none';
         profileName.parentNode.insertBefore(tempInput, profileName.nextSibling);
         
-        // Фокус на поле
         setTimeout(() => tempInput.focus(), 50);
         
-        // Обработчик потери фокуса
         const blurHandler = () => {
             setTimeout(() => {
                 if (!tempInput.matches(':focus')) {
@@ -441,7 +430,6 @@ const Profile = {
             }, 100);
         };
         
-        // Обработчик Enter
         const keyHandler = (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -453,7 +441,6 @@ const Profile = {
         tempInput.addEventListener('keypress', keyHandler, { once: true });
     },
     
-    // Сохранение из временного поля
     async saveNameFromTempInput(tempInput, profileName) {
         const newName = tempInput.value.trim();
         
@@ -502,7 +489,6 @@ const Profile = {
             this.showToast('❌ Никнейм должен быть от 3 до 10 символов');
         }
         
-        // Удаляем временное поле и показываем текст
         tempInput.remove();
         profileName.style.display = 'inline-block';
     },
@@ -531,9 +517,7 @@ const Profile = {
         document.getElementById('faceitLinkDisplay')?.focus();
     },
     
-    // Обработка кликов по всем элементам профиля
     setupClickHandlers() {
-        // Аватарка
         const avatar = document.getElementById('profileAvatar');
         if (avatar) {
             avatar.addEventListener('click', (e) => {
@@ -545,7 +529,6 @@ const Profile = {
             });
         }
         
-        // Ник
         const profileName = document.getElementById('profileName');
         if (profileName) {
             profileName.addEventListener('click', (e) => {
@@ -557,7 +540,6 @@ const Profile = {
             });
         }
         
-        // Возраст
         const ageCard = document.getElementById('ageCard');
         if (ageCard) {
             ageCard.addEventListener('click', (e) => {
@@ -569,7 +551,6 @@ const Profile = {
             });
         }
         
-        // Steam
         const steamCard = document.getElementById('steamCard');
         if (steamCard) {
             steamCard.addEventListener('click', (e) => {
@@ -581,7 +562,6 @@ const Profile = {
             });
         }
         
-        // Faceit
         const faceitCard = document.getElementById('faceitLinkCard');
         if (faceitCard) {
             faceitCard.addEventListener('click', (e) => {
@@ -601,7 +581,6 @@ const Profile = {
                 if (this.editMode) this.validateAge(e.target.value);
             });
             
-            // Очищаем ошибку при начале ввода
             ageInput.addEventListener('focus', () => {
                 if (this.editMode) {
                     const container = ageInput.closest('.stat-value');
@@ -610,13 +589,11 @@ const Profile = {
                 }
             });
             
-            // Добавляем проверку при вводе (чтобы ошибка уходила сразу)
             ageInput.addEventListener('input', (e) => {
                 if (this.editMode) {
                     const val = e.target.value;
                     const container = ageInput.closest('.stat-value');
                     
-                    // Если поле стало пустым или корректным - убираем ошибку
                     if (val === '' || (val.length <= 3 && !isNaN(parseInt(val)) && parseInt(val) >= 0 && parseInt(val) <= 100)) {
                         this.removeErrorMessage(container);
                         container?.classList.remove('error');
@@ -639,7 +616,6 @@ const Profile = {
                 }
             });
             
-            // Добавляем проверку при вводе
             steamInput.addEventListener('input', (e) => {
                 if (this.editMode) {
                     const val = e.target.value;
@@ -667,7 +643,6 @@ const Profile = {
                 }
             });
             
-            // Добавляем проверку при вводе
             faceitInput.addEventListener('input', (e) => {
                 if (this.editMode) {
                     const val = e.target.value;
@@ -681,7 +656,6 @@ const Profile = {
             });
         }
         
-        // Скрываем кнопку "Применить" при загрузке
         const applyBtn = document.getElementById('applyBtn');
         if (applyBtn) {
             applyBtn.style.display = 'none';
@@ -689,6 +663,7 @@ const Profile = {
     },
     
     loadSavedValues() {
+        console.log('🚀 Загружаем сохраненные значения профиля');
         this.loadProfileFromServer();
         setTimeout(() => {
             this.setupListeners();
@@ -698,6 +673,7 @@ const Profile = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('📄 Profile: DOM загружен');
     Profile.loadSavedValues();
 });
 
