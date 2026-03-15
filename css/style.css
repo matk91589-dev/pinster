@@ -3257,23 +3257,47 @@ html {
     box-shadow: 0 0 15px rgba(255, 85, 0, 0.5);
 }
 
-/* ===== НАСТРОЙКИ - ПОЛНОСТЬЮ БЕЗ ОТСТУПОВ ===== */
+/* ===== НАСТРОЙКИ - ФИНАЛ ===== */
 .settings-screen {
-    padding: 0 !important;
-    width: 100% !important;
-    margin: 0 !important;
+    padding: 0;
+    width: 100%;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #FF5500 #2A2F3A;
+}
+
+.settings-screen::-webkit-scrollbar {
+    width: 4px;
+}
+
+.settings-screen::-webkit-scrollbar-track {
+    background: #2A2F3A;
+    border-radius: 4px;
+}
+
+.settings-screen::-webkit-scrollbar-thumb {
+    background: #FF5500;
+    border-radius: 4px;
+}
+
+.settings-screen::-webkit-scrollbar-thumb:hover {
+    background: #ff7700;
 }
 
 .settings-header {
-    padding: 16px 16px 8px 16px;
+    padding: 12px 16px 8px 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     box-sizing: border-box;
 }
 
 .settings-title {
-    font-size: 28px;
-    font-weight: 700;
+    font-size: 20px;
+    font-weight: 600;
     color: var(--text-primary);
+    text-align: center;
 }
 
 .settings-section {
@@ -3344,7 +3368,7 @@ html {
     font-weight: 300;
 }
 
-/* Переключатель */
+/* Переключатель как в Telegram */
 .toggle-switch {
     width: 46px;
     height: 26px;
