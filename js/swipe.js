@@ -879,19 +879,30 @@ const Swipe = {
             const playerNickEl = document.getElementById('swipePlayerNick');
             if (playerNickEl) playerNickEl.textContent = player.nick || '';
             
-            // ❤️ РЕЙТИНГ ДОВЕРИЯ (НЕ ТРОГАЕМ)
+            // ❤️ РЕЙТИНГ ДОВЕРИЯ (лайки)
             const ratingValueEl = document.getElementById('swipeRatingValue');
             if (ratingValueEl) ratingValueEl.textContent = player.trust_rating || '0';
             
-            // 🏆 РАНГ/ELO (меняется в зависимости от режима)
+            // 🏆 РАНГ/ELO/CS Rating (в зависимости от режима)
             const rankEl = document.getElementById('swipeRank');
             if (rankEl) {
-                if (this.mode === 'FACEIT' || this.mode === 'PREMIER') {
-                    // Для FACEIT/PREMIER показываем ELO/CS Rating
-                    rankEl.textContent = player.rating || '0';
-                } else {
-                    // Для MM PRIME/PUBLIC показываем звание
+                const modeUpper = this.mode ? this.mode.toUpperCase() : '';
+                
+                if (modeUpper === 'FACEIT') {
+                    // Для FACEIT показываем ELO
+                    rankEl.textContent = player.rating ? player.rating + ' ELO' : '0 ELO';
+                } 
+                else if (modeUpper === 'PREMIER') {
+                    // Для PREMIER показываем CS Rating
+                    rankEl.textContent = player.rating ? player.rating + ' CS' : '0 CS';
+                }
+                else if (modeUpper === 'MM PRIME' || modeUpper === 'MM PUBLIC') {
+                    // Для MM режимов показываем звание
                     rankEl.textContent = player.rank || '—';
+                }
+                else {
+                    // По умолчанию
+                    rankEl.textContent = player.rating || '—';
                 }
             }
             
