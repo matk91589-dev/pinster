@@ -100,11 +100,11 @@ const Swipe = {
             // Максимальная ширина (не больше 420px)
             const maxWidth = 420;
             
-            // Рассчитываем идеальную ширину для 4:3
+            // Рассчитываем идеальную ширину для 4:5
             let idealWidth = Math.min(maxWidth, window.innerWidth * 0.9);
             
             // Нужная высота для этой ширины
-            const neededHeight = idealWidth * 1.25;
+            const neededHeight = idealWidth * 1.25; // 4:5
             
             console.log(`📐 Подгон карточки свайпа: экран=${screenHeight}, доступно=${availableHeight}, нужно=${neededHeight}, ширина=${idealWidth}`);
             
@@ -141,32 +141,31 @@ const Swipe = {
         if (!connectionCard || !this.isConnectionMode) return;
         
         setTimeout(() => {
-            // Получаем высоту экрана
-            const screenHeight = window.innerHeight;
+            // Берем размер карточки свайпа
+            const swipeCard = document.getElementById('swipeCard');
             
-            // Высота header
+            if (swipeCard && swipeCard.offsetWidth > 0) {
+                // Делаем такую же ширину
+                const swipeWidth = swipeCard.offsetWidth;
+                connectionCard.style.width = swipeWidth + 'px';
+                connectionCard.style.maxWidth = swipeWidth + 'px';
+                connectionCard.style.margin = '0 auto';
+                console.log(`✅ Экран ожидания подогнан под свайп: ${swipeWidth}px`);
+                return;
+            }
+            
+            // Если карточки свайпа нет - считаем сами
+            const screenHeight = window.innerHeight;
             const header = document.querySelector('.header');
             const headerHeight = header ? header.offsetHeight : 60;
-            
-            // Высота bottom-nav
             const bottomNav = document.querySelector('.bottom-nav');
             const navHeight = bottomNav ? bottomNav.offsetHeight : 60;
-            
-            // Высота заголовка свайпа (если есть)
             const swipeHeader = document.querySelector('.swipe-header');
             const headerTitleHeight = swipeHeader ? swipeHeader.offsetHeight : 80;
-            
-            // Доступная высота для карточки
-            const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 30;
-            
-            // Максимальная ширина
+            const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 20;
             const maxWidth = 420;
-            
-            // Рассчитываем идеальную ширину
             let idealWidth = Math.min(maxWidth, window.innerWidth * 0.9);
-            
-            // Нужная высота для 4:3
-            const neededHeight = idealWidth * 1.33;
+            const neededHeight = idealWidth * 1.25; // 4:5
             
             console.log(`📐 Подгон карточки ожидания: доступно=${availableHeight}, нужно=${neededHeight}`);
             
@@ -174,13 +173,12 @@ const Swipe = {
                 const newWidth = Math.max(availableHeight / 1.25, 320);
                 connectionCard.style.width = newWidth + 'px';
                 connectionCard.style.maxWidth = newWidth + 'px';
-                connectionCard.style.margin = '0 auto';
                 console.log(`✅ Карточка ожидания уменьшена до ${newWidth}px`);
             } else {
                 connectionCard.style.width = '100%';
                 connectionCard.style.maxWidth = maxWidth + 'px';
-                connectionCard.style.margin = '0 auto';
             }
+            connectionCard.style.margin = '0 auto';
         }, 100);
     },
     
@@ -567,6 +565,9 @@ const Swipe = {
                     
                     // Создаем игру
                     this.createGame();
+                    
+                    // Подгоняем размер карточки ожидания после создания игры
+                    this.adjustConnectionCardSize();
                 }
                 
                 if (data.status === 'rejected') {
@@ -891,6 +892,9 @@ const Swipe = {
                 }
                 
                 this.gameCreated = true;
+                
+                // Подгоняем размер карточки ожидания после создания игры
+                this.adjustConnectionCardSize();
             } else {
                 console.error('createGame error: no chat_link', data);
                 this.updateChatButton(false);
