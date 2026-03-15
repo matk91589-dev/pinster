@@ -33,8 +33,7 @@ const Swipe = {
     currentPlayer: null,
     currentMatchId: null,
     playersQueue: [],
-    mode: 'PREMIER', // Режим ПОИСКА (сохраняем при старте)
-    playerMode: null, // Режим игрока (из БД)
+    mode: null, // Режим из БД (matches.mode)
     isInitialized: false,
     connectionTimer: null,
     cardTimerInterval: null,
@@ -53,8 +52,6 @@ const Swipe = {
     
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
-        
-        this.mode = mode || 'PREMIER'; // СОХРАНЯЕМ РЕЖИМ ПОИСКА
         this.card = document.getElementById('swipeCard');
         this.container = document.getElementById('swipeContainer');
         this.hint = document.getElementById('swipeHint');
@@ -214,7 +211,11 @@ const Swipe = {
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
         this.isConnectionMode = false;
-        this.playerMode = opponent.mode || 'PREMIER'; // Сохраняем режим игрока, но НЕ ИСПОЛЬЗУЕМ для надписи
+        
+        // 🎯 БЕРЕМ MODE ИЗ ОБЪЕКТА OPPONENT (ИЗ ТАБЛИЦЫ MATCHES)
+        this.mode = opponent.mode;
+        console.log('🎯 РЕЖИМ ИЗ БАЗЫ ДАННЫХ (matches.mode):', this.mode);
+        
         this.gameCreated = false;
         this.gameCreating = false;
         this.chatLink = null;
@@ -884,27 +885,27 @@ const Swipe = {
             const ratingValueEl = document.getElementById('swipeRatingValue');
             if (ratingValueEl) ratingValueEl.textContent = player.trust_rating || '0';
             
-            // 🏆 ИСПОЛЬЗУЕМ РЕЖИМ ПОИСКА (this.mode) ДЛЯ НАДПИСИ
-            const modeUpper = this.mode ? this.mode.toUpperCase() : 'PREMIER';
-            console.log(`🎮 Режим поиска: ${modeUpper}`);
+            // 🎯 БЕРЕМ MODE ИЗ БАЗЫ (БЕЗ ЗНАЧЕНИЯ ПО УМОЛЧАНИЮ)
+            const modeFromDB = this.mode ? this.mode.toUpperCase() : null;
+            console.log('🎯 РЕЖИМ ИЗ БД ДЛЯ ОТОБРАЖЕНИЯ:', modeFromDB);
             
             // 🏆 МЕНЯЕМ НАДПИСЬ НАД ПЛАШКОЙ
-            // Ищем все три плашки и берем первую (РАНГ)
             const statItems = document.querySelectorAll('.swipe-stats-row.three-cols .swipe-stat-item');
             if (statItems && statItems.length >= 3) {
                 const rankLabelEl = statItems[0].querySelector('.swipe-stat-label');
                 if (rankLabelEl) {
-                    if (modeUpper === 'FACEIT') {
+                    if (modeFromDB === 'FACEIT') {
                         rankLabelEl.textContent = 'ELO FACEIT';
                     } 
-                    else if (modeUpper === 'PREMIER') {
+                    else if (modeFromDB === 'PREMIER') {
                         rankLabelEl.textContent = 'CS RATING';
                     }
-                    else if (modeUpper === 'MM PRIME' || modeUpper === 'MM PUBLIC') {
+                    else if (modeFromDB === 'PRIME' || modeFromDB === 'PUBLIC') {
                         rankLabelEl.textContent = 'РАНГ';
                     }
                     else {
-                        rankLabelEl.textContent = 'CS RATING';
+                        // Если режим не определен - показываем прочерк
+                        rankLabelEl.textContent = '—';
                     }
                     console.log(`🏷️ Установлена надпись: ${rankLabelEl.textContent}`);
                 }
@@ -913,20 +914,20 @@ const Swipe = {
             // 🏆 ЗНАЧЕНИЕ В ПЛАШКЕ
             const rankEl = document.getElementById('swipeRank');
             if (rankEl) {
-                if (modeUpper === 'FACEIT') {
+                if (modeFromDB === 'FACEIT') {
                     rankEl.textContent = player.rating ? player.rating : '0';
                     console.log(`🔢 FACEIT ELO: ${rankEl.textContent}`);
                 } 
-                else if (modeUpper === 'PREMIER') {
+                else if (modeFromDB === 'PREMIER') {
                     rankEl.textContent = player.rating ? player.rating : '0';
                     console.log(`🔢 CS RATING: ${rankEl.textContent}`);
                 }
-                else if (modeUpper === 'MM PRIME' || modeUpper === 'MM PUBLIC') {
+                else if (modeFromDB === 'PRIME' || modeFromDB === 'PUBLIC') {
                     rankEl.textContent = player.rank || '—';
                     console.log(`🎖️ MM РАНГ: ${rankEl.textContent}`);
                 }
                 else {
-                    rankEl.textContent = player.rating || '—';
+                    rankEl.textContent = '—';
                 }
             }
             
@@ -985,7 +986,7 @@ const Swipe = {
     
     startSwipe(mode) {
         console.log('Swipe.startSwipe() called with mode:', mode);
-        this.mode = mode || 'PREMIER'; // СОХРАНЯЕМ РЕЖИМ ПОИСКА
+        this.mode = mode;
         this.playersQueue = [];
         this.isConnectionMode = false;
         
