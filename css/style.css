@@ -3257,32 +3257,36 @@ html {
     box-shadow: 0 0 15px rgba(255, 85, 0, 0.5);
 }
 
-/* ===== ФИКС ДЛЯ НАСТРОЕК - УБИРАЕМ ВСЕ ОТСТУПЫ ===== */
+/* ===== ПОЛНЫЙ СБРОС ОТСТУПОВ ДЛЯ НАСТРОЕК ===== */
 .settings-screen {
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
     height: 100%;
     overflow-y: auto !important;
-    scrollbar-width: thin;
-    scrollbar-color: #FF5500 #2A2F3A;
 }
 
-/* Жёстко перебиваем padding у .content ТОЛЬКО в настройках */
-.settings-screen .content {
-    padding: 0 !important;
-    margin: 0 !important;
+/* Убираем padding у ВСЕХ элементов внутри настроек */
+.settings-screen * {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
-/* Убираем отступы у всех родительских элементов внутри настроек */
-.settings-screen .phone-frame,
-.settings-screen main,
-.settings-screen .screen,
-.settings-screen .settings-content {
-    padding: 0 !important;
-    margin: 0 !important;
+/* Возвращаем padding только тексту внутри строк, но не самим строкам */
+.settings-row .settings-row-label,
+.settings-row .settings-value,
+.settings-row .settings-arrow,
+.settings-row-link .settings-row-label,
+.settings-row-link .settings-value,
+.settings-row-link .settings-arrow,
+.settings-section-title {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
 }
 
+/* Стили для скролла */
 .settings-screen::-webkit-scrollbar {
     width: 4px;
 }
@@ -3296,19 +3300,12 @@ html {
     border-radius: 4px;
 }
 
-.settings-screen::-webkit-scrollbar-thumb:hover {
-    background: #ff7700;
-}
-
-/* Заголовок */
 .settings-header {
-    padding: 12px 16px 8px 16px !important;
-    margin: 0 !important;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 12px 0 8px 0 !important;
     width: 100%;
-    box-sizing: border-box;
 }
 
 .settings-title {
@@ -3316,13 +3313,10 @@ html {
     font-weight: 600;
     color: var(--text-primary);
     text-align: center;
-    margin: 0;
 }
 
-/* Секции */
 .settings-section {
     margin: 0 0 24px 0 !important;
-    padding: 0 !important;
     width: 100%;
 }
 
@@ -3333,42 +3327,24 @@ html {
     text-transform: uppercase;
     letter-spacing: 0.3px;
     margin: 0 0 8px 0 !important;
-    padding: 0 16px !important;
     width: 100%;
     box-sizing: border-box;
 }
 
-/* Строки */
-.settings-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px !important;
-    margin: 0 !important;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    cursor: pointer;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.settings-row:last-child {
-    border-bottom: none;
-}
-
+.settings-row,
 .settings-row-link {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px !important;
+    padding: 12px 0 !important;
     margin: 0 !important;
     border-bottom: 1px solid rgba(255,255,255,0.05);
-    text-decoration: none;
-    color: inherit;
     cursor: pointer;
     width: 100%;
     box-sizing: border-box;
 }
 
+.settings-row:last-child,
 .settings-row-link:last-child {
     border-bottom: none;
 }
@@ -3390,7 +3366,6 @@ html {
     font-weight: 300;
 }
 
-/* Переключатель */
 .toggle-switch {
     width: 46px;
     height: 26px;
