@@ -7,34 +7,49 @@ const Avatar = {
     
     select() {
         if (!Profile.editMode) {
-            // Заменяем alert на toast
             if (Profile.showToast) {
                 Profile.showToast('Для изменений перейдите в режим редактирования');
             }
             return;
         }
         
-        // В Telegram Mini App нельзя напрямую загружать файлы
-        // Показываем заглушку
-        App.showPopup({
-            title: 'Загрузка аватарки',
-            message: 'Функция загрузки аватарки будет доступна в ближайшее время',
-            buttons: [{ id: 'ok', type: 'ok', text: 'Понятно' }]
-        });
+        // 👇 УБИРАЕМ СООБЩЕНИЕ И СРАЗУ ОТКРЫВАЕМ ПРОВОДНИК
+        this.openFilePicker();
+    },
+    
+    openFilePicker() {
+        // Создаем скрытый input для загрузки файла
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.style.display = 'none';
+        document.body.appendChild(fileInput);
         
-        App.hapticFeedback('light');
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                this.handleFile(file);
+            }
+            fileInput.remove();
+        };
+        
+        fileInput.click();
     },
     
     handleFile(file) {
         if (!file) return;
         
         if (file.size > this.MAX_FILE_SIZE) {
-            App.showAlert('Файл слишком большой! Максимум 5MB');
+            if (Profile.showToast) {
+                Profile.showToast('Файл слишком большой! Максимум 5MB');
+            }
             return;
         }
         
         if (!file.type.startsWith('image/')) {
-            App.showAlert('Можно загружать только изображения!');
+            if (Profile.showToast) {
+                Profile.showToast('Можно загружать только изображения');
+            }
             return;
         }
         
@@ -50,14 +65,12 @@ const Avatar = {
                 startAvatar.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
             }
             
-            // Сохраняем в localStorage (временное решение)
-            localStorage.setItem('pingster_avatar', e.target.result);
+            // Сохраняем во временные данные профиля
+            Profile.tempAvatarUrl = e.target.result;
             
-            Profile.tempAvatar = e.target.result;
-            Profile.savedAvatar = e.target.result;
-            
-            App.showAlert('✅ Аватарка загружена');
-            App.hapticFeedback('medium');
+            if (Profile.showToast) {
+                Profile.showToast('Аватарка выбрана, сохраните профиль');
+            }
         };
         reader.readAsDataURL(file);
     },
@@ -80,7 +93,6 @@ const Avatar = {
             avatarDiv.style.border = '';
             
             if (!Profile.editMode) {
-                // Заменяем alert на toast
                 if (Profile.showToast) {
                     Profile.showToast('Для изменений перейдите в режим редактирования');
                 }
@@ -94,5 +106,10 @@ const Avatar = {
         });
     }
 };
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', () => {
+    Avatar.setupDragAndDrop();
+});
 
 window.Avatar = Avatar;
