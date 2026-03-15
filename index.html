@@ -20,9 +20,8 @@
     <!-- Telegram Mini App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- ========== ЗАЩИТА ОТ FOUC (ЧЕРНО-БЕЛОГО СПИСКА) ========== -->
+    <!-- ========== ЗАЩИТА ОТ FOUC ========== -->
     <style>
-        /* Только минимальные стили для предотвращения FOUC */
         body {
             background-color: #0D0F15;
             margin: 0;
@@ -30,12 +29,9 @@
             opacity: 0;
             transition: opacity 0.15s ease;
         }
-        
         body.loaded {
             opacity: 1;
         }
-        
-        /* Убираем мигание */
         .screen {
             display: none;
         }
@@ -44,7 +40,7 @@
         }
     </style>
     
-    <!-- Preload CSS (опционально, не ломает) -->
+    <!-- Preload CSS -->
     <link rel="preload" href="css/style.css" as="style">
     <link rel="preload" href="css/shop-cases.css" as="style">
     <link rel="preload" href="css/animations.css" as="style">
@@ -54,7 +50,7 @@
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
     
-    <!-- Дополнительные стили для плавности (НЕ ПЕРЕЗАПИСЫВАЕМ ОСНОВНЫЕ) -->
+    <!-- Дополнительные стили -->
     <style>
         .screen {
             transition: opacity 0.2s ease;
@@ -65,8 +61,6 @@
             opacity: 1;
             display: flex;
         }
-
-        /* Стили для поля ввода ника */
         .edit-name-input {
             width: 100%;
             padding: 8px 12px;
@@ -81,12 +75,10 @@
             margin: 0;
             box-sizing: border-box;
         }
-
         .edit-name-input:focus {
             border-color: #FF5500;
             box-shadow: 0 0 0 2px rgba(255, 85, 0, 0.2);
         }
-
         .profile-name-row {
             display: flex;
             align-items: center;
@@ -94,14 +86,11 @@
             flex-wrap: wrap;
             width: 100%;
         }
-
         .profile-name-row .profile-name,
         .profile-name-row .edit-name-input {
             flex: 1;
             min-width: 0;
         }
-
-        /* Стили для SVG аватарки */
         .tg-avatar-svg {
             width: 90px;
             height: 90px;
@@ -111,13 +100,10 @@
             align-items: center;
             justify-content: center;
         }
-
         .tg-avatar-svg svg {
             width: 42px;
             height: 42px;
         }
-        
-        /* Диагностический блок */
         #diagnostic-badge {
             position: fixed;
             bottom: 10px;
@@ -130,14 +116,11 @@
             z-index: 9999;
             display: none;
         }
-
-        /* Стили для кнопки на экране соединения */
         .connection-button {
             width: 100%;
             margin-top: 24px;
             padding: 0 16px;
         }
-
         .tg-chat-button {
             width: 100%;
             height: 52px;
@@ -156,7 +139,6 @@
             color: rgba(255, 255, 255, 0.5);
             pointer-events: none;
         }
-
         .tg-chat-button.active {
             background: #37AEE2;
             border: none;
@@ -164,21 +146,17 @@
             pointer-events: auto;
             box-shadow: 0 4px 12px rgba(55, 174, 226, 0.3);
         }
-
         .tg-chat-button.active:hover {
             background: #2E9AC9;
             transform: scale(1.02);
         }
-
         .tg-chat-button svg {
             width: 22px;
             height: 22px;
         }
-
         .tg-chat-button.active svg {
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
-
         .connection-tooltip {
             font-size: 13px;
             color: rgba(255, 255, 255, 0.3);
@@ -186,21 +164,17 @@
             margin-top: 8px;
             transition: color 0.2s ease;
         }
-
         .connection-tooltip.active {
             color: #37AEE2;
         }
     </style>
 </head>
 <body>
-    <!-- Скрипт для убирания FOUC -->
     <script>
         (function() {
-            // Устанавливаем класс loaded после полной загрузки
             function showContent() {
                 document.body.classList.add('loaded');
             }
-            
             if (document.readyState === 'complete') {
                 setTimeout(showContent, 50);
             } else {
@@ -211,10 +185,8 @@
         })();
     </script>
     
-    <!-- Диагностический элемент -->
     <div id="diagnostic-badge">⚠️</div>
     
-    <!-- ОСНОВНОЙ КОНТЕЙНЕР (НЕ ТРОГАЕМ СТРУКТУРУ!) -->
     <div class="phone-frame">
         
         <!-- Хедер -->
@@ -401,7 +373,7 @@
                 <div class="team-content" id="teamContent"></div>
             </div>
 
-            <!-- ЭКРАН СВАЙП-КАРТОЧЕК -->
+            <!-- ЭКРАН СВАЙП-КАРТОЧЕК - БЕЗ ТЕСТОВЫХ ДАННЫХ -->
             <div id="swipeScreen" class="screen swipe-screen">
                 <div class="swipe-header">
                     <div class="swipe-title">Поиск тиммейтов</div>
@@ -431,12 +403,12 @@
                                 </div>
                                 
                                 <div class="swipe-name-block">
-                                    <div class="swipe-player-id" id="swipePlayerId">80794177</div>
-                                    <div class="swipe-player-nick" id="swipePlayerNick">Player123</div>
+                                    <div class="swipe-player-id" id="swipePlayerId"></div>
+                                    <div class="swipe-player-nick" id="swipePlayerNick"></div>
                                 </div>
                                 
                                 <div class="swipe-rating-block">
-                                    <span class="swipe-rating-value" id="swipeRatingValue">1500</span>
+                                    <span class="swipe-rating-value" id="swipeRatingValue"></span>
                                     <span class="heart-icon">
                                         <svg viewBox="0 0 24 24" width="18" height="18">
                                             <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#F5F5F5" stroke-width="2" fill="none"/>
@@ -450,31 +422,31 @@
                             <div class="swipe-stats-row three-cols">
                                 <div class="swipe-stat-item">
                                     <div class="swipe-stat-label">РАНГ</div>
-                                    <div class="swipe-stat-value" id="swipeRank">Gold Nova 3</div>
+                                    <div class="swipe-stat-value" id="swipeRank"></div>
                                 </div>
                                 <div class="swipe-stat-item">
                                     <div class="swipe-stat-label">ВОЗРАСТ</div>
-                                    <div class="swipe-stat-value" id="swipeAge">21 год</div>
+                                    <div class="swipe-stat-value" id="swipeAge"></div>
                                 </div>
                                 <div class="swipe-stat-item">
                                     <div class="swipe-stat-label">СТИЛЬ</div>
-                                    <div class="swipe-stat-value" id="swipeStyle" data-style="fan">🔄 Fan</div>
+                                    <div class="swipe-stat-value" id="swipeStyle"></div>
                                 </div>
                             </div>
 
                             <div class="swipe-steam-container">
                                 <div class="swipe-link-label">Ссылка Steam</div>
-                                <div class="swipe-link-value" id="swipeSteamLink">steamcommunity.com/id/player123</div>
+                                <div class="swipe-link-value" id="swipeSteamLink"></div>
                             </div>
 
                             <div class="swipe-faceit-container">
                                 <div class="swipe-link-label">Ссылка Faceit</div>
-                                <div class="swipe-link-value" id="swipeFaceitLink">faceit.com/player123</div>
+                                <div class="swipe-link-value" id="swipeFaceitLink"></div>
                             </div>
 
                             <div class="swipe-comment">
                                 <div class="swipe-comment-label">Комментарий</div>
-                                <div class="swipe-comment-text" id="swipeComment">ищу норм тиммейтов для каток, без токсиков</div>
+                                <div class="swipe-comment-text" id="swipeComment"></div>
                             </div>
                         </div>
                     </div>
@@ -485,7 +457,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН СОЕДИНЕНИЯ -->
+            <!-- ЭКРАН СОЕДИНЕНИЯ - БЕЗ ТЕСТОВЫХ ДАННЫХ -->
             <div id="connectionScreen" class="screen connection-screen">
                 <div class="swipe-header">
                     <div class="swipe-title">Тиммейт найден</div>
@@ -494,7 +466,7 @@
                 <div class="swipe-container" id="connectionContainer">
                     <div class="swipe-card" id="connectionCard">
                         <div class="connection-timer" id="connectionTimer">
-                            <span class="timer-icon">⏳</span> 30с
+                            30с
                         </div>
                         
                         <div class="swipe-card-content connection-mode">
@@ -522,27 +494,16 @@
                                 </div>
                             </div>
 
-                            <div class="connection-status" id="connectionStatus">
-                                <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                    <circle cx="12" cy="12" r="10" stroke="#9BA1B0" stroke-width="2"/>
-                                    <path d="M12 8v4l3 3" stroke="#9BA1B0" stroke-width="2" stroke-linecap="round"/>
-                                </svg>
-                                Тиммейт найден
-                            </div>
+                            <!-- СТАТУС - пустой, JS заполнит -->
+                            <div class="connection-status" id="connectionStatus"></div>
 
                             <div class="teammate-info">
-                                <span class="teammate-nick" id="teammateNick">Player123</span>
-                                <span class="teammate-rating" id="teammateRating">
-                                    1500
-                                    <svg class="heart-icon-small" width="14" height="14" viewBox="0 0 24 24">
-                                        <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#FF5500" stroke-width="2" fill="none"/>
-                                    </svg>
-                                </span>
+                                <span class="teammate-nick" id="teammateNick"></span>
                             </div>
 
                             <div class="connection-rank-age">
-                                <span class="connection-rank" id="connectionRank">Gold Nova 3</span>
-                                <span class="connection-age" id="connectionAge">21 год</span>
+                                <span class="connection-rank" id="connectionRank"></span>
+                                <span class="connection-age" id="connectionAge"></span>
                             </div>
 
                             <!-- КНОПКА ЧАТА -->
@@ -736,9 +697,10 @@
                 
                 <div class="input-label">Звание</div>
                 <select class="rank-select" id="publicRankSelect">
+                    <option selected>Выберите ранг</option>
                     <option>Silver 1</option>
                     <option>Silver 2</option>
-                    <option selected>Silver 3</option>
+                    <option>Silver 3</option>
                     <option>Silver 4</option>
                     <option>Silver Elite</option>
                     <option>Gold Nova 1</option>
