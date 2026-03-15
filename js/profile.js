@@ -9,11 +9,13 @@ const Profile = {
     savedAge: '',
     savedSteam: '',
     savedFaceitLink: '',
+    savedAvatarUrl: null,
     tempName: '-',
     tempAvatar: '<div class="tg-avatar-svg"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#ffffff"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="#ffffff"/></svg></div>',
     tempAge: '',
     tempSteam: '',
     tempFaceitLink: '',
+    tempAvatarUrl: null,
     telegramId: null,
     toastTimeout: null,
     
@@ -27,17 +29,14 @@ const Profile = {
     },
     
     getTelegramId() {
-        // Пробуем получить из tg
         const tg = window.Telegram?.WebApp;
         if (tg?.initDataUnsafe?.user?.id) {
             return tg.initDataUnsafe.user.id;
         }
-        // Если нет, пробуем из URL (для веб-версии)
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get('tg_id');
     },
     
-    // Toast уведомление (только для режима редактирования)
     showToast(message) {
         if (this.toastTimeout) {
             clearTimeout(this.toastTimeout);
@@ -117,11 +116,13 @@ const Profile = {
                 this.savedAge = data.age || '';
                 this.savedSteam = data.steam_link || '';
                 this.savedFaceitLink = data.faceit_link || '';
+                this.savedAvatarUrl = data.avatar || null;  // 👈 СОХРАНЯЕМ АВАТАРКУ
                 
                 this.tempName = this.savedName;
                 this.tempAge = this.savedAge;
                 this.tempSteam = this.savedSteam;
                 this.tempFaceitLink = this.savedFaceitLink;
+                this.tempAvatarUrl = this.savedAvatarUrl;
                 
                 // Обновляем отображение
                 this.updateDisplay();
@@ -147,44 +148,88 @@ const Profile = {
         const profileNameEl = document.getElementById('profileName');
         if (profileNameEl) {
             profileNameEl.textContent = this.savedName;
-            console.log('  ник:', this.savedName);
         }
         
         const ageValueEl = document.getElementById('ageValue');
         if (ageValueEl) {
             ageValueEl.value = this.savedAge || '';
-            console.log('  возраст:', this.savedAge);
         }
         
         const steamDisplayEl = document.getElementById('steamDisplay');
         if (steamDisplayEl) {
             steamDisplayEl.value = this.savedSteam || '';
-            console.log('  steam:', this.savedSteam);
         }
         
         const faceitLinkDisplayEl = document.getElementById('faceitLinkDisplay');
         if (faceitLinkDisplayEl) {
             faceitLinkDisplayEl.value = this.savedFaceitLink || '';
-            console.log('  faceit:', this.savedFaceitLink);
         }
         
+        // 👇 ОБНОВЛЯЕМ АВАТАРКУ
         const avatarDiv = document.getElementById('profileAvatar');
         if (avatarDiv) {
-            avatarDiv.innerHTML = this.savedAvatar;
+            if (this.savedAvatarUrl) {
+                // Если есть сохраненная аватарка - показываем её
+                avatarDiv.innerHTML = `<img src="${this.savedAvatarUrl}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            } else {
+                // Если нет - показываем заглушку
+                avatarDiv.innerHTML = this.savedAvatar;
+            }
         }
         
         this.clearAllErrors();
     },
     
-    // 👇 ФУНКЦИЯ ДЛЯ АВАТАРКИ (ЗАГЛУШКА, ПОТОМ ДОБАВИМ РЕАЛЬНУЮ ЗАГРУЗКУ)
+    // 👇 ФУНКЦИЯ ДЛЯ ВЫБОРА АВАТАРКИ
     editAvatar() {
         if (!this.editMode) {
             this.showToast('Для изменений перейдите в режим редактирования');
             return;
         }
         
-        // Пока просто показываем тост, что скоро будет
-        this.showToast('⚡ Скоро можно будет загрузить свою аватарку');
+        // Создаем скрытый input для загрузки файла
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.style.display = 'none';
+        document.body.appendChild(fileInput);
+        
+        fileInput.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            // Проверяем размер (макс 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                this.showToast('❌ Файл слишком большой (макс 5MB)');
+                fileInput.remove();
+                return;
+            }
+            
+            // Проверяем тип файла
+            if (!file.type.startsWith('image/')) {
+                this.showToast('❌ Можно загружать только изображения');
+                fileInput.remove();
+                return;
+            }
+            
+            // Показываем превью
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const avatarDiv = document.getElementById('profileAvatar');
+                if (avatarDiv) {
+                    avatarDiv.innerHTML = `<img src="${e.target.result}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                    this.tempAvatarUrl = e.target.result;
+                }
+            };
+            reader.readAsDataURL(file);
+            
+            // Здесь потом будет загрузка на сервер
+            this.showToast('✅ Аватарка выбрана, сохраните профиль');
+            
+            fileInput.remove();
+        };
+        
+        fileInput.click();
     },
     
     toggleEditMode() {
@@ -218,7 +263,7 @@ const Profile = {
                 profileName.classList.add('editable');
             }
             
-            // 👇 ДОБАВЛЯЕМ ПОДСВЕТКУ АВАТАРКИ
+            // Подсвечиваем аватарку
             if (avatar) {
                 avatar.classList.add('editable-avatar');
             }
@@ -239,9 +284,15 @@ const Profile = {
                 profileName.classList.remove('editable');
             }
             
-            // 👇 УБИРАЕМ ПОДСВЕТКУ АВАТАРКИ
+            // Убираем подсветку аватарки
             if (avatar) {
                 avatar.classList.remove('editable-avatar');
+            }
+            
+            // Если были изменения аватарки, но не сохранили - откатываем
+            if (this.tempAvatarUrl !== this.savedAvatarUrl) {
+                this.tempAvatarUrl = this.savedAvatarUrl;
+                this.updateDisplay();
             }
         }
     },
@@ -372,12 +423,14 @@ const Profile = {
             return;
         }
 
+        // 👇 СОБИРАЕМ ДАННЫЕ ВКЛЮЧАЯ АВАТАРКУ
         const dataToSend = {
             telegram_id: this.telegramId,
             nick: this.tempName,
             age: ageInput ? ageInput.value || null : null,
             steam_link: steamInput ? steamInput.value || null : null,
-            faceit_link: faceitInput ? faceitInput.value || null : null
+            faceit_link: faceitInput ? faceitInput.value || null : null,
+            avatar: this.tempAvatarUrl || null  // 👈 ОТПРАВЛЯЕМ АВАТАРКУ
         };
 
         try {
@@ -396,15 +449,18 @@ const Profile = {
                 this.savedAge = ageInput ? ageInput.value : '';
                 this.savedSteam = steamInput ? steamInput.value : '';
                 this.savedFaceitLink = faceitInput ? faceitInput.value : '';
+                this.savedAvatarUrl = this.tempAvatarUrl;  // 👈 СОХРАНЯЕМ АВАТАРКУ
                 
                 if (profileName) {
                     profileName.textContent = this.savedName;
                 }
                 
                 this.toggleEditMode();
+                this.showToast('✅ Профиль сохранен');
             }
         } catch (error) {
             console.error('❌ Ошибка отправки:', error);
+            this.showToast('❌ Ошибка сохранения');
         } finally {
             if (applyBtn) {
                 applyBtn.style.pointerEvents = 'auto';
@@ -473,40 +529,9 @@ const Profile = {
         }
         
         if (newName.length >= 3 && newName.length <= 10) {
-            if (!this.telegramId) {
-                this.telegramId = this.getTelegramId();
-                if (!this.telegramId) {
-                    tempInput.remove();
-                    profileName.style.display = 'inline-block';
-                    return;
-                }
-            }
-            
-            try {
-                const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/profile/update', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        telegram_id: this.telegramId,
-                        nick: newName
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.status === 'ok') {
-                    this.tempName = newName;
-                    this.savedName = newName;
-                    profileName.textContent = newName;
-                } else {
-                    this.showToast('❌ Ошибка при сохранении ника');
-                }
-            } catch (error) {
-                console.error('❌ Ошибка отправки:', error);
-                this.showToast('❌ Не удалось сохранить ник');
-            }
+            this.tempName = newName;
+            profileName.textContent = newName;
+            this.showToast('✅ Нажмите "Применить" для сохранения');
         } else {
             this.showToast('❌ Никнейм должен быть от 3 до 10 символов');
         }
@@ -543,7 +568,6 @@ const Profile = {
         const avatar = document.getElementById('profileAvatar');
         if (avatar) {
             avatar.addEventListener('click', (e) => {
-                // В режиме редактирования вызываем editAvatar
                 if (this.editMode) {
                     this.editAvatar();
                 } else {
@@ -557,7 +581,9 @@ const Profile = {
         const profileName = document.getElementById('profileName');
         if (profileName) {
             profileName.addEventListener('click', (e) => {
-                if (!this.editMode) {
+                if (this.editMode) {
+                    this.editName();
+                } else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
@@ -568,7 +594,9 @@ const Profile = {
         const ageCard = document.getElementById('ageCard');
         if (ageCard) {
             ageCard.addEventListener('click', (e) => {
-                if (!this.editMode) {
+                if (this.editMode) {
+                    this.editAge();
+                } else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
@@ -579,7 +607,9 @@ const Profile = {
         const steamCard = document.getElementById('steamCard');
         if (steamCard) {
             steamCard.addEventListener('click', (e) => {
-                if (!this.editMode) {
+                if (this.editMode) {
+                    this.editSteam();
+                } else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
@@ -590,7 +620,9 @@ const Profile = {
         const faceitCard = document.getElementById('faceitLinkCard');
         if (faceitCard) {
             faceitCard.addEventListener('click', (e) => {
-                if (!this.editMode) {
+                if (this.editMode) {
+                    this.editFaceitLink();
+                } else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
