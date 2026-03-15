@@ -176,6 +176,17 @@ const Profile = {
         this.clearAllErrors();
     },
     
+    // 👇 ФУНКЦИЯ ДЛЯ АВАТАРКИ (ЗАГЛУШКА, ПОТОМ ДОБАВИМ РЕАЛЬНУЮ ЗАГРУЗКУ)
+    editAvatar() {
+        if (!this.editMode) {
+            this.showToast('Для изменений перейдите в режим редактирования');
+            return;
+        }
+        
+        // Пока просто показываем тост, что скоро будет
+        this.showToast('⚡ Скоро можно будет загрузить свою аватарку');
+    },
+    
     toggleEditMode() {
         this.editMode = !this.editMode;
         
@@ -186,6 +197,7 @@ const Profile = {
         const ageInput = document.getElementById('ageValue');
         const steamInput = document.getElementById('steamDisplay');
         const faceitInput = document.getElementById('faceitLinkDisplay');
+        const avatar = document.getElementById('profileAvatar');
         
         this.clearAllErrors();
         
@@ -205,6 +217,11 @@ const Profile = {
             if (profileName) {
                 profileName.classList.add('editable');
             }
+            
+            // 👇 ДОБАВЛЯЕМ ПОДСВЕТКУ АВАТАРКИ
+            if (avatar) {
+                avatar.classList.add('editable-avatar');
+            }
         } else {
             profileScreen.classList.remove('editable');
             if (editToggle) editToggle.classList.remove('active');
@@ -220,6 +237,11 @@ const Profile = {
             
             if (profileName) {
                 profileName.classList.remove('editable');
+            }
+            
+            // 👇 УБИРАЕМ ПОДСВЕТКУ АВАТАРКИ
+            if (avatar) {
+                avatar.classList.remove('editable-avatar');
             }
         }
     },
@@ -521,7 +543,10 @@ const Profile = {
         const avatar = document.getElementById('profileAvatar');
         if (avatar) {
             avatar.addEventListener('click', (e) => {
-                if (!this.editMode) {
+                // В режиме редактирования вызываем editAvatar
+                if (this.editMode) {
+                    this.editAvatar();
+                } else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
