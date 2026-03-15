@@ -3257,7 +3257,7 @@ html {
     box-shadow: 0 0 15px rgba(255, 85, 0, 0.5);
 }
 
-/* ===== НАСТРОЙКИ - ЖЁСТКОЕ ПРИЛЕГАНИЕ ===== */
+/* ===== ФИКС ДЛЯ НАСТРОЕК - УБИРАЕМ ВСЕ ОТСТУПЫ ===== */
 .settings-screen {
     padding: 0 !important;
     margin: 0 !important;
@@ -3268,8 +3268,13 @@ html {
     scrollbar-color: #FF5500 #2A2F3A;
 }
 
-/* Убираем ВСЕ возможные отступы у родительских элементов ВНУТРИ настроек */
-.settings-screen .content,
+/* Жёстко перебиваем padding у .content ТОЛЬКО в настройках */
+.settings-screen .content {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Убираем отступы у всех родительских элементов внутри настроек */
 .settings-screen .phone-frame,
 .settings-screen main,
 .settings-screen .screen,
