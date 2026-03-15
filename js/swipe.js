@@ -879,17 +879,24 @@ const Swipe = {
             const playerNickEl = document.getElementById('swipePlayerNick');
             if (playerNickEl) playerNickEl.textContent = player.nick || '';
             
-            // ❤️ РЕЙТИНГ ДОВЕРИЯ (лайки) - НЕ ТРОГАЕМ
+            // ❤️ РЕЙТИНГ ДОВЕРИЯ (лайки)
             const ratingValueEl = document.getElementById('swipeRatingValue');
             if (ratingValueEl) ratingValueEl.textContent = player.trust_rating || '0';
             
-            // 🏆 МЕНЯЕМ НАДПИСЬ НАД ПЛАШКОЙ В ЗАВИСИМОСТИ ОТ РЕЖИМА
+            // 🏆 ОПРЕДЕЛЯЕМ РЕЖИМ ТЕКУЩЕГО ПОИСКА
+            let currentMode = this.mode;
+            
+            // Если есть режим у игрока - используем его
+            if (player.mode) {
+                currentMode = player.mode;
+            }
+            
+            const modeUpper = currentMode ? currentMode.toUpperCase() : '';
+            console.log(`🎮 Текущий режим поиска: ${modeUpper}`);
+            
+            // 🏆 МЕНЯЕМ НАДПИСЬ НАД ПЛАШКОЙ
             const rankLabelEl = document.querySelector('.swipe-stats-row.three-cols .swipe-stat-item:first-child .swipe-stat-label');
             if (rankLabelEl) {
-                const modeUpper = this.mode ? this.mode.toUpperCase() : '';
-                
-                console.log(`🎮 Режим поиска: ${modeUpper}`);
-                
                 if (modeUpper === 'FACEIT') {
                     rankLabelEl.textContent = 'ELO FACEIT';
                 } 
@@ -902,27 +909,25 @@ const Swipe = {
                 else {
                     rankLabelEl.textContent = 'CS RATING';
                 }
+                console.log(`🏷️ Установлена надпись: ${rankLabelEl.textContent}`);
             }
             
-            // 🏆 ЗНАЧЕНИЕ В ПЛАШКЕ (только число/звание без лишних слов)
+            // 🏆 ЗНАЧЕНИЕ В ПЛАШКЕ
             const rankEl = document.getElementById('swipeRank');
             if (rankEl) {
-                const modeUpper = this.mode ? this.mode.toUpperCase() : '';
-                
                 if (modeUpper === 'FACEIT') {
-                    // Для FACEIT показываем ELO (только число)
                     rankEl.textContent = player.rating ? player.rating : '0';
+                    console.log(`🔢 FACEIT ELO: ${rankEl.textContent}`);
                 } 
                 else if (modeUpper === 'PREMIER') {
-                    // Для PREMIER показываем CS Rating (только число)
                     rankEl.textContent = player.rating ? player.rating : '0';
+                    console.log(`🔢 CS RATING: ${rankEl.textContent}`);
                 }
                 else if (modeUpper === 'MM PRIME' || modeUpper === 'MM PUBLIC') {
-                    // Для MM режимов показываем звание
                     rankEl.textContent = player.rank || '—';
+                    console.log(`🎖️ MM РАНГ: ${rankEl.textContent}`);
                 }
                 else {
-                    // По умолчанию
                     rankEl.textContent = player.rating || '—';
                 }
             }
