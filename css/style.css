@@ -3256,3 +3256,167 @@ html {
     border-color: #ff7700;
     box-shadow: 0 0 15px rgba(255, 85, 0, 0.5);
 }
+
+/* ===== НАСТРОЙКИ - ОБНОВЛЕННЫЙ ДИЗАЙН ===== */
+.settings-screen {
+    padding: 0 0 20px 0;
+}
+
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    margin-bottom: 8px;
+}
+
+.settings-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.settings-version {
+    font-size: 14px;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.settings-group {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 8px 0;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.settings-group-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    padding: 16px 16px 8px 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.settings-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.settings-item:last-child {
+    border-bottom: none;
+}
+
+.settings-item.with-slider {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.settings-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.settings-value {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.settings-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.settings-link:hover {
+    background: var(--surface-hover);
+}
+
+.settings-arrow {
+    font-size: 18px;
+    color: var(--accent);
+}
+
+.settings-badge {
+    font-size: 12px;
+    padding: 4px 8px;
+    background: rgba(255, 85, 0, 0.1);
+    border-radius: 20px;
+    color: var(--accent);
+}
+
+.settings-item.clickable {
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.settings-item.clickable:hover {
+    background: var(--surface-hover);
+}
+
+/* Квадратные переключатели */
+.square-toggle {
+    width: 48px;
+    height: 28px;
+    background: #2A2F3A;
+    border-radius: 8px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.square-toggle.active {
+    background: var(--accent);
+}
+
+.square-toggle-switch {
+    width: 22px;
+    height: 22px;
+    background: white;
+    border-radius: 6px;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.2s ease;
+}
+
+.square-toggle.active .square-toggle-switch {
+    transform: translateX(20px);
+}
+
+/* Слайдер громкости */
+.volume-slider {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    background: #2A2F3A;
+    border-radius: 3px;
+    outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    background: var(--accent);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
