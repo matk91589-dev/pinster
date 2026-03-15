@@ -81,41 +81,23 @@ const Swipe = {
     adjustCardSize() {
         if (!this.card || this.isConnectionMode) return;
         
-        // Даем время на отрисовку
         setTimeout(() => {
-            // Получаем высоту экрана
             const screenHeight = window.innerHeight;
-            
-            // Высота header
             const header = document.querySelector('.header');
             const headerHeight = header ? header.offsetHeight : 60;
-            
-            // Высота bottom-nav
             const bottomNav = document.querySelector('.bottom-nav');
             const navHeight = bottomNav ? bottomNav.offsetHeight : 60;
-            
-            // Высота заголовка свайпа
             const swipeHeader = document.querySelector('.swipe-header');
             const headerTitleHeight = swipeHeader ? swipeHeader.offsetHeight : 80;
-            
-            // Доступная высота для карточки (с учетом отступов)
             const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 20;
-            
-            // Максимальная ширина (не больше 420px)
             const maxWidth = 420;
-            
-            // Рассчитываем идеальную ширину для 4:5
             let idealWidth = Math.min(maxWidth, window.innerWidth * 0.9);
-            
-            // Нужная высота для этой ширины
             const neededHeight = idealWidth * 1.25; // 4:5
             
             console.log(`📐 Подгон карточки свайпа: экран=${screenHeight}, доступно=${availableHeight}, нужно=${neededHeight}, ширина=${idealWidth}`);
             
-            // Если нужная высота больше доступной
             if (neededHeight > availableHeight) {
-                // Уменьшаем ширину, чтобы вписаться, но не слишком сильно
-                const newWidth = Math.max(availableHeight / 1.25, 320); // Минимум 320px
+                const newWidth = Math.max(availableHeight / 1.25, 320);
                 
                 if (newWidth <= maxWidth) {
                     this.card.style.width = newWidth + 'px';
@@ -127,17 +109,14 @@ const Swipe = {
                     this.card.style.maxWidth = maxWidth + 'px';
                 }
             } else {
-                // Всё ок, ставим ширину на всю
                 this.card.style.width = '100%';
                 this.card.style.maxWidth = maxWidth + 'px';
                 this.card.style.margin = '0 auto';
             }
             
-            // Принудительно центрируем
             this.card.style.marginLeft = 'auto';
             this.card.style.marginRight = 'auto';
             
-            // Сохраняем размеры для экрана ожидания (и ширину, и высоту)
             this.lastSwipeCardWidth = this.card.offsetWidth;
             this.lastSwipeCardHeight = this.card.offsetHeight;
             
@@ -151,9 +130,7 @@ const Swipe = {
         if (!connectionCard || !this.isConnectionMode) return;
         
         setTimeout(() => {
-            // Берем карточку свайпа
             const swipeCard = document.getElementById('swipeCard');
-            
             let targetWidth = 0;
             let targetHeight = 0;
             
@@ -166,7 +143,6 @@ const Swipe = {
                 targetHeight = this.lastSwipeCardHeight;
                 console.log(`📏 Берем сохраненные размеры: ${targetWidth}px x ${targetHeight}px`);
             } else {
-                // Если ничего нет - считаем сами
                 const screenHeight = window.innerHeight;
                 const header = document.querySelector('.header');
                 const headerHeight = header ? header.offsetHeight : 60;
@@ -189,7 +165,6 @@ const Swipe = {
                 console.log(`📏 Рассчитали размер: ${targetWidth}px x ${targetHeight}px`);
             }
             
-            // Применяем размер (и ширину, и высоту)
             connectionCard.style.width = targetWidth + 'px';
             connectionCard.style.maxWidth = targetWidth + 'px';
             connectionCard.style.height = targetHeight + 'px';
@@ -198,7 +173,6 @@ const Swipe = {
             connectionCard.style.margin = '0 auto';
             connectionCard.style.boxSizing = 'border-box';
             
-            // Растягиваем контент на всю высоту
             const content = connectionCard.querySelector('.swipe-card-content');
             if (content) {
                 content.style.height = '100%';
@@ -209,7 +183,6 @@ const Swipe = {
             
             console.log(`✅ Экран ожидания установлен: ${targetWidth}px x ${targetHeight}px`);
             
-            // Проверяем через 200мс
             setTimeout(() => {
                 if (connectionCard.offsetWidth !== targetWidth || connectionCard.offsetHeight !== targetHeight) {
                     connectionCard.style.width = targetWidth + 'px';
@@ -255,7 +228,6 @@ const Swipe = {
             console.log('✅ matchExpiresAt (timestamp):', this.matchExpiresAt);
         }
         
-        // Считаем разницу между expires_at и текущим временем
         const clientNow = Date.now();
         let timeLeft = Math.floor((this.matchExpiresAt - clientNow) / 1000);
         
@@ -264,7 +236,6 @@ const Swipe = {
         console.log(`⏰ Разница (мс): ${this.matchExpiresAt - clientNow}`);
         console.log(`⏰ Осталось секунд: ${timeLeft}`);
         
-        // Если матч истек - выходим
         if (timeLeft <= 0) {
             console.warn('⚠️ Время на принятие истекло');
             this.exitSwipeMode('timeout_accept');
@@ -310,8 +281,6 @@ const Swipe = {
         
         const clientNow = Date.now();
         const timeLeft = Math.max(0, Math.floor((this.matchExpiresAt - clientNow) / 1000));
-        
-        // Таймер на принятие не может быть больше 30 секунд
         return Math.min(timeLeft, 30);
     },
     
@@ -331,7 +300,6 @@ const Swipe = {
         
         const updateTimer = () => {
             const timeLeft = this.getTimeLeft();
-            
             timerElement.innerHTML = timeLeft + 'с';
             
             if (timeLeft <= 0) {
@@ -532,10 +500,7 @@ const Swipe = {
             return;
         }
         
-        // ========== ШАГ 1: СРАЗУ ПОКАЗЫВАЕМ ЭКРАН ОЖИДАНИЯ ==========
         this.showConnectionMode();
-        
-        // ========== ШАГ 2: скрываем карточку ==========
         this.card.style.transition = 'opacity 0.2s ease';
         this.card.style.opacity = '0';
         
@@ -553,8 +518,6 @@ const Swipe = {
         .then(res => res.json())
         .then((data) => {
             console.log('📦 Accept response:', data);
-            
-            // ВСЕГДА запускаем polling, он сам разберется
             this.startMatchStatusPolling(this.currentMatchId);
         })
         .catch(error => {
@@ -599,13 +562,8 @@ const Swipe = {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
                     
-                    // Обновляем UI
                     this.updateConnectionUI('both_accepted');
-                    
-                    // Создаем игру
                     this.createGame();
-                    
-                    // Подгоняем размер карточки ожидания после создания игры
                     this.adjustConnectionCardSize();
                 }
                 
@@ -634,31 +592,26 @@ const Swipe = {
         console.log('🔄 Обновляем UI соединения, статус:', status);
         
         if (status === 'both_accepted') {
-            // Обновляем статус
             const statusEl = document.getElementById('connectionStatus');
             if (statusEl) {
                 statusEl.innerHTML = `Создано`;
             }
             
-            // Подсвечиваем аватар тиммейта
             const teammateAvatar = document.querySelector('.teammate-avatar');
             if (teammateAvatar) {
                 teammateAvatar.classList.add('connected');
             }
             
-            // Линия полностью заполняется
             const connectionLine = document.querySelector('.connection-line');
             if (connectionLine) {
                 connectionLine.classList.add('connected');
             }
             
-            // Останавливаем таймер
             if (this.connectionTimer) {
                 clearInterval(this.connectionTimer);
                 this.connectionTimer = null;
             }
             
-            // Меняем текст таймера
             const timerElement = document.getElementById('connectionTimer');
             if (timerElement) {
                 timerElement.innerHTML = `Готово`;
@@ -749,46 +702,36 @@ const Swipe = {
         console.log('🔄 Показываем экран соединения');
         this.isConnectionMode = true;
         
-        // Скрываем элементы свайпа
         if (this.labelLeft) this.labelLeft.style.display = 'none';
         if (this.labelRight) this.labelRight.style.display = 'none';
         if (this.hint) this.hint.style.display = 'none';
         
-        // Сбрасываем статус
         const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
             statusEl.innerHTML = ``;
         }
         
-        // Сбрасываем кнопку чата
         this.updateChatButton(false);
         
-        // Сбрасываем аватар тиммейта
         const teammateAvatar = document.querySelector('.teammate-avatar');
         if (teammateAvatar) {
             teammateAvatar.classList.remove('connected');
         }
         
-        // Сбрасываем линию соединения
         const connectionLine = document.querySelector('.connection-line');
         if (connectionLine) {
             connectionLine.classList.remove('connected');
         }
         
-        // Переключаем экраны
         document.getElementById('swipeScreen').classList.remove('active');
         document.getElementById('connectionScreen').classList.add('active');
         
-        // Обновляем данные игрока
         document.getElementById('teammateNick').textContent = this.currentPlayer?.nick || '';
         document.getElementById('teammateRating').innerHTML = this.currentPlayer?.rating || '';
         document.getElementById('connectionRank').textContent = this.currentPlayer?.rank || '';
         document.getElementById('connectionAge').textContent = this.currentPlayer?.age ? this.currentPlayer?.age + ' лет' : '';
         
-        // Запускаем таймер
         this.startConnectionTimer();
-        
-        // ВАЖНО: Подгоняем размер карточки ожидания
         this.adjustConnectionCardSize();
     },
     
@@ -843,11 +786,8 @@ const Swipe = {
             
             if (inviteLink) {
                 if (tg?.openTelegramLink) {
-                    console.log('📱 Открываем invite link через Telegram');
                     tg.openTelegramLink(inviteLink);
-                    
                     setTimeout(() => {
-                        console.log('⏱️ Открываем тему через 1.5 сек');
                         tg.openTelegramLink(chatLink);
                     }, 1500);
                 } else {
@@ -903,15 +843,12 @@ const Swipe = {
                 }
                 
                 this.updateChatButton(true, data.chat_link, data.invite_link);
-                
                 console.log('✅ Кнопка чата активирована');
                 if (data.invite_link) {
                     console.log('🔗 Invite link получен:', data.invite_link);
                 }
                 
                 this.gameCreated = true;
-                
-                // Подгоняем размер карточки ожидания после создания игры
                 this.adjustConnectionCardSize();
             } else {
                 console.error('createGame error: no chat_link', data);
@@ -929,6 +866,7 @@ const Swipe = {
         });
     },
     
+    // ========== ИСПРАВЛЕННЫЙ showPlayer ==========
     showPlayer(player) {
         this.currentPlayer = player;
         
@@ -941,11 +879,21 @@ const Swipe = {
             const playerNickEl = document.getElementById('swipePlayerNick');
             if (playerNickEl) playerNickEl.textContent = player.nick || '';
             
+            // ❤️ РЕЙТИНГ ДОВЕРИЯ (НЕ ТРОГАЕМ)
             const ratingValueEl = document.getElementById('swipeRatingValue');
-            if (ratingValueEl) ratingValueEl.textContent = player.rating || '';
+            if (ratingValueEl) ratingValueEl.textContent = player.trust_rating || '0';
             
+            // 🏆 РАНГ/ELO (меняется в зависимости от режима)
             const rankEl = document.getElementById('swipeRank');
-            if (rankEl) rankEl.textContent = player.rank || '';
+            if (rankEl) {
+                if (this.mode === 'FACEIT' || this.mode === 'PREMIER') {
+                    // Для FACEIT/PREMIER показываем ELO/CS Rating
+                    rankEl.textContent = player.rating || '0';
+                } else {
+                    // Для MM PRIME/PUBLIC показываем звание
+                    rankEl.textContent = player.rank || '—';
+                }
+            }
             
             const ageEl = document.getElementById('swipeAge');
             if (ageEl) ageEl.textContent = player.age ? player.age + ' лет' : '';
@@ -967,8 +915,6 @@ const Swipe = {
             if (commentEl) commentEl.textContent = player.comment || '';
             
             this.updateLinksVisibility();
-            
-            // ВАЖНО: После отображения игрока подгоняем размер карточки
             this.adjustCardSize();
         }
     },
@@ -1141,7 +1087,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('✅ Swipe: DOM загружен, финальная версия');
     window.Swipe = Swipe;
     
-    // Добавляем слушатели для подгона размера
     window.addEventListener('resize', () => {
         if (Swipe.card && !Swipe.isConnectionMode) {
             Swipe.adjustCardSize();
