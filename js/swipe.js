@@ -73,6 +73,63 @@ const Swipe = {
         }
     },
     
+    // ========== НОВАЯ ФУНКЦИЯ ДЛЯ АВТО-ПОДГОНА РАЗМЕРА ==========
+    adjustCardSize() {
+        if (!this.card || this.isConnectionMode) return;
+        
+        // Даем время на отрисовку
+        setTimeout(() => {
+            // Получаем высоту экрана
+            const screenHeight = window.innerHeight;
+            
+            // Высота header
+            const header = document.querySelector('.header');
+            const headerHeight = header ? header.offsetHeight : 60;
+            
+            // Высота bottom-nav
+            const bottomNav = document.querySelector('.bottom-nav');
+            const navHeight = bottomNav ? bottomNav.offsetHeight : 60;
+            
+            // Высота заголовка свайпа
+            const swipeHeader = document.querySelector('.swipe-header');
+            const headerTitleHeight = swipeHeader ? swipeHeader.offsetHeight : 80;
+            
+            // Доступная высота для карточки (с учетом отступов)
+            const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 40;
+            
+            // Текущая ширина карточки
+            let cardWidth = this.card.offsetWidth;
+            
+            // Нужная высота для пропорции 4:3 (высота = ширина * 1.33)
+            const neededHeight = cardWidth * 1.33;
+            
+            console.log(`📐 Подгон карточки: экран=${screenHeight}, доступно=${availableHeight}, нужно=${neededHeight}, ширина=${cardWidth}`);
+            
+            // Если нужная высота больше доступной
+            if (neededHeight > availableHeight) {
+                // Уменьшаем ширину, чтобы вписаться
+                const newWidth = Math.min(availableHeight / 1.33, cardWidth);
+                
+                // Не делаем карточку слишком узкой
+                if (newWidth > 250) {
+                    this.card.style.width = newWidth + 'px';
+                    this.card.style.maxWidth = newWidth + 'px';
+                    this.card.style.margin = '0 auto';
+                    console.log(`✅ Карточка уменьшена до ${newWidth}px`);
+                } else {
+                    // Если совсем узко — оставляем минимум
+                    this.card.style.width = '280px';
+                    this.card.style.maxWidth = '280px';
+                }
+            } else {
+                // Всё ок, оставляем как есть или ставим max-width
+                this.card.style.width = '100%';
+                this.card.style.maxWidth = '420px';
+                this.card.style.margin = '0 auto';
+            }
+        }, 100);
+    },
+    
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
         if (this.currentMatchId === matchId) {
             console.log('⚠️ startWithOpponent: уже показываем этот матч, игнорируем');
@@ -831,6 +888,9 @@ const Swipe = {
             if (commentEl) commentEl.textContent = player.comment || 'нет комментария';
             
             this.updateLinksVisibility();
+            
+            // ВАЖНО: После отображения игрока подгоняем размер карточки
+            this.adjustCardSize();
         }
     },
     
@@ -1015,6 +1075,21 @@ const Swipe = {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('✅ Swipe: DOM загружен, финальная версия');
     window.Swipe = Swipe;
+    
+    // Добавляем слушатели для подгона размера
+    window.addEventListener('resize', () => {
+        if (Swipe.card && !Swipe.isConnectionMode) {
+            Swipe.adjustCardSize();
+        }
+    });
+    
+    window.addEventListener('orientationchange', () => {
+        setTimeout(() => {
+            if (Swipe.card && !Swipe.isConnectionMode) {
+                Swipe.adjustCardSize();
+            }
+        }, 200);
+    });
 });
 
 if (document.getElementById('swipeScreen')?.classList.contains('active')) {
