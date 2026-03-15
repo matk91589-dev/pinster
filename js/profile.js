@@ -37,7 +37,7 @@ const Profile = {
         return urlParams.get('tg_id');
     },
     
-    // Toast уведомление - УБРАЛ ВСЕ ЭМОДЗИ
+    // Toast уведомление - без эмодзи
     showToast(message) {
         if (this.toastTimeout) {
             clearTimeout(this.toastTimeout);
@@ -176,55 +176,7 @@ const Profile = {
         this.clearAllErrors();
     },
     
-    // 👇 ИСПРАВЛЕННАЯ ФУНКЦИЯ - сразу открывает проводник, без лишних сообщений
-    editAvatar() {
-        if (!this.editMode) {
-            this.showToast('Для изменений перейдите в режим редактирования');
-            return;
-        }
-        
-        // Сразу открываем проводник
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = 'image/*';
-        fileInput.style.display = 'none';
-        document.body.appendChild(fileInput);
-        
-        fileInput.onchange = async (e) => {
-            const file = e.target.files[0];
-            if (!file) {
-                fileInput.remove();
-                return;
-            }
-            
-            if (file.size > 5 * 1024 * 1024) {
-                this.showToast('Файл слишком большой (макс 5MB)');
-                fileInput.remove();
-                return;
-            }
-            
-            if (!file.type.startsWith('image/')) {
-                this.showToast('Можно загружать только изображения');
-                fileInput.remove();
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const avatarDiv = document.getElementById('profileAvatar');
-                if (avatarDiv) {
-                    avatarDiv.innerHTML = `<img src="${e.target.result}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-                    this.tempAvatarUrl = e.target.result;
-                }
-                fileInput.remove();
-            };
-            reader.readAsDataURL(file);
-            
-            this.showToast('Аватарка выбрана, сохраните профиль');
-        };
-        
-        fileInput.click();
-    },
+    // 👇 ФУНКЦИЯ editAvatar() УДАЛЕНА - теперь используем Avatar.select()
     
     toggleEditMode() {
         this.editMode = !this.editMode;
@@ -546,7 +498,10 @@ const Profile = {
         if (avatar) {
             avatar.addEventListener('click', (e) => {
                 if (this.editMode) {
-                    this.editAvatar();
+                    // 👇 ВЫЗЫВАЕМ Avatar.select() вместо this.editAvatar()
+                    if (window.Avatar && Avatar.select) {
+                        Avatar.select();
+                    }
                 } else {
                     e.preventDefault();
                     e.stopPropagation();
