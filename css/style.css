@@ -2081,30 +2081,26 @@ input:checked + .slider:before {
     align-items: center;
     justify-content: center;
     margin: 0;
-    padding: 0 10px;
+    padding: 0;
     min-height: 0;
 }
 
 /* Новая карточка игрока - МИНИМАЛИЗМ */
 .swipe-card {
-    width: 90%; /* На телефоне почти на всю ширину */
-    max-width: 380px; /* Максимум для больших телефонов */
-    aspect-ratio: 4 / 5; /* Соотношение 4:5 */
+    width: 100%;  /* Всегда на всю ширину */
+    max-width: 420px;  /* Максимум для больших экранов */
     margin: 0 auto;
     background: var(--surface);
-    border-radius: 28px;
+    border-radius: 24px;
     border: 1px solid #2A2F3A;
-    padding: 20px 16px;
+    padding: 20px;
     transition: transform 0.25s ease;
     touch-action: pan-y;
     will-change: transform;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
     position: relative;
     z-index: 10;
-    
-    /* Растягиваем контент на всю высоту */
-    display: flex;
-    flex-direction: column;
+    /* Убрал фиксированную высоту, пусть подстраивается */
 }
 
 /* Убираем нахуй эффекты при наведении */
@@ -2181,27 +2177,6 @@ input:checked + .slider:before {
     gap: 12px; /* Чуть меньше отступы */
     height: 100%;
     flex: 1;
-}
-
-/* Для ПК (ширина > 600px) делаем компактнее */
-@media (min-width: 600px) {
-    .swipe-card {
-        max-width: 340px;
-        aspect-ratio: 4 / 4.5; /* Чуть ниже на ПК */
-    }
-}
-
-/* Для совсем маленьких телефонов */
-@media (max-width: 380px) {
-    .swipe-card {
-        width: 95%;
-        padding: 16px 12px;
-        aspect-ratio: 4 / 4.8;
-    }
-    
-    .swipe-card-content {
-        gap: 8px;
-    }
 }
 
 .swipe-player-row {
