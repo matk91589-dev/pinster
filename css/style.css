@@ -3242,3 +3242,17 @@ button:active { transform: scale(0.96); }
 html {
     scroll-behavior: smooth;
 }
+
+/* Подсветка аватарки в режиме редактирования */
+.profile-avatar.editable-avatar {
+    border: 2px solid #FF5500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 10px rgba(255, 85, 0, 0.3);
+}
+
+.profile-avatar.editable-avatar:hover {
+    transform: scale(1.05);
+    border-color: #ff7700;
+    box-shadow: 0 0 15px rgba(255, 85, 0, 0.5);
+}
