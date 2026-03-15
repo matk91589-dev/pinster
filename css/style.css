@@ -3257,25 +3257,22 @@ html {
     box-shadow: 0 0 15px rgba(255, 85, 0, 0.5);
 }
 
-/* ===== НАСТРОЙКИ ===== */
+/* ===== НАСТРОЙКИ - ФИНАЛ (0 ОТСТУПОВ) ===== */
 .settings-screen {
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
     height: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #FF5500 #2A2F3A;
 }
 
-/* Контейнер для контента с отступами */
-.settings-content {
-    padding: 0 16px;
-    width: 100%;
-    box-sizing: border-box;
+/* Убираем отступы у родительских контейнеров */
+.content {
+    padding: 0 !important;
 }
 
-/* Стили для скролла */
 .settings-screen::-webkit-scrollbar {
     width: 4px;
 }
@@ -3293,10 +3290,9 @@ html {
     background: #ff7700;
 }
 
-/* Хедер */
 .settings-header {
-    padding: 12px 16px 8px 16px;
-    margin: 0;
+    padding: 12px 16px 8px 16px !important;
+    margin: 0 !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -3312,10 +3308,9 @@ html {
     margin: 0;
 }
 
-/* Секции */
 .settings-section {
-    margin: 0 0 24px 0;
-    padding: 0;
+    margin: 0 0 24px 0 !important;
+    padding: 0 !important;
     width: 100%;
 }
 
@@ -3325,18 +3320,18 @@ html {
     color: #8E97A6;
     text-transform: uppercase;
     letter-spacing: 0.3px;
-    margin: 0 0 8px 0;
-    padding: 0;
+    margin: 0 0 8px 0 !important;
+    padding: 0 16px !important;
     width: 100%;
+    box-sizing: border-box;
 }
 
-/* Строки */
 .settings-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 0;
-    margin: 0;
+    padding: 12px 16px !important;
+    margin: 0 !important;
     border-bottom: 1px solid rgba(255,255,255,0.05);
     cursor: pointer;
     width: 100%;
@@ -3351,8 +3346,8 @@ html {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 0;
-    margin: 0;
+    padding: 12px 16px !important;
+    margin: 0 !important;
     border-bottom: 1px solid rgba(255,255,255,0.05);
     text-decoration: none;
     color: inherit;
