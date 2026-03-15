@@ -3259,11 +3259,12 @@ html {
 
 /* ===== НАСТРОЙКИ - СТИЛЬ TELEGRAM ===== */
 .settings-screen {
-    padding: 0 16px;
+    padding: 0; /* Убрал отступы по бокам */
+    width: 100%;
 }
 
 .settings-header {
-    padding: 16px 0;
+    padding: 16px 16px 8px 16px; /* Отступы только у заголовка */
 }
 
 .settings-title {
@@ -3272,8 +3273,13 @@ html {
     color: var(--text-primary);
 }
 
+.settings-content {
+    width: 100%;
+}
+
 .settings-section {
     margin-bottom: 24px;
+    width: 100%;
 }
 
 .settings-section-title {
@@ -3283,16 +3289,18 @@ html {
     text-transform: uppercase;
     letter-spacing: 0.3px;
     margin-bottom: 8px;
-    padding-left: 4px;
+    padding-left: 16px; /* Отступ только для заголовка секции */
 }
 
 .settings-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 0;
+    padding: 12px 16px; /* Отступы только у строк */
     border-bottom: 1px solid rgba(255,255,255,0.05);
     cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .settings-row:last-child {
@@ -3303,11 +3311,13 @@ html {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 0;
+    padding: 12px 16px; /* Отступы только у строк */
     border-bottom: 1px solid rgba(255,255,255,0.05);
     text-decoration: none;
     color: inherit;
     cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .settings-row-link:last-child {
@@ -3340,6 +3350,7 @@ html {
     position: relative;
     cursor: pointer;
     transition: background 0.2s ease;
+    flex-shrink: 0;
 }
 
 .toggle-switch.active {
