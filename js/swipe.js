@@ -132,6 +132,9 @@ const Swipe = {
             // Принудительно центрируем
             this.card.style.marginLeft = 'auto';
             this.card.style.marginRight = 'auto';
+            
+            // Сохраняем размер для экрана ожидания
+            this.lastSwipeCardWidth = this.card.offsetWidth;
         }, 100);
     },
     
@@ -141,45 +144,57 @@ const Swipe = {
         if (!connectionCard || !this.isConnectionMode) return;
         
         setTimeout(() => {
-            // Берем размер карточки свайпа
+            // Берем размер карточки свайпа (если есть)
             const swipeCard = document.getElementById('swipeCard');
             
+            let targetWidth = 0;
+            
             if (swipeCard && swipeCard.offsetWidth > 0) {
-                // Делаем такую же ширину
-                const swipeWidth = swipeCard.offsetWidth;
-                connectionCard.style.width = swipeWidth + 'px';
-                connectionCard.style.maxWidth = swipeWidth + 'px';
-                connectionCard.style.margin = '0 auto';
-                console.log(`✅ Экран ожидания подогнан под свайп: ${swipeWidth}px`);
-                return;
-            }
-            
-            // Если карточки свайпа нет - считаем сами
-            const screenHeight = window.innerHeight;
-            const header = document.querySelector('.header');
-            const headerHeight = header ? header.offsetHeight : 60;
-            const bottomNav = document.querySelector('.bottom-nav');
-            const navHeight = bottomNav ? bottomNav.offsetHeight : 60;
-            const swipeHeader = document.querySelector('.swipe-header');
-            const headerTitleHeight = swipeHeader ? swipeHeader.offsetHeight : 80;
-            const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 20;
-            const maxWidth = 420;
-            let idealWidth = Math.min(maxWidth, window.innerWidth * 0.9);
-            const neededHeight = idealWidth * 1.25; // 4:5
-            
-            console.log(`📐 Подгон карточки ожидания: доступно=${availableHeight}, нужно=${neededHeight}`);
-            
-            if (neededHeight > availableHeight) {
-                const newWidth = Math.max(availableHeight / 1.25, 320);
-                connectionCard.style.width = newWidth + 'px';
-                connectionCard.style.maxWidth = newWidth + 'px';
-                console.log(`✅ Карточка ожидания уменьшена до ${newWidth}px`);
+                targetWidth = swipeCard.offsetWidth;
+                console.log(`📏 Берем размер от карточки свайпа: ${targetWidth}px`);
+            } else if (this.lastSwipeCardWidth > 0) {
+                targetWidth = this.lastSwipeCardWidth;
+                console.log(`📏 Берем сохраненный размер: ${targetWidth}px`);
             } else {
-                connectionCard.style.width = '100%';
-                connectionCard.style.maxWidth = maxWidth + 'px';
+                // Если ничего нет - считаем сами
+                const screenHeight = window.innerHeight;
+                const header = document.querySelector('.header');
+                const headerHeight = header ? header.offsetHeight : 60;
+                const bottomNav = document.querySelector('.bottom-nav');
+                const navHeight = bottomNav ? bottomNav.offsetHeight : 60;
+                const swipeHeader = document.querySelector('.swipe-header');
+                const headerTitleHeight = swipeHeader ? swipeHeader.offsetHeight : 80;
+                const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 20;
+                const maxWidth = 420;
+                let idealWidth = Math.min(maxWidth, window.innerWidth * 0.9);
+                const neededHeight = idealWidth * 1.25;
+                
+                if (neededHeight > availableHeight) {
+                    targetWidth = Math.max(availableHeight / 1.25, 320);
+                } else {
+                    targetWidth = maxWidth;
+                }
+                console.log(`📏 Рассчитали размер: ${targetWidth}px`);
             }
+            
+            // Применяем размер
+            connectionCard.style.width = targetWidth + 'px';
+            connectionCard.style.maxWidth = targetWidth + 'px';
             connectionCard.style.margin = '0 auto';
-        }, 100);
+            connectionCard.style.boxSizing = 'border-box';
+            
+            console.log(`✅ Экран ожидания установлен: ${targetWidth}px`);
+            
+            // Проверяем через 100мс
+            setTimeout(() => {
+                if (connectionCard.offsetWidth !== targetWidth) {
+                    connectionCard.style.width = targetWidth + 'px';
+                    connectionCard.style.maxWidth = targetWidth + 'px';
+                    console.log(`✅ Повторная подгонка: ${targetWidth}px`);
+                }
+            }, 100);
+            
+        }, 150); // Немного увеличил задержку
     },
     
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
