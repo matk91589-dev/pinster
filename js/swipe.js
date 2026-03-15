@@ -1,844 +1,1169 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+// ============================================
+// СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// ============================================
+
+const Swipe = {
+    // Элементы DOM
+    card: null,
+    container: null,
+    hint: null,
+    loading: null,
+    labelLeft: null,
+    labelRight: null,
+    timerElement: null,
+
+    // Переменные для drag
+    isDragging: false,
+    startX: 0,
+    currentX: 0,
+    initialX: 0,
     
-    <!-- Блокировка кэша -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+    // Константы
+    SWIPE_THRESHOLD: 0.25,
+    MAX_ROTATE: 6,
+    ANIMATION_DURATION: 250,
+    AUTO_COMPLETE_DURATION: 300,
+    MIN_THRESHOLD_PX: 150,
     
-    <title>Pingster — Telegram Mini App</title>
+    // Цвета для подсветки
+    BRIGHT_GREEN: 'rgba(76, 175, 80, 0.25)',
+    BRIGHT_RED: 'rgba(244, 67, 54, 0.25)',
     
-    <!-- Глобальная версия (timestamp при загрузке) -->
-    <script>
-        window.BUILD_VERSION = Date.now();
-        console.log('🔄 Версия сборки:', window.BUILD_VERSION);
-    </script>
+    // Данные
+    currentPlayer: null,
+    currentMatchId: null,
+    playersQueue: [],
+    mode: 'PREMIER',
+    isInitialized: false,
+    connectionTimer: null,
+    cardTimerInterval: null,
+    isConnectionMode: false,
+    matchExpiresAt: null,
+    serverTime: null,
+    matchPolling: null,
+    gameCreated: false,
+    gameCreating: false,
+    chatLink: null,
+    inviteLink: null,
     
-    <!-- Telegram Mini App SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    // Сохраненные размеры для экрана ожидания
+    lastSwipeCardWidth: 0,
+    lastSwipeCardHeight: 0,
     
-    <!-- ========== ЗАЩИТА ОТ FOUC ========== -->
-    <style>
-        body {
-            background-color: #0D0F15;
-            margin: 0;
-            padding: 0;
-            opacity: 0;
-            transition: opacity 0.15s ease;
+    init(mode) {
+        console.log('🔥 Swipe.init() with mode:', mode);
+        
+        this.mode = mode || 'PREMIER';
+        this.card = document.getElementById('swipeCard');
+        this.container = document.getElementById('swipeContainer');
+        this.hint = document.getElementById('swipeHint');
+        this.loading = document.getElementById('swipeLoading');
+        this.labelLeft = document.getElementById('swipeLabelLeft');
+        this.labelRight = document.getElementById('swipeLabelRight');
+        
+        if (!this.card) {
+            console.error('❌ Swipe card not found!');
+            return;
         }
-        body.loaded {
-            opacity: 1;
+        
+        this.blockScroll();
+        this.showHintOnce();
+        
+        if (this.loading) this.loading.classList.add('active');
+        
+        if (!this.isInitialized) {
+            this.setupEventListeners();
+            this.isInitialized = true;
         }
-        .screen {
-            display: none;
-        }
-        .screen.active {
-            display: flex;
-        }
-    </style>
+    },
     
-    <!-- Preload CSS -->
-    <link rel="preload" href="css/style.css" as="style">
-    <link rel="preload" href="css/shop-cases.css" as="style">
-    <link rel="preload" href="css/animations.css" as="style">
-    
-    <!-- Основные CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/shop-cases.css">
-    <link rel="stylesheet" href="css/animations.css">
-    
-    <!-- Дополнительные стили -->
-    <style>
-        .screen {
-            transition: opacity 0.2s ease;
-            opacity: 0;
-            display: none;
-        }
-        .screen.active {
-            opacity: 1;
-            display: flex;
-        }
-        .edit-name-input {
-            width: 100%;
-            padding: 8px 12px;
-            background: #1A1D24;
-            border: 2px solid #FF5500;
-            border-radius: 8px;
-            color: #F5F5F5;
-            font-size: 18px;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            outline: none;
-            margin: 0;
-            box-sizing: border-box;
-        }
-        .edit-name-input:focus {
-            border-color: #FF5500;
-            box-shadow: 0 0 0 2px rgba(255, 85, 0, 0.2);
-        }
-        .profile-name-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            width: 100%;
-        }
-        .profile-name-row .profile-name,
-        .profile-name-row .edit-name-input {
-            flex: 1;
-            min-width: 0;
-        }
-        .tg-avatar-svg {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: #2B2F36;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .tg-avatar-svg svg {
-            width: 42px;
-            height: 42px;
-        }
-        #diagnostic-badge {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: #FF5500;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            z-index: 9999;
-            display: none;
-        }
-        .connection-button {
-            width: 100%;
-            margin-top: 24px;
-            padding: 0 16px;
-        }
-        .tg-chat-button {
-            width: 100%;
-            height: 52px;
-            border-radius: 12px;
-            border: none;
-            font-size: 18px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: transparent;
-            border: 1.5px solid rgba(255, 255, 255, 0.2);
-            color: rgba(255, 255, 255, 0.5);
-            pointer-events: none;
-        }
-        .tg-chat-button.active {
-            background: #37AEE2;
-            border: none;
-            color: white;
-            pointer-events: auto;
-            box-shadow: 0 4px 12px rgba(55, 174, 226, 0.3);
-        }
-        .tg-chat-button.active:hover {
-            background: #2E9AC9;
-            transform: scale(1.02);
-        }
-        .tg-chat-button svg {
-            width: 22px;
-            height: 22px;
-        }
-        .tg-chat-button.active svg {
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-        }
-        .connection-tooltip {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.3);
-            text-align: center;
-            margin-top: 8px;
-            transition: color 0.2s ease;
-        }
-        .connection-tooltip.active {
-            color: #37AEE2;
-        }
-    </style>
-</head>
-<body>
-    <script>
-        (function() {
-            function showContent() {
-                document.body.classList.add('loaded');
-            }
-            if (document.readyState === 'complete') {
-                setTimeout(showContent, 50);
+    // ========== ФУНКЦИЯ ДЛЯ АВТО-ПОДГОНА РАЗМЕРА КАРТОЧКИ СВАЙПА ==========
+    adjustCardSize() {
+        if (!this.card || this.isConnectionMode) return;
+        
+        // Даем время на отрисовку
+        setTimeout(() => {
+            // Получаем высоту экрана
+            const screenHeight = window.innerHeight;
+            
+            // Высота header
+            const header = document.querySelector('.header');
+            const headerHeight = header ? header.offsetHeight : 60;
+            
+            // Высота bottom-nav
+            const bottomNav = document.querySelector('.bottom-nav');
+            const navHeight = bottomNav ? bottomNav.offsetHeight : 60;
+            
+            // Высота заголовка свайпа
+            const swipeHeader = document.querySelector('.swipe-header');
+            const headerTitleHeight = swipeHeader ? swipeHeader.offsetHeight : 80;
+            
+            // Доступная высота для карточки (с учетом отступов)
+            const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 20;
+            
+            // Максимальная ширина (не больше 420px)
+            const maxWidth = 420;
+            
+            // Рассчитываем идеальную ширину для 4:5
+            let idealWidth = Math.min(maxWidth, window.innerWidth * 0.9);
+            
+            // Нужная высота для этой ширины
+            const neededHeight = idealWidth * 1.25; // 4:5
+            
+            console.log(`📐 Подгон карточки свайпа: экран=${screenHeight}, доступно=${availableHeight}, нужно=${neededHeight}, ширина=${idealWidth}`);
+            
+            // Если нужная высота больше доступной
+            if (neededHeight > availableHeight) {
+                // Уменьшаем ширину, чтобы вписаться, но не слишком сильно
+                const newWidth = Math.max(availableHeight / 1.25, 320); // Минимум 320px
+                
+                if (newWidth <= maxWidth) {
+                    this.card.style.width = newWidth + 'px';
+                    this.card.style.maxWidth = newWidth + 'px';
+                    this.card.style.margin = '0 auto';
+                    console.log(`✅ Карточка свайпа уменьшена до ${newWidth}px`);
+                } else {
+                    this.card.style.width = maxWidth + 'px';
+                    this.card.style.maxWidth = maxWidth + 'px';
+                }
             } else {
-                window.addEventListener('load', function() {
-                    setTimeout(showContent, 50);
-                });
+                // Всё ок, ставим ширину на всю
+                this.card.style.width = '100%';
+                this.card.style.maxWidth = maxWidth + 'px';
+                this.card.style.margin = '0 auto';
             }
-        })();
-    </script>
+            
+            // Принудительно центрируем
+            this.card.style.marginLeft = 'auto';
+            this.card.style.marginRight = 'auto';
+            
+            // Сохраняем размеры для экрана ожидания (и ширину, и высоту)
+            this.lastSwipeCardWidth = this.card.offsetWidth;
+            this.lastSwipeCardHeight = this.card.offsetHeight;
+            
+            console.log(`💾 Сохранены размеры: ${this.lastSwipeCardWidth}px x ${this.lastSwipeCardHeight}px`);
+        }, 100);
+    },
     
-    <div id="diagnostic-badge">⚠️</div>
+    // ========== ФУНКЦИЯ ДЛЯ АВТО-ПОДГОНА РАЗМЕРА КАРТОЧКИ ОЖИДАНИЯ ==========
+    adjustConnectionCardSize() {
+        const connectionCard = document.getElementById('connectionCard');
+        if (!connectionCard || !this.isConnectionMode) return;
+        
+        setTimeout(() => {
+            // Берем карточку свайпа
+            const swipeCard = document.getElementById('swipeCard');
+            
+            let targetWidth = 0;
+            let targetHeight = 0;
+            
+            if (swipeCard && swipeCard.offsetWidth > 0 && swipeCard.offsetHeight > 0) {
+                targetWidth = swipeCard.offsetWidth;
+                targetHeight = swipeCard.offsetHeight;
+                console.log(`📏 Берем размер от карточки свайпа: ${targetWidth}px x ${targetHeight}px`);
+            } else if (this.lastSwipeCardWidth > 0 && this.lastSwipeCardHeight > 0) {
+                targetWidth = this.lastSwipeCardWidth;
+                targetHeight = this.lastSwipeCardHeight;
+                console.log(`📏 Берем сохраненные размеры: ${targetWidth}px x ${targetHeight}px`);
+            } else {
+                // Если ничего нет - считаем сами
+                const screenHeight = window.innerHeight;
+                const header = document.querySelector('.header');
+                const headerHeight = header ? header.offsetHeight : 60;
+                const bottomNav = document.querySelector('.bottom-nav');
+                const navHeight = bottomNav ? bottomNav.offsetHeight : 60;
+                const swipeHeader = document.querySelector('.swipe-header');
+                const headerTitleHeight = swipeHeader ? swipeHeader.offsetHeight : 80;
+                const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 20;
+                const maxWidth = 420;
+                let idealWidth = Math.min(maxWidth, window.innerWidth * 0.9);
+                const neededHeight = idealWidth * 1.25;
+                
+                if (neededHeight > availableHeight) {
+                    targetWidth = Math.max(availableHeight / 1.25, 320);
+                    targetHeight = targetWidth * 1.25;
+                } else {
+                    targetWidth = maxWidth;
+                    targetHeight = targetWidth * 1.25;
+                }
+                console.log(`📏 Рассчитали размер: ${targetWidth}px x ${targetHeight}px`);
+            }
+            
+            // Применяем размер (и ширину, и высоту)
+            connectionCard.style.width = targetWidth + 'px';
+            connectionCard.style.maxWidth = targetWidth + 'px';
+            connectionCard.style.height = targetHeight + 'px';
+            connectionCard.style.minHeight = targetHeight + 'px';
+            connectionCard.style.maxHeight = targetHeight + 'px';
+            connectionCard.style.margin = '0 auto';
+            connectionCard.style.boxSizing = 'border-box';
+            
+            // Растягиваем контент на всю высоту
+            const content = connectionCard.querySelector('.swipe-card-content');
+            if (content) {
+                content.style.height = '100%';
+                content.style.display = 'flex';
+                content.style.flexDirection = 'column';
+                content.style.justifyContent = 'space-between';
+            }
+            
+            console.log(`✅ Экран ожидания установлен: ${targetWidth}px x ${targetHeight}px`);
+            
+            // Проверяем через 200мс
+            setTimeout(() => {
+                if (connectionCard.offsetWidth !== targetWidth || connectionCard.offsetHeight !== targetHeight) {
+                    connectionCard.style.width = targetWidth + 'px';
+                    connectionCard.style.height = targetHeight + 'px';
+                    console.log(`✅ Повторная подгонка: ${targetWidth}px x ${targetHeight}px`);
+                }
+            }, 200);
+            
+        }, 150);
+    },
     
-    <div class="phone-frame">
+    startWithOpponent(opponent, matchId, expiresAt, serverTime) {
+        if (this.currentMatchId === matchId) {
+            console.log('⚠️ startWithOpponent: уже показываем этот матч, игнорируем');
+            return;
+        }
+        if (this.currentMatchId && this.currentMatchId !== matchId) {
+            console.warn('⚠️ startWithOpponent: заменяем текущий матч', this.currentMatchId, 'на', matchId);
+            this.exitSwipeMode('замена матча');
+        }
+
+        console.log('🔄 Swipe.startWithOpponent() вызван');
+        console.log('📦 opponent:', opponent);
+        console.log('📦 matchId:', matchId);
+        console.log('📦 expiresAt:', expiresAt);
+        console.log('📦 serverTime:', serverTime);
         
-        <!-- Хедер -->
-        <header class="header">
-            <div class="logo" onclick="Logo.handleClick()">
-                <span class="ping">Ping</span><span class="ster">ster</span>
-            </div>
-            <div id="settingsIcon" class="icon-settings" onclick="App.showScreen('settingsScreen', true)">
-                <svg viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/>
-                </svg>
-            </div>
-        </header>
-
-        <main class="content">
-
-            <!-- ГЛАВНЫЙ ЭКРАН -->
-            <div id="mainScreen" class="screen main-screen">
-                <div class="section-title">Выбор режима</div>
-                <div class="section-subtitle">Подберите подходящий</div>
-                <div class="mode-container">
-                    <button class="mode-btn faceit" onclick="App.showScreen('faceitScreen', false)">FACEIT</button>
-                    <button class="mode-btn premier" onclick="App.showScreen('premierScreen', false)">PREMIER</button>
-                    <button class="mode-btn prime" onclick="App.showScreen('primeScreen', false)">MM PRIME</button>
-                    <button class="mode-btn public" onclick="App.showScreen('publicScreen', false)">MM PUBLIC</button>
-                </div>
-            </div>
-
-            <!-- ЭКРАН МАГАЗИНА -->
-            <div id="shopScreen" class="screen shop-screen">
-                <div class="title-row">
-                    <div class="title-left"><div class="section-title">Магазин</div></div>
-                    <div class="coins-header">Pingcoins: <span id="coinsAmount">99999</span></div>
-                </div>
-                <div class="shop-tabs">
-                    <div class="shop-tab active" onclick="Shop.showTab('cases')">Кейсы</div>
-                    <div class="shop-tab" onclick="Shop.showTab('inventory')" id="inventoryTab">Инвентарь</div>
-                </div>
-                <div class="cases-section">
-                    <div class="cases-grid">
-                        <div class="case-item">
-                            <div class="case-icon"><img src="cases/common_case.png" alt="common case"></div>
-                            <div class="case-info">
-                                <div class="case-name">Базовый кейс</div>
-                                <div class="case-price-row">
-                                    <span class="price-value">100</span>
-                                    <button class="buy-btn-simple" onclick="Shop.buyCase('common_case')">Купить</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="case-item">
-                            <div class="case-icon"><img src="cases/rare_case.png" alt="rare case"></div>
-                            <div class="case-info">
-                                <div class="case-name">Редкий кейс</div>
-                                <div class="case-price-row">
-                                    <span class="price-value">250</span>
-                                    <button class="buy-btn-simple" onclick="Shop.buyCase('rare_case')">Купить</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="case-item">
-                            <div class="case-icon"><img src="cases/premium_case.png" alt="premium case"></div>
-                            <div class="case-info">
-                                <div class="case-name">Легендарный кейс</div>
-                                <div class="case-price-row">
-                                    <span class="price-value">500</span>
-                                    <button class="buy-btn-simple" onclick="Shop.buyCase('premium_case')">Купить</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="case-item">
-                            <div class="case-icon"><img src="cases/secret_case.png" alt="secret case"></div>
-                            <div class="case-info">
-                                <div class="case-name">Секретный кейс</div>
-                                <div class="case-price-row">
-                                    <span class="price-value">1000</span>
-                                    <button class="buy-btn-simple" onclick="Shop.buyCase('secret_case')">Купить</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="inventory-section hidden">
-                    <div class="inventory-grid">
-                        <!-- ИНВЕНТАРЬ -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- ЭКРАН ПРОФИЛЯ -->
-            <div id="profileScreen" class="screen profile-screen">
-                <div class="title-row">
-                    <div class="title-left">
-                        <div class="section-title">Ваш профиль</div>
-                        <div class="edit-controls">
-                            <div id="editToggle" class="edit-title-icon" onclick="Profile.toggleEditMode()">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M12 20h9" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                                    <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <div id="applyBtn" class="apply-btn" onclick="Profile.applyChanges()">Применить</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="profile-header">
-                    <div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()">
-                        <div class="tg-avatar-svg">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                                <circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2" fill="none"/>
-                                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#ffffff" stroke-width="2" fill="none"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="profile-info">
-                        <div class="profile-name-label">ваш никнейм</div>
-                        <div class="profile-name-row">
-                            <span id="profileName" class="profile-name" onclick="Profile.editName()">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stats-row">
-                    <div class="stat-card" id="ratingCard">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" id="ratingValue" placeholder="0" value="0" readonly disabled>
-                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
-                        </div>
-                    </div>
-                    <div class="stat-card" id="ageCard">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="ageValueContainer">
-                            <input type="text" id="ageValue" placeholder="0-100" value="" maxlength="3" readonly>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="profile-stats">
-                    <div class="profile-stat-card" id="steamCard">
-                        <div class="profile-stat-label">Ссылка Steam</div>
-                        <input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" value="" maxlength="50" readonly>
-                    </div>
-                    <div class="profile-stat-card" id="faceitLinkCard">
-                        <div class="profile-stat-label">Ссылка Faceit</div>
-                        <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit / пропустите" value="" maxlength="50" readonly>
-                    </div>
-                </div>
-
-                <!-- БЛОК ДРУЗЕЙ В ПРОФИЛЕ -->
-                <div class="friends-section" id="friendsSection">
-                    <div id="friendsHeader" class="friends-header">
-                        <span class="friends-title">Ваши друзья: 0</span>
-                        <div class="friends-actions">
-                            <div class="friends-arrow" onclick="Team.showTeamPage()">
-                                <svg viewBox="0 0 24 24" width="20" height="20">
-                                    <path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="friends-list" id="friendsList"></div>
-                </div>
-            </div>
-
-            <!-- ЭКРАН КОМАНДА -->
-            <div id="teamScreen" class="screen team-screen">
-                <div class="team-header">
-                    <div class="team-back" onclick="Team.goBack()">←</div>
-                    <div class="team-title">КОМАНДА</div>
-                    <div class="team-requests" onclick="Team.showRequests()">
-                        <span class="tg-help-minimal">?</span>
-                        <span>запросы</span>
-                    </div>
-                </div>
-
-                <div class="team-tabs">
-                    <div class="team-tab active" onclick="Team.switchTab('friends', this)">ВАШИ ДРУЗЬЯ</div>
-                    <div class="team-tab" onclick="Team.switchTab('search', this)">ПОИСК ИГРОКА</div>
-                </div>
-
-                <div class="team-content" id="teamContent"></div>
-            </div>
-
-            <!-- ЭКРАН СВАЙП-КАРТОЧЕК - ТЕСТОВЫЕ ДАННЫЕ УДАЛЕНЫ -->
-            <div id="swipeScreen" class="screen swipe-screen">
-                <div class="swipe-header">
-                    <div class="swipe-title">Поиск тиммейтов</div>
-                    <div class="swipe-subtitle">
-                        <span class="swipe-subtitle-left">← отклонить</span>
-                        <span class="swipe-subtitle-divider">|</span>
-                        <span class="swipe-subtitle-right">принять →</span>
-                    </div>
-                </div>
-
-                <div class="swipe-container" id="swipeContainer">
-                    <div class="swipe-card" id="swipeCard">
-                        <div class="swipe-label swipe-label-left" id="swipeLabelLeft">SKIP</div>
-                        <div class="swipe-label swipe-label-right" id="swipeLabelRight">INVITE</div>
-                        
-                        <div class="swipe-card-content">
-                            <div class="swipe-timer" id="swipeTimer">30с</div>
-                            
-                            <div class="swipe-player-row">
-                                <div class="swipe-avatar">
-                                    <div class="tg-avatar-svg" style="width: 70px; height: 70px;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="35" height="35">
-                                            <circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/>
-                                            <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                                
-                                <div class="swipe-name-block">
-                                    <div class="swipe-player-id" id="swipePlayerId"></div>
-                                    <div class="swipe-player-nick" id="swipePlayerNick"></div>
-                                </div>
-                                
-                                <div class="swipe-rating-block">
-                                    <span class="swipe-rating-value" id="swipeRatingValue"></span>
-                                    <span class="heart-icon">
-                                        <svg viewBox="0 0 24 24" width="18" height="18">
-                                            <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#F5F5F5" stroke-width="2" fill="none"/>
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="swipe-rating-line"></div>
-
-                            <div class="swipe-stats-row three-cols">
-                                <div class="swipe-stat-item">
-                                    <div class="swipe-stat-label">РАНГ</div>
-                                    <div class="swipe-stat-value" id="swipeRank"></div>
-                                </div>
-                                <div class="swipe-stat-item">
-                                    <div class="swipe-stat-label">ВОЗРАСТ</div>
-                                    <div class="swipe-stat-value" id="swipeAge"></div>
-                                </div>
-                                <div class="swipe-stat-item">
-                                    <div class="swipe-stat-label">СТИЛЬ</div>
-                                    <div class="swipe-stat-value" id="swipeStyle"></div>
-                                </div>
-                            </div>
-
-                            <div class="swipe-steam-container">
-                                <div class="swipe-link-label">Ссылка Steam</div>
-                                <div class="swipe-link-value" id="swipeSteamLink"></div>
-                            </div>
-
-                            <div class="swipe-faceit-container">
-                                <div class="swipe-link-label">Ссылка Faceit</div>
-                                <div class="swipe-link-value" id="swipeFaceitLink"></div>
-                            </div>
-
-                            <div class="swipe-comment">
-                                <div class="swipe-comment-label">Комментарий</div>
-                                <div class="swipe-comment-text" id="swipeComment"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="swipe-loading" id="swipeLoading">
-                    <div class="spinner-small"></div>
-                </div>
-            </div>
-
-            <!-- ЭКРАН СОЕДИНЕНИЯ - ТЕСТОВЫЕ ДАННЫЕ УДАЛЕНЫ, НО ВСЕ ID СОХРАНЕНЫ -->
-            <div id="connectionScreen" class="screen connection-screen">
-                <div class="swipe-header">
-                    <div class="swipe-title">Тиммейт найден</div>
-                </div>
-
-                <div class="swipe-container" id="connectionContainer">
-                    <div class="swipe-card" id="connectionCard">
-                        <div class="connection-timer" id="connectionTimer">
-                            30с
-                        </div>
-                        
-                        <div class="swipe-card-content connection-mode">
-                            <div class="connection-avatars">
-                                <div class="connection-avatar self-avatar">
-                                    <div class="tg-avatar-svg">
-                                        <svg viewBox="0 0 24 24" width="35" height="35">
-                                            <circle cx="12" cy="8" r="4" fill="#FF5500" stroke="#FF5500" stroke-width="2"/>
-                                            <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" fill="#FF5500" stroke="#FF5500" stroke-width="2"/>
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <div class="connection-line">
-                                    <div class="line-pulse"></div>
-                                </div>
-
-                                <div class="connection-avatar teammate-avatar">
-                                    <div class="tg-avatar-svg">
-                                        <svg viewBox="0 0 24 24" width="30" height="30">
-                                            <circle cx="12" cy="8" r="4" stroke="#9BA1B0" stroke-width="2" fill="none"/>
-                                            <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#9BA1B0" stroke-width="2" fill="none"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- ВСЕ ID СОХРАНЕНЫ - JS БУДЕТ ИХ ЗАПОЛНЯТЬ -->
-                            <div class="connection-status" id="connectionStatus"></div>
-
-                            <div class="teammate-info">
-                                <span class="teammate-nick" id="teammateNick"></span>
-                                <!-- teвmmateRating ОСТАВЛЕН - JS ИСПОЛЬЗУЕТ ЕГО -->
-                                <span class="teammate-rating" id="teammateRating"></span>
-                            </div>
-
-                            <div class="connection-rank-age">
-                                <span class="connection-rank" id="connectionRank"></span>
-                                <span class="connection-age" id="connectionAge"></span>
-                            </div>
-
-                            <!-- КНОПКА ЧАТА -->
-                            <div class="connection-button">
-                                <button class="tg-chat-button" id="tgChatButton" disabled>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-                                        <circle cx="128" cy="128" r="128" fill="#37AEE2"/>
-                                        <path fill="#FFFFFF" d="M94.7 173.3c-1.3 0-2.7-.2-4-1-3.6-1.7-6.3-5.4-6.3-9.6 0-2.5 1-4.7 2.6-6.4l93.2-79.1c2.5-2.1 6.2-2.4 9-.6 2.8 1.9 4 5.3 3 8.4l-37.4 92.2-59.5-3.9zm59.8-2.1l26.1-64.3L107.5 142.7l46.9 28.5z"/>
-                                    </svg>
-                                    <span id="tgChatButtonText">Ожидание тиммейта</span>
-                                </button>
-                                <div class="connection-tooltip" id="connectionTooltip">
-                                    Ожидаем второго игрока
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="swipe-loading" id="connectionLoading">
-                    <div class="spinner-small"></div>
-                </div>
-            </div>
-
-            <!-- ЭКРАН НАСТРОЕК -->
-            <div id="settingsScreen" class="screen settings-screen">
-                <div class="title-row"><div class="title-left"><div class="section-title">Настройки</div></div></div>
-                <div class="settings-content">
-                    <div class="settings-item"><span class="settings-label">Звуки</span><label class="switch"><input type="checkbox" id="soundToggle" checked><span class="slider round"></span></label></div>
-                    <div class="settings-item"><span class="settings-label">Уведомления</span><label class="switch"><input type="checkbox" id="notificationsToggle" checked><span class="slider round"></span></label></div>
-                    <div class="settings-item"><span class="settings-label">Тёмная тема</span><label class="switch"><input type="checkbox" id="themeToggle" checked><span class="slider round"></span></label></div>
-                </div>
-                <button class="primary-btn" onclick="App.showScreen('mainScreen', true)" style="margin:20px 0;">На главную</button>
-            </div>
-
-            <!-- ЭКРАН FACEIT -->
-            <div id="faceitScreen" class="screen faceit-screen">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
-                    <div class="mode-title faceit">FACEIT</div>
-                </div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
-                
-                <div class="input-label">Faceit ELO</div>
-                <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="-" min="0" max="5000">
-                
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" placeholder="0" value="0" readonly>
-                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
-                        </div>
-                    </div>
-                    <div class="stat-card" onclick="Profile.editFaceitAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value">
-                            <input type="text" id="faceitAgeValue" placeholder="21" value="21">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="input-label">Ссылка Faceit</div>
-                <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="">
-                
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
-                </div>
-
-                <div class="comment-section">
-                    <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="faceitComment" placeholder="Введите комментарий" maxlength="100"></textarea>
-                </div>
-
-                <button class="mode-search-btn" onclick="Search.start('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
-            </div>
-
-            <!-- ЭКРАН PREMIER -->
-            <div id="premierScreen" class="screen premier-screen">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
-                    <div class="mode-title premier">PREMIER</div>
-                </div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
-                
-                <div class="input-label">CS Rating</div>
-                <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="12500" min="0" max="35000">
-                
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" placeholder="0" value="0" readonly>
-                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
-                        </div>
-                    </div>
-                    <div class="stat-card" onclick="Profile.editPremierAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value">
-                            <input type="text" id="premierAgeValue" placeholder="21" value="21">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="">
-                
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
-                </div>
-
-                <div class="comment-section">
-                    <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="premierComment" placeholder="Введите комментарий" maxlength="100"></textarea>
-                </div>
-
-                <button class="mode-search-btn" onclick="Search.start('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
-            </div>
-
-            <!-- ЭКРАН MM PRIME -->
-            <div id="primeScreen" class="screen prime-screen">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
-                    <div class="mode-title prime">MM PRIME</div>
-                </div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
-                
-                <div class="input-label">Звание</div>
-                <select class="rank-select" id="primeRankSelect">
-                    <option selected>Выберите ранг</option>
-                    <option>Silver 1</option>
-                    <option>Silver 2</option>
-                    <option>Silver 3</option>
-                    <option>Silver 4</option>
-                    <option>Silver Elite</option>
-                    <option>Gold Nova 1</option>
-                    <option>Gold Nova 2</option>
-                    <option>Gold Nova 3</option>
-                    <option>Gold Nova Master</option>
-                    <option>Master Guardian 1</option>
-                    <option>Master Guardian 2</option>
-                    <option>Master Guardian Elite</option>
-                    <option>Distinguished Master Guardian</option>
-                    <option>Legendary Eagle</option>
-                    <option>Legendary Eagle Master</option>
-                    <option>Supreme Master First Class</option>
-                    <option>Global Elite</option>
-                </select>
-                
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" placeholder="0" value="0" readonly>
-                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
-                        </div>
-                    </div>
-                    <div class="stat-card" onclick="Profile.editPrimeAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value">
-                            <input type="text" id="primeAgeValue" placeholder="21" value="21">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="">
-                
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
-                </div>
-
-                <div class="comment-section">
-                    <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="primeComment" placeholder="Введите комментарий" maxlength="100"></textarea>
-                </div>
-
-                <button class="mode-search-btn" onclick="Search.start('MM PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
-            </div>
-
-            <!-- ЭКРАН MM PUBLIC -->
-            <div id="publicScreen" class="screen public-screen">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
-                    <div class="mode-title public">MM PUBLIC</div>
-                </div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
-                
-                <div class="input-label">Звание</div>
-                <select class="rank-select" id="publicRankSelect">
-                    <option selected>Выберите ранг</option>
-                    <option>Silver 1</option>
-                    <option>Silver 2</option>
-                    <option>Silver 3</option>
-                    <option>Silver 4</option>
-                    <option>Silver Elite</option>
-                    <option>Gold Nova 1</option>
-                    <option>Gold Nova 2</option>
-                    <option>Gold Nova 3</option>
-                    <option>Gold Nova Master</option>
-                    <option>Master Guardian 1</option>
-                    <option>Master Guardian 2</option>
-                    <option>Master Guardian Elite</option>
-                    <option>Distinguished Master Guardian</option>
-                    <option>Legendary Eagle</option>
-                    <option>Legendary Eagle Master</option>
-                    <option>Supreme Master First Class</option>
-                    <option>Global Elite</option>
-                </select>
-                
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" placeholder="0" value="0" readonly>
-                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
-                        </div>
-                    </div>
-                    <div class="stat-card" onclick="Profile.editPublicAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value">
-                            <input type="text" id="publicAgeValue" placeholder="21" value="21">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="">
-                
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
-                </div>
-
-                <div class="comment-section">
-                    <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="publicComment" placeholder="Введите комментарий" maxlength="100"></textarea>
-                </div>
-
-                <button class="mode-search-btn" onclick="Search.start('MM PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
-            </div>
-
-            <!-- ЭКРАН ПОИСКА -->
-            <div id="searchScreen" class="screen search-screen">
-                <div class="search-header">
-                    <div class="search-title" id="searchModeTitle">FACEIT</div>
-                    <div class="search-timer" id="searchTimer">00:00</div>
-                </div>
-                <div class="search-status" id="searchStatus">Поиск тиммейта начат</div>
-                <div class="search-loading">
-                    <div class="spinner"></div>
-                </div>
-                <button class="cancel-search-btn" onclick="Search.cancel()">Отменить поиск</button>
-            </div>
-
-            <!-- ЭКРАН ДРУЗЕЙ -->
-            <div id="friendsScreen" class="screen friends-screen">
-                <div class="friends-page-header">
-                    <button class="back-btn" onclick="App.showScreen('profileScreen', true)">←</button>
-                    <div class="friends-page-title">Ваши друзья</div>
-                    <div style="width: 40px;"></div>
-                </div>
-                
-                <div class="friends-search-container">
-                    <div class="friends-search-label">Найти тиммейта по ID</div>
-                    <div class="friends-search-box">
-                        <input type="text" id="friendSearchInput" class="friends-search-input" placeholder="Введите ID пользователя" maxlength="20">
-                        <button class="friends-search-btn" onclick="Friends.searchByID()">Найти</button>
-                    </div>
-                </div>
-                
-                <div class="friends-list-container">
-                    <div class="friends-list-title">Мои друзья</div>
-                    <div class="friends-page-list" id="friendsPageList">
-                        <!-- Сюда будут подгружаться друзья -->
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- Нижняя навигация -->
-        <nav class="bottom-nav">
-            <div class="nav-item active" onclick="App.showScreen('mainScreen', true)" id="navMain">
-                <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
-                <span class="nav-label">Главная</span>
-            </div>
-            <div class="nav-item" onclick="App.showScreen('shopScreen', true)" id="navShop">
-                <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span>
-                <span class="nav-label">Магазин</span>
-            </div>
-            <div class="nav-item" onclick="App.showScreen('profileScreen', true)" id="navProfile">
-                <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
-                <span class="nav-label">Профиль</span>
-            </div>
-        </nav>
-    </div>
-
-    <!-- JS ФАЙЛЫ -->
-    <script src="js/config.js"></script>
-    <script src="js/globals.js"></script>
-    <script src="js/navigation.js"></script>
-    <script src="js/profile.js"></script>
-    <script src="js/avatar.js"></script>
-    <script src="js/friends.js"></script>
-    <script src="js/shop.js"></script>
-    <script src="js/search.js"></script>
-    <script src="js/logo.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/team.js"></script>
-    <script src="js/swipe.js"></script>
-
-    <!-- Скрипт для автоматического добавления версий -->
-    <script>
-    (function() {
-        const version = window.BUILD_VERSION || Date.now();
+        this.currentMatchId = matchId;
+        this.currentPlayer = opponent;
+        this.isConnectionMode = false;
+        this.mode = opponent.mode || 'PREMIER';
+        this.gameCreated = false;
+        this.gameCreating = false;
+        this.chatLink = null;
+        this.inviteLink = null;
         
-        document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-            if (link.href && !link.href.includes('telegram')) {
-                link.href = link.href.split('?')[0] + '?v=' + version;
+        if (expiresAt) {
+            if (typeof expiresAt === 'string') {
+                this.matchExpiresAt = new Date(expiresAt).getTime();
+            } else {
+                this.matchExpiresAt = expiresAt;
             }
-        });
+            console.log('✅ matchExpiresAt (timestamp):', this.matchExpiresAt);
+        }
         
-        document.querySelectorAll('img[src]').forEach(img => {
-            if (img.src && !img.src.includes('telegram') && !img.src.includes('data:')) {
-                img.src = img.src.split('?')[0] + '?v=' + version;
+        // Считаем разницу между expires_at и текущим временем
+        const clientNow = Date.now();
+        let timeLeft = Math.floor((this.matchExpiresAt - clientNow) / 1000);
+        
+        console.log(`⏰ clientNow (timestamp): ${clientNow}`);
+        console.log(`⏰ expiresAt (timestamp): ${this.matchExpiresAt}`);
+        console.log(`⏰ Разница (мс): ${this.matchExpiresAt - clientNow}`);
+        console.log(`⏰ Осталось секунд: ${timeLeft}`);
+        
+        // Если матч истек - выходим
+        if (timeLeft <= 0) {
+            console.warn('⚠️ Время на принятие истекло');
+            this.exitSwipeMode('timeout_accept');
+            return;
+        }
+        
+        this.card = document.getElementById('swipeCard');
+        this.container = document.getElementById('swipeContainer');
+        this.hint = document.getElementById('swipeHint');
+        this.loading = document.getElementById('swipeLoading');
+        this.labelLeft = document.getElementById('swipeLabelLeft');
+        this.labelRight = document.getElementById('swipeLabelRight');
+        
+        if (!this.card) {
+            console.error('❌ Swipe card not found in startWithOpponent!');
+            return;
+        }
+        
+        if (this.loading) this.loading.classList.remove('active');
+        
+        this.card.style.transition = 'none';
+        this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
+        this.card.style.opacity = '1';
+        this.card.classList.remove('both-accepted', 'rejected', 'right-swipe', 'left-swipe');
+        
+        this.showPlayer(opponent);
+        this.startCardTimer();
+        this.blockScroll();
+        this.showHintOnce();
+        
+        if (!this.isInitialized) {
+            this.setupEventListeners();
+            this.isInitialized = true;
+        }
+        
+        console.log('✅ Swipe готов с оппонентом:', opponent.nick);
+    },
+    
+    getTimeLeft() {
+        if (!this.matchExpiresAt) {
+            return 30;
+        }
+        
+        const clientNow = Date.now();
+        const timeLeft = Math.max(0, Math.floor((this.matchExpiresAt - clientNow) / 1000));
+        
+        // Таймер на принятие не может быть больше 30 секунд
+        return Math.min(timeLeft, 30);
+    },
+    
+    startCardTimer() {
+        console.log('⏱️ Запуск таймера на карточке');
+        
+        if (this.cardTimerInterval) {
+            clearInterval(this.cardTimerInterval);
+            this.cardTimerInterval = null;
+        }
+        
+        const timerElement = document.getElementById('swipeTimer');
+        if (!timerElement) {
+            console.warn('⚠️ timerElement не найден');
+            return;
+        }
+        
+        const updateTimer = () => {
+            const timeLeft = this.getTimeLeft();
+            
+            timerElement.innerHTML = timeLeft + 'с';
+            
+            if (timeLeft <= 0) {
+                timerElement.classList.add('warning');
+                clearInterval(this.cardTimerInterval);
+                this.cardTimerInterval = null;
+                this.exitSwipeMode('таймер истек на карточке');
+                return;
             }
-        });
+            
+            if (timeLeft < 10) {
+                timerElement.classList.add('warning');
+            } else {
+                timerElement.classList.remove('warning');
+            }
+        };
         
-        console.log('✅ Версия для статики:', version);
-    })();
-    </script>
-</body>
-</html>
+        updateTimer();
+        this.cardTimerInterval = setInterval(updateTimer, 1000);
+    },
+    
+    blockScroll() {
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+        document.body.style.height = '100%';
+        document.body.style.touchAction = 'none';
+        
+        if (this.container) {
+            this.container.style.overflow = 'hidden';
+            this.container.style.touchAction = 'none';
+        }
+        
+        window.addEventListener('scroll', this.preventDefaultScroll, { passive: false });
+        document.addEventListener('touchmove', this.preventDefaultScroll, { passive: false });
+        document.addEventListener('mousewheel', this.preventDefaultScroll, { passive: false });
+    },
+    
+    unblockScroll() {
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.height = '';
+        document.body.style.touchAction = '';
+        
+        if (this.container) {
+            this.container.style.overflow = '';
+            this.container.style.touchAction = '';
+        }
+        
+        window.removeEventListener('scroll', this.preventDefaultScroll);
+        document.removeEventListener('touchmove', this.preventDefaultScroll);
+        document.removeEventListener('mousewheel', this.preventDefaultScroll);
+    },
+    
+    setupEventListeners() {
+        this.onDragStartBound = this.onDragStart.bind(this);
+        this.onDragMoveBound = this.onDragMove.bind(this);
+        this.onDragEndBound = this.onDragEnd.bind(this);
+        
+        this.card.addEventListener('pointerdown', this.onDragStartBound);
+        this.card.addEventListener('pointermove', this.onDragMoveBound);
+        this.card.addEventListener('pointerup', this.onDragEndBound);
+        this.card.addEventListener('pointercancel', this.onDragEndBound);
+        this.card.addEventListener('dragstart', (e) => e.preventDefault());
+        console.log('✅ Обработчики событий установлены');
+    },
+    
+    preventScroll(e) {
+        e.preventDefault();
+        return false;
+    },
+    
+    getClientX(e) {
+        return e.clientX ?? e.touches?.[0]?.clientX;
+    },
+    
+    onDragStart(e) {
+        if (this.isConnectionMode) return;
+        
+        this.isDragging = true;
+        this.startX = this.getClientX(e);
+        this.initialX = this.currentX || 0;
+        
+        this.card.style.transition = 'none';
+        this.card.style.cursor = 'grabbing';
+        this.card.style.transform = 'scale(1.02)';
+        this.card.classList.remove('right-swipe', 'left-swipe');
+        
+        e.preventDefault();
+    },
+    
+    onDragMove(e) {
+        if (!this.isDragging || this.isConnectionMode) return;
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const clientX = this.getClientX(e);
+        if (!clientX) return;
+        
+        const deltaX = clientX - this.startX;
+        this.currentX = this.initialX + deltaX;
+        
+        const maxDistance = window.innerWidth * 0.5;
+        this.currentX = Math.max(-maxDistance, Math.min(maxDistance, this.currentX));
+        
+        const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
+        const progress = Math.min(Math.abs(this.currentX) / threshold, 1);
+        const rotate = (this.currentX / maxDistance) * this.MAX_ROTATE;
+        
+        this.card.style.transform = `translateX(${this.currentX}px) rotate(${rotate}deg) scale(${1 + progress * 0.02})`;
+        
+        if (this.currentX > 0) {
+            this.card.classList.add('right-swipe');
+            this.card.classList.remove('left-swipe');
+            
+            this.card.style.background = `linear-gradient(145deg, 
+                ${this.BRIGHT_GREEN}, 
+                var(--surface) ${Math.min(30 + progress * 40, 70)}%)`;
+            
+            if (this.labelRight) this.labelRight.style.opacity = progress;
+            if (this.labelLeft) this.labelLeft.style.opacity = 0;
+            
+        } else if (this.currentX < 0) {
+            this.card.classList.add('left-swipe');
+            this.card.classList.remove('right-swipe');
+            
+            this.card.style.background = `linear-gradient(145deg, 
+                ${this.BRIGHT_RED}, 
+                var(--surface) ${Math.min(30 + progress * 40, 70)}%)`;
+            
+            if (this.labelLeft) this.labelLeft.style.opacity = progress;
+            if (this.labelRight) this.labelRight.style.opacity = 0;
+        }
+    },
+    
+    onDragEnd(e) {
+        if (!this.isDragging || this.isConnectionMode) return;
+        
+        this.isDragging = false;
+        this.card.style.cursor = 'grab';
+        
+        const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
+        
+        if (Math.abs(this.currentX) > threshold) {
+            this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
+            
+            if (this.currentX > 0) {
+                this.card.style.background = `linear-gradient(145deg, ${this.BRIGHT_GREEN}, var(--surface) 40%)`;
+                this.card.style.transform = `translateX(200%) rotate(12deg) scale(0.9)`;
+                setTimeout(() => {
+                    this.acceptPlayer();
+                }, this.ANIMATION_DURATION);
+            } else {
+                this.card.style.background = `linear-gradient(145deg, ${this.BRIGHT_RED}, var(--surface) 40%)`;
+                this.card.style.transform = `translateX(-200%) rotate(-12deg) scale(0.9)`;
+                setTimeout(() => {
+                    this.rejectPlayer();
+                }, this.ANIMATION_DURATION);
+            }
+        } else {
+            this.resetCardPosition();
+        }
+        
+        e.preventDefault();
+    },
+    
+    resetCardPosition() {
+        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.25, 0.8, 0.25, 1), background 0.2s ease`;
+        this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
+        this.card.style.background = '';
+        this.currentX = 0;
+        
+        if (this.labelLeft) this.labelLeft.style.opacity = 0;
+        if (this.labelRight) this.labelRight.style.opacity = 0;
+        
+        this.card.classList.remove('right-swipe', 'left-swipe');
+        
+        setTimeout(() => {
+            this.card.style.transition = 'none';
+        }, this.ANIMATION_DURATION);
+    },
+    
+    // ========== ИСПРАВЛЕННЫЙ acceptPlayer ==========
+    acceptPlayer() {
+        console.log('✅ Принят игрок:', this.currentPlayer);
+        console.log('🎯 matchId:', this.currentMatchId);
+        
+        if (this.cardTimerInterval) {
+            clearInterval(this.cardTimerInterval);
+            this.cardTimerInterval = null;
+        }
+        
+        if (!this.currentMatchId) {
+            console.error('❌ Нет currentMatchId!');
+            this.exitSwipeMode('acceptPlayer: нет matchId');
+            return;
+        }
+        
+        // ========== ШАГ 1: СРАЗУ ПОКАЗЫВАЕМ ЭКРАН ОЖИДАНИЯ ==========
+        this.showConnectionMode();
+        
+        // ========== ШАГ 2: скрываем карточку ==========
+        this.card.style.transition = 'opacity 0.2s ease';
+        this.card.style.opacity = '0';
+        
+        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        
+        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                telegram_id: telegram_id,
+                match_id: this.currentMatchId,
+                response: 'accept'
+            })
+        })
+        .then(res => res.json())
+        .then((data) => {
+            console.log('📦 Accept response:', data);
+            
+            // ВСЕГДА запускаем polling, он сам разберется
+            this.startMatchStatusPolling(this.currentMatchId);
+        })
+        .catch(error => {
+            console.error('❌ Error:', error);
+            setTimeout(() => {
+                this.exitConnectionMode();
+            }, 1000);
+        });
+    },
+    
+    // ========== ИСПРАВЛЕННЫЙ POLLING ==========
+    startMatchStatusPolling(matchId) {
+        console.log('🔄 Запускаем polling статуса матча для ID:', matchId);
+        
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
+        
+        let attempts = 0;
+        const MAX_ATTEMPTS = 60;
+        
+        this.matchPolling = setInterval(async () => {
+            attempts++;
+            
+            if (attempts > MAX_ATTEMPTS) {
+                console.log('⏰ Polling превысил лимит попыток');
+                clearInterval(this.matchPolling);
+                this.matchPolling = null;
+                this.connectionTimeout();
+                return;
+            }
+            
+            try {
+                const res = await fetch(`https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/status/${matchId}`);
+                const data = await res.json();
+                
+                console.log(`📦 Polling status response (${attempts}):`, data);
+                
+                if (data.status === 'both_accepted') {
+                    console.log('🎉 Оба приняли!');
+                    clearInterval(this.matchPolling);
+                    this.matchPolling = null;
+                    
+                    // Обновляем UI
+                    this.updateConnectionUI('both_accepted');
+                    
+                    // Создаем игру
+                    this.createGame();
+                    
+                    // Подгоняем размер карточки ожидания после создания игры
+                    this.adjustConnectionCardSize();
+                }
+                
+                if (data.status === 'rejected') {
+                    console.log('❌ Матч отклонен');
+                    clearInterval(this.matchPolling);
+                    this.matchPolling = null;
+                    this.handleRejection();
+                }
+                
+                if (data.status === 'expired') {
+                    console.log('⏰ Матч истек');
+                    clearInterval(this.matchPolling);
+                    this.matchPolling = null;
+                    this.connectionTimeout();
+                }
+                
+            } catch (error) {
+                console.error('❌ Error in match polling:', error);
+            }
+        }, 1500);
+    },
+    
+    // ========== НОВАЯ ФУНКЦИЯ ДЛЯ ОБНОВЛЕНИЯ UI ==========
+    updateConnectionUI(status) {
+        console.log('🔄 Обновляем UI соединения, статус:', status);
+        
+        if (status === 'both_accepted') {
+            // Обновляем статус
+            const statusEl = document.getElementById('connectionStatus');
+            if (statusEl) {
+                statusEl.innerHTML = `Создано`;
+            }
+            
+            // Подсвечиваем аватар тиммейта
+            const teammateAvatar = document.querySelector('.teammate-avatar');
+            if (teammateAvatar) {
+                teammateAvatar.classList.add('connected');
+            }
+            
+            // Линия полностью заполняется
+            const connectionLine = document.querySelector('.connection-line');
+            if (connectionLine) {
+                connectionLine.classList.add('connected');
+            }
+            
+            // Останавливаем таймер
+            if (this.connectionTimer) {
+                clearInterval(this.connectionTimer);
+                this.connectionTimer = null;
+            }
+            
+            // Меняем текст таймера
+            const timerElement = document.getElementById('connectionTimer');
+            if (timerElement) {
+                timerElement.innerHTML = `Готово`;
+                timerElement.classList.remove('warning');
+            }
+        }
+    },
+    
+    rejectPlayer() {
+        console.log('❌ Пропущен игрок:', this.currentPlayer);
+        console.log('🎯 matchId:', this.currentMatchId);
+        
+        if (this.cardTimerInterval) {
+            clearInterval(this.cardTimerInterval);
+            this.cardTimerInterval = null;
+        }
+        
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
+        
+        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        
+        if (this.currentMatchId) {
+            fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    telegram_id: telegram_id,
+                    match_id: this.currentMatchId,
+                    response: 'reject'
+                })
+            })
+            .then(res => res.json())
+            .then(data => console.log('📦 Reject response:', data))
+            .catch(error => console.error('Error rejecting:', error));
+        }
+        
+        setTimeout(() => {
+            this.exitSwipeMode('rejectPlayer');
+        }, 300);
+    },
+    
+    startConnectionTimer() {
+        console.log('⏱️ Запуск таймера на экране ожидания');
+        
+        if (this.connectionTimer) {
+            clearInterval(this.connectionTimer);
+            this.connectionTimer = null;
+        }
+        
+        const timerElement = document.getElementById('connectionTimer');
+        if (!timerElement) return;
+        
+        const updateTimer = () => {
+            const timeLeft = this.getTimeLeft();
+            
+            if (timeLeft <= 0) {
+                timerElement.innerHTML = `0с`;
+                clearInterval(this.connectionTimer);
+                this.connectionTimer = null;
+                
+                if (this.matchPolling) {
+                    clearInterval(this.matchPolling);
+                    this.matchPolling = null;
+                }
+                
+                this.connectionTimeout();
+                return;
+            }
+            
+            if (timeLeft < 10) {
+                timerElement.classList.add('warning');
+            } else {
+                timerElement.classList.remove('warning');
+            }
+            
+            timerElement.innerHTML = `${timeLeft}с`;
+        };
+        
+        updateTimer();
+        this.connectionTimer = setInterval(updateTimer, 1000);
+    },
+    
+    // ========== ИСПРАВЛЕННЫЙ showConnectionMode ==========
+    showConnectionMode() {
+        console.log('🔄 Показываем экран соединения');
+        this.isConnectionMode = true;
+        
+        // Скрываем элементы свайпа
+        if (this.labelLeft) this.labelLeft.style.display = 'none';
+        if (this.labelRight) this.labelRight.style.display = 'none';
+        if (this.hint) this.hint.style.display = 'none';
+        
+        // Сбрасываем статус
+        const statusEl = document.getElementById('connectionStatus');
+        if (statusEl) {
+            statusEl.innerHTML = ``;
+        }
+        
+        // Сбрасываем кнопку чата
+        this.updateChatButton(false);
+        
+        // Сбрасываем аватар тиммейта
+        const teammateAvatar = document.querySelector('.teammate-avatar');
+        if (teammateAvatar) {
+            teammateAvatar.classList.remove('connected');
+        }
+        
+        // Сбрасываем линию соединения
+        const connectionLine = document.querySelector('.connection-line');
+        if (connectionLine) {
+            connectionLine.classList.remove('connected');
+        }
+        
+        // Переключаем экраны
+        document.getElementById('swipeScreen').classList.remove('active');
+        document.getElementById('connectionScreen').classList.add('active');
+        
+        // Обновляем данные игрока
+        document.getElementById('teammateNick').textContent = this.currentPlayer?.nick || '';
+        document.getElementById('teammateRating').innerHTML = this.currentPlayer?.rating || '';
+        document.getElementById('connectionRank').textContent = this.currentPlayer?.rank || '';
+        document.getElementById('connectionAge').textContent = this.currentPlayer?.age ? this.currentPlayer?.age + ' лет' : '';
+        
+        // Запускаем таймер
+        this.startConnectionTimer();
+        
+        // ВАЖНО: Подгоняем размер карточки ожидания
+        this.adjustConnectionCardSize();
+    },
+    
+    // ========== ИСПРАВЛЕННЫЙ updateChatButton ==========
+    updateChatButton(active, chatLink = null, inviteLink = null) {
+        const button = document.getElementById('tgChatButton');
+        const buttonText = document.getElementById('tgChatButtonText');
+        const tooltip = document.getElementById('connectionTooltip');
+        
+        if (!button || !buttonText || !tooltip) return;
+        
+        button.classList.remove('active');
+        button.disabled = true;
+        button.onclick = null;
+        
+        if (active && chatLink) {
+            button.classList.add('active');
+            button.disabled = false;
+            buttonText.textContent = 'Перейти в чат';
+            tooltip.textContent = 'Матч создан';
+            tooltip.classList.add('active');
+            
+            this.chatLink = chatLink;
+            this.inviteLink = inviteLink;
+            localStorage.setItem('currentChatLink', chatLink);
+            if (inviteLink) {
+                localStorage.setItem('currentInviteLink', inviteLink);
+            }
+            
+            button.onclick = () => {
+                this.openChatLink();
+            };
+        } else {
+            buttonText.textContent = 'Ожидание тиммейта';
+            tooltip.textContent = 'Ожидаем второго игрока';
+            tooltip.classList.remove('active');
+        }
+    },
+    
+    openChatLink() {
+        let chatLink = this.chatLink || localStorage.getItem('currentChatLink');
+        let inviteLink = this.inviteLink || localStorage.getItem('currentInviteLink');
+        
+        console.log('🚀 openChatLink() вызван');
+        console.log('📌 chatLink:', chatLink);
+        console.log('📌 inviteLink:', inviteLink);
+        
+        if (chatLink) {
+            console.log('✅ Открываем чат:', chatLink);
+            
+            const tg = window.Telegram?.WebApp;
+            
+            if (inviteLink) {
+                if (tg?.openTelegramLink) {
+                    console.log('📱 Открываем invite link через Telegram');
+                    tg.openTelegramLink(inviteLink);
+                    
+                    setTimeout(() => {
+                        console.log('⏱️ Открываем тему через 1.5 сек');
+                        tg.openTelegramLink(chatLink);
+                    }, 1500);
+                } else {
+                    window.open(inviteLink, '_blank');
+                    setTimeout(() => {
+                        window.open(chatLink, '_blank');
+                    }, 1500);
+                }
+            } else {
+                if (tg?.openTelegramLink) {
+                    tg.openTelegramLink(chatLink);
+                } else {
+                    window.open(chatLink, '_blank');
+                }
+            }
+        } else {
+            console.error('❌ Ссылка не найдена');
+            alert('Ссылка на чат не найдена');
+        }
+    },
+    
+    // ========== ИСПРАВЛЕННЫЙ createGame ==========
+    createGame() {
+        if (this.gameCreating) {
+            console.log('⚠️ Игра уже создается, пропускаем');
+            return;
+        }
+        
+        console.log('Создаем игру для match_id:', this.currentMatchId);
+        
+        if (!this.currentMatchId) {
+            console.log('Нет active match');
+            this.exitSwipeMode('createGame: нет matchId');
+            return;
+        }
+        
+        this.gameCreating = true;
+        
+        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/game/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                match_id: this.currentMatchId
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log('Game create response:', data);
+            
+            if (data.status === 'ok' && data.chat_link) {
+                if (data.already_exists) {
+                    console.log('ℹ️ Игра уже существовала, используем существующую');
+                }
+                
+                this.updateChatButton(true, data.chat_link, data.invite_link);
+                
+                console.log('✅ Кнопка чата активирована');
+                if (data.invite_link) {
+                    console.log('🔗 Invite link получен:', data.invite_link);
+                }
+                
+                this.gameCreated = true;
+                
+                // Подгоняем размер карточки ожидания после создания игры
+                this.adjustConnectionCardSize();
+            } else {
+                console.error('createGame error: no chat_link', data);
+                this.updateChatButton(false);
+            }
+        })
+        .catch(error => {
+            console.error('Error creating game:', error);
+            this.updateChatButton(false);
+        })
+        .finally(() => {
+            setTimeout(() => {
+                this.gameCreating = false;
+            }, 3000);
+        });
+    },
+    
+    showPlayer(player) {
+        this.currentPlayer = player;
+        
+        if (!this.isConnectionMode) {
+            this.resetCardPosition();
+            
+            const playerIdEl = document.getElementById('swipePlayerId');
+            if (playerIdEl) playerIdEl.textContent = player.player_id || '';
+            
+            const playerNickEl = document.getElementById('swipePlayerNick');
+            if (playerNickEl) playerNickEl.textContent = player.nick || '';
+            
+            const ratingValueEl = document.getElementById('swipeRatingValue');
+            if (ratingValueEl) ratingValueEl.textContent = player.rating || '';
+            
+            const rankEl = document.getElementById('swipeRank');
+            if (rankEl) rankEl.textContent = player.rank || '';
+            
+            const ageEl = document.getElementById('swipeAge');
+            if (ageEl) ageEl.textContent = player.age ? player.age + ' лет' : '';
+            
+            const styleEl = document.getElementById('swipeStyle');
+            if (styleEl) {
+                const styleText = player.style === 'fan' ? 'Fan' : 'Tryhard';
+                styleEl.textContent = styleText;
+                styleEl.setAttribute('data-style', player.style || 'fan');
+            }
+            
+            const steamLinkEl = document.getElementById('swipeSteamLink');
+            if (steamLinkEl) steamLinkEl.textContent = player.steam_link || '';
+            
+            const faceitLinkEl = document.getElementById('swipeFaceitLink');
+            if (faceitLinkEl) faceitLinkEl.textContent = player.faceit_link || '';
+            
+            const commentEl = document.getElementById('swipeComment');
+            if (commentEl) commentEl.textContent = player.comment || '';
+            
+            this.updateLinksVisibility();
+            
+            // ВАЖНО: После отображения игрока подгоняем размер карточки
+            this.adjustCardSize();
+        }
+    },
+    
+    updateLinksVisibility() {
+        const steamContainer = document.querySelector('.swipe-steam-container');
+        const faceitContainer = document.querySelector('.swipe-faceit-container');
+        
+        if (this.mode === 'FACEIT') {
+            if (steamContainer) steamContainer.style.display = 'none';
+            if (faceitContainer) faceitContainer.style.display = 'block';
+        } else {
+            if (steamContainer) steamContainer.style.display = 'block';
+            if (faceitContainer) faceitContainer.style.display = 'none';
+        }
+    },
+    
+    showHintOnce() {
+        if (!this.hint) return;
+        
+        const hintShown = localStorage.getItem('swipeHintShown');
+        
+        if (!hintShown) {
+            this.hint.classList.remove('fade-out');
+            setTimeout(() => {
+                this.hint.classList.add('fade-out');
+            }, 3000);
+            localStorage.setItem('swipeHintShown', 'true');
+        } else {
+            this.hint.classList.add('fade-out');
+        }
+    },
+    
+    startSwipe(mode) {
+        console.log('Swipe.startSwipe() called with mode:', mode);
+        this.mode = mode || 'PREMIER';
+        this.playersQueue = [];
+        this.isConnectionMode = false;
+        
+        this.blockScroll();
+        
+        if (this.card) {
+            if (this.loading) this.loading.classList.add('active');
+        } else {
+            this.init(mode);
+        }
+    },
+    
+    destroy() {
+        this.unblockScroll();
+        
+        if (this.card) {
+            this.card.removeEventListener('pointerdown', this.onDragStartBound);
+            this.card.removeEventListener('pointermove', this.onDragMoveBound);
+            this.card.removeEventListener('pointerup', this.onDragEndBound);
+            this.card.removeEventListener('pointercancel', this.onDragEndBound);
+        }
+        
+        if (this.connectionTimer) {
+            clearInterval(this.connectionTimer);
+            this.connectionTimer = null;
+        }
+        if (this.cardTimerInterval) {
+            clearInterval(this.cardTimerInterval);
+            this.cardTimerInterval = null;
+        }
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
+        this.gameCreated = false;
+        this.gameCreating = false;
+        this.chatLink = null;
+        this.inviteLink = null;
+    },
+    
+    connectionTimeout() {
+        console.log('⏰ Время истекло');
+        
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
+        
+        const statusEl = document.getElementById('connectionStatus');
+        if (statusEl) {
+            statusEl.innerHTML = `⏰ Время ожидания истекло`;
+        }
+        
+        setTimeout(() => {
+            this.exitSwipeMode('connectionTimeout');
+        }, 2000);
+    },
+    
+    handleRejection() {
+        console.log('❌ Тиммейт отклонил');
+        
+        if (this.connectionTimer) {
+            clearInterval(this.connectionTimer);
+            this.connectionTimer = null;
+        }
+        
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
+        
+        const statusEl = document.getElementById('connectionStatus');
+        if (statusEl) {
+            statusEl.innerHTML = `❌ Тиммейт отклонил приглашение`;
+        }
+        
+        setTimeout(() => {
+            this.exitSwipeMode('handleRejection');
+        }, 2000);
+    },
+    
+    exitConnectionMode() {
+        console.log('🔄 Выход из режима соединения');
+        this.isConnectionMode = false;
+        
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
+        
+        if (this.labelLeft) this.labelLeft.style.display = 'block';
+        if (this.labelRight) this.labelRight.style.display = 'block';
+        if (this.hint) this.hint.style.display = 'block';
+        
+        this.exitSwipeMode('exitConnectionMode');
+    },
+    
+    exitSwipeMode(reason = 'неизвестно') {
+        console.log(`🔄 Выход из режима свайпа. Причина: ${reason}`);
+        this.unblockScroll();
+        this.isConnectionMode = false;
+        this.currentMatchId = null;
+        this.currentPlayer = null;
+        this.matchExpiresAt = null;
+        this.serverTime = null;
+        this.gameCreated = false;
+        this.gameCreating = false;
+        this.chatLink = null;
+        this.inviteLink = null;
+        
+        if (this.cardTimerInterval) {
+            clearInterval(this.cardTimerInterval);
+            this.cardTimerInterval = null;
+        }
+        if (this.connectionTimer) {
+            clearInterval(this.connectionTimer);
+            this.connectionTimer = null;
+        }
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
+        
+        document.getElementById('connectionScreen').classList.remove('active');
+        if (window.App) {
+            App.showScreen('mainScreen', true);
+        } else {
+            window.location.href = '/';
+        }
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('✅ Swipe: DOM загружен, финальная версия');
+    window.Swipe = Swipe;
+    
+    // Добавляем слушатели для подгона размера
+    window.addEventListener('resize', () => {
+        if (Swipe.card && !Swipe.isConnectionMode) {
+            Swipe.adjustCardSize();
+        }
+        if (Swipe.isConnectionMode) {
+            Swipe.adjustConnectionCardSize();
+        }
+    });
+    
+    window.addEventListener('orientationchange', () => {
+        setTimeout(() => {
+            if (Swipe.card && !Swipe.isConnectionMode) {
+                Swipe.adjustCardSize();
+            }
+            if (Swipe.isConnectionMode) {
+                Swipe.adjustConnectionCardSize();
+            }
+        }, 200);
+    });
+});
+
+if (document.getElementById('swipeScreen')?.classList.contains('active')) {
+    console.log('Swipe экран уже активен, инициализируем');
+    setTimeout(() => Swipe.init(), 100);
+}
