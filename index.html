@@ -167,6 +167,111 @@
         .connection-tooltip.active {
             color: #37AEE2;
         }
+
+        /* ===== НАСТРОЙКИ - СТИЛЬ TELEGRAM ===== */
+        .settings-screen {
+            padding: 0 16px;
+        }
+
+        .settings-header {
+            padding: 16px 0;
+        }
+
+        .settings-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .settings-section {
+            margin-bottom: 24px;
+        }
+
+        .settings-section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #8E97A6;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 8px;
+            padding-left: 4px;
+        }
+
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+        }
+
+        .settings-row:last-child {
+            border-bottom: none;
+        }
+
+        .settings-row-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        .settings-row-link:last-child {
+            border-bottom: none;
+        }
+
+        .settings-row-label {
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-primary);
+        }
+
+        .settings-value {
+            font-size: 14px;
+            color: #8E97A6;
+        }
+
+        .settings-arrow {
+            font-size: 18px;
+            color: #8E97A6;
+            font-weight: 300;
+        }
+
+        /* Переключатель как в Telegram */
+        .toggle-switch {
+            width: 46px;
+            height: 26px;
+            background: #2A2F3A;
+            border-radius: 30px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .toggle-switch.active {
+            background: #FF5500;
+        }
+
+        .toggle-switch-handle {
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .toggle-switch.active .toggle-switch-handle {
+            transform: translateX(20px);
+        }
     </style>
 </head>
 <body>
@@ -528,7 +633,7 @@
             </div>
 
             <!-- ============================================ -->
-            <!-- ЭКРАН НАСТРОЕК - МИНИМАЛИСТИЧНЫЙ -->
+            <!-- ЭКРАН НАСТРОЕК - СТИЛЬ TELEGRAM (МИНИМАЛИЗМ) -->
             <!-- ============================================ -->
             <div id="settingsScreen" class="screen settings-screen">
                 <div class="settings-header">
@@ -538,76 +643,70 @@
                 <div class="settings-content">
                     
                     <!-- ===== ОСНОВНЫЕ ===== -->
-                    <div class="settings-group">
-                        <div class="settings-group-title">ОСНОВНЫЕ</div>
+                    <div class="settings-section">
+                        <div class="settings-section-title">ОСНОВНЫЕ</div>
                         
-                        <!-- Звук -->
-                        <div class="settings-item">
-                            <span class="settings-label">Звук</span>
+                        <div class="settings-row">
+                            <span class="settings-row-label">Звук</span>
                             <div class="toggle-switch">
                                 <div class="toggle-switch-handle"></div>
                             </div>
                         </div>
                         
-                        <!-- Реферальная система -->
-                        <div class="settings-item clickable">
-                            <span class="settings-label">Реферальная система</span>
+                        <div class="settings-row">
+                            <span class="settings-row-label">Реферальная система</span>
                             <span class="settings-arrow">→</span>
                         </div>
                         
-                        <!-- Друзья -->
-                        <div class="settings-item clickable" onclick="App.showScreen('friendsScreen', true)">
-                            <span class="settings-label">Друзья</span>
+                        <div class="settings-row" onclick="App.showScreen('friendsScreen', true)">
+                            <span class="settings-row-label">Друзья</span>
                             <span class="settings-arrow">→</span>
                         </div>
                         
-                        <!-- Инвентарь -->
-                        <div class="settings-item clickable" onclick="App.showScreen('shopScreen', true)">
-                            <span class="settings-label">Инвентарь</span>
+                        <div class="settings-row" onclick="App.showScreen('shopScreen', true)">
+                            <span class="settings-row-label">Инвентарь</span>
                             <span class="settings-arrow">→</span>
                         </div>
                     </div>
                     
                     <!-- ===== ОФОРМЛЕНИЕ ===== -->
-                    <div class="settings-group">
-                        <div class="settings-group-title">ОФОРМЛЕНИЕ</div>
+                    <div class="settings-section">
+                        <div class="settings-section-title">ОФОРМЛЕНИЕ</div>
                         
-                        <!-- Тема -->
-                        <div class="settings-item">
-                            <span class="settings-label">Тема</span>
-                            <div class="theme-selector">
-                                <span class="theme-option dark active">Тёмная</span>
-                                <span class="theme-option light">Светлая</span>
+                        <div class="settings-row">
+                            <span class="settings-row-label">Тёмная тема</span>
+                            <div class="toggle-switch">
+                                <div class="toggle-switch-handle"></div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- ===== СОЦСЕТИ ===== -->
-                    <div class="settings-group">
-                        <div class="settings-group-title">СОЦСЕТИ</div>
+                    <div class="settings-section">
+                        <div class="settings-section-title">СОЦСЕТИ</div>
                         
-                        <a href="#" class="settings-link">
-                            <span class="settings-label">TikTok</span>
+                        <a href="#" class="settings-row-link">
+                            <span class="settings-row-label">TikTok</span>
                             <span class="settings-arrow">→</span>
                         </a>
                         
-                        <a href="#" class="settings-link">
-                            <span class="settings-label">Telegram канал</span>
+                        <a href="#" class="settings-row-link">
+                            <span class="settings-row-label">Telegram канал</span>
                             <span class="settings-arrow">→</span>
                         </a>
                     </div>
                     
                     <!-- ===== ПОДДЕРЖКА ===== -->
-                    <div class="settings-group">
-                        <div class="settings-group-title">ПОДДЕРЖКА</div>
+                    <div class="settings-section">
+                        <div class="settings-section-title">ПОДДЕРЖКА</div>
                         
-                        <a href="mailto:support@pingster.com" class="settings-link">
-                            <span class="settings-label">Gmail</span>
+                        <a href="mailto:support@pingster.com" class="settings-row-link">
+                            <span class="settings-row-label">Gmail</span>
                             <span class="settings-value">support@pingster.com</span>
                         </a>
                         
-                        <div class="settings-item">
-                            <span class="settings-label">Telegram</span>
+                        <div class="settings-row">
+                            <span class="settings-row-label">Telegram</span>
                             <span class="settings-value">@pingster_support</span>
                         </div>
                     </div>
