@@ -217,10 +217,22 @@ const Search = {
         });
     },
     
+    // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ showSwipeScreen ==========
     showSwipeScreen(data) {
         console.log('🔄 Показываем экран свайпа для match_id:', data.match_id);
         console.log('Данные от сервера:', data);
-    
+        
+        // 👇 ВАЖНО: Добавляем mode к opponent, если его нет
+        if (data.opponent) {
+            // Добавляем режим из поиска в объект opponent
+            data.opponent.mode = this.currentMode;
+            console.log('✅ Добавлен mode к opponent:', this.currentMode);
+        } else {
+            console.warn('⚠️ opponent отсутствует в данных!');
+            // Создаем объект opponent, если его нет
+            data.opponent = { mode: this.currentMode };
+        }
+        
         this.currentMatchId = data.match_id;
         this.myResponse = null;
         this.isSearching = false;
@@ -349,7 +361,7 @@ const Search = {
         
         App.showScreen('searchScreen', true);
         
-        // ИЗМЕНЕНО: показываем PRIME и PUBLIC (без MM)
+        // Показываем режим (FACEIT, PREMIER, PRIME, PUBLIC)
         document.getElementById('searchModeTitle').textContent = mode;
         
         const statusEl = document.getElementById('searchStatus');
