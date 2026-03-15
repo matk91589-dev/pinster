@@ -104,14 +104,14 @@ const Swipe = {
             let idealWidth = Math.min(maxWidth, window.innerWidth * 0.9);
             
             // Нужная высота для этой ширины
-            const neededHeight = idealWidth * 1.33;
+            const neededHeight = idealWidth * 1.25;
             
             console.log(`📐 Подгон карточки свайпа: экран=${screenHeight}, доступно=${availableHeight}, нужно=${neededHeight}, ширина=${idealWidth}`);
             
             // Если нужная высота больше доступной
             if (neededHeight > availableHeight) {
                 // Уменьшаем ширину, чтобы вписаться, но не слишком сильно
-                const newWidth = Math.max(availableHeight / 1.33, 320); // Минимум 320px
+                const newWidth = Math.max(availableHeight / 1.25, 320); // Минимум 320px
                 
                 if (newWidth <= maxWidth) {
                     this.card.style.width = newWidth + 'px';
@@ -171,7 +171,7 @@ const Swipe = {
             console.log(`📐 Подгон карточки ожидания: доступно=${availableHeight}, нужно=${neededHeight}`);
             
             if (neededHeight > availableHeight) {
-                const newWidth = Math.max(availableHeight / 1.33, 320);
+                const newWidth = Math.max(availableHeight / 1.25, 320);
                 connectionCard.style.width = newWidth + 'px';
                 connectionCard.style.maxWidth = newWidth + 'px';
                 connectionCard.style.margin = '0 auto';
