@@ -8,25 +8,21 @@
     
     if (tg) {
         tg.ready();
-        tg.expand();                    // растягиваем на весь экран
+        tg.expand();
         if (tg.disableVerticalSwipes) {
-            tg.disableVerticalSwipes(); // убираем свайп закрытия
+            tg.disableVerticalSwipes();
         }
         
-        // Адаптация под тему Telegram
         document.body.style.backgroundColor = tg.themeParams.bg_color || '#0D0F15';
         
-        // Слушаем изменения темы
         tg.onEvent('themeChanged', () => {
             document.body.style.backgroundColor = tg.themeParams.bg_color || '#0D0F15';
         });
     }
 
-    // Запуск после полной загрузки DOM
     document.addEventListener('DOMContentLoaded', () => {
         console.log('Запуск Pingster...');
         
-        // Инициализация модулей (с защитой от ошибок)
         try {
             if (typeof Shop !== 'undefined') Shop.init();
             if (typeof Friends !== 'undefined') Friends.init();
@@ -35,18 +31,15 @@
             console.error('Ошибка инициализации модулей:', e);
         }
         
-        // Сбрасываем иконку настроек
         const settingsIcon = document.getElementById('settingsIcon');
         if (settingsIcon) {
             settingsIcon.classList.remove('active');
         }
         
-        // ПОЛУЧАЕМ TELEGRAM ID И СРАЗУ ПОКАЗЫВАЕМ ГЛАВНЫЙ ЭКРАН
         const telegram_id = tg?.initDataUnsafe?.user?.id;
         console.log('Telegram ID:', telegram_id);
         
         if (telegram_id) {
-            // Инициализируем пользователя на сервере
             fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/user/init', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -59,23 +52,27 @@
             .then(data => {
                 console.log('User init response:', data);
                 
-                // Сохраняем данные
                 if (data.player_id) {
                     localStorage.setItem('player_id', data.player_id);
                     localStorage.setItem('nick', data.nick);
                     localStorage.setItem('pingcoins', data.pingcoins);
+                    
+                    // 👇 ВАЖНО: Загружаем профиль после инициализации
+                    if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
+                        console.log('📥 Загружаем данные профиля...');
+                        Profile.loadProfileFromServer();
+                    } else {
+                        console.warn('⚠️ Profile.loadProfileFromServer не найден');
+                    }
                 }
                 
-                // СРАЗУ ПОКАЗЫВАЕМ ГЛАВНЫЙ ЭКРАН
                 if (window.App && App.showScreen) {
                     App.showScreen('mainScreen', true);
                 } else {
-                    // Если App еще не загружен, показываем через запасной метод
                     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                     document.getElementById('mainScreen')?.classList.add('active');
                 }
                 
-                // Проверяем мэтч при старте
                 setTimeout(() => {
                     if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
                         Search.checkMatchStatus();
@@ -84,7 +81,6 @@
             })
             .catch(error => {
                 console.error('Error initializing user:', error);
-                // Даже при ошибке показываем главный экран
                 if (window.App && App.showScreen) {
                     App.showScreen('mainScreen', true);
                 } else {
@@ -104,43 +100,31 @@
     });
 })();
 
-// ============================================
-// ГЛОБАЛЬНЫЕ ФУНКЦИИ (ДОПОЛНЕНИЕ К App ИЗ navigation.js)
-// ============================================
-
-// Проверяем, что App уже существует (из navigation.js)
 if (!window.App) {
     window.App = {};
 }
 
-// Добавляем методы, которых нет в navigation.js
 Object.assign(window.App, {
-    // Показать экран (если вдруг не существует в navigation.js)
     showScreen: function(screenId, updateNav = true) {
         console.log('App.showScreen:', screenId);
         
-        // Скрываем все экраны
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
         });
         
-        // Показываем нужный экран
         const screen = document.getElementById(screenId);
         if (screen) {
             screen.classList.add('active');
         }
         
-        // Обновляем навигацию
         if (updateNav) {
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
             
-            // Активируем соответствующий пункт навигации
             if (screenId === 'mainScreen') {
                 document.getElementById('navMain')?.classList.add('active');
                 
-                // ВАЖНО: при возврате на главный экран проверяем мэтч
                 setTimeout(() => {
                     if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
                         console.log('Проверяем мэтч после возврата на главный экран');
@@ -152,16 +136,15 @@ Object.assign(window.App, {
             } else if (screenId === 'profileScreen') {
                 document.getElementById('navProfile')?.classList.add('active');
                 
-                // Загружаем профиль при показе
-                if (typeof Profile !== 'undefined' && Profile.load) {
-                    Profile.load();
+                // 👇 Принудительно загружаем профиль при открытии экрана
+                if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
+                    console.log('📥 Загружаем профиль при открытии экрана');
+                    Profile.loadProfileFromServer();
                 }
             }
         }
         
-        // Специальные действия для определенных экранов
         if (screenId === 'profileScreen') {
-            // Дополнительная проверка мэтча при открытии профиля
             setTimeout(() => {
                 if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
                     Search.checkMatchStatus();
@@ -170,7 +153,6 @@ Object.assign(window.App, {
         }
     },
     
-    // Показать уведомление
     showAlert: function(message) {
         if (window.Telegram?.WebApp) {
             window.Telegram.WebApp.showAlert(message);
@@ -178,9 +160,6 @@ Object.assign(window.App, {
             alert(message);
         }
     }
-    
-    // МЕТОД startApp ПОЛНОСТЬЮ УДАЛЕН — БОЛЬШЕ НЕ НУЖЕН
 });
 
-// Делаем App глобальным (если вдруг перезаписалось)
 window.App = window.App;
