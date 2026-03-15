@@ -46,6 +46,10 @@ const Swipe = {
     chatLink: null,
     inviteLink: null,
     
+    // Сохраненные размеры для экрана ожидания
+    lastSwipeCardWidth: 0,
+    lastSwipeCardHeight: 0,
+    
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
         
@@ -133,8 +137,11 @@ const Swipe = {
             this.card.style.marginLeft = 'auto';
             this.card.style.marginRight = 'auto';
             
-            // Сохраняем размер для экрана ожидания
+            // Сохраняем размеры для экрана ожидания (и ширину, и высоту)
             this.lastSwipeCardWidth = this.card.offsetWidth;
+            this.lastSwipeCardHeight = this.card.offsetHeight;
+            
+            console.log(`💾 Сохранены размеры: ${this.lastSwipeCardWidth}px x ${this.lastSwipeCardHeight}px`);
         }, 100);
     },
     
@@ -144,17 +151,20 @@ const Swipe = {
         if (!connectionCard || !this.isConnectionMode) return;
         
         setTimeout(() => {
-            // Берем размер карточки свайпа (если есть)
+            // Берем карточку свайпа
             const swipeCard = document.getElementById('swipeCard');
             
             let targetWidth = 0;
+            let targetHeight = 0;
             
-            if (swipeCard && swipeCard.offsetWidth > 0) {
+            if (swipeCard && swipeCard.offsetWidth > 0 && swipeCard.offsetHeight > 0) {
                 targetWidth = swipeCard.offsetWidth;
-                console.log(`📏 Берем размер от карточки свайпа: ${targetWidth}px`);
-            } else if (this.lastSwipeCardWidth > 0) {
+                targetHeight = swipeCard.offsetHeight;
+                console.log(`📏 Берем размер от карточки свайпа: ${targetWidth}px x ${targetHeight}px`);
+            } else if (this.lastSwipeCardWidth > 0 && this.lastSwipeCardHeight > 0) {
                 targetWidth = this.lastSwipeCardWidth;
-                console.log(`📏 Берем сохраненный размер: ${targetWidth}px`);
+                targetHeight = this.lastSwipeCardHeight;
+                console.log(`📏 Берем сохраненные размеры: ${targetWidth}px x ${targetHeight}px`);
             } else {
                 // Если ничего нет - считаем сами
                 const screenHeight = window.innerHeight;
@@ -171,30 +181,44 @@ const Swipe = {
                 
                 if (neededHeight > availableHeight) {
                     targetWidth = Math.max(availableHeight / 1.25, 320);
+                    targetHeight = targetWidth * 1.25;
                 } else {
                     targetWidth = maxWidth;
+                    targetHeight = targetWidth * 1.25;
                 }
-                console.log(`📏 Рассчитали размер: ${targetWidth}px`);
+                console.log(`📏 Рассчитали размер: ${targetWidth}px x ${targetHeight}px`);
             }
             
-            // Применяем размер
+            // Применяем размер (и ширину, и высоту)
             connectionCard.style.width = targetWidth + 'px';
             connectionCard.style.maxWidth = targetWidth + 'px';
+            connectionCard.style.height = targetHeight + 'px';
+            connectionCard.style.minHeight = targetHeight + 'px';
+            connectionCard.style.maxHeight = targetHeight + 'px';
             connectionCard.style.margin = '0 auto';
             connectionCard.style.boxSizing = 'border-box';
             
-            console.log(`✅ Экран ожидания установлен: ${targetWidth}px`);
+            // Растягиваем контент на всю высоту
+            const content = connectionCard.querySelector('.swipe-card-content');
+            if (content) {
+                content.style.height = '100%';
+                content.style.display = 'flex';
+                content.style.flexDirection = 'column';
+                content.style.justifyContent = 'space-between';
+            }
             
-            // Проверяем через 100мс
+            console.log(`✅ Экран ожидания установлен: ${targetWidth}px x ${targetHeight}px`);
+            
+            // Проверяем через 200мс
             setTimeout(() => {
-                if (connectionCard.offsetWidth !== targetWidth) {
+                if (connectionCard.offsetWidth !== targetWidth || connectionCard.offsetHeight !== targetHeight) {
                     connectionCard.style.width = targetWidth + 'px';
-                    connectionCard.style.maxWidth = targetWidth + 'px';
-                    console.log(`✅ Повторная подгонка: ${targetWidth}px`);
+                    connectionCard.style.height = targetHeight + 'px';
+                    console.log(`✅ Повторная подгонка: ${targetWidth}px x ${targetHeight}px`);
                 }
-            }, 100);
+            }, 200);
             
-        }, 150); // Немного увеличил задержку
+        }, 150);
     },
     
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
