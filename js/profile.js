@@ -37,6 +37,7 @@ const Profile = {
         return urlParams.get('tg_id');
     },
     
+    // Toast уведомление - УБРАЛ ВСЕ ЭМОДЗИ
     showToast(message) {
         if (this.toastTimeout) {
             clearTimeout(this.toastTimeout);
@@ -89,10 +90,10 @@ const Profile = {
     
     async loadProfileFromServer() {
         this.telegramId = this.getTelegramId();
-        console.log('📥 Загрузка профиля для telegram_id:', this.telegramId);
+        console.log('Загрузка профиля для telegram_id:', this.telegramId);
         
         if (!this.telegramId) {
-            console.error('❌ Нет telegram_id');
+            console.error('Нет telegram_id');
             return;
         }
         
@@ -108,15 +109,14 @@ const Profile = {
             });
             
             const data = await response.json();
-            console.log('📦 Данные профиля с сервера:', data);
+            console.log('Данные профиля с сервера:', data);
             
             if (data.status === 'ok') {
-                // Сохраняем данные
                 this.savedName = data.nick || '-';
                 this.savedAge = data.age || '';
                 this.savedSteam = data.steam_link || '';
                 this.savedFaceitLink = data.faceit_link || '';
-                this.savedAvatarUrl = data.avatar || null;  // 👈 СОХРАНЯЕМ АВАТАРКУ
+                this.savedAvatarUrl = data.avatar || null;
                 
                 this.tempName = this.savedName;
                 this.tempAge = this.savedAge;
@@ -124,11 +124,10 @@ const Profile = {
                 this.tempFaceitLink = this.savedFaceitLink;
                 this.tempAvatarUrl = this.savedAvatarUrl;
                 
-                // Обновляем отображение
                 this.updateDisplay();
-                console.log('✅ Профиль обновлен');
+                console.log('Профиль обновлен');
             } else {
-                console.error('❌ Ошибка в ответе сервера:', data);
+                console.error('Ошибка в ответе сервера:', data);
             }
             
             setTimeout(() => {
@@ -138,12 +137,12 @@ const Profile = {
             }, 1000);
             
         } catch (error) {
-            console.error('❌ Ошибка загрузки профиля:', error);
+            console.error('Ошибка загрузки профиля:', error);
         }
     },
     
     updateDisplay() {
-        console.log('🔄 Обновление отображения профиля');
+        console.log('Обновление отображения профиля');
         
         const profileNameEl = document.getElementById('profileName');
         if (profileNameEl) {
@@ -165,14 +164,11 @@ const Profile = {
             faceitLinkDisplayEl.value = this.savedFaceitLink || '';
         }
         
-        // 👇 ОБНОВЛЯЕМ АВАТАРКУ
         const avatarDiv = document.getElementById('profileAvatar');
         if (avatarDiv) {
             if (this.savedAvatarUrl) {
-                // Если есть сохраненная аватарка - показываем её
                 avatarDiv.innerHTML = `<img src="${this.savedAvatarUrl}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
             } else {
-                // Если нет - показываем заглушку
                 avatarDiv.innerHTML = this.savedAvatar;
             }
         }
@@ -180,14 +176,14 @@ const Profile = {
         this.clearAllErrors();
     },
     
-    // 👇 ФУНКЦИЯ ДЛЯ ВЫБОРА АВАТАРКИ
+    // 👇 ИСПРАВЛЕННАЯ ФУНКЦИЯ - сразу открывает проводник, без лишних сообщений
     editAvatar() {
         if (!this.editMode) {
             this.showToast('Для изменений перейдите в режим редактирования');
             return;
         }
         
-        // Создаем скрытый input для загрузки файла
+        // Сразу открываем проводник
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = 'image/*';
@@ -196,23 +192,23 @@ const Profile = {
         
         fileInput.onchange = async (e) => {
             const file = e.target.files[0];
-            if (!file) return;
+            if (!file) {
+                fileInput.remove();
+                return;
+            }
             
-            // Проверяем размер (макс 5MB)
             if (file.size > 5 * 1024 * 1024) {
-                this.showToast('❌ Файл слишком большой (макс 5MB)');
+                this.showToast('Файл слишком большой (макс 5MB)');
                 fileInput.remove();
                 return;
             }
             
-            // Проверяем тип файла
             if (!file.type.startsWith('image/')) {
-                this.showToast('❌ Можно загружать только изображения');
+                this.showToast('Можно загружать только изображения');
                 fileInput.remove();
                 return;
             }
             
-            // Показываем превью
             const reader = new FileReader();
             reader.onload = (e) => {
                 const avatarDiv = document.getElementById('profileAvatar');
@@ -220,13 +216,11 @@ const Profile = {
                     avatarDiv.innerHTML = `<img src="${e.target.result}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
                     this.tempAvatarUrl = e.target.result;
                 }
+                fileInput.remove();
             };
             reader.readAsDataURL(file);
             
-            // Здесь потом будет загрузка на сервер
-            this.showToast('✅ Аватарка выбрана, сохраните профиль');
-            
-            fileInput.remove();
+            this.showToast('Аватарка выбрана, сохраните профиль');
         };
         
         fileInput.click();
@@ -263,7 +257,6 @@ const Profile = {
                 profileName.classList.add('editable');
             }
             
-            // Подсвечиваем аватарку
             if (avatar) {
                 avatar.classList.add('editable-avatar');
             }
@@ -284,12 +277,10 @@ const Profile = {
                 profileName.classList.remove('editable');
             }
             
-            // Убираем подсветку аватарки
             if (avatar) {
                 avatar.classList.remove('editable-avatar');
             }
             
-            // Если были изменения аватарки, но не сохранили - откатываем
             if (this.tempAvatarUrl !== this.savedAvatarUrl) {
                 this.tempAvatarUrl = this.savedAvatarUrl;
                 this.updateDisplay();
@@ -399,7 +390,6 @@ const Profile = {
         const ageInput = document.getElementById('ageValue');
         const steamInput = document.getElementById('steamDisplay');
         const faceitInput = document.getElementById('faceitLinkDisplay');
-        const profileName = document.getElementById('profileName');
 
         let isValid = true;
         
@@ -423,14 +413,13 @@ const Profile = {
             return;
         }
 
-        // 👇 СОБИРАЕМ ДАННЫЕ ВКЛЮЧАЯ АВАТАРКУ
         const dataToSend = {
             telegram_id: this.telegramId,
             nick: this.tempName,
             age: ageInput ? ageInput.value || null : null,
             steam_link: steamInput ? steamInput.value || null : null,
             faceit_link: faceitInput ? faceitInput.value || null : null,
-            avatar: this.tempAvatarUrl || null  // 👈 ОТПРАВЛЯЕМ АВАТАРКУ
+            avatar: this.tempAvatarUrl || null
         };
 
         try {
@@ -449,18 +438,15 @@ const Profile = {
                 this.savedAge = ageInput ? ageInput.value : '';
                 this.savedSteam = steamInput ? steamInput.value : '';
                 this.savedFaceitLink = faceitInput ? faceitInput.value : '';
-                this.savedAvatarUrl = this.tempAvatarUrl;  // 👈 СОХРАНЯЕМ АВАТАРКУ
+                this.savedAvatarUrl = this.tempAvatarUrl;
                 
-                if (profileName) {
-                    profileName.textContent = this.savedName;
-                }
-                
+                this.updateDisplay();
                 this.toggleEditMode();
-                this.showToast('✅ Профиль сохранен');
+                this.showToast('Профиль сохранен');
             }
         } catch (error) {
-            console.error('❌ Ошибка отправки:', error);
-            this.showToast('❌ Ошибка сохранения');
+            console.error('Ошибка отправки:', error);
+            this.showToast('Ошибка сохранения');
         } finally {
             if (applyBtn) {
                 applyBtn.style.pointerEvents = 'auto';
@@ -469,6 +455,7 @@ const Profile = {
         }
     },
     
+    // 👇 ИСПРАВЛЕННАЯ ФУНКЦИЯ - без дубликатов
     editName() {
         if (!this.editMode) {
             this.showToast('Для изменений перейдите в режим редактирования');
@@ -478,8 +465,16 @@ const Profile = {
         const profileName = document.getElementById('profileName');
         if (!profileName) return;
         
+        // Проверяем, нет ли уже активного поля ввода
+        const existingInput = profileName.parentNode.querySelector('.profile-name-input');
+        if (existingInput) {
+            existingInput.focus();
+            return;
+        }
+        
         const tempInput = document.createElement('input');
         tempInput.type = 'text';
+        tempInput.className = 'profile-name-input';
         tempInput.value = this.tempName;
         tempInput.maxLength = 10;
         tempInput.style.cssText = `
@@ -500,44 +495,26 @@ const Profile = {
         
         setTimeout(() => tempInput.focus(), 50);
         
-        const blurHandler = () => {
-            setTimeout(() => {
-                if (!tempInput.matches(':focus')) {
-                    this.saveNameFromTempInput(tempInput, profileName);
-                }
-            }, 100);
-        };
-        
-        const keyHandler = (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                this.saveNameFromTempInput(tempInput, profileName);
+        const saveHandler = () => {
+            const newName = tempInput.value.trim();
+            if (newName && newName.length >= 3 && newName.length <= 10) {
+                this.tempName = newName;
+                profileName.textContent = newName;
+                this.showToast('Нажмите Применить для сохранения');
+            } else if (newName && (newName.length < 3 || newName.length > 10)) {
+                this.showToast('Никнейм должен быть от 3 до 10 символов');
             }
-        };
-        
-        tempInput.addEventListener('blur', blurHandler, { once: true });
-        tempInput.addEventListener('keypress', keyHandler, { once: true });
-    },
-    
-    async saveNameFromTempInput(tempInput, profileName) {
-        const newName = tempInput.value.trim();
-        
-        if (newName === '') {
             tempInput.remove();
             profileName.style.display = 'inline-block';
-            return;
-        }
+        };
         
-        if (newName.length >= 3 && newName.length <= 10) {
-            this.tempName = newName;
-            profileName.textContent = newName;
-            this.showToast('✅ Нажмите "Применить" для сохранения');
-        } else {
-            this.showToast('❌ Никнейм должен быть от 3 до 10 символов');
-        }
-        
-        tempInput.remove();
-        profileName.style.display = 'inline-block';
+        tempInput.addEventListener('blur', saveHandler, { once: true });
+        tempInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveHandler();
+            }
+        });
     },
     
     editAge() {
@@ -720,7 +697,7 @@ const Profile = {
     },
     
     loadSavedValues() {
-        console.log('🚀 Загружаем сохраненные значения профиля');
+        console.log('Загружаем сохраненные значения профиля');
         this.loadProfileFromServer();
         setTimeout(() => {
             this.setupListeners();
@@ -730,7 +707,7 @@ const Profile = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('📄 Profile: DOM загружен');
+    console.log('Profile: DOM загружен');
     Profile.loadSavedValues();
 });
 
