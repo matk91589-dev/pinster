@@ -3499,7 +3499,7 @@ scroll-behavior:smooth;
 
 /* ===== ФИКС СООТНОШЕНИЯ ЭКРАНА ОЖИДАНИЯ ===== */
 .connection-screen .swipe-card {
-    aspect-ratio: 3 / 4 !important;  /* Это 4:3 вертикальный */
+    aspect-ratio: 4 / 5 !important;  /* 4:5 - широкий вертикальный */
     display: flex;
     flex-direction: column;
     max-height: none !important;
