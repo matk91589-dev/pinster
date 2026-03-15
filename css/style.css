@@ -3497,12 +3497,15 @@ scroll-behavior:smooth;
     font-size: 16px !important;
 }
 
-/* ===== ФИКС СООТНОШЕНИЯ ЭКРАНА ОЖИДАНИЯ ===== */
+/* ===== ЭКРАН ОЖИДАНИЯ - ОДИНАКОВЫЙ РАЗМЕР СО СВАЙПОМ ===== */
 .connection-screen .swipe-card {
-    aspect-ratio: 4 / 5 !important;  /* 4:5 - широкий вертикальный */
+    aspect-ratio: 4 / 5 !important;
     display: flex;
     flex-direction: column;
     max-height: none !important;
+    width: 100%;
+    max-width: 420px; /* Такой же как у свайпа */
+    margin: 0 auto;
 }
 
 .connection-screen .swipe-card-content {
@@ -3510,4 +3513,5 @@ scroll-behavior:smooth;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    gap: 6px;
 }
