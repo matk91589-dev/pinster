@@ -1,118 +1,61 @@
 // ============================================
-// НАСТРОЙКИ PINGSTER - ПОЛНАЯ ВЕРСИЯ
+// НАСТРОЙКИ PINGSTER - МИНИМАЛИЗМ
 // ============================================
 
 const Settings = {
-    // Состояние настроек
     state: {
         sound: true,
-        volume: 70,
-        notifications: true,
-        theme: 'dark',
-        language: 'ru',
-        showAge: true,
-        showSteam: true,
-        showFaceit: true
+        theme: 'dark'
     },
     
     init() {
         this.loadSettings();
         this.setupToggles();
-        this.setupSlider();
-        this.applyTheme();
-        console.log('⚙️ Настройки инициализированы');
+        this.setupThemeSelector();
+        console.log('Настройки загружены');
     },
     
     loadSettings() {
-        // Загружаем из localStorage
         this.state.sound = localStorage.getItem('settings_sound') !== 'false';
-        this.state.volume = parseInt(localStorage.getItem('settings_volume')) || 70;
-        this.state.notifications = localStorage.getItem('settings_notifications') !== 'false';
         this.state.theme = localStorage.getItem('settings_theme') || 'dark';
-        this.state.showAge = localStorage.getItem('settings_showAge') !== 'false';
-        this.state.showSteam = localStorage.getItem('settings_showSteam') !== 'false';
-        this.state.showFaceit = localStorage.getItem('settings_showFaceit') !== 'false';
-        
-        // Обновляем UI
-        this.updateToggles();
+        this.applyTheme();
     },
     
     setupToggles() {
-        // Находим все квадратные переключатели
-        document.querySelectorAll('.square-toggle').forEach(toggle => {
-            const setting = toggle.dataset.setting;
-            if (!setting) return;
-            
-            // Устанавливаем начальное состояние
-            if (this.state[setting]) {
-                toggle.classList.add('active');
+        const toggle = document.querySelector('.toggle-switch');
+        if (!toggle) return;
+        
+        if (this.state.sound) {
+            toggle.classList.add('active');
+        }
+        
+        toggle.addEventListener('click', () => {
+            toggle.classList.toggle('active');
+            this.state.sound = toggle.classList.contains('active');
+            localStorage.setItem('settings_sound', this.state.sound);
+        });
+    },
+    
+    setupThemeSelector() {
+        const options = document.querySelectorAll('.theme-option');
+        
+        options.forEach(opt => {
+            if (opt.classList.contains('dark') && this.state.theme === 'dark') {
+                opt.classList.add('active');
+            }
+            if (opt.classList.contains('light') && this.state.theme === 'light') {
+                opt.classList.add('active');
             }
             
-            // Добавляем обработчик клика
-            toggle.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
+            opt.addEventListener('click', () => {
+                options.forEach(o => o.classList.remove('active'));
+                opt.classList.add('active');
                 
-                // Переключаем класс
-                toggle.classList.toggle('active');
-                
-                // Обновляем состояние
-                const isActive = toggle.classList.contains('active');
-                this.state[setting] = isActive;
-                
-                // Сохраняем в localStorage
-                localStorage.setItem(`settings_${setting}`, isActive);
-                
-                // Применяем изменения
-                this.applySetting(setting, isActive);
-                
-                console.log(`⚙️ ${setting}:`, isActive);
+                this.state.theme = opt.classList.contains('dark') ? 'dark' : 'light';
+                localStorage.setItem('settings_theme', this.state.theme);
+                this.applyTheme();
             });
         });
-    },
-    
-    setupSlider() {
-        const slider = document.getElementById('volumeSlider');
-        if (!slider) return;
-        
-        // Устанавливаем значение
-        slider.value = this.state.volume;
-        
-        // Добавляем обработчик
-        slider.addEventListener('input', (e) => {
-            const value = parseInt(e.target.value);
-            this.state.volume = value;
-            localStorage.setItem('settings_volume', value);
-            console.log('Громкость:', value);
-        });
-    },
-    
-    updateToggles() {
-        document.querySelectorAll('.square-toggle').forEach(toggle => {
-            const setting = toggle.dataset.setting;
-            if (setting && this.state[setting]) {
-                toggle.classList.add('active');
-            } else {
-                toggle.classList.remove('active');
-            }
-        });
-    },
-    
-    applySetting(setting, value) {
-        switch(setting) {
-            case 'theme':
-                this.applyTheme();
-                break;
-            case 'sound':
-                // Здесь будет логика звуков
-                break;
-            case 'notifications':
-                // Здесь будет логика уведомлений
-                break;
-            default:
-                // Для приватности пока ничего не делаем
-                break;
-        }
     },
     
     applyTheme() {
@@ -123,32 +66,11 @@ const Settings = {
             document.body.classList.remove('dark-theme');
             document.body.classList.add('light-theme');
         }
-    },
-    
-    // Получить значение настройки
-    get(key) {
-        return this.state[key];
-    },
-    
-    // Установить значение настройки
-    set(key, value) {
-        this.state[key] = value;
-        localStorage.setItem(`settings_${key}`, value);
-        this.applySetting(key, value);
-        
-        // Обновляем UI если нужно
-        if (key === 'theme') {
-            this.applyTheme();
-        }
     }
 };
 
-// Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', () => {
-    // Даем небольшую задержку, чтобы DOM точно загрузился
-    setTimeout(() => {
-        Settings.init();
-    }, 100);
+    setTimeout(() => Settings.init(), 100);
 });
 
 window.Settings = Settings;
