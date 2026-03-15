@@ -3257,7 +3257,7 @@ html {
     box-shadow: 0 0 15px rgba(255, 85, 0, 0.5);
 }
 
-/* ===== ПОЛНЫЙ СБРОС ОТСТУПОВ ДЛЯ НАСТРОЕК ===== */
+/* ===== ЖЁСТКИЙ СБРОС ДЛЯ НАСТРОЕК ===== */
 .settings-screen {
     padding: 0 !important;
     margin: 0 !important;
@@ -3266,15 +3266,30 @@ html {
     overflow-y: auto !important;
 }
 
+/* Перебиваем глобальный селектор */
+.settings-screen.main-screen,
+.settings-screen.shop-screen,
+.settings-screen.profile-screen,
+.settings-screen.faceit-screen,
+.settings-screen.premier-screen,
+.settings-screen.prime-screen,
+.settings-screen.public-screen,
+.settings-screen.search-screen,
+.settings-screen.start-screen,
+.settings-screen.friends-screen,
+.settings-screen.team-screen,
+.settings-screen.match-found-screen {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
 /* Убираем padding у ВСЕХ элементов внутри настроек */
 .settings-screen * {
     padding-left: 0 !important;
     padding-right: 0 !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
 }
 
-/* Возвращаем padding только тексту внутри строк, но не самим строкам */
+/* Возвращаем padding только тексту */
 .settings-row .settings-row-label,
 .settings-row .settings-value,
 .settings-row .settings-arrow,
@@ -3286,7 +3301,7 @@ html {
     padding-right: 16px !important;
 }
 
-/* Стили для скролла */
+/* Скролл */
 .settings-screen::-webkit-scrollbar {
     width: 4px;
 }
@@ -3300,12 +3315,12 @@ html {
     border-radius: 4px;
 }
 
+/* Заголовок */
 .settings-header {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 12px 0 8px 0 !important;
-    width: 100%;
 }
 
 .settings-title {
@@ -3317,7 +3332,6 @@ html {
 
 .settings-section {
     margin: 0 0 24px 0 !important;
-    width: 100%;
 }
 
 .settings-section-title {
@@ -3327,8 +3341,6 @@ html {
     text-transform: uppercase;
     letter-spacing: 0.3px;
     margin: 0 0 8px 0 !important;
-    width: 100%;
-    box-sizing: border-box;
 }
 
 .settings-row,
@@ -3341,7 +3353,6 @@ html {
     border-bottom: 1px solid rgba(255,255,255,0.05);
     cursor: pointer;
     width: 100%;
-    box-sizing: border-box;
 }
 
 .settings-row:last-child,
@@ -3366,6 +3377,7 @@ html {
     font-weight: 300;
 }
 
+/* Переключатель */
 .toggle-switch {
     width: 46px;
     height: 26px;
