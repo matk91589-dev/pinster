@@ -895,21 +895,25 @@ const Swipe = {
             console.log(`🎮 Текущий режим поиска: ${modeUpper}`);
             
             // 🏆 МЕНЯЕМ НАДПИСЬ НАД ПЛАШКОЙ
-            const rankLabelEl = document.querySelector('.swipe-stats-row.three-cols .swipe-stat-item:first-child .swipe-stat-label');
-            if (rankLabelEl) {
-                if (modeUpper === 'FACEIT') {
-                    rankLabelEl.textContent = 'ELO FACEIT';
-                } 
-                else if (modeUpper === 'PREMIER') {
-                    rankLabelEl.textContent = 'CS RATING';
+            // Ищем все три плашки и берем первую (РАНГ)
+            const statItems = document.querySelectorAll('.swipe-stats-row.three-cols .swipe-stat-item');
+            if (statItems && statItems.length >= 3) {
+                const rankLabelEl = statItems[0].querySelector('.swipe-stat-label');
+                if (rankLabelEl) {
+                    if (modeUpper === 'FACEIT') {
+                        rankLabelEl.textContent = 'ELO FACEIT';
+                    } 
+                    else if (modeUpper === 'PREMIER') {
+                        rankLabelEl.textContent = 'CS RATING';
+                    }
+                    else if (modeUpper === 'MM PRIME' || modeUpper === 'MM PUBLIC') {
+                        rankLabelEl.textContent = 'РАНГ';
+                    }
+                    else {
+                        rankLabelEl.textContent = 'CS RATING';
+                    }
+                    console.log(`🏷️ Установлена надпись: ${rankLabelEl.textContent}`);
                 }
-                else if (modeUpper === 'MM PRIME' || modeUpper === 'MM PUBLIC') {
-                    rankLabelEl.textContent = 'РАНГ';
-                }
-                else {
-                    rankLabelEl.textContent = 'CS RATING';
-                }
-                console.log(`🏷️ Установлена надпись: ${rankLabelEl.textContent}`);
             }
             
             // 🏆 ЗНАЧЕНИЕ В ПЛАШКЕ
