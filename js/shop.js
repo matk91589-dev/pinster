@@ -1,5 +1,5 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - НОВЫЕ КЕЙСЫ ПЕРВЫЕ
+// МАГАЗИН (Telegram Mini App версия) - СО ЗВУКАМИ
 // ============================================
 
 const Shop = {
@@ -107,11 +107,17 @@ const Shop = {
             badge.className = 'new-badge';
             badge.textContent = 'NEW';
             inventoryTab.appendChild(badge);
+            
+            // 👇 ЗВУК ПРИ НОВОМ ПРЕДМЕТЕ
+            if (window.Settings) Settings.success();
             App.hapticFeedback('light');
         }
     },
     
     showTab(tab) {
+        // 👇 ЗВУК ПРИ ПЕРЕКЛЮЧЕНИИ ВКЛАДОК
+        if (window.Settings) Settings.click();
+        
         this.currentTab = tab;
         
         document.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
@@ -230,6 +236,9 @@ const Shop = {
     },
     
     buyCase(caseId) {
+        // 👇 ЗВУК ПРИ НАЖАТИИ КУПИТЬ
+        if (window.Settings) Settings.click();
+        
         if (this.processingIds.has(caseId)) {
             return;
         }
@@ -239,11 +248,15 @@ const Shop = {
         
         if (caseItem.isSecret) {
             App.showAlert('❌ Этот кейс нельзя купить! Выполняйте задания чтобы получить его.');
+            // 👇 ЗВУК ПРИ ОШИБКЕ
+            if (window.Settings) Settings.error();
             return;
         }
         
         if (this.coins < caseItem.price) {
             App.showAlert('❌ Недостаточно Pingcoins!');
+            // 👇 ЗВУК ПРИ ОШИБКЕ
+            if (window.Settings) Settings.error();
             return;
         }
         
@@ -265,6 +278,8 @@ const Shop = {
         this.newItems.push(uniqueId);
         this.updateInventoryBadge();
         
+        // 👇 ЗВУК ПРИ УСПЕШНОЙ ПОКУПКЕ
+        if (window.Settings) Settings.success();
         App.hapticFeedback('medium');
         
         this.renderCases();
@@ -279,6 +294,9 @@ const Shop = {
     },
     
     useItem(uniqueId) {
+        // 👇 ЗВУК ПРИ КЛИКЕ НА ПРЕДМЕТ
+        if (window.Settings) Settings.click();
+        
         const newIndex = this.newItems.indexOf(uniqueId);
         if (newIndex !== -1) {
             this.newItems.splice(newIndex, 1);
@@ -287,6 +305,9 @@ const Shop = {
         
         this.renderInventory();
         App.hapticFeedback('light');
+        
+        // 👇 ЗВУК ПРИ ОТКРЫТИИ КЕЙСА (пока заглушка)
+        if (window.Settings) Settings.success();
         
         App.showPopup({
             title: 'Открытие кейса',
@@ -316,6 +337,8 @@ const Shop = {
             this.renderInventory();
         }
         
+        // 👇 ЗВУК ПРИ ПОЛУЧЕНИИ СЕКРЕТНОГО КЕЙСА
+        if (window.Settings) Settings.success();
         App.hapticFeedback('medium');
     }
 };
