@@ -1,5 +1,5 @@
 // ============================================
-// НАСТРОЙКИ PINGSTER - С ЗВУКАМИ (ИСПРАВЛЕНО)
+// НАСТРОЙКИ PINGSTER - С ЗВУКАМИ (УНИВЕРСАЛЬНО)
 // ============================================
 
 const Settings = {
@@ -25,35 +25,36 @@ const Settings = {
     
     // Обновляем состояние всех переключателей
     updateToggles() {
-        // Звук - первый переключатель
-        const soundToggle = document.querySelector('.settings-section:first-child .settings-row:first-child .toggle-switch');
-        if (soundToggle) {
-            if (this.state.sound) {
-                soundToggle.classList.add('active');
-            } else {
-                soundToggle.classList.remove('active');
-            }
-        }
+        // Находим ВСЕ переключатели
+        const toggles = document.querySelectorAll('.settings-row .toggle-switch');
         
-        // Тема - второй переключатель
-        const themeToggle = document.querySelector('.settings-section:first-child .settings-row:nth-child(2) .toggle-switch');
-        if (themeToggle) {
-            if (this.state.theme === 'light') {
-                themeToggle.classList.add('active');
+        if (toggles.length >= 2) {
+            // Первый переключатель - звук
+            if (this.state.sound) {
+                toggles[0].classList.add('active');
             } else {
-                themeToggle.classList.remove('active');
+                toggles[0].classList.remove('active');
+            }
+            
+            // Второй переключатель - тема
+            if (this.state.theme === 'light') {
+                toggles[1].classList.add('active');
+            } else {
+                toggles[1].classList.remove('active');
             }
         }
     },
     
     setupSoundToggle() {
-        // Находим переключатель звука (первый в секции ОФОРМЛЕНИЕ)
-        const soundToggle = document.querySelector('.settings-section:first-child .settings-row:first-child .toggle-switch');
-        if (!soundToggle) {
-            console.log('❌ Переключатель звука не найден');
+        // Находим ВСЕ переключатели и берем первый
+        const toggles = document.querySelectorAll('.settings-row .toggle-switch');
+        
+        if (toggles.length === 0) {
+            console.log('❌ Переключатели не найдены');
             return;
         }
         
+        const soundToggle = toggles[0]; // Первый - звук
         console.log('✅ Переключатель звука найден');
         
         soundToggle.addEventListener('click', (e) => {
@@ -66,7 +67,7 @@ const Settings = {
             
             console.log('Звук:', this.state.sound ? 'вкл 🔊' : 'выкл 🔇');
             
-            // Пробный звук при включении (с небольшой задержкой)
+            // Пробный звук при включении
             if (this.state.sound) {
                 setTimeout(() => this.playSound('light'), 50);
             }
@@ -74,13 +75,15 @@ const Settings = {
     },
     
     setupThemeToggle() {
-        // Находим переключатель темы (второй в секции ОФОРМЛЕНИЕ)
-        const themeToggle = document.querySelector('.settings-section:first-child .settings-row:nth-child(2) .toggle-switch');
-        if (!themeToggle) {
+        // Находим ВСЕ переключатели и берем второй
+        const toggles = document.querySelectorAll('.settings-row .toggle-switch');
+        
+        if (toggles.length < 2) {
             console.log('❌ Переключатель темы не найден');
             return;
         }
         
+        const themeToggle = toggles[1]; // Второй - тема
         console.log('✅ Переключатель темы найден');
         
         themeToggle.addEventListener('click', (e) => {
@@ -96,7 +99,7 @@ const Settings = {
             
             console.log('Тема:', this.state.theme === 'dark' ? '🌙 тёмная' : '☀️ светлая');
             
-            // Звук при смене темы (если звук включен)
+            // Звук при смене темы
             if (this.state.sound) {
                 setTimeout(() => this.playSound('medium'), 50);
             }
@@ -119,7 +122,6 @@ const Settings = {
     playSound(type = 'light') {
         // Проверяем, включен ли звук
         if (!this.state || this.state.sound !== true) {
-            console.log('Звук выключен, пропускаем');
             return;
         }
         
@@ -127,12 +129,9 @@ const Settings = {
         if (tg?.HapticFeedback) {
             tg.HapticFeedback.impactOccurred(type);
             console.log(`🔊 Звук: ${type}`);
-        } else {
-            console.log('❌ Telegram HapticFeedback не доступен');
         }
     },
     
-    // Специальные звуки для разных действий
     click() {
         this.playSound('light');
     },
