@@ -20,12 +20,13 @@ const Settings = {
         this.state.theme = localStorage.getItem('settings_theme') || 'dark';
         this.applyTheme();
         this.updateToggles();
+        console.log('Загружены настройки:', this.state);
     },
     
     // Обновляем состояние всех переключателей
     updateToggles() {
-        // Звук
-        const soundToggle = document.querySelector('.settings-row:first-child .toggle-switch');
+        // Звук - первый переключатель
+        const soundToggle = document.querySelector('.settings-section:first-child .settings-row:first-child .toggle-switch');
         if (soundToggle) {
             if (this.state.sound) {
                 soundToggle.classList.add('active');
@@ -34,8 +35,8 @@ const Settings = {
             }
         }
         
-        // Тема
-        const themeToggle = document.querySelector('.settings-row:nth-child(2) .toggle-switch');
+        // Тема - второй переключатель
+        const themeToggle = document.querySelector('.settings-section:first-child .settings-row:nth-child(2) .toggle-switch');
         if (themeToggle) {
             if (this.state.theme === 'light') {
                 themeToggle.classList.add('active');
@@ -46,28 +47,46 @@ const Settings = {
     },
     
     setupSoundToggle() {
-        const soundToggle = document.querySelector('.settings-row:first-child .toggle-switch');
-        if (!soundToggle) return;
+        // Находим переключатель звука (первый в секции ОФОРМЛЕНИЕ)
+        const soundToggle = document.querySelector('.settings-section:first-child .settings-row:first-child .toggle-switch');
+        if (!soundToggle) {
+            console.log('❌ Переключатель звука не найден');
+            return;
+        }
         
-        soundToggle.addEventListener('click', () => {
+        console.log('✅ Переключатель звука найден');
+        
+        soundToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
             soundToggle.classList.toggle('active');
             this.state.sound = soundToggle.classList.contains('active');
             localStorage.setItem('settings_sound', this.state.sound);
             
-            // Пробный звук при включении
+            console.log('Звук:', this.state.sound ? 'вкл 🔊' : 'выкл 🔇');
+            
+            // Пробный звук при включении (с небольшой задержкой)
             if (this.state.sound) {
                 setTimeout(() => this.playSound('light'), 50);
             }
-            
-            console.log('Звук:', this.state.sound ? 'вкл' : 'выкл');
         });
     },
     
     setupThemeToggle() {
-        const themeToggle = document.querySelector('.settings-row:nth-child(2) .toggle-switch');
-        if (!themeToggle) return;
+        // Находим переключатель темы (второй в секции ОФОРМЛЕНИЕ)
+        const themeToggle = document.querySelector('.settings-section:first-child .settings-row:nth-child(2) .toggle-switch');
+        if (!themeToggle) {
+            console.log('❌ Переключатель темы не найден');
+            return;
+        }
         
-        themeToggle.addEventListener('click', () => {
+        console.log('✅ Переключатель темы найден');
+        
+        themeToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
             themeToggle.classList.toggle('active');
             
             // Тема: active = светлая, не active = тёмная
@@ -75,12 +94,12 @@ const Settings = {
             localStorage.setItem('settings_theme', this.state.theme);
             this.applyTheme();
             
+            console.log('Тема:', this.state.theme === 'dark' ? '🌙 тёмная' : '☀️ светлая');
+            
             // Звук при смене темы (если звук включен)
             if (this.state.sound) {
                 setTimeout(() => this.playSound('medium'), 50);
             }
-            
-            console.log('Тема:', this.state.theme);
         });
     },
     
