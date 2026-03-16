@@ -1,60 +1,95 @@
 /* Подключаем шрифт Montserrat */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
-/* ===== ТЕМЫ ===== */
+/* ===== ТЕМЫ - APPLE STYLE ===== */
 /* Тёмная тема (по умолчанию) */
 :root {
     --accent: #FF5500;
     --accent-soft: #FF6A33;
-    --accent-glow: rgba(255, 85, 0, 0.35);
-    --surface: #181B21;
-    --surface-hover: #1F232B;
-    --bg-deep: #111317;
-    --bg-body: #0D0F15;
-    --text-primary: #F5F5F5;
-    --text-secondary: #9BA1B0;
-    --border-color: #2A2F3A;
+    --accent-glow: rgba(255, 85, 0, 0.3);
+    
+    /* Основные фоны */
+    --bg-primary: #0D0F15;        /* Глубокий тёмный */
+    --bg-secondary: #111317;       /* Чуть светлее */
+    --bg-tertiary: #1A1D24;        /* Для плашек */
+    
+    /* Тексты */
+    --text-primary: #F5F5F5;       /* Почти белый */
+    --text-secondary: #9BA1B0;     /* Серый */
+    --text-tertiary: #6B7280;       /* Ещё темнее */
+    
+    /* Поверхности */
+    --surface: #181B21;            /* Основа */
+    --surface-hover: #1F232B;      /* Ховер */
+    --surface-card: #1A1D24;       /* Карточки */
+    
+    /* Границы */
+    --border-color: #2A2F3A;       /* Тёмная граница */
+    --border-light: #3A3F4A;       /* Чуть светлее */
+    
+    /* Элементы */
+    --input-bg: #1A1D24;           /* Фон инпутов */
+    --toggle-bg: #2A2F3A;          /* Фон переключателей */
+    
+    /* Telegram */
     --tg-blue: #37AEE2;
     --tg-blue-hover: #2E9AC9;
-    --tg-gray: rgba(255, 255, 255, 0.2);
-    --card-bg: #1A1D24;
-    --input-bg: #1A1D24;
-    --toggle-bg: #2A2F3A;
 }
 
-/* Светлая тема */
+/* Светлая тема - APPLE STYLE */
 .light-theme {
     --accent: #FF5500;
     --accent-soft: #FF6A33;
-    --accent-glow: rgba(255, 85, 0, 0.2);
-    --surface: #FFFFFF;
-    --surface-hover: #F5F5F5;
-    --bg-deep: #F0F2F5;
-    --bg-body: #F5F7FA;
-    --text-primary: #1A1D24;
-    --text-secondary: #6B7280;
-    --border-color: #E5E7EB;
+    --accent-glow: rgba(255, 85, 0, 0.15);
+    
+    /* Основные фоны */
+    --bg-primary: #F5F5F7;        /* Мягкий серый фон (как у Apple) */
+    --bg-secondary: #FFFFFF;       /* Белый для плашек */
+    --bg-tertiary: #F5F5F7;        /* Для плашек */
+    
+    /* Тексты */
+    --text-primary: #1D1D1F;      /* Почти черный */
+    --text-secondary: #86868B;    /* Серый для подписей */
+    --text-tertiary: #98989D;      /* Еще светлее */
+    
+    /* Поверхности */
+    --surface: #FFFFFF;            /* Белые плашки */
+    --surface-hover: #F5F5F7;      /* Ховер */
+    --surface-card: #FFFFFF;       /* Карточки */
+    
+    /* Границы */
+    --border-color: #E5E5EA;       /* Очень светлая граница */
+    --border-light: #F0F0F5;       /* Еще светлее */
+    
+    /* Элементы */
+    --input-bg: #F5F5F7;           /* Фон инпутов */
+    --toggle-bg: #E5E5EA;          /* Фон переключателей */
+    
+    /* Telegram */
     --tg-blue: #37AEE2;
     --tg-blue-hover: #2E9AC9;
-    --tg-gray: rgba(0, 0, 0, 0.1);
-    --card-bg: #FFFFFF;
-    --input-bg: #F5F5F5;
-    --toggle-bg: #E0E0E0;
 }
 
-/* Применяем переменные */
+/* Базовые стили */
 body {
-    background-color: var(--bg-body);
+    background-color: var(--bg-primary);
     color: var(--text-primary);
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Обновляем фон для всех элементов */
-.phone-frame {
-    background: var(--bg-deep);
+/* Убираем градиенты и пятна в светлой теме */
+.light-theme .phone-frame {
+    background: var(--bg-primary) !important;
+    box-shadow: none !important;
+    border: none !important;
 }
 
-.content {
-    background: transparent;
+.light-theme .phone-frame::before,
+.light-theme .phone-frame::after,
+.light-theme body::before,
+.light-theme .header::after,
+.light-theme .bottom-nav::before {
+    display: none !important;
 }
 
 /* Карточки и поверхности */
@@ -73,8 +108,18 @@ body {
 .connection-card,
 .mode-btn {
     background: var(--surface);
-    border-color: var(--border-color);
+    border: 1px solid var(--border-color);
     color: var(--text-primary);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Прозрачный хедер и навигация */
+.header,
+.bottom-nav {
+    background: transparent;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-color: var(--border-color);
 }
 
 /* Тексты */
@@ -104,7 +149,11 @@ body {
 .connection-timer,
 .swipe-timer,
 .friend-id,
-.friend-status {
+.friend-status,
+.team-requests span,
+.friends-search-label,
+.comment-label,
+.input-label {
     color: var(--text-secondary);
 }
 
@@ -121,7 +170,13 @@ body {
 input, textarea, select {
     background: var(--input-bg);
     color: var(--text-primary);
-    border-color: var(--border-color);
+    border: 1px solid var(--border-color);
+    transition: border-color 0.2s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--accent);
+    outline: none;
 }
 
 input::placeholder, textarea::placeholder {
@@ -137,47 +192,15 @@ input::placeholder, textarea::placeholder {
     background: var(--surface-hover);
 }
 
-/* Границы */
-.header,
-.bottom-nav,
-.settings-row,
-.settings-row-link,
-.stats-row .stat-value,
-.profile-stat-value,
-.input-field,
-.search-input-field,
-.rank-select,
-.comment-input,
-.case-item,
-.friend-item,
-.inventory-item {
-    border-color: var(--border-color);
-}
-
-/* Фон body */
-.light-theme body {
-    background-color: var(--bg-body);
-}
-
-/* Фикс для сердечка */
-.heart-icon svg {
-    stroke: var(--accent);
-}
-
-/* Фикс для стрелок */
-.settings-arrow {
-    color: var(--text-secondary);
-}
-
-/* Фикс для кнопок */
+/* Кнопки */
 .mode-search-btn,
 .primary-btn,
-.cancel-search-btn,
-.buy-btn-simple,
 .friends-search-btn,
 .team-search-btn {
     background: var(--accent);
     color: white;
+    border: none;
+    transition: background 0.2s ease;
 }
 
 .mode-search-btn:hover,
@@ -187,22 +210,70 @@ input::placeholder, textarea::placeholder {
     background: var(--accent-soft);
 }
 
-.cancel-search-btn {
+.cancel-search-btn,
+.buy-btn-simple {
     background: transparent;
-    border-color: var(--accent);
+    border: 1px solid var(--accent);
     color: var(--accent);
+    transition: background 0.2s ease;
 }
 
-.cancel-search-btn:hover {
-    background: rgba(255, 85, 0, 0.1);
+.cancel-search-btn:hover,
+.buy-btn-simple:hover {
+    background: rgba(255, 85, 0, 0.05);
 }
 
-/* Фикс для скролла */
-::-webkit-scrollbar-track {
+/* Тосты (всплывающие сообщения) */
+.profile-toast {
     background: var(--surface);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-toast.error {
+    background: #FFEBEE;
+    border-color: #FFCDD2;
+    color: #B71C1C;
+}
+
+.profile-toast.success {
+    background: #E8F5E9;
+    border-color: #C8E6C9;
+    color: #1B5E20;
+}
+
+/* Иконки */
+.heart-icon svg {
+    stroke: var(--accent);
+}
+
+.nav-icon svg,
+.icon-settings svg {
+    stroke: var(--text-secondary);
+}
+
+.nav-item.active svg,
+.icon-settings.active svg {
+    stroke: var(--accent);
+}
+
+/* Скролл */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
+    background: var(--text-secondary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
     background: var(--accent);
 }
 
