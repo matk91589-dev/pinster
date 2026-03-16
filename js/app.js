@@ -110,25 +110,36 @@ Object.assign(window.App, {
         // Получаем элемент content
         const content = document.querySelector('.content');
         
-        // ВСЕГДА убираем класс settings-mode при смене экрана
+        // ВСЕГДА убираем классы при смене экрана
         if (content) {
             content.classList.remove('settings-mode');
+            content.classList.remove('shop-mode');
         }
         
-        // Если открываем настройки - добавляем класс
+        // Если открываем настройки - добавляем класс настроек
         if (screenId === 'settingsScreen' && content) {
             content.classList.add('settings-mode');
+            console.log('✅ Добавлен класс settings-mode');
         }
         
+        // Если открываем магазин - добавляем класс магазина
+        if (screenId === 'shopScreen' && content) {
+            content.classList.add('shop-mode');
+            console.log('✅ Добавлен класс shop-mode');
+        }
+        
+        // Скрываем все экраны
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
         });
         
+        // Показываем нужный экран
         const screen = document.getElementById(screenId);
         if (screen) {
             screen.classList.add('active');
         }
         
+        // Обновляем навигацию
         if (updateNav) {
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
@@ -145,6 +156,11 @@ Object.assign(window.App, {
                 }, 500);
             } else if (screenId === 'shopScreen') {
                 document.getElementById('navShop')?.classList.add('active');
+                
+                // Перерендериваем магазин при открытии
+                if (typeof Shop !== 'undefined' && Shop.renderShop) {
+                    Shop.renderShop();
+                }
             } else if (screenId === 'profileScreen') {
                 document.getElementById('navProfile')?.classList.add('active');
                 
@@ -155,6 +171,7 @@ Object.assign(window.App, {
             }
         }
         
+        // Дополнительные действия для профиля
         if (screenId === 'profileScreen') {
             setTimeout(() => {
                 if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
