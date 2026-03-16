@@ -1,6 +1,5 @@
 // ============================================
-// ПОИСК (Telegram Mini App версия) - ИСПРАВЛЕНО
-// теперь Search только ищет и передает управление Swipe
+// ПОИСК (Telegram Mini App версия) - СО ЗВУКАМИ
 // ============================================
 
 const Search = {
@@ -68,6 +67,10 @@ const Search = {
         const options = parent.querySelectorAll('.style-option');
         options.forEach(opt => opt.classList.remove('active'));
         element.classList.add('active');
+        
+        // 👇 ЗВУК ПРИ ВЫБОРЕ СТИЛЯ
+        if (window.Settings) Settings.click();
+        
         if (window.Telegram?.WebApp?.HapticFeedback) {
             Telegram.WebApp.HapticFeedback.impactOccurred('light');
         }
@@ -75,6 +78,9 @@ const Search = {
     
     start(mode, value) {
         console.log('Search.start called with mode:', mode);
+        
+        // 👇 ЗВУК ПРИ СТАРТЕ ПОИСКА
+        if (window.Settings) Settings.click();
         
         if (this.blockUntil && Date.now() < this.blockUntil) {
             const waitSeconds = Math.ceil((this.blockUntil - Date.now()) / 1000);
@@ -222,6 +228,9 @@ const Search = {
         console.log('🔄 Показываем экран свайпа для match_id:', data.match_id);
         console.log('Данные от сервера:', data);
         
+        // 👇 ЗВУК ПРИ НАЙДЕННОМ МАТЧЕ
+        if (window.Settings) Settings.match();
+        
         // 👇 ВАЖНО: Добавляем mode к opponent, если его нет
         if (data.opponent) {
             // Добавляем режим из поиска в объект opponent
@@ -277,6 +286,9 @@ const Search = {
     handlePartnerReject() {
         console.log('Партнер отклонил мэтч');
         
+        // 👇 ЗВУК ПРИ ОТКЛОНЕНИИ
+        if (window.Settings) Settings.error();
+        
         if (this.matchTimerInterval) {
             clearInterval(this.matchTimerInterval);
             this.matchTimerInterval = null;
@@ -315,6 +327,9 @@ const Search = {
     
     handleBothAccepted() {
         console.log('Оба приняли!');
+        
+        // 👇 ЗВУК ПРИ УСПЕХЕ
+        if (window.Settings) Settings.success();
         
         if (this.matchTimerInterval) {
             clearInterval(this.matchTimerInterval);
@@ -443,6 +458,10 @@ const Search = {
     
     cancel() {
         console.log('Отмена поиска');
+        
+        // 👇 ЗВУК ПРИ ОТМЕНЕ
+        if (window.Settings) Settings.error();
+        
         this.resetTimer();
         this.stopPolling();
         this.waitingForPartner = false;
