@@ -343,6 +343,33 @@ const Shop = {
     }
 };
 
+// 👇 НОВАЯ ФУНКЦИЯ: показ магазина с классом shop-mode
+Shop.show = function() {
+    // Добавляем класс к .content
+    const content = document.querySelector('.content');
+    if (content) {
+        content.classList.add('shop-mode');
+    }
+    
+    // Показываем экран магазина
+    document.getElementById('shopScreen')?.classList.add('active');
+    
+    // Инициализируем, если нужно
+    this.init();
+};
+
+// 👇 НОВАЯ ФУНКЦИЯ: скрытие магазина
+Shop.hide = function() {
+    // Убираем класс с .content
+    const content = document.querySelector('.content');
+    if (content) {
+        content.classList.remove('shop-mode');
+    }
+    
+    // Скрываем экран магазина
+    document.getElementById('shopScreen')?.classList.remove('active');
+};
+
 // ИНИЦИАЛИЗАЦИЯ
 document.addEventListener('DOMContentLoaded', () => {
     Shop.init();
