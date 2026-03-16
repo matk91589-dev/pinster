@@ -57,7 +57,6 @@
                     localStorage.setItem('nick', data.nick);
                     localStorage.setItem('pingcoins', data.pingcoins);
                     
-                    // 👇 ВАЖНО: Загружаем профиль после инициализации
                     if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
                         console.log('📥 Загружаем данные профиля...');
                         Profile.loadProfileFromServer();
@@ -108,6 +107,18 @@ Object.assign(window.App, {
     showScreen: function(screenId, updateNav = true) {
         console.log('App.showScreen:', screenId);
         
+        // Получаем элемент content
+        const content = document.querySelector('.content');
+        
+        // Если открываем настройки - добавляем класс
+        if (screenId === 'settingsScreen' && content) {
+            content.classList.add('settings-mode');
+        } 
+        // Если закрываем настройки и открываем другой экран - убираем класс
+        else if (this.currentScreen === 'settingsScreen' && content) {
+            content.classList.remove('settings-mode');
+        }
+        
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
         });
@@ -136,7 +147,6 @@ Object.assign(window.App, {
             } else if (screenId === 'profileScreen') {
                 document.getElementById('navProfile')?.classList.add('active');
                 
-                // 👇 Принудительно загружаем профиль при открытии экрана
                 if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
                     console.log('📥 Загружаем профиль при открытии экрана');
                     Profile.loadProfileFromServer();
