@@ -332,6 +332,116 @@
         .toggle-switch.active .toggle-switch-handle {
             transform: translateX(20px);
         }
+
+        /* ===== НОВЫЕ СТИЛИ ДЛЯ ЭКРАНА СОЕДИНЕНИЯ ===== */
+        .teammate-avatar {
+            width: 50px;
+            height: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .teammate-avatar.connected {
+            width: 60px;
+            height: 60px;
+            filter: grayscale(0);
+            opacity: 1;
+            animation: avatarPulse 0.5s ease;
+        }
+
+        @keyframes avatarPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .connection-status {
+            font-size: 16px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin: 8px 0;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .connection-status.active {
+            color: #4CAF50;
+        }
+
+        .connection-line {
+            position: relative;
+            width: 60px;
+            height: 2px;
+            background: var(--border-color);
+            overflow: hidden;
+        }
+
+        .line-pulse {
+            position: absolute;
+            width: 30px;
+            height: 100%;
+            background: var(--accent);
+            animation: pulse 1.5s infinite;
+        }
+
+        .connection-line.connected {
+            background: #4CAF50;
+        }
+
+        .connection-line.connected .line-pulse {
+            display: none;
+        }
+
+        @keyframes pulse {
+            0% { left: -30px; }
+            100% { left: 100%; }
+        }
+
+        .teammate-info {
+            text-align: center;
+            margin: 8px 0;
+        }
+
+        .teammate-nick {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .connection-rank-age {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 8px 0;
+        }
+
+        .connection-rank,
+        .connection-age {
+            background: var(--surface);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .tg-chat-button.active {
+            background: var(--accent) !important;
+            border: none;
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 85, 0, 0.3);
+        }
+
+        .tg-chat-button.active:hover {
+            background: var(--accent-soft) !important;
+        }
+
+        .self-avatar .tg-avatar-svg img,
+        .teammate-avatar .tg-avatar-svg img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
@@ -622,7 +732,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН СОЕДИНЕНИЯ -->
+            <!-- ЭКРАН СОЕДИНЕНИЯ - НОВЫЙ -->
             <div id="connectionScreen" class="screen connection-screen">
                 <div class="swipe-header">
                     <div class="swipe-title">Тиммейт найден</div>
@@ -630,19 +740,12 @@
 
                 <div class="swipe-container" id="connectionContainer">
                     <div class="swipe-card" id="connectionCard">
-                        <div class="connection-timer" id="connectionTimer">
-                            30с
-                        </div>
+                        <div class="connection-timer" id="connectionTimer">30с</div>
                         
                         <div class="swipe-card-content connection-mode">
                             <div class="connection-avatars">
                                 <div class="connection-avatar self-avatar">
-                                    <div class="tg-avatar-svg">
-                                        <svg viewBox="0 0 24 24" width="35" height="35">
-                                            <circle cx="12" cy="8" r="4" fill="#FF5500" stroke="#FF5500" stroke-width="2"/>
-                                            <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" fill="#FF5500" stroke="#FF5500" stroke-width="2"/>
-                                        </svg>
-                                    </div>
+                                    <div class="tg-avatar-svg"></div>
                                 </div>
 
                                 <div class="connection-line">
@@ -650,20 +753,14 @@
                                 </div>
 
                                 <div class="connection-avatar teammate-avatar">
-                                    <div class="tg-avatar-svg">
-                                        <svg viewBox="0 0 24 24" width="30" height="30">
-                                            <circle cx="12" cy="8" r="4" stroke="#9BA1B0" stroke-width="2" fill="none"/>
-                                            <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#9BA1B0" stroke-width="2" fill="none"/>
-                                        </svg>
-                                    </div>
+                                    <div class="tg-avatar-svg"></div>
                                 </div>
                             </div>
 
-                            <div class="connection-status" id="connectionStatus"></div>
+                            <div class="connection-status" id="connectionStatus">Ожидание тиммейта...</div>
 
                             <div class="teammate-info">
                                 <span class="teammate-nick" id="teammateNick"></span>
-                                <span class="teammate-rating" id="teammateRating"></span>
                             </div>
 
                             <div class="connection-rank-age">
