@@ -117,14 +117,50 @@ const Settings = {
     playSound(type = 'light') {
         // Проверяем, включен ли звук
         if (!this.state || this.state.sound !== true) {
+            console.log('Звук выключен, пропускаем');
             return;
         }
         
+        console.log(`🎵 Попытка воспроизвести звук: ${type}`);
+        
         const tg = window.Telegram?.WebApp;
+        console.log('Telegram WebApp:', tg ? 'доступен' : 'не доступен');
+        console.log('HapticFeedback:', tg?.HapticFeedback ? 'доступен' : 'не доступен');
+        
         if (tg?.HapticFeedback) {
             tg.HapticFeedback.impactOccurred(type);
-            console.log(`🔊 Звук: ${type}`);
+            console.log(`✅ HapticFeedback отправлен: ${type}`);
+        } else {
+            console.log('❌ HapticFeedback не доступен (это нормально для браузера)');
+            // Визуальная обратная связь для браузера
+            this.showVisualFeedback(type);
         }
+    },
+    
+    // Визуальная обратная связь для браузера
+    showVisualFeedback(type) {
+        const feedback = document.createElement('div');
+        feedback.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #FF5500;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            z-index: 10000;
+            opacity: 0.9;
+            animation: soundFade 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255,85,0,0.3);
+            pointer-events: none;
+        `;
+        feedback.textContent = `🔊 ${type}`;
+        document.body.appendChild(feedback);
+        
+        setTimeout(() => feedback.remove(), 300);
     },
     
     click() {
@@ -147,6 +183,17 @@ const Settings = {
         this.playSound('medium');
     }
 };
+
+// Добавляем CSS анимацию
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes soundFade {
+        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+        50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+        100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+    }
+`;
+document.head.appendChild(style);
 
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => Settings.init(), 100);
