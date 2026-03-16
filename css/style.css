@@ -3595,3 +3595,9 @@ html {
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
+
+/* ===== КЛАСС ДЛЯ УБИРАНИЯ ОТСТУПОВ В МАГАЗИНЕ ===== */
+.content.shop-mode {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
