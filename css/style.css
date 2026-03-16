@@ -10,12 +10,16 @@
     --surface: #181B21;
     --surface-hover: #1F232B;
     --bg-deep: #111317;
+    --bg-body: #0D0F15;
     --text-primary: #F5F5F5;
     --text-secondary: #9BA1B0;
     --border-color: #2A2F3A;
     --tg-blue: #37AEE2;
     --tg-blue-hover: #2E9AC9;
     --tg-gray: rgba(255, 255, 255, 0.2);
+    --card-bg: #1A1D24;
+    --input-bg: #1A1D24;
+    --toggle-bg: #2A2F3A;
 }
 
 /* Светлая тема */
@@ -26,17 +30,180 @@
     --surface: #FFFFFF;
     --surface-hover: #F5F5F5;
     --bg-deep: #F0F2F5;
+    --bg-body: #F5F7FA;
     --text-primary: #1A1D24;
     --text-secondary: #6B7280;
     --border-color: #E5E7EB;
     --tg-blue: #37AEE2;
     --tg-blue-hover: #2E9AC9;
     --tg-gray: rgba(0, 0, 0, 0.1);
+    --card-bg: #FFFFFF;
+    --input-bg: #F5F5F5;
+    --toggle-bg: #E0E0E0;
 }
 
-/* Обновляем фон body для светлой темы */
+/* Применяем переменные */
+body {
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+}
+
+/* Обновляем фон для всех элементов */
+.phone-frame {
+    background: var(--bg-deep);
+}
+
+.content {
+    background: transparent;
+}
+
+/* Карточки и поверхности */
+.settings-row,
+.settings-row-link,
+.stat-value,
+.profile-stat-value,
+.input-field,
+.search-input-field,
+.rank-select,
+.comment-input,
+.case-item,
+.friend-item,
+.inventory-item,
+.swipe-card,
+.connection-card,
+.mode-btn {
+    background: var(--surface);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+/* Тексты */
+.section-title,
+.settings-title,
+.settings-row-label,
+.profile-name,
+.stat-label,
+.swipe-stat-label,
+.swipe-link-label,
+.swipe-comment-label,
+.friends-title,
+.team-title,
+.search-title {
+    color: var(--text-primary);
+}
+
+/* Второстепенные тексты */
+.section-subtitle,
+.settings-section-title,
+.settings-value,
+.settings-arrow,
+.stat-value input,
+.profile-stat-value,
+.input-field::placeholder,
+.search-status,
+.connection-timer,
+.swipe-timer,
+.friend-id,
+.friend-status {
+    color: var(--text-secondary);
+}
+
+/* Переключатели */
+.toggle-switch {
+    background: var(--toggle-bg);
+}
+
+.toggle-switch.active {
+    background: var(--accent);
+}
+
+/* Инпуты */
+input, textarea, select {
+    background: var(--input-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--text-secondary);
+}
+
+/* Ховеры */
+.settings-row:hover,
+.settings-row-link:hover,
+.case-item:hover,
+.friend-item:hover,
+.inventory-item:hover {
+    background: var(--surface-hover);
+}
+
+/* Границы */
+.header,
+.bottom-nav,
+.settings-row,
+.settings-row-link,
+.stats-row .stat-value,
+.profile-stat-value,
+.input-field,
+.search-input-field,
+.rank-select,
+.comment-input,
+.case-item,
+.friend-item,
+.inventory-item {
+    border-color: var(--border-color);
+}
+
+/* Фон body */
 .light-theme body {
-    background-color: #F0F2F5;
+    background-color: var(--bg-body);
+}
+
+/* Фикс для сердечка */
+.heart-icon svg {
+    stroke: var(--accent);
+}
+
+/* Фикс для стрелок */
+.settings-arrow {
+    color: var(--text-secondary);
+}
+
+/* Фикс для кнопок */
+.mode-search-btn,
+.primary-btn,
+.cancel-search-btn,
+.buy-btn-simple,
+.friends-search-btn,
+.team-search-btn {
+    background: var(--accent);
+    color: white;
+}
+
+.mode-search-btn:hover,
+.primary-btn:hover,
+.friends-search-btn:hover,
+.team-search-btn:hover {
+    background: var(--accent-soft);
+}
+
+.cancel-search-btn {
+    background: transparent;
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.cancel-search-btn:hover {
+    background: rgba(255, 85, 0, 0.1);
+}
+
+/* Фикс для скролла */
+::-webkit-scrollbar-track {
+    background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent);
 }
 
 /* Глобальное сглаживание для всего текста */
