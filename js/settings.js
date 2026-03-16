@@ -10,8 +10,8 @@ const Settings = {
     
     init() {
         this.loadSettings();
-        this.setupToggles();
-        this.setupThemeSelector();
+        this.setupSoundToggle();
+        this.setupThemeToggle();
         console.log('Настройки загружены');
     },
     
@@ -19,42 +19,56 @@ const Settings = {
         this.state.sound = localStorage.getItem('settings_sound') !== 'false';
         this.state.theme = localStorage.getItem('settings_theme') || 'dark';
         this.applyTheme();
+        this.updateToggles();
     },
     
-    setupToggles() {
-        const toggle = document.querySelector('.toggle-switch');
-        if (!toggle) return;
-        
-        if (this.state.sound) {
-            toggle.classList.add('active');
+    // Обновляем состояние всех переключателей
+    updateToggles() {
+        // Звук
+        const soundToggle = document.querySelector('.settings-row:first-child .toggle-switch');
+        if (soundToggle) {
+            if (this.state.sound) {
+                soundToggle.classList.add('active');
+            } else {
+                soundToggle.classList.remove('active');
+            }
         }
         
-        toggle.addEventListener('click', () => {
-            toggle.classList.toggle('active');
-            this.state.sound = toggle.classList.contains('active');
+        // Тема
+        const themeToggle = document.querySelector('.settings-row:nth-child(2) .toggle-switch');
+        if (themeToggle) {
+            if (this.state.theme === 'light') {
+                themeToggle.classList.add('active');
+            } else {
+                themeToggle.classList.remove('active');
+            }
+        }
+    },
+    
+    setupSoundToggle() {
+        const soundToggle = document.querySelector('.settings-row:first-child .toggle-switch');
+        if (!soundToggle) return;
+        
+        soundToggle.addEventListener('click', () => {
+            soundToggle.classList.toggle('active');
+            this.state.sound = soundToggle.classList.contains('active');
             localStorage.setItem('settings_sound', this.state.sound);
+            console.log('Звук:', this.state.sound ? 'вкл' : 'выкл');
         });
     },
     
-    setupThemeSelector() {
-        const options = document.querySelectorAll('.theme-option');
+    setupThemeToggle() {
+        const themeToggle = document.querySelector('.settings-row:nth-child(2) .toggle-switch');
+        if (!themeToggle) return;
         
-        options.forEach(opt => {
-            if (opt.classList.contains('dark') && this.state.theme === 'dark') {
-                opt.classList.add('active');
-            }
-            if (opt.classList.contains('light') && this.state.theme === 'light') {
-                opt.classList.add('active');
-            }
+        themeToggle.addEventListener('click', () => {
+            themeToggle.classList.toggle('active');
             
-            opt.addEventListener('click', () => {
-                options.forEach(o => o.classList.remove('active'));
-                opt.classList.add('active');
-                
-                this.state.theme = opt.classList.contains('dark') ? 'dark' : 'light';
-                localStorage.setItem('settings_theme', this.state.theme);
-                this.applyTheme();
-            });
+            // Тема: active = светлая, не active = тёмная
+            this.state.theme = themeToggle.classList.contains('active') ? 'light' : 'dark';
+            localStorage.setItem('settings_theme', this.state.theme);
+            this.applyTheme();
+            console.log('Тема:', this.state.theme);
         });
     },
     
@@ -62,9 +76,11 @@ const Settings = {
         if (this.state.theme === 'dark') {
             document.body.classList.remove('light-theme');
             document.body.classList.add('dark-theme');
+            console.log('🌙 Тёмная тема');
         } else {
             document.body.classList.remove('dark-theme');
             document.body.classList.add('light-theme');
+            console.log('☀️ Светлая тема');
         }
     }
 };
