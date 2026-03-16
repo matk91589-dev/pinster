@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// СВАЙП-КАРТОЧКИ - СО ЗВУКАМИ
 // ============================================
 
 const Swipe = {
@@ -33,7 +33,7 @@ const Swipe = {
     currentPlayer: null,
     currentMatchId: null,
     playersQueue: [],
-    mode: null, // Режим из БД (matches.mode)
+    mode: null,
     isInitialized: false,
     connectionTimer: null,
     cardTimerInterval: null,
@@ -90,7 +90,7 @@ const Swipe = {
             const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 20;
             const maxWidth = 420;
             let idealWidth = Math.min(maxWidth, window.innerWidth * 0.9);
-            const neededHeight = idealWidth * 1.25; // 4:5
+            const neededHeight = idealWidth * 1.25;
             
             console.log(`📐 Подгон карточки свайпа: экран=${screenHeight}, доступно=${availableHeight}, нужно=${neededHeight}, ширина=${idealWidth}`);
             
@@ -212,7 +212,6 @@ const Swipe = {
         this.currentPlayer = opponent;
         this.isConnectionMode = false;
         
-        // 🎯 БЕРЕМ MODE ИЗ ОБЪЕКТА OPPONENT (ИЗ ТАБЛИЦЫ MATCHES)
         this.mode = opponent.mode;
         console.log('🎯 РЕЖИМ ИЗ БАЗЫ ДАННЫХ (matches.mode):', this.mode);
         
@@ -448,6 +447,10 @@ const Swipe = {
         const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
         
         if (Math.abs(this.currentX) > threshold) {
+            
+            // 👇 ЗВУК ПРИ СВАЙПЕ
+            if (window.Settings) Settings.swipe();
+            
             this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
             
             if (this.currentX > 0) {
@@ -490,6 +493,9 @@ const Swipe = {
     acceptPlayer() {
         console.log('✅ Принят игрок:', this.currentPlayer);
         console.log('🎯 matchId:', this.currentMatchId);
+        
+        // 👇 ЗВУК ПРИ ПРИНЯТИИ
+        if (window.Settings) Settings.success();
         
         if (this.cardTimerInterval) {
             clearInterval(this.cardTimerInterval);
@@ -625,6 +631,9 @@ const Swipe = {
     rejectPlayer() {
         console.log('❌ Пропущен игрок:', this.currentPlayer);
         console.log('🎯 matchId:', this.currentMatchId);
+        
+        // 👇 ЗВУК ПРИ ОТКЛОНЕНИИ
+        if (window.Settings) Settings.error();
         
         if (this.cardTimerInterval) {
             clearInterval(this.cardTimerInterval);
@@ -881,15 +890,12 @@ const Swipe = {
             const playerNickEl = document.getElementById('swipePlayerNick');
             if (playerNickEl) playerNickEl.textContent = player.nick || '';
             
-            // ❤️ РЕЙТИНГ ДОВЕРИЯ (лайки)
             const ratingValueEl = document.getElementById('swipeRatingValue');
             if (ratingValueEl) ratingValueEl.textContent = player.trust_rating || '0';
             
-            // 🎯 БЕРЕМ MODE ИЗ БАЗЫ (БЕЗ ЗНАЧЕНИЯ ПО УМОЛЧАНИЮ)
             const modeFromDB = this.mode ? this.mode.toUpperCase() : null;
             console.log('🎯 РЕЖИМ ИЗ БД ДЛЯ ОТОБРАЖЕНИЯ:', modeFromDB);
             
-            // 🏆 МЕНЯЕМ НАДПИСЬ НАД ПЛАШКОЙ
             const statItems = document.querySelectorAll('.swipe-stats-row.three-cols .swipe-stat-item');
             if (statItems && statItems.length >= 3) {
                 const rankLabelEl = statItems[0].querySelector('.swipe-stat-label');
@@ -904,14 +910,12 @@ const Swipe = {
                         rankLabelEl.textContent = 'РАНГ';
                     }
                     else {
-                        // Если режим не определен - показываем прочерк
                         rankLabelEl.textContent = '—';
                     }
                     console.log(`🏷️ Установлена надпись: ${rankLabelEl.textContent}`);
                 }
             }
             
-            // 🏆 ЗНАЧЕНИЕ В ПЛАШКЕ
             const rankEl = document.getElementById('swipeRank');
             if (rankEl) {
                 if (modeFromDB === 'FACEIT') {
