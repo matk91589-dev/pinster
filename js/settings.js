@@ -1,5 +1,5 @@
 // ============================================
-// НАСТРОЙКИ PINGSTER - С ID ДЛЯ ПЕРЕКЛЮЧАТЕЛЕЙ
+// НАСТРОЙКИ PINGSTER - С РАБОЧЕЙ ВИБРАЦИЕЙ
 // ============================================
 
 const Settings = {
@@ -117,21 +117,27 @@ const Settings = {
     playSound(type = 'light') {
         // Проверяем, включен ли звук
         if (!this.state || this.state.sound !== true) {
-            console.log('Звук выключен, пропускаем');
             return;
         }
         
-        console.log(`🎵 Попытка воспроизвести звук: ${type}`);
-        
         const tg = window.Telegram?.WebApp;
-        console.log('Telegram WebApp:', tg ? 'доступен' : 'не доступен');
-        console.log('HapticFeedback:', tg?.HapticFeedback ? 'доступен' : 'не доступен');
         
         if (tg?.HapticFeedback) {
-            tg.HapticFeedback.impactOccurred(type);
-            console.log(`✅ HapticFeedback отправлен: ${type}`);
+            // НА ANDROID impactOccurred НЕ РАБОТАЕТ!
+            // Используем notificationOccurred - работает везде
+            
+            if (type === 'light' || type === 'click' || type === 'swipe') {
+                tg.HapticFeedback.notificationOccurred('success');
+            } 
+            else if (type === 'medium' || type === 'success' || type === 'match') {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+            else if (type === 'heavy' || type === 'error') {
+                tg.HapticFeedback.notificationOccurred('error');
+            }
+            
+            console.log(`✅ Вибрация: ${type}`);
         } else {
-            console.log('❌ HapticFeedback не доступен (это нормально для браузера)');
             // Визуальная обратная связь для браузера
             this.showVisualFeedback(type);
         }
