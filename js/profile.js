@@ -179,6 +179,9 @@ const Profile = {
     // 👇 ФУНКЦИЯ editAvatar() УДАЛЕНА - теперь используем Avatar.select()
     
     toggleEditMode() {
+        // Звук при переключении режима
+        if (window.Settings) Settings.click();
+        
         this.editMode = !this.editMode;
         
         const profileScreen = document.getElementById('profileScreen');
@@ -358,6 +361,9 @@ const Profile = {
         }
         
         if (!isValid) {
+            // Звук при ошибке валидации
+            if (window.Settings) Settings.error();
+            
             if (applyBtn) {
                 applyBtn.style.pointerEvents = 'auto';
                 applyBtn.style.opacity = '1';
@@ -395,10 +401,16 @@ const Profile = {
                 this.updateDisplay();
                 this.toggleEditMode();
                 this.showToast('Профиль сохранен');
+                
+                // Звук успеха
+                if (window.Settings) Settings.success();
             }
         } catch (error) {
             console.error('Ошибка отправки:', error);
             this.showToast('Ошибка сохранения');
+            
+            // Звук ошибки
+            if (window.Settings) Settings.error();
         } finally {
             if (applyBtn) {
                 applyBtn.style.pointerEvents = 'auto';
@@ -413,6 +425,9 @@ const Profile = {
             this.showToast('Для изменений перейдите в режим редактирования');
             return;
         }
+        
+        // Звук при клике на ник
+        if (window.Settings) Settings.click();
         
         const profileName = document.getElementById('profileName');
         if (!profileName) return;
@@ -455,6 +470,8 @@ const Profile = {
                 this.showToast('Нажмите Применить для сохранения');
             } else if (newName && (newName.length < 3 || newName.length > 10)) {
                 this.showToast('Никнейм должен быть от 3 до 10 символов');
+                // Звук при ошибке валидации
+                if (window.Settings) Settings.error();
             }
             tempInput.remove();
             profileName.style.display = 'inline-block';
@@ -474,6 +491,9 @@ const Profile = {
             this.showToast('Для изменений перейдите в режим редактирования');
             return;
         }
+        
+        // Звук при клике на возраст
+        if (window.Settings) Settings.click();
         document.getElementById('ageValue')?.focus();
     },
     
@@ -482,6 +502,9 @@ const Profile = {
             this.showToast('Для изменений перейдите в режим редактирования');
             return;
         }
+        
+        // Звук при клике на Steam
+        if (window.Settings) Settings.click();
         document.getElementById('steamDisplay')?.focus();
     },
     
@@ -490,6 +513,9 @@ const Profile = {
             this.showToast('Для изменений перейдите в режим редактирования');
             return;
         }
+        
+        // Звук при клике на Faceit
+        if (window.Settings) Settings.click();
         document.getElementById('faceitLinkDisplay')?.focus();
     },
     
@@ -500,6 +526,8 @@ const Profile = {
                 if (this.editMode) {
                     // 👇 ВЫЗЫВАЕМ Avatar.select() вместо this.editAvatar()
                     if (window.Avatar && Avatar.select) {
+                        // Звук при клике на аватарку
+                        if (window.Settings) Settings.click();
                         Avatar.select();
                     }
                 } else {
