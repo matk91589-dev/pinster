@@ -110,13 +110,14 @@ Object.assign(window.App, {
         // Получаем элемент content
         const content = document.querySelector('.content');
         
+        // ВСЕГДА убираем класс settings-mode при смене экрана
+        if (content) {
+            content.classList.remove('settings-mode');
+        }
+        
         // Если открываем настройки - добавляем класс
         if (screenId === 'settingsScreen' && content) {
             content.classList.add('settings-mode');
-        } 
-        // Если закрываем настройки и открываем другой экран - убираем класс
-        else if (this.currentScreen === 'settingsScreen' && content) {
-            content.classList.remove('settings-mode');
         }
         
         document.querySelectorAll('.screen').forEach(screen => {
