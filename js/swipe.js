@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - СО ЗВУКАМИ
+// СВАЙП-КАРТОЧКИ - СО ЗВУКАМИ И НОВЫМ ЭКРАНОМ СОЕДИНЕНИЯ
 // ============================================
 
 const Swipe = {
@@ -595,36 +595,48 @@ const Swipe = {
         }, 1500);
     },
     
-    // ========== НОВАЯ ФУНКЦИЯ ДЛЯ ОБНОВЛЕНИЯ UI ==========
+    // ========== ОБНОВЛЕНИЕ UI СОЕДИНЕНИЯ ==========
     updateConnectionUI(status) {
         console.log('🔄 Обновляем UI соединения, статус:', status);
         
+        const statusEl = document.getElementById('connectionStatus');
+        const connectionLine = document.querySelector('.connection-line');
+        const teammateAvatar = document.querySelector('.teammate-avatar');
+        const connectionTimer = document.getElementById('connectionTimer');
+        
         if (status === 'both_accepted') {
-            const statusEl = document.getElementById('connectionStatus');
+            // Меняем статус
             if (statusEl) {
-                statusEl.innerHTML = `Создано`;
+                statusEl.innerHTML = 'Матч создан';
+                statusEl.classList.add('active');
             }
             
-            const teammateAvatar = document.querySelector('.teammate-avatar');
+            // Аватарка становится нормальной
             if (teammateAvatar) {
                 teammateAvatar.classList.add('connected');
             }
             
-            const connectionLine = document.querySelector('.connection-line');
+            // Полоска останавливается и становится зелёной
             if (connectionLine) {
                 connectionLine.classList.add('connected');
             }
             
-            if (this.connectionTimer) {
-                clearInterval(this.connectionTimer);
-                this.connectionTimer = null;
+            // Таймер убираем или меняем текст
+            if (connectionTimer) {
+                connectionTimer.innerHTML = 'Готово';
+                connectionTimer.classList.remove('warning');
             }
             
-            const timerElement = document.getElementById('connectionTimer');
-            if (timerElement) {
-                timerElement.innerHTML = `Готово`;
-                timerElement.classList.remove('warning');
+            // Звук успеха
+            if (window.Settings) Settings.success();
+            
+        } else if (status === 'rejected') {
+            if (statusEl) {
+                statusEl.innerHTML = 'Тиммейт отклонил';
+                statusEl.style.color = '#FF3B30';
             }
+            
+            if (window.Settings) Settings.error();
         }
     },
     
@@ -708,7 +720,7 @@ const Swipe = {
         this.connectionTimer = setInterval(updateTimer, 1000);
     },
     
-    // ========== ИСПРАВЛЕННЫЙ showConnectionMode ==========
+    // ========== НОВЫЙ showConnectionMode ==========
     showConnectionMode() {
         console.log('🔄 Показываем экран соединения');
         this.isConnectionMode = true;
@@ -717,32 +729,48 @@ const Swipe = {
         if (this.labelRight) this.labelRight.style.display = 'none';
         if (this.hint) this.hint.style.display = 'none';
         
-        const statusEl = document.getElementById('connectionStatus');
-        if (statusEl) {
-            statusEl.innerHTML = ``;
-        }
-        
-        this.updateChatButton(false);
-        
-        const teammateAvatar = document.querySelector('.teammate-avatar');
-        if (teammateAvatar) {
-            teammateAvatar.classList.remove('connected');
-        }
-        
-        const connectionLine = document.querySelector('.connection-line');
-        if (connectionLine) {
-            connectionLine.classList.remove('connected');
-        }
-        
+        // Скрываем экран свайпа и показываем экран соединения
         document.getElementById('swipeScreen').classList.remove('active');
         document.getElementById('connectionScreen').classList.add('active');
         
+        // Заполняем данные
         document.getElementById('teammateNick').textContent = this.currentPlayer?.nick || '';
-        document.getElementById('teammateRating').innerHTML = this.currentPlayer?.rating || '';
         document.getElementById('connectionRank').textContent = this.currentPlayer?.rank || '';
         document.getElementById('connectionAge').textContent = this.currentPlayer?.age ? this.currentPlayer?.age + ' лет' : '';
         
+        // Аватарка тиммейта (размытая и уменьшенная)
+        const teammateAvatar = document.querySelector('.teammate-avatar .tg-avatar-svg');
+        if (teammateAvatar && this.currentPlayer?.avatar) {
+            teammateAvatar.innerHTML = `<img src="${this.currentPlayer.avatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover; filter: grayscale(0.6) blur(1px); opacity:0.7;">`;
+        }
+        
+        // Аватарка своя (нормальная)
+        const selfAvatar = document.querySelector('.self-avatar .tg-avatar-svg');
+        if (selfAvatar) {
+            const myAvatar = localStorage.getItem('pingster_avatar') || Profile?.savedAvatarUrl;
+            if (myAvatar) {
+                selfAvatar.innerHTML = `<img src="${myAvatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+            }
+        }
+        
+        // Убираем классы connected
+        document.querySelector('.teammate-avatar')?.classList.remove('connected');
+        document.querySelector('.connection-line')?.classList.remove('connected');
+        
+        // Статус "Ожидание тиммейта..."
+        const statusEl = document.getElementById('connectionStatus');
+        if (statusEl) {
+            statusEl.innerHTML = 'Ожидание тиммейта...';
+            statusEl.classList.remove('active');
+        }
+        
+        // Кнопка чата неактивна
+        this.updateChatButton(false);
+        
+        // Запускаем таймер
         this.startConnectionTimer();
+        
+        // Подгоняем размер карточки
         this.adjustConnectionCardSize();
     },
     
@@ -894,7 +922,6 @@ const Swipe = {
             if (ratingValueEl) ratingValueEl.textContent = player.trust_rating || '0';
             
             const modeFromDB = this.mode ? this.mode.toUpperCase() : null;
-            console.log('🎯 РЕЖИМ ИЗ БД ДЛЯ ОТОБРАЖЕНИЯ:', modeFromDB);
             
             const statItems = document.querySelectorAll('.swipe-stats-row.three-cols .swipe-stat-item');
             if (statItems && statItems.length >= 3) {
@@ -912,7 +939,6 @@ const Swipe = {
                     else {
                         rankLabelEl.textContent = '—';
                     }
-                    console.log(`🏷️ Установлена надпись: ${rankLabelEl.textContent}`);
                 }
             }
             
@@ -920,15 +946,12 @@ const Swipe = {
             if (rankEl) {
                 if (modeFromDB === 'FACEIT') {
                     rankEl.textContent = player.rating ? player.rating : '0';
-                    console.log(`🔢 FACEIT ELO: ${rankEl.textContent}`);
                 } 
                 else if (modeFromDB === 'PREMIER') {
                     rankEl.textContent = player.rating ? player.rating : '0';
-                    console.log(`🔢 CS RATING: ${rankEl.textContent}`);
                 }
                 else if (modeFromDB === 'PRIME' || modeFromDB === 'PUBLIC') {
                     rankEl.textContent = player.rank || '—';
-                    console.log(`🎖️ MM РАНГ: ${rankEl.textContent}`);
                 }
                 else {
                     rankEl.textContent = '—';
@@ -1041,7 +1064,8 @@ const Swipe = {
         
         const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
-            statusEl.innerHTML = `⏰ Время ожидания истекло`;
+            statusEl.innerHTML = `Время истекло`;
+            statusEl.style.color = '#FF3B30';
         }
         
         setTimeout(() => {
@@ -1064,8 +1088,11 @@ const Swipe = {
         
         const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
-            statusEl.innerHTML = `❌ Тиммейт отклонил приглашение`;
+            statusEl.innerHTML = `Тиммейт отклонил`;
+            statusEl.style.color = '#FF3B30';
         }
+        
+        if (window.Settings) Settings.error();
         
         setTimeout(() => {
             this.exitSwipeMode('handleRejection');
