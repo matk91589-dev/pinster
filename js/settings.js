@@ -1,5 +1,5 @@
 // ============================================
-// НАСТРОЙКИ PINGSTER - С ЗВУКАМИ (УНИВЕРСАЛЬНО)
+// НАСТРОЙКИ PINGSTER - С ID ДЛЯ ПЕРЕКЛЮЧАТЕЛЕЙ
 // ============================================
 
 const Settings = {
@@ -25,36 +25,34 @@ const Settings = {
     
     // Обновляем состояние всех переключателей
     updateToggles() {
-        // Находим ВСЕ переключатели
-        const toggles = document.querySelectorAll('.settings-row .toggle-switch');
-        
-        if (toggles.length >= 2) {
-            // Первый переключатель - звук
+        // Звук
+        const soundToggle = document.getElementById('soundToggle');
+        if (soundToggle) {
             if (this.state.sound) {
-                toggles[0].classList.add('active');
+                soundToggle.classList.add('active');
             } else {
-                toggles[0].classList.remove('active');
+                soundToggle.classList.remove('active');
             }
-            
-            // Второй переключатель - тема
+        }
+        
+        // Тема
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
             if (this.state.theme === 'light') {
-                toggles[1].classList.add('active');
+                themeToggle.classList.add('active');
             } else {
-                toggles[1].classList.remove('active');
+                themeToggle.classList.remove('active');
             }
         }
     },
     
     setupSoundToggle() {
-        // Находим ВСЕ переключатели и берем первый
-        const toggles = document.querySelectorAll('.settings-row .toggle-switch');
-        
-        if (toggles.length === 0) {
-            console.log('❌ Переключатели не найдены');
+        const soundToggle = document.getElementById('soundToggle');
+        if (!soundToggle) {
+            console.log('❌ Переключатель звука не найден');
             return;
         }
         
-        const soundToggle = toggles[0]; // Первый - звук
         console.log('✅ Переключатель звука найден');
         
         soundToggle.addEventListener('click', (e) => {
@@ -75,15 +73,12 @@ const Settings = {
     },
     
     setupThemeToggle() {
-        // Находим ВСЕ переключатели и берем второй
-        const toggles = document.querySelectorAll('.settings-row .toggle-switch');
-        
-        if (toggles.length < 2) {
+        const themeToggle = document.getElementById('themeToggle');
+        if (!themeToggle) {
             console.log('❌ Переключатель темы не найден');
             return;
         }
         
-        const themeToggle = toggles[1]; // Второй - тема
         console.log('✅ Переключатель темы найден');
         
         themeToggle.addEventListener('click', (e) => {
