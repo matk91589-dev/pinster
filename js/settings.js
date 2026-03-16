@@ -1,5 +1,5 @@
 // ============================================
-// НАСТРОЙКИ PINGSTER - С ЗВУКАМИ
+// НАСТРОЙКИ PINGSTER - С ЗВУКАМИ (ИСПРАВЛЕНО)
 // ============================================
 
 const Settings = {
@@ -54,9 +54,9 @@ const Settings = {
             this.state.sound = soundToggle.classList.contains('active');
             localStorage.setItem('settings_sound', this.state.sound);
             
-            // Пробный звук при включении/выключении
+            // Пробный звук при включении
             if (this.state.sound) {
-                this.playSound('light');
+                setTimeout(() => this.playSound('light'), 50);
             }
             
             console.log('Звук:', this.state.sound ? 'вкл' : 'выкл');
@@ -77,7 +77,7 @@ const Settings = {
             
             // Звук при смене темы (если звук включен)
             if (this.state.sound) {
-                this.playSound('medium');
+                setTimeout(() => this.playSound('medium'), 50);
             }
             
             console.log('Тема:', this.state.theme);
@@ -98,11 +98,18 @@ const Settings = {
     
     // ===== ЗВУКИ =====
     playSound(type = 'light') {
-        if (!this.state.sound) return; // Если звук выключен - ничего не делаем
+        // Проверяем, включен ли звук
+        if (!this.state || this.state.sound !== true) {
+            console.log('Звук выключен, пропускаем');
+            return;
+        }
         
         const tg = window.Telegram?.WebApp;
         if (tg?.HapticFeedback) {
             tg.HapticFeedback.impactOccurred(type);
+            console.log(`🔊 Звук: ${type}`);
+        } else {
+            console.log('❌ Telegram HapticFeedback не доступен');
         }
     },
     
