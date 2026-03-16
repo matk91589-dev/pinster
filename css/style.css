@@ -1,7 +1,8 @@
 /* Подключаем шрифт Montserrat */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
-/* ===== CSS VARIABLES ===== */
+/* ===== ТЕМЫ ===== */
+/* Тёмная тема (по умолчанию) */
 :root {
     --accent: #FF5500;
     --accent-soft: #FF6A33;
@@ -12,11 +13,30 @@
     --text-primary: #F5F5F5;
     --text-secondary: #9BA1B0;
     --border-color: #2A2F3A;
-    
-    /* Telegram цвета */
     --tg-blue: #37AEE2;
     --tg-blue-hover: #2E9AC9;
     --tg-gray: rgba(255, 255, 255, 0.2);
+}
+
+/* Светлая тема */
+.light-theme {
+    --accent: #FF5500;
+    --accent-soft: #FF6A33;
+    --accent-glow: rgba(255, 85, 0, 0.2);
+    --surface: #FFFFFF;
+    --surface-hover: #F5F5F5;
+    --bg-deep: #F0F2F5;
+    --text-primary: #1A1D24;
+    --text-secondary: #6B7280;
+    --border-color: #E5E7EB;
+    --tg-blue: #37AEE2;
+    --tg-blue-hover: #2E9AC9;
+    --tg-gray: rgba(0, 0, 0, 0.1);
+}
+
+/* Обновляем фон body для светлой темы */
+.light-theme body {
+    background-color: #F0F2F5;
 }
 
 /* Глобальное сглаживание для всего текста */
