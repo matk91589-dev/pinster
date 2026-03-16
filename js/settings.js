@@ -1,5 +1,5 @@
 // ============================================
-// НАСТРОЙКИ PINGSTER - МИНИМАЛИЗМ
+// НАСТРОЙКИ PINGSTER - С ЗВУКАМИ
 // ============================================
 
 const Settings = {
@@ -53,6 +53,12 @@ const Settings = {
             soundToggle.classList.toggle('active');
             this.state.sound = soundToggle.classList.contains('active');
             localStorage.setItem('settings_sound', this.state.sound);
+            
+            // Пробный звук при включении/выключении
+            if (this.state.sound) {
+                this.playSound('light');
+            }
+            
             console.log('Звук:', this.state.sound ? 'вкл' : 'выкл');
         });
     },
@@ -68,6 +74,12 @@ const Settings = {
             this.state.theme = themeToggle.classList.contains('active') ? 'light' : 'dark';
             localStorage.setItem('settings_theme', this.state.theme);
             this.applyTheme();
+            
+            // Звук при смене темы (если звук включен)
+            if (this.state.sound) {
+                this.playSound('medium');
+            }
+            
             console.log('Тема:', this.state.theme);
         });
     },
@@ -82,6 +94,37 @@ const Settings = {
             document.body.classList.add('light-theme');
             console.log('☀️ Светлая тема');
         }
+    },
+    
+    // ===== ЗВУКИ =====
+    playSound(type = 'light') {
+        if (!this.state.sound) return; // Если звук выключен - ничего не делаем
+        
+        const tg = window.Telegram?.WebApp;
+        if (tg?.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred(type);
+        }
+    },
+    
+    // Специальные звуки для разных действий
+    click() {
+        this.playSound('light');
+    },
+    
+    success() {
+        this.playSound('medium');
+    },
+    
+    error() {
+        this.playSound('heavy');
+    },
+    
+    swipe() {
+        this.playSound('light');
+    },
+    
+    match() {
+        this.playSound('medium');
     }
 };
 
