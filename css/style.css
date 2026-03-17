@@ -3675,3 +3675,111 @@ html {
     opacity: 0.7;
     margin: 0 2px; 
 }
+
+/* ===== ПОИСК ИГРОКОВ ===== */
+.player-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.player-item:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.player-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--input-bg);
+}
+
+.player-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: var(--accent-glow);
+}
+
+.player-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.player-nick {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-id {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.player-profile-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 8px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.player-profile-btn:hover {
+    transform: scale(1.1);
+}
+
+.player-profile-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.player-profile-btn svg circle:first-child {
+    fill: var(--surface);
+    stroke: var(--border-color);
+    stroke-width: 1;
+}
+
+.player-profile-btn svg circle:last-of-type,
+.player-profile-btn svg path {
+    fill: var(--text-primary);
+}
+
+.player-profile-btn:hover svg circle:first-child {
+    fill: var(--accent);
+    stroke: var(--accent);
+}
+
+.player-profile-btn:hover svg circle:last-of-type,
+.player-profile-btn:hover svg path {
+    fill: white;
+}
