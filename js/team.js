@@ -1,5 +1,5 @@
 // ============================================
-// КОМАНДА
+// КОМАНДА - ИСПРАВЛЕННАЯ ВЕРСИЯ
 // ============================================
 
 const Team = {
@@ -57,8 +57,10 @@ const Team = {
         const content = document.getElementById('teamContent');
         if (!content) return;
         
-        // Используем список друзей из Friends
-        if (Friends.list.length === 0) {
+        // Проверяем, есть ли Friends и list
+        const friendsList = window.Friends?.list || [];
+        
+        if (friendsList.length === 0) {
             content.innerHTML = `
                 <div class="team-list">
                     <div class="empty-friends">
@@ -69,7 +71,7 @@ const Team = {
         } else {
             content.innerHTML = `
                 <div class="team-list">
-                    ${Friends.list.map(f => `
+                    ${friendsList.map(f => `
                         <div class="friend-item" onclick="Team.showFriendProfile('${f.id}')">
                             <div class="friend-avatar"></div>
                             <div class="friend-details">
