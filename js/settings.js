@@ -1,9 +1,8 @@
 // ============================================
-// НАСТРОЙКИ PINGSTER - ПРОСТЫЕ И РАБОЧИЕ
+// НАСТРОЙКИ PINGSTER - РАБОЧАЯ ВЕРСИЯ
 // ============================================
 
 const Settings = {
-    // Состояние настроек
     sound: true,
     
     init() {
@@ -13,13 +12,11 @@ const Settings = {
     },
     
     loadSettings() {
-        // Загружаем настройки из localStorage
         this.sound = localStorage.getItem('settings_sound') !== 'false';
         console.log('Звук загружен:', this.sound ? 'вкл' : 'выкл');
     },
     
     setupSoundButtons() {
-        // Находим кнопки
         const soundOn = document.getElementById('soundOn');
         const soundOff = document.getElementById('soundOff');
         
@@ -29,24 +26,18 @@ const Settings = {
         }
         
         console.log('✅ Кнопки найдены');
-        
-        // Устанавливаем начальное состояние
         this.updateButtons();
         
-        // Вешаем обработчики напрямую
         soundOn.onclick = (e) => {
             e.preventDefault();
-            e.stopPropagation();
-            console.log('👉 Нажали ВКЛ');
             this.sound = true;
             localStorage.setItem('settings_sound', 'true');
             this.updateButtons();
+            this.playSound();
         };
         
         soundOff.onclick = (e) => {
             e.preventDefault();
-            e.stopPropagation();
-            console.log('👉 Нажали ВЫКЛ');
             this.sound = false;
             localStorage.setItem('settings_sound', 'false');
             this.updateButtons();
@@ -62,21 +53,23 @@ const Settings = {
         if (this.sound) {
             soundOn.classList.add('sound-active');
             soundOff.classList.remove('sound-active');
-            console.log('🔊 Звук включен');
         } else {
             soundOff.classList.add('sound-active');
             soundOn.classList.remove('sound-active');
-            console.log('🔇 Звук выключен');
         }
     },
     
     playSound(type = 'light') {
         if (!this.sound) return;
         
+        // Вибрация для Telegram WebApp
         const tg = window.Telegram?.WebApp;
         if (tg?.HapticFeedback) {
             tg.HapticFeedback.notificationOccurred('success');
-            console.log('✅ Вибрация');
+            console.log('✅ Вибрация через Telegram');
+        } else if (navigator.vibrate) {
+            navigator.vibrate(50);
+            console.log('✅ Вибрация через браузер');
         }
     },
     
@@ -87,7 +80,6 @@ const Settings = {
     match() { this.playSound(); }
 };
 
-// Запускаем после загрузки DOM
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => Settings.init(), 100);
 });
