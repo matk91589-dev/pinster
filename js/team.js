@@ -1,5 +1,5 @@
 // ============================================
-// КОМАНДА - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// КОМАНДА - НОВЫЙ ДИЗАЙН (Telegram/FACEIT стиль)
 // ============================================
 
 const Team = {
@@ -92,7 +92,7 @@ const Team = {
         
         // Заглушка для друзей (потом добавишь)
         content.innerHTML = `
-            <div class="team-list">
+            <div class="players-list">
                 <div class="empty-friends">
                     <div class="empty-friends-text">🤷 скоро тут будут друзья</div>
                 </div>
@@ -105,16 +105,14 @@ const Team = {
         if (!content) return;
         
         content.innerHTML = `
-            <div class="team-search-container">
-                <div class="team-search-box">
-                    <input type="text" 
-                           id="teamSearchInput" 
-                           class="team-search-input" 
-                           placeholder="🔍 Введите ник или ID игрока"
-                           autocomplete="off">
-                </div>
+            <div class="players-search">
+                <input type="search" 
+                       id="teamSearchInput" 
+                       class="players-search-input" 
+                       placeholder="Введите ник или ID игрока"
+                       autocomplete="off">
             </div>
-            <div class="team-list" id="teamSearchResults">
+            <div class="players-list" id="teamSearchResults">
                 <!-- Сюда будут игроки -->
             </div>
         `;
@@ -140,20 +138,18 @@ const Team = {
         let html = '';
         players.forEach(player => {
             html += `
-            <div class="player-item" onclick="Team.showPlayerProfile('${player.player_id}')">
+            <div class="player-row" onclick="Team.showPlayerProfile('${player.player_id}')">
                 <div class="player-avatar">
                     ${player.avatar 
-                        ? `<img src="${player.avatar}" alt="avatar" style="width:100%; height:100%; object-fit:cover;">` 
+                        ? `<img src="${player.avatar}" alt="avatar">` 
                         : `<div class="avatar-placeholder">${player.nick?.[0] || '?'}</div>`
                     }
                 </div>
                 <div class="player-info">
-                    <div class="player-nick">${player.nick || 'Без имени'}</div>
-                    <div class="player-id">ID: ${player.player_id}</div>
+                    <span class="player-id">ID: ${player.player_id}</span>
+                    <span class="player-nick">${player.nick || 'Без имени'}</span>
                 </div>
-                <button class="player-profile-btn" onclick="event.stopPropagation(); Team.showPlayerProfile('${player.player_id}')">
-                    👤
-                </button>
+                <span class="player-arrow">→</span>
             </div>
             `;
         });
