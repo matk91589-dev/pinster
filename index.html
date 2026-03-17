@@ -333,6 +333,28 @@
             transform: translateX(20px);
         }
 
+        /* Стили для новых кнопок звука */
+        .sound-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .sound-btn {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #2A2F3A;
+            color: #8E97A6;
+        }
+        
+        .sound-btn.active {
+            background: #FF5500;
+            color: white;
+        }
+
         /* ===== НОВЫЕ СТИЛИ ДЛЯ ЭКРАНА СОЕДИНЕНИЯ ===== */
         .teammate-avatar {
             width: 50px;
@@ -789,7 +811,7 @@
                 </div>
             </div>
 
-            <!-- ===== ЭКРАН НАСТРОЕК - ИСПРАВЛЕННЫЙ ===== -->
+            <!-- ===== ЭКРАН НАСТРОЕК - ОБНОВЛЕННЫЙ ===== -->
             <div id="settingsScreen" class="screen settings-screen">
                 <div class="settings-header">
                     <div class="settings-title">Настройки</div>
@@ -799,20 +821,25 @@
                 <div class="settings-section">
                     <div class="settings-section-title">ОФОРМЛЕНИЕ</div>
                     
-                    <!-- Звук - ПЕРВЫЙ с id="soundToggle" -->
+                    <!-- Звук - кнопки вкл/выкл -->
                     <div class="settings-row">
                         <span class="settings-row-label">Звук</span>
-                        <div class="toggle-switch" id="soundToggle">
-                            <div class="toggle-switch-handle"></div>
+                        <div class="sound-buttons">
+                            <span class="sound-btn" id="soundOffBtn">выкл</span>
+                            <span class="sound-btn active" id="soundOnBtn">вкл</span>
                         </div>
                     </div>
                     
-                    <!-- Тема - ВТОРОЙ с id="themeToggle" -->
+                    <!-- Тема - просто текст -->
                     <div class="settings-row">
                         <span class="settings-row-label">Тема</span>
-                        <div class="toggle-switch" id="themeToggle">
-                            <div class="toggle-switch-handle"></div>
-                        </div>
+                        <span class="settings-value">черный</span>
+                    </div>
+                    
+                    <!-- Язык -->
+                    <div class="settings-row">
+                        <span class="settings-row-label">Язык</span>
+                        <span class="settings-value">русский</span>
                     </div>
                 </div>
                 
