@@ -3648,3 +3648,20 @@ html {
     right: 16px !important;
     top: 12px !important;
 }
+
+/* Стили для звука (только буквы) */
+.sound-toggle {
+    display: flex;
+    gap: 12px;
+}
+
+.sound-option {
+    font-size: 14px;
+    color: #8E97A6;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.sound-option.sound-active {
+    color: #FF5500;
+}
