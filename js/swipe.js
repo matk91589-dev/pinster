@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - СО ЗВУКАМИ И НОВЫМ ЭКРАНОМ СОЕДИНЕНИЯ
+// СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННЫЙ ЭКРАН ОЖИДАНИЯ
 // ============================================
 
 const Swipe = {
@@ -603,6 +603,8 @@ const Swipe = {
         const connectionLine = document.querySelector('.connection-line');
         const teammateAvatar = document.querySelector('.teammate-avatar');
         const connectionTimer = document.getElementById('connectionTimer');
+        const button = document.getElementById('tgChatButton');
+        const buttonText = document.getElementById('tgChatButtonText');
         
         if (status === 'both_accepted') {
             // Меняем статус
@@ -616,15 +618,20 @@ const Swipe = {
                 teammateAvatar.classList.add('connected');
             }
             
-            // Полоска останавливается и становится зелёной
+            // Полоска останавливается и становится оранжевой
             if (connectionLine) {
                 connectionLine.classList.add('connected');
             }
             
             // Таймер убираем или меняем текст
             if (connectionTimer) {
-                connectionTimer.innerHTML = 'Готово';
+                connectionTimer.innerHTML = 'Матч создан';
                 connectionTimer.classList.remove('warning');
+            }
+            
+            // Кнопка появляется
+            if (button) {
+                button.style.display = 'flex';
             }
             
             // Звук успеха
@@ -720,7 +727,7 @@ const Swipe = {
         this.connectionTimer = setInterval(updateTimer, 1000);
     },
     
-    // ========== НОВЫЙ showConnectionMode ==========
+    // ========== ИСПРАВЛЕННЫЙ showConnectionMode ==========
     showConnectionMode() {
         console.log('🔄 Показываем экран соединения');
         this.isConnectionMode = true;
@@ -757,14 +764,14 @@ const Swipe = {
         document.querySelector('.teammate-avatar')?.classList.remove('connected');
         document.querySelector('.connection-line')?.classList.remove('connected');
         
-        // Статус "Ожидание тиммейта..."
+        // Статус "Ожидание тиммейта" (без многоточия)
         const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
-            statusEl.innerHTML = 'Ожидание тиммейта...';
+            statusEl.innerHTML = 'Ожидание тиммейта';
             statusEl.classList.remove('active');
         }
         
-        // Кнопка чата неактивна
+        // Кнопка чата не показывается вообще
         this.updateChatButton(false);
         
         // Запускаем таймер
@@ -782,14 +789,14 @@ const Swipe = {
         
         if (!button || !buttonText || !tooltip) return;
         
-        button.classList.remove('active');
-        button.disabled = true;
-        button.onclick = null;
-        
         if (active && chatLink) {
+            // Матч создан - показываем кнопку
+            button.style.display = 'flex';
+            button.classList.remove('disabled');
             button.classList.add('active');
             button.disabled = false;
             buttonText.textContent = 'Перейти в чат';
+            tooltip.style.display = 'block';
             tooltip.textContent = 'Матч создан';
             tooltip.classList.add('active');
             
@@ -804,9 +811,9 @@ const Swipe = {
                 this.openChatLink();
             };
         } else {
-            buttonText.textContent = 'Ожидание тиммейта';
-            tooltip.textContent = 'Ожидаем второго игрока';
-            tooltip.classList.remove('active');
+            // Матч не создан - кнопки нет
+            button.style.display = 'none';
+            tooltip.style.display = 'none';
         }
     },
     
