@@ -3649,10 +3649,11 @@ html {
     top: 12px !important;
 }
 
-/* Стили для звука (только буквы) */
+/* Стили для звука */
 .sound-toggle {
     display: flex;
-    gap: 12px;
+    align-items: center;
+    gap: 4px; 
 }
 
 .sound-option {
@@ -3660,8 +3661,17 @@ html {
     color: #8E97A6;
     cursor: pointer;
     transition: color 0.2s ease;
+    padding: 4px 0;
+    user-select: none;
 }
 
 .sound-option.sound-active {
-    color: #FF5500;
+    color: #FF5500 !important;
+}
+
+.sound-separator {
+    color: #8E97A6;
+    font-size: 14px;
+    opacity: 0.7;
+    margin: 0 2px; 
 }
