@@ -27,7 +27,10 @@ const Settings = {
         const soundOn = document.getElementById('soundOn');
         const soundOff = document.getElementById('soundOff');
         
-        if (!soundOn || !soundOff) return;
+        if (!soundOn || !soundOff) {
+            console.log('❌ Кнопки не найдены в updateSoundButtons');
+            return;
+        }
         
         if (this.state.sound) {
             soundOn.classList.add('sound-active');
@@ -44,30 +47,31 @@ const Settings = {
         const soundOff = document.getElementById('soundOff');
         
         if (!soundOn || !soundOff) {
-            console.log('❌ Кнопки звука не найдены');
+            console.log('❌ Кнопки звука не найдены в setupSoundButtons');
             return;
         }
         
         console.log('✅ Кнопки звука найдены');
         
-        // Убираем старые обработчики если есть
-        soundOn.replaceWith(soundOn.cloneNode(true));
-        soundOff.replaceWith(soundOff.cloneNode(true));
+        // Убираем старые обработчики
+        const newSoundOn = soundOn.cloneNode(true);
+        const newSoundOff = soundOff.cloneNode(true);
         
-        // Получаем новые ссылки после замены
-        const newSoundOn = document.getElementById('soundOn');
-        const newSoundOff = document.getElementById('soundOff');
+        soundOn.parentNode.replaceChild(newSoundOn, soundOn);
+        soundOff.parentNode.replaceChild(newSoundOff, soundOff);
         
-        // Добавляем обработчики
+        // Добавляем новые обработчики
         newSoundOn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
+            console.log('Клик на ВКЛ');
             this.toggleSound(true);
         });
         
         newSoundOff.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
+            console.log('Клик на ВЫКЛ');
             this.toggleSound(false);
         });
         
@@ -77,10 +81,15 @@ const Settings = {
     
     // Переключение звука
     toggleSound(enable) {
+        console.log('toggleSound called with:', enable);
+        
         const soundOn = document.getElementById('soundOn');
         const soundOff = document.getElementById('soundOff');
         
-        if (!soundOn || !soundOff) return;
+        if (!soundOn || !soundOff) {
+            console.log('❌ Кнопки не найдены в toggleSound');
+            return;
+        }
         
         this.state.sound = enable;
         localStorage.setItem('settings_sound', enable);
@@ -88,31 +97,27 @@ const Settings = {
         if (enable) {
             soundOn.classList.add('sound-active');
             soundOff.classList.remove('sound-active');
-            // Пробный звук при включении
+            console.log('Звук включен');
             setTimeout(() => this.playSound('light'), 50);
         } else {
             soundOff.classList.add('sound-active');
             soundOn.classList.remove('sound-active');
+            console.log('Звук выключен');
         }
-        
-        console.log('Звук:', enable ? 'вкл 🔊' : 'выкл 🔇');
     },
     
     applyTheme() {
         if (this.state.theme === 'dark') {
             document.body.classList.remove('light-theme');
             document.body.classList.add('dark-theme');
-            console.log('🌙 Тёмная тема');
         } else {
             document.body.classList.remove('dark-theme');
             document.body.classList.add('light-theme');
-            console.log('☀️ Светлая тема');
         }
     },
     
     // ===== ЗВУКИ =====
     playSound(type = 'light') {
-        // Проверяем, включен ли звук
         if (!this.state || this.state.sound !== true) {
             return;
         }
@@ -120,7 +125,6 @@ const Settings = {
         const tg = window.Telegram?.WebApp;
         
         if (tg?.HapticFeedback) {
-            // Используем notificationOccurred - работает везде
             if (type === 'light' || type === 'click' || type === 'swipe') {
                 tg.HapticFeedback.notificationOccurred('success');
             } 
@@ -133,12 +137,10 @@ const Settings = {
             
             console.log(`✅ Вибрация: ${type}`);
         } else {
-            // Визуальная обратная связь для браузера
             this.showVisualFeedback(type);
         }
     },
     
-    // Визуальная обратная связь для браузера
     showVisualFeedback(type) {
         const feedback = document.createElement('div');
         feedback.style.cssText = `
@@ -164,25 +166,11 @@ const Settings = {
         setTimeout(() => feedback.remove(), 300);
     },
     
-    click() {
-        this.playSound('light');
-    },
-    
-    success() {
-        this.playSound('medium');
-    },
-    
-    error() {
-        this.playSound('heavy');
-    },
-    
-    swipe() {
-        this.playSound('light');
-    },
-    
-    match() {
-        this.playSound('medium');
-    }
+    click() { this.playSound('light'); },
+    success() { this.playSound('medium'); },
+    error() { this.playSound('heavy'); },
+    swipe() { this.playSound('light'); },
+    match() { this.playSound('medium'); }
 };
 
 // Добавляем CSS анимацию
