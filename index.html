@@ -652,11 +652,10 @@
             </div>
 
             <!-- ЭКРАН КОМАНДА - ОБНОВЛЕННЫЙ -->
-            <div id="teamScreen" class="screen team-screen">
-                <div class="team-header">
-                    <div class="team-back" onclick="Team.goBack()">←</div>
-                    <div class="team-title">друзья</div>
-                </div>
+            <div class="team-header" style="display: flex; align-items: center; justify-content: center; position: relative;">
+                <div class="team-back" onclick="Team.goBack()" style="position: absolute; left: 0;">←</div>
+                <div class="team-title">друзья</div>
+            </div>
 
                 <div class="team-tabs">
                     <div class="team-tab active" onclick="Team.switchTab('friends', this)">ВАШИ ДРУЗЬЯ</div>
