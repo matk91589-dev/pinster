@@ -1,5 +1,5 @@
 // ============================================
-// НАСТРОЙКИ PINGSTER - РАБОЧАЯ ВЕРСИЯ
+// НАСТРОЙКИ PINGSTER - ПРОСТЫЕ И РАБОЧИЕ
 // ============================================
 
 const Settings = {
@@ -30,51 +30,36 @@ const Settings = {
         
         console.log('✅ Кнопки найдены');
         
-        // Убираем старые классы
-        soundOn.classList.remove('sound-active');
-        soundOff.classList.remove('sound-active');
-        
         // Устанавливаем начальное состояние
-        if (this.sound) {
-            soundOn.classList.add('sound-active');
-            soundOff.classList.remove('sound-active');
-        } else {
-            soundOff.classList.add('sound-active');
-            soundOn.classList.remove('sound-active');
-        }
+        this.updateButtons();
         
-        // Убираем старые обработчики (если были)
-        soundOn.onclick = null;
-        soundOff.onclick = null;
-        
-        // Вешаем новые обработчики
+        // Вешаем обработчики напрямую
         soundOn.onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
             console.log('👉 Нажали ВКЛ');
-            this.toggleSound(true);
+            this.sound = true;
+            localStorage.setItem('settings_sound', 'true');
+            this.updateButtons();
         };
         
         soundOff.onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
             console.log('👉 Нажали ВЫКЛ');
-            this.toggleSound(false);
+            this.sound = false;
+            localStorage.setItem('settings_sound', 'false');
+            this.updateButtons();
         };
     },
     
-    toggleSound(enable) {
+    updateButtons() {
         const soundOn = document.getElementById('soundOn');
         const soundOff = document.getElementById('soundOff');
         
         if (!soundOn || !soundOff) return;
         
-        // Меняем состояние
-        this.sound = enable;
-        localStorage.setItem('settings_sound', enable);
-        
-        // Меняем классы
-        if (enable) {
+        if (this.sound) {
             soundOn.classList.add('sound-active');
             soundOff.classList.remove('sound-active');
             console.log('🔊 Звук включен');
