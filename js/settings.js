@@ -1,5 +1,5 @@
 // ============================================
-// НАСТРОЙКИ PINGSTER - ПРОСТЫЕ И РАБОЧИЕ
+// НАСТРОЙКИ PINGSTER - РАБОЧАЯ ВЕРСИЯ
 // ============================================
 
 const Settings = {
@@ -13,9 +13,9 @@ const Settings = {
     },
     
     loadSettings() {
-        // Загружаем настройки
+        // Загружаем настройки из localStorage
         this.sound = localStorage.getItem('settings_sound') !== 'false';
-        console.log('Звук загружен:', this.sound);
+        console.log('Звук загружен:', this.sound ? 'вкл' : 'выкл');
     },
     
     setupSoundButtons() {
@@ -24,42 +24,64 @@ const Settings = {
         const soundOff = document.getElementById('soundOff');
         
         if (!soundOn || !soundOff) {
-            console.log('❌ Кнопки не найдены');
+            console.log('❌ Кнопки не найдены!');
             return;
         }
         
         console.log('✅ Кнопки найдены');
         
-        // Устанавливаем начальное состояние
-        this.updateButtons(soundOn, soundOff);
+        // Убираем старые классы
+        soundOn.classList.remove('sound-active');
+        soundOff.classList.remove('sound-active');
         
-        // Вешаем обработчики напрямую
+        // Устанавливаем начальное состояние
+        if (this.sound) {
+            soundOn.classList.add('sound-active');
+            soundOff.classList.remove('sound-active');
+        } else {
+            soundOff.classList.add('sound-active');
+            soundOn.classList.remove('sound-active');
+        }
+        
+        // Убираем старые обработчики (если были)
+        soundOn.onclick = null;
+        soundOff.onclick = null;
+        
+        // Вешаем новые обработчики
         soundOn.onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log('Нажали ВКЛ');
-            this.sound = true;
-            localStorage.setItem('settings_sound', 'true');
-            this.updateButtons(soundOn, soundOff);
+            console.log('👉 Нажали ВКЛ');
+            this.toggleSound(true);
         };
         
         soundOff.onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log('Нажали ВЫКЛ');
-            this.sound = false;
-            localStorage.setItem('settings_sound', 'false');
-            this.updateButtons(soundOn, soundOff);
+            console.log('👉 Нажали ВЫКЛ');
+            this.toggleSound(false);
         };
     },
     
-    updateButtons(soundOn, soundOff) {
-        if (this.sound) {
-            soundOn.style.color = '#FF5500';
-            soundOff.style.color = '#8E97A6';
+    toggleSound(enable) {
+        const soundOn = document.getElementById('soundOn');
+        const soundOff = document.getElementById('soundOff');
+        
+        if (!soundOn || !soundOff) return;
+        
+        // Меняем состояние
+        this.sound = enable;
+        localStorage.setItem('settings_sound', enable);
+        
+        // Меняем классы
+        if (enable) {
+            soundOn.classList.add('sound-active');
+            soundOff.classList.remove('sound-active');
+            console.log('🔊 Звук включен');
         } else {
-            soundOn.style.color = '#8E97A6';
-            soundOff.style.color = '#FF5500';
+            soundOff.classList.add('sound-active');
+            soundOn.classList.remove('sound-active');
+            console.log('🔇 Звук выключен');
         }
     },
     
@@ -80,9 +102,9 @@ const Settings = {
     match() { this.playSound(); }
 };
 
-// Запускаем
+// Запускаем после загрузки DOM
 document.addEventListener('DOMContentLoaded', () => {
-    Settings.init();
+    setTimeout(() => Settings.init(), 100);
 });
 
 window.Settings = Settings;
