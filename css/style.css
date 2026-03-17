@@ -3676,51 +3676,54 @@ html {
     margin: 0 2px; 
 }
 
-/* ===== ПОИСК ИГРОКОВ ===== */
-.player-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    background: var(--surface);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+/* ===== ПОИСК ИГРОКОВ - ПРИНУДИТЕЛЬНОЕ ОТОБРАЖЕНИЕ ===== */
+.friends-page-list {
+    display: block !important;
+    padding: 16px !important;
+    min-height: 200px !important;
 }
 
-.player-item:hover {
-    border-color: var(--accent);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+.player-item {
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    margin-bottom: 8px !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .player-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    overflow: hidden;
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
     flex-shrink: 0;
-    background: var(--input-bg);
+    background: var(--input-bg) !important;
 }
 
 .player-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
 }
 
 .avatar-placeholder {
     width: 100%;
     height: 100%;
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 20px !important;
     font-weight: 600;
-    color: var(--text-primary);
-    background: var(--accent-glow);
+    color: var(--text-primary) !important;
+    background: var(--accent-glow) !important;
 }
 
 .player-info {
@@ -3729,57 +3732,40 @@ html {
 }
 
 .player-nick {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 4px;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+    margin-bottom: 4px !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .player-id {
-    font-size: 12px;
-    color: var(--text-secondary);
+    font-size: 12px !important;
+    color: var(--text-secondary) !important;
 }
 
 .player-profile-btn {
-    width: 40px;
-    height: 40px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    padding: 8px;
+    width: 40px !important;
+    height: 40px !important;
+    border: none !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    padding: 8px !important;
     flex-shrink: 0;
     transition: transform 0.2s ease;
 }
 
-.player-profile-btn:hover {
-    transform: scale(1.1);
+/* Убираем возможные скрывающие классы */
+.empty-friends {
+    display: flex !important;
+    padding: 20px !important;
+    text-align: center !important;
+    color: var(--text-secondary) !important;
 }
 
-.player-profile-btn svg {
-    width: 24px;
-    height: 24px;
-}
-
-.player-profile-btn svg circle:first-child {
-    fill: var(--surface);
-    stroke: var(--border-color);
-    stroke-width: 1;
-}
-
-.player-profile-btn svg circle:last-of-type,
-.player-profile-btn svg path {
-    fill: var(--text-primary);
-}
-
-.player-profile-btn:hover svg circle:first-child {
-    fill: var(--accent);
-    stroke: var(--accent);
-}
-
-.player-profile-btn:hover svg circle:last-of-type,
-.player-profile-btn:hover svg path {
-    fill: white;
+.empty-friends-text {
+    font-size: 14px !important;
+    color: var(--text-secondary) !important;
 }
