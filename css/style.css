@@ -4082,3 +4082,112 @@ html {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
 }
+
+/* ===== НОВЫЙ ЭКРАН ОЖИДАНИЯ (Telegram стиль) ===== */
+
+/* Убираем кнопку пока матч не создан */
+#tgChatButton {
+    display: none;  /* По умолчанию скрыта */
+    width: 100%;
+    height: 46px;
+    border-radius: 14px;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;  /* Будет показано через JS */
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.15s ease;
+    margin-top: 16px;
+}
+
+/* Неактивное состояние (ожидание) */
+#tgChatButton.disabled {
+    background: #2B2F36;
+    color: #6B7280;
+    cursor: default;
+}
+
+/* Активное состояние */
+#tgChatButton.active {
+    background: #FF5500;
+    color: white;
+    cursor: pointer;
+}
+
+#tgChatButton.active:active {
+    transform: scale(0.97);
+}
+
+/* Иконка Telegram */
+.tg-icon {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+/* Таймер по центру */
+#connectionTimer {
+    font-size: 42px;
+    font-weight: 800;
+    color: #FF5500;
+    text-align: center;
+    margin: 20px 0;
+    letter-spacing: -1px;
+    line-height: 1;
+}
+
+/* Улучшенная анимация линии */
+.line-pulse {
+    animation: lineMove 2s infinite ease-in-out;
+    opacity: 0.7;
+}
+
+@keyframes lineMove {
+    0% { left: -30px; }
+    50% { left: 50%; transform: translateX(-50%); }
+    100% { left: 100%; }
+}
+
+/* Эффект появления тиммейта */
+.teammate-avatar.connected {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}
+
+/* Упрощенная карточка */
+.connection-screen .swipe-card {
+    box-shadow: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    background: rgba(24, 27, 33, 0.6) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* Статус соединения */
+.connection-status {
+    font-size: 16px;
+    color: #9BA1B0;
+    text-align: center;
+    margin: 8px 0;
+    font-weight: 500;
+}
+
+.connection-status.active {
+    color: #FF5500;
+}
+
+/* Прячем тултип */
+#connectionTooltip {
+    display: none;
+}
+
+/* Контейнер кнопки */
+.connection-button {
+    width: 100%;
+    margin-top: 16px;
+    padding: 0 16px;
+}
