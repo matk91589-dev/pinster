@@ -10,8 +10,7 @@ const Settings = {
     
     init() {
         this.loadSettings();
-        this.setupSoundToggle();
-        this.setupThemeToggle();
+        this.setupSoundButtons();
         console.log('Настройки загружены');
     },
     
@@ -19,86 +18,84 @@ const Settings = {
         this.state.sound = localStorage.getItem('settings_sound') !== 'false';
         this.state.theme = localStorage.getItem('settings_theme') || 'dark';
         this.applyTheme();
-        this.updateToggles();
+        this.updateSoundButtons();
         console.log('Загружены настройки:', this.state);
     },
     
-    // Обновляем состояние всех переключателей
-    updateToggles() {
-        // Звук
-        const soundToggle = document.getElementById('soundToggle');
-        if (soundToggle) {
-            if (this.state.sound) {
-                soundToggle.classList.add('active');
-            } else {
-                soundToggle.classList.remove('active');
-            }
-        }
+    // Обновляем состояние кнопок звука
+    updateSoundButtons() {
+        const soundOn = document.getElementById('soundOn');
+        const soundOff = document.getElementById('soundOff');
         
-        // Тема
-        const themeToggle = document.getElementById('themeToggle');
-        if (themeToggle) {
-            if (this.state.theme === 'light') {
-                themeToggle.classList.add('active');
-            } else {
-                themeToggle.classList.remove('active');
-            }
+        if (!soundOn || !soundOff) return;
+        
+        if (this.state.sound) {
+            soundOn.classList.add('sound-active');
+            soundOff.classList.remove('sound-active');
+        } else {
+            soundOff.classList.add('sound-active');
+            soundOn.classList.remove('sound-active');
         }
     },
     
-    setupSoundToggle() {
-        const soundToggle = document.getElementById('soundToggle');
-        if (!soundToggle) {
-            console.log('❌ Переключатель звука не найден');
+    // Настройка кнопок звука
+    setupSoundButtons() {
+        const soundOn = document.getElementById('soundOn');
+        const soundOff = document.getElementById('soundOff');
+        
+        if (!soundOn || !soundOff) {
+            console.log('❌ Кнопки звука не найдены');
             return;
         }
         
-        console.log('✅ Переключатель звука найден');
+        console.log('✅ Кнопки звука найдены');
         
-        soundToggle.addEventListener('click', (e) => {
+        // Убираем старые обработчики если есть
+        soundOn.replaceWith(soundOn.cloneNode(true));
+        soundOff.replaceWith(soundOff.cloneNode(true));
+        
+        // Получаем новые ссылки после замены
+        const newSoundOn = document.getElementById('soundOn');
+        const newSoundOff = document.getElementById('soundOff');
+        
+        // Добавляем обработчики
+        newSoundOn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            
-            soundToggle.classList.toggle('active');
-            this.state.sound = soundToggle.classList.contains('active');
-            localStorage.setItem('settings_sound', this.state.sound);
-            
-            console.log('Звук:', this.state.sound ? 'вкл 🔊' : 'выкл 🔇');
-            
+            this.toggleSound(true);
+        });
+        
+        newSoundOff.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.toggleSound(false);
+        });
+        
+        // Устанавливаем начальное состояние
+        this.updateSoundButtons();
+    },
+    
+    // Переключение звука
+    toggleSound(enable) {
+        const soundOn = document.getElementById('soundOn');
+        const soundOff = document.getElementById('soundOff');
+        
+        if (!soundOn || !soundOff) return;
+        
+        this.state.sound = enable;
+        localStorage.setItem('settings_sound', enable);
+        
+        if (enable) {
+            soundOn.classList.add('sound-active');
+            soundOff.classList.remove('sound-active');
             // Пробный звук при включении
-            if (this.state.sound) {
-                setTimeout(() => this.playSound('light'), 50);
-            }
-        });
-    },
-    
-    setupThemeToggle() {
-        const themeToggle = document.getElementById('themeToggle');
-        if (!themeToggle) {
-            console.log('❌ Переключатель темы не найден');
-            return;
+            setTimeout(() => this.playSound('light'), 50);
+        } else {
+            soundOff.classList.add('sound-active');
+            soundOn.classList.remove('sound-active');
         }
         
-        console.log('✅ Переключатель темы найден');
-        
-        themeToggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            themeToggle.classList.toggle('active');
-            
-            // Тема: active = светлая, не active = тёмная
-            this.state.theme = themeToggle.classList.contains('active') ? 'light' : 'dark';
-            localStorage.setItem('settings_theme', this.state.theme);
-            this.applyTheme();
-            
-            console.log('Тема:', this.state.theme === 'dark' ? '🌙 тёмная' : '☀️ светлая');
-            
-            // Звук при смене темы
-            if (this.state.sound) {
-                setTimeout(() => this.playSound('medium'), 50);
-            }
-        });
+        console.log('Звук:', enable ? 'вкл 🔊' : 'выкл 🔇');
     },
     
     applyTheme() {
@@ -123,9 +120,7 @@ const Settings = {
         const tg = window.Telegram?.WebApp;
         
         if (tg?.HapticFeedback) {
-            // НА ANDROID impactOccurred НЕ РАБОТАЕТ!
             // Используем notificationOccurred - работает везде
-            
             if (type === 'light' || type === 'click' || type === 'swipe') {
                 tg.HapticFeedback.notificationOccurred('success');
             } 
