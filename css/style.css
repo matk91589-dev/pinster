@@ -3888,246 +3888,170 @@ html {
     opacity: 0.7;
 }
 
-/* ===== LIQUID GLASS ДИЗАЙН — СТИЛЬ TELEGRAM + APPLE ===== */
+/* ===== НОВЫЙ ДИЗАЙН ПОИСКА ИГРОКОВ (Telegram стиль) ===== */
 
-/* Глобальные переменные для стекла */
-:root {
-    --glass-bg: rgba(20, 22, 28, 0.3);
-    --glass-border: rgba(255, 85, 0, 0.2);
-    --glass-blur: 20px;
-    --glass-radius: 16px;
-}
-
-/* НИЖНЯЯ НАВИГАЦИЯ — как в новом Telegram [citation:4] */
-.bottom-nav {
-    background: rgba(13, 15, 21, 0.4) !important;
-    backdrop-filter: blur(var(--glass-blur)) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%) !important;
-    border-top: 1px solid rgba(255, 85, 0, 0.15) !important;
-    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.2) !important;
-}
-
-/* ХЕДЕР — стеклянный */
-.header {
-    background: rgba(13, 15, 21, 0.3) !important;
-    backdrop-filter: blur(var(--glass-blur)) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%) !important;
-    border-bottom: 1px solid rgba(255, 85, 0, 0.1) !important;
-}
-
-/* ПОИСК — крупный и стильный (как в Telegram) [citation:2] */
-.team-search-container {
-    padding: 8px 16px 16px 16px !important;
+/* Контейнер поиска (sticky) */
+.players-search {
+    position: sticky !important;
+    top: 0 !important;
+    background: #0F1115 !important;
+    z-index: 5 !important;
+    padding: 6px 16px 10px 16px !important;
     width: 100%;
 }
 
-.team-search-input {
+/* Поле ввода */
+.players-search-input {
     width: 100% !important;
-    height: 48px !important; /* Увеличенная высота как в Telegram */
-    background: rgba(26, 29, 36, 0.2) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    border: 1px solid rgba(255, 85, 0, 0.25) !important;
-    border-radius: 24px !important; /* Сильно скругленные */
-    padding: 0 24px !important;
-    font-size: 17px !important;
-    font-weight: 500 !important;
-    color: #F5F5F5 !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
-    transition: all 0.2s ease !important;
+    height: 32px !important;
+    background: rgba(26, 29, 36, 0.65) !important;
+    border: 1.5px solid #FF5500 !important;
+    border-radius: 14px !important;
+    padding: 0 14px !important;
+    font-size: 13px !important;
+    color: #fff !important;
+    outline: none !important;
+    box-sizing: border-box !important;
 }
 
-.team-search-input:focus {
-    border-color: #FF5500 !important;
-    box-shadow: 0 0 0 3px rgba(255, 85, 0, 0.2), 0 8px 28px rgba(0, 0, 0, 0.3) !important;
-    background: rgba(26, 29, 36, 0.3) !important;
-}
-
-.team-search-input::placeholder {
-    color: #9BA1B0 !important;
-    font-weight: 400 !important;
-    opacity: 0.7;
+.players-search-input::placeholder {
+    color: #6B7280 !important;
+    opacity: 1 !important;
 }
 
 /* Отключаем лупу браузера */
-.team-search-input::-webkit-search-decoration,
-.team-search-input::-webkit-search-cancel-button,
-.team-search-input::-webkit-search-results-button,
-.team-search-input::-webkit-search-results-decoration {
+.players-search-input::-webkit-search-decoration,
+.players-search-input::-webkit-search-cancel-button,
+.players-search-input::-webkit-search-results-button,
+.players-search-input::-webkit-search-results-decoration {
     display: none !important;
     -webkit-appearance: none !important;
 }
 
-.team-search-input[type="search"] {
+.players-search-input[type="search"] {
     -webkit-appearance: none !important;
     appearance: none !important;
 }
 
-/* Кнопку поиска скрываем */
-.team-search-btn {
-    display: none !important;
+/* Контейнер списка игроков */
+.players-list {
+    padding: 0 16px !important;
+    flex: 1;
+    overflow-y: auto;
 }
 
-/* ПЛАШКИ ИГРОКОВ — Liquid Glass стиль [citation:5] */
-.team-list {
-    padding: 4px 12px 12px 12px !important;
-}
-
-/* Стилизация скролла */
-.team-list::-webkit-scrollbar {
-    width: 4px !important;
-}
-
-.team-list::-webkit-scrollbar-track {
-    background: rgba(42, 47, 58, 0.3) !important;
-    border-radius: 10px !important;
-}
-
-.team-list::-webkit-scrollbar-thumb {
-    background: #FF5500 !important;
-    border-radius: 10px !important;
-}
-
-/* Плашка игрока — настоящий Liquid Glass [citation:10] */
-.team-list .player-item {
+/* Строка игрока */
+.player-row {
     display: flex !important;
     align-items: center !important;
-    gap: 14px !important;
-    
-    padding: 10px 16px !important;
-    margin-bottom: 8px !important;
-    min-height: 60px !important;
-    width: 100% !important;
-    
-    /* Основной стеклянный эффект */
-    background: rgba(24, 27, 33, 0.2) !important;
-    backdrop-filter: blur(16px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-    
-    border: 1px solid rgba(255, 85, 0, 0.15) !important;
-    border-radius: 18px !important; /* Скругление как в Telegram */
-    
-    /* Эффект глубины */
-    box-shadow: 
-        0 8px 24px rgba(0, 0, 0, 0.2),
-        inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
-    
-    transform: translateY(0);
-    transition: all 0.25s cubic-bezier(0.2, 0, 0, 1) !important;
+    gap: 12px !important;
+    padding: 8px 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+    cursor: pointer !important;
+    transition: background 0.15s ease !important;
+    animation: fadeIn 0.2s ease !important;
 }
 
-/* Эффект при наведении — усиливаем стекло */
-.team-list .player-item:hover {
-    background: rgba(24, 27, 33, 0.3) !important;
-    border-color: rgba(255, 85, 0, 0.3) !important;
-    transform: translateY(-2px);
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3) !important;
+.player-row:active {
+    background: rgba(255, 255, 255, 0.03) !important;
 }
 
-/* Аватарка */
-.team-list .player-avatar {
-    width: 44px !important;
-    height: 44px !important;
+/* Аватар */
+.player-avatar {
+    width: 38px !important;
+    height: 38px !important;
     border-radius: 50% !important;
     overflow: hidden !important;
-    background: rgba(42, 47, 58, 0.3) !important;
-    border: 1.5px solid rgba(255, 85, 0, 0.3) !important;
+    border: 1.5px solid #FF5500 !important;
     flex-shrink: 0 !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 
-.team-list .player-avatar img {
+.player-avatar img {
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
 }
 
-.team-list .avatar-placeholder {
-    width: 100% !important;
-    height: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 18px !important;
-    font-weight: 600 !important;
-    color: #F5F5F5 !important;
-    background: rgba(255, 85, 0, 0.2) !important;
+.player-avatar .avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #F5F5F5;
+    background: rgba(255, 85, 0, 0.2);
 }
 
-/* Информация об игроке */
-.team-list .player-info {
+/* Блок информации (ID над ником) */
+.player-info {
+    display: flex !important;
+    flex-direction: column !important;
+    line-height: 1.1 !important;
     flex: 1 !important;
     min-width: 0 !important;
 }
 
-.team-list .player-nick {
-    font-size: 16px !important;
+/* ID игрока */
+.player-id {
+    font-size: 10px !important;
+    color: #FF5500 !important;
     font-weight: 600 !important;
-    color: #F5F5F5 !important;
-    margin-bottom: 4px !important;
-    line-height: 1.3;
-    letter-spacing: -0.2px;
+    letter-spacing: 0.5px !important;
+    margin-bottom: 2px !important;
 }
 
-.team-list .player-id {
-    font-size: 12px !important;
+/* Ник игрока */
+.player-nick {
+    font-size: 15px !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Стрелка справа */
+.player-arrow {
+    margin-left: auto !important;
     color: #FF5500 !important;
-    opacity: 0.8;
-    font-weight: 500;
-    margin: 0 !important;
+    font-size: 18px !important;
+    opacity: 0.8 !important;
+    flex-shrink: 0 !important;
 }
 
-/* Стрелка — без кружка, просто символ */
-.team-list .player-profile-btn {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 32px !important;
-    height: 32px !important;
+/* Стилизация скролла */
+.players-list::-webkit-scrollbar {
+    width: 4px !important;
+}
+
+.players-list::-webkit-scrollbar-track {
     background: transparent !important;
-    border: none !important;
-    font-size: 0 !important;
-    cursor: pointer !important;
-    opacity: 0.7;
-    transition: all 0.2s ease !important;
 }
 
-.team-list .player-profile-btn::after {
-    content: "→" !important;
-    font-size: 22px !important;
-    color: #FF5500 !important;
-    font-weight: 300 !important;
-    line-height: 1;
-    transition: transform 0.2s ease !important;
+.players-list::-webkit-scrollbar-thumb {
+    background: #FF5500 !important;
+    border-radius: 10px !important;
 }
 
-.team-list .player-profile-btn:hover {
-    opacity: 1;
+/* Анимация появления */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.team-list .player-profile-btn:hover::after {
-    transform: translateX(4px) scale(1.1);
-}
-
-/* Пустое состояние */
-.empty-friends {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 40px 20px !important;
-    text-align: center !important;
-    color: #8E97A6 !important;
-    font-size: 14px !important;
-    font-weight: 400 !important;
-}
-
-/* Анимация преломления при скролле (как в Liquid Glass) [citation:9] */
-@keyframes glassRefraction {
-    0% { backdrop-filter: blur(16px) saturate(180%); }
-    50% { backdrop-filter: blur(20px) saturate(200%); }
-    100% { backdrop-filter: blur(16px) saturate(180%); }
-}
-
-.team-list .player-item {
-    animation: glassRefraction 6s infinite ease-in-out;
+/* Убираем старые стили, если они мешают */
+.team-search-container,
+.team-search-box,
+.team-search-btn,
+.team-list .player-item,
+.team-list .player-profile-btn {
+    /* Эти классы больше не используем */
 }
