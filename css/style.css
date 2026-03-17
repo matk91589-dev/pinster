@@ -3890,7 +3890,7 @@ html {
 
 /* ===== ПРЕМИУМ ДИЗАЙН ПОИСКА ИГРОКОВ ===== */
 
-/* ПОЛЕ ВВОДА — стильно, как поиск */
+/* ПОЛЕ ВВОДА — убираем лупу */
 .team-search-container {
     padding: 8px 12px 12px 12px !important;
     width: 100%;
@@ -3900,26 +3900,40 @@ html {
     width: 100%;
 }
 
+/* Отключаем стандартную лупу в браузере */
+.team-search-input::-webkit-search-decoration,
+.team-search-input::-webkit-search-cancel-button,
+.team-search-input::-webkit-search-results-button,
+.team-search-input::-webkit-search-results-decoration {
+    display: none !important;
+    -webkit-appearance: none !important;
+}
+
+.team-search-input[type="search"] {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+}
+
 .team-search-input {
     width: calc(100% - 8px) !important;
     margin: 0 auto !important;
     display: block !important;
     
-    background: rgba(26, 29, 36, 0.7) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
+    /* Более прозрачный фон для стекла */
+    background: rgba(20, 22, 28, 0.3) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
     
     border: 1.5px solid #FF5500 !important;
-    border-radius: 30px !important;        /* Сильно скругленные края, как в поиске */
-    
-    padding: 8px 18px !important;           /* Высота уменьшена в 2 раза */
+    border-radius: 30px !important;
+    padding: 8px 18px !important;
     font-size: 15px !important;
     font-weight: 500 !important;
     color: #F5F5F5 !important;
     
     box-shadow: 
-        0 2px 8px rgba(255, 85, 0, 0.15),
-        inset 0 1px 2px rgba(255, 255, 255, 0.05) !important;
+        0 4px 12px rgba(255, 85, 0, 0.2),
+        inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
     
     transition: all 0.2s ease !important;
 }
@@ -3928,14 +3942,14 @@ html {
     outline: none !important;
     border-color: #FF5500 !important;
     box-shadow: 
-        0 0 0 3px rgba(255, 85, 0, 0.25),
-        0 4px 12px rgba(255, 85, 0, 0.2) !important;
+        0 0 0 3px rgba(255, 85, 0, 0.3),
+        0 8px 20px rgba(255, 85, 0, 0.25) !important;
 }
 
 .team-search-input::placeholder {
-    color: #8E97A6 !important;
+    color: #9BA1B0 !important;
     font-weight: 400 !important;
-    opacity: 0.8;
+    opacity: 1;
 }
 
 /* Убираем старую кнопку */
@@ -3943,14 +3957,14 @@ html {
     display: none !important;
 }
 
-/* ПЛАШКИ ИГРОКОВ — чистое стекло */
+/* ПЛАШКИ ИГРОКОВ — реальное стекло */
 .team-list {
     padding: 4px 8px 8px 8px !important;
     scrollbar-width: thin !important;
     scrollbar-color: #FF5500 #2A2F3A !important;
 }
 
-/* Стилизация скролла (как в магазине/настройках) */
+/* Стилизация скролла */
 .team-list::-webkit-scrollbar {
     width: 4px !important;
 }
@@ -3965,34 +3979,37 @@ html {
     border-radius: 10px !important;
 }
 
-.team-list::-webkit-scrollbar-thumb:hover {
-    background: #ff7700 !important;
-}
-
-/* Плашка игрока — стекло, без 3D */
+/* Плашка игрока — настоящее стекло */
 .team-list .player-item {
     display: flex !important;
     align-items: center !important;
     gap: 12px !important;
     
-    padding: 6px 12px !important;
+    padding: 8px 12px !important;
     margin-bottom: 6px !important;
-    min-height: 52px !important;
+    min-height: 48px !important;
     width: 100% !important;
     
-    /* Стеклянный эффект (без впадин) */
-    background: rgba(24, 27, 33, 0.6) !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
+    /* Настоящий стеклянный эффект */
+    background: rgba(24, 27, 33, 0.25) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
     
-    border: 1px solid rgba(255, 85, 0, 0.15) !important;
-    border-radius: 12px !important;
+    border: 1px solid rgba(255, 85, 0, 0.2) !important;
+    border-radius: 14px !important;
     
-    /* Легкая тень для объема (не впадина) */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+    /* Мягкая тень для объема */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
     
-    transform: translateY(0);
     transition: all 0.2s ease !important;
+}
+
+/* Эффект при наведении */
+.team-list .player-item:hover {
+    border-color: rgba(255, 85, 0, 0.4) !important;
+    background: rgba(24, 27, 33, 0.35) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4) !important;
 }
 
 /* Убираем кружок у стрелки */
@@ -4000,64 +4017,64 @@ html {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 30px !important;           /* Уже без фона */
-    height: 30px !important;
-    background: transparent !important;  /* Прозрачный фон */
-    border: none !important;            /* Убираем границу */
+    width: 28px !important;
+    height: 28px !important;
+    background: transparent !important;
+    border: none !important;
     font-size: 0 !important;
     position: relative;
+    cursor: pointer !important;
 }
 
-/* Стрелка (без кружка) */
+/* Стрелка (без фона) */
 .team-list .player-profile-btn::after {
     content: "→" !important;
-    font-size: 22px !important;        /* Чуть крупнее */
+    font-size: 20px !important;
     color: #FF5500 !important;
-    font-weight: 400 !important;
+    font-weight: 300 !important;
     line-height: 1;
+    transition: transform 0.2s ease !important;
 }
 
-/* Легкий hover на стрелку */
 .team-list .player-profile-btn:hover::after {
-    transform: scale(1.1);
+    transform: translateX(3px) scale(1.1);
 }
 
-/* ID сверху, очень мелкий */
+/* ID ПОД НИКОМ (а не над) */
 .team-list .player-info {
     display: flex !important;
-    flex-direction: column-reverse !important;
+    flex-direction: column !important;  /* Изменено с column-reverse на column */
     gap: 2px !important;
     flex: 1 !important;
 }
 
 .team-list .player-id {
-    font-size: 9px !important;
+    font-size: 10px !important;
     color: #FF5500 !important;
-    opacity: 0.8;
+    opacity: 0.7;
     letter-spacing: 0.2px;
     font-weight: 500;
-    text-transform: uppercase;
     margin: 0 !important;
-    order: 1 !important;
+    order: 2 !important;  /* ID снизу */
 }
 
 .team-list .player-nick {
-    font-size: 14px !important;
+    font-size: 15px !important;
     font-weight: 600 !important;
     color: #F5F5F5 !important;
     margin: 0 !important;
-    order: 2 !important;
+    order: 1 !important;  /* Ник сверху */
     line-height: 1.3;
     letter-spacing: -0.2px;
 }
 
 /* Аватарка */
 .team-list .player-avatar {
-    width: 38px !important;
-    height: 38px !important;
+    width: 40px !important;
+    height: 40px !important;
     border-radius: 50% !important;
     overflow: hidden !important;
-    background: rgba(42, 47, 58, 0.5) !important;
+    background: rgba(42, 47, 58, 0.3) !important;
     border: 1px solid rgba(255, 85, 0, 0.2) !important;
     flex-shrink: 0 !important;
 }
@@ -4078,14 +4095,4 @@ html {
     font-weight: 600 !important;
     color: #F5F5F5 !important;
     background: rgba(255, 85, 0, 0.2) !important;
-}
-
-/* Заголовок секции (если нужен) */
-.team-section-header {
-    padding: 8px 16px 4px 16px !important;
-    font-size: 13px !important;
-    font-weight: 600 !important;
-    color: #8E97A6 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.3px !important;
 }
