@@ -1,5 +1,5 @@
 // ============================================
-// ДРУЗЬЯ - ПОИСК ИГРОКОВ (РАБОЧАЯ ВЕРСИЯ)
+// ДРУЗЬЯ - ПОИСК ИГРОКОВ (ИСПРАВЛЕНО)
 // ============================================
 
 const Friends = {
@@ -9,6 +9,7 @@ const Friends = {
     
     init() {
         this.telegramId = Profile.getTelegramId();
+        console.log('Friends.init() с telegram_id:', this.telegramId);
         this.loadAllPlayers();
         this.setupSearchInput();
     },
@@ -27,11 +28,19 @@ const Friends = {
             });
             
             const data = await response.json();
-            console.log('📦 Загружено игроков:', data.users?.length || 0);
+            console.log('📦 Ответ от сервера:', data);
             
             if (data.status === 'ok' && data.users) {
                 this.allPlayers = data.users;
-                this.renderPlayers(this.allPlayers);
+                console.log('✅ Загружено игроков:', this.allPlayers.length);
+                
+                // Принудительно вызываем отрисовку
+                setTimeout(() => {
+                    this.renderPlayers(this.allPlayers);
+                }, 100);
+            } else {
+                console.log('❌ Нет данных или ошибка:', data);
+                this.showError('Нет данных от сервера');
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки игроков:', error);
@@ -62,27 +71,24 @@ const Friends = {
             const query = e.target.value.trim();
             console.log('🔍 Поиск:', query);
             
-            // Очищаем предыдущий таймер
             if (this.searchTimeout) {
                 clearTimeout(this.searchTimeout);
             }
             
-            // Если запрос пустой - показываем всех
             if (query === '') {
                 this.renderPlayers(this.allPlayers);
                 return;
             }
             
-            // Ждем 300мс после последнего ввода
             this.searchTimeout = setTimeout(() => {
                 this.searchPlayers(query);
             }, 300);
         });
         
-        // Убираем обработчик с кнопки, поиск идет по мере ввода
+        // Прячем кнопку
         const searchBtn = document.querySelector('.friends-search-btn');
         if (searchBtn) {
-            searchBtn.style.display = 'none'; // Прячем кнопку
+            searchBtn.style.display = 'none';
         }
     },
     
@@ -106,31 +112,42 @@ const Friends = {
             });
             
             const data = await response.json();
-            console.log('📦 Результаты поиска:', data.users?.length || 0);
+            console.log('📦 Результаты поиска:', data);
             
-            if (data.status === 'ok') {
-                this.renderPlayers(data.users || []);
+            if (data.status === 'ok' && data.users) {
+                this.renderPlayers(data.users);
+            } else {
+                this.renderPlayers([]);
             }
         } catch (error) {
             console.error('❌ Ошибка поиска:', error);
+            this.renderPlayers([]);
         }
     },
     
     // Отрисовка игроков
     renderPlayers(players) {
+        console.log('🎨 Отрисовка игроков:', players);
+        
         const container = document.getElementById('friendsPageList');
-        if (!container) return;
+        if (!container) {
+            console.log('❌ Контейнер friendsPageList не найден');
+            return;
+        }
         
         if (!players || players.length === 0) {
             container.innerHTML = `
                 <div class="empty-friends">
-                    <div class="empty-friends-text">игроки не найдены</div>
+                    <div class="empty-friends-text">🤷 игроки не найдены</div>
                 </div>
             `;
             return;
         }
         
-        container.innerHTML = players.map(player => `
+        let html = '';
+        players.forEach(player => {
+            console.log('👤 Игрок:', player);
+            html += `
             <div class="player-item" onclick="Friends.showPlayerProfile('${player.player_id}')">
                 <div class="player-avatar">
                     ${player.avatar 
@@ -150,7 +167,11 @@ const Friends = {
                     </svg>
                 </button>
             </div>
-        `).join('');
+            `;
+        });
+        
+        container.innerHTML = html;
+        console.log('✅ Отрисовка завершена');
     },
     
     // Показать ошибку
@@ -174,7 +195,8 @@ const Friends = {
 
 // Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => Friends.init(), 300);
+    console.log('Friends.js загружен');
+    setTimeout(() => Friends.init(), 500);
 });
 
 window.Friends = Friends;
