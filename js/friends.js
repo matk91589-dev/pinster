@@ -1,168 +1,127 @@
 // ============================================
-// ДРУЗЬЯ (Telegram Mini App версия) - СЧЕТЧИК РЯДОМ
+// ДРУЗЬЯ - ПОИСК ИГРОКОВ (ИЗ БД)
 // ============================================
 
 const Friends = {
-    list: [],
-    count: 0,
+    players: [],
     telegramId: null,
+    searchTimeout: null,
     
     init() {
         this.telegramId = Profile.getTelegramId();
-        this.loadFriends();
+        this.loadAllPlayers();
+        this.setupSearch();
     },
     
-    // Загрузка списка друзей
-    async loadFriends() {
+    // Загрузка всех игроков из БД
+    async loadAllPlayers() {
+        console.log('📥 Загрузка всех игроков...');
         
-        // ПОКА ПУСТО - 0 друзей
-        this.list = [];
-        this.count = this.list.length;
-        this.render();
-        this.renderFriendsPage();
-    },
-    
-    // Отрисовка на главном экране профиля
-    render() {
-        const friendsList = document.getElementById('friendsList');
-        const friendsTitle = document.querySelector('.friends-title');
-        
-        if (friendsTitle) {
-            friendsTitle.textContent = `Ваши друзья: ${this.count}`;
-        }
-        
-        if (friendsList) {
-            if (this.list.length === 0) {
-                friendsList.innerHTML = `
-                    <div class="empty-friends">
-                        <div class="empty-friends-text">пока что пусто</div>
-                    </div>
-                `;
-            } else {
-                friendsList.innerHTML = this.list.map(f => `
-                    <div class="friend-item" onclick="Friends.showFriendProfile('${f.id}')">
-                        <div class="friend-avatar"></div>
-                        <div class="friend-info">
-                            <div class="friend-name-row">
-                                <span class="friend-name">${f.name || 'Без имени'}</span>
-                                <span class="friend-id">${f.id}</span>
-                            </div>
-                            <div class="friend-steam">steamcommunity.com/id/${(f.name || 'user').toLowerCase()}</div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-    },
-    
-    // Отрисовка на странице друзей
-    renderFriendsPage() {
-        const friendsPageList = document.getElementById('friendsPageList');
-        
-        if (!friendsPageList) return;
-        
-        if (this.list.length === 0) {
-            friendsPageList.innerHTML = `
-                <div class="empty-friends">
-                    <div class="empty-friends-text">пока что пусто</div>
-                </div>
-            `;
-        } else {
-            friendsPageList.innerHTML = this.list.map(f => `
-                <div class="friend-item" onclick="Friends.showFriendProfile('${f.id}')">
-                    <div class="friend-avatar"></div>
-                    <div class="friend-details">
-                        <div class="friend-name">${f.name || 'Без имени'}</div>
-                        <div class="friend-id">ID: ${f.id}</div>
-                    </div>
-                    <div class="friend-status">online</div>
-                </div>
-            `).join('');
-        }
-    },
-    
-    // НОВЫЙ МЕТОД - показать экран команды
-    showTeamPage() {
-        console.log('showTeamPage called');
-        if (typeof Team !== 'undefined' && Team.showTeamPage) {
-            Team.showTeamPage();
-        } else {
-            console.error('Team not found!');
-            // Запасной вариант - показываем старый экран друзей
-            const friendsScreen = document.getElementById('friendsScreen');
-            if (friendsScreen) {
-                document.querySelectorAll('.screen').forEach(screen => {
-                    screen.classList.remove('active');
-                });
-                friendsScreen.classList.add('active');
-                this.renderFriendsPage();
-            }
-        }
-    },
-    
-    // Показать страницу друзей (старый метод)
-    showFriendsPage() {
-        console.log('showFriendsPage called');
-        const friendsScreen = document.getElementById('friendsScreen');
-        if (friendsScreen) {
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
+        try {
+            const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/users/all', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    telegram_id: this.telegramId
+                })
             });
-            friendsScreen.classList.add('active');
-            this.renderFriendsPage();
             
-            if (window.Telegram?.WebApp?.HapticFeedback) {
-                Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            const data = await response.json();
+            console.log('📦 Игроки:', data);
+            
+            if (data.status === 'ok' && data.users) {
+                this.players = data.users;
+                this.renderPlayersList(this.players);
             }
-        } else {
-            console.error('friendsScreen not found!');
+        } catch (error) {
+            console.error('❌ Ошибка загрузки игроков:', error);
         }
     },
     
-    // Поиск пользователя по ID
-    searchByID() {
+    // Настройка поиска
+    setupSearch() {
         const searchInput = document.getElementById('friendSearchInput');
-        if (!searchInput) return;
         
-        const userId = searchInput.value.trim();
-        
-        if (!userId) {
-            alert('❌ Введите ID пользователя');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                // Дебаунс чтобы не ддосить сервер
+                if (this.searchTimeout) clearTimeout(this.searchTimeout);
+                this.searchTimeout = setTimeout(() => {
+                    this.searchPlayers(e.target.value);
+                }, 300);
+            });
+        }
+    },
+    
+    // Поиск игроков через сервер
+    async searchPlayers(query) {
+        if (!query.trim()) {
+            this.loadAllPlayers();
             return;
         }
         
-        alert(`🔍 Поиск пользователя с ID: ${userId} (будет позже)`);
-        searchInput.value = '';
+        try {
+            const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/users/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    telegram_id: this.telegramId,
+                    query: query.trim()
+                })
+            });
+            
+            const data = await response.json();
+            console.log('📦 Результаты поиска:', data);
+            
+            if (data.status === 'ok' && data.users) {
+                this.renderPlayersList(data.users);
+            }
+        } catch (error) {
+            console.error('❌ Ошибка поиска:', error);
+        }
     },
     
-    // ПОКАЗАТЬ ПРОФИЛЬ ДРУГА
-    showFriendProfile(friendId) {
-        alert(`👤 Профиль друга ${friendId} (будет позже)`);
+    // Отрисовка списка игроков
+    renderPlayersList(players) {
+        const container = document.getElementById('friendsPageList');
+        if (!container) return;
+        
+        if (!players || players.length === 0) {
+            container.innerHTML = `
+                <div class="empty-friends">
+                    <div class="empty-friends-text">игроки не найдены</div>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = players.map(player => `
+            <div class="player-item" onclick="Friends.showPlayerProfile('${player.player_id}')">
+                <div class="player-avatar">
+                    ${player.avatar 
+                        ? `<img src="${player.avatar}" alt="avatar">` 
+                        : `<div class="avatar-placeholder">${player.nick?.[0] || '?'}</div>`
+                    }
+                </div>
+                <div class="player-info">
+                    <div class="player-nick">${player.nick || 'Без имени'}</div>
+                    <div class="player-id">ID: ${player.player_id}</div>
+                </div>
+                <button class="player-profile-btn" onclick="event.stopPropagation(); Friends.showPlayerProfile('${player.player_id}')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" fill="white"/>
+                        <circle cx="12" cy="8" r="4" fill="black"/>
+                        <path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="black"/>
+                    </svg>
+                </button>
+            </div>
+        `).join('');
     },
     
-    // ТЕСТОВАЯ ФУНКЦИЯ - добавить друга (чтобы проверить счетчик)
-    addTestFriend() {
-        const newFriend = {
-            id: Math.floor(Math.random() * 100000).toString(),
-            name: `Player${this.list.length + 1}`
-        };
-        
-        this.list.push(newFriend);
-        this.count = this.list.length;
-        this.render();
-        this.renderFriendsPage();
-        
-        console.log(`✅ Добавлен друг, теперь друзей: ${this.count}`);
-    },
-    
-    // ТЕСТОВАЯ ФУНКЦИЯ - удалить друга
-    removeTestFriend() {
-        this.list.pop();
-        this.count = this.list.length;
-        this.render();
-        this.renderFriendsPage();
-        
-        console.log(`✅ Удален друг, теперь друзей: ${this.count}`);
+    // Показать профиль игрока
+    showPlayerProfile(playerId) {
+        console.log('👤 Профиль игрока:', playerId);
+        // TODO: Открыть карточку игрока (как в свайпе)
     }
 };
 
@@ -171,5 +130,4 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => Friends.init(), 300);
 });
 
-// Для теста в консоли (чтобы проверить счетчик)
 window.Friends = Friends;
