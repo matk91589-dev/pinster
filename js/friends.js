@@ -1,19 +1,19 @@
 // ============================================
-// ДРУЗЬЯ - ПОИСК ИГРОКОВ (ИЗ БД)
+// ДРУЗЬЯ - ПОИСК ИГРОКОВ (РАБОЧАЯ ВЕРСИЯ)
 // ============================================
 
 const Friends = {
-    players: [],
+    allPlayers: [],
     telegramId: null,
     searchTimeout: null,
     
     init() {
         this.telegramId = Profile.getTelegramId();
         this.loadAllPlayers();
-        this.setupSearch();
+        this.setupSearchInput();
     },
     
-    // Загрузка всех игроков из БД
+    // Загрузка всех игроков при открытии
     async loadAllPlayers() {
         console.log('📥 Загрузка всех игроков...');
         
@@ -27,38 +27,73 @@ const Friends = {
             });
             
             const data = await response.json();
-            console.log('📦 Игроки:', data);
+            console.log('📦 Загружено игроков:', data.users?.length || 0);
             
             if (data.status === 'ok' && data.users) {
-                this.players = data.users;
-                this.renderPlayersList(this.players);
+                this.allPlayers = data.users;
+                this.renderPlayers(this.allPlayers);
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки игроков:', error);
+            this.showError('Не удалось загрузить игроков');
         }
     },
     
-    // Настройка поиска
-    setupSearch() {
+    // Настройка поля поиска
+    setupSearchInput() {
         const searchInput = document.getElementById('friendSearchInput');
         
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                // Дебаунс чтобы не ддосить сервер
-                if (this.searchTimeout) clearTimeout(this.searchTimeout);
-                this.searchTimeout = setTimeout(() => {
-                    this.searchPlayers(e.target.value);
-                }, 300);
-            });
+        if (!searchInput) {
+            console.log('❌ Поле поиска не найдено');
+            return;
+        }
+        
+        console.log('✅ Поле поиска настроено');
+        
+        // Убираем readonly и disabled
+        searchInput.removeAttribute('readonly');
+        searchInput.removeAttribute('disabled');
+        
+        // Очищаем плейсхолдер
+        searchInput.value = '';
+        
+        // Добавляем обработчик ввода
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            console.log('🔍 Поиск:', query);
+            
+            // Очищаем предыдущий таймер
+            if (this.searchTimeout) {
+                clearTimeout(this.searchTimeout);
+            }
+            
+            // Если запрос пустой - показываем всех
+            if (query === '') {
+                this.renderPlayers(this.allPlayers);
+                return;
+            }
+            
+            // Ждем 300мс после последнего ввода
+            this.searchTimeout = setTimeout(() => {
+                this.searchPlayers(query);
+            }, 300);
+        });
+        
+        // Убираем обработчик с кнопки, поиск идет по мере ввода
+        const searchBtn = document.querySelector('.friends-search-btn');
+        if (searchBtn) {
+            searchBtn.style.display = 'none'; // Прячем кнопку
         }
     },
     
-    // Поиск игроков через сервер
+    // Поиск игроков
     async searchPlayers(query) {
-        if (!query.trim()) {
-            this.loadAllPlayers();
+        if (!query) {
+            this.renderPlayers(this.allPlayers);
             return;
         }
+        
+        console.log('🔍 Ищем:', query);
         
         try {
             const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/users/search', {
@@ -66,23 +101,23 @@ const Friends = {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     telegram_id: this.telegramId,
-                    query: query.trim()
+                    query: query
                 })
             });
             
             const data = await response.json();
-            console.log('📦 Результаты поиска:', data);
+            console.log('📦 Результаты поиска:', data.users?.length || 0);
             
-            if (data.status === 'ok' && data.users) {
-                this.renderPlayersList(data.users);
+            if (data.status === 'ok') {
+                this.renderPlayers(data.users || []);
             }
         } catch (error) {
             console.error('❌ Ошибка поиска:', error);
         }
     },
     
-    // Отрисовка списка игроков
-    renderPlayersList(players) {
+    // Отрисовка игроков
+    renderPlayers(players) {
         const container = document.getElementById('friendsPageList');
         if (!container) return;
         
@@ -118,10 +153,22 @@ const Friends = {
         `).join('');
     },
     
+    // Показать ошибку
+    showError(message) {
+        const container = document.getElementById('friendsPageList');
+        if (container) {
+            container.innerHTML = `
+                <div class="empty-friends">
+                    <div class="empty-friends-text">❌ ${message}</div>
+                </div>
+            `;
+        }
+    },
+    
     // Показать профиль игрока
     showPlayerProfile(playerId) {
         console.log('👤 Профиль игрока:', playerId);
-        // TODO: Открыть карточку игрока (как в свайпе)
+        alert(`Профиль игрока ${playerId} (будет позже)`);
     }
 };
 
