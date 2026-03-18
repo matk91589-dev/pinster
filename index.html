@@ -655,7 +655,7 @@
             <div id="teamScreen" class="screen team-screen">
                 <div class="team-header" style="display: flex; align-items: center; justify-content: center; position: relative;">
                     <div class="team-back" onclick="Team.goBack()" style="position: absolute; left: 0;">←</div>
-                    <div class="team-title">друзья</div>
+                    <div class="team-title">ДРУЗЬЯ</div>
                 </div>
 
                 <div class="team-tabs">
@@ -752,7 +752,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН СОЕДИНЕНИЯ - НОВЫЙ -->
+            <!-- ЭКРАН СОЕДИНЕНИЯ - ИСПРАВЛЕННЫЙ -->
             <div id="connectionScreen" class="screen connection-screen">
                 <div class="swipe-header">
                     <div class="swipe-title">Тиммейт найден</div>
@@ -777,28 +777,16 @@
                                 </div>
                             </div>
 
-                            <div class="connection-status" id="connectionStatus">Ожидание тиммейта...</div>
-
-                            <div class="teammate-info">
+                            <div class="teammate-info" data-player-id="">
                                 <span class="teammate-nick" id="teammateNick"></span>
                             </div>
 
-                            <div class="connection-rank-age">
-                                <span class="connection-rank" id="connectionRank"></span>
-                                <span class="connection-age" id="connectionAge"></span>
-                            </div>
+                            <div class="connection-status" id="connectionStatus">Ожидание тиммейта</div>
 
                             <div class="connection-button">
-                                <button class="tg-chat-button" id="tgChatButton" disabled>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-                                        <circle cx="128" cy="128" r="128" fill="#37AEE2"/>
-                                        <path fill="#FFFFFF" d="M94.7 173.3c-1.3 0-2.7-.2-4-1-3.6-1.7-6.3-5.4-6.3-9.6 0-2.5 1-4.7 2.6-6.4l93.2-79.1c2.5-2.1 6.2-2.4 9-.6 2.8 1.9 4 5.3 3 8.4l-37.4 92.2-59.5-3.9zm59.8-2.1l26.1-64.3L107.5 142.7l46.9 28.5z"/>
-                                    </svg>
-                                    <span id="tgChatButtonText">Ожидание тиммейта</span>
+                                <button class="tg-chat-button disabled" id="tgChatButton" disabled>
+                                    <span id="tgChatButtonText">Перейти в чат</span>
                                 </button>
-                                <div class="connection-tooltip" id="connectionTooltip">
-                                    Ожидаем второго игрока
-                                </div>
                             </div>
                         </div>
                     </div>
