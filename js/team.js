@@ -143,22 +143,26 @@ const Team = {
                         <span class="friend-name">${friend.nick || 'Без имени'}</span>
                     </div>
                     <div class="friend-actions">
+                        <!-- Кнопка профиля -->
+                        <button class="friend-profile-btn" onclick="event.stopPropagation(); Team.showFriendProfile('${friend.player_id}')">
+                            <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="24" cy="24" r="24" fill="#000000"/>
+                                <circle cx="24" cy="17" r="6" fill="#FFFFFF"/>
+                                <path d="M14 33 C14 28 18 25 24 25 C30 25 34 28 34 33 C34 34 33 35 32 35 H16 C15 35 14 34 14 33Z" fill="#FFFFFF"/>
+                            </svg>
+                        </button>
+                        <!-- Кнопка Telegram -->
                         <button class="friend-tg-btn" onclick="event.stopPropagation(); Team.openTelegramChat('${friend.player_id}')">
-                            <svg width="20" height="20" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="tgGradientSmall" x1="0" y1="0" x2="1" y2="1">
-                                        <stop offset="0%" stop-color="#37AEE2"/>
-                                        <stop offset="100%" stop-color="#1E96C8"/>
-                                    </linearGradient>
-                                </defs>
-                                <circle cx="120" cy="120" r="120" fill="url(#tgGradientSmall)"/>
+                            <svg width="28" height="28" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="120" cy="120" r="120" fill="#000000"/>
                                 <path fill="#FFFFFF" d="M180.2 63.8L48.5 113.5C42.6 115.8 42.7 119.1 47.5 120.6L81.3 131.2L155.6 86.3C158.9 84.4 161.9 85.4 159.4 87.6L99.5 140.9L97.3 173.2C100.6 173.2 102.1 171.6 103.9 169.7L120.2 153.6L154.1 178.4C160.4 181.9 164.9 180.1 166.5 172.5L188.8 75.5C191.2 66.1 185.1 61.9 180.2 63.8Z"/>
                             </svg>
                         </button>
+                        <!-- Кнопка удаления -->
                         <button class="friend-delete-btn" onclick="event.stopPropagation(); Team.deleteFriend('${friend.player_id}')">
-                            <svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="24" cy="24" r="24" fill="#2AABEE"/>
-                                <g stroke="white" stroke-width="2" stroke-linecap="round">
+                            <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="24" cy="24" r="24" fill="#000000"/>
+                                <g stroke="white" stroke-width="2" stroke-linecap="round" fill="none">
                                     <path d="M14 18H34"/>
                                     <path d="M20 18V15C20 14.4477 20.4477 14 21 14H27C27.5523 14 28 14.4477 28 15V18"/>
                                     <path d="M18 18L19 32C19.0523 32.5523 19.4477 33 20 33H28C28.5523 33 28.9477 32.5523 29 32L30 18"/>
@@ -253,22 +257,26 @@ const Team = {
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
                 </div>
                 <div class="friend-actions">
+                    <!-- Кнопка профиля -->
+                    <button class="friend-profile-btn" onclick="event.stopPropagation(); Team.showFriendProfile('${friend.player_id}')">
+                        <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="24" cy="24" r="24" fill="#000000"/>
+                            <circle cx="24" cy="17" r="6" fill="#FFFFFF"/>
+                            <path d="M14 33 C14 28 18 25 24 25 C30 25 34 28 34 33 C34 34 33 35 32 35 H16 C15 35 14 34 14 33Z" fill="#FFFFFF"/>
+                        </svg>
+                    </button>
+                    <!-- Кнопка Telegram -->
                     <button class="friend-tg-btn" onclick="event.stopPropagation(); Team.openTelegramChat('${friend.player_id}')">
-                        <svg width="20" height="20" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <linearGradient id="tgGradientSmall" x1="0" y1="0" x2="1" y2="1">
-                                    <stop offset="0%" stop-color="#37AEE2"/>
-                                    <stop offset="100%" stop-color="#1E96C8"/>
-                                </linearGradient>
-                            </defs>
-                            <circle cx="120" cy="120" r="120" fill="url(#tgGradientSmall)"/>
+                        <svg width="28" height="28" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="120" cy="120" r="120" fill="#000000"/>
                             <path fill="#FFFFFF" d="M180.2 63.8L48.5 113.5C42.6 115.8 42.7 119.1 47.5 120.6L81.3 131.2L155.6 86.3C158.9 84.4 161.9 85.4 159.4 87.6L99.5 140.9L97.3 173.2C100.6 173.2 102.1 171.6 103.9 169.7L120.2 153.6L154.1 178.4C160.4 181.9 164.9 180.1 166.5 172.5L188.8 75.5C191.2 66.1 185.1 61.9 180.2 63.8Z"/>
                         </svg>
                     </button>
+                    <!-- Кнопка удаления -->
                     <button class="friend-delete-btn" onclick="event.stopPropagation(); Team.deleteFriend('${friend.player_id}')">
-                        <svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="24" cy="24" r="24" fill="#2AABEE"/>
-                            <g stroke="white" stroke-width="2" stroke-linecap="round">
+                        <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="24" cy="24" r="24" fill="#000000"/>
+                            <g stroke="white" stroke-width="2" stroke-linecap="round" fill="none">
                                 <path d="M14 18H34"/>
                                 <path d="M20 18V15C20 14.4477 20.4477 14 21 14H27C27.5523 14 28 14.4477 28 15V18"/>
                                 <path d="M18 18L19 32C19.0523 32.5523 19.4477 33 20 33H28C28.5523 33 28.9477 32.5523 29 32L30 18"/>
