@@ -4073,3 +4073,51 @@ html {
     transform: none !important;
     box-shadow: none !important;
 }
+
+/* ===== СТИЛИ ПОЛЯ ПОИСКА (НОВЫЕ) ===== */
+
+.players-search {
+    padding: 6px 16px 10px 16px !important;
+    width: 100%;
+    background: transparent !important;
+}
+
+.players-search-input {
+    width: 100% !important;
+    height: 36px !important;
+    background: rgba(26, 29, 36, 0.65) !important;
+    border: 1.5px solid #FF5500 !important;
+    border-radius: 30px !important;
+    padding: 0 18px !important;
+    font-size: 14px !important;
+    color: #F5F5F5 !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+    transition: all 0.2s ease !important;
+}
+
+.players-search-input:focus {
+    border-color: #FF5500 !important;
+    box-shadow: 0 0 0 3px rgba(255, 85, 0, 0.25) !important;
+    background: rgba(26, 29, 36, 0.8) !important;
+}
+
+.players-search-input::placeholder {
+    color: #8E97A6 !important;
+    font-weight: 400 !important;
+    opacity: 0.8;
+}
+
+/* Отключаем лупу браузера */
+.players-search-input::-webkit-search-decoration,
+.players-search-input::-webkit-search-cancel-button,
+.players-search-input::-webkit-search-results-button,
+.players-search-input::-webkit-search-results-decoration {
+    display: none !important;
+    -webkit-appearance: none !important;
+}
+
+.players-search-input[type="search"] {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+}
