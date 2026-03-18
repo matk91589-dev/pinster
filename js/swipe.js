@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННЫЙ ЭКРАН ОЖИДАНИЯ
+// СВАЙП-КАРТОЧКИ - С ДОБАВЛЕНИЕМ В ДРУЗЬЯ
 // ============================================
 
 const Swipe = {
@@ -573,6 +573,9 @@ const Swipe = {
                     this.updateConnectionUI('both_accepted');
                     this.createGame();
                     this.adjustConnectionCardSize();
+                    
+                    // 👇 ДОБАВЛЯЕМ В ДРУЗЬЯ
+                    this.addFriendAfterMatch();
                 }
                 
                 if (data.status === 'rejected') {
@@ -614,7 +617,6 @@ const Swipe = {
             // Аватарка становится нормальной
             if (teammateAvatar) {
                 teammateAvatar.classList.add('connected');
-                // Убираем inline-стили с фильтром, если они есть
                 const img = teammateAvatar.querySelector('img');
                 if (img) {
                     img.style.filter = 'none';
@@ -642,6 +644,46 @@ const Swipe = {
             }
             
             if (window.Settings) Settings.error();
+        }
+    },
+    
+    // ========== ДОБАВЛЕНИЕ В ДРУЗЬЯ ==========
+    async addFriendAfterMatch() {
+        console.log('👥 Добавляем тиммейта в друзья...');
+        
+        if (!this.currentPlayer) {
+            console.error('❌ Нет данных о тиммейте');
+            return;
+        }
+        
+        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        if (!telegram_id) {
+            console.error('❌ Нет telegram_id');
+            return;
+        }
+        
+        try {
+            const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/friends/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    telegram_id: telegram_id,
+                    friend_player_id: this.currentPlayer.player_id
+                })
+            });
+            
+            const data = await response.json();
+            console.log('📦 Добавление в друзья:', data);
+            
+            if (data.status === 'ok') {
+                console.log('✅ Тиммейт добавлен в друзья');
+                // Показываем уведомление (можно добавить позже)
+                // if (window.Notifications) Notifications.show('Тиммейт добавлен в друзья');
+            } else if (data.status === 'already_friends') {
+                console.log('ℹ️ Уже друзья');
+            }
+        } catch (error) {
+            console.error('❌ Ошибка добавления в друзья:', error);
         }
     },
     
