@@ -4230,3 +4230,110 @@ html {
     border-top: none !important;
     background-image: none !important;
 }
+
+/* ===== ПРЕМИУМ СТИЛЬ - ПОИСК КАК В ХЕДЕРЕ ===== */
+
+/* КОНТЕЙНЕР ПОИСКА - sticky */
+.players-search {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
+    padding: 0 16px 0 16px !important;
+    margin: 0 !important;
+    width: 100%;
+    background: transparent !important;
+}
+
+/* ПЛАШКА ПОИСКА - темная */
+.players-search-input {
+    width: 100% !important;
+    height: 48px !important;
+    background: linear-gradient(165deg, #1A1D24, #12141A) !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 20px !important;
+    font-size: 14px !important;
+    color: #F5F5F5 !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+    
+    /* Зеркальный блеск */
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.08),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.3) !important;
+}
+
+.players-search-input::placeholder {
+    color: #A0A8B8 !important;
+    font-weight: 400 !important;
+    opacity: 0.8;
+}
+
+/* ТОНКАЯ РАЗДЕЛИТЕЛЬНАЯ ЛИНИЯ (как в хедере) */
+.players-search::after {
+    content: "" !important;
+    position: absolute !important;
+    bottom: -1px !important;  /* Чуть ниже плашки поиска */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 120px !important;
+    height: 2px !important;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.7),
+        transparent
+    ) !important;
+    opacity: 0.5 !important;
+    filter: blur(0.3px) !important;
+    z-index: 101 !important;
+    pointer-events: none !important;
+}
+
+/* ПЛАШКИ ИГРОКОВ - прилегают к линии */
+.players-list {
+    padding: 0 16px !important;
+    margin-top: 0 !important;  /* Вплотную к линии */
+}
+
+.players-list .player-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 10px 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+    cursor: pointer !important;
+    background: transparent !important;
+}
+
+.players-list .player-row:first-child {
+    padding-top: 12px !important;  /* Чуть отступ от линии */
+}
+
+/* ЭФФЕКТ ПРИ СКРОЛЛЕ */
+.players-search {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    background: rgba(13, 15, 21, 0.7) !important;  /* Легкое затемнение при скролле */
+    transition: background 0.2s ease !important;
+}
+
+.players-search:hover {
+    background: rgba(13, 15, 21, 0.9) !important;
+}
+
+/* Анимация появления игроков */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.players-list .player-row {
+    animation: slideDown 0.2s ease;
+}
