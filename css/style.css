@@ -4074,7 +4074,7 @@ html {
     box-shadow: none !important;
 }
 
-/* ===== СТИЛИ ПОЛЯ ПОИСКА (НОВЫЕ) ===== */
+/* ===== СТИЛИ ПОЛЯ ПОИСКА (ОБНОВЛЕННЫЕ) ===== */
 
 .players-search {
     padding: 6px 16px 10px 16px !important;
@@ -4084,12 +4084,12 @@ html {
 
 .players-search-input {
     width: 100% !important;
-    height: 36px !important;
+    height: 32px !important;  /* Уменьшили высоту */
     background: rgba(26, 29, 36, 0.65) !important;
-    border: 1.5px solid #FF5500 !important;
-    border-radius: 30px !important;
-    padding: 0 18px !important;
-    font-size: 14px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;  /* Белая аккуратная обводка */
+    border-radius: 16px !important;  /* Чуть менее закругленные края (было 30px) */
+    padding: 0 14px !important;  /* Уменьшили отступы */
+    font-size: 13px !important;  /* Чуть меньше текст */
     color: #F5F5F5 !important;
     outline: none !important;
     box-sizing: border-box !important;
@@ -4097,15 +4097,16 @@ html {
 }
 
 .players-search-input:focus {
-    border-color: #FF5500 !important;
-    box-shadow: 0 0 0 3px rgba(255, 85, 0, 0.25) !important;
+    border-color: #FF5500 !important;  /* При фокусе оранжевая */
+    box-shadow: 0 0 0 2px rgba(255, 85, 0, 0.2) !important;
     background: rgba(26, 29, 36, 0.8) !important;
 }
 
 .players-search-input::placeholder {
-    color: #8E97A6 !important;
+    color: #9BA1B0 !important;
     font-weight: 400 !important;
-    opacity: 0.8;
+    opacity: 0.7;
+    font-size: 13px !important;
 }
 
 /* Отключаем лупу браузера */
