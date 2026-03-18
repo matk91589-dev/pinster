@@ -154,12 +154,12 @@ const Friends = {
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
                 </div>
                 <div class="friend-actions">
-                    <!-- Кнопка профиля (слева) -->
+                    <!-- Кнопка профиля (слева) - ИСПРАВЛЕННАЯ -->
                     <button class="friend-profile-btn" onclick="event.stopPropagation(); Friends.showFriendProfile('${friend.player_id}')">
-                        <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="24" cy="24" r="24" fill="#000000"/>
-                            <circle cx="24" cy="17" r="6" fill="#FFFFFF"/>
-                            <path d="M14 33 C14 28 18 25 24 25 C30 25 34 28 34 33 C34 34 33 35 32 35 H16 C15 35 14 34 14 33Z" fill="#FFFFFF"/>
+                        <svg width="28" height="28" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="28" cy="28" r="28" fill="#000000"/>
+                            <circle cx="28" cy="24" r="8" fill="#FFFFFF"/>
+                            <path d="M16 40 C16 34 22 30 28 30 C34 30 40 34 40 40 C40 42 38 44 36 44 H20 C18 44 16 42 16 40Z" fill="#FFFFFF"/>
                         </svg>
                     </button>
                     <!-- Кнопка Telegram -->
@@ -227,12 +227,12 @@ const Friends = {
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
                 </div>
                 <div class="friend-actions">
-                    <!-- Кнопка профиля (слева) -->
+                    <!-- Кнопка профиля (слева) - ИСПРАВЛЕННАЯ -->
                     <button class="friend-profile-btn" onclick="event.stopPropagation(); Friends.showFriendProfile('${friend.player_id}')">
-                        <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="24" cy="24" r="24" fill="#000000"/>
-                            <circle cx="24" cy="17" r="6" fill="#FFFFFF"/>
-                            <path d="M14 33 C14 28 18 25 24 25 C30 25 34 28 34 33 C34 34 33 35 32 35 H16 C15 35 14 34 14 33Z" fill="#FFFFFF"/>
+                        <svg width="28" height="28" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="28" cy="28" r="28" fill="#000000"/>
+                            <circle cx="28" cy="24" r="8" fill="#FFFFFF"/>
+                            <path d="M16 40 C16 34 22 30 28 30 C34 30 40 34 40 40 C40 42 38 44 36 44 H20 C18 44 16 42 16 40Z" fill="#FFFFFF"/>
                         </svg>
                     </button>
                     <!-- Кнопка Telegram -->
