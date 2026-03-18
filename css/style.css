@@ -4646,3 +4646,17 @@ html {
 .friend-delete-btn svg g {
     stroke: #FFFFFF;
 }
+
+.friend-profile-btn svg,
+.friend-tg-btn svg,
+.friend-delete-btn svg {
+    width: 16px !important;
+    height: 16px !important;
+}
+
+.friend-profile-btn,
+.friend-tg-btn,
+.friend-delete-btn {
+    width: 22px !important;
+    height: 22px !important;
+}
