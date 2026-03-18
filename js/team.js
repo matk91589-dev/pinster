@@ -143,24 +143,24 @@ const Team = {
                         <span class="friend-name">${friend.nick || 'Без имени'}</span>
                     </div>
                     <div class="friend-actions">
-                        <!-- Кнопка профиля -->
+                        <!-- Кнопка профиля - НЕЗАЛИТАЯ (только обводка) -->
                         <button class="friend-profile-btn" onclick="event.stopPropagation(); Team.showFriendProfile('${friend.player_id}')">
-                            <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="24" cy="24" r="24" fill="#000000"/>
-                                <circle cx="24" cy="17" r="6" fill="#FFFFFF"/>
-                                <path d="M14 33 C14 28 18 25 24 25 C30 25 34 28 34 33 C34 34 33 35 32 35 H16 C15 35 14 34 14 33Z" fill="#FFFFFF"/>
+                            <svg width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="12" fill="#000000"/>
+                                <circle cx="12" cy="8" r="3.5" stroke="#ffffff" stroke-width="1.8" fill="none"/>
+                                <path d="M5.5 16 C5.5 13.8, 8.5 12.5, 12 12.5 C15.5 12.5, 18.5 13.8, 18.5 16 C18.5 17.8, 16.5 19, 12 19 C7.5 19, 5.5 17.8, 5.5 16" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
                         <!-- Кнопка Telegram -->
                         <button class="friend-tg-btn" onclick="event.stopPropagation(); Team.openTelegramChat('${friend.player_id}')">
-                            <svg width="28" height="28" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="26" height="26" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="120" cy="120" r="120" fill="#000000"/>
                                 <path fill="#FFFFFF" d="M180.2 63.8L48.5 113.5C42.6 115.8 42.7 119.1 47.5 120.6L81.3 131.2L155.6 86.3C158.9 84.4 161.9 85.4 159.4 87.6L99.5 140.9L97.3 173.2C100.6 173.2 102.1 171.6 103.9 169.7L120.2 153.6L154.1 178.4C160.4 181.9 164.9 180.1 166.5 172.5L188.8 75.5C191.2 66.1 185.1 61.9 180.2 63.8Z"/>
                             </svg>
                         </button>
                         <!-- Кнопка удаления -->
                         <button class="friend-delete-btn" onclick="event.stopPropagation(); Team.deleteFriend('${friend.player_id}')">
-                            <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="26" height="26" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="24" cy="24" r="24" fill="#000000"/>
                                 <g stroke="white" stroke-width="2" stroke-linecap="round" fill="none">
                                     <path d="M14 18H34"/>
@@ -257,24 +257,24 @@ const Team = {
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
                 </div>
                 <div class="friend-actions">
-                    <!-- Кнопка профиля -->
+                    <!-- Кнопка профиля - НЕЗАЛИТАЯ (только обводка) -->
                     <button class="friend-profile-btn" onclick="event.stopPropagation(); Team.showFriendProfile('${friend.player_id}')">
-                        <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="24" cy="24" r="24" fill="#000000"/>
-                            <circle cx="24" cy="17" r="6" fill="#FFFFFF"/>
-                            <path d="M14 33 C14 28 18 25 24 25 C30 25 34 28 34 33 C34 34 33 35 32 35 H16 C15 35 14 34 14 33Z" fill="#FFFFFF"/>
+                        <svg width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="12" fill="#000000"/>
+                            <circle cx="12" cy="8" r="3.5" stroke="#ffffff" stroke-width="1.8" fill="none"/>
+                            <path d="M5.5 16 C5.5 13.8, 8.5 12.5, 12 12.5 C15.5 12.5, 18.5 13.8, 18.5 16 C18.5 17.8, 16.5 19, 12 19 C7.5 19, 5.5 17.8, 5.5 16" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </button>
                     <!-- Кнопка Telegram -->
                     <button class="friend-tg-btn" onclick="event.stopPropagation(); Team.openTelegramChat('${friend.player_id}')">
-                        <svg width="28" height="28" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="26" height="26" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="120" cy="120" r="120" fill="#000000"/>
                             <path fill="#FFFFFF" d="M180.2 63.8L48.5 113.5C42.6 115.8 42.7 119.1 47.5 120.6L81.3 131.2L155.6 86.3C158.9 84.4 161.9 85.4 159.4 87.6L99.5 140.9L97.3 173.2C100.6 173.2 102.1 171.6 103.9 169.7L120.2 153.6L154.1 178.4C160.4 181.9 164.9 180.1 166.5 172.5L188.8 75.5C191.2 66.1 185.1 61.9 180.2 63.8Z"/>
                         </svg>
                     </button>
                     <!-- Кнопка удаления -->
                     <button class="friend-delete-btn" onclick="event.stopPropagation(); Team.deleteFriend('${friend.player_id}')">
-                        <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="26" height="26" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="24" cy="24" r="24" fill="#000000"/>
                             <g stroke="white" stroke-width="2" stroke-linecap="round" fill="none">
                                 <path d="M14 18H34"/>
