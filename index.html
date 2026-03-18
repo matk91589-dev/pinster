@@ -839,7 +839,8 @@
                         <span class="settings-arrow">→</span>
                     </div>
                     
-                    <div class="settings-row" onclick="App.showScreen('friendsScreen', true)">
+                    <!-- ИСПРАВЛЕНО: теперь ведет на teamScreen -->
+                    <div class="settings-row" onclick="Team.showTeamPage()">
                         <span class="settings-row-label">друзья</span>
                         <span class="settings-arrow">→</span>
                     </div>
@@ -1104,28 +1105,8 @@
                 <button class="cancel-search-btn" onclick="Search.cancel()">Отменить поиск</button>
             </div>
 
-            <!-- ЭКРАН ДРУЗЕЙ - ИСПРАВЛЕННЫЙ -->
-            <div id="friendsScreen" class="screen friends-screen">
-                <div class="friends-page-header">
-                    <button class="back-btn" onclick="App.showScreen('profileScreen', true)">←</button>
-                    <div class="friends-page-title">Ваши друзья</div>
-                    <div style="width: 40px;"></div>
-                </div>
-                
-                <div class="friends-search">
-                    <input type="search" 
-                           id="friendsSearchInput" 
-                           class="friends-search-input" 
-                           placeholder="поиск: введите id или ник друга"
-                           autocomplete="off">
-                </div>
-                
-                <div class="friends-list-container">
-                    <div class="friends-page-list" id="friendsPageList">
-                        <!-- Сюда будут подгружаться друзья -->
-                    </div>
-                </div>
-            </div>
+            <!-- ЭКРАН ДРУЗЕЙ - УДАЛЕН, ТЕПЕРЬ ИСПОЛЬЗУЕМ teamScreen -->
+            
         </main>
 
         <!-- Нижняя навигация -->
