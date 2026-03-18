@@ -4650,13 +4650,13 @@ html {
 .friend-profile-btn svg,
 .friend-tg-btn svg,
 .friend-delete-btn svg {
-    width: 20px !important;
-    height: 20px !important;
+    width: 26px !important;
+    height: 26px !important;
 }
 
 .friend-profile-btn,
 .friend-tg-btn,
 .friend-delete-btn {
-    width: 28px !important;
-    height: 28px !important;
+    width: 34px !important;
+    height: 34px !important;
 }
