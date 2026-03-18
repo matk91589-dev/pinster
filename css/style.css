@@ -4588,23 +4588,28 @@ html {
 .friend-actions {
     display: flex;
     align-items: center;
-    gap: 4px; /* Уменьшил с 8px до 4px */
+    gap: 2px; /* Еще меньше расстояние между иконками */
     flex-shrink: 0;
+    margin-right: -4px; /* Сдвигаем левее (отрицательный отступ) */
 }
 
 .friend-profile-btn,
 .friend-tg-btn,
 .friend-delete-btn {
-    width: 28px; /* Уменьшил с 32px до 28px */
-    height: 28px; /* Уменьшил с 32px до 28px */
+    width: 32px; /* Вернул немного больше, чтобы SVG не обрезался */
+    height: 32px;
     border: none;
-    background: transparent !important; /* Принудительно убираем фон */
+    background: transparent !important;
     cursor: pointer;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: transform 0.2s ease;
+    /* Запрещаем появление скролла при трансформации */
+    overflow: hidden !important;
+    transform: translateZ(0); /* Включаем аппаратное ускорение */
+    -webkit-transform: translateZ(0);
 }
 
 /* Убираем возможные фоны у SVG */
@@ -4613,27 +4618,53 @@ html {
 .friend-delete-btn svg {
     background: transparent !important;
     display: block;
+    width: 28px; /* Увеличил размер SVG */
+    height: 28px; /* Увеличил размер SVG */
+    /* Запрещаем выход за границы */
+    max-width: none;
+    flex-shrink: 0;
 }
 
 .friend-profile-btn:hover,
 .friend-tg-btn:hover,
 .friend-delete-btn:hover {
     transform: scale(1.1);
+    /* Убираем возможное появление скролла при hover */
+    overflow: visible !important;
+    /* Не влияем на ширину родителя */
+    will-change: transform;
 }
 
 /* Убеждаемся что нет фона у кругов */
 .friend-profile-btn svg circle,
 .friend-tg-btn svg circle,
 .friend-delete-btn svg circle {
-    fill: #000000; /* Оставляем черный круг */
+    fill: #000000;
 }
 
 .friend-profile-btn svg path,
-.friend-tg-btn svg path,
-.friend-delete-btn svg path {
-    fill: white; /* Белые элементы */
+.friend-tg-btn svg path {
+    fill: white;
 }
 
 .friend-delete-btn svg g {
-    stroke: white; /* Белая мусорка */
+    stroke: white;
+}
+
+/* Добавляем защиту от скролла для родительского контейнера */
+.friend-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    background: transparent;
+    transition: background 0.2s ease;
+    overflow: hidden; /* Скрываем лишнее */
+}
+
+.friend-row:hover {
+    background: rgba(255, 255, 255, 0.03);
+    overflow: hidden; /* Оставляем скрытым даже при hover */
 }
