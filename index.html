@@ -1104,7 +1104,7 @@
                 <button class="cancel-search-btn" onclick="Search.cancel()">Отменить поиск</button>
             </div>
 
-            <!-- ЭКРАН ДРУЗЕЙ -->
+            <!-- ЭКРАН ДРУЗЕЙ - ИСПРАВЛЕННЫЙ -->
             <div id="friendsScreen" class="screen friends-screen">
                 <div class="friends-page-header">
                     <button class="back-btn" onclick="App.showScreen('profileScreen', true)">←</button>
@@ -1112,16 +1112,15 @@
                     <div style="width: 40px;"></div>
                 </div>
                 
-                <div class="friends-search-container">
-                    <div class="friends-search-label">Найти тиммейта по ID</div>
-                    <div class="friends-search-box">
-                        <input type="text" id="friendSearchInput" class="friends-search-input" placeholder="Введите ID пользователя" maxlength="20">
-                        <button class="friends-search-btn" onclick="Friends.searchByID()">Найти</button>
-                    </div>
+                <div class="friends-search">
+                    <input type="search" 
+                           id="friendsSearchInput" 
+                           class="friends-search-input" 
+                           placeholder="поиск: введите id или ник друга"
+                           autocomplete="off">
                 </div>
                 
                 <div class="friends-list-container">
-                    <div class="friends-list-title">Мои друзья</div>
                     <div class="friends-page-list" id="friendsPageList">
                         <!-- Сюда будут подгружаться друзья -->
                     </div>
