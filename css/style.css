@@ -4660,3 +4660,122 @@ html {
     width: 34px !important;
     height: 34px !important;
 }
+
+/* ===== СТИЛИ ДЛЯ ДРУЗЕЙ КАК В ПОИСКЕ ===== */
+
+/* Контейнер списка друзей в профиле */
+.friends-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    padding: 0 !important;
+}
+
+/* Карточка друга - как в поиске */
+.friends-list .friend-row,
+#friendsTabList .friend-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 8px 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+    cursor: pointer !important;
+    background: transparent !important;
+    transition: none !important; /* Убираем анимацию */
+}
+
+/* Убираем hover эффект полностью */
+.friends-list .friend-row:hover,
+#friendsTabList .friend-row:hover {
+    background: transparent !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Убираем нижнюю границу у последнего */
+.friends-list .friend-row:last-child,
+#friendsTabList .friend-row:last-child {
+    border-bottom: none !important;
+}
+
+/* Аватарка как в поиске */
+.friends-list .friend-avatar,
+#friendsTabList .friend-avatar {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    border: none !important;
+    flex-shrink: 0 !important;
+    background: var(--input-bg) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+}
+
+.friends-list .friend-avatar img,
+#friendsTabList .friend-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* Информация о друге */
+.friends-list .friend-info,
+#friendsTabList .friend-info {
+    flex: 1 !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* ID как в поиске - оранжевый сверху */
+.friends-list .friend-id,
+#friendsTabList .friend-id {
+    font-size: 10px !important;
+    color: #FF5500 !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+    margin-bottom: 2px !important;
+    order: 1 !important;
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+/* Ник как в поиске - белый снизу */
+.friends-list .friend-name,
+#friendsTabList .friend-name {
+    font-size: 15px !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    order: 2 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+/* Кнопки действий */
+.friends-list .friend-actions,
+#friendsTabList .friend-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-shrink: 0 !important;
+    margin-right: 4px !important;
+}
+
+/* Отключаем все hover эффекты для кнопок внутри друзей */
+.friends-list .friend-profile-btn:hover,
+#friendsTabList .friend-profile-btn:hover,
+.friends-list .friend-tg-btn:hover,
+#friendsTabList .friend-tg-btn:hover,
+.friends-list .friend-delete-btn:hover,
+#friendsTabList .friend-delete-btn:hover {
+    transform: none !important;
+}
