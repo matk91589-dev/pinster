@@ -4238,53 +4238,60 @@ html {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
-    padding: 0 16px 0 16px !important;
+    padding: 6px 16px 0 16px !important;  /* Уменьшил отступы */
     margin: 0 !important;
     width: 100%;
     background: transparent !important;
 }
 
-/* ПЛАШКА ПОИСКА - темная */
+/* ПЛАШКА ПОИСКА - маленькая, скругленная */
 .players-search-input {
     width: 100% !important;
-    height: 48px !important;
-    background: linear-gradient(165deg, #1A1D24, #12141A) !important;
-    border: none !important;
-    border-radius: 0 !important;
-    padding: 0 20px !important;
-    font-size: 14px !important;
-    color: #F5F5F5 !important;
+    height: 28px !important;  /* В 3 раза меньше (было 48px) */
+    background: #0F1115 !important;  /* Чисто черный фон */
+    border: 1px solid #000000 !important;  /* Черная обводка без подсветки */
+    border-radius: 8px !important;  /* Скругленные верхние углы */
+    padding: 0 12px !important;
+    font-size: 13px !important;  /* Как в комментариях */
+    color: #FFFFFF !important;  /* Белый текст */
     outline: none !important;
     box-sizing: border-box !important;
     
-    /* Зеркальный блеск */
-    box-shadow: 
-        inset 0 1px 1px rgba(255, 255, 255, 0.08),
-        inset 0 -1px 1px rgba(0, 0, 0, 0.3) !important;
+    /* Убираем все эффекты */
+    box-shadow: none !important;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5) !important;  /* Легкая тень для читаемости */
 }
 
 .players-search-input::placeholder {
-    color: #A0A8B8 !important;
+    color: #E0E0E0 !important;  /* Светло-серый, почти белый */
     font-weight: 400 !important;
-    opacity: 0.8;
+    opacity: 0.9 !important;
+    font-size: 13px !important;
+}
+
+/* Убираем стандартную обводку при фокусе */
+.players-search-input:focus {
+    border-color: #000000 !important;
+    box-shadow: none !important;
+    background: #0F1115 !important;
 }
 
 /* ТОНКАЯ РАЗДЕЛИТЕЛЬНАЯ ЛИНИЯ (как в хедере) */
 .players-search::after {
     content: "" !important;
     position: absolute !important;
-    bottom: -1px !important;  /* Чуть ниже плашки поиска */
+    bottom: -2px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    width: 120px !important;
+    width: 100px !important;
     height: 2px !important;
     background: linear-gradient(
         90deg,
         transparent,
-        rgba(255, 255, 255, 0.7),
+        rgba(255, 255, 255, 0.5),
         transparent
     ) !important;
-    opacity: 0.5 !important;
+    opacity: 0.4 !important;
     filter: blur(0.3px) !important;
     z-index: 101 !important;
     pointer-events: none !important;
@@ -4292,41 +4299,37 @@ html {
 
 /* ПЛАШКИ ИГРОКОВ - прилегают к линии */
 .players-list {
-    padding: 0 16px !important;
-    margin-top: 0 !important;  /* Вплотную к линии */
+    padding: 4px 16px 0 16px !important;  /* Уменьшил отступ сверху */
+    margin-top: 0 !important;
 }
 
 .players-list .player-row {
     display: flex !important;
     align-items: center !important;
     gap: 12px !important;
-    padding: 10px 0 !important;
+    padding: 8px 0 !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
     cursor: pointer !important;
     background: transparent !important;
 }
 
 .players-list .player-row:first-child {
-    padding-top: 12px !important;  /* Чуть отступ от линии */
+    padding-top: 8px !important;
 }
 
 /* ЭФФЕКТ ПРИ СКРОЛЛЕ */
 .players-search {
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-    background: rgba(13, 15, 21, 0.7) !important;  /* Легкое затемнение при скролле */
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    background: rgba(13, 15, 21, 0.5) !important;
     transition: background 0.2s ease !important;
-}
-
-.players-search:hover {
-    background: rgba(13, 15, 21, 0.9) !important;
 }
 
 /* Анимация появления игроков */
 @keyframes slideDown {
     from {
         opacity: 0;
-        transform: translateY(-5px);
+        transform: translateY(-3px);
     }
     to {
         opacity: 1;
@@ -4335,5 +4338,14 @@ html {
 }
 
 .players-list .player-row {
-    animation: slideDown 0.2s ease;
+    animation: slideDown 0.15s ease;
+}
+
+/* Отключаем лупу браузера */
+.players-search-input::-webkit-search-decoration,
+.players-search-input::-webkit-search-cancel-button,
+.players-search-input::-webkit-search-results-button,
+.players-search-input::-webkit-search-results-decoration {
+    display: none !important;
+    -webkit-appearance: none !important;
 }
