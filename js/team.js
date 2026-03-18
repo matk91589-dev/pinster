@@ -1,5 +1,5 @@
 // ============================================
-// КОМАНДА - НОВЫЙ ДИЗАЙН (Telegram/FACEIT стиль)
+// КОМАНДА - С ДРУЗЬЯМИ
 // ============================================
 
 const Team = {
@@ -90,14 +90,59 @@ const Team = {
         const content = document.getElementById('teamContent');
         if (!content) return;
         
-        // Заглушка для друзей (потом добавишь)
-        content.innerHTML = `
-            <div class="players-list">
-                <div class="empty-friends">
-                    <div class="empty-friends-text">🤷 скоро тут будут друзья</div>
+        // Проверяем, есть ли Friends и список друзей
+        if (window.Friends && window.Friends.friendsList) {
+            const friends = window.Friends.friendsList;
+            
+            if (friends.length === 0) {
+                content.innerHTML = `
+                    <div class="players-list">
+                        <div class="empty-friends">
+                            <div class="empty-friends-text">🤷 у вас пока нет друзей</div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '<div class="players-list">';
+            friends.forEach(friend => {
+                html += `
+                <div class="player-row" onclick="Team.showPlayerProfile('${friend.player_id}')">
+                    <div class="player-avatar">
+                        ${friend.avatar 
+                            ? `<img src="${friend.avatar}" alt="avatar">` 
+                            : `<div class="avatar-placeholder">${friend.nick?.[0] || '?'}</div>`
+                        }
+                    </div>
+                    <div class="player-info">
+                        <span class="player-id">ID: ${friend.player_id}</span>
+                        <span class="player-nick">${friend.nick || 'Без имени'}</span>
+                    </div>
+                    <span class="player-arrow">→</span>
                 </div>
-            </div>
-        `;
+                `;
+            });
+            html += '</div>';
+            
+            content.innerHTML = html;
+        } else {
+            // Если Friends еще не загрузился, показываем заглушку
+            content.innerHTML = `
+                <div class="players-list">
+                    <div class="empty-friends">
+                        <div class="empty-friends-text">🤷 загрузка...</div>
+                    </div>
+                </div>
+            `;
+            
+            // Пробуем загрузить через секунду
+            setTimeout(() => {
+                if (window.Friends && window.Friends.friendsList) {
+                    this.renderFriendsTab();
+                }
+            }, 1000);
+        }
     },
     
     renderSearchTab() {
@@ -149,7 +194,7 @@ const Team = {
                     <span class="player-id">ID: ${player.player_id}</span>
                     <span class="player-nick">${player.nick || 'Без имени'}</span>
                 </div>
-                <span class="player-arrow">→</span>
+                <span class="player-arrow" onclick="event.stopPropagation(); Team.showPlayerProfile('${player.player_id}')">→</span>
             </div>
             `;
         });
