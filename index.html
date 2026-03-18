@@ -464,6 +464,162 @@
             border-radius: 50%;
             object-fit: cover;
         }
+
+        /* ===== НОВЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ДРУЗЕЙ ===== */
+        .friend-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            background: transparent;
+            transition: background 0.2s ease;
+        }
+
+        .friend-row:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .friend-row:last-child {
+            border-bottom: none;
+        }
+
+        .friend-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: none;
+            flex-shrink: 0;
+            background: #1A1D24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+            color: #F5F5F5;
+        }
+
+        .friend-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .friend-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .friend-id {
+            font-size: 10px;
+            color: #FF5500;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            margin-bottom: 2px;
+        }
+
+        .friend-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .friend-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .friend-tg-btn,
+        .friend-delete-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+
+        .friend-tg-btn:hover,
+        .friend-delete-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .friend-tg-btn svg,
+        .friend-delete-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Поиск на экране друзей */
+        .friends-search {
+            padding: 6px 16px 0 16px;
+            width: 100%;
+            margin-bottom: 8px;
+            position: relative;
+            background: transparent;
+        }
+
+        .friends-search-input {
+            width: 100%;
+            height: 28px;
+            background: rgba(15, 17, 21, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px 8px 0 0;
+            padding: 0 12px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #F5F5F5;
+            outline: none;
+            box-sizing: border-box;
+            line-height: 28px;
+        }
+
+        .friends-search-input::placeholder {
+            color: #9BA1B0;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        .friends-search-input:focus {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(15, 17, 21, 0.8);
+        }
+
+        .friends-search::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            opacity: 0.4;
+            filter: blur(0.3px);
+            z-index: 101;
+            pointer-events: none;
+        }
+
+        .friends-list-container {
+            padding: 4px 16px 0 16px;
+            flex: 1;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
@@ -651,7 +807,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН КОМАНДА - ОБНОВЛЕННЫЙ -->
+            <!-- ЭКРАН КОМАНДА - С ДРУЗЬЯМИ И ПОИСКОМ -->
             <div id="teamScreen" class="screen team-screen">
                 <div class="team-header" style="display: flex; align-items: center; justify-content: center; position: relative;">
                     <div class="team-back" onclick="Team.goBack()" style="position: absolute; left: 0;">←</div>
@@ -664,7 +820,9 @@
                 </div>
 
                 <div class="team-content" id="teamContent">
-                    <!-- Контент будет загружаться через team.js -->
+                    <!-- Контент будет загружаться через team.js
+                         Для друзей: friends-search + friends-list-container
+                         Для поиска: players-search + players-list -->
                 </div>
             </div>
 
@@ -797,7 +955,7 @@
                 </div>
             </div>
 
-            <!-- ===== ЭКРАН НАСТРОЕК - ОБНОВЛЕННЫЙ ===== -->
+            <!-- ЭКРАН НАСТРОЕК - ОБНОВЛЕННЫЙ -->
             <div id="settingsScreen" class="screen settings-screen">
                 <div class="settings-header">
                     <div class="settings-title">Настройки</div>
@@ -1104,8 +1262,6 @@
                 </div>
                 <button class="cancel-search-btn" onclick="Search.cancel()">Отменить поиск</button>
             </div>
-
-            <!-- ЭКРАН ДРУЗЕЙ - УДАЛЕН, ТЕПЕРЬ ИСПОЛЬЗУЕМ teamScreen -->
             
         </main>
 
