@@ -1,10 +1,12 @@
 // ============================================
-// КОМАНДА - С ДРУЗЬЯМИ
+// КОМАНДА - С ДРУЗЬЯМИ И ПОИСКОМ
 // ============================================
 
 const Team = {
     currentTab: 'friends',
     allPlayers: [],
+    friendsList: [],         // Актуальный список друзей (синхронизируется с Friends.friendsList)
+    filteredFriends: [],     // Отфильтрованный список для отображения
     telegramId: null,
     searchTimeout: null,
     
@@ -30,12 +32,32 @@ const Team = {
             });
             teamScreen.classList.add('active');
             
-            // Загружаем игроков при открытии
+            // Загружаем всех игроков для вкладки поиска
             this.loadAllPlayers();
+
+            // Синхронизируем список друзей с Friends
+            this.syncFriendsList();
             
             if (window.Telegram?.WebApp?.HapticFeedback) {
                 Telegram.WebApp.HapticFeedback.impactOccurred('light');
             }
+        }
+    },
+
+    // Новый метод для синхронизации списка друзей
+    syncFriendsList() {
+        if (window.Friends && window.Friends.friendsList) {
+            this.friendsList = window.Friends.friendsList;
+            this.filteredFriends = [...this.friendsList];
+            console.log('✅ Team: друзья синхронизированы, количество:', this.friendsList.length);
+            
+            // Если открыта вкладка друзей, обновляем её
+            if (this.currentTab === 'friends') {
+                this.renderFriendsTab();
+            }
+        } else {
+            console.log('⏳ Team: Friends еще не загружен, пробуем через секунду...');
+            setTimeout(() => this.syncFriendsList(), 500);
         }
     },
     
@@ -62,8 +84,6 @@ const Team = {
                 // Если открыт таб поиска, сразу показываем всех
                 if (this.currentTab === 'search') {
                     this.renderSearchResults(this.allPlayers);
-                } else {
-                    this.renderFriendsTab();
                 }
             }
         } catch (error) {
@@ -86,27 +106,41 @@ const Team = {
         }
     },
     
+    // ============================================
+    // ОБНОВЛЕННАЯ ВКЛАДКА ДРУЗЕЙ С ПОИСКОМ
+    // ============================================
     renderFriendsTab() {
         const content = document.getElementById('teamContent');
         if (!content) return;
         
-        // Проверяем, есть ли Friends и список друзей
+        // Сначала синхронизируем список на всякий случай
         if (window.Friends && window.Friends.friendsList) {
-            const friends = window.Friends.friendsList;
-            
-            if (friends.length === 0) {
-                content.innerHTML = `
-                    <div class="players-list">
-                        <div class="empty-friends">
-                            <div class="empty-friends-text">🤷 у вас пока нет друзей</div>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = '<div class="players-list">';
-            friends.forEach(friend => {
+            this.friendsList = window.Friends.friendsList;
+            this.filteredFriends = [...this.friendsList];
+        }
+        
+        // Формируем HTML с полем поиска
+        let html = `
+            <div class="friends-search">
+                <input type="search" 
+                       id="friendsSearchInput" 
+                       class="friends-search-input" 
+                       placeholder="поиск: введите id или ник друга"
+                       autocomplete="off">
+            </div>
+            <div class="friends-list-container" id="friendsTabList">
+        `;
+        
+        // Проверяем, есть ли друзья
+        if (!this.filteredFriends || this.filteredFriends.length === 0) {
+            html += `
+                <div class="empty-friends">
+                    <div class="empty-friends-text">пока что пусто</div>
+                </div>
+            `;
+        } else {
+            // Отображаем отфильтрованный список
+            this.filteredFriends.forEach(friend => {
                 html += `
                 <div class="player-row" onclick="Team.showPlayerProfile('${friend.player_id}')">
                     <div class="player-avatar">
@@ -123,28 +157,109 @@ const Team = {
                 </div>
                 `;
             });
-            html += '</div>';
-            
-            content.innerHTML = html;
-        } else {
-            // Если Friends еще не загрузился, показываем заглушку
-            content.innerHTML = `
-                <div class="players-list">
-                    <div class="empty-friends">
-                        <div class="empty-friends-text">🤷 загрузка...</div>
-                    </div>
-                </div>
-            `;
-            
-            // Пробуем загрузить через секунду
-            setTimeout(() => {
-                if (window.Friends && window.Friends.friendsList) {
-                    this.renderFriendsTab();
-                }
-            }, 1000);
         }
+        
+        html += '</div>'; // Закрываем friends-list-container
+        content.innerHTML = html;
+        
+        // Настраиваем поиск после того, как DOM обновился
+        this.setupFriendsSearch();
     },
     
+    // ============================================
+    // НОВЫЕ МЕТОДЫ ДЛЯ ПОИСКА ПО ДРУЗЬЯМ
+    // ============================================
+    setupFriendsSearch() {
+        // Даем время на отрисовку DOM
+        setTimeout(() => {
+            const searchInput = document.getElementById('friendsSearchInput');
+            if (!searchInput) {
+                console.log('❌ Поле поиска друзей в Team не найдено');
+                return;
+            }
+            
+            console.log('✅ Поле поиска друзей в Team настроено');
+            searchInput.removeAttribute('readonly');
+            searchInput.removeAttribute('disabled');
+            
+            // Убираем старый обработчик, если был
+            if (this.searchTimeout) {
+                clearTimeout(this.searchTimeout);
+            }
+            
+            // Вешаем новый обработчик
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.trim().toLowerCase();
+                
+                if (this.searchTimeout) clearTimeout(this.searchTimeout);
+                
+                this.searchTimeout = setTimeout(() => {
+                    this.searchFriends(query);
+                }, 300);
+            });
+        }, 100);
+    },
+    
+    searchFriends(query) {
+        console.log('🔍 Team: поиск по друзьям:', query);
+        
+        if (!query) {
+            // Если запрос пустой, показываем всех друзей
+            this.filteredFriends = [...this.friendsList];
+        } else {
+            // Фильтруем по нику или ID
+            this.filteredFriends = this.friendsList.filter(friend => {
+                const nickMatch = friend.nick?.toLowerCase().includes(query);
+                const idMatch = friend.player_id?.toLowerCase().includes(query);
+                return nickMatch || idMatch;
+            });
+        }
+        
+        // Обновляем отображение списка друзей
+        this.updateFriendsTabList();
+    },
+    
+    updateFriendsTabList() {
+        const container = document.getElementById('friendsTabList');
+        if (!container) {
+            console.log('❌ Контейнер friendsTabList не найден');
+            return;
+        }
+        
+        if (!this.filteredFriends || this.filteredFriends.length === 0) {
+            container.innerHTML = `
+                <div class="empty-friends">
+                    <div class="empty-friends-text">никто не найден</div>
+                </div>
+            `;
+            return;
+        }
+        
+        let html = '';
+        this.filteredFriends.forEach(friend => {
+            html += `
+            <div class="player-row" onclick="Team.showPlayerProfile('${friend.player_id}')">
+                <div class="player-avatar">
+                    ${friend.avatar 
+                        ? `<img src="${friend.avatar}" alt="avatar">` 
+                        : `<div class="avatar-placeholder">${friend.nick?.[0] || '?'}</div>`
+                    }
+                </div>
+                <div class="player-info">
+                    <span class="player-id">ID: ${friend.player_id}</span>
+                    <span class="player-nick">${friend.nick || 'Без имени'}</span>
+                </div>
+                <span class="player-arrow">→</span>
+            </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+    },
+    
+    // ============================================
+    // ВКЛАДКА ПОИСКА (без изменений)
+    // ============================================
     renderSearchTab() {
         const content = document.getElementById('teamContent');
         if (!content) return;
@@ -174,7 +289,7 @@ const Team = {
         if (!players || players.length === 0) {
             container.innerHTML = `
                 <div class="empty-friends">
-                    <div class="empty-friends-text">🤷 игроки не найдены</div>
+                    <div class="empty-friends-text">никто не найден</div>
                 </div>
             `;
             return;
