@@ -154,7 +154,7 @@ const Friends = {
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
                 </div>
                 <div class="friend-actions">
-                    <!-- Кнопка профиля - НОРМАЛЬНЫЙ SVG -->
+                    <!-- Кнопка профиля - НЕЗАПОЛНЕННАЯ (только обводка) -->
                     <button class="friend-profile-btn" onclick="event.stopPropagation(); Friends.showFriendProfile('${friend.player_id}')">
                         <svg width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="12" fill="#000000"/>
@@ -227,7 +227,7 @@ const Friends = {
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
                 </div>
                 <div class="friend-actions">
-                    <!-- Кнопка профиля - НОРМАЛЬНЫЙ SVG -->
+                    <!-- Кнопка профиля - НЕЗАПОЛНЕННАЯ (только обводка) -->
                     <button class="friend-profile-btn" onclick="event.stopPropagation(); Friends.showFriendProfile('${friend.player_id}')">
                         <svg width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="12" fill="#000000"/>
