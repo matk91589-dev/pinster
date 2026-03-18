@@ -465,7 +465,7 @@
             object-fit: cover;
         }
 
-        /* ===== НОВЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ДРУЗЕЙ ===== */
+        /* ===== ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ДРУЗЕЙ ===== */
         .friend-row {
             display: flex;
             align-items: center;
@@ -531,36 +531,66 @@
             text-overflow: ellipsis;
         }
 
+        /* ===== ИСПРАВЛЕННЫЕ СТИЛИ ДЛЯ КНОПОК ===== */
         .friend-actions {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 2px;
             flex-shrink: 0;
+            margin-right: -6px;
         }
 
+        .friend-profile-btn,
         .friend-tg-btn,
         .friend-delete-btn {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border: none;
-            background: transparent;
+            background: transparent !important;
             cursor: pointer;
             padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: transform 0.2s ease;
+            overflow: visible;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
         }
 
+        .friend-profile-btn svg,
+        .friend-tg-btn svg,
+        .friend-delete-btn svg {
+            background: transparent !important;
+            display: block;
+            width: 32px;
+            height: 32px;
+            max-width: none;
+            flex-shrink: 0;
+        }
+
+        .friend-profile-btn:hover,
         .friend-tg-btn:hover,
         .friend-delete-btn:hover {
             transform: scale(1.1);
+            z-index: 10;
+            position: relative;
         }
 
-        .friend-tg-btn svg,
-        .friend-delete-btn svg {
-            width: 20px;
-            height: 20px;
+        /* Цвета иконок - все одинаково */
+        .friend-profile-btn svg circle,
+        .friend-tg-btn svg circle,
+        .friend-delete-btn svg circle {
+            fill: #000000;
+        }
+
+        .friend-profile-btn svg path,
+        .friend-tg-btn svg path {
+            fill: #FFFFFF;
+        }
+
+        .friend-delete-btn svg g {
+            stroke: #FFFFFF;
         }
 
         /* Поиск на экране друзей */
