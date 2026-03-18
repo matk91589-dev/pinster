@@ -1,16 +1,15 @@
 // ============================================
-// ДРУЗЬЯ - ИСПРАВЛЕННАЯ ВЕРСИЯ С ДЕБАГОМ
+// ДРУЗЬЯ - ЗАГРУЗКА РЕАЛЬНЫХ ДРУЗЕЙ
 // ============================================
 
 const Friends = {
-    allPlayers: [],
+    friendsList: [],
     telegramId: null,
-    searchTimeout: null,
     
     init() {
         console.log('🔍 Friends.init() запущен');
         
-        // Пробуем получить telegram_id разными способами
+        // Получаем Telegram ID
         if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
             this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
             console.log('✅ Telegram ID из WebApp:', this.telegramId);
@@ -25,23 +24,22 @@ const Friends = {
             return;
         }
         
-        console.log('🚀 Загружаем игроков с ID:', this.telegramId);
-        this.loadAllPlayers();
-        this.setupSearchInput();
+        console.log('🚀 Загружаем список друзей...');
+        this.loadFriendsList();
     },
     
-    async loadAllPlayers() {
-        console.log('📥 Запрос к /api/users/all...');
+    async loadFriendsList() {
+        console.log('📥 Запрос к /api/friends/list...');
         
         try {
-            const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/users/all', {
+            const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/friends/list', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Cache-Control': 'no-cache'
                 },
                 body: JSON.stringify({
-                    telegram_id: this.telegramId  // 👈 ТЕПЕРЬ ТОЧНО ПРАВИЛЬНЫЙ ID
+                    telegram_id: this.telegramId
                 })
             });
             
@@ -49,117 +47,104 @@ const Friends = {
             const data = await response.json();
             console.log('📦 Данные от сервера:', data);
             
-            if (data.status === 'ok' && data.users) {
-                this.allPlayers = data.users;
-                console.log('✅ Загружено игроков:', this.allPlayers.length);
-                this.renderPlayers(this.allPlayers);
+            if (data.status === 'ok' && data.friends) {
+                this.friendsList = data.friends;
+                console.log('✅ Загружено друзей:', this.friendsList.length);
+                this.renderFriends(this.friendsList);
+                this.updateFriendsCounter();
             } else {
                 console.log('❌ Ошибка от сервера:', data.error);
                 this.showError(data.error || 'Нет данных');
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки:', error);
-            this.showError('Не удалось загрузить игроков');
+            this.showError('Не удалось загрузить друзей');
         }
     },
     
-    setupSearchInput() {
-        const searchInput = document.getElementById('friendSearchInput');
-        if (!searchInput) {
-            console.log('❌ Поле поиска не найдено');
+    renderFriends(friends) {
+        console.log('🎨 Отрисовка друзей:', friends?.length || 0);
+        
+        // Обновляем список на главном экране профиля
+        this.renderFriendsList();
+        
+        // Обновляем список на отдельном экране друзей
+        this.renderFriendsPage();
+    },
+    
+    renderFriendsList() {
+        const container = document.getElementById('friendsList');
+        if (!container) {
+            console.log('❌ Контейнер friendsList не найден');
             return;
         }
         
-        console.log('✅ Поле поиска настроено');
-        searchInput.removeAttribute('readonly');
-        searchInput.removeAttribute('disabled');
-        searchInput.value = '';
+        if (!this.friendsList || this.friendsList.length === 0) {
+            container.innerHTML = `
+                <div class="empty-friends">
+                    <div class="empty-friends-text">🤷 у вас пока нет друзей</div>
+                </div>
+            `;
+            return;
+        }
         
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.trim();
-            
-            if (this.searchTimeout) clearTimeout(this.searchTimeout);
-            
-            if (query === '') {
-                this.renderPlayers(this.allPlayers);
-                return;
-            }
-            
-            this.searchTimeout = setTimeout(() => {
-                this.searchPlayers(query);
-            }, 300);
+        // Показываем только первых 3 друзей в превью
+        const previewFriends = this.friendsList.slice(0, 3);
+        
+        let html = '';
+        previewFriends.forEach(friend => {
+            html += `
+            <div class="friend-item" onclick="Friends.showFriendProfile('${friend.player_id}')">
+                <div class="friend-avatar">
+                    ${friend.avatar 
+                        ? `<img src="${friend.avatar}" style="width:100%; height:100%; object-fit:cover;">` 
+                        : `<span>${friend.nick?.[0] || '?'}</span>`
+                    }
+                </div>
+                <div class="friend-details">
+                    <div class="friend-name">${friend.nick || 'Без имени'}</div>
+                    <div class="friend-id">ID: ${friend.player_id}</div>
+                </div>
+                <div class="friend-status">online</div>
+            </div>
+            `;
         });
         
-        // Прячем кнопку
-        const searchBtn = document.querySelector('.friends-search-btn');
-        if (searchBtn) searchBtn.style.display = 'none';
+        container.innerHTML = html;
+        console.log('✅ Превью друзей отрисовано');
     },
     
-    async searchPlayers(query) {
-        if (!query) {
-            this.renderPlayers(this.allPlayers);
-            return;
-        }
-        
-        console.log('🔍 Поиск:', query);
-        
-        try {
-            const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/users/search', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    telegram_id: this.telegramId,
-                    query: query
-                })
-            });
-            
-            const data = await response.json();
-            console.log('📦 Результаты поиска:', data);
-            
-            if (data.status === 'ok' && data.users) {
-                this.renderPlayers(data.users);
-            } else {
-                this.renderPlayers([]);
-            }
-        } catch (error) {
-            console.error('❌ Ошибка поиска:', error);
-            this.renderPlayers([]);
-        }
-    },
-    
-    renderPlayers(players) {
-        console.log('🎨 Отрисовка игроков:', players?.length || 0);
-        
+    renderFriendsPage() {
         const container = document.getElementById('friendsPageList');
         if (!container) {
             console.log('❌ Контейнер friendsPageList не найден');
             return;
         }
         
-        if (!players || players.length === 0) {
+        if (!this.friendsList || this.friendsList.length === 0) {
             container.innerHTML = `
                 <div class="empty-friends">
-                    <div class="empty-friends-text">🤷 игроки не найдены</div>
+                    <div class="empty-friends-text">🤷 у вас пока нет друзей</div>
                 </div>
             `;
             return;
         }
         
         let html = '';
-        players.forEach(player => {
+        this.friendsList.forEach(friend => {
             html += `
-            <div class="player-item" onclick="Friends.showPlayerProfile('${player.player_id}')">
+            <div class="player-item" onclick="Friends.showFriendProfile('${friend.player_id}')">
                 <div class="player-avatar">
-                    ${player.avatar 
-                        ? `<img src="${player.avatar}" alt="avatar">` 
-                        : `<div class="avatar-placeholder">${player.nick?.[0] || '?'}</div>`
+                    ${friend.avatar 
+                        ? `<img src="${friend.avatar}" alt="avatar">` 
+                        : `<div class="avatar-placeholder">${friend.nick?.[0] || '?'}</div>`
                     }
                 </div>
                 <div class="player-info">
-                    <div class="player-nick">${player.nick || 'Без имени'}</div>
-                    <div class="player-id">ID: ${player.player_id}</div>
+                    <div class="player-nick">${friend.nick || 'Без имени'}</div>
+                    <div class="player-id">ID: ${friend.player_id}</div>
                 </div>
-                <button class="player-profile-btn" onclick="event.stopPropagation(); Friends.showPlayerProfile('${player.player_id}')">
+                <button class="player-profile-btn" onclick="event.stopPropagation(); Friends.showFriendProfile('${friend.player_id}')">
                     👤
                 </button>
             </div>
@@ -167,30 +152,39 @@ const Friends = {
         });
         
         container.innerHTML = html;
-        console.log('✅ Отрисовка завершена');
+        console.log('✅ Страница друзей отрисована');
     },
     
-    showError(message) {
-        const container = document.getElementById('friendsPageList');
-        if (container) {
-            container.innerHTML = `
-                <div class="empty-friends">
-                    <div class="empty-friends-text">❌ ${message}</div>
-                </div>
-            `;
+    updateFriendsCounter() {
+        const friendsTitle = document.querySelector('.friends-title');
+        if (friendsTitle) {
+            friendsTitle.textContent = `Ваши друзья: ${this.friendsList.length}`;
         }
     },
     
-    showPlayerProfile(playerId) {
-        console.log('👤 Профиль игрока:', playerId);
-        alert(`Профиль игрока ${playerId}`);
+    showError(message) {
+        const containers = ['friendsList', 'friendsPageList'];
+        containers.forEach(id => {
+            const container = document.getElementById(id);
+            if (container) {
+                container.innerHTML = `
+                    <div class="empty-friends">
+                        <div class="empty-friends-text">❌ ${message}</div>
+                    </div>
+                `;
+            }
+        });
+    },
+    
+    showFriendProfile(playerId) {
+        console.log('👤 Профиль друга:', playerId);
+        alert(`Профиль друга ${playerId} (будет позже)`);
     }
 };
 
 // Инициализация после загрузки DOM
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Friends.js загружен');
-    // Даем время инициализироваться Telegram
     setTimeout(() => Friends.init(), 1000);
 });
 
