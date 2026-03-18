@@ -4363,6 +4363,8 @@ html {
     width: 100%;
     margin-bottom: 8px !important;
     position: relative !important;
+    display: block !important;
+    background: transparent !important;
 }
 
 .friends-search-input {
@@ -4376,13 +4378,15 @@ html {
     padding: 0 12px !important;
     font-size: clamp(11px, 3.2vw, 13px) !important;
     font-weight: 500 !important;
-    color: var(--text-primary) !important;
+    color: #F5F5F5 !important;
     outline: none !important;
     box-sizing: border-box !important;
+    display: block !important;
+    line-height: 28px !important;
 }
 
 .friends-search-input::placeholder {
-    color: var(--text-secondary) !important;
+    color: #9BA1B0 !important;
     font-weight: 400 !important;
     opacity: 0.8;
 }
