@@ -154,12 +154,12 @@ const Friends = {
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
                 </div>
                 <div class="friend-actions">
-                    <!-- Кнопка профиля - АВАТАРКА НОВОГО ПОЛЬЗОВАТЕЛЯ -->
+                    <!-- Кнопка профиля - НОРМАЛЬНЫЙ SVG -->
                     <button class="friend-profile-btn" onclick="event.stopPropagation(); Friends.showFriendProfile('${friend.player_id}')">
                         <svg width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="12" fill="#000000"/>
-                            <circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2" fill="none"/>
-                            <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#ffffff" stroke-width="2" fill="none"/>
+                            <circle cx="12" cy="8" r="3.5" stroke="#ffffff" stroke-width="1.8" fill="none"/>
+                            <path d="M5.5 16 C5.5 13.8, 8.5 12.5, 12 12.5 C15.5 12.5, 18.5 13.8, 18.5 16 C18.5 17.8, 16.5 19, 12 19 C7.5 19, 5.5 17.8, 5.5 16" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </button>
                     <!-- Кнопка Telegram -->
@@ -227,12 +227,12 @@ const Friends = {
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
                 </div>
                 <div class="friend-actions">
-                    <!-- Кнопка профиля - АВАТАРКА НОВОГО ПОЛЬЗОВАТЕЛЯ -->
+                    <!-- Кнопка профиля - НОРМАЛЬНЫЙ SVG -->
                     <button class="friend-profile-btn" onclick="event.stopPropagation(); Friends.showFriendProfile('${friend.player_id}')">
                         <svg width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="12" fill="#000000"/>
-                            <circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2" fill="none"/>
-                            <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#ffffff" stroke-width="2" fill="none"/>
+                            <circle cx="12" cy="8" r="3.5" stroke="#ffffff" stroke-width="1.8" fill="none"/>
+                            <path d="M5.5 16 C5.5 13.8, 8.5 12.5, 12 12.5 C15.5 12.5, 18.5 13.8, 18.5 16 C18.5 17.8, 16.5 19, 12 19 C7.5 19, 5.5 17.8, 5.5 16" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </button>
                     <!-- Кнопка Telegram -->
