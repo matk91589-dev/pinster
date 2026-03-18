@@ -10,7 +10,7 @@ const Friends = {
 
     init() {
         console.log('🔍 Friends.init() запущен');
-        
+
         // Получаем Telegram ID
         if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
             this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
