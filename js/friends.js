@@ -1,10 +1,12 @@
 // ============================================
-// ДРУЗЬЯ - ЗАГРУЗКА РЕАЛЬНЫХ ДРУЗЕЙ
+// ДРУЗЬЯ - С ПОИСКОМ ПО ДРУЗЬЯМ
 // ============================================
 
 const Friends = {
     friendsList: [],
+    filteredFriends: [],
     telegramId: null,
+    searchTimeout: null,
     
     init() {
         console.log('🔍 Friends.init() запущен');
@@ -26,6 +28,7 @@ const Friends = {
         
         console.log('🚀 Загружаем список друзей...');
         this.loadFriendsList();
+        this.setupSearchInput();
     },
     
     async loadFriendsList() {
@@ -49,8 +52,9 @@ const Friends = {
             
             if (data.status === 'ok' && data.friends) {
                 this.friendsList = data.friends;
+                this.filteredFriends = [...this.friendsList];
                 console.log('✅ Загружено друзей:', this.friendsList.length);
-                this.renderFriends(this.friendsList);
+                this.renderFriends(this.filteredFriends);
                 this.updateFriendsCounter();
             } else {
                 console.log('❌ Ошибка от сервера:', data.error);
@@ -62,6 +66,47 @@ const Friends = {
         }
     },
     
+    setupSearchInput() {
+        // Ждем немного, чтобы DOM точно загрузился
+        setTimeout(() => {
+            const searchInput = document.getElementById('friendsSearchInput');
+            if (!searchInput) {
+                console.log('❌ Поле поиска друзей не найдено');
+                return;
+            }
+            
+            console.log('✅ Поле поиска друзей настроено');
+            searchInput.removeAttribute('readonly');
+            searchInput.removeAttribute('disabled');
+            
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.trim().toLowerCase();
+                
+                if (this.searchTimeout) clearTimeout(this.searchTimeout);
+                
+                this.searchTimeout = setTimeout(() => {
+                    this.searchFriends(query);
+                }, 300);
+            });
+        }, 500);
+    },
+    
+    searchFriends(query) {
+        console.log('🔍 Поиск по друзьям:', query);
+        
+        if (!query) {
+            this.filteredFriends = [...this.friendsList];
+        } else {
+            this.filteredFriends = this.friendsList.filter(friend => {
+                const nickMatch = friend.nick?.toLowerCase().includes(query);
+                const idMatch = friend.player_id?.toLowerCase().includes(query);
+                return nickMatch || idMatch;
+            });
+        }
+        
+        this.renderFriendsPage(this.filteredFriends);
+    },
+    
     renderFriends(friends) {
         console.log('🎨 Отрисовка друзей:', friends?.length || 0);
         
@@ -69,7 +114,7 @@ const Friends = {
         this.renderFriendsList();
         
         // Обновляем список на отдельном экране друзей
-        this.renderFriendsPage();
+        this.renderFriendsPage(friends);
     },
     
     renderFriendsList() {
@@ -114,24 +159,26 @@ const Friends = {
         console.log('✅ Превью друзей отрисовано');
     },
     
-    renderFriendsPage() {
+    renderFriendsPage(friends = null) {
         const container = document.getElementById('friendsPageList');
         if (!container) {
             console.log('❌ Контейнер friendsPageList не найден');
             return;
         }
         
-        if (!this.friendsList || this.friendsList.length === 0) {
+        const friendsToRender = friends || this.filteredFriends;
+        
+        if (!friendsToRender || friendsToRender.length === 0) {
             container.innerHTML = `
                 <div class="empty-friends">
-                    <div class="empty-friends-text">🤷 у вас пока нет друзей</div>
+                    <div class="empty-friends-text">🤷 друзья не найдены</div>
                 </div>
             `;
             return;
         }
         
         let html = '';
-        this.friendsList.forEach(friend => {
+        friendsToRender.forEach(friend => {
             html += `
             <div class="player-item" onclick="Friends.showFriendProfile('${friend.player_id}')">
                 <div class="player-avatar">
