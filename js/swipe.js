@@ -603,8 +603,6 @@ const Swipe = {
         const connectionLine = document.querySelector('.connection-line');
         const teammateAvatar = document.querySelector('.teammate-avatar');
         const connectionTimer = document.getElementById('connectionTimer');
-        const button = document.getElementById('tgChatButton');
-        const buttonText = document.getElementById('tgChatButtonText');
         
         if (status === 'both_accepted') {
             // Меняем статус
@@ -616,6 +614,12 @@ const Swipe = {
             // Аватарка становится нормальной
             if (teammateAvatar) {
                 teammateAvatar.classList.add('connected');
+                // Убираем inline-стили с фильтром, если они есть
+                const img = teammateAvatar.querySelector('img');
+                if (img) {
+                    img.style.filter = 'none';
+                    img.style.opacity = '1';
+                }
             }
             
             // Полоска останавливается и становится оранжевой
@@ -623,15 +627,9 @@ const Swipe = {
                 connectionLine.classList.add('connected');
             }
             
-            // Таймер убираем или меняем текст
+            // Таймер НЕ МЕНЯЕМ, просто убираем warning
             if (connectionTimer) {
-                connectionTimer.innerHTML = 'Матч создан';
                 connectionTimer.classList.remove('warning');
-            }
-            
-            // Кнопка появляется
-            if (button) {
-                button.style.display = 'flex';
             }
             
             // Звук успеха
@@ -745,10 +743,10 @@ const Swipe = {
         document.getElementById('connectionRank').textContent = this.currentPlayer?.rank || '';
         document.getElementById('connectionAge').textContent = this.currentPlayer?.age ? this.currentPlayer?.age + ' лет' : '';
         
-        // Аватарка тиммейта (размытая и уменьшенная)
+        // Аватарка тиммейта (размытая в ожидании)
         const teammateAvatar = document.querySelector('.teammate-avatar .tg-avatar-svg');
         if (teammateAvatar && this.currentPlayer?.avatar) {
-            teammateAvatar.innerHTML = `<img src="${this.currentPlayer.avatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover; filter: grayscale(0.6) blur(1px); opacity:0.7;">`;
+            teammateAvatar.innerHTML = `<img src="${this.currentPlayer.avatar}" class="teammate-avatar-img" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
         }
         
         // Аватарка своя (нормальная)
@@ -769,9 +767,10 @@ const Swipe = {
         if (statusEl) {
             statusEl.innerHTML = 'Ожидание тиммейта';
             statusEl.classList.remove('active');
+            statusEl.style.color = ''; // Сбрасываем цвет
         }
         
-        // Кнопка чата не показывается вообще
+        // Кнопка всегда видна, но серая
         this.updateChatButton(false);
         
         // Запускаем таймер
@@ -785,20 +784,18 @@ const Swipe = {
     updateChatButton(active, chatLink = null, inviteLink = null) {
         const button = document.getElementById('tgChatButton');
         const buttonText = document.getElementById('tgChatButtonText');
-        const tooltip = document.getElementById('connectionTooltip');
         
-        if (!button || !buttonText || !tooltip) return;
+        if (!button || !buttonText) return;
+        
+        // Кнопка всегда видна
+        button.style.display = 'flex';
         
         if (active && chatLink) {
-            // Матч создан - показываем кнопку
-            button.style.display = 'flex';
+            // Матч создан - активная кнопка
             button.classList.remove('disabled');
             button.classList.add('active');
             button.disabled = false;
             buttonText.textContent = 'Перейти в чат';
-            tooltip.style.display = 'block';
-            tooltip.textContent = 'Матч создан';
-            tooltip.classList.add('active');
             
             this.chatLink = chatLink;
             this.inviteLink = inviteLink;
@@ -811,9 +808,12 @@ const Swipe = {
                 this.openChatLink();
             };
         } else {
-            // Матч не создан - кнопки нет
-            button.style.display = 'none';
-            tooltip.style.display = 'none';
+            // Ожидание - серая кнопка (нельзя нажать)
+            button.classList.remove('active');
+            button.classList.add('disabled');
+            button.disabled = true;
+            buttonText.textContent = 'Ожидание тиммейта';
+            button.onclick = null;
         }
     },
     
