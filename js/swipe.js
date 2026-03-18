@@ -738,10 +738,14 @@ const Swipe = {
         document.getElementById('swipeScreen').classList.remove('active');
         document.getElementById('connectionScreen').classList.add('active');
         
-        // Заполняем данные
+        // Заполняем ник
         document.getElementById('teammateNick').textContent = this.currentPlayer?.nick || '';
-        document.getElementById('connectionRank').textContent = this.currentPlayer?.rank || '';
-        document.getElementById('connectionAge').textContent = this.currentPlayer?.age ? this.currentPlayer?.age + ' лет' : '';
+        
+        // Добавляем ID для отображения через CSS
+        const teammateInfo = document.querySelector('.teammate-info');
+        if (teammateInfo && this.currentPlayer) {
+            teammateInfo.setAttribute('data-player-id', this.currentPlayer.player_id || '');
+        }
         
         // Аватарка тиммейта (размытая в ожидании)
         const teammateAvatar = document.querySelector('.teammate-avatar .tg-avatar-svg');
@@ -762,15 +766,15 @@ const Swipe = {
         document.querySelector('.teammate-avatar')?.classList.remove('connected');
         document.querySelector('.connection-line')?.classList.remove('connected');
         
-        // Статус "Ожидание тиммейта" (без многоточия)
+        // Статус "Ожидание тиммейта"
         const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
             statusEl.innerHTML = 'Ожидание тиммейта';
             statusEl.classList.remove('active');
-            statusEl.style.color = ''; // Сбрасываем цвет
+            statusEl.style.color = '';
         }
         
-        // Кнопка всегда видна, но серая
+        // Кнопка всегда видна, но серая (текст уже "Перейти в чат")
         this.updateChatButton(false);
         
         // Запускаем таймер
@@ -787,15 +791,15 @@ const Swipe = {
         
         if (!button || !buttonText) return;
         
-        // Кнопка всегда видна
+        // Кнопка всегда видна и текст всегда "Перейти в чат"
         button.style.display = 'flex';
+        buttonText.textContent = 'Перейти в чат';
         
         if (active && chatLink) {
             // Матч создан - активная кнопка
             button.classList.remove('disabled');
             button.classList.add('active');
             button.disabled = false;
-            buttonText.textContent = 'Перейти в чат';
             
             this.chatLink = chatLink;
             this.inviteLink = inviteLink;
@@ -812,7 +816,6 @@ const Swipe = {
             button.classList.remove('active');
             button.classList.add('disabled');
             button.disabled = true;
-            buttonText.textContent = 'Ожидание тиммейта';
             button.onclick = null;
         }
     },
