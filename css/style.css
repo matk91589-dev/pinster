@@ -4584,20 +4584,20 @@ html {
     overflow-y: auto;
 }
 
-/* ===== ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КНОПОК ДРУЗЕЙ ===== */
+/* ===== ИСПРАВЛЕННЫЕ СТИЛИ ДЛЯ КНОПОК ===== */
 .friend-actions {
     display: flex;
     align-items: center;
-    gap: 0px; /* Убрал gap, используем отрицательный margin */
+    gap: 8px; /* Увеличил расстояние между иконками */
     flex-shrink: 0;
-    margin-right: -8px; /* Сдвигаем всю группу вправо к краю */
+    margin-right: 4px; /* Небольшой отступ от правого края */
 }
 
 .friend-profile-btn,
 .friend-tg-btn,
 .friend-delete-btn {
-    width: 32px;
-    height: 32px;
+    width: 32px; /* Уменьшил с 36px до 32px */
+    height: 32px; /* Уменьшил с 36px до 32px */
     border: none;
     background: transparent !important;
     cursor: pointer;
@@ -4605,46 +4605,33 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s ease;
-    overflow: hidden;
+    transition: transform 0.15s ease; /* Более плавная и менее сильная анимация */
+    overflow: visible;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
-    margin-left: -4px; /* Отрицательный margin для наложения друг на друга */
 }
 
-.friend-profile-btn:first-child,
-.friend-tg-btn:first-child,
-.friend-delete-btn:first-child {
-    margin-left: 0; /* У первой кнопки отменяем отрицательный margin */
-}
-
-/* SVG внутри кнопок */
 .friend-profile-btn svg,
 .friend-tg-btn svg,
 .friend-delete-btn svg {
     background: transparent !important;
     display: block;
-    width: 28px;
-    height: 28px;
+    width: 28px; /* Уменьшил с 32px до 28px */
+    height: 28px; /* Уменьшил с 32px до 28px */
     max-width: none;
     flex-shrink: 0;
-    /* Убираем лишние пространства вокруг SVG */
-    transform: scale(1);
 }
 
-/* Эффект при наведении */
+/* Уменьшил силу анимации при наведении */
 .friend-profile-btn:hover,
 .friend-tg-btn:hover,
 .friend-delete-btn:hover {
-    transform: scale(1.15);
-    z-index: 10; /* Чтобы увеличинная кнопка была поверх других */
-    overflow: visible;
-    will-change: transform;
-    /* Убираем влияние на ширину родителя */
+    transform: scale(1.05); /* Уменьшил с 1.1 до 1.05 */
+    z-index: 10;
     position: relative;
 }
 
-/* Цвета иконок */
+/* Цвета иконок - все одинаково */
 .friend-profile-btn svg circle,
 .friend-tg-btn svg circle,
 .friend-delete-btn svg circle {
@@ -4653,48 +4640,9 @@ html {
 
 .friend-profile-btn svg path,
 .friend-tg-btn svg path {
-    fill: white;
+    fill: #FFFFFF;
 }
 
 .friend-delete-btn svg g {
-    stroke: white;
-}
-
-/* Делаем группу кнопок компактнее */
-.friend-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    cursor: pointer;
-    background: transparent;
-    transition: background 0.2s ease;
-    overflow: hidden;
-    /* Добавляем отступ справа для компенсации отрицательного margin */
-    padding-right: 4px;
-}
-
-.friend-row:hover {
-    background: rgba(255, 255, 255, 0.03);
-    overflow: hidden;
-}
-
-/* Анимация появления */
-@keyframes buttonPop {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-.friend-profile-btn:active,
-.friend-tg-btn:active,
-.friend-delete-btn:active {
-    animation: buttonPop 0.2s ease;
+    stroke: #FFFFFF;
 }
