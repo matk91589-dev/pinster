@@ -4136,7 +4136,7 @@ html {
 .friends-list {
     display: flex !important;
     flex-direction: column !important;
-    gap: 8px !important;
+    gap: 0 !important;  /* Убираем gap, используем border-bottom */
     padding: 0 !important;
 }
 
@@ -4145,13 +4145,18 @@ html {
     display: flex !important;
     align-items: center !important;
     gap: 12px !important;
-    padding: 8px 0 !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+    padding: 10px 0 !important;  /* Немного больше padding */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;  /* Тонкая линия-разделитель */
     cursor: pointer !important;
     background: transparent !important;
     border-radius: 0 !important;
     margin: 0 !important;
     transition: background 0.2s ease !important;
+}
+
+/* Убираем нижнюю границу у последнего элемента */
+.friends-list .friend-item:last-child {
+    border-bottom: none !important;
 }
 
 .friends-list .friend-item:hover {
@@ -4215,13 +4220,13 @@ html {
     border: 1px solid rgba(76, 175, 80, 0.3) !important;
 }
 
-/* Скрываем старые стили */
-.friends-list .friend-item {
-    transform: none !important;
-    box-shadow: none !important;
-}
-
+/* ПОЛНОСТЬЮ ОТКЛЮЧАЕМ СТАРЫЕ СТИЛИ */
+.friends-list .friend-item,
 .friends-list .friend-item:hover {
     transform: none !important;
     box-shadow: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    background-image: none !important;
 }
