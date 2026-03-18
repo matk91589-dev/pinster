@@ -154,31 +154,31 @@ const Friends = {
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
                 </div>
                 <div class="friend-actions">
-                    <!-- Кнопка профиля (слева) - ИСПРАВЛЕННАЯ -->
+                    <!-- Кнопка профиля (слева) - уменьшенная -->
                     <button class="friend-profile-btn" onclick="event.stopPropagation(); Friends.showFriendProfile('${friend.player_id}')">
-                        <svg width="28" height="28" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="28" cy="28" r="28" fill="#000000"/>
-                            <circle cx="28" cy="24" r="8" fill="#FFFFFF"/>
-                            <path d="M16 40 C16 34 22 30 28 30 C34 30 40 34 40 40 C40 42 38 44 36 44 H20 C18 44 16 42 16 40Z" fill="#FFFFFF"/>
+                        <svg width="18" height="18" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="19" cy="19" r="19" fill="#000000"/>
+                            <circle cx="19" cy="16" r="5.5" fill="#FFFFFF"/>
+                            <path d="M11 27 C11 23 15 20 19 20 C23 20 27 23 27 27 C27 28.5 26 30 24.5 30 H13.5 C12 30 11 28.5 11 27Z" fill="#FFFFFF"/>
                         </svg>
                     </button>
-                    <!-- Кнопка Telegram -->
+                    <!-- Кнопка Telegram - уменьшенная -->
                     <button class="friend-tg-btn" onclick="event.stopPropagation(); Friends.openTelegramChat('${friend.player_id}')">
-                        <svg width="28" height="28" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="120" cy="120" r="120" fill="#000000"/>
-                            <path fill="#FFFFFF" d="M180.2 63.8L48.5 113.5C42.6 115.8 42.7 119.1 47.5 120.6L81.3 131.2L155.6 86.3C158.9 84.4 161.9 85.4 159.4 87.6L99.5 140.9L97.3 173.2C100.6 173.2 102.1 171.6 103.9 169.7L120.2 153.6L154.1 178.4C160.4 181.9 164.9 180.1 166.5 172.5L188.8 75.5C191.2 66.1 185.1 61.9 180.2 63.8Z"/>
+                        <svg width="18" height="18" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="80" cy="80" r="80" fill="#000000"/>
+                            <path fill="#FFFFFF" d="M120.1 42.5L32.3 75.7C28.4 77.2 28.5 79.4 31.7 80.4L54.2 87.5L103.7 57.5C105.9 56.3 108 56.9 106.3 58.4L67.3 93.9L65.8 115.5C68.1 115.5 69.1 114.4 70.3 113.1L81.2 102.1L104.1 118.9C108.3 121.3 111.4 120.1 112.5 115L125.2 50.3C126.8 44.1 123.4 41.3 120.1 42.5Z"/>
                         </svg>
                     </button>
-                    <!-- Кнопка удаления -->
+                    <!-- Кнопка удаления - уменьшенная -->
                     <button class="friend-delete-btn" onclick="event.stopPropagation(); Friends.deleteFriend('${friend.player_id}')">
-                        <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="24" cy="24" r="24" fill="#000000"/>
-                            <g stroke="white" stroke-width="2" stroke-linecap="round" fill="none">
-                                <path d="M14 18H34"/>
-                                <path d="M20 18V15C20 14.4477 20.4477 14 21 14H27C27.5523 14 28 14.4477 28 15V18"/>
-                                <path d="M18 18L19 32C19.0523 32.5523 19.4477 33 20 33H28C28.5523 33 28.9477 32.5523 29 32L30 18"/>
-                                <path d="M22 22V29"/>
-                                <path d="M26 22V29"/>
+                        <svg width="18" height="18" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="16" cy="16" r="16" fill="#000000"/>
+                            <g stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none">
+                                <path d="M9 12H23"/>
+                                <path d="M13 12V10C13 9.5 13.5 9 14 9H18C18.5 9 19 9.5 19 10V12"/>
+                                <path d="M12 12L12.5 21C12.5 21.5 13 22 13.5 22H18.5C19 22 19.5 21.5 19.5 21L20 12"/>
+                                <path d="M15 15V19"/>
+                                <path d="M17 15V19"/>
                             </g>
                         </svg>
                     </button>
@@ -227,31 +227,31 @@ const Friends = {
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
                 </div>
                 <div class="friend-actions">
-                    <!-- Кнопка профиля (слева) - ИСПРАВЛЕННАЯ -->
+                    <!-- Кнопка профиля (слева) - уменьшенная -->
                     <button class="friend-profile-btn" onclick="event.stopPropagation(); Friends.showFriendProfile('${friend.player_id}')">
-                        <svg width="28" height="28" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="28" cy="28" r="28" fill="#000000"/>
-                            <circle cx="28" cy="24" r="8" fill="#FFFFFF"/>
-                            <path d="M16 40 C16 34 22 30 28 30 C34 30 40 34 40 40 C40 42 38 44 36 44 H20 C18 44 16 42 16 40Z" fill="#FFFFFF"/>
+                        <svg width="18" height="18" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="19" cy="19" r="19" fill="#000000"/>
+                            <circle cx="19" cy="16" r="5.5" fill="#FFFFFF"/>
+                            <path d="M11 27 C11 23 15 20 19 20 C23 20 27 23 27 27 C27 28.5 26 30 24.5 30 H13.5 C12 30 11 28.5 11 27Z" fill="#FFFFFF"/>
                         </svg>
                     </button>
-                    <!-- Кнопка Telegram -->
+                    <!-- Кнопка Telegram - уменьшенная -->
                     <button class="friend-tg-btn" onclick="event.stopPropagation(); Friends.openTelegramChat('${friend.player_id}')">
-                        <svg width="28" height="28" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="120" cy="120" r="120" fill="#000000"/>
-                            <path fill="#FFFFFF" d="M180.2 63.8L48.5 113.5C42.6 115.8 42.7 119.1 47.5 120.6L81.3 131.2L155.6 86.3C158.9 84.4 161.9 85.4 159.4 87.6L99.5 140.9L97.3 173.2C100.6 173.2 102.1 171.6 103.9 169.7L120.2 153.6L154.1 178.4C160.4 181.9 164.9 180.1 166.5 172.5L188.8 75.5C191.2 66.1 185.1 61.9 180.2 63.8Z"/>
+                        <svg width="18" height="18" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="80" cy="80" r="80" fill="#000000"/>
+                            <path fill="#FFFFFF" d="M120.1 42.5L32.3 75.7C28.4 77.2 28.5 79.4 31.7 80.4L54.2 87.5L103.7 57.5C105.9 56.3 108 56.9 106.3 58.4L67.3 93.9L65.8 115.5C68.1 115.5 69.1 114.4 70.3 113.1L81.2 102.1L104.1 118.9C108.3 121.3 111.4 120.1 112.5 115L125.2 50.3C126.8 44.1 123.4 41.3 120.1 42.5Z"/>
                         </svg>
                     </button>
-                    <!-- Кнопка удаления -->
+                    <!-- Кнопка удаления - уменьшенная -->
                     <button class="friend-delete-btn" onclick="event.stopPropagation(); Friends.deleteFriend('${friend.player_id}')">
-                        <svg width="28" height="28" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="24" cy="24" r="24" fill="#000000"/>
-                            <g stroke="white" stroke-width="2" stroke-linecap="round" fill="none">
-                                <path d="M14 18H34"/>
-                                <path d="M20 18V15C20 14.4477 20.4477 14 21 14H27C27.5523 14 28 14.4477 28 15V18"/>
-                                <path d="M18 18L19 32C19.0523 32.5523 19.4477 33 20 33H28C28.5523 33 28.9477 32.5523 29 32L30 18"/>
-                                <path d="M22 22V29"/>
-                                <path d="M26 22V29"/>
+                        <svg width="18" height="18" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="16" cy="16" r="16" fill="#000000"/>
+                            <g stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none">
+                                <path d="M9 12H23"/>
+                                <path d="M13 12V10C13 9.5 13.5 9 14 9H18C18.5 9 19 9.5 19 10V12"/>
+                                <path d="M12 12L12.5 21C12.5 21.5 13 22 13.5 22H18.5C19 22 19.5 21.5 19.5 21L20 12"/>
+                                <path d="M15 15V19"/>
+                                <path d="M17 15V19"/>
                             </g>
                         </svg>
                     </button>
