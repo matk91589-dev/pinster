@@ -4129,3 +4129,99 @@ html {
     -webkit-appearance: none !important;
     appearance: none !important;
 }
+
+/* ===== СТИЛИ ДЛЯ ДРУЗЕЙ В ПРОФИЛЕ (как в поиске) ===== */
+
+/* Контейнер списка друзей в профиле */
+.friends-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 0 !important;
+}
+
+/* Карточка друга в профиле */
+.friends-list .friend-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 8px 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+    cursor: pointer !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    transition: background 0.2s ease !important;
+}
+
+.friends-list .friend-item:hover {
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Аватарка друга */
+.friends-list .friend-avatar {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    border: none !important;
+    flex-shrink: 0 !important;
+    background: var(--input-bg) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+}
+
+.friends-list .friend-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* Информация о друге */
+.friends-list .friend-details {
+    flex: 1 !important;
+    min-width: 0 !important;
+}
+
+.friends-list .friend-name {
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    margin-bottom: 2px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.friends-list .friend-id {
+    font-size: 10px !important;
+    color: #FF5500 !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px !important;
+}
+
+/* Статус друга */
+.friends-list .friend-status {
+    font-size: 10px !important;
+    color: #4CAF50 !important;
+    background: transparent !important;
+    padding: 4px 8px !important;
+    border-radius: 12px !important;
+    white-space: nowrap !important;
+    border: 1px solid rgba(76, 175, 80, 0.3) !important;
+}
+
+/* Скрываем старые стили */
+.friends-list .friend-item {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.friends-list .friend-item:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
