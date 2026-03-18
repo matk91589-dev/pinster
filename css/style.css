@@ -4355,3 +4355,71 @@ html {
     display: none !important;
     -webkit-appearance: none !important;
 }
+
+/* ===== ПОИСК НА ЭКРАНЕ ДРУЗЕЙ ===== */
+
+.friends-search {
+    padding: 6px 16px 0 16px !important;
+    width: 100%;
+    margin-bottom: 8px !important;
+    position: relative !important;
+}
+
+.friends-search-input {
+    width: 100% !important;
+    height: 28px !important;
+    background: rgba(15, 17, 21, 0.7) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px 8px 0 0 !important;
+    padding: 0 12px !important;
+    font-size: clamp(11px, 3.2vw, 13px) !important;
+    font-weight: 500 !important;
+    color: var(--text-primary) !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+}
+
+.friends-search-input::placeholder {
+    color: var(--text-secondary) !important;
+    font-weight: 400 !important;
+    opacity: 0.8;
+}
+
+.friends-search-input:focus {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    background: rgba(15, 17, 21, 0.8) !important;
+}
+
+/* Линия как в хедере */
+.friends-search::after {
+    content: "" !important;
+    position: absolute !important;
+    bottom: -2px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100px !important;
+    height: 2px !important;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.5),
+        transparent
+    ) !important;
+    opacity: 0.4 !important;
+    filter: blur(0.3px) !important;
+    z-index: 101 !important;
+    pointer-events: none !important;
+}
+
+/* Контейнер для списка друзей */
+.friends-list-container {
+    padding: 0 16px !important;
+    flex: 1 !important;
+    overflow-y: auto !important;
+}
+
+.friends-page-list {
+    padding: 4px 0 0 0 !important;
+}
