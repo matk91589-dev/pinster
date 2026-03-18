@@ -4045,3 +4045,125 @@ html {
     height: 18px;
     fill: currentColor;
 }
+
+/* ===== ФИНАЛЬНЫЕ ПРАВКИ ЭКРАНА ОЖИДАНИЯ ===== */
+
+/* СТАТУС - белый в ожидании */
+.connection-status {
+    font-size: 16px;
+    color: #F5F5F5 !important;  /* Белый цвет */
+    text-align: center;
+    margin: 8px 0;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+/* Статус при создании матча - оранжевый */
+.connection-status.active {
+    color: #FF5500 !important;  /* Оранжевый */
+}
+
+/* ЛИНИЯ ПУЛЬСАЦИИ */
+.connection-line {
+    width: 60px;
+    height: 3px;
+    background: #2B2F38;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.line-pulse {
+    position: absolute;
+    height: 3px;
+    width: 30px;
+    background: #FF5500;
+    border-radius: 20px;
+    animation: lineMove 2s infinite ease-in-out;
+    opacity: 0.7;
+    box-shadow: 0 0 10px #FF5500;
+}
+
+@keyframes lineMove {
+    0% { left: -20px; }
+    50% { left: 50%; transform: translateX(-50%); }
+    100% { left: 100%; }
+}
+
+/* Когда оба приняли - линия оранжевая и не движется */
+.connection-line.connected {
+    background: #FF5500 !important;  /* Оранжевая */
+}
+
+.connection-line.connected .line-pulse {
+    display: none;
+}
+
+/* РАНГ И ВОЗРАСТ - одинаковые стили */
+.connection-rank,
+.connection-age {
+    background: #1A1D24;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 14px;
+    color: #F5F5F5 !important;  /* Белый текст */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: inline-block;
+    min-width: 60px;
+    text-align: center;
+}
+
+/* КНОПКА - убираем SVG, оставляем только текст и стрелку */
+#tgChatButton {
+    width: 100%;
+    height: 46px;
+    border-radius: 12px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    margin-top: 0;
+    position: relative;
+}
+
+/* Убираем иконку Telegram */
+#tgChatButton svg,
+#tgChatButton .tg-icon {
+    display: none !important;
+}
+
+/* Добавляем стрелку справа */
+#tgChatButton::after {
+    content: "→";
+    font-size: 18px;
+    color: white;
+    margin-left: 8px;
+    opacity: 0.9;
+    transition: transform 0.2s ease;
+}
+
+#tgChatButton.active:hover::after {
+    transform: translateX(4px);
+}
+
+/* В неактивном состоянии стрелка тоже серая */
+#tgChatButton.disabled::after {
+    color: #6B7280;
+}
+
+#tgChatButton.disabled {
+    background: #2B2F36;
+    color: #6B7280;
+    cursor: default;
+    pointer-events: none;
+}
+
+#tgChatButton.active {
+    background: #FF5500;
+    color: white;
+    cursor: pointer;
+}
