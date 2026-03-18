@@ -7,7 +7,7 @@ const Friends = {
     filteredFriends: [],
     telegramId: null,
     searchTimeout: null,
-    
+
     init() {
         console.log('🔍 Friends.init() запущен');
         
