@@ -5,15 +5,14 @@
 const Team = {
     currentTab: 'friends',
     allPlayers: [],
-    friendsList: [],         // Актуальный список друзей (синхронизируется с Friends.friendsList)
-    filteredFriends: [],     // Отфильтрованный список для отображения
+    friendsList: [],
+    filteredFriends: [],
     telegramId: null,
     searchTimeout: null,
     
     init() {
         console.log('Team.init() запущен');
         
-        // Получаем Telegram ID
         if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
             this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
         } else {
@@ -32,10 +31,7 @@ const Team = {
             });
             teamScreen.classList.add('active');
             
-            // Загружаем всех игроков для вкладки поиска
             this.loadAllPlayers();
-
-            // Синхронизируем список друзей с Friends
             this.syncFriendsList();
             
             if (window.Telegram?.WebApp?.HapticFeedback) {
@@ -44,14 +40,12 @@ const Team = {
         }
     },
 
-    // Новый метод для синхронизации списка друзей
     syncFriendsList() {
         if (window.Friends && window.Friends.friendsList) {
             this.friendsList = window.Friends.friendsList;
             this.filteredFriends = [...this.friendsList];
             console.log('✅ Team: друзья синхронизированы, количество:', this.friendsList.length);
             
-            // Если открыта вкладка друзей, обновляем её
             if (this.currentTab === 'friends') {
                 this.renderFriendsTab();
             }
@@ -81,7 +75,6 @@ const Team = {
             
             if (data.status === 'ok' && data.users) {
                 this.allPlayers = data.users;
-                // Если открыт таб поиска, сразу показываем всех
                 if (this.currentTab === 'search') {
                     this.renderSearchResults(this.allPlayers);
                 }
@@ -106,20 +99,15 @@ const Team = {
         }
     },
     
-    // ============================================
-    // ОБНОВЛЕННАЯ ВКЛАДКА ДРУЗЕЙ С ПОИСКОМ
-    // ============================================
     renderFriendsTab() {
         const content = document.getElementById('teamContent');
         if (!content) return;
         
-        // Сначала синхронизируем список на всякий случай
         if (window.Friends && window.Friends.friendsList) {
             this.friendsList = window.Friends.friendsList;
             this.filteredFriends = [...this.friendsList];
         }
         
-        // Формируем HTML с полем поиска
         let html = `
             <div class="friends-search">
                 <input type="search" 
@@ -128,18 +116,17 @@ const Team = {
                        placeholder="поиск: введите id или ник друга"
                        autocomplete="off">
             </div>
-            <div class="friends-list-container" id="friendsTabList">
+            <div class="players-list" id="friendsTabList">
         `;
         
-        // Проверяем, есть ли друзья
         if (!this.filteredFriends || this.filteredFriends.length === 0) {
             html += `
                 <div class="empty-friends">
-                    <div class="empty-friends-text">пока что пусто</div>
+                    <div class="empty-friends-text">🤷 у вас пока нет друзей</div>
                 </div>
             `;
         } else {
-            // Отображаем отфильтрованный список
+            // Используем те же классы, что и в поиске (player-row)
             this.filteredFriends.forEach(friend => {
                 html += `
                 <div class="player-row" onclick="Team.showPlayerProfile('${friend.player_id}')">
@@ -159,18 +146,12 @@ const Team = {
             });
         }
         
-        html += '</div>'; // Закрываем friends-list-container
+        html += '</div>';
         content.innerHTML = html;
-        
-        // Настраиваем поиск после того, как DOM обновился
         this.setupFriendsSearch();
     },
     
-    // ============================================
-    // НОВЫЕ МЕТОДЫ ДЛЯ ПОИСКА ПО ДРУЗЬЯМ
-    // ============================================
     setupFriendsSearch() {
-        // Даем время на отрисовку DOM
         setTimeout(() => {
             const searchInput = document.getElementById('friendsSearchInput');
             if (!searchInput) {
@@ -182,12 +163,10 @@ const Team = {
             searchInput.removeAttribute('readonly');
             searchInput.removeAttribute('disabled');
             
-            // Убираем старый обработчик, если был
             if (this.searchTimeout) {
                 clearTimeout(this.searchTimeout);
             }
             
-            // Вешаем новый обработчик
             searchInput.addEventListener('input', (e) => {
                 const query = e.target.value.trim().toLowerCase();
                 
@@ -204,10 +183,8 @@ const Team = {
         console.log('🔍 Team: поиск по друзьям:', query);
         
         if (!query) {
-            // Если запрос пустой, показываем всех друзей
             this.filteredFriends = [...this.friendsList];
         } else {
-            // Фильтруем по нику или ID
             this.filteredFriends = this.friendsList.filter(friend => {
                 const nickMatch = friend.nick?.toLowerCase().includes(query);
                 const idMatch = friend.player_id?.toLowerCase().includes(query);
@@ -215,7 +192,6 @@ const Team = {
             });
         }
         
-        // Обновляем отображение списка друзей
         this.updateFriendsTabList();
     },
     
@@ -229,7 +205,7 @@ const Team = {
         if (!this.filteredFriends || this.filteredFriends.length === 0) {
             container.innerHTML = `
                 <div class="empty-friends">
-                    <div class="empty-friends-text">никто не найден</div>
+                    <div class="empty-friends-text">🤷 друзья не найдены</div>
                 </div>
             `;
             return;
@@ -237,6 +213,7 @@ const Team = {
         
         let html = '';
         this.filteredFriends.forEach(friend => {
+            // И здесь тоже используем player-row
             html += `
             <div class="player-row" onclick="Team.showPlayerProfile('${friend.player_id}')">
                 <div class="player-avatar">
@@ -257,9 +234,6 @@ const Team = {
         container.innerHTML = html;
     },
     
-    // ============================================
-    // ВКЛАДКА ПОИСКА (без изменений)
-    // ============================================
     renderSearchTab() {
         const content = document.getElementById('teamContent');
         if (!content) return;
@@ -277,7 +251,6 @@ const Team = {
             </div>
         `;
         
-        // Показываем всех игроков сразу
         this.renderSearchResults(this.allPlayers);
         this.setupSearchInput();
     },
@@ -289,7 +262,7 @@ const Team = {
         if (!players || players.length === 0) {
             container.innerHTML = `
                 <div class="empty-friends">
-                    <div class="empty-friends-text">никто не найден</div>
+                    <div class="empty-friends-text">🤷 игроки не найдены</div>
                 </div>
             `;
             return;
