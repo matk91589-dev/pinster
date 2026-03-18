@@ -3888,208 +3888,13 @@ html {
     opacity: 0.7;
 }
 
-/* ===== НОВЫЙ ДИЗАЙН ПОИСКА ИГРОКОВ (Telegram стиль) ===== */
-
-/* Контейнер поиска (sticky) */
-.players-search {
-    position: sticky !important;
-    top: 0 !important;
-    background: #0F1115 !important;
-    z-index: 5 !important;
-    padding: 6px 16px 10px 16px !important;
-    width: 100%;
-}
-
-/* Поле ввода */
-.players-search-input {
-    width: 100% !important;
-    height: 32px !important;
-    background: rgba(26, 29, 36, 0.65) !important;
-    border: 1.5px solid #FF5500 !important;
-    border-radius: 14px !important;
-    padding: 0 14px !important;
-    font-size: 13px !important;
-    color: #fff !important;
-    outline: none !important;
-    box-sizing: border-box !important;
-}
-
-.players-search-input::placeholder {
-    color: #6B7280 !important;
-    opacity: 1 !important;
-}
-
-/* Отключаем лупу браузера */
-.players-search-input::-webkit-search-decoration,
-.players-search-input::-webkit-search-cancel-button,
-.players-search-input::-webkit-search-results-button,
-.players-search-input::-webkit-search-results-decoration {
-    display: none !important;
-    -webkit-appearance: none !important;
-}
-
-.players-search-input[type="search"] {
-    -webkit-appearance: none !important;
-    appearance: none !important;
-}
-
-/* Контейнер списка игроков */
-.players-list {
-    padding: 0 16px !important;
-    flex: 1;
-    overflow-y: auto;
-}
-
-/* Строка игрока */
-.player-row {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    padding: 8px 0 !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
-    cursor: pointer !important;
-    transition: background 0.15s ease !important;
-    animation: fadeIn 0.2s ease !important;
-}
-
-.player-row:active {
-    background: rgba(255, 255, 255, 0.03) !important;
-}
-
-/* Аватар */
-.player-avatar {
-    width: 38px !important;
-    height: 38px !important;
-    border-radius: 50% !important;
-    overflow: hidden !important;
-    border: 1.5px solid #FF5500 !important;
-    flex-shrink: 0 !important;
-}
-
-.player-avatar img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-}
-
-.player-avatar .avatar-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    font-weight: 600;
-    color: #F5F5F5;
-    background: rgba(255, 85, 0, 0.2);
-}
-
-/* Блок информации (ID над ником) */
-.player-info {
-    display: flex !important;
-    flex-direction: column !important;
-    line-height: 1.1 !important;
-    flex: 1 !important;
-    min-width: 0 !important;
-}
-
-/* ID игрока */
-.player-id {
-    font-size: 10px !important;
-    color: #FF5500 !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.5px !important;
-    margin-bottom: 2px !important;
-}
-
-/* Ник игрока */
-.player-nick {
-    font-size: 15px !important;
-    color: #ffffff !important;
-    font-weight: 600 !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-}
-
-/* Стрелка справа */
-.player-arrow {
-    margin-left: auto !important;
-    color: #FF5500 !important;
-    font-size: 18px !important;
-    opacity: 0.8 !important;
-    flex-shrink: 0 !important;
-}
-
-/* Стилизация скролла */
-.players-list::-webkit-scrollbar {
-    width: 4px !important;
-}
-
-.players-list::-webkit-scrollbar-track {
-    background: transparent !important;
-}
-
-.players-list::-webkit-scrollbar-thumb {
-    background: #FF5500 !important;
-    border-radius: 10px !important;
-}
-
-/* Анимация появления */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(4px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Убираем старые стили, если они мешают */
-.team-search-container,
-.team-search-box,
-.team-search-btn,
-.team-list .player-item,
-.team-list .player-profile-btn {
-    /* Эти классы больше не используем */
-}
-
-/* Убираем черную хуйню под поиском (фон у контейнера) */
-.players-search {
-    background: transparent !important;
-    box-shadow: none !important;
-}
-
-/* Убираем оранжевую обводку у аватарок */
-.player-avatar {
-    border: none !important;  /* Убираем обводку */
-    box-shadow: none !important;
-}
-
-/* Если где-то еще осталась обводка у аватарок */
-.team-list .player-avatar,
-.friends-page-list .player-avatar,
-.player-avatar {
-    border: none !important;
-    outline: none !important;
-}
-
-/* Убираем возможные фоны и тени */
-.players-search {
-    background: transparent !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-}
-
 updateChatButton(active, chatLink = null, inviteLink = null) {
     const button = document.getElementById('tgChatButton');
     const buttonText = document.getElementById('tgChatButtonText');
     
     if (!button || !buttonText) return;
     
-    // Кнопка всегда видна (убираем style.display)
+    // Кнопка всегда видна
     button.style.display = 'flex';
     
     if (active && chatLink) {
@@ -4101,16 +3906,12 @@ updateChatButton(active, chatLink = null, inviteLink = null) {
         
         this.chatLink = chatLink;
         this.inviteLink = inviteLink;
-        localStorage.setItem('currentChatLink', chatLink);
-        if (inviteLink) {
-            localStorage.setItem('currentInviteLink', inviteLink);
-        }
         
         button.onclick = () => {
             this.openChatLink();
         };
     } else {
-        // Ожидание - серая кнопка
+        // Ожидание - серая кнопка (нельзя нажать)
         button.classList.remove('active');
         button.classList.add('disabled');
         button.disabled = true;
