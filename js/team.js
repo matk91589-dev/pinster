@@ -99,6 +99,9 @@ const Team = {
         }
     },
     
+    // ============================================
+    // ОБНОВЛЕННАЯ ВКЛАДКА ДРУЗЕЙ
+    // ============================================
     renderFriendsTab() {
         const content = document.getElementById('teamContent');
         if (!content) return;
@@ -116,7 +119,7 @@ const Team = {
                        placeholder="поиск: введите id или ник друга"
                        autocomplete="off">
             </div>
-            <div class="players-list" id="friendsTabList">
+            <div class="friends-list-container" id="friendsTabList">
         `;
         
         if (!this.filteredFriends || this.filteredFriends.length === 0) {
@@ -126,21 +129,45 @@ const Team = {
                 </div>
             `;
         } else {
-            // Используем те же классы, что и в поиске (player-row)
             this.filteredFriends.forEach(friend => {
                 html += `
-                <div class="player-row" onclick="Team.showPlayerProfile('${friend.player_id}')">
-                    <div class="player-avatar">
+                <div class="friend-row" onclick="Team.showFriendProfile('${friend.player_id}')">
+                    <div class="friend-avatar">
                         ${friend.avatar 
                             ? `<img src="${friend.avatar}" alt="avatar">` 
-                            : `<div class="avatar-placeholder">${friend.nick?.[0] || '?'}</div>`
+                            : `<span>${friend.nick?.[0] || '?'}</span>`
                         }
                     </div>
-                    <div class="player-info">
-                        <span class="player-id">ID: ${friend.player_id}</span>
-                        <span class="player-nick">${friend.nick || 'Без имени'}</span>
+                    <div class="friend-info">
+                        <span class="friend-id">ID: ${friend.player_id}</span>
+                        <span class="friend-name">${friend.nick || 'Без имени'}</span>
                     </div>
-                    <span class="player-arrow">→</span>
+                    <div class="friend-actions">
+                        <button class="friend-tg-btn" onclick="event.stopPropagation(); Team.openTelegramChat('${friend.player_id}')">
+                            <svg width="20" height="20" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="tgGradientSmall" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stop-color="#37AEE2"/>
+                                        <stop offset="100%" stop-color="#1E96C8"/>
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="120" cy="120" r="120" fill="url(#tgGradientSmall)"/>
+                                <path fill="#FFFFFF" d="M180.2 63.8L48.5 113.5C42.6 115.8 42.7 119.1 47.5 120.6L81.3 131.2L155.6 86.3C158.9 84.4 161.9 85.4 159.4 87.6L99.5 140.9L97.3 173.2C100.6 173.2 102.1 171.6 103.9 169.7L120.2 153.6L154.1 178.4C160.4 181.9 164.9 180.1 166.5 172.5L188.8 75.5C191.2 66.1 185.1 61.9 180.2 63.8Z"/>
+                            </svg>
+                        </button>
+                        <button class="friend-delete-btn" onclick="event.stopPropagation(); Team.deleteFriend('${friend.player_id}')">
+                            <svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="24" cy="24" r="24" fill="#2AABEE"/>
+                                <g stroke="white" stroke-width="2" stroke-linecap="round">
+                                    <path d="M14 18H34"/>
+                                    <path d="M20 18V15C20 14.4477 20.4477 14 21 14H27C27.5523 14 28 14.4477 28 15V18"/>
+                                    <path d="M18 18L19 32C19.0523 32.5523 19.4477 33 20 33H28C28.5523 33 28.9477 32.5523 29 32L30 18"/>
+                                    <path d="M22 22V29"/>
+                                    <path d="M26 22V29"/>
+                                </g>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 `;
             });
@@ -213,20 +240,44 @@ const Team = {
         
         let html = '';
         this.filteredFriends.forEach(friend => {
-            // И здесь тоже используем player-row
             html += `
-            <div class="player-row" onclick="Team.showPlayerProfile('${friend.player_id}')">
-                <div class="player-avatar">
+            <div class="friend-row" onclick="Team.showFriendProfile('${friend.player_id}')">
+                <div class="friend-avatar">
                     ${friend.avatar 
                         ? `<img src="${friend.avatar}" alt="avatar">` 
-                        : `<div class="avatar-placeholder">${friend.nick?.[0] || '?'}</div>`
+                        : `<span>${friend.nick?.[0] || '?'}</span>`
                     }
                 </div>
-                <div class="player-info">
-                    <span class="player-id">ID: ${friend.player_id}</span>
-                    <span class="player-nick">${friend.nick || 'Без имени'}</span>
+                <div class="friend-info">
+                    <span class="friend-id">ID: ${friend.player_id}</span>
+                    <span class="friend-name">${friend.nick || 'Без имени'}</span>
                 </div>
-                <span class="player-arrow">→</span>
+                <div class="friend-actions">
+                    <button class="friend-tg-btn" onclick="event.stopPropagation(); Team.openTelegramChat('${friend.player_id}')">
+                        <svg width="20" height="20" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="tgGradientSmall" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#37AEE2"/>
+                                    <stop offset="100%" stop-color="#1E96C8"/>
+                                </linearGradient>
+                            </defs>
+                            <circle cx="120" cy="120" r="120" fill="url(#tgGradientSmall)"/>
+                            <path fill="#FFFFFF" d="M180.2 63.8L48.5 113.5C42.6 115.8 42.7 119.1 47.5 120.6L81.3 131.2L155.6 86.3C158.9 84.4 161.9 85.4 159.4 87.6L99.5 140.9L97.3 173.2C100.6 173.2 102.1 171.6 103.9 169.7L120.2 153.6L154.1 178.4C160.4 181.9 164.9 180.1 166.5 172.5L188.8 75.5C191.2 66.1 185.1 61.9 180.2 63.8Z"/>
+                        </svg>
+                    </button>
+                    <button class="friend-delete-btn" onclick="event.stopPropagation(); Team.deleteFriend('${friend.player_id}')">
+                        <svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="24" cy="24" r="24" fill="#2AABEE"/>
+                            <g stroke="white" stroke-width="2" stroke-linecap="round">
+                                <path d="M14 18H34"/>
+                                <path d="M20 18V15C20 14.4477 20.4477 14 21 14H27C27.5523 14 28 14.4477 28 15V18"/>
+                                <path d="M18 18L19 32C19.0523 32.5523 19.4477 33 20 33H28C28.5523 33 28.9477 32.5523 29 32L30 18"/>
+                                <path d="M22 22V29"/>
+                                <path d="M26 22V29"/>
+                            </g>
+                        </svg>
+                    </button>
+                </div>
             </div>
             `;
         });
@@ -341,8 +392,29 @@ const Team = {
         }
     },
     
+    // ============================================
+    // МЕТОДЫ ДЛЯ РАБОТЫ С ДРУЗЬЯМИ
+    // ============================================
+    showFriendProfile(playerId) {
+        console.log('👤 Профиль друга:', playerId);
+        alert(`Профиль друга ${playerId} (будет позже)`);
+    },
+    
     showPlayerProfile(playerId) {
-        alert(`👤 Профиль игрока ${playerId}`);
+        console.log('👤 Профиль игрока:', playerId);
+        alert(`Профиль игрока ${playerId} (будет позже)`);
+    },
+    
+    openTelegramChat(playerId) {
+        console.log('📨 Открыть чат с другом:', playerId);
+        alert(`Чат с игроком ${playerId} (будет позже)`);
+    },
+    
+    deleteFriend(playerId) {
+        console.log('🗑️ Удалить друга:', playerId);
+        if (confirm('Удалить пользователя из друзей?')) {
+            alert(`Удаление друга ${playerId} (будет позже)`);
+        }
     },
     
     showRequests() {
