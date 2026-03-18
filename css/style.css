@@ -4074,30 +4074,36 @@ html {
     box-shadow: none !important;
 }
 
-/* ===== СТИЛИ ПОЛЯ ПОИСКА (ОБНОВЛЕННЫЕ) ===== */
+/* ===== СТИЛИ ПОЛЯ ПОИСКА (ШИРИНА ПО ТЕКСТУ) ===== */
 
 .players-search {
     padding: 6px 16px 10px 16px !important;
     width: 100%;
+    display: flex !important;
+    justify-content: center !important;  /* Центрируем */
     background: transparent !important;
 }
 
 .players-search-input {
-    width: 100% !important;
-    height: 32px !important;  /* Уменьшили высоту */
+    width: auto !important;  /* Автоширина по содержимому */
+    min-width: 240px !important;  /* Минимальная ширина, чтобы не было слишком узко */
+    max-width: 320px !important;  /* Максимальная, чтобы не расползалось */
+    height: 32px !important;
     background: rgba(26, 29, 36, 0.65) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;  /* Белая аккуратная обводка */
-    border-radius: 16px !important;  /* Чуть менее закругленные края (было 30px) */
-    padding: 0 14px !important;  /* Уменьшили отступы */
-    font-size: 13px !important;  /* Чуть меньше текст */
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 16px !important;
+    padding: 0 14px !important;
+    font-size: 13px !important;
     color: #F5F5F5 !important;
     outline: none !important;
     box-sizing: border-box !important;
     transition: all 0.2s ease !important;
+    text-align: left !important;
+    flex: 0 1 auto !important;  /* Запрещаем растягивание */
 }
 
 .players-search-input:focus {
-    border-color: #FF5500 !important;  /* При фокусе оранжевая */
+    border-color: #FF5500 !important;
     box-shadow: 0 0 0 2px rgba(255, 85, 0, 0.2) !important;
     background: rgba(26, 29, 36, 0.8) !important;
 }
@@ -4107,6 +4113,7 @@ html {
     font-weight: 400 !important;
     opacity: 0.7;
     font-size: 13px !important;
+    white-space: nowrap !important;  /* Запрещаем перенос */
 }
 
 /* Отключаем лупу браузера */
