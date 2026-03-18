@@ -3957,94 +3957,7 @@ html {
     z-index: 10;
 }
 
-/* ===== ФИНАЛЬНЫЕ ИСПРАВЛЕНИЯ ЭКРАНА ОЖИДАНИЯ ===== */
-
-/* ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ОБВОДКИ У АВАТАРОК */
-.self-avatar,
-.teammate-avatar,
-.self-avatar .tg-avatar-svg,
-.teammate-avatar .tg-avatar-svg,
-.self-avatar *,
-.teammate-avatar * {
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-/* Убираем старые обводки из предыдущих стилей */
-.both-accepted .self-avatar,
-.both-accepted .teammate-avatar,
-.self-avatar.connected,
-.teammate-avatar.connected {
-    border: none !important;
-    box-shadow: none !important;
-    animation: none !important;
-}
-
-.both-accepted .teammate-avatar .tg-avatar-svg,
-.teammate-avatar.connected .tg-avatar-svg {
-    border: none !important;
-}
-
-/* Размытие аватарки тиммейта ТОЛЬКО в ожидании */
-.teammate-avatar:not(.connected) img {
-    filter: grayscale(0.6) blur(2px);
-    opacity: 0.6;
-    transition: all 0.3s ease;
-}
-
-.teammate-avatar.connected img {
-    filter: none !important;
-    opacity: 1 !important;
-}
-
-/* УБИРАЕМ ДУБЛИКАТ СТАТУСА */
-#connectionTooltip,
-.connection-tooltip {
-    display: none !important;
-}
-
-/* КНОПКУ ПОДНИМАЕМ ВЫШЕ */
-.connection-button {
-    width: 100%;
-    margin-top: 8px !important;  /* Уменьшили отступ сверху */
-    padding: 0 16px;
-}
-
-#tgChatButton {
-    width: 100%;
-    height: 46px;
-    border-radius: 12px;
-    border: none;
-    font-size: 15px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s ease;
-    margin-top: 0;  /* Убрали лишний отступ */
-}
-
-#tgChatButton.disabled {
-    background: #2B2F36;
-    color: #6B7280;
-    cursor: default;
-    pointer-events: none;
-}
-
-#tgChatButton.active {
-    background: #FF5500;
-    color: white;
-    cursor: pointer;
-}
-
-/* Иконка Telegram */
-.tg-icon {
-    width: 18px;
-    height: 18px;
-    fill: currentColor;
-}
+/* ===== ФИНАЛЬНОЕ РАЗДЕЛЕНИЕ СТИЛЕЙ ДРУЗЕЙ И ПОИСКА ===== */
 
 /* СТИЛИ ТОЛЬКО ДЛЯ ЭКРАНА ДРУЗЕЙ (friendsScreen) */
 .friends-page-list .player-item {
@@ -4066,6 +3979,7 @@ html {
     overflow: hidden !important;
     flex-shrink: 0 !important;
     background: var(--input-bg) !important;
+    border: none !important;  /* Убираем обводку */
 }
 
 .friends-page-list .player-info {
@@ -4113,8 +4027,9 @@ html {
     height: 38px !important;
     border-radius: 50% !important;
     overflow: hidden !important;
-    border: 1.5px solid #FF5500 !important;
+    border: none !important;  /* Убираем обводку */
     flex-shrink: 0 !important;
+    background: var(--input-bg) !important;
 }
 
 .players-list .player-info {
