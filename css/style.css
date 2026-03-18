@@ -4238,42 +4238,48 @@ html {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
-    padding: 6px 16px 0 16px !important;  /* Уменьшил отступы */
+    padding: 6px 16px 0 16px !important;
     margin: 0 !important;
     width: 100%;
     background: transparent !important;
 }
 
-/* ПЛАШКА ПОИСКА - маленькая, скругленная */
+/* ПЛАШКА ПОИСКА - стеклянная, с острыми нижними углами */
 .players-search-input {
     width: 100% !important;
-    height: 28px !important;  /* В 3 раза меньше (было 48px) */
-    background: #0F1115 !important;  /* Чисто черный фон */
-    border: 1px solid #000000 !important;  /* Черная обводка без подсветки */
-    border-radius: 8px !important;  /* Скругленные верхние углы */
+    height: 28px !important;
+    
+    /* Стеклянный эффект */
+    background: rgba(15, 17, 21, 0.7) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px 8px 0 0 !important;  /* Скруглены ТОЛЬКО верхние углы */
     padding: 0 12px !important;
-    font-size: 13px !important;  /* Как в комментариях */
-    color: #FFFFFF !important;  /* Белый текст */
+    
+    /* Текст как в комментариях */
+    font-size: clamp(11px, 3.2vw, 13px) !important;
+    font-weight: 500 !important;
+    color: var(--text-primary) !important;
+    
     outline: none !important;
     box-sizing: border-box !important;
-    
-    /* Убираем все эффекты */
     box-shadow: none !important;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5) !important;  /* Легкая тень для читаемости */
 }
 
 .players-search-input::placeholder {
-    color: #E0E0E0 !important;  /* Светло-серый, почти белый */
+    color: var(--text-secondary) !important;
     font-weight: 400 !important;
-    opacity: 0.9 !important;
-    font-size: 13px !important;
+    opacity: 0.8;
+    font-size: clamp(11px, 3.2vw, 13px) !important;
 }
 
 /* Убираем стандартную обводку при фокусе */
 .players-search-input:focus {
-    border-color: #000000 !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
     box-shadow: none !important;
-    background: #0F1115 !important;
+    background: rgba(15, 17, 21, 0.8) !important;
 }
 
 /* ТОНКАЯ РАЗДЕЛИТЕЛЬНАЯ ЛИНИЯ (как в хедере) */
@@ -4299,7 +4305,7 @@ html {
 
 /* ПЛАШКИ ИГРОКОВ - прилегают к линии */
 .players-list {
-    padding: 4px 16px 0 16px !important;  /* Уменьшил отступ сверху */
+    padding: 4px 16px 0 16px !important;
     margin-top: 0 !important;
 }
 
@@ -4321,7 +4327,7 @@ html {
 .players-search {
     backdrop-filter: blur(4px) !important;
     -webkit-backdrop-filter: blur(4px) !important;
-    background: rgba(13, 15, 21, 0.5) !important;
+    background: rgba(13, 15, 21, 0.3) !important;
     transition: background 0.2s ease !important;
 }
 
