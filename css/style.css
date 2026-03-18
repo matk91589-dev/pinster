@@ -4083,217 +4083,38 @@ html {
     -webkit-backdrop-filter: none !important;
 }
 
-/* ===== НОВЫЙ ЭКРАН ОЖИДАНИЯ (Telegram стиль) ===== */
-
-/* ТАЙМЕР - маленький в левом верхнем углу */
-#connectionTimer {
-    position: absolute !important;
-    top: 12px !important;
-    left: 12px !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    color: #9BA1B0 !important;
-    background: rgba(0, 0, 0, 0.3) !important;
-    padding: 4px 10px !important;
-    border-radius: 16px !important;
-    backdrop-filter: blur(4px) !important;
-    -webkit-backdrop-filter: blur(4px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    z-index: 10 !important;
-    margin: 0 !important;
-    letter-spacing: normal !important;
-    line-height: normal !important;
-}
-
-#connectionTimer.warning {
-    color: #FF5500 !important;
-}
-
-/* КНОПКА - серая в ожидании, оранжевая при создании */
-#tgChatButton {
-    width: 100%;
-    height: 46px;
-    border-radius: 12px;
-    border: none;
-    font-size: 15px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    margin-top: 12px;
-}
-
-/* Неактивное состояние (ожидание) */
-#tgChatButton.disabled {
-    background: #2B2F36;
-    color: #6B7280;
-    cursor: default;
-    pointer-events: none;
-}
-
-/* Активное состояние (матч создан) */
-#tgChatButton.active {
-    background: #FF5500;
-    color: white;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(255, 85, 0, 0.3);
-}
-
-#tgChatButton.active:active {
-    transform: scale(0.97);
-}
-
-/* Иконка Telegram */
-.tg-icon {
-    width: 18px;
-    height: 18px;
-    fill: currentColor;
-}
-
-/* АВАТАРКИ - одинаковые, без лишних обводок */
-.self-avatar,
-.teammate-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    overflow: hidden;
-    background: #1A1D24;
-    border: 1.5px solid rgba(255, 85, 0, 0.2) !important; /* Тонкая оранжевая граница у обоих */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    flex-shrink: 0;
-}
-
-/* Убираем двойные обводки */
-.self-avatar .tg-avatar-svg,
-.teammate-avatar .tg-avatar-svg {
-    width: 100%;
-    height: 100%;
-    border: none !important;
-    background: transparent;
-}
-
-.self-avatar .tg-avatar-svg img,
-.teammate-avatar .tg-avatar-svg img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
-/* Размытая аватарка тиммейта в ожидании */
-.teammate-avatar:not(.connected) img {
-    filter: grayscale(0.6) blur(1px);
-    opacity: 0.7;
-}
-
-/* Аватарка при подключении */
-.teammate-avatar.connected {
-    border-color: #FF5500 !important;
-    box-shadow: 0 0 0 2px rgba(255, 85, 0, 0.3);
-}
-
-.teammate-avatar.connected img {
-    filter: none;
-    opacity: 1;
-}
-
-/* ЛИНИЯ ПУЛЬСАЦИИ */
-.connection-line {
-    width: 60px;
-    height: 3px;
-    background: #2B2F38;
-    border-radius: 20px;
-    overflow: hidden;
-    position: relative;
-}
-
-.line-pulse {
-    position: absolute;
-    height: 3px;
-    width: 30px;
-    background: #FF5500;
-    border-radius: 20px;
-    animation: lineMove 2s infinite ease-in-out;
-    opacity: 0.7;
-    box-shadow: 0 0 10px #FF5500;
-}
-
-@keyframes lineMove {
-    0% { left: -20px; }
-    50% { left: 50%; transform: translateX(-50%); }
-    100% { left: 100%; }
-}
-
-.connection-line.connected {
-    background: #FF5500;
-}
-
-.connection-line.connected .line-pulse {
-    display: none;
-}
-
-/* СТАТУС */
-.connection-status {
-    font-size: 16px;
-    color: #9BA1B0;
-    text-align: center;
-    margin: 8px 0;
-    font-weight: 500;
-}
-
-.connection-status.active {
-    color: #FF5500;
-}
-
-/* Ник тиммейта */
-.teammate-nick {
-    font-size: 18px;
-    font-weight: 600;
-    color: #F5F5F5;
-    text-align: center;
-    margin: 8px 0;
-}
-
-/* Ранг и возраст */
-.connection-rank-age {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin: 8px 0;
-}
-
-.connection-rank,
-.connection-age {
-    background: #1A1D24;
-    padding: 6px 16px;
-    border-radius: 30px;
-    font-size: 14px;
-    color: #9BA1B0;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* Прячем старый тултип */
-#connectionTooltip {
-    display: none;
-}
-
-/* Контейнер кнопки */
-.connection-button {
-    width: 100%;
-    margin-top: 16px;
-    padding: 0 16px;
-}
-
-/* Карточка соединения */
-.connection-screen .swipe-card {
-    position: relative;
-    background: rgba(24, 27, 33, 0.7) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
-    padding: 24px 22px;
+updateChatButton(active, chatLink = null, inviteLink = null) {
+    const button = document.getElementById('tgChatButton');
+    const buttonText = document.getElementById('tgChatButtonText');
+    
+    if (!button || !buttonText) return;
+    
+    // Кнопка всегда видна (убираем style.display)
+    button.style.display = 'flex';
+    
+    if (active && chatLink) {
+        // Матч создан - активная кнопка
+        button.classList.remove('disabled');
+        button.classList.add('active');
+        button.disabled = false;
+        buttonText.textContent = 'Перейти в чат';
+        
+        this.chatLink = chatLink;
+        this.inviteLink = inviteLink;
+        localStorage.setItem('currentChatLink', chatLink);
+        if (inviteLink) {
+            localStorage.setItem('currentInviteLink', inviteLink);
+        }
+        
+        button.onclick = () => {
+            this.openChatLink();
+        };
+    } else {
+        // Ожидание - серая кнопка
+        button.classList.remove('active');
+        button.classList.add('disabled');
+        button.disabled = true;
+        buttonText.textContent = 'Ожидание тиммейта';
+        button.onclick = null;
+    }
 }
