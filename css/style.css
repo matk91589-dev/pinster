@@ -4012,12 +4012,12 @@ html {
     flex-shrink: 0 !important;
 }
 
-/* СТИЛИ ТОЛЬКО ДЛЯ ЭКРАНА ПОИСКА (teamScreen) */
+/* ===== СТИЛИ ДЛЯ ЭКРАНА ПОИСКА (teamScreen) ===== */
 .players-list .player-row {
     display: flex !important;
     align-items: center !important;
     gap: 12px !important;
-    padding: 8px 0 !important;
+    padding: 10px 0 !important;  /* Увеличил с 8px до 10px как в друзьях */
     border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
     cursor: pointer !important;
 }
@@ -4027,16 +4027,22 @@ html {
     height: 38px !important;
     border-radius: 50% !important;
     overflow: hidden !important;
-    border: none !important;  /* Убираем обводку */
+    border: none !important;
     flex-shrink: 0 !important;
     background: var(--input-bg) !important;
+}
+
+.players-list .player-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .players-list .player-info {
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
-    line-height: 1.1 !important;
+    line-height: 1.2 !important;
     min-width: 0 !important;
 }
 
@@ -4044,7 +4050,7 @@ html {
     font-size: 10px !important;
     color: #FF5500 !important;
     font-weight: 600 !important;
-    letter-spacing: 0.5px !important;
+    letter-spacing: 0.3px !important;
     margin-bottom: 2px !important;
     order: 1 !important;
 }
@@ -4062,16 +4068,11 @@ html {
 .players-list .player-arrow {
     margin-left: auto !important;
     color: #FF5500 !important;
-    font-size: 18px !important;
+    font-size: 20px !important;  /* Увеличил с 18px до 20px как в друзьях */
+    font-weight: 600 !important;
     opacity: 0.8 !important;
     flex-shrink: 0 !important;
-}
-
-/* Отключаем старые конфликтующие стили */
-.friends-page-list .player-item:hover,
-.players-list .player-row:hover {
-    transform: none !important;
-    box-shadow: none !important;
+    padding-right: 4px !important;  /* Добавил отступ как в друзьях */
 }
 
 /* ===== ПОИСК НА ЭКРАНЕ ПОИСКА ИГРОКА ===== */
@@ -4410,5 +4411,10 @@ html {
 /* ===== АНИМАЦИЯ ПОЯВЛЕНИЯ ДЛЯ ДРУЗЕЙ ===== */
 .friends-list-container .friend-row,
 #friendsTabList .friend-row {
+    animation: slideDown 0.15s ease;
+}
+
+/* ===== АНИМАЦИЯ ДЛЯ ПОИСКА ИГРОКОВ ===== */
+.players-list .player-row {
     animation: slideDown 0.15s ease;
 }
