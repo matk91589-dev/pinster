@@ -4444,3 +4444,13 @@ html {
     opacity: 1 !important;
     line-height: normal !important;
 }
+
+/* ===== ФИНАЛЬНОЕ ВЫРАВНИВАНИЕ ВЫСОТЫ ===== */
+.players-list .player-row {
+    min-height: 58px !important; /* Фиксируем как в друзьях */
+    padding: 8px 0 !important; /* Как в друзьях */
+}
+
+.friend-row {
+    min-height: 58px !important; /* На всякий случай фиксируем и друзей */
+}
