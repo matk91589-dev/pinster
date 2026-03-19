@@ -281,7 +281,7 @@ const Team = {
             <input type="search" 
                    id="teamSearchInput" 
                    class="players-search-input" 
-                   placeholder="Введите ник или ID игрока"
+                   placeholder="поиск: введите id или ник игрока"
                    autocomplete="off">
         `;
         
@@ -290,7 +290,7 @@ const Team = {
         listDiv.id = 'teamSearchResults';
         listDiv.innerHTML = `
             <div class="empty-friends">
-                <div class="empty-friends-text">введите запрос для поиска</div>
+                <div class="empty-friends-text">ожидание загрузки ...</div>
             </div>
         `;
         
