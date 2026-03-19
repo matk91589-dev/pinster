@@ -4061,7 +4061,6 @@ html {
     font-weight: 600;
     letter-spacing: 0.3px;
     margin-bottom: 2px;
-    font-family: inherit;
 }
 
 .players-list .player-nick {
@@ -4071,7 +4070,6 @@ html {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-family: inherit;
 }
 
 .players-list .player-arrow {
