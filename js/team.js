@@ -321,7 +321,7 @@ const Team = {
         }
     },
     
-    // Новый метод для принудительных стилей
+    // Метод для принудительных стилей
     injectForcedStyles() {
         // Проверяем, не добавляли ли уже
         if (document.getElementById('forced-search-styles')) return;
@@ -350,7 +350,8 @@ const Team = {
             .players-list .player-id,
             .players-list .player-id span,
             .players-list .player-id::before,
-            .players-list .player-id::after {
+            .players-list .player-id::after,
+            .players-list .player-id * {
                 font-size: 10px !important;
                 color: #FF5500 !important;
                 font-weight: 600 !important;
@@ -367,7 +368,8 @@ const Team = {
             .players-list .player-nick,
             .players-list .player-nick span,
             .players-list .player-nick::before,
-            .players-list .player-nick::after {
+            .players-list .player-nick::after,
+            .players-list .player-nick * {
                 font-size: 15px !important;
                 font-weight: 600 !important;
                 color: #ffffff !important;
@@ -390,7 +392,7 @@ const Team = {
                 font-family: 'Montserrat', sans-serif !important;
             }
             
-            /* ФИКС ДЛЯ ПОЛЯ ПОИСКА - чтобы текст не был сжатым */
+            /* ФИКС ДЛЯ ПОЛЯ ПОИСКА */
             .players-search-input {
                 font-family: 'Montserrat', sans-serif !important;
                 font-size: 13px !important;
