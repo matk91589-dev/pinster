@@ -4074,60 +4074,56 @@ html {
     box-shadow: none !important;
 }
 
-/* ===== СТИЛИ ПОЛЯ ПОИСКА (ШИРИНА ПО ТЕКСТУ) ===== */
-
+/* ===== ПОИСК НА ЭКРАНЕ ПОИСКА ИГРОКА ===== */
 .players-search {
-    padding: 6px 16px 10px 16px !important;
+    padding: 6px 16px 0 16px;
     width: 100%;
-    display: flex !important;
-    justify-content: center !important;  /* Центрируем */
-    background: transparent !important;
+    margin-bottom: 8px;
+    position: relative;
+    background: transparent;
 }
 
 .players-search-input {
-    width: auto !important;  /* Автоширина по содержимому */
-    min-width: 240px !important;  /* Минимальная ширина, чтобы не было слишком узко */
-    max-width: 320px !important;  /* Максимальная, чтобы не расползалось */
-    height: 32px !important;
-    background: rgba(26, 29, 36, 0.65) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    border-radius: 16px !important;
-    padding: 0 14px !important;
-    font-size: 13px !important;
-    color: #F5F5F5 !important;
-    outline: none !important;
-    box-sizing: border-box !important;
-    transition: all 0.2s ease !important;
-    text-align: left !important;
-    flex: 0 1 auto !important;  /* Запрещаем растягивание */
-}
-
-.players-search-input:focus {
-    border-color: #FF5500 !important;
-    box-shadow: 0 0 0 2px rgba(255, 85, 0, 0.2) !important;
-    background: rgba(26, 29, 36, 0.8) !important;
+    width: 100%;
+    height: 28px;
+    background: rgba(15, 17, 21, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px 8px 0 0;
+    padding: 0 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #F5F5F5;
+    outline: none;
+    box-sizing: border-box;
+    line-height: 28px;
 }
 
 .players-search-input::placeholder {
-    color: #9BA1B0 !important;
-    font-weight: 400 !important;
-    opacity: 0.7;
-    font-size: 13px !important;
-    white-space: nowrap !important;  /* Запрещаем перенос */
+    color: #9BA1B0;
+    font-weight: 400;
+    opacity: 0.8;
 }
 
-/* Отключаем лупу браузера */
-.players-search-input::-webkit-search-decoration,
-.players-search-input::-webkit-search-cancel-button,
-.players-search-input::-webkit-search-results-button,
-.players-search-input::-webkit-search-results-decoration {
-    display: none !important;
-    -webkit-appearance: none !important;
+.players-search-input:focus {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(15, 17, 21, 0.8);
 }
 
-.players-search-input[type="search"] {
-    -webkit-appearance: none !important;
-    appearance: none !important;
+.players-search::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    opacity: 0.4;
+    filter: blur(0.3px);
+    z-index: 101;
+    pointer-events: none;
 }
 
 /* ===== СТИЛИ ДЛЯ ДРУЗЕЙ В ПРОФИЛЕ (как в поиске) ===== */
@@ -4215,131 +4211,6 @@ html {
     border-right: none !important;
     border-top: none !important;
     background-image: none !important;
-}
-
-/* ===== ПРЕМИУМ СТИЛЬ - ПОИСК КАК В ХЕДЕРЕ ===== */
-
-/* КОНТЕЙНЕР ПОИСКА - sticky */
-.players-search {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 100 !important;
-    padding: 6px 16px 0 16px !important;
-    margin: 0 !important;
-    width: 100%;
-    background: transparent !important;
-}
-
-/* ПЛАШКА ПОИСКА - стеклянная, с острыми нижними углами */
-.players-search-input {
-    width: 100% !important;
-    height: 28px !important;
-    
-    /* Стеклянный эффект */
-    background: rgba(15, 17, 21, 0.7) !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-    
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 8px 8px 0 0 !important;  /* Скруглены ТОЛЬКО верхние углы */
-    padding: 0 12px !important;
-    
-    /* Текст как в комментариях */
-    font-size: clamp(11px, 3.2vw, 13px) !important;
-    font-weight: 500 !important;
-    color: var(--text-primary) !important;
-    
-    outline: none !important;
-    box-sizing: border-box !important;
-    box-shadow: none !important;
-}
-
-.players-search-input::placeholder {
-    color: var(--text-secondary) !important;
-    font-weight: 400 !important;
-    opacity: 0.8;
-    font-size: clamp(11px, 3.2vw, 13px) !important;
-}
-
-/* Убираем стандартную обводку при фокусе */
-.players-search-input:focus {
-    border-color: rgba(255, 255, 255, 0.2) !important;
-    box-shadow: none !important;
-    background: rgba(15, 17, 21, 0.8) !important;
-}
-
-/* ТОНКАЯ РАЗДЕЛИТЕЛЬНАЯ ЛИНИЯ (как в хедере) */
-.players-search::after {
-    content: "" !important;
-    position: absolute !important;
-    bottom: -2px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 100px !important;
-    height: 2px !important;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.5),
-        transparent
-    ) !important;
-    opacity: 0.4 !important;
-    filter: blur(0.3px) !important;
-    z-index: 101 !important;
-    pointer-events: none !important;
-}
-
-/* ПЛАШКИ ИГРОКОВ - прилегают к линии */
-.players-list {
-    padding: 4px 16px 0 16px !important;
-    margin-top: 0 !important;
-}
-
-.players-list .player-row {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    padding: 8px 0 !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
-    cursor: pointer !important;
-    background: transparent !important;
-}
-
-.players-list .player-row:first-child {
-    padding-top: 8px !important;
-}
-
-/* ЭФФЕКТ ПРИ СКРОЛЛЕ */
-.players-search {
-    backdrop-filter: blur(4px) !important;
-    -webkit-backdrop-filter: blur(4px) !important;
-    background: rgba(13, 15, 21, 0.3) !important;
-    transition: background 0.2s ease !important;
-}
-
-/* Анимация появления игроков */
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-3px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.players-list .player-row {
-    animation: slideDown 0.15s ease;
-}
-
-/* Отключаем лупу браузера */
-.players-search-input::-webkit-search-decoration,
-.players-search-input::-webkit-search-cancel-button,
-.players-search-input::-webkit-search-results-button,
-.players-search-input::-webkit-search-results-decoration {
-    display: none !important;
-    -webkit-appearance: none !important;
 }
 
 /* ===== ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ДРУЗЕЙ ===== */
@@ -4528,4 +4399,10 @@ html {
     padding: 4px 16px 0 16px;
     flex: 1;
     overflow-y: auto;
+}
+
+/* ===== АНИМАЦИЯ ПОЯВЛЕНИЯ ДЛЯ ДРУЗЕЙ ===== */
+.friends-list-container .friend-row,
+#friendsTabList .friend-row {
+    animation: slideDown 0.15s ease;
 }
