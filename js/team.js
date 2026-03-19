@@ -299,6 +299,9 @@ const Team = {
         content.appendChild(searchDiv);
         content.appendChild(listDiv);
         
+        // Добавляем принудительные стили прямо в head
+        this.injectForcedStyles();
+        
         // Сразу настраиваем инпут (без setTimeout)
         const input = document.getElementById('teamSearchInput');
         if (input) {
@@ -316,6 +319,62 @@ const Team = {
                 }
             });
         }
+    },
+    
+    // Новый метод для принудительных стилей
+    injectForcedStyles() {
+        // Проверяем, не добавляли ли уже
+        if (document.getElementById('forced-search-styles')) return;
+        
+        const style = document.createElement('style');
+        style.id = 'forced-search-styles';
+        style.textContent = `
+            /* ПРИНУДИТЕЛЬНЫЕ СТИЛИ - перебивают всё */
+            .players-list .player-row {
+                min-height: 58px !important;
+                padding: 8px 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 12px !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+                background: transparent !important;
+            }
+            .players-list .player-avatar {
+                width: 38px !important;
+                height: 38px !important;
+                border-radius: 50% !important;
+                background: #1A1D24 !important;
+                flex-shrink: 0 !important;
+                overflow: hidden !important;
+            }
+            .players-list .player-id {
+                font-size: 10px !important;
+                color: #FF5500 !important;
+                font-weight: 600 !important;
+                letter-spacing: 0.3px !important;
+                margin-bottom: 2px !important;
+                font-family: 'Montserrat', sans-serif !important;
+                text-transform: none !important;
+            }
+            .players-list .player-nick {
+                font-size: 15px !important;
+                font-weight: 600 !important;
+                color: #ffffff !important;
+                font-family: 'Montserrat', sans-serif !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            .players-list .player-arrow {
+                color: #FF5500 !important;
+                font-size: 20px !important;
+                font-weight: 600 !important;
+                margin-left: auto !important;
+                padding-right: 4px !important;
+            }
+        `;
+        document.head.appendChild(style);
+        console.log('✅ Принудительные стили для поиска добавлены');
     },
     
     attachSearchHandler(input) {
