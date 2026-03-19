@@ -4013,35 +4013,32 @@ html {
 }
 
 /* ===== СТИЛИ ДЛЯ ЭКРАНА ПОИСКА (teamScreen) ===== */
-
-/* ===== КОНТЕЙНЕР СПИСКА В ПОИСКЕ ===== */
 .players-list {
-    padding: 0 16px !important;  /* Убрал верхний отступ, сделал как в друзьях */
-    margin-top: 0 !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
+    padding: 0 16px;
+    margin-top: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-/* ===== ПЛАШКИ ИГРОКОВ ===== */
 .players-list .player-row {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    padding: 10px 0 !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
-    cursor: pointer !important;
-    width: 100% !important;  /* Гарантируем полную ширину */
-    box-sizing: border-box !important;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .players-list .player-avatar {
-    width: 38px !important;
-    height: 38px !important;
-    border-radius: 50% !important;
-    overflow: hidden !important;
-    border: none !important;
-    flex-shrink: 0 !important;
-    background: var(--input-bg) !important;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: none;
+    flex-shrink: 0;
+    background: var(--input-bg);
 }
 
 .players-list .player-avatar img {
@@ -4051,46 +4048,40 @@ html {
 }
 
 .players-list .player-info {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    line-height: 1.2 !important;
-    min-width: 0 !important;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
 }
 
+/* ТОЧНО КАК В ДРУЗЬЯХ */
 .players-list .player-id {
-    font-size: 10px !important;
-    color: #FF5500 !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.3px !important;
-    margin-bottom: 2px !important;
-    order: 1 !important;
-    font-family: 'Montserrat', sans-serif !important;  /* Добавил */
-    text-transform: none !important;  /* Добавил */
-    line-height: 1.2 !important;  /* Добавил */
-    opacity: 1 !important;  /* Добавил */
+    font-size: 10px;
+    color: #FF5500;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    margin-bottom: 2px;
+    font-family: inherit;
 }
 
 .players-list .player-nick {
-    font-size: 15px !important;
-    color: #ffffff !important;
-    font-weight: 600 !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    order: 2 !important;
-    font-family: 'Montserrat', sans-serif !important;  /* Добавил */
-    line-height: 1.2 !important;  /* Добавил */
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: inherit;
 }
 
 .players-list .player-arrow {
-    margin-left: auto !important;
-    color: #FF5500 !important;
-    font-size: 20px !important;  /* Увеличил с 18px до 20px как в друзьях */
-    font-weight: 600 !important;
-    opacity: 0.8 !important;
-    flex-shrink: 0 !important;
-    padding-right: 4px !important;  /* Добавил отступ как в друзьях */
+    margin-left: auto;
+    color: #FF5500;
+    font-size: 20px;
+    font-weight: 600;
+    opacity: 0.8;
+    flex-shrink: 0;
+    padding-right: 4px;
 }
 
 /* ===== ПОИСК НА ЭКРАНЕ ПОИСКА ИГРОКА ===== */
