@@ -345,9 +345,6 @@ const Team = {
                 this.searchPlayers(query);
             }, 300);
         };
-        
-        // Даем фокус для удобства
-        setTimeout(() => input.focus(), 100);
     },
     
     renderSearchResults(players) {
