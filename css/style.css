@@ -4065,6 +4065,10 @@ html {
     letter-spacing: 0.3px !important;
     margin-bottom: 2px !important;
     order: 1 !important;
+    font-family: 'Montserrat', sans-serif !important;  /* Добавил */
+    text-transform: none !important;  /* Добавил */
+    line-height: 1.2 !important;  /* Добавил */
+    opacity: 1 !important;  /* Добавил */
 }
 
 .players-list .player-nick {
@@ -4075,6 +4079,8 @@ html {
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     order: 2 !important;
+    font-family: 'Montserrat', sans-serif !important;  /* Добавил */
+    line-height: 1.2 !important;  /* Добавил */
 }
 
 .players-list .player-arrow {
