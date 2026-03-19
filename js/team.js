@@ -100,7 +100,7 @@ const Team = {
     },
     
     // ============================================
-    // ОБНОВЛЕННАЯ ВКЛАДКА ДРУЗЕЙ - ТОЛЬКО СТРЕЛКА
+    // ВКЛАДКА ДРУЗЕЙ
     // ============================================
     renderFriendsTab() {
         const content = document.getElementById('teamContent');
@@ -235,6 +235,9 @@ const Team = {
         container.innerHTML = html;
     },
     
+    // ============================================
+    // ВКЛАДКА ПОИСКА - ИСПРАВЛЕННАЯ
+    // ============================================
     renderSearchTab() {
         const content = document.getElementById('teamContent');
         if (!content) return;
@@ -253,7 +256,11 @@ const Team = {
         `;
         
         this.renderSearchResults(this.allPlayers);
-        this.setupSearchInput();
+        
+        // Даем время на отрисовку DOM перед настройкой обработчика
+        setTimeout(() => {
+            this.setupSearchInput();
+        }, 50);
     },
     
     renderSearchResults(players) {
@@ -293,7 +300,21 @@ const Team = {
     
     setupSearchInput() {
         const input = document.getElementById('teamSearchInput');
-        if (!input) return;
+        if (!input) {
+            console.log('❌ Поле поиска teamSearchInput не найдено, пробуем снова...');
+            // Пробуем еще раз через 100мс
+            setTimeout(() => this.setupSearchInput(), 100);
+            return;
+        }
+        
+        console.log('✅ Поле поиска teamSearchInput настроено');
+        input.removeAttribute('readonly');
+        input.removeAttribute('disabled');
+        
+        // Убираем старый обработчик если был
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+        }
         
         input.addEventListener('input', (e) => {
             const query = e.target.value.trim();
