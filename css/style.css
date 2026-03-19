@@ -4425,3 +4425,35 @@ html {
 .players-list .player-row {
     animation: slideDown 0.15s ease;
 }
+
+/* ФИНАЛЬНЫЕ СТИЛИ ДЛЯ ПОИСКА */
+.players-list .player-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0 !important;  /* Принудительно ставим как в друзьях */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 58px; /* Фиксируем высоту как в друзьях (38px аватар + отступы) */
+}
+
+.players-list .player-id {
+    font-size: 10px !important;
+    color: #FF5500 !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px !important;
+    margin-bottom: 2px !important;
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+.players-list .player-nick {
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-family: 'Montserrat', sans-serif !important;
+}
