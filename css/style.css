@@ -4431,3 +4431,16 @@ html {
     background: transparent !important;
     transform: none !important;
 }
+
+/* ===== ПОЛНЫЙ ПЕРЕЗАПУСК СТИЛЕЙ ПОИСКА ===== */
+.players-list .player-id {
+    font-size: 10px !important;
+    color: #FF5500 !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px !important;
+    margin-bottom: 2px !important;
+    font-family: 'Montserrat', sans-serif !important;
+    text-transform: none !important;
+    opacity: 1 !important;
+    line-height: normal !important;
+}
