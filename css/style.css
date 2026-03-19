@@ -103,7 +103,6 @@ body {
 .search-status,
 .connection-timer,
 .swipe-timer,
-.friend-id,
 .friend-status {
     color: var(--text-secondary);
 }
