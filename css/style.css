@@ -3979,7 +3979,7 @@ html {
     overflow: hidden !important;
     flex-shrink: 0 !important;
     background: var(--input-bg) !important;
-    border: none !important;  /* Убираем обводку */
+    border: none !important;
 }
 
 .friends-page-list .player-info {
@@ -4012,17 +4012,14 @@ html {
     flex-shrink: 0 !important;
 }
 
-/* ===== СТИЛИ ДЛЯ ДРУЗЕЙ В ПРОФИЛЕ (как в поиске) ===== */
-
-/* Контейнер списка друзей в профиле */
+/* ===== СТИЛИ ДЛЯ ДРУЗЕЙ В ПРОФИЛЕ ===== */
 .friends-list {
     display: flex !important;
     flex-direction: column !important;
-    gap: 0 !important;  /* Убираем gap, используем border-bottom */
+    gap: 0 !important;
     padding: 0 !important;
 }
 
-/* Убираем нижнюю границу у последнего элемента */
 .friends-list .friend-item:last-child {
     border-bottom: none !important;
 }
@@ -4031,7 +4028,6 @@ html {
     background: rgba(255, 255, 255, 0.03) !important;
 }
 
-/* Аватарка друга */
 .friends-list .friend-avatar {
     width: 38px !important;
     height: 38px !important;
@@ -4054,7 +4050,6 @@ html {
     object-fit: cover !important;
 }
 
-/* Информация о друге */
 .friends-list .friend-details {
     flex: 1 !important;
     min-width: 0 !important;
@@ -4077,7 +4072,6 @@ html {
     letter-spacing: 0.3px !important;
 }
 
-/* Статус друга */
 .friends-list .friend-status {
     font-size: 10px !important;
     color: #4CAF50 !important;
@@ -4088,7 +4082,6 @@ html {
     border: 1px solid rgba(76, 175, 80, 0.3) !important;
 }
 
-/* ПОЛНОСТЬЮ ОТКЛЮЧАЕМ СТАРЫЕ СТИЛИ */
 .friends-list .friend-item,
 .friends-list .friend-item:hover {
     transform: none !important;
@@ -4160,7 +4153,6 @@ html {
     text-overflow: ellipsis;
 }
 
-/* Стрелка для превью в профиле */
 .friend-arrow {
     color: #FF5500;
     font-size: 20px;
@@ -4169,7 +4161,6 @@ html {
     padding-right: 4px;
 }
 
-/* Кнопки на полном экране */
 .friend-actions {
     display: flex;
     align-items: center;
@@ -4190,7 +4181,7 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: none; /* Убираем анимацию */
+    transition: none;
 }
 
 .friend-profile-btn svg,
@@ -4204,7 +4195,6 @@ html {
     flex-shrink: 0;
 }
 
-/* Отключаем все hover эффекты */
 .friend-profile-btn:hover,
 .friend-tg-btn:hover,
 .friend-delete-btn:hover,
@@ -4213,7 +4203,6 @@ html {
     background: transparent !important;
 }
 
-/* Цвета иконок */
 .friend-profile-btn svg circle,
 .friend-tg-btn svg circle,
 .friend-delete-btn svg circle {
@@ -4229,7 +4218,7 @@ html {
     stroke: #FFFFFF;
 }
 
-/* Поиск на экране друзей */
+/* ===== ПОИСК НА ЭКРАНЕ ДРУЗЕЙ ===== */
 .friends-search {
     padding: 6px 16px 0 16px;
     width: 100%;
@@ -4293,117 +4282,7 @@ html {
     animation: slideDown 0.15s ease;
 }
 
-/* ===== АНИМАЦИЯ ДЛЯ ПОИСКА ИГРОКОВ ===== */
-.players-list .player-row {
-    animation: slideDown 0.15s ease;
-}
-
-/* ФИНАЛЬНЫЕ СТИЛИ ДЛЯ ПОИСКА */
-.players-list .player-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 0 !important;  /* Принудительно ставим как в друзьях */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    cursor: pointer;
-    width: 100%;
-    box-sizing: border-box;
-    min-height: 58px; /* Фиксируем высоту как в друзьях (38px аватар + отступы) */
-}
-
-.players-list .player-id {
-    font-size: 10px !important;
-    color: #FF5500 !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.3px !important;
-    margin-bottom: 2px !important;
-    font-family: 'Montserrat', sans-serif !important;
-}
-
-.players-list .player-nick {
-    font-size: 15px !important;
-    font-weight: 600 !important;
-    color: #ffffff !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    font-family: 'Montserrat', sans-serif !important;
-}
-
-/* ===== ПОИСК ИГРОКОВ - ТОЧНО КАК В ДРУЗЬЯХ ===== */
-.players-list {
-    padding: 0 16px;
-    margin-top: 0;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.players-list .player-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    cursor: pointer;
-    width: 100%;
-    box-sizing: border-box;
-    min-height: 58px; /* Как в друзьях */
-}
-
-.players-list .player-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: none;
-    flex-shrink: 0;
-    background: var(--input-bg);
-}
-
-.players-list .player-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.players-list .player-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-/* Копия стиля из друзей */
-.players-list .player-id {
-    font-size: 10px;
-    color: #FF5500;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    margin-bottom: 2px;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.players-list .player-nick {
-    font-size: 15px;
-    font-weight: 600;
-    color: #ffffff;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.players-list .player-arrow {
-    margin-left: auto;
-    color: #FF5500;
-    font-size: 20px;
-    font-weight: 600;
-    opacity: 0.8;
-    flex-shrink: 0;
-    padding-right: 4px;
-}
-
-/* ===== СТИЛИ ДЛЯ ПОИСКА В КОМАНДЕ ===== */
+/* ===== ЕДИНЫЙ СТИЛЬ ДЛЯ ПОИСКА ИГРОКОВ ===== */
 .players-search {
     padding: 6px 16px 0 16px;
     width: 100%;
@@ -4456,7 +4335,10 @@ html {
 }
 
 .players-list {
-    padding: 4px 16px 0 16px;
+    padding: 0 16px;
+    margin-top: 0;
+    width: 100%;
+    box-sizing: border-box;
     flex: 1;
     overflow-y: auto;
 }
@@ -4471,6 +4353,11 @@ html {
     width: 100%;
     box-sizing: border-box;
     min-height: 58px;
+    animation: slideDown 0.15s ease;
+}
+
+.players-list .player-row:last-child {
+    border-bottom: none;
 }
 
 .players-list .player-avatar {
@@ -4543,8 +4430,4 @@ html {
 .players-list .player-row:hover {
     background: transparent !important;
     transform: none !important;
-}
-
-.players-list .player-row:last-child {
-    border-bottom: none;
 }
