@@ -4098,12 +4098,18 @@ html {
     outline: none;
     box-sizing: border-box;
     line-height: 28px;
+    font-family: 'Montserrat', sans-serif; /* добавил */
+    letter-spacing: normal; /* добавил */
+    text-transform: none; /* добавил */
 }
 
 .players-search-input::placeholder {
     color: #9BA1B0;
     font-weight: 400;
     opacity: 0.8;
+    font-family: 'Montserrat', sans-serif; /* добавил */
+    letter-spacing: normal; /* добавил */
+    text-transform: none; /* добавил */
 }
 
 .players-search-input:focus {
