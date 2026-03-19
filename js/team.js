@@ -347,29 +347,19 @@ const Team = {
                 flex-shrink: 0 !important;
                 overflow: hidden !important;
             }
-            .players-list .player-id,
-            .players-list .player-id span,
-            .players-list .player-id::before,
-            .players-list .player-id::after,
-            .players-list .player-id * {
+            /* ТОЧНО КАК В ДРУЗЬЯХ */
+            .players-list .player-id {
                 font-size: 10px !important;
                 color: #FF5500 !important;
                 font-weight: 600 !important;
                 letter-spacing: 0.3px !important;
                 margin-bottom: 2px !important;
                 font-family: 'Montserrat', sans-serif !important;
-                text-transform: none !important;
                 line-height: normal !important;
+                text-transform: none !important;
                 font-style: normal !important;
-                text-rendering: optimizeLegibility !important;
-                -webkit-font-smoothing: antialiased !important;
-                -moz-osx-font-smoothing: grayscale !important;
             }
-            .players-list .player-nick,
-            .players-list .player-nick span,
-            .players-list .player-nick::before,
-            .players-list .player-nick::after,
-            .players-list .player-nick * {
+            .players-list .player-nick {
                 font-size: 15px !important;
                 font-weight: 600 !important;
                 color: #ffffff !important;
@@ -378,10 +368,6 @@ const Team = {
                 overflow: hidden !important;
                 text-overflow: ellipsis !important;
                 line-height: normal !important;
-                font-style: normal !important;
-                text-rendering: optimizeLegibility !important;
-                -webkit-font-smoothing: antialiased !important;
-                -moz-osx-font-smoothing: grayscale !important;
             }
             .players-list .player-arrow {
                 color: #FF5500 !important;
@@ -389,7 +375,6 @@ const Team = {
                 font-weight: 600 !important;
                 margin-left: auto !important;
                 padding-right: 4px !important;
-                font-family: 'Montserrat', sans-serif !important;
             }
             
             /* ФИКС ДЛЯ ПОЛЯ ПОИСКА */
@@ -399,20 +384,13 @@ const Team = {
                 font-weight: 500 !important;
                 letter-spacing: normal !important;
                 line-height: 28px !important;
-                text-transform: none !important;
-                font-style: normal !important;
-                -webkit-font-smoothing: antialiased !important;
-                -moz-osx-font-smoothing: grayscale !important;
             }
             .players-search-input::placeholder {
                 font-family: 'Montserrat', sans-serif !important;
                 font-size: 13px !important;
                 font-weight: 400 !important;
-                letter-spacing: normal !important;
                 color: #9BA1B0 !important;
                 opacity: 0.8 !important;
-                text-transform: none !important;
-                font-style: normal !important;
             }
         `;
         document.head.appendChild(style);
