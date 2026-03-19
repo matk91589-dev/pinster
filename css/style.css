@@ -4013,13 +4013,25 @@ html {
 }
 
 /* ===== СТИЛИ ДЛЯ ЭКРАНА ПОИСКА (teamScreen) ===== */
+
+/* ===== КОНТЕЙНЕР СПИСКА В ПОИСКЕ ===== */
+.players-list {
+    padding: 0 16px !important;  /* Убрал верхний отступ, сделал как в друзьях */
+    margin-top: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* ===== ПЛАШКИ ИГРОКОВ ===== */
 .players-list .player-row {
     display: flex !important;
     align-items: center !important;
     gap: 12px !important;
-    padding: 10px 0 !important;  /* Увеличил с 8px до 10px как в друзьях */
+    padding: 10px 0 !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
     cursor: pointer !important;
+    width: 100% !important;  /* Гарантируем полную ширину */
+    box-sizing: border-box !important;
 }
 
 .players-list .player-avatar {
