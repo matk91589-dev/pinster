@@ -15,7 +15,7 @@ const Shop = {
             name: 'COMMON CASE',
             price: 1000,
             class: 'common-case',
-            imagePath: 'cases/common_case.png',
+            imagePath: 'cases/common_case.webp',  
             isSecret: false
         },
         { 
@@ -23,7 +23,7 @@ const Shop = {
             name: 'RARE CASE',
             price: 2500,
             class: 'rare-case',
-            imagePath: 'cases/rare_case.png',
+            imagePath: 'cases/rare_case.webp',  
             isSecret: false
         },
         { 
@@ -31,7 +31,7 @@ const Shop = {
             name: 'PREMIUM CASE',
             price: 5000,
             class: 'premium-case',
-            imagePath: 'cases/premium_case.png',
+            imagePath: 'cases/premium_case.webp', 
             isSecret: false
         },
         { 
@@ -39,7 +39,7 @@ const Shop = {
             name: 'SECRET CASE',
             price: 0,
             class: 'secret-case',
-            imagePath: 'cases/secret_case.png',
+            imagePath: 'cases/secret_case.webp', 
             isSecret: true
         }
     ],
@@ -108,14 +108,12 @@ const Shop = {
             badge.textContent = 'NEW';
             inventoryTab.appendChild(badge);
             
-            // 👇 ЗВУК ПРИ НОВОМ ПРЕДМЕТЕ
             if (window.Settings) Settings.success();
             App.hapticFeedback('light');
         }
     },
     
     showTab(tab) {
-        // 👇 ЗВУК ПРИ ПЕРЕКЛЮЧЕНИИ ВКЛАДОК
         if (window.Settings) Settings.click();
         
         this.currentTab = tab;
@@ -177,6 +175,11 @@ const Shop = {
                 </div>
             `;
         }).join('');
+        
+        // Загружаем картинки lazy (если есть функция)
+        if (window.loadShopImages) {
+            setTimeout(window.loadShopImages, 50);
+        }
     },
     
     renderInventory() {
@@ -189,7 +192,6 @@ const Shop = {
             return;
         }
         
-        // СОРТИРУЕМ: сначала новые, потом старые, внутри каждой группы по дате (сначала свежие)
         const sortedCases = [...this.ownedCases].sort((a, b) => {
             const aIsNew = this.newItems.includes(a.uniqueId);
             const bIsNew = this.newItems.includes(b.uniqueId);
@@ -209,7 +211,7 @@ const Shop = {
                      data-unique-id="${caseItem.uniqueId}">
                     ${isNew ? '<span class="item-badge">NEW</span>' : ''}
                     <div class="item-icon">
-                        <img src="${caseData?.imagePath || 'cases/common_case.png'}" alt="case">
+                        <img src="${caseData?.imagePath || 'cases/common_case.webp'}" alt="case">  <!-- ✅ ИСПРАВЛЕНО -->
                     </div>
                 </div>
             `;
@@ -236,7 +238,6 @@ const Shop = {
     },
     
     buyCase(caseId) {
-        // 👇 ЗВУК ПРИ НАЖАТИИ КУПИТЬ
         if (window.Settings) Settings.click();
         
         if (this.processingIds.has(caseId)) {
@@ -248,14 +249,12 @@ const Shop = {
         
         if (caseItem.isSecret) {
             App.showAlert('❌ Этот кейс нельзя купить! Выполняйте задания чтобы получить его.');
-            // 👇 ЗВУК ПРИ ОШИБКЕ
             if (window.Settings) Settings.error();
             return;
         }
         
         if (this.coins < caseItem.price) {
             App.showAlert('❌ Недостаточно Pingcoins!');
-            // 👇 ЗВУК ПРИ ОШИБКЕ
             if (window.Settings) Settings.error();
             return;
         }
@@ -278,7 +277,6 @@ const Shop = {
         this.newItems.push(uniqueId);
         this.updateInventoryBadge();
         
-        // 👇 ЗВУК ПРИ УСПЕШНОЙ ПОКУПКЕ
         if (window.Settings) Settings.success();
         App.hapticFeedback('medium');
         
@@ -294,7 +292,6 @@ const Shop = {
     },
     
     useItem(uniqueId) {
-        // 👇 ЗВУК ПРИ КЛИКЕ НА ПРЕДМЕТ
         if (window.Settings) Settings.click();
         
         const newIndex = this.newItems.indexOf(uniqueId);
@@ -306,7 +303,6 @@ const Shop = {
         this.renderInventory();
         App.hapticFeedback('light');
         
-        // 👇 ЗВУК ПРИ ОТКРЫТИИ КЕЙСА (пока заглушка)
         if (window.Settings) Settings.success();
         
         App.showPopup({
@@ -337,40 +333,34 @@ const Shop = {
             this.renderInventory();
         }
         
-        // 👇 ЗВУК ПРИ ПОЛУЧЕНИИ СЕКРЕТНОГО КЕЙСА
         if (window.Settings) Settings.success();
         App.hapticFeedback('medium');
     }
 };
 
-// 👇 НОВАЯ ФУНКЦИЯ: показ магазина с классом shop-mode
 Shop.show = function() {
-    // Добавляем класс к .content
     const content = document.querySelector('.content');
     if (content) {
         content.classList.add('shop-mode');
     }
     
-    // Показываем экран магазина
     document.getElementById('shopScreen')?.classList.add('active');
-    
-    // Инициализируем, если нужно
     this.init();
+    
+    // Загружаем картинки при открытии магазина
+    if (window.loadShopImages) {
+        setTimeout(window.loadShopImages, 100);
+    }
 };
 
-// 👇 НОВАЯ ФУНКЦИЯ: скрытие магазина
 Shop.hide = function() {
-    // Убираем класс с .content
     const content = document.querySelector('.content');
     if (content) {
         content.classList.remove('shop-mode');
     }
-    
-    // Скрываем экран магазина
     document.getElementById('shopScreen')?.classList.remove('active');
 };
 
-// ИНИЦИАЛИЗАЦИЯ
 document.addEventListener('DOMContentLoaded', () => {
     Shop.init();
 });
