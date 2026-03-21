@@ -102,7 +102,7 @@ const App = {
                     } else {
                         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
                         if (telegram_id) {
-                            fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/search/stop', {
+                            fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ telegram_id: telegram_id })
@@ -276,7 +276,7 @@ const App = {
             } else {
                 const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
                 if (telegram_id) {
-                    fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/search/stop', {
+                    fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ telegram_id: telegram_id })
