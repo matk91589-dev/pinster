@@ -8,6 +8,7 @@ const Shop = {
     ownedCases: [],
     newItems: [],
     processingIds: new Set(),
+    _initialized: false,  // ✅ Флаг, чтобы инициализировать только 1 раз
     
     cases: [
         { 
@@ -45,9 +46,24 @@ const Shop = {
     ],
     
     init() {
+        if (this._initialized) return;  // ✅ Уже инициализированы
+        this._initialized = true;
+        
         this.updateCoinsDisplay();
-        this.renderShop();
         this.setupEventListeners();
+        // ❌ НЕ вызываем renderShop() при инициализации
+        console.log('✅ Shop инициализирован (без загрузки картинок)');
+    },
+    
+    // ✅ Отдельный метод для отрисовки магазина (вызывается при открытии)
+    renderShop() {
+        this.renderCases();
+        this.renderInventory();
+        
+        // Загружаем картинки после отрисовки
+        if (window.loadShopImages) {
+            setTimeout(window.loadShopImages, 50);
+        }
     },
     
     setupEventListeners() {
@@ -109,7 +125,7 @@ const Shop = {
             inventoryTab.appendChild(badge);
             
             if (window.Settings) Settings.success();
-            App.hapticFeedback('light');
+            if (window.App) App.hapticFeedback('light');
         }
     },
     
@@ -132,12 +148,7 @@ const Shop = {
             this.renderInventory();
         }
         
-        App.hapticFeedback('light');
-    },
-    
-    renderShop() {
-        this.renderCases();
-        this.renderInventory();
+        if (window.App) App.hapticFeedback('light');
     },
     
     renderCases() {
@@ -150,7 +161,7 @@ const Shop = {
             if (caseItem.isSecret) {
                 return `
                     <div class="case-item ${caseItem.class} secret-case">
-                        <div class="case-icon"><img src="${caseItem.imagePath}" alt="${caseItem.name}"></div>
+                        <div class="case-icon"><img data-src="${caseItem.imagePath}" alt="${caseItem.name}" loading="lazy"></div>
                         <div class="case-info">
                             <div class="case-name">${caseItem.name}</div>
                             <div class="secret-message">выполняйте задания →</div>
@@ -161,7 +172,7 @@ const Shop = {
             
             return `
                 <div class="case-item ${caseItem.class}">
-                    <div class="case-icon"><img src="${caseItem.imagePath}" alt="${caseItem.name}"></div>
+                    <div class="case-icon"><img data-src="${caseItem.imagePath}" alt="${caseItem.name}" loading="lazy"></div>
                     <div class="case-info">
                         <div class="case-name">${caseItem.name}</div>
                         <div class="case-price-row">
@@ -176,7 +187,7 @@ const Shop = {
             `;
         }).join('');
         
-        // Загружаем картинки lazy (если есть функция)
+        // Загружаем картинки после отрисовки
         if (window.loadShopImages) {
             setTimeout(window.loadShopImages, 50);
         }
@@ -211,13 +222,18 @@ const Shop = {
                      data-unique-id="${caseItem.uniqueId}">
                     ${isNew ? '<span class="item-badge">NEW</span>' : ''}
                     <div class="item-icon">
-                        <img src="${caseData?.imagePath || 'cases/common_case.webp'}" alt="case">  <!-- ✅ ИСПРАВЛЕНО -->
+                        <img data-src="${caseData?.imagePath || 'cases/common_case.webp'}" alt="case" loading="lazy">
                     </div>
                 </div>
             `;
         }).join('');
         
         this.renderInventoryStats();
+        
+        // Загружаем картинки инвентаря
+        if (window.loadShopImages) {
+            setTimeout(window.loadShopImages, 50);
+        }
     },
     
     renderInventoryStats() {
@@ -248,13 +264,13 @@ const Shop = {
         if (!caseItem) return;
         
         if (caseItem.isSecret) {
-            App.showAlert('❌ Этот кейс нельзя купить! Выполняйте задания чтобы получить его.');
+            if (window.App) App.showAlert('❌ Этот кейс нельзя купить! Выполняйте задания чтобы получить его.');
             if (window.Settings) Settings.error();
             return;
         }
         
         if (this.coins < caseItem.price) {
-            App.showAlert('❌ Недостаточно Pingcoins!');
+            if (window.App) App.showAlert('❌ Недостаточно Pingcoins!');
             if (window.Settings) Settings.error();
             return;
         }
@@ -278,7 +294,7 @@ const Shop = {
         this.updateInventoryBadge();
         
         if (window.Settings) Settings.success();
-        App.hapticFeedback('medium');
+        if (window.App) App.hapticFeedback('medium');
         
         this.renderCases();
         
@@ -301,20 +317,21 @@ const Shop = {
         }
         
         this.renderInventory();
-        App.hapticFeedback('light');
+        if (window.App) App.hapticFeedback('light');
         
         if (window.Settings) Settings.success();
         
-        App.showPopup({
-            title: 'Открытие кейса',
-            message: 'Здесь будет анимация открытия',
-            buttons: [{ id: 'ok', type: 'ok', text: 'ОК' }]
-        });
+        if (window.App) {
+            App.showPopup({
+                title: 'Открытие кейса',
+                message: 'Здесь будет анимация открытия',
+                buttons: [{ id: 'ok', type: 'ok', text: 'ОК' }]
+            });
+        }
     },
     
     addSecretCase() {
         const caseId = 'secret_case';
-        const caseItem = this.cases.find(c => c.id === caseId);
         
         const timestamp = Date.now();
         const random = Math.random().toString(36).substring(2, 15);
@@ -334,10 +351,11 @@ const Shop = {
         }
         
         if (window.Settings) Settings.success();
-        App.hapticFeedback('medium');
+        if (window.App) App.hapticFeedback('medium');
     }
 };
 
+// ===== ПОКАЗ МАГАЗИНА (ОТКРЫТИЕ) =====
 Shop.show = function() {
     const content = document.querySelector('.content');
     if (content) {
@@ -345,14 +363,22 @@ Shop.show = function() {
     }
     
     document.getElementById('shopScreen')?.classList.add('active');
+    
+    // ✅ Инициализируем (только 1 раз)
     this.init();
     
-    // Загружаем картинки при открытии магазина
+    // ✅ Отрисовываем магазин (картинки начнут грузиться ТОЛЬКО здесь)
+    this.renderShop();
+    
+    // Дополнительная загрузка lazy картинок
     if (window.loadShopImages) {
         setTimeout(window.loadShopImages, 100);
     }
+    
+    console.log('🛒 Магазин открыт, картинки загружаются...');
 };
 
+// ===== СКРЫТИЕ МАГАЗИНА =====
 Shop.hide = function() {
     const content = document.querySelector('.content');
     if (content) {
@@ -361,8 +387,9 @@ Shop.hide = function() {
     document.getElementById('shopScreen')?.classList.remove('active');
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    Shop.init();
-});
+// ===== НЕ ВЫЗЫВАЕМ Shop.init() ПРИ ЗАГРУЗКЕ СТРАНИЦЫ =====
+// ❌ document.addEventListener('DOMContentLoaded', () => { Shop.init(); });
 
 window.Shop = Shop;
+
+console.log('✅ shop.js загружен (автоматическая инициализация ОТКЛЮЧЕНА)');
