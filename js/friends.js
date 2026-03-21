@@ -35,7 +35,7 @@ const Friends = {
         console.log('📥 Запрос к /api/friends/list...');
         
         try {
-            const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/friends/list', {
+            const response = await fetch('matk91589-dev-pingster-backend-cee8.twc1.net/api/friends/list', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
