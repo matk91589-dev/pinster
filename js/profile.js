@@ -98,7 +98,7 @@ const Profile = {
         }
         
         try {
-            const response = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net', {
+            const response = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/profile/get', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
