@@ -58,39 +58,7 @@ const Shop = {
     renderShop() {
         this.renderCases();
         this.renderInventory();
-        // Сразу загружаем картинки после отрисовки
-        setTimeout(() => this.loadImages(), 10);
-    },
-    
-    // ✅ Загрузка картинок (с поддержкой кэша)
-    loadImages() {
-        const images = document.querySelectorAll('.case-icon img[data-src], .item-icon img[data-src]');
-        if (images.length === 0) return;
-        
-        let loadedCount = 0;
-        
-        images.forEach(img => {
-            const src = img.dataset.src;
-            if (src) {
-                // Если картинка уже загружена с таким src — просто показываем
-                if (img.src === src) {
-                    img.classList.add('loaded');
-                    loadedCount++;
-                    return;
-                }
-                
-                img.src = src;
-                img.onload = () => {
-                    img.classList.add('loaded');
-                    loadedCount++;
-                };
-                img.onerror = () => {
-                    console.warn(`⚠️ Ошибка загрузки: ${src}`);
-                    img.classList.add('loaded');
-                    loadedCount++;
-                };
-            }
-        });
+        console.log('🛒 Магазин отрисован');
     },
     
     setupEventListeners() {
@@ -175,9 +143,6 @@ const Shop = {
             this.renderInventory();
         }
         
-        // Загружаем картинки после переключения вкладки
-        setTimeout(() => this.loadImages(), 10);
-        
         if (window.App) App.hapticFeedback('light');
     },
     
@@ -191,7 +156,7 @@ const Shop = {
             if (caseItem.isSecret) {
                 return `
                     <div class="case-item ${caseItem.class} secret-case">
-                        <div class="case-icon"><img data-src="${caseItem.imagePath}" alt="${caseItem.name}" loading="lazy"></div>
+                        <div class="case-icon"><img src="${caseItem.imagePath}" alt="${caseItem.name}"></div>
                         <div class="case-info">
                             <div class="case-name">${caseItem.name}</div>
                             <div class="secret-message">выполняйте задания →</div>
@@ -202,7 +167,7 @@ const Shop = {
             
             return `
                 <div class="case-item ${caseItem.class}">
-                    <div class="case-icon"><img data-src="${caseItem.imagePath}" alt="${caseItem.name}" loading="lazy"></div>
+                    <div class="case-icon"><img src="${caseItem.imagePath}" alt="${caseItem.name}"></div>
                     <div class="case-info">
                         <div class="case-name">${caseItem.name}</div>
                         <div class="case-price-row">
@@ -247,7 +212,7 @@ const Shop = {
                      data-unique-id="${caseItem.uniqueId}">
                     ${isNew ? '<span class="item-badge">NEW</span>' : ''}
                     <div class="item-icon">
-                        <img data-src="${caseData?.imagePath || 'cases/common_case.webp'}" alt="case" loading="lazy">
+                        <img src="${caseData?.imagePath || 'cases/common_case.webp'}" alt="case">
                     </div>
                 </div>
             `;
@@ -317,7 +282,6 @@ const Shop = {
         if (window.App) App.hapticFeedback('medium');
         
         this.renderCases();
-        this.loadImages(); // Сразу загружаем картинки после обновления
         
         if (this.currentTab === 'inventory') {
             this.renderInventory();
@@ -338,7 +302,6 @@ const Shop = {
         }
         
         this.renderInventory();
-        this.loadImages(); // Загружаем картинки инвентаря
         
         if (window.App) App.hapticFeedback('light');
         
@@ -371,7 +334,6 @@ const Shop = {
         
         if (this.currentTab === 'inventory') {
             this.renderInventory();
-            this.loadImages();
         }
         
         if (window.Settings) Settings.success();
