@@ -9,7 +9,6 @@ const Shop = {
     newItems: [],
     processingIds: new Set(),
     _initialized: false,
-    _imagesLoaded: false,  // ✅ Флаг, чтобы не грузить картинки дважды
     
     cases: [
         { 
@@ -52,44 +51,43 @@ const Shop = {
         
         this.updateCoinsDisplay();
         this.setupEventListeners();
-        console.log('✅ Shop инициализирован (без загрузки картинок)');
+        console.log('✅ Shop инициализирован');
     },
     
-    // ✅ Отрисовка магазина без загрузки картинок (только HTML)
+    // ✅ Отрисовка магазина
     renderShop() {
         this.renderCases();
         this.renderInventory();
-        console.log('🖼️ Магазин отрисован, картинки загрузятся фоном');
+        // Сразу загружаем картинки после отрисовки
+        setTimeout(() => this.loadImages(), 10);
     },
     
-    // ✅ Функция для загрузки картинок (вызывается из фона)
+    // ✅ Загрузка картинок (с поддержкой кэша)
     loadImages() {
-        if (this._imagesLoaded) return;
-        
         const images = document.querySelectorAll('.case-icon img[data-src], .item-icon img[data-src]');
         if (images.length === 0) return;
         
-        console.log(`🖼️ Загрузка ${images.length} картинок магазина...`);
         let loadedCount = 0;
         
         images.forEach(img => {
-            if (img.dataset.src && !img.src) {
-                const src = img.dataset.src;
+            const src = img.dataset.src;
+            if (src) {
+                // Если картинка уже загружена с таким src — просто показываем
+                if (img.src === src) {
+                    img.classList.add('loaded');
+                    loadedCount++;
+                    return;
+                }
+                
                 img.src = src;
                 img.onload = () => {
-                    loadedCount++;
                     img.classList.add('loaded');
-                    if (loadedCount === images.length) {
-                        console.log('✅ Все картинки магазина загружены');
-                        this._imagesLoaded = true;
-                    }
+                    loadedCount++;
                 };
                 img.onerror = () => {
-                    loadedCount++;
                     console.warn(`⚠️ Ошибка загрузки: ${src}`);
-                    if (loadedCount === images.length) {
-                        this._imagesLoaded = true;
-                    }
+                    img.classList.add('loaded');
+                    loadedCount++;
                 };
             }
         });
@@ -176,6 +174,9 @@ const Shop = {
             document.querySelector('.inventory-section')?.classList.remove('hidden');
             this.renderInventory();
         }
+        
+        // Загружаем картинки после переключения вкладки
+        setTimeout(() => this.loadImages(), 10);
         
         if (window.App) App.hapticFeedback('light');
     },
@@ -316,6 +317,7 @@ const Shop = {
         if (window.App) App.hapticFeedback('medium');
         
         this.renderCases();
+        this.loadImages(); // Сразу загружаем картинки после обновления
         
         if (this.currentTab === 'inventory') {
             this.renderInventory();
@@ -336,6 +338,8 @@ const Shop = {
         }
         
         this.renderInventory();
+        this.loadImages(); // Загружаем картинки инвентаря
+        
         if (window.App) App.hapticFeedback('light');
         
         if (window.Settings) Settings.success();
@@ -367,6 +371,7 @@ const Shop = {
         
         if (this.currentTab === 'inventory') {
             this.renderInventory();
+            this.loadImages();
         }
         
         if (window.Settings) Settings.success();
@@ -386,9 +391,6 @@ Shop.show = function() {
     this.init();
     this.renderShop();
     
-    // ✅ Загружаем картинки (если еще не загружены)
-    setTimeout(() => this.loadImages(), 50);
-    
     console.log('🛒 Магазин открыт');
 };
 
@@ -404,4 +406,4 @@ Shop.hide = function() {
 // ===== ЭКСПОРТ =====
 window.Shop = Shop;
 
-console.log('✅ shop.js загружен (картинки грузятся только в магазине или фоном)');
+console.log('✅ shop.js загружен');
