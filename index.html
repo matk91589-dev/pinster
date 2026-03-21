@@ -650,6 +650,30 @@
             flex: 1;
             overflow-y: auto;
         }
+
+        /* ===== LAZY LOADING PLACEHOLDER ===== */
+        .case-icon {
+            background: #1A1D24;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+        }
+        
+        .case-icon img {
+            max-width: 100%;
+            height: auto;
+            transition: opacity 0.2s ease;
+        }
+        
+        .case-icon img[data-src] {
+            opacity: 0;
+        }
+        
+        .case-icon img.loaded {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -699,7 +723,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН МАГАЗИНА -->
+            <!-- ЭКРАН МАГАЗИНА - С LAZY LOADING -->
             <div id="shopScreen" class="screen shop-screen">
                 <div class="title-row">
                     <div class="title-left"><div class="section-title">Магазин</div></div>
@@ -712,7 +736,7 @@
                 <div class="cases-section">
                     <div class="cases-grid">
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/common_case.png" alt="common case"></div>
+                            <div class="case-icon"><img data-src="cases/common_case.webp" alt="common case" loading="lazy"></div>
                             <div class="case-info">
                                 <div class="case-name">Базовый кейс</div>
                                 <div class="case-price-row">
@@ -722,7 +746,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/rare_case.png" alt="rare case"></div>
+                            <div class="case-icon"><img data-src="cases/rare_case.webp" alt="rare case" loading="lazy"></div>
                             <div class="case-info">
                                 <div class="case-name">Редкий кейс</div>
                                 <div class="case-price-row">
@@ -732,7 +756,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/premium_case.png" alt="premium case"></div>
+                            <div class="case-icon"><img data-src="cases/premium_case.webp" alt="premium case" loading="lazy"></div>
                             <div class="case-info">
                                 <div class="case-name">Легендарный кейс</div>
                                 <div class="case-price-row">
@@ -742,7 +766,7 @@
                             </div>
                         </div>
                         <div class="case-item">
-                            <div class="case-icon"><img src="cases/secret_case.png" alt="secret case"></div>
+                            <div class="case-icon"><img data-src="cases/secret_case.webp" alt="secret case" loading="lazy"></div>
                             <div class="case-info">
                                 <div class="case-name">Секретный кейс</div>
                                 <div class="case-price-row">
@@ -850,9 +874,7 @@
                 </div>
 
                 <div class="team-content" id="teamContent">
-                    <!-- Контент будет загружаться через team.js
-                         Для друзей: friends-search + friends-list-container
-                         Для поиска: players-search + players-list -->
+                    <!-- Контент будет загружаться через team.js -->
                 </div>
             </div>
 
@@ -940,7 +962,7 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН СОЕДИНЕНИЯ - ИСПРАВЛЕННЫЙ -->
+            <!-- ЭКРАН СОЕДИНЕНИЯ -->
             <div id="connectionScreen" class="screen connection-screen">
                 <div class="swipe-header">
                     <div class="swipe-title">Тиммейт найден</div>
@@ -985,17 +1007,15 @@
                 </div>
             </div>
 
-            <!-- ЭКРАН НАСТРОЕК - ОБНОВЛЕННЫЙ -->
+            <!-- ЭКРАН НАСТРОЕК -->
             <div id="settingsScreen" class="screen settings-screen">
                 <div class="settings-header">
                     <div class="settings-title">Настройки</div>
                 </div>
                 
-                <!-- ОФОРМЛЕНИЕ -->
                 <div class="settings-section">
                     <div class="settings-section-title">ОФОРМЛЕНИЕ</div>
                     
-                    <!-- Звук - выкл / вкл -->
                     <div class="settings-row">
                         <span class="settings-row-label">Звук</span>
                         <div class="sound-toggle">
@@ -1005,20 +1025,17 @@
                         </div>
                     </div>
                     
-                    <!-- Тема - просто текст -->
                     <div class="settings-row">
                         <span class="settings-row-label">тема</span>
                         <span class="settings-value">черный</span>
                     </div>
                     
-                    <!-- Язык -->
                     <div class="settings-row">
                         <span class="settings-row-label">язык</span>
                         <span class="settings-value">русский</span>
                     </div>
                 </div>
                 
-                <!-- ОСНОВНЫЕ -->
                 <div class="settings-section">
                     <div class="settings-section-title">ОСНОВНЫЕ</div>
                     
@@ -1027,7 +1044,6 @@
                         <span class="settings-arrow">→</span>
                     </div>
                     
-                    <!-- ИСПРАВЛЕНО: теперь ведет на teamScreen -->
                     <div class="settings-row" onclick="Team.showTeamPage()">
                         <span class="settings-row-label">друзья</span>
                         <span class="settings-arrow">→</span>
@@ -1039,7 +1055,6 @@
                     </div>
                 </div>
                 
-                <!-- СОЦСЕТИ -->
                 <div class="settings-section">
                     <div class="settings-section-title">СОЦСЕТИ</div>
                     
@@ -1054,7 +1069,6 @@
                     </a>
                 </div>
                 
-                <!-- ПОДДЕРЖКА -->
                 <div class="settings-section">
                     <div class="settings-section-title">ПОДДЕРЖКА</div>
                     
@@ -1327,24 +1341,60 @@
     <script src="js/team.js"></script>
     <script src="js/swipe.js"></script>
 
-    <!-- Скрипт для автоматического добавления версий -->
+    <!-- Скрипт для Lazy Loading картинок в магазине -->
     <script>
     (function() {
         const version = window.BUILD_VERSION || Date.now();
         
+        // Добавляем версию к CSS
         document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
             if (link.href && !link.href.includes('telegram')) {
                 link.href = link.href.split('?')[0] + '?v=' + version;
             }
         });
         
-        document.querySelectorAll('img[src]').forEach(img => {
-            if (img.src && !img.src.includes('telegram') && !img.src.includes('data:')) {
-                img.src = img.src.split('?')[0] + '?v=' + version;
-            }
-        });
+        // Функция загрузки картинок магазина (вызывается при открытии магазина)
+        window.loadShopImages = function() {
+            const images = document.querySelectorAll('.case-icon img[data-src]');
+            images.forEach(img => {
+                if (img.dataset.src && !img.src) {
+                    const src = img.dataset.src + '?v=' + version;
+                    img.src = src;
+                    img.onload = function() {
+                        img.classList.add('loaded');
+                    };
+                }
+            });
+        };
+        
+        // Перехватываем открытие магазина
+        const originalShowScreen = window.App?.showScreen;
+        if (originalShowScreen) {
+            window.App.showScreen = function(screenId, updateNav) {
+                originalShowScreen(screenId, updateNav);
+                if (screenId === 'shopScreen') {
+                    setTimeout(window.loadShopImages, 50);
+                }
+            };
+        }
+        
+        // Если App еще не загружен, ждем
+        if (!window.App) {
+            window.addEventListener('load', function() {
+                if (window.App && window.App.showScreen) {
+                    const orig = window.App.showScreen;
+                    window.App.showScreen = function(screenId, updateNav) {
+                        orig(screenId, updateNav);
+                        if (screenId === 'shopScreen') {
+                            setTimeout(window.loadShopImages, 50);
+                        }
+                    };
+                }
+            });
+        }
         
         console.log('✅ Версия для статики:', version);
+        console.log('✅ Lazy loading для магазина активирован');
     })();
     </script>
 </body>
