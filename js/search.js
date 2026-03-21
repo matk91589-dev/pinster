@@ -168,7 +168,7 @@ const Search = {
         const telegram_id = this.getTelegramId();
         if (!telegram_id) return;
         
-        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/check', {
+        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/check', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -388,7 +388,7 @@ const Search = {
         this.resetTimer();
         this.startTimer();
         
-        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/search/start', {
+        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/start', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -473,7 +473,7 @@ const Search = {
         
         const telegram_id = this.getTelegramId();
         
-        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/search/stop', {
+        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
