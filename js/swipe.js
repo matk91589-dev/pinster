@@ -514,7 +514,7 @@ const Swipe = {
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         
-        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
+        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -560,7 +560,7 @@ const Swipe = {
             }
             
             try {
-                const res = await fetch(`https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/status/${matchId}`);
+                const res = await fetch(`https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/status/${matchId}`);
                 const data = await res.json();
                 
                 console.log(`📦 Polling status response (${attempts}):`, data);
@@ -663,7 +663,7 @@ const Swipe = {
         }
         
         try {
-            const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/friends/add', {
+            const response = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/friends/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -707,7 +707,7 @@ const Swipe = {
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         
         if (this.currentMatchId) {
-            fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/match/respond', {
+            fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -917,7 +917,7 @@ const Swipe = {
         
         this.gameCreating = true;
         
-        fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/game/create', {
+        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/game/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
