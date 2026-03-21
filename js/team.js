@@ -96,7 +96,7 @@ const Team = {
         }
         
         try {
-            const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/users/all', {
+            const response = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/users/all', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ telegram_id: this.telegramId })
@@ -470,7 +470,7 @@ const Team = {
         console.log('🔍 Поиск:', query);
         
         try {
-            const response = await fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/users/search', {
+            const response = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/users/search', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
