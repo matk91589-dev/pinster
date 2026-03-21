@@ -40,7 +40,7 @@
         console.log('Telegram ID:', telegram_id);
         
         if (telegram_id) {
-            fetch('https://matk91589-dev-pingster-backend-e306.twc1.net/api/user/init', {
+            fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/user/init', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
