@@ -25,8 +25,6 @@
         const modeBtns = document.querySelectorAll('.mode-btn');
         if (modeBtns.length === 0) return;
         
-        console.log('🔘 Принудительный показ кнопок...');
-        
         modeBtns.forEach(btn => {
             btn.style.opacity = '1';
             btn.style.transform = 'translateY(0)';
@@ -41,15 +39,7 @@
             modeContainer.style.visibility = 'visible';
             modeContainer.style.opacity = '1';
         }
-        
-        const mainScreen = document.getElementById('mainScreen');
-        if (mainScreen) {
-            mainScreen.style.display = 'flex';
-        }
     }
-
-    // Глобальная функция для принудительного показа
-    window.forceShowMainScreen = forceShowButtons;
 
     document.addEventListener('DOMContentLoaded', () => {
         console.log('Запуск Pingster...');
@@ -65,7 +55,7 @@
         // ✅ МГНОВЕННО показываем кнопки
         forceShowButtons();
         
-        // Инициализация модулей (не блокирует UI)
+        // Инициализация модулей
         try {
             if (typeof Shop !== 'undefined') Shop.init();
             if (typeof Friends !== 'undefined') Friends.init();
@@ -83,7 +73,6 @@
         console.log('Telegram ID:', telegram_id);
         
         if (telegram_id) {
-            // ✅ Асинхронно инициализируем пользователя (не блокирует UI)
             fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/user/init', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -102,18 +91,17 @@
                     if (data.pingcoins) localStorage.setItem('pingcoins', data.pingcoins);
                 }
                 
-                // ✅ Профиль грузим через 100ms (не блокирует UI)
+                // ✅ Профиль грузим через 1 секунду (не блокирует)
                 setTimeout(() => {
                     if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
                         Profile.loadProfileFromServer();
                     }
-                }, 100);
+                }, 1000);
             })
             .catch(error => {
                 console.error('Error initializing user:', error);
             });
             
-            // ✅ Проверка мэтча через 2 секунды
             setTimeout(() => {
                 if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
                     Search.checkMatchStatus();
@@ -144,41 +132,24 @@ Object.assign(window.App, {
         
         if (screenId === 'settingsScreen' && content) {
             content.classList.add('settings-mode');
-            console.log('✅ Добавлен класс settings-mode');
         }
         
         if (screenId === 'shopScreen' && content) {
             content.classList.add('shop-mode');
-            console.log('✅ Добавлен класс shop-mode');
         }
         
+        // Скрываем все экраны
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
         });
         
+        // Показываем нужный экран
         const screen = document.getElementById(screenId);
         if (screen) {
             screen.classList.add('active');
         }
         
-        // ✅ При открытии главного экрана — показываем кнопки
-        if (screenId === 'mainScreen') {
-            setTimeout(() => {
-                const modeBtns = document.querySelectorAll('.mode-btn');
-                modeBtns.forEach(btn => {
-                    btn.style.display = 'flex';
-                    btn.style.visibility = 'visible';
-                    btn.style.opacity = '1';
-                    btn.style.transform = 'translateY(0)';
-                    btn.style.animation = 'none';
-                });
-                const modeContainer = document.querySelector('.mode-container');
-                if (modeContainer) {
-                    modeContainer.style.display = 'flex';
-                }
-            }, 10);
-        }
-        
+        // Обновляем навигацию
         if (updateNav) {
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
@@ -188,7 +159,6 @@ Object.assign(window.App, {
                 document.getElementById('navMain')?.classList.add('active');
             } else if (screenId === 'shopScreen') {
                 document.getElementById('navShop')?.classList.add('active');
-                
                 if (typeof Shop !== 'undefined' && Shop.renderShop) {
                     Shop.renderShop();
                 }
@@ -208,19 +178,3 @@ Object.assign(window.App, {
 });
 
 window.App = window.App;
-
-// ✅ ГАРАНТИРОВАННЫЙ ЗАПУСК (на случай если DOMContentLoaded уже сработал)
-if (document.readyState === 'loading') {
-    // Ждем загрузки
-} else {
-    // DOM уже загружен, показываем главный экран
-    setTimeout(() => {
-        const mainScreen = document.getElementById('mainScreen');
-        if (mainScreen && !mainScreen.classList.contains('active')) {
-            console.log('🔥 Форсированный запуск главного экрана');
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            mainScreen.classList.add('active');
-            if (window.forceShowMainScreen) window.forceShowMainScreen();
-        }
-    }, 10);
-}
