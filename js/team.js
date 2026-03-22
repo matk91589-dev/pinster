@@ -14,19 +14,35 @@ const Team = {
     init() {
         console.log('Team.init() запущен');
         
+        // ✅ Получаем Telegram ID
         if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
             this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
+            console.log('✅ Team Telegram ID из WebApp:', this.telegramId);
         } else {
-            // Получаем из URL параметра
+            // Пробуем получить из URL параметра
             const urlParams = new URLSearchParams(window.location.search);
             this.telegramId = urlParams.get('tg_id');
+            console.log('✅ Team Telegram ID из URL:', this.telegramId);
         }
         
-        console.log('Team Telegram ID:', this.telegramId);
+        // Если все еще нет — пробуем из Profile
+        if (!this.telegramId && window.Profile) {
+            this.telegramId = Profile.getTelegramId();
+            console.log('✅ Team Telegram ID из Profile:', this.telegramId);
+        }
+        
+        console.log('Team Telegram ID итоговый:', this.telegramId);
     },
     
     showTeamPage() {
         console.log('showTeamPage called');
+        
+        // ✅ Проверяем telegram_id перед загрузкой
+        if (!this.telegramId) {
+            console.warn('⚠️ Нет telegram_id, пробуем получить снова');
+            this.init();
+        }
+        
         const teamScreen = document.getElementById('teamScreen');
         if (teamScreen) {
             document.querySelectorAll('.screen').forEach(screen => {
@@ -48,7 +64,6 @@ const Team = {
         }
     },
     
-    // ✅ Загрузка друзей напрямую из БД
     async loadFriendsList() {
         console.log('🔄 Team: загружаем друзей из БД...');
         
@@ -198,7 +213,6 @@ const Team = {
         html += '</div>';
         content.innerHTML = html;
         
-        // Сразу настраиваем поиск
         setTimeout(() => this.setupFriendsSearch(), 50);
     },
     
@@ -217,7 +231,6 @@ const Team = {
             clearTimeout(this.searchTimeout);
         }
         
-        // Убираем старый обработчик
         searchInput.oninput = null;
         
         searchInput.addEventListener('input', (e) => {
@@ -249,10 +262,7 @@ const Team = {
     
     updateFriendsTabList() {
         const container = document.getElementById('friendsTabList');
-        if (!container) {
-            console.log('❌ Контейнер friendsTabList не найден');
-            return;
-        }
+        if (!container) return;
         
         if (!this.filteredFriends || this.filteredFriends.length === 0) {
             container.innerHTML = `
@@ -292,7 +302,6 @@ const Team = {
         const content = document.getElementById('teamContent');
         if (!content) return;
         
-        // Создаем DOM сразу
         const searchDiv = document.createElement('div');
         searchDiv.className = 'players-search';
         searchDiv.innerHTML = `
@@ -312,25 +321,20 @@ const Team = {
             </div>
         `;
         
-        // Очищаем и добавляем
         content.innerHTML = '';
         content.appendChild(searchDiv);
         content.appendChild(listDiv);
         
-        // Добавляем принудительные стили
         this.injectForcedStyles();
         
-        // Сразу настраиваем инпут
         const input = document.getElementById('teamSearchInput');
         if (input) {
             this.attachSearchHandler(input);
         }
         
-        // Если игроки уже загружены, показываем их
         if (this.allPlayers && this.allPlayers.length > 0) {
             this.renderSearchResults(this.allPlayers);
         } else {
-            // Если нет, загружаем
             this.loadAllPlayers().then(() => {
                 if (this.allPlayers && this.allPlayers.length > 0) {
                     this.renderSearchResults(this.allPlayers);
@@ -507,9 +511,6 @@ const Team = {
         }
     },
     
-    // ============================================
-    // МЕТОДЫ ДЛЯ РАБОТЫ С ДРУЗЬЯМИ
-    // ============================================
     showFriendProfile(playerId) {
         console.log('👤 Профиль друга:', playerId);
         if (window.App) {
