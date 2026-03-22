@@ -20,7 +20,6 @@ const Profile = {
     toastTimeout: null,
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
     avatarLoaded: false,
-    profileLoaded: false,
     
     generateRandomNick() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -89,11 +88,6 @@ const Profile = {
     
     // ✅ ОСНОВНАЯ ЗАГРУЗКА ПРОФИЛЯ
     async loadProfileFromServer() {
-        if (this.profileLoaded) {
-            console.log('📦 Профиль уже загружен');
-            return;
-        }
-        
         this.telegramId = this.getTelegramId();
         console.log('🔥 Загрузка профиля для telegram_id:', this.telegramId);
         
@@ -125,7 +119,6 @@ const Profile = {
                 this.tempFaceitLink = this.savedFaceitLink;
                 
                 this.updateDisplay();
-                this.profileLoaded = true;
                 console.log('✅ Профиль загружен');
             }
         } catch (error) {
@@ -133,9 +126,9 @@ const Profile = {
         }
     },
     
-    // ✅ ЗАГРУЗКА АВАТАРА
-    async loadAvatar(force = false) {
-        if (this.avatarLoaded && !force) {
+    // ✅ ЗАГРУЗКА АВАТАРА (только при открытии профиля)
+    async loadAvatar() {
+        if (this.avatarLoaded) {
             console.log('🖼️ Аватар уже загружен');
             return;
         }
