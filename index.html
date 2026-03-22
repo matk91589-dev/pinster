@@ -4,11 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- Блокировка кэша -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    
     <title>Pingster — Telegram Mini App</title>
     
     <!-- Глобальная версия (timestamp при загрузке) -->
@@ -40,12 +35,7 @@
         }
     </style>
     
-    <!-- Preload CSS -->
-    <link rel="preload" href="css/style.css" as="style">
-    <link rel="preload" href="css/shop-cases.css" as="style">
-    <link rel="preload" href="css/animations.css" as="style">
-    
-    <!-- Основные CSS -->
+    <!-- Основные CSS (версия добавляется автоматически) -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
@@ -168,7 +158,7 @@
             color: #37AEE2;
         }
 
-        /* ===== ФИКС ДЛЯ НАСТРОЕК - УБИРАЕМ ВСЕ ОТСТУПЫ ===== */
+        /* ===== ФИКС ДЛЯ НАСТРОЕК ===== */
         .settings-screen {
             padding: 0 !important;
             margin: 0 !important;
@@ -178,12 +168,10 @@
             scrollbar-width: thin;
             scrollbar-color: #FF5500 #2A2F3A;
         }
-
         .settings-screen .content {
             padding: 0 !important;
             margin: 0 !important;
         }
-
         .settings-screen .phone-frame,
         .settings-screen main,
         .settings-screen .screen,
@@ -191,24 +179,19 @@
             padding: 0 !important;
             margin: 0 !important;
         }
-
         .settings-screen::-webkit-scrollbar {
             width: 4px;
         }
-
         .settings-screen::-webkit-scrollbar-track {
             background: #2A2F3A;
         }
-
         .settings-screen::-webkit-scrollbar-thumb {
             background: #FF5500;
             border-radius: 4px;
         }
-
         .settings-screen::-webkit-scrollbar-thumb:hover {
             background: #ff7700;
         }
-
         .settings-header {
             padding: 12px 16px 8px 16px !important;
             margin: 0 !important;
@@ -218,7 +201,6 @@
             width: 100%;
             box-sizing: border-box;
         }
-
         .settings-title {
             font-size: 20px;
             font-weight: 600;
@@ -226,13 +208,11 @@
             text-align: center;
             margin: 0;
         }
-
         .settings-section {
             margin: 0 0 24px 0 !important;
             padding: 0 !important;
             width: 100%;
         }
-
         .settings-section-title {
             font-size: 13px;
             font-weight: 600;
@@ -244,7 +224,6 @@
             width: 100%;
             box-sizing: border-box;
         }
-
         .settings-row {
             display: flex;
             align-items: center;
@@ -256,11 +235,9 @@
             width: 100%;
             box-sizing: border-box;
         }
-
         .settings-row:last-child {
             border-bottom: none;
         }
-
         .settings-row-link {
             display: flex;
             align-items: center;
@@ -274,28 +251,23 @@
             width: 100%;
             box-sizing: border-box;
         }
-
         .settings-row-link:last-child {
             border-bottom: none;
         }
-
         .settings-row-label {
             font-size: 16px;
             font-weight: 400;
             color: var(--text-primary);
         }
-
         .settings-value {
             font-size: 14px;
             color: #8E97A6;
         }
-
         .settings-arrow {
             font-size: 18px;
             color: #8E97A6;
             font-weight: 300;
         }
-
         .toggle-switch {
             width: 46px;
             height: 26px;
@@ -306,11 +278,9 @@
             transition: background 0.2s ease;
             flex-shrink: 0;
         }
-
         .toggle-switch.active {
             background: #FF5500;
         }
-
         .toggle-switch-handle {
             width: 22px;
             height: 22px;
@@ -322,16 +292,13 @@
             transition: transform 0.2s ease;
             box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
-
         .toggle-switch.active .toggle-switch-handle {
             transform: translateX(20px);
         }
-
         .sound-buttons {
             display: flex;
             gap: 8px;
         }
-        
         .sound-btn {
             padding: 6px 12px;
             border-radius: 20px;
@@ -342,18 +309,15 @@
             background: #2A2F3A;
             color: #8E97A6;
         }
-        
         .sound-btn.active {
             background: #FF5500;
             color: white;
         }
-
         .teammate-avatar {
             width: 50px;
             height: 50px;
             transition: all 0.3s ease;
         }
-
         .teammate-avatar.connected {
             width: 60px;
             height: 60px;
@@ -361,13 +325,11 @@
             opacity: 1;
             animation: avatarPulse 0.5s ease;
         }
-
         @keyframes avatarPulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
-
         .connection-status {
             font-size: 16px;
             color: var(--text-secondary);
@@ -376,11 +338,9 @@
             font-weight: 500;
             transition: color 0.3s ease;
         }
-
         .connection-status.active {
             color: #4CAF50;
         }
-
         .connection-line {
             position: relative;
             width: 60px;
@@ -388,7 +348,6 @@
             background: var(--border-color);
             overflow: hidden;
         }
-
         .line-pulse {
             position: absolute;
             width: 30px;
@@ -396,38 +355,31 @@
             background: var(--accent);
             animation: pulse 1.5s infinite;
         }
-
         .connection-line.connected {
             background: #4CAF50;
         }
-
         .connection-line.connected .line-pulse {
             display: none;
         }
-
         @keyframes pulse {
             0% { left: -30px; }
             100% { left: 100%; }
         }
-
         .teammate-info {
             text-align: center;
             margin: 8px 0;
         }
-
         .teammate-nick {
             font-size: 20px;
             font-weight: 600;
             color: var(--text-primary);
         }
-
         .connection-rank-age {
             display: flex;
             justify-content: center;
             gap: 12px;
             margin: 8px 0;
         }
-
         .connection-rank,
         .connection-age {
             background: var(--surface);
@@ -437,18 +389,15 @@
             color: var(--text-secondary);
             border: 1px solid var(--border-color);
         }
-
         .tg-chat-button.active {
             background: var(--accent) !important;
             border: none;
             color: white;
             box-shadow: 0 4px 12px rgba(255, 85, 0, 0.3);
         }
-
         .tg-chat-button.active:hover {
             background: var(--accent-soft) !important;
         }
-
         .self-avatar .tg-avatar-svg img,
         .teammate-avatar .tg-avatar-svg img {
             width: 100%;
@@ -456,7 +405,6 @@
             border-radius: 50%;
             object-fit: cover;
         }
-
         .friend-row {
             display: flex;
             align-items: center;
@@ -467,15 +415,12 @@
             background: transparent;
             transition: background 0.2s ease;
         }
-
         .friend-row:hover {
             background: rgba(255, 255, 255, 0.03);
         }
-
         .friend-row:last-child {
             border-bottom: none;
         }
-
         .friend-avatar {
             width: 38px;
             height: 38px;
@@ -491,20 +436,17 @@
             font-weight: 600;
             color: #F5F5F5;
         }
-
         .friend-avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
         .friend-info {
             flex: 1;
             min-width: 0;
             display: flex;
             flex-direction: column;
         }
-
         .friend-id {
             font-size: 10px;
             color: #FF5500;
@@ -512,7 +454,6 @@
             letter-spacing: 0.3px;
             margin-bottom: 2px;
         }
-
         .friend-name {
             font-size: 15px;
             font-weight: 600;
@@ -521,7 +462,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
         .friend-actions {
             display: flex;
             align-items: center;
@@ -529,7 +469,6 @@
             flex-shrink: 0;
             margin-right: -6px;
         }
-
         .friend-profile-btn,
         .friend-tg-btn,
         .friend-delete-btn {
@@ -547,7 +486,6 @@
             transform: translateZ(0);
             -webkit-transform: translateZ(0);
         }
-
         .friend-profile-btn svg,
         .friend-tg-btn svg,
         .friend-delete-btn svg {
@@ -558,7 +496,6 @@
             max-width: none;
             flex-shrink: 0;
         }
-
         .friend-profile-btn:hover,
         .friend-tg-btn:hover,
         .friend-delete-btn:hover {
@@ -566,22 +503,18 @@
             z-index: 10;
             position: relative;
         }
-
         .friend-profile-btn svg circle,
         .friend-tg-btn svg circle,
         .friend-delete-btn svg circle {
             fill: #000000;
         }
-
         .friend-profile-btn svg path,
         .friend-tg-btn svg path {
             fill: #FFFFFF;
         }
-
         .friend-delete-btn svg g {
             stroke: #FFFFFF;
         }
-
         .friends-search {
             padding: 6px 16px 0 16px;
             width: 100%;
@@ -589,7 +522,6 @@
             position: relative;
             background: transparent;
         }
-
         .friends-search-input {
             width: 100%;
             height: 28px;
@@ -606,18 +538,15 @@
             box-sizing: border-box;
             line-height: 28px;
         }
-
         .friends-search-input::placeholder {
             color: #9BA1B0;
             font-weight: 400;
             opacity: 0.8;
         }
-
         .friends-search-input:focus {
             border-color: rgba(255, 255, 255, 0.2);
             background: rgba(15, 17, 21, 0.8);
         }
-
         .friends-search::after {
             content: "";
             position: absolute;
@@ -632,13 +561,11 @@
             z-index: 101;
             pointer-events: none;
         }
-
         .friends-list-container {
             padding: 4px 16px 0 16px;
             flex: 1;
             overflow-y: auto;
         }
-
         .case-icon {
             background: #1A1D24;
             border-radius: 12px;
@@ -647,17 +574,14 @@
             justify-content: center;
             min-height: 100px;
         }
-        
         .case-icon img {
             max-width: 100%;
             height: auto;
             transition: opacity 0.2s ease;
         }
-        
         .case-icon img[data-src] {
             opacity: 0;
         }
-        
         .case-icon img.loaded {
             opacity: 1;
         }
@@ -1235,115 +1159,124 @@
         </nav>
     </div>
 
-    <!-- JS ФАЙЛЫ -->
-    <script src="js/config.js"></script>
-    <script src="js/globals.js"></script>
-    <script src="js/navigation.js"></script>
-    <script src="js/settings.js"></script>
-    <script src="js/profile.js"></script>
-    <script src="js/avatar.js"></script>
-    <script src="js/friends.js"></script>
-    <script src="js/shop.js"></script>
-    <script src="js/search.js"></script>
-    <script src="js/logo.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/team.js"></script>
-    <script src="js/swipe.js"></script>
-
-    <!-- Скрипт для Lazy Loading и фоновой загрузки кейсов -->
+    <!-- JS ФАЙЛЫ с автоматической версией -->
     <script>
-    (function() {
-        const version = window.BUILD_VERSION || Date.now();
-        
-        // Добавляем версию к CSS
-        document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-            if (link.href && !link.href.includes('telegram')) {
-                link.href = link.href.split('?')[0] + '?v=' + version;
-            }
-        });
-        
-        // Функция загрузки картинок магазина
-        window.loadShopImages = function() {
-            const images = document.querySelectorAll('.case-icon img[data-src]');
-            images.forEach(img => {
-                if (img.dataset.src && !img.src) {
-                    const src = img.dataset.src + '?v=' + version;
-                    img.src = src;
-                    img.onload = function() {
-                        img.classList.add('loaded');
-                    };
-                }
-            });
-        };
-        
-        // Функция фоновой загрузки кейсов (через 2 секунды после загрузки)
-        function preloadCaseImagesBackground() {
-            console.log('🔄 Фоновая загрузка кейсов...');
-            const images = document.querySelectorAll('.case-icon img[data-src]');
-            let loadedCount = 0;
-            const total = images.length;
+        (function() {
+            const version = window.BUILD_VERSION || Date.now();
             
-            images.forEach(img => {
-                if (img.dataset.src && !img.src) {
-                    const src = img.dataset.src + '?v=' + version;
-                    img.src = src;
-                    img.onload = () => {
-                        loadedCount++;
-                        console.log(`✅ Кейс загружен (${loadedCount}/${total})`);
-                    };
-                    img.onerror = () => {
-                        loadedCount++;
-                        console.warn(`⚠️ Ошибка загрузки кейса`);
-                    };
+            // Список JS файлов
+            const jsFiles = [
+                'js/config.js',
+                'js/globals.js',
+                'js/navigation.js',
+                'js/settings.js',
+                'js/profile.js',
+                'js/avatar.js',
+                'js/friends.js',
+                'js/shop.js',
+                'js/search.js',
+                'js/logo.js',
+                'js/app.js',
+                'js/team.js',
+                'js/swipe.js'
+            ];
+            
+            // Добавляем версию к CSS
+            document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+                if (link.href && !link.href.includes('telegram')) {
+                    link.href = link.href.split('?')[0] + '?v=' + version;
                 }
             });
-        }
-        
-        // Запускаем фоновую загрузку через 2 секунды после загрузки страницы
-        setTimeout(() => {
-            if (document.getElementById('mainScreen')?.classList.contains('active')) {
-                preloadCaseImagesBackground();
-            } else {
-                // Ждем появления главного экрана
-                const observer = new MutationObserver(() => {
-                    if (document.getElementById('mainScreen')?.classList.contains('active')) {
-                        preloadCaseImagesBackground();
-                        observer.disconnect();
+            
+            // Добавляем JS динамически с версией
+            jsFiles.forEach(file => {
+                const script = document.createElement('script');
+                script.src = file + '?v=' + version;
+                script.async = false;
+                document.body.appendChild(script);
+            });
+            
+            // Функция загрузки картинок магазина
+            window.loadShopImages = function() {
+                const images = document.querySelectorAll('.case-icon img[data-src]');
+                images.forEach(img => {
+                    if (img.dataset.src && !img.src) {
+                        const src = img.dataset.src + '?v=' + version;
+                        img.src = src;
+                        img.onload = function() {
+                            img.classList.add('loaded');
+                        };
                     }
                 });
-                observer.observe(document.body, { attributes: true, subtree: true });
-                setTimeout(() => observer.disconnect(), 5000);
-            }
-        }, 2000);
-        
-        // Перехватываем открытие магазина (на случай если фоновая загрузка не успела)
-        const originalShowScreen = window.App?.showScreen;
-        if (originalShowScreen) {
-            window.App.showScreen = function(screenId, updateNav) {
-                originalShowScreen(screenId, updateNav);
-                if (screenId === 'shopScreen') {
-                    setTimeout(window.loadShopImages, 50);
-                }
             };
-        }
-        
-        if (!window.App) {
-            window.addEventListener('load', function() {
-                if (window.App && window.App.showScreen) {
-                    const orig = window.App.showScreen;
-                    window.App.showScreen = function(screenId, updateNav) {
-                        orig(screenId, updateNav);
-                        if (screenId === 'shopScreen') {
-                            setTimeout(window.loadShopImages, 50);
+            
+            // Функция фоновой загрузки кейсов
+            function preloadCaseImagesBackground() {
+                console.log('🔄 Фоновая загрузка кейсов...');
+                const images = document.querySelectorAll('.case-icon img[data-src]');
+                let loadedCount = 0;
+                const total = images.length;
+                
+                images.forEach(img => {
+                    if (img.dataset.src && !img.src) {
+                        const src = img.dataset.src + '?v=' + version;
+                        img.src = src;
+                        img.onload = () => {
+                            loadedCount++;
+                            console.log(`✅ Кейс загружен (${loadedCount}/${total})`);
+                        };
+                        img.onerror = () => {
+                            loadedCount++;
+                            console.warn(`⚠️ Ошибка загрузки кейса`);
+                        };
+                    }
+                });
+            }
+            
+            // Запускаем фоновую загрузку через 2 секунды
+            setTimeout(() => {
+                if (document.getElementById('mainScreen')?.classList.contains('active')) {
+                    preloadCaseImagesBackground();
+                } else {
+                    const observer = new MutationObserver(() => {
+                        if (document.getElementById('mainScreen')?.classList.contains('active')) {
+                            preloadCaseImagesBackground();
+                            observer.disconnect();
                         }
-                    };
+                    });
+                    observer.observe(document.body, { attributes: true, subtree: true });
+                    setTimeout(() => observer.disconnect(), 5000);
                 }
-            });
-        }
-        
-        console.log('✅ Версия для статики:', version);
-        console.log('✅ Фоновая загрузка кейсов активирована (через 2 секунды)');
-    })();
+            }, 2000);
+            
+            // Перехватываем открытие магазина
+            const originalShowScreen = window.App?.showScreen;
+            if (originalShowScreen) {
+                window.App.showScreen = function(screenId, updateNav) {
+                    originalShowScreen(screenId, updateNav);
+                    if (screenId === 'shopScreen') {
+                        setTimeout(window.loadShopImages, 50);
+                    }
+                };
+            }
+            
+            if (!window.App) {
+                window.addEventListener('load', function() {
+                    if (window.App && window.App.showScreen) {
+                        const orig = window.App.showScreen;
+                        window.App.showScreen = function(screenId, updateNav) {
+                            orig(screenId, updateNav);
+                            if (screenId === 'shopScreen') {
+                                setTimeout(window.loadShopImages, 50);
+                            }
+                        };
+                    }
+                });
+            }
+            
+            console.log('✅ Версия сборки:', version);
+            console.log('✅ Все ресурсы загружены с версией');
+        })();
     </script>
 </body>
 </html>
