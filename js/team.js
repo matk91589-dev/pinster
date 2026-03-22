@@ -34,7 +34,7 @@ const Team = {
             // Загружаем всё параллельно
             Promise.all([
                 this.loadAllPlayers(),
-                this.syncFriendsList()
+                this.loadFriendsList()
             ]).then(() => {
                 console.log('✅ Team: все данные загружены');
             });
@@ -44,47 +44,52 @@ const Team = {
             }
         }
     },
-
-    syncFriendsList() {
-        return new Promise((resolve) => {
-            if (window.Friends && window.Friends.friendsList) {
-                this.friendsList = window.Friends.friendsList;
-                this.filteredFriends = [...this.friendsList];
-                console.log('✅ Team: друзья синхронизированы, количество:', this.friendsList.length);
-                
-                if (this.currentTab === 'friends') {
-                    this.renderFriendsTab();
-                }
-                resolve();
-            } else {
-                console.log('⏳ Team: Friends еще не загружен, пробуем...');
-                // Пробуем несколько раз с интервалом
-                let attempts = 0;
-                const checkInterval = setInterval(() => {
-                    attempts++;
-                    if (window.Friends && window.Friends.friendsList) {
-                        this.friendsList = window.Friends.friendsList;
-                        this.filteredFriends = [...this.friendsList];
-                        console.log('✅ Team: друзья синхронизированы после проверки');
-                        
-                        if (this.currentTab === 'friends') {
-                            this.renderFriendsTab();
-                        }
-                        clearInterval(checkInterval);
-                        resolve();
-                    } else if (attempts > 10) {
-                        console.log('⚠️ Team: не удалось загрузить друзей');
-                        this.friendsList = [];
-                        this.filteredFriends = [];
-                        if (this.currentTab === 'friends') {
-                            this.renderFriendsTab();
-                        }
-                        clearInterval(checkInterval);
-                        resolve();
-                    }
-                }, 100);
+    
+    // ✅ НОВЫЙ МЕТОД: загрузка друзей напрямую из БД
+    async loadFriendsList() {
+        console.log('🔄 Team: загружаем друзей из БД...');
+        
+        if (!this.telegramId) {
+            console.error('❌ Нет telegram_id для загрузки друзей');
+            if (this.currentTab === 'friends') {
+                this.renderFriendsTab();
             }
-        });
+            return [];
+        }
+        
+        try {
+            const response = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/friends/list', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telegram_id: this.telegramId })
+            });
+            
+            const data = await response.json();
+            console.log('📦 Team: ответ друзей из БД:', data);
+            
+            if (data.status === 'ok' && data.friends) {
+                this.friendsList = data.friends;
+                this.filteredFriends = [...this.friendsList];
+                console.log('✅ Team: загружено друзей:', this.friendsList.length);
+            } else {
+                this.friendsList = [];
+                this.filteredFriends = [];
+            }
+            
+            if (this.currentTab === 'friends') {
+                this.renderFriendsTab();
+            }
+            
+            return this.friendsList;
+        } catch (error) {
+            console.error('❌ Ошибка загрузки друзей:', error);
+            this.friendsList = [];
+            this.filteredFriends = [];
+            if (this.currentTab === 'friends') {
+                this.renderFriendsTab();
+            }
+            return [];
+        }
     },
     
     async loadAllPlayers() {
@@ -103,7 +108,7 @@ const Team = {
             });
             
             const data = await response.json();
-            console.log('📦 Team ответ:', data);
+            console.log('📦 Team ответ (игроки):', data);
             
             if (data.status === 'ok' && data.users) {
                 this.allPlayers = data.users;
@@ -137,11 +142,6 @@ const Team = {
     renderFriendsTab() {
         const content = document.getElementById('teamContent');
         if (!content) return;
-        
-        if (window.Friends && window.Friends.friendsList) {
-            this.friendsList = window.Friends.friendsList;
-            this.filteredFriends = [...this.friendsList];
-        }
         
         let html = `
             <div class="friends-search">
@@ -184,7 +184,7 @@ const Team = {
         content.innerHTML = html;
         
         // Сразу настраиваем поиск
-        setTimeout(() => this.setupFriendsSearch(), 0);
+        setTimeout(() => this.setupFriendsSearch(), 50);
     },
     
     setupFriendsSearch() {
@@ -201,6 +201,9 @@ const Team = {
         if (this.searchTimeout) {
             clearTimeout(this.searchTimeout);
         }
+        
+        // Убираем старый обработчик
+        searchInput.oninput = null;
         
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.trim().toLowerCase();
@@ -299,10 +302,10 @@ const Team = {
         content.appendChild(searchDiv);
         content.appendChild(listDiv);
         
-        // Добавляем принудительные стили прямо в head
+        // Добавляем принудительные стили
         this.injectForcedStyles();
         
-        // Сразу настраиваем инпут (без setTimeout)
+        // Сразу настраиваем инпут
         const input = document.getElementById('teamSearchInput');
         if (input) {
             this.attachSearchHandler(input);
@@ -321,15 +324,12 @@ const Team = {
         }
     },
     
-    // Метод для принудительных стилей
     injectForcedStyles() {
-        // Проверяем, не добавляли ли уже
         if (document.getElementById('forced-search-styles')) return;
         
         const style = document.createElement('style');
         style.id = 'forced-search-styles';
         style.textContent = `
-            /* ПРИНУДИТЕЛЬНЫЕ СТИЛИ - перебивают всё */
             .players-list .player-row {
                 min-height: 58px !important;
                 padding: 8px 0 !important;
@@ -338,6 +338,7 @@ const Team = {
                 gap: 12px !important;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
                 background: transparent !important;
+                cursor: pointer !important;
             }
             .players-list .player-avatar {
                 width: 38px !important;
@@ -346,8 +347,10 @@ const Team = {
                 background: #1A1D24 !important;
                 flex-shrink: 0 !important;
                 overflow: hidden !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
             }
-            /* ТОЧНО КАК В ДРУЗЬЯХ */
             .players-list .player-id {
                 font-size: 10px !important;
                 color: #FF5500 !important;
@@ -356,8 +359,6 @@ const Team = {
                 margin-bottom: 2px !important;
                 font-family: 'Montserrat', sans-serif !important;
                 line-height: normal !important;
-                text-transform: none !important;
-                font-style: normal !important;
             }
             .players-list .player-nick {
                 font-size: 15px !important;
@@ -367,7 +368,6 @@ const Team = {
                 white-space: nowrap !important;
                 overflow: hidden !important;
                 text-overflow: ellipsis !important;
-                line-height: normal !important;
             }
             .players-list .player-arrow {
                 color: #FF5500 !important;
@@ -375,14 +375,12 @@ const Team = {
                 font-weight: 600 !important;
                 margin-left: auto !important;
                 padding-right: 4px !important;
+                cursor: pointer !important;
             }
-            
-            /* ФИКС ДЛЯ ПОЛЯ ПОИСКА */
             .players-search-input {
                 font-family: 'Montserrat', sans-serif !important;
                 font-size: 13px !important;
                 font-weight: 500 !important;
-                letter-spacing: normal !important;
                 line-height: 28px !important;
             }
             .players-search-input::placeholder {
@@ -400,16 +398,13 @@ const Team = {
     attachSearchHandler(input) {
         console.log('✅ Инпут поиска активирован');
         
-        // Убираем все атрибуты которые могут блокировать
         input.removeAttribute('readonly');
         input.removeAttribute('disabled');
         
-        // Убираем старый обработчик
         if (this.searchTimeout) {
             clearTimeout(this.searchTimeout);
         }
         
-        // Вешаем новый обработчик напрямую
         input.oninput = (e) => {
             const query = e.target.value.trim();
             
@@ -467,7 +462,7 @@ const Team = {
             return;
         }
         
-        console.log('🔍 Поиск:', query);
+        console.log('🔍 Поиск игроков:', query);
         
         try {
             const response = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/users/search', {
@@ -480,6 +475,7 @@ const Team = {
             });
             
             const data = await response.json();
+            console.log('📦 Результаты поиска:', data);
             
             if (data.status === 'ok' && data.users) {
                 this.renderSearchResults(data.users);
@@ -497,32 +493,55 @@ const Team = {
     // ============================================
     showFriendProfile(playerId) {
         console.log('👤 Профиль друга:', playerId);
-        alert(`Профиль друга ${playerId} (будет позже)`);
+        // Временно показываем alert, потом заменим на полноценный профиль
+        if (window.App) {
+            App.showAlert(`Профиль друга ${playerId}\n(функция в разработке)`);
+        } else {
+            alert(`Профиль друга ${playerId}\n(функция в разработке)`);
+        }
     },
     
     showPlayerProfile(playerId) {
         console.log('👤 Профиль игрока:', playerId);
-        alert(`Профиль игрока ${playerId} (будет позже)`);
+        if (window.App) {
+            App.showAlert(`Профиль игрока ${playerId}\n(функция в разработке)`);
+        } else {
+            alert(`Профиль игрока ${playerId}\n(функция в разработке)`);
+        }
     },
     
     openTelegramChat(playerId) {
-        console.log('📨 Открыть чат с другом:', playerId);
-        alert(`Чат с игроком ${playerId} (будет позже)`);
+        console.log('📨 Открыть чат с игроком:', playerId);
+        if (window.App) {
+            App.showAlert(`Чат с игроком ${playerId}\n(функция в разработке)`);
+        } else {
+            alert(`Чат с игроком ${playerId}\n(функция в разработке)`);
+        }
     },
     
     deleteFriend(playerId) {
         console.log('🗑️ Удалить друга:', playerId);
         if (confirm('Удалить пользователя из друзей?')) {
-            alert(`Удаление друга ${playerId} (будет позже)`);
+            if (window.App) {
+                App.showAlert(`Удаление друга ${playerId}\n(функция в разработке)`);
+            } else {
+                alert(`Удаление друга ${playerId}\n(функция в разработке)`);
+            }
         }
     },
     
     showRequests() {
-        alert('📨 Запросы в друзья (будет позже)');
+        if (window.App) {
+            App.showAlert('📨 Запросы в друзья\n(функция в разработке)');
+        } else {
+            alert('📨 Запросы в друзья (функция в разработке)');
+        }
     },
     
     goBack() {
-        App.showScreen('profileScreen', true);
+        if (window.App && App.showScreen) {
+            App.showScreen('profileScreen', true);
+        }
     }
 };
 
