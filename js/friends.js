@@ -10,7 +10,7 @@ const Friends = {
 
     init() {
         console.log('🔍 Friends.init() запущен');
-
+        
         if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
             this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
             console.log('✅ Telegram ID из WebApp:', this.telegramId);
@@ -34,7 +34,7 @@ const Friends = {
         console.log('📥 Запрос к /api/friends/list...');
         
         try {
-            // ✅ ЖЕСТКИЙ URL
+            // ✅ ПОЛНЫЙ URL С HTTPS
             const response = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/friends/list', {
                 method: 'POST',
                 headers: { 
