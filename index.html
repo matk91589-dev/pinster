@@ -6,13 +6,16 @@
     
     <title>Pingster — Telegram Mini App</title>
     
+    <!-- Глобальная версия (timestamp при загрузке) -->
     <script>
         window.BUILD_VERSION = Date.now();
         console.log('🔄 Версия сборки:', window.BUILD_VERSION);
     </script>
     
+    <!-- Telegram Mini App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
+    <!-- ========== ЗАЩИТА ОТ FOUC ========== -->
     <style>
         body {
             background-color: #0D0F15;
@@ -21,128 +24,567 @@
             opacity: 0;
             transition: opacity 0.15s ease;
         }
-        body.loaded { opacity: 1; }
-        .screen { display: none; }
-        .screen.active { display: flex; }
-        
-        /* ===== ФИКС КНОПОК ===== */
-        .mode-container {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 12px !important;
-            width: 100% !important;
-            visibility: visible !important;
-            opacity: 1 !important;
+        body.loaded {
+            opacity: 1;
         }
-        .mode-btn {
-            display: flex !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            transform: none !important;
-            animation: none !important;
-            width: 100% !important;
-            padding: 14px 20px !important;
-            background: #1A1D24 !important;
-            border: 1px solid #2A2F3A !important;
-            border-radius: 12px !important;
-            color: #F5F5F5 !important;
-            font-size: 16px !important;
-            font-weight: 600 !important;
-            cursor: pointer !important;
+        .screen {
+            display: none;
         }
-        .mode-btn.faceit { border-left: 4px solid #FF5500 !important; color: #FF5500 !important; }
-        .mode-btn.premier { border-left: 4px solid #FF5500 !important; color: #FF5500 !important; }
+        .screen.active {
+            display: flex;
+        }
     </style>
     
+    <!-- Основные CSS (версия добавляется автоматически) -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
     
+    <!-- Дополнительные стили -->
     <style>
-        .screen { transition: opacity 0.2s ease; opacity: 0; display: none; }
-        .screen.active { opacity: 1; display: flex; }
-        .edit-name-input { width: 100%; padding: 8px 12px; background: #1A1D24; border: 2px solid #FF5500; border-radius: 8px; color: #F5F5F5; font-size: 18px; font-weight: 600; font-family: 'Montserrat', sans-serif; outline: none; margin: 0; box-sizing: border-box; }
-        .edit-name-input:focus { border-color: #FF5500; box-shadow: 0 0 0 2px rgba(255, 85, 0, 0.2); }
-        .profile-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; width: 100%; }
-        .profile-name-row .profile-name, .profile-name-row .edit-name-input { flex: 1; min-width: 0; }
-        .tg-avatar-svg { width: 90px; height: 90px; border-radius: 50%; background: #2B2F36; display: flex; align-items: center; justify-content: center; }
-        .tg-avatar-svg svg { width: 42px; height: 42px; }
-        #diagnostic-badge { position: fixed; bottom: 10px; right: 10px; background: #FF5500; color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; z-index: 9999; display: none; }
-        .connection-button { width: 100%; margin-top: 24px; padding: 0 16px; }
-        .tg-chat-button { width: 100%; height: 52px; border-radius: 12px; border: none; font-size: 18px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: all 0.2s ease; background: transparent; border: 1.5px solid rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.5); pointer-events: none; }
-        .tg-chat-button.active { background: #37AEE2; border: none; color: white; pointer-events: auto; box-shadow: 0 4px 12px rgba(55, 174, 226, 0.3); }
-        .tg-chat-button.active:hover { background: #2E9AC9; transform: scale(1.02); }
-        .tg-chat-button svg { width: 22px; height: 22px; }
-        .tg-chat-button.active svg { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
-        .connection-tooltip { font-size: 13px; color: rgba(255, 255, 255, 0.3); text-align: center; margin-top: 8px; transition: color 0.2s ease; }
-        .connection-tooltip.active { color: #37AEE2; }
-        .settings-screen { padding: 0 !important; margin: 0 !important; width: 100% !important; height: 100%; overflow-y: auto !important; scrollbar-width: thin; scrollbar-color: #FF5500 #2A2F3A; }
-        .settings-screen .content { padding: 0 !important; margin: 0 !important; }
-        .settings-screen .phone-frame, .settings-screen main, .settings-screen .screen, .settings-screen .settings-content { padding: 0 !important; margin: 0 !important; }
-        .settings-screen::-webkit-scrollbar { width: 4px; }
-        .settings-screen::-webkit-scrollbar-track { background: #2A2F3A; }
-        .settings-screen::-webkit-scrollbar-thumb { background: #FF5500; border-radius: 4px; }
-        .settings-screen::-webkit-scrollbar-thumb:hover { background: #ff7700; }
-        .settings-header { padding: 12px 16px 8px 16px !important; margin: 0 !important; display: flex; justify-content: center; align-items: center; width: 100%; box-sizing: border-box; }
-        .settings-title { font-size: 20px; font-weight: 600; color: var(--text-primary); text-align: center; margin: 0; }
-        .settings-section { margin: 0 0 24px 0 !important; padding: 0 !important; width: 100%; }
-        .settings-section-title { font-size: 13px; font-weight: 600; color: #8E97A6; text-transform: uppercase; letter-spacing: 0.3px; margin: 0 0 8px 0 !important; padding: 0 16px !important; width: 100%; box-sizing: border-box; }
-        .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px !important; margin: 0 !important; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; width: 100%; box-sizing: border-box; }
-        .settings-row:last-child { border-bottom: none; }
-        .settings-row-link { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px !important; margin: 0 !important; border-bottom: 1px solid rgba(255,255,255,0.05); text-decoration: none; color: inherit; cursor: pointer; width: 100%; box-sizing: border-box; }
-        .settings-row-link:last-child { border-bottom: none; }
-        .settings-row-label { font-size: 16px; font-weight: 400; color: var(--text-primary); }
-        .settings-value { font-size: 14px; color: #8E97A6; }
-        .settings-arrow { font-size: 18px; color: #8E97A6; font-weight: 300; }
-        .toggle-switch { width: 46px; height: 26px; background: #2A2F3A; border-radius: 30px; position: relative; cursor: pointer; transition: background 0.2s ease; flex-shrink: 0; }
-        .toggle-switch.active { background: #FF5500; }
-        .toggle-switch-handle { width: 22px; height: 22px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform 0.2s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
-        .toggle-switch.active .toggle-switch-handle { transform: translateX(20px); }
-        .sound-buttons { display: flex; gap: 8px; }
-        .sound-btn { padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; background: #2A2F3A; color: #8E97A6; }
-        .sound-btn.active { background: #FF5500; color: white; }
-        .teammate-avatar { width: 50px; height: 50px; transition: all 0.3s ease; }
-        .teammate-avatar.connected { width: 60px; height: 60px; filter: grayscale(0); opacity: 1; animation: avatarPulse 0.5s ease; }
-        @keyframes avatarPulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        .connection-status { font-size: 16px; color: var(--text-secondary); text-align: center; margin: 8px 0; font-weight: 500; transition: color 0.3s ease; }
-        .connection-status.active { color: #4CAF50; }
-        .connection-line { position: relative; width: 60px; height: 2px; background: var(--border-color); overflow: hidden; }
-        .line-pulse { position: absolute; width: 30px; height: 100%; background: var(--accent); animation: pulse 1.5s infinite; }
-        .connection-line.connected { background: #4CAF50; }
-        .connection-line.connected .line-pulse { display: none; }
-        @keyframes pulse { 0% { left: -30px; } 100% { left: 100%; } }
-        .teammate-info { text-align: center; margin: 8px 0; }
-        .teammate-nick { font-size: 20px; font-weight: 600; color: var(--text-primary); }
-        .connection-rank-age { display: flex; justify-content: center; gap: 12px; margin: 8px 0; }
-        .connection-rank, .connection-age { background: var(--surface); padding: 6px 16px; border-radius: 20px; font-size: 14px; color: var(--text-secondary); border: 1px solid var(--border-color); }
-        .tg-chat-button.active { background: var(--accent) !important; border: none; color: white; box-shadow: 0 4px 12px rgba(255, 85, 0, 0.3); }
-        .tg-chat-button.active:hover { background: var(--accent-soft) !important; }
-        .self-avatar .tg-avatar-svg img, .teammate-avatar .tg-avatar-svg img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-        .friend-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.04); cursor: pointer; background: transparent; transition: background 0.2s ease; }
-        .friend-row:hover { background: rgba(255, 255, 255, 0.03); }
-        .friend-row:last-child { border-bottom: none; }
-        .friend-avatar { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; border: none; flex-shrink: 0; background: #1A1D24; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; color: #F5F5F5; }
-        .friend-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .friend-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-        .friend-id { font-size: 10px; color: #FF5500; font-weight: 600; letter-spacing: 0.3px; margin-bottom: 2px; }
-        .friend-name { font-size: 15px; font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .friend-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; margin-right: -6px; }
-        .friend-profile-btn, .friend-tg-btn, .friend-delete-btn { width: 36px; height: 36px; border: none; background: transparent !important; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; transition: transform 0.2s ease; overflow: visible; transform: translateZ(0); -webkit-transform: translateZ(0); }
-        .friend-profile-btn svg, .friend-tg-btn svg, .friend-delete-btn svg { background: transparent !important; display: block; width: 32px; height: 32px; max-width: none; flex-shrink: 0; }
-        .friend-profile-btn:hover, .friend-tg-btn:hover, .friend-delete-btn:hover { transform: scale(1.1); z-index: 10; position: relative; }
-        .friend-profile-btn svg circle, .friend-tg-btn svg circle, .friend-delete-btn svg circle { fill: #000000; }
-        .friend-profile-btn svg path, .friend-tg-btn svg path { fill: #FFFFFF; }
-        .friend-delete-btn svg g { stroke: #FFFFFF; }
-        .friends-search { padding: 6px 16px 0 16px; width: 100%; margin-bottom: 8px; position: relative; background: transparent; }
-        .friends-search-input { width: 100%; height: 28px; background: rgba(15, 17, 21, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px 8px 0 0; padding: 0 12px; font-size: 13px; font-weight: 500; color: #F5F5F5; outline: none; box-sizing: border-box; line-height: 28px; }
-        .friends-search-input::placeholder { color: #9BA1B0; font-weight: 400; opacity: 0.8; }
-        .friends-search-input:focus { border-color: rgba(255, 255, 255, 0.2); background: rgba(15, 17, 21, 0.8); }
-        .friends-search::after { content: ""; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 100px; height: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent); opacity: 0.4; filter: blur(0.3px); z-index: 101; pointer-events: none; }
-        .friends-list-container { padding: 4px 16px 0 16px; flex: 1; overflow-y: auto; }
-        .case-icon { background: #1A1D24; border-radius: 12px; display: flex; align-items: center; justify-content: center; min-height: 100px; }
-        .case-icon img { max-width: 100%; height: auto; transition: opacity 0.2s ease; }
-        .case-icon img[data-src] { opacity: 0; }
-        .case-icon img.loaded { opacity: 1; }
+        .screen {
+            transition: opacity 0.2s ease;
+            opacity: 0;
+            display: none;
+        }
+        .screen.active {
+            opacity: 1;
+            display: flex;
+        }
+        .edit-name-input {
+            width: 100%;
+            padding: 8px 12px;
+            background: #1A1D24;
+            border: 2px solid #FF5500;
+            border-radius: 8px;
+            color: #F5F5F5;
+            font-size: 18px;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            outline: none;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        .edit-name-input:focus {
+            border-color: #FF5500;
+            box-shadow: 0 0 0 2px rgba(255, 85, 0, 0.2);
+        }
+        .profile-name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+        .profile-name-row .profile-name,
+        .profile-name-row .edit-name-input {
+            flex: 1;
+            min-width: 0;
+        }
+        .tg-avatar-svg {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: #2B2F36;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tg-avatar-svg svg {
+            width: 42px;
+            height: 42px;
+        }
+        #diagnostic-badge {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: #FF5500;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 9999;
+            display: none;
+        }
+        .connection-button {
+            width: 100%;
+            margin-top: 24px;
+            padding: 0 16px;
+        }
+        .tg-chat-button {
+            width: 100%;
+            height: 52px;
+            border-radius: 12px;
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.5);
+            pointer-events: none;
+        }
+        .tg-chat-button.active {
+            background: #37AEE2;
+            border: none;
+            color: white;
+            pointer-events: auto;
+            box-shadow: 0 4px 12px rgba(55, 174, 226, 0.3);
+        }
+        .tg-chat-button.active:hover {
+            background: #2E9AC9;
+            transform: scale(1.02);
+        }
+        .tg-chat-button svg {
+            width: 22px;
+            height: 22px;
+        }
+        .tg-chat-button.active svg {
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        .connection-tooltip {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.3);
+            text-align: center;
+            margin-top: 8px;
+            transition: color 0.2s ease;
+        }
+        .connection-tooltip.active {
+            color: #37AEE2;
+        }
+
+        /* ===== ФИКС ДЛЯ НАСТРОЕК ===== */
+        .settings-screen {
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
+            height: 100%;
+            overflow-y: auto !important;
+            scrollbar-width: thin;
+            scrollbar-color: #FF5500 #2A2F3A;
+        }
+        .settings-screen .content {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .settings-screen .phone-frame,
+        .settings-screen main,
+        .settings-screen .screen,
+        .settings-screen .settings-content {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .settings-screen::-webkit-scrollbar {
+            width: 4px;
+        }
+        .settings-screen::-webkit-scrollbar-track {
+            background: #2A2F3A;
+        }
+        .settings-screen::-webkit-scrollbar-thumb {
+            background: #FF5500;
+            border-radius: 4px;
+        }
+        .settings-screen::-webkit-scrollbar-thumb:hover {
+            background: #ff7700;
+        }
+        .settings-header {
+            padding: 12px 16px 8px 16px !important;
+            margin: 0 !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .settings-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: center;
+            margin: 0;
+        }
+        .settings-section {
+            margin: 0 0 24px 0 !important;
+            padding: 0 !important;
+            width: 100%;
+        }
+        .settings-section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #8E97A6;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin: 0 0 8px 0 !important;
+            padding: 0 16px !important;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px !important;
+            margin: 0 !important;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .settings-row:last-child {
+            border-bottom: none;
+        }
+        .settings-row-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px !important;
+            margin: 0 !important;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .settings-row-link:last-child {
+            border-bottom: none;
+        }
+        .settings-row-label {
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-primary);
+        }
+        .settings-value {
+            font-size: 14px;
+            color: #8E97A6;
+        }
+        .settings-arrow {
+            font-size: 18px;
+            color: #8E97A6;
+            font-weight: 300;
+        }
+        .toggle-switch {
+            width: 46px;
+            height: 26px;
+            background: #2A2F3A;
+            border-radius: 30px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            flex-shrink: 0;
+        }
+        .toggle-switch.active {
+            background: #FF5500;
+        }
+        .toggle-switch-handle {
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .toggle-switch.active .toggle-switch-handle {
+            transform: translateX(20px);
+        }
+        .sound-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .sound-btn {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #2A2F3A;
+            color: #8E97A6;
+        }
+        .sound-btn.active {
+            background: #FF5500;
+            color: white;
+        }
+        .teammate-avatar {
+            width: 50px;
+            height: 50px;
+            transition: all 0.3s ease;
+        }
+        .teammate-avatar.connected {
+            width: 60px;
+            height: 60px;
+            filter: grayscale(0);
+            opacity: 1;
+            animation: avatarPulse 0.5s ease;
+        }
+        @keyframes avatarPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .connection-status {
+            font-size: 16px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin: 8px 0;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .connection-status.active {
+            color: #4CAF50;
+        }
+        .connection-line {
+            position: relative;
+            width: 60px;
+            height: 2px;
+            background: var(--border-color);
+            overflow: hidden;
+        }
+        .line-pulse {
+            position: absolute;
+            width: 30px;
+            height: 100%;
+            background: var(--accent);
+            animation: pulse 1.5s infinite;
+        }
+        .connection-line.connected {
+            background: #4CAF50;
+        }
+        .connection-line.connected .line-pulse {
+            display: none;
+        }
+        @keyframes pulse {
+            0% { left: -30px; }
+            100% { left: 100%; }
+        }
+        .teammate-info {
+            text-align: center;
+            margin: 8px 0;
+        }
+        .teammate-nick {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .connection-rank-age {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 8px 0;
+        }
+        .connection-rank,
+        .connection-age {
+            background: var(--surface);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+        .tg-chat-button.active {
+            background: var(--accent) !important;
+            border: none;
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 85, 0, 0.3);
+        }
+        .tg-chat-button.active:hover {
+            background: var(--accent-soft) !important;
+        }
+        .self-avatar .tg-avatar-svg img,
+        .teammate-avatar .tg-avatar-svg img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .friend-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            background: transparent;
+            transition: background 0.2s ease;
+        }
+        .friend-row:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .friend-row:last-child {
+            border-bottom: none;
+        }
+        .friend-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: none;
+            flex-shrink: 0;
+            background: #1A1D24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+            color: #F5F5F5;
+        }
+        .friend-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .friend-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .friend-id {
+            font-size: 10px;
+            color: #FF5500;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            margin-bottom: 2px;
+        }
+        .friend-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .friend-actions {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex-shrink: 0;
+            margin-right: -6px;
+        }
+        .friend-profile-btn,
+        .friend-tg-btn,
+        .friend-delete-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent !important;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+            overflow: visible;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
+        .friend-profile-btn svg,
+        .friend-tg-btn svg,
+        .friend-delete-btn svg {
+            background: transparent !important;
+            display: block;
+            width: 32px;
+            height: 32px;
+            max-width: none;
+            flex-shrink: 0;
+        }
+        .friend-profile-btn:hover,
+        .friend-tg-btn:hover,
+        .friend-delete-btn:hover {
+            transform: scale(1.1);
+            z-index: 10;
+            position: relative;
+        }
+        .friend-profile-btn svg circle,
+        .friend-tg-btn svg circle,
+        .friend-delete-btn svg circle {
+            fill: #000000;
+        }
+        .friend-profile-btn svg path,
+        .friend-tg-btn svg path {
+            fill: #FFFFFF;
+        }
+        .friend-delete-btn svg g {
+            stroke: #FFFFFF;
+        }
+        .friends-search {
+            padding: 6px 16px 0 16px;
+            width: 100%;
+            margin-bottom: 8px;
+            position: relative;
+            background: transparent;
+        }
+        .friends-search-input {
+            width: 100%;
+            height: 28px;
+            background: rgba(15, 17, 21, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px 8px 0 0;
+            padding: 0 12px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #F5F5F5;
+            outline: none;
+            box-sizing: border-box;
+            line-height: 28px;
+        }
+        .friends-search-input::placeholder {
+            color: #9BA1B0;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+        .friends-search-input:focus {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(15, 17, 21, 0.8);
+        }
+        .friends-search::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            opacity: 0.4;
+            filter: blur(0.3px);
+            z-index: 101;
+            pointer-events: none;
+        }
+        .friends-list-container {
+            padding: 4px 16px 0 16px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        .case-icon {
+            background: #1A1D24;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+        }
+        .case-icon img {
+            max-width: 100%;
+            height: auto;
+            transition: opacity 0.2s ease;
+        }
+        .case-icon img[data-src] {
+            opacity: 0;
+        }
+        .case-icon img.loaded {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -179,7 +621,6 @@
 
         <main class="content">
 
-            <!-- ГЛАВНЫЙ ЭКРАН С ID mainScreen -->
             <div id="mainScreen" class="screen main-screen">
                 <div class="section-title">Выбор режима</div>
                 <div class="section-subtitle">Подберите подходящий</div>
@@ -718,23 +1159,36 @@
         </nav>
     </div>
 
-    <!-- JS ФАЙЛЫ -->
+    <!-- JS ФАЙЛЫ с автоматической версией -->
     <script>
         (function() {
             const version = window.BUILD_VERSION || Date.now();
             
+            // Список JS файлов
             const jsFiles = [
-                'js/config.js', 'js/globals.js', 'js/navigation.js', 'js/settings.js',
-                'js/profile.js', 'js/avatar.js', 'js/friends.js', 'js/shop.js',
-                'js/search.js', 'js/logo.js', 'js/app.js', 'js/team.js', 'js/swipe.js'
+                'js/config.js',
+                'js/globals.js',
+                'js/navigation.js',
+                'js/settings.js',
+                'js/profile.js',
+                'js/avatar.js',
+                'js/friends.js',
+                'js/shop.js',
+                'js/search.js',
+                'js/logo.js',
+                'js/app.js',
+                'js/team.js',
+                'js/swipe.js'
             ];
             
+            // Добавляем версию к CSS
             document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
                 if (link.href && !link.href.includes('telegram')) {
                     link.href = link.href.split('?')[0] + '?v=' + version;
                 }
             });
             
+            // Добавляем JS динамически с версией
             jsFiles.forEach(file => {
                 const script = document.createElement('script');
                 script.src = file + '?v=' + version;
@@ -742,30 +1196,44 @@
                 document.body.appendChild(script);
             });
             
+            // Функция загрузки картинок магазина
             window.loadShopImages = function() {
                 const images = document.querySelectorAll('.case-icon img[data-src]');
                 images.forEach(img => {
                     if (img.dataset.src && !img.src) {
-                        img.src = img.dataset.src + '?v=' + version;
-                        img.onload = function() { img.classList.add('loaded'); };
+                        const src = img.dataset.src + '?v=' + version;
+                        img.src = src;
+                        img.onload = function() {
+                            img.classList.add('loaded');
+                        };
                     }
                 });
             };
             
+            // Функция фоновой загрузки кейсов
             function preloadCaseImagesBackground() {
                 console.log('🔄 Фоновая загрузка кейсов...');
                 const images = document.querySelectorAll('.case-icon img[data-src]');
                 let loadedCount = 0;
                 const total = images.length;
+                
                 images.forEach(img => {
                     if (img.dataset.src && !img.src) {
-                        img.src = img.dataset.src + '?v=' + version;
-                        img.onload = () => { loadedCount++; console.log(`✅ Кейс загружен (${loadedCount}/${total})`); };
-                        img.onerror = () => { loadedCount++; console.warn(`⚠️ Ошибка загрузки кейса`); };
+                        const src = img.dataset.src + '?v=' + version;
+                        img.src = src;
+                        img.onload = () => {
+                            loadedCount++;
+                            console.log(`✅ Кейс загружен (${loadedCount}/${total})`);
+                        };
+                        img.onerror = () => {
+                            loadedCount++;
+                            console.warn(`⚠️ Ошибка загрузки кейса`);
+                        };
                     }
                 });
             }
             
+            // Запускаем фоновую загрузку через 2 секунды
             setTimeout(() => {
                 if (document.getElementById('mainScreen')?.classList.contains('active')) {
                     preloadCaseImagesBackground();
@@ -781,7 +1249,33 @@
                 }
             }, 2000);
             
+            // Перехватываем открытие магазина
+            const originalShowScreen = window.App?.showScreen;
+            if (originalShowScreen) {
+                window.App.showScreen = function(screenId, updateNav) {
+                    originalShowScreen(screenId, updateNav);
+                    if (screenId === 'shopScreen') {
+                        setTimeout(window.loadShopImages, 50);
+                    }
+                };
+            }
+            
+            if (!window.App) {
+                window.addEventListener('load', function() {
+                    if (window.App && window.App.showScreen) {
+                        const orig = window.App.showScreen;
+                        window.App.showScreen = function(screenId, updateNav) {
+                            orig(screenId, updateNav);
+                            if (screenId === 'shopScreen') {
+                                setTimeout(window.loadShopImages, 50);
+                            }
+                        };
+                    }
+                });
+            }
+            
             console.log('✅ Версия сборки:', version);
+            console.log('✅ Все ресурсы загружены с версией');
         })();
     </script>
 </body>
