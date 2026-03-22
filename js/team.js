@@ -9,6 +9,7 @@ const Team = {
     filteredFriends: [],
     telegramId: null,
     searchTimeout: null,
+    BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
     
     init() {
         console.log('Team.init() запущен');
@@ -16,7 +17,9 @@ const Team = {
         if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
             this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
         } else {
-            this.telegramId = Profile.getTelegramId();
+            // Получаем из URL параметра
+            const urlParams = new URLSearchParams(window.location.search);
+            this.telegramId = urlParams.get('tg_id');
         }
         
         console.log('Team Telegram ID:', this.telegramId);
@@ -45,7 +48,7 @@ const Team = {
         }
     },
     
-    // ✅ НОВЫЙ МЕТОД: загрузка друзей напрямую из БД
+    // ✅ Загрузка друзей напрямую из БД
     async loadFriendsList() {
         console.log('🔄 Team: загружаем друзей из БД...');
         
@@ -58,11 +61,17 @@ const Team = {
         }
         
         try {
-            const response = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/friends/list', {
+            const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ telegram_id: this.telegramId })
             });
+            
+            console.log('📡 Статус ответа друзей:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
             
             const data = await response.json();
             console.log('📦 Team: ответ друзей из БД:', data);
@@ -101,11 +110,17 @@ const Team = {
         }
         
         try {
-            const response = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/users/all', {
+            const response = await fetch(`${this.BACKEND_URL}/api/users/all`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ telegram_id: this.telegramId })
             });
+            
+            console.log('📡 Статус ответа игроков:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
             
             const data = await response.json();
             console.log('📦 Team ответ (игроки):', data);
@@ -117,7 +132,7 @@ const Team = {
                 }
             }
         } catch (error) {
-            console.error('❌ Ошибка загрузки:', error);
+            console.error('❌ Ошибка загрузки игроков:', error);
         }
     },
     
@@ -271,7 +286,7 @@ const Team = {
     },
     
     // ============================================
-    // ВКЛАДКА ПОИСКА - МАКСИМАЛЬНО БЫСТРЫЙ ОТКЛИК
+    // ВКЛАДКА ПОИСКА
     // ============================================
     renderSearchTab() {
         const content = document.getElementById('teamContent');
@@ -465,7 +480,7 @@ const Team = {
         console.log('🔍 Поиск игроков:', query);
         
         try {
-            const response = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/users/search', {
+            const response = await fetch(`${this.BACKEND_URL}/api/users/search`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -473,6 +488,10 @@ const Team = {
                     query: query
                 })
             });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
             
             const data = await response.json();
             console.log('📦 Результаты поиска:', data);
@@ -493,7 +512,6 @@ const Team = {
     // ============================================
     showFriendProfile(playerId) {
         console.log('👤 Профиль друга:', playerId);
-        // Временно показываем alert, потом заменим на полноценный профиль
         if (window.App) {
             App.showAlert(`Профиль друга ${playerId}\n(функция в разработке)`);
         } else {
