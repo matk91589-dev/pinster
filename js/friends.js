@@ -7,6 +7,7 @@ const Friends = {
     filteredFriends: [],
     telegramId: null,
     searchTimeout: null,
+    BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
 
     init() {
         console.log('🔍 Friends.init() запущен');
@@ -35,7 +36,8 @@ const Friends = {
         console.log('📥 Запрос к /api/friends/list...');
         
         try {
-            const response = await fetch('matk91589-dev-pingster-backend-cee8.twc1.net/api/friends/list', {
+            // ✅ ИСПРАВЛЕНО: добавил https://
+            const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -47,6 +49,11 @@ const Friends = {
             });
             
             console.log('📦 Статус ответа:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            
             const data = await response.json();
             console.log('📦 Данные от сервера:', data);
             
@@ -78,6 +85,9 @@ const Friends = {
             console.log('✅ Поле поиска друзей настроено');
             searchInput.removeAttribute('readonly');
             searchInput.removeAttribute('disabled');
+            
+            // Убираем старый обработчик
+            searchInput.oninput = null;
             
             searchInput.addEventListener('input', (e) => {
                 const query = e.target.value.trim().toLowerCase();
@@ -198,7 +208,7 @@ const Friends = {
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
                 </div>
                 <div class="friend-actions">
-                    <!-- Кнопка профиля - НЕЗАПОЛНЕННАЯ (только обводка) -->
+                    <!-- Кнопка профиля -->
                     <button class="friend-profile-btn" onclick="event.stopPropagation(); Friends.showFriendProfile('${friend.player_id}')">
                         <svg width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="12" fill="#000000"/>
@@ -258,7 +268,11 @@ const Friends = {
     
     showFriendProfile(playerId) {
         console.log('👤 Профиль друга:', playerId);
-        alert(`Профиль друга ${playerId} (будет позже)`);
+        if (window.App) {
+            App.showAlert(`Профиль друга ${playerId}\n(функция в разработке)`);
+        } else {
+            alert(`Профиль друга ${playerId}\n(функция в разработке)`);
+        }
     },
     
     // ============================================
@@ -266,13 +280,21 @@ const Friends = {
     // ============================================
     openTelegramChat(playerId) {
         console.log('📨 Открыть чат с другом:', playerId);
-        alert(`Чат с игроком ${playerId} (будет позже)`);
+        if (window.App) {
+            App.showAlert(`Чат с игроком ${playerId}\n(функция в разработке)`);
+        } else {
+            alert(`Чат с игроком ${playerId}\n(функция в разработке)`);
+        }
     },
     
     deleteFriend(playerId) {
-        console.log('Удалить друга:', playerId);
+        console.log('🗑️ Удалить друга:', playerId);
         if (confirm('Удалить пользователя из друзей?')) {
-            alert(`Удаление друга ${playerId} (будет позже)`);
+            if (window.App) {
+                App.showAlert(`Удаление друга ${playerId}\n(функция в разработке)`);
+            } else {
+                alert(`Удаление друга ${playerId}\n(функция в разработке)`);
+            }
         }
     }
 };
