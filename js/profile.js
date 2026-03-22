@@ -85,15 +85,18 @@ const Profile = {
         });
     },
     
-    // ✅ ОСНОВНАЯ ЗАГРУЗКА ПРОФИЛЯ (БЕЗ АВАТАРА)
     async loadProfileFromServer() {
+        console.log('🔥 loadProfileFromServer ВЫЗВАН!');
+        
         this.telegramId = this.getTelegramId();
         console.log('Загрузка профиля для telegram_id:', this.telegramId);
         
         if (!this.telegramId) {
-            console.error('Нет telegram_id');
+            console.error('❌ Нет telegram_id!');
             return;
         }
+        
+        console.log('✅ telegram_id есть, делаю запрос...');
         
         try {
             const response = await fetch(`${this.BACKEND_URL}/api/profile/get`, {
@@ -102,15 +105,15 @@ const Profile = {
                 body: JSON.stringify({ telegram_id: this.telegramId })
             });
             
+            console.log('📡 Статус ответа:', response.status);
             const data = await response.json();
-            console.log('Данные профиля с сервера:', data);
+            console.log('📦 Данные профиля с сервера:', data);
             
             if (data.status === 'ok') {
                 this.savedName = data.nick || '-';
                 this.savedAge = data.age || '';
                 this.savedSteam = data.steam_link || '';
                 this.savedFaceitLink = data.faceit_link || '';
-                // ❌ НЕ сохраняем avatar здесь — он грузится отдельно
                 
                 this.tempName = this.savedName;
                 this.tempAge = this.savedAge;
@@ -118,19 +121,17 @@ const Profile = {
                 this.tempFaceitLink = this.savedFaceitLink;
                 
                 this.updateDisplay();
-                console.log('Профиль обновлен');
+                console.log('✅ Профиль обновлен');
                 
-                // ✅ Аватар загружаем отдельно
                 this.loadAvatar();
             } else {
-                console.error('Ошибка в ответе сервера:', data);
+                console.error('❌ Ошибка в ответе сервера:', data);
             }
         } catch (error) {
-            console.error('Ошибка загрузки профиля:', error);
+            console.error('❌ Ошибка загрузки профиля:', error);
         }
     },
     
-    // ✅ ЗАГРУЗКА АВАТАРА ОТДЕЛЬНО
     async loadAvatar() {
         console.log('🖼️ Загрузка аватара...');
         
@@ -150,12 +151,12 @@ const Profile = {
                 this.updateAvatarDisplay();
             }
         } catch (error) {
-            console.error('Ошибка загрузки аватара:', error);
+            console.error('❌ Ошибка загрузки аватара:', error);
         }
     },
     
     updateDisplay() {
-        console.log('Обновление отображения профиля');
+        console.log('🔄 Обновление отображения профиля');
         
         const profileNameEl = document.getElementById('profileName');
         if (profileNameEl) profileNameEl.textContent = this.savedName;
@@ -375,7 +376,7 @@ const Profile = {
                 if (window.Settings) Settings.success();
             }
         } catch (error) {
-            console.error('Ошибка отправки:', error);
+            console.error('❌ Ошибка отправки:', error);
             this.showToast('Ошибка сохранения');
             if (window.Settings) Settings.error();
         } finally {
@@ -635,9 +636,18 @@ const Profile = {
     }
 };
 
+// ✅ ИНИЦИАЛИЗАЦИЯ
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Profile: DOM загружен');
     Profile.loadSavedValues();
 });
+
+// ✅ ПРИНУДИТЕЛЬНЫЙ ВЫЗОВ ДЛЯ НАДЕЖНОСТИ (запасной вариант)
+setTimeout(() => {
+    console.log('🔥 Принудительная загрузка профиля (запасной вариант)');
+    if (window.Profile && Profile.loadProfileFromServer) {
+        Profile.loadProfileFromServer();
+    }
+}, 500);
 
 window.Profile = Profile;
