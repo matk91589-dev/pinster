@@ -73,13 +73,16 @@
                     if (data.pingcoins) localStorage.setItem('pingcoins', data.pingcoins);
                 }
                 
-                // ✅ Профиль грузим в фоне (через 1 секунду, не блокируем)
+                // ✅ Профиль грузим СРАЗУ после ответа (не через 1 секунду)
                 setTimeout(() => {
+                    console.log('📥 Попытка загрузить профиль...');
                     if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
                         console.log('📥 Фоновая загрузка профиля...');
                         Profile.loadProfileFromServer();
+                    } else {
+                        console.warn('⚠️ Profile.loadProfileFromServer не найден');
                     }
-                }, 1000);
+                }, 100);
             })
             .catch(error => {
                 console.error('Error initializing user:', error);
