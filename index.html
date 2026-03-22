@@ -1278,5 +1278,23 @@
             console.log('✅ Все ресурсы загружены с версией');
         })();
     </script>
+    <script>
+    // ГАРАНТИРОВАННЫЙ ЗАПУСК ПОСЛЕ ЗАГРУЗКИ DOM
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('✅ DOM загружен, запускаем главный экран');
+        setTimeout(function() {
+            if (window.App && App.showScreen) {
+                App.showScreen('mainScreen', true);
+            } else {
+                console.warn('⚠️ App не загружен, повторная попытка...');
+                setTimeout(function() {
+                    if (window.App && App.showScreen) {
+                        App.showScreen('mainScreen', true);
+                    }
+                }, 500);
+            }
+        }, 50);
+    });
+</script>
 </body>
 </html>
