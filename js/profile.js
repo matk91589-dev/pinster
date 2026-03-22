@@ -19,6 +19,7 @@ const Profile = {
     telegramId: null,
     toastTimeout: null,
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
+    avatarLoaded: false, // ✅ Флаг, чтобы не грузить аватар дважды
     
     generateRandomNick() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -85,6 +86,7 @@ const Profile = {
         });
     },
     
+    // ✅ ОСНОВНАЯ ЗАГРУЗКА ПРОФИЛЯ (БЕЗ АВАТАРА)
     async loadProfileFromServer() {
         console.log('🔥 loadProfileFromServer ВЫЗВАН!');
         
@@ -123,7 +125,8 @@ const Profile = {
                 this.updateDisplay();
                 console.log('✅ Профиль обновлен');
                 
-                this.loadAvatar();
+                // ✅ НЕ ГРУЗИМ АВАТАР СРАЗУ
+                // this.loadAvatar(); // ❌ УБРАНО
             } else {
                 console.error('❌ Ошибка в ответе сервера:', data);
             }
@@ -132,7 +135,13 @@ const Profile = {
         }
     },
     
-    async loadAvatar() {
+    // ✅ ЗАГРУЗКА АВАТАРА (ТОЛЬКО ПРИ ОТКРЫТИИ ПРОФИЛЯ ИЛИ ПО ЗАПРОСУ)
+    async loadAvatar(force = false) {
+        if (this.avatarLoaded && !force) {
+            console.log('🖼️ Аватар уже загружен, пропускаем');
+            return;
+        }
+        
         console.log('🖼️ Загрузка аватара...');
         
         try {
@@ -149,6 +158,7 @@ const Profile = {
                 this.savedAvatarUrl = data.avatar;
                 this.tempAvatarUrl = data.avatar;
                 this.updateAvatarDisplay();
+                this.avatarLoaded = true;
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки аватара:', error);
@@ -649,5 +659,13 @@ setTimeout(() => {
         Profile.loadProfileFromServer();
     }
 }, 500);
+
+// ✅ ЗАГРУЗКА АВАТАРА В ФОНЕ ЧЕРЕЗ 3 СЕКУНДЫ (НЕ БЛОКИРУЕТ СТАРТ)
+setTimeout(() => {
+    console.log('🖼️ Фоновая загрузка аватара через 3 секунды');
+    if (window.Profile && Profile.loadAvatar) {
+        Profile.loadAvatar();
+    }
+}, 3000);
 
 window.Profile = Profile;
