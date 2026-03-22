@@ -20,21 +20,44 @@
         });
     }
 
+    // Функция принудительного показа кнопок
+    function showMainScreenButtons() {
+        console.log('🔘 Принудительный показ кнопок...');
+        
+        const modeContainer = document.querySelector('.mode-container');
+        if (modeContainer) {
+            modeContainer.style.display = 'flex';
+            modeContainer.style.visibility = 'visible';
+            modeContainer.style.opacity = '1';
+        }
+        
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        if (modeBtns.length > 0) {
+            modeBtns.forEach(btn => {
+                btn.style.display = 'flex';
+                btn.style.visibility = 'visible';
+            });
+        }
+        
+        // Дополнительно: проверяем родительские элементы
+        const mainScreen = document.getElementById('mainScreen');
+        if (mainScreen) {
+            mainScreen.style.display = 'flex';
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         console.log('Запуск Pingster...');
         
-        // ✅ СРАЗУ показываем главный экран (до любых запросов)
+        // ✅ СРАЗУ показываем главный экран
         const mainScreen = document.getElementById('mainScreen');
         if (mainScreen) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             mainScreen.classList.add('active');
         }
         
-        // ✅ Принудительно показываем кнопки
-        const modeContainer = document.querySelector('.mode-container');
-        if (modeContainer) {
-            modeContainer.style.display = 'flex';
-        }
+        // ✅ ПРИНУДИТЕЛЬНО ПОКАЗЫВАЕМ КНОПКИ СРАЗУ
+        showMainScreenButtons();
         
         // Инициализация модулей (они не блокируют UI)
         try {
@@ -54,7 +77,7 @@
         console.log('Telegram ID:', telegram_id);
         
         if (telegram_id) {
-            // ✅ Асинхронно инициализируем пользователя (не блокирует UI)
+            // ✅ Асинхронно инициализируем пользователя
             fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/user/init', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -73,7 +96,7 @@
                     if (data.pingcoins) localStorage.setItem('pingcoins', data.pingcoins);
                 }
                 
-                // ✅ Профиль грузим СРАЗУ после ответа (не через 1 секунду)
+                // ✅ Профиль грузим через 100ms
                 setTimeout(() => {
                     console.log('📥 Попытка загрузить профиль...');
                     if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
@@ -97,6 +120,9 @@
         } else {
             console.warn('Нет Telegram ID');
         }
+        
+        // ✅ ПОВТОРНЫЙ ПОКАЗ КНОПОК ЧЕРЕЗ 200ms (на всякий случай)
+        setTimeout(showMainScreenButtons, 200);
         
         console.log('Pingster готов к работе!');
     });
@@ -147,12 +173,14 @@ Object.assign(window.App, {
             const modeContainer = document.querySelector('.mode-container');
             if (modeContainer) {
                 modeContainer.style.display = 'flex';
+                modeContainer.style.visibility = 'visible';
             }
             
             const modeBtns = document.querySelectorAll('.mode-btn');
             if (modeBtns.length > 0) {
                 modeBtns.forEach(btn => {
                     btn.style.display = 'flex';
+                    btn.style.visibility = 'visible';
                 });
             }
         }
@@ -176,13 +204,19 @@ Object.assign(window.App, {
             }
         }
         
-        // ✅ При возврате на главный экран — проверяем кнопки
+        // ✅ При возврате на главный экран — еще раз проверяем кнопки
         if (screenId === 'mainScreen') {
             setTimeout(() => {
                 const modeContainer = document.querySelector('.mode-container');
                 if (modeContainer) {
                     modeContainer.style.display = 'flex';
+                    modeContainer.style.visibility = 'visible';
                 }
+                const modeBtns = document.querySelectorAll('.mode-btn');
+                modeBtns.forEach(btn => {
+                    btn.style.display = 'flex';
+                    btn.style.visibility = 'visible';
+                });
             }, 50);
         }
     },
