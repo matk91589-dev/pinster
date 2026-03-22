@@ -57,19 +57,28 @@
                     localStorage.setItem('nick', data.nick);
                     localStorage.setItem('pingcoins', data.pingcoins);
                     
-                    if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
-                        console.log('📥 Загружаем данные профиля...');
-                        Profile.loadProfileFromServer();
+                    // ✅ СРАЗУ показываем главный экран
+                    if (window.App && App.showScreen) {
+                        App.showScreen('mainScreen', true);
                     } else {
-                        console.warn('⚠️ Profile.loadProfileFromServer не найден');
+                        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                        document.getElementById('mainScreen')?.classList.add('active');
                     }
-                }
-                
-                if (window.App && App.showScreen) {
-                    App.showScreen('mainScreen', true);
+                    
+                    // ✅ Профиль грузим в фоне (не блокируем интерфейс)
+                    setTimeout(() => {
+                        if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
+                            console.log('📥 Фоновая загрузка профиля...');
+                            Profile.loadProfileFromServer();
+                        }
+                    }, 100);
                 } else {
-                    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-                    document.getElementById('mainScreen')?.classList.add('active');
+                    // Если нет player_id — все равно показываем главный
+                    if (window.App && App.showScreen) {
+                        App.showScreen('mainScreen', true);
+                    } else {
+                        document.getElementById('mainScreen')?.classList.add('active');
+                    }
                 }
                 
                 setTimeout(() => {
@@ -139,6 +148,22 @@ Object.assign(window.App, {
             screen.classList.add('active');
         }
         
+        // ✅ ФИКС: принудительно показываем кнопки на главном экране
+        if (screenId === 'mainScreen') {
+            const modeContainer = document.querySelector('.mode-container');
+            if (modeContainer) {
+                modeContainer.style.display = 'flex';
+            }
+            
+            // Перестраиваем режимы (на случай если были скрыты)
+            const modeBtns = document.querySelectorAll('.mode-btn');
+            if (modeBtns.length > 0) {
+                modeBtns.forEach(btn => {
+                    btn.style.display = 'flex';
+                });
+            }
+        }
+        
         // Обновляем навигацию
         if (updateNav) {
             document.querySelectorAll('.nav-item').forEach(item => {
@@ -164,9 +189,13 @@ Object.assign(window.App, {
             } else if (screenId === 'profileScreen') {
                 document.getElementById('navProfile')?.classList.add('active');
                 
+                // Загружаем профиль при открытии, если еще не загружен
                 if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
-                    console.log('📥 Загружаем профиль при открытии экрана');
-                    Profile.loadProfileFromServer();
+                    const profileName = document.getElementById('profileName');
+                    if (profileName && profileName.textContent === '-') {
+                        console.log('📥 Загружаем профиль при открытии экрана');
+                        Profile.loadProfileFromServer();
+                    }
                 }
             }
         }
@@ -178,6 +207,16 @@ Object.assign(window.App, {
                     Search.checkMatchStatus();
                 }
             }, 1000);
+        }
+        
+        // ✅ ФИКС: при возврате на главный экран из другого
+        if (screenId === 'mainScreen') {
+            setTimeout(() => {
+                const modeContainer = document.querySelector('.mode-container');
+                if (modeContainer) {
+                    modeContainer.style.display = 'flex';
+                }
+            }, 50);
         }
     },
     
