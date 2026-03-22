@@ -84,9 +84,21 @@
                     if (data.pingcoins) localStorage.setItem('pingcoins', data.pingcoins);
                 }
                 
-                if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
-                    Profile.loadProfileFromServer();
-                }
+                // ✅ ВЫЗОВ ПРОФИЛЯ
+                setTimeout(() => {
+                    console.log('📥 Загружаем профиль...');
+                    if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
+                        Profile.loadProfileFromServer();
+                    } else {
+                        console.error('❌ Profile не найден!');
+                        // Пробуем еще раз через 1 секунду
+                        setTimeout(() => {
+                            if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
+                                Profile.loadProfileFromServer();
+                            }
+                        }, 1000);
+                    }
+                }, 100);
             })
             .catch(error => {
                 console.error('Error initializing user:', error);
