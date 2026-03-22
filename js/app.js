@@ -20,29 +20,46 @@
         });
     }
 
-    // Функция принудительного показа кнопок
-    function showMainScreenButtons() {
-        console.log('🔘 Принудительный показ кнопок...');
+    // Функция запуска анимации кнопок
+    function startButtonsAnimation() {
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        if (modeBtns.length === 0) return;
+        
+        console.log('🎬 Запуск анимации кнопок...');
+        
+        // Сбрасываем стили для анимации
+        modeBtns.forEach(btn => {
+            btn.style.opacity = '';
+            btn.style.transform = '';
+            btn.style.animation = 'none';
+        });
+        
+        // Форсируем перерисовку
+        void modeBtns[0].offsetHeight;
+        
+        // Запускаем анимацию с задержками
+        modeBtns.forEach((btn, index) => {
+            const delays = [0.08, 0.16, 0.24, 0.32];
+            btn.style.animation = `modeFade 0.45s ease forwards ${delays[index] || 0.08}s`;
+        });
+    }
+
+    // Функция принудительного показа кнопок (без анимации, если что-то пошло не так)
+    function forceShowButtons() {
+        console.log('🔘 Принудительный показ кнопок (без анимации)...');
+        
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        modeBtns.forEach(btn => {
+            btn.style.opacity = '1';
+            btn.style.transform = 'translateY(0)';
+            btn.style.visibility = 'visible';
+            btn.style.display = 'flex';
+        });
         
         const modeContainer = document.querySelector('.mode-container');
         if (modeContainer) {
             modeContainer.style.display = 'flex';
             modeContainer.style.visibility = 'visible';
-            modeContainer.style.opacity = '1';
-        }
-        
-        const modeBtns = document.querySelectorAll('.mode-btn');
-        if (modeBtns.length > 0) {
-            modeBtns.forEach(btn => {
-                btn.style.display = 'flex';
-                btn.style.visibility = 'visible';
-            });
-        }
-        
-        // Дополнительно: проверяем родительские элементы
-        const mainScreen = document.getElementById('mainScreen');
-        if (mainScreen) {
-            mainScreen.style.display = 'flex';
         }
     }
 
@@ -56,8 +73,8 @@
             mainScreen.classList.add('active');
         }
         
-        // ✅ ПРИНУДИТЕЛЬНО ПОКАЗЫВАЕМ КНОПКИ СРАЗУ
-        showMainScreenButtons();
+        // ✅ Запускаем анимацию кнопок
+        startButtonsAnimation();
         
         // Инициализация модулей (они не блокируют UI)
         try {
@@ -121,8 +138,22 @@
             console.warn('Нет Telegram ID');
         }
         
-        // ✅ ПОВТОРНЫЙ ПОКАЗ КНОПОК ЧЕРЕЗ 200ms (на всякий случай)
-        setTimeout(showMainScreenButtons, 200);
+        // ✅ Запасной вариант: если анимация не сработала, показываем кнопки через 500ms
+        setTimeout(() => {
+            const modeBtns = document.querySelectorAll('.mode-btn');
+            let allVisible = true;
+            modeBtns.forEach(btn => {
+                const style = getComputedStyle(btn);
+                if (style.opacity === '0' || style.display === 'none') {
+                    allVisible = false;
+                }
+            });
+            
+            if (!allVisible || modeBtns.length === 0) {
+                console.log('⚠️ Анимация не сработала, показываем кнопки принудительно');
+                forceShowButtons();
+            }
+        }, 500);
         
         console.log('Pingster готов к работе!');
     });
@@ -168,21 +199,35 @@ Object.assign(window.App, {
             screen.classList.add('active');
         }
         
-        // ✅ ФИКС: принудительно показываем кнопки на главном экране
+        // ✅ При открытии главного экрана — запускаем анимацию кнопок
         if (screenId === 'mainScreen') {
-            const modeContainer = document.querySelector('.mode-container');
-            if (modeContainer) {
-                modeContainer.style.display = 'flex';
-                modeContainer.style.visibility = 'visible';
-            }
-            
-            const modeBtns = document.querySelectorAll('.mode-btn');
-            if (modeBtns.length > 0) {
-                modeBtns.forEach(btn => {
-                    btn.style.display = 'flex';
-                    btn.style.visibility = 'visible';
-                });
-            }
+            setTimeout(() => {
+                const modeBtns = document.querySelectorAll('.mode-btn');
+                if (modeBtns.length > 0) {
+                    // Проверяем, видны ли кнопки
+                    let needAnimation = false;
+                    modeBtns.forEach(btn => {
+                        const style = getComputedStyle(btn);
+                        if (style.opacity === '0') {
+                            needAnimation = true;
+                        }
+                    });
+                    
+                    if (needAnimation) {
+                        // Запускаем анимацию
+                        modeBtns.forEach((btn, index) => {
+                            const delays = [0.08, 0.16, 0.24, 0.32];
+                            btn.style.animation = `modeFade 0.45s ease forwards ${delays[index] || 0.08}s`;
+                        });
+                    } else {
+                        // Если кнопки уже видны, просто убеждаемся что они есть
+                        modeBtns.forEach(btn => {
+                            btn.style.display = 'flex';
+                            btn.style.visibility = 'visible';
+                        });
+                    }
+                }
+            }, 50);
         }
         
         // Обновляем навигацию
@@ -202,22 +247,6 @@ Object.assign(window.App, {
             } else if (screenId === 'profileScreen') {
                 document.getElementById('navProfile')?.classList.add('active');
             }
-        }
-        
-        // ✅ При возврате на главный экран — еще раз проверяем кнопки
-        if (screenId === 'mainScreen') {
-            setTimeout(() => {
-                const modeContainer = document.querySelector('.mode-container');
-                if (modeContainer) {
-                    modeContainer.style.display = 'flex';
-                    modeContainer.style.visibility = 'visible';
-                }
-                const modeBtns = document.querySelectorAll('.mode-btn');
-                modeBtns.forEach(btn => {
-                    btn.style.display = 'flex';
-                    btn.style.visibility = 'visible';
-                });
-            }, 50);
         }
     },
     
