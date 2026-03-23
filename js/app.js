@@ -17,38 +17,19 @@
         });
     }
 
-    // ✅ Принудительный показ кнопок (на всякий случай)
-    function forceShowButtons() {
-        const modeBtns = document.querySelectorAll('.mode-btn');
-        if (modeBtns.length === 0) return;
-        modeBtns.forEach(btn => {
-            btn.style.opacity = '1';
-            btn.style.transform = 'translateY(0)';
-            btn.style.visibility = 'visible';
-            btn.style.display = 'flex';
-            btn.style.animation = 'none';
-        });
-        const modeContainer = document.querySelector('.mode-container');
-        if (modeContainer) {
-            modeContainer.style.display = 'flex';
-            modeContainer.style.visibility = 'visible';
-        }
-    }
+    // ✅ НЕТ ФУНКЦИИ forceShowButtons() — кнопки уже видны из CSS
 
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('🚀 Запуск Pingster...');
+        console.log('🚀 Запуск Pingster (JS)...');
         
-        // 1. СРАЗУ показываем главный экран
+        // ✅ ТОЛЬКО АКТИВИРУЕМ ЭКРАН (кнопки уже видны)
         const mainScreen = document.getElementById('mainScreen');
         if (mainScreen) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             mainScreen.classList.add('active');
         }
         
-        // 2. Принудительно показываем кнопки
-        forceShowButtons();
-        
-        // 3. Инициализация базовых модулей (не блокирует UI)
+        // Инициализация модулей
         try {
             if (typeof Shop !== 'undefined') Shop.init();
             if (typeof Friends !== 'undefined') Friends.init();
@@ -64,7 +45,6 @@
         console.log('Telegram ID:', telegram_id);
         
         if (telegram_id) {
-            // 4. Инициализация пользователя
             fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/user/init', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -81,30 +61,9 @@
                     if (data.nick) localStorage.setItem('nick', data.nick);
                     if (data.pingcoins) localStorage.setItem('pingcoins', data.pingcoins);
                 }
-                
-                // ✅ 5. ФОНОВАЯ ЗАГРУЗКА ПРОФИЛЯ И ДРУЗЕЙ (через 100ms)
-                setTimeout(() => {
-                    console.log('📥 Фоновая загрузка профиля...');
-                    if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
-                        Profile.loadProfileFromServer();
-                    }
-                    console.log('👥 Фоновая загрузка друзей...');
-                    if (typeof Friends !== 'undefined' && Friends.loadFriendsList) {
-                        Friends.loadFriendsList();
-                    }
-                }, 100);
-                
-                // ✅ 6. ФОНОВАЯ ЗАГРУЗКА МАГАЗИНА (через 2 секунды, после профиля)
-                setTimeout(() => {
-                    console.log('🛒 Фоновая загрузка магазина...');
-                    if (typeof window.loadShopImages === 'function') {
-                        window.loadShopImages();
-                    }
-                }, 2000);
             })
             .catch(error => console.error('Error initializing user:', error));
             
-            // Проверка мэтча через 2 секунды
             setTimeout(() => {
                 if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
                     Search.checkMatchStatus();
@@ -114,7 +73,7 @@
             console.warn('Нет Telegram ID');
         }
         
-        console.log('Pingster готов к работе!');
+        console.log('Pingster готов!');
     });
 })();
 
@@ -143,7 +102,7 @@ Object.assign(window.App, {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         screen.classList.add('active');
         
-        // ✅ Если открываем профиль, а данные еще не загружены — подгружаем
+        // ✅ ПРОФИЛЬ грузится ТОЛЬКО при открытии
         if (screenId === 'profileScreen') {
             setTimeout(() => {
                 if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
@@ -153,15 +112,6 @@ Object.assign(window.App, {
                     Profile.loadAvatar();
                 }
             }, 50);
-        }
-        
-        // ✅ Если открываем магазин, а картинки еще не загружены — подгружаем
-        if (screenId === 'shopScreen') {
-            setTimeout(() => {
-                if (typeof window.loadShopImages === 'function') {
-                    window.loadShopImages();
-                }
-            }, 100);
         }
         
         if (updateNav) {
