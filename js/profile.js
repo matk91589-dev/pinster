@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ - С ВАЛИДАЦИЕЙ ЧЕРЕЗ КРАСНУЮ РАМКУ
+// ПРОФИЛЬ - ОПТИМИЗИРОВАННЫЙ
 // ============================================
 
 const Profile = {
@@ -19,8 +19,7 @@ const Profile = {
     telegramId: null,
     toastTimeout: null,
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
-    avatarLoaded: false,
-    profileLoaded: false, // ✅ Добавляем флаг, чтобы не грузить дважды
+    isLoading: false, // ✅ защита от дублирования
     
     generateRandomNick() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -44,19 +43,13 @@ const Profile = {
         if (this.toastTimeout) {
             clearTimeout(this.toastTimeout);
         }
-        
         const existingToast = document.querySelector('.profile-toast');
-        if (existingToast) {
-            existingToast.remove();
-        }
-        
+        if (existingToast) existingToast.remove();
         const toast = document.createElement('div');
         toast.className = 'profile-toast';
         toast.textContent = message;
         document.body.appendChild(toast);
-        
         setTimeout(() => toast.classList.add('show'), 10);
-        
         this.toastTimeout = setTimeout(() => {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
@@ -87,23 +80,21 @@ const Profile = {
         });
     },
     
-    // ✅ ОСНОВНАЯ ЗАГРУЗКА ПРОФИЛЯ (с защитой от дублирования)
+    // ✅ ЗАГРУЗКА ПРОФИЛЯ (только по запросу, без блокировки)
     async loadProfileFromServer() {
-        // Защита от повторной загрузки
-        if (this.profileLoaded) {
-            console.log('📦 Профиль уже загружен, пропускаем');
+        if (this.isLoading) {
+            console.log('⏳ Профиль уже загружается...');
             return;
         }
         
-        // Если telegramId не установлен, пробуем получить
-        if (!this.telegramId) {
-            this.telegramId = this.getTelegramId();
-        }
+        this.isLoading = true;
         
-        console.log('🔥 Загрузка профиля для telegram_id:', this.telegramId);
+        this.telegramId = this.getTelegramId();
+        console.log('🔥 Загрузка профиля для:', this.telegramId);
         
         if (!this.telegramId) {
-            console.error('❌ Нет telegram_id!');
+            console.error('❌ Нет telegram_id');
+            this.isLoading = false;
             return;
         }
         
@@ -114,11 +105,7 @@ const Profile = {
                 body: JSON.stringify({ telegram_id: this.telegramId })
             });
             
-            console.log('📡 Статус ответа:', response.status);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
             console.log('📦 Данные профиля:', data);
@@ -135,29 +122,19 @@ const Profile = {
                 this.tempFaceitLink = this.savedFaceitLink;
                 
                 this.updateDisplay();
-                this.profileLoaded = true;
                 console.log('✅ Профиль загружен');
             }
         } catch (error) {
-            console.error('❌ Ошибка загрузки профиля:', error);
+            console.error('❌ Ошибка:', error);
+        } finally {
+            this.isLoading = false;
         }
     },
     
-    // ✅ ЗАГРУЗКА АВАТАРА (только при открытии профиля)
+    // ✅ ЗАГРУЗКА АВАТАРА (отдельно)
     async loadAvatar() {
-        if (this.avatarLoaded) {
-            console.log('🖼️ Аватар уже загружен');
-            return;
-        }
-        
-        if (!this.telegramId) {
-            this.telegramId = this.getTelegramId();
-        }
-        
-        if (!this.telegramId) {
-            console.warn('❌ Нет telegram_id для загрузки аватара');
-            return;
-        }
+        if (!this.telegramId) this.telegramId = this.getTelegramId();
+        if (!this.telegramId) return;
         
         console.log('🖼️ Загрузка аватара...');
         
@@ -168,28 +145,22 @@ const Profile = {
                 body: JSON.stringify({ telegram_id: this.telegramId })
             });
             
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
-            console.log('📦 Данные аватара:', data);
             
             if (data.status === 'ok' && data.avatar) {
                 this.savedAvatarUrl = data.avatar;
                 this.tempAvatarUrl = data.avatar;
                 this.updateAvatarDisplay();
-                this.avatarLoaded = true;
                 console.log('✅ Аватар загружен');
             }
         } catch (error) {
-            console.error('❌ Ошибка загрузки аватара:', error);
+            console.error('❌ Ошибка аватара:', error);
         }
     },
     
     updateDisplay() {
-        console.log('🔄 Обновление отображения профиля');
-        
         const profileNameEl = document.getElementById('profileName');
         if (profileNameEl) profileNameEl.textContent = this.savedName;
         
@@ -219,7 +190,6 @@ const Profile = {
     
     toggleEditMode() {
         if (window.Settings) Settings.click();
-        
         this.editMode = !this.editMode;
         
         const profileScreen = document.getElementById('profileScreen');
@@ -393,9 +363,7 @@ const Profile = {
                 body: JSON.stringify(dataToSend)
             });
             
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
             
@@ -412,7 +380,7 @@ const Profile = {
                 if (window.Settings) Settings.success();
             }
         } catch (error) {
-            console.error('❌ Ошибка отправки:', error);
+            console.error('❌ Ошибка:', error);
             this.showToast('Ошибка сохранения');
             if (window.Settings) Settings.error();
         } finally {
@@ -428,9 +396,7 @@ const Profile = {
             this.showToast('Для изменений перейдите в режим редактирования');
             return;
         }
-        
         if (window.Settings) Settings.click();
-        
         const profileName = document.getElementById('profileName');
         if (!profileName) return;
         
@@ -445,22 +411,10 @@ const Profile = {
         tempInput.className = 'profile-name-input';
         tempInput.value = this.tempName;
         tempInput.maxLength = 10;
-        tempInput.style.cssText = `
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: #FF5500;
-            font-size: clamp(16px, 5vw, 20px);
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            outline: none;
-            padding: 4px 0;
-            margin: 0;
-        `;
+        tempInput.style.cssText = `width:100%; background:transparent; border:none; color:#FF5500; font-size:clamp(16px,5vw,20px); font-weight:600; outline:none; padding:4px 0; margin:0;`;
         
         profileName.style.display = 'none';
         profileName.parentNode.insertBefore(tempInput, profileName.nextSibling);
-        
         setTimeout(() => tempInput.focus(), 50);
         
         const saveHandler = () => {
@@ -533,9 +487,8 @@ const Profile = {
         const profileName = document.getElementById('profileName');
         if (profileName) {
             profileName.addEventListener('click', (e) => {
-                if (this.editMode) {
-                    this.editName();
-                } else {
+                if (this.editMode) this.editName();
+                else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
@@ -546,9 +499,8 @@ const Profile = {
         const ageCard = document.getElementById('ageCard');
         if (ageCard) {
             ageCard.addEventListener('click', (e) => {
-                if (this.editMode) {
-                    this.editAge();
-                } else {
+                if (this.editMode) this.editAge();
+                else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
@@ -559,9 +511,8 @@ const Profile = {
         const steamCard = document.getElementById('steamCard');
         if (steamCard) {
             steamCard.addEventListener('click', (e) => {
-                if (this.editMode) {
-                    this.editSteam();
-                } else {
+                if (this.editMode) this.editSteam();
+                else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
@@ -572,9 +523,8 @@ const Profile = {
         const faceitCard = document.getElementById('faceitLinkCard');
         if (faceitCard) {
             faceitCard.addEventListener('click', (e) => {
-                if (this.editMode) {
-                    this.editFaceitLink();
-                } else {
+                if (this.editMode) this.editFaceitLink();
+                else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
@@ -586,9 +536,7 @@ const Profile = {
     setupListeners() {
         const ageInput = document.getElementById('ageValue');
         if (ageInput) {
-            ageInput.addEventListener('blur', (e) => {
-                if (this.editMode) this.validateAge(e.target.value);
-            });
+            ageInput.addEventListener('blur', (e) => { if (this.editMode) this.validateAge(e.target.value); });
             ageInput.addEventListener('focus', () => {
                 if (this.editMode) {
                     const container = ageInput.closest('.stat-value');
@@ -610,9 +558,7 @@ const Profile = {
         
         const steamInput = document.getElementById('steamDisplay');
         if (steamInput) {
-            steamInput.addEventListener('blur', (e) => {
-                if (this.editMode) this.validateSteamLink(e.target.value);
-            });
+            steamInput.addEventListener('blur', (e) => { if (this.editMode) this.validateSteamLink(e.target.value); });
             steamInput.addEventListener('focus', () => {
                 if (this.editMode) {
                     const container = steamInput.closest('.profile-stat-value');
@@ -634,9 +580,7 @@ const Profile = {
         
         const faceitInput = document.getElementById('faceitLinkDisplay');
         if (faceitInput) {
-            faceitInput.addEventListener('blur', (e) => {
-                if (this.editMode) this.validateFaceitLink(e.target.value);
-            });
+            faceitInput.addEventListener('blur', (e) => { if (this.editMode) this.validateFaceitLink(e.target.value); });
             faceitInput.addEventListener('focus', () => {
                 if (this.editMode) {
                     const container = faceitInput.closest('.profile-stat-value');
@@ -657,14 +601,13 @@ const Profile = {
         }
         
         const applyBtn = document.getElementById('applyBtn');
-        if (applyBtn) {
-            applyBtn.style.display = 'none';
-        }
+        if (applyBtn) applyBtn.style.display = 'none';
     },
     
     loadSavedValues() {
-        console.log('Загружаем сохраненные значения профиля');
-        this.loadProfileFromServer();
+        console.log('Profile: готов к загрузке');
+        // ✅ НЕ ГРУЗИМ АВТОМАТИЧЕСКИ!
+        // this.loadProfileFromServer(); // ❌ УБРАНО
         setTimeout(() => {
             this.setupListeners();
             this.setupClickHandlers();
@@ -672,7 +615,6 @@ const Profile = {
     }
 };
 
-// ✅ ИНИЦИАЛИЗАЦИЯ
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Profile: DOM загружен');
     Profile.loadSavedValues();
