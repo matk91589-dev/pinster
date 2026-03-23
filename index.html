@@ -33,40 +33,6 @@
         .screen.active {
             display: flex;
         }
-        
-        /* ===== ПРИНУДИТЕЛЬНЫЙ ПОКАЗ КНОПОК (БЕЗ JS) ===== */
-        .mode-container {
-            display: flex !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            flex-wrap: wrap !important;
-            gap: 12px !important;
-            justify-content: center !important;
-            margin-top: 20px !important;
-            width: 100% !important;
-        }
-        .mode-btn {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
-            animation: none !important;
-            display: flex !important;
-            visibility: visible !important;
-            flex: 1 !important;
-            min-width: 100px !important;
-            padding: 12px 24px !important;
-            border-radius: 12px !important;
-            font-weight: 600 !important;
-            cursor: pointer !important;
-            background: #1A1D24 !important;
-            border: 1px solid #2A2F3A !important;
-            color: #F5F5F5 !important;
-            justify-content: center !important;
-            align-items: center !important;
-        }
-        .mode-btn.faceit, .mode-btn.premier {
-            border-left: 4px solid #FF5500 !important;
-            color: #FF5500 !important;
-        }
     </style>
     
     <!-- Основные CSS (версия добавляется автоматически) -->
@@ -1198,54 +1164,36 @@
         (function() {
             const version = window.BUILD_VERSION || Date.now();
             
-            // Список JS файлов
             const jsFiles = [
-                'js/config.js',
-                'js/globals.js',
-                'js/navigation.js',
-                'js/settings.js',
-                'js/profile.js',
-                'js/avatar.js',
-                'js/friends.js',
-                'js/shop.js',
-                'js/search.js',
-                'js/logo.js',
-                'js/app.js',
-                'js/team.js',
-                'js/swipe.js'
+                'js/config.js', 'js/globals.js', 'js/navigation.js', 'js/settings.js',
+                'js/profile.js', 'js/avatar.js', 'js/friends.js', 'js/shop.js',
+                'js/search.js', 'js/logo.js', 'js/app.js', 'js/team.js', 'js/swipe.js'
             ];
             
-            // Добавляем версию к CSS
             document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
                 if (link.href && !link.href.includes('telegram')) {
                     link.href = link.href.split('?')[0] + '?v=' + version;
                 }
             });
             
-            // Добавляем JS динамически с версией и defer
+            // ✅ Добавляем JS с defer в head
             jsFiles.forEach(file => {
                 const script = document.createElement('script');
                 script.src = file + '?v=' + version;
                 script.defer = true;
-                script.async = false;
                 document.head.appendChild(script);
             });
             
-            // Функция загрузки картинок магазина
             window.loadShopImages = function() {
                 const images = document.querySelectorAll('.case-icon img[data-src]');
                 images.forEach(img => {
                     if (img.dataset.src && !img.src) {
-                        const src = img.dataset.src + '?v=' + version;
-                        img.src = src;
-                        img.onload = function() {
-                            img.classList.add('loaded');
-                        };
+                        img.src = img.dataset.src + '?v=' + version;
+                        img.onload = () => img.classList.add('loaded');
                     }
                 });
             };
             
-            // Функция фоновой загрузки кейсов
             function preloadCaseImagesBackground() {
                 console.log('🔄 Фоновая загрузка кейсов...');
                 const images = document.querySelectorAll('.case-icon img[data-src]');
@@ -1253,8 +1201,7 @@
                 const total = images.length;
                 images.forEach(img => {
                     if (img.dataset.src && !img.src) {
-                        const src = img.dataset.src + '?v=' + version;
-                        img.src = src;
+                        img.src = img.dataset.src + '?v=' + version;
                         img.onload = () => {
                             loadedCount++;
                             console.log(`✅ Кейс загружен (${loadedCount}/${total})`);
@@ -1267,7 +1214,6 @@
                 });
             }
             
-            // Запускаем фоновую загрузку через 2 секунды
             setTimeout(() => {
                 if (document.getElementById('mainScreen')?.classList.contains('active')) {
                     preloadCaseImagesBackground();
@@ -1284,7 +1230,7 @@
             }, 2000);
             
             console.log('✅ Версия сборки:', version);
-            console.log('✅ Все ресурсы загружены с версией и defer');
+            console.log('✅ JS загружен с defer');
         })();
     </script>
 </body>
