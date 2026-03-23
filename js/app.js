@@ -38,30 +38,6 @@
         }
     }
 
-    // ✅ ФУНКЦИЯ ОЖИДАНИЯ PROFILE
-    function waitForProfileAndLoad(telegramId) {
-        let attempts = 0;
-        const maxAttempts = 30; // 3 секунды максимум
-
-        const interval = setInterval(() => {
-            attempts++;
-
-            if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
-                clearInterval(interval);
-                console.log('✅ Profile найден, загружаем...');
-                
-                // 🔥 КРИТИЧНО: устанавливаем telegramId в Profile
-                Profile.telegramId = telegramId;
-                Profile.loadProfileFromServer();
-
-            } else if (attempts >= maxAttempts) {
-                clearInterval(interval);
-                console.error('❌ Profile не загрузился после', maxAttempts, 'попыток');
-            }
-
-        }, 100);
-    }
-
     document.addEventListener('DOMContentLoaded', async () => {
         console.log('🚀 Запуск Pingster...');
         
@@ -74,7 +50,7 @@
         
         forceShowButtons();
         
-        // 2. Инициализация модулей (не блокируют UI)
+        // 2. Инициализация модулей
         try {
             if (typeof Shop !== 'undefined') Shop.init();
             if (typeof Friends !== 'undefined') Friends.init();
@@ -93,7 +69,6 @@
         
         if (telegram_id) {
             try {
-                // 3. Инициализация пользователя
                 const response = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/user/init', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -112,14 +87,13 @@
                     if (data.pingcoins) localStorage.setItem('pingcoins', data.pingcoins);
                 }
                 
-                // 4. Ждем загрузки Profile и загружаем профиль
-                waitForProfileAndLoad(telegram_id);
+                // ✅ НЕ ГРУЗИМ ПРОФИЛЬ АВТОМАТИЧЕСКИ
+                // Профиль загрузится при открытии экрана профиля
                 
             } catch (error) {
                 console.error('Error initializing user:', error);
             }
             
-            // 5. Проверка мэтча через 2 секунды
             setTimeout(() => {
                 if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
                     Search.checkMatchStatus();
@@ -163,6 +137,18 @@ Object.assign(window.App, {
         const screen = document.getElementById(screenId);
         if (screen) {
             screen.classList.add('active');
+        }
+        
+        // ✅ При открытии профиля — загружаем данные
+        if (screenId === 'profileScreen') {
+            setTimeout(() => {
+                if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
+                    Profile.loadProfileFromServer();
+                }
+                if (typeof Profile !== 'undefined' && Profile.loadAvatar) {
+                    Profile.loadAvatar();
+                }
+            }, 100);
         }
         
         if (updateNav) {
