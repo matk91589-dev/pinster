@@ -7,6 +7,8 @@ const Friends = {
     filteredFriends: [],
     telegramId: null,
     searchTimeout: null,
+    friendsListLoaded: false,
+    BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
 
     init() {
         console.log('🔍 Friends.init() запущен');
@@ -30,20 +32,33 @@ const Friends = {
         this.setupSearchInput();
     },
     
+    getTelegramId() {
+        if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
+            return Telegram.WebApp.initDataUnsafe.user.id;
+        }
+        return Profile.getTelegramId();
+    },
+    
     async loadFriendsList() {
-        console.log('📥 Запрос к /api/friends/list...');
+        if (this.friendsListLoaded) {
+            console.log('📦 Друзья уже загружены');
+            return;
+        }
+        
+        if (!this.telegramId) {
+            this.telegramId = this.getTelegramId();
+        }
+        
+        console.log('👥 Загрузка друзей...');
         
         try {
-            // ✅ ПОЛНЫЙ URL С HTTPS
-            const response = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/friends/list', {
+            const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Cache-Control': 'no-cache'
                 },
-                body: JSON.stringify({
-                    telegram_id: this.telegramId
-                })
+                body: JSON.stringify({ telegram_id: this.telegramId })
             });
             
             console.log('📦 Статус ответа:', response.status);
@@ -58,15 +73,16 @@ const Friends = {
             if (data.status === 'ok' && data.friends) {
                 this.friendsList = data.friends;
                 this.filteredFriends = [...this.friendsList];
-                console.log('✅ Загружено друзей:', this.friendsList.length);
-                this.renderFriends(this.filteredFriends);
                 this.updateFriendsCounter();
+                this.renderFriendsList();
+                this.friendsListLoaded = true;
+                console.log('✅ Друзья загружены:', this.friendsList.length);
             } else {
                 console.log('❌ Ошибка от сервера:', data.error);
                 this.showError(data.error || 'Нет данных');
             }
         } catch (error) {
-            console.error('❌ Ошибка загрузки:', error);
+            console.error('❌ Ошибка загрузки друзей:', error);
             this.showError('Не удалось загрузить друзей');
         }
     },
