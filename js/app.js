@@ -3,7 +3,6 @@
 // ============================================
 
 (function() {
-    // Telegram Mini App init (обязательно в самом начале)
     const tg = window.Telegram?.WebApp;
     
     if (tg) {
@@ -20,37 +19,16 @@
         });
     }
 
-    // Функция запуска анимации кнопок
-    function startButtonsAnimation() {
+    function forceShowButtons() {
         const modeBtns = document.querySelectorAll('.mode-btn');
         if (modeBtns.length === 0) return;
         
-        console.log('🎬 Запуск анимации кнопок...');
-        
-        modeBtns.forEach(btn => {
-            btn.style.opacity = '';
-            btn.style.transform = '';
-            btn.style.animation = 'none';
-        });
-        
-        void modeBtns[0].offsetHeight;
-        
-        modeBtns.forEach((btn, index) => {
-            const delays = [0.08, 0.16, 0.24, 0.32];
-            btn.style.animation = `modeFade 0.45s ease forwards ${delays[index] || 0.08}s`;
-        });
-    }
-
-    // Функция принудительного показа кнопок
-    function forceShowButtons() {
-        console.log('🔘 Принудительный показ кнопок (без анимации)...');
-        
-        const modeBtns = document.querySelectorAll('.mode-btn');
         modeBtns.forEach(btn => {
             btn.style.opacity = '1';
             btn.style.transform = 'translateY(0)';
             btn.style.visibility = 'visible';
             btn.style.display = 'flex';
+            btn.style.animation = 'none';
         });
         
         const modeContainer = document.querySelector('.mode-container');
@@ -60,17 +38,43 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('Запуск Pingster...');
+    // ✅ ФУНКЦИЯ ОЖИДАНИЯ PROFILE
+    function waitForProfileAndLoad(telegramId) {
+        let attempts = 0;
+        const maxAttempts = 30; // 3 секунды максимум
+
+        const interval = setInterval(() => {
+            attempts++;
+
+            if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
+                clearInterval(interval);
+                console.log('✅ Profile найден, загружаем...');
+                
+                // 🔥 КРИТИЧНО: устанавливаем telegramId в Profile
+                Profile.telegramId = telegramId;
+                Profile.loadProfileFromServer();
+
+            } else if (attempts >= maxAttempts) {
+                clearInterval(interval);
+                console.error('❌ Profile не загрузился после', maxAttempts, 'попыток');
+            }
+
+        }, 100);
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        console.log('🚀 Запуск Pingster...');
         
+        // 1. СРАЗУ показываем главный экран
         const mainScreen = document.getElementById('mainScreen');
         if (mainScreen) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             mainScreen.classList.add('active');
         }
         
-        startButtonsAnimation();
+        forceShowButtons();
         
+        // 2. Инициализация модулей (не блокируют UI)
         try {
             if (typeof Shop !== 'undefined') Shop.init();
             if (typeof Friends !== 'undefined') Friends.init();
@@ -88,16 +92,18 @@
         console.log('Telegram ID:', telegram_id);
         
         if (telegram_id) {
-            fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/user/init', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    telegram_id: telegram_id,
-                    username: tg?.initDataUnsafe?.user?.username || ''
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
+            try {
+                // 3. Инициализация пользователя
+                const response = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/user/init', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        telegram_id: telegram_id,
+                        username: tg?.initDataUnsafe?.user?.username || ''
+                    })
+                });
+                
+                const data = await response.json();
                 console.log('User init response:', data);
                 
                 if (data.player_id) {
@@ -106,20 +112,14 @@
                     if (data.pingcoins) localStorage.setItem('pingcoins', data.pingcoins);
                 }
                 
-                setTimeout(() => {
-                    console.log('📥 Попытка загрузить профиль...');
-                    if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
-                        console.log('📥 Фоновая загрузка профиля...');
-                        Profile.loadProfileFromServer();
-                    } else {
-                        console.warn('⚠️ Profile.loadProfileFromServer не найден');
-                    }
-                }, 100);
-            })
-            .catch(error => {
+                // 4. Ждем загрузки Profile и загружаем профиль
+                waitForProfileAndLoad(telegram_id);
+                
+            } catch (error) {
                 console.error('Error initializing user:', error);
-            });
+            }
             
+            // 5. Проверка мэтча через 2 секунды
             setTimeout(() => {
                 if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
                     Search.checkMatchStatus();
@@ -128,22 +128,6 @@
         } else {
             console.warn('Нет Telegram ID');
         }
-        
-        setTimeout(() => {
-            const modeBtns = document.querySelectorAll('.mode-btn');
-            let allVisible = true;
-            modeBtns.forEach(btn => {
-                const style = getComputedStyle(btn);
-                if (style.opacity === '0' || style.display === 'none') {
-                    allVisible = false;
-                }
-            });
-            
-            if (!allVisible || modeBtns.length === 0) {
-                console.log('⚠️ Анимация не сработала, показываем кнопки принудительно');
-                forceShowButtons();
-            }
-        }, 500);
         
         console.log('Pingster готов к работе!');
     });
@@ -166,12 +150,10 @@ Object.assign(window.App, {
         
         if (screenId === 'settingsScreen' && content) {
             content.classList.add('settings-mode');
-            console.log('✅ Добавлен класс settings-mode');
         }
         
         if (screenId === 'shopScreen' && content) {
             content.classList.add('shop-mode');
-            console.log('✅ Добавлен класс shop-mode');
         }
         
         document.querySelectorAll('.screen').forEach(screen => {
@@ -183,33 +165,6 @@ Object.assign(window.App, {
             screen.classList.add('active');
         }
         
-        if (screenId === 'mainScreen') {
-            setTimeout(() => {
-                const modeBtns = document.querySelectorAll('.mode-btn');
-                if (modeBtns.length > 0) {
-                    let needAnimation = false;
-                    modeBtns.forEach(btn => {
-                        const style = getComputedStyle(btn);
-                        if (style.opacity === '0') {
-                            needAnimation = true;
-                        }
-                    });
-                    
-                    if (needAnimation) {
-                        modeBtns.forEach((btn, index) => {
-                            const delays = [0.08, 0.16, 0.24, 0.32];
-                            btn.style.animation = `modeFade 0.45s ease forwards ${delays[index] || 0.08}s`;
-                        });
-                    } else {
-                        modeBtns.forEach(btn => {
-                            btn.style.display = 'flex';
-                            btn.style.visibility = 'visible';
-                        });
-                    }
-                }
-            }, 50);
-        }
-        
         if (updateNav) {
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
@@ -219,7 +174,6 @@ Object.assign(window.App, {
                 document.getElementById('navMain')?.classList.add('active');
             } else if (screenId === 'shopScreen') {
                 document.getElementById('navShop')?.classList.add('active');
-                
                 if (typeof Shop !== 'undefined' && Shop.renderShop) {
                     Shop.renderShop();
                 }
@@ -239,20 +193,3 @@ Object.assign(window.App, {
 });
 
 window.App = window.App;
-
-// ===== ПРИНУДИТЕЛЬНЫЙ ЗАПУСК ГЛАВНОГО ЭКРАНА =====
-setTimeout(() => {
-    console.log('🔥 Принудительный запуск главного экрана из app.js');
-    if (window.App && App.showScreen) {
-        App.showScreen('mainScreen', true);
-    } else {
-        // Если App еще не определен, пробуем еще раз
-        setTimeout(() => {
-            if (window.App && App.showScreen) {
-                App.showScreen('mainScreen', true);
-            } else {
-                console.error('❌ App не найден!');
-            }
-        }, 500);
-    }
-}, 50);
