@@ -19,7 +19,8 @@ const Profile = {
     telegramId: null,
     toastTimeout: null,
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
-    isLoading: false, // ✅ защита от дублирования
+    isLoading: false,
+    isProfileLoaded: false, // ✅ флаг, что профиль уже загружен
     
     generateRandomNick() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -80,8 +81,14 @@ const Profile = {
         });
     },
     
-    // ✅ ЗАГРУЗКА ПРОФИЛЯ (только по запросу, без блокировки)
+    // ✅ ЗАГРУЗКА ПРОФИЛЯ (только по запросу)
     async loadProfileFromServer() {
+        // Проверяем, загружен ли уже профиль
+        if (this.isProfileLoaded) {
+            console.log('✅ Профиль уже загружен, пропускаем');
+            return;
+        }
+        
         if (this.isLoading) {
             console.log('⏳ Профиль уже загружается...');
             return;
@@ -89,7 +96,11 @@ const Profile = {
         
         this.isLoading = true;
         
-        this.telegramId = this.getTelegramId();
+        // ✅ Убеждаемся, что telegramId установлен
+        if (!this.telegramId) {
+            this.telegramId = this.getTelegramId();
+        }
+        
         console.log('🔥 Загрузка профиля для:', this.telegramId);
         
         if (!this.telegramId) {
@@ -99,11 +110,18 @@ const Profile = {
         }
         
         try {
+            // ✅ Добавляем таймаут 5 секунд
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            
             const response = await fetch(`${this.BACKEND_URL}/api/profile/get`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId })
+                body: JSON.stringify({ telegram_id: this.telegramId }),
+                signal: controller.signal
             });
+            
+            clearTimeout(timeoutId);
             
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
@@ -122,10 +140,15 @@ const Profile = {
                 this.tempFaceitLink = this.savedFaceitLink;
                 
                 this.updateDisplay();
+                this.isProfileLoaded = true; // ✅ Помечаем как загруженный
                 console.log('✅ Профиль загружен');
             }
         } catch (error) {
-            console.error('❌ Ошибка:', error);
+            if (error.name === 'AbortError') {
+                console.error('❌ Таймаут загрузки профиля (5 сек)');
+            } else {
+                console.error('❌ Ошибка загрузки профиля:', error);
+            }
         } finally {
             this.isLoading = false;
         }
@@ -606,8 +629,8 @@ const Profile = {
     
     loadSavedValues() {
         console.log('Profile: готов к загрузке');
-        // ✅ НЕ ГРУЗИМ АВТОМАТИЧЕСКИ!
-        // this.loadProfileFromServer(); // ❌ УБРАНО
+        // ✅ НЕ ГРУЗИМ ПРОФИЛЬ АВТОМАТИЧЕСКИ!
+        // Профиль загрузится только при открытии экрана профиля
         setTimeout(() => {
             this.setupListeners();
             this.setupClickHandlers();
@@ -615,9 +638,11 @@ const Profile = {
     }
 };
 
+// ✅ ИНИЦИАЛИЗАЦИЯ (только слушатели, без загрузки данных)
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Profile: DOM загружен');
+    console.log('Profile: DOM загружен, инициализация слушателей');
     Profile.loadSavedValues();
+    // ❌ НЕТ вызова Profile.loadProfileFromServer() здесь!
 });
 
 window.Profile = Profile;
