@@ -17,60 +17,54 @@
         });
     }
 
-    // ✅ Функция для гарантированного показа главного экрана
-    function showMainScreen() {
-        const mainScreen = document.getElementById('mainScreen');
-        if (mainScreen) {
-            console.log('✅ mainScreen найден, показываем');
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            mainScreen.classList.add('active');
-            
-            // Активируем навигацию
-            const navMain = document.getElementById('navMain');
-            if (navMain) {
-                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-                navMain.classList.add('active');
-            }
-        } else {
-            console.warn('⚠️ mainScreen не найден, повторная попытка через 50ms');
-            setTimeout(showMainScreen, 50);
+    // ✅ Принудительный показ кнопок (на всякий случай)
+    function forceShowButtons() {
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        if (modeBtns.length === 0) return;
+        modeBtns.forEach(btn => {
+            btn.style.opacity = '1';
+            btn.style.transform = 'translateY(0)';
+            btn.style.visibility = 'visible';
+            btn.style.display = 'flex';
+            btn.style.animation = 'none';
+        });
+        const modeContainer = document.querySelector('.mode-container');
+        if (modeContainer) {
+            modeContainer.style.display = 'flex';
+            modeContainer.style.visibility = 'visible';
         }
     }
 
-    // ✅ Ждем полной загрузки DOM
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀 DOM загружен, запускаем Pingster...');
-            showMainScreen();
-            initModules();
-            initUser();
-        });
-    } else {
-        console.log('🚀 DOM уже загружен, запускаем Pingster...');
-        showMainScreen();
-        initModules();
-        initUser();
-    }
-    
-    function initModules() {
-        // Инициализация модулей (неблокирующая)
-        setTimeout(() => {
-            try {
-                if (typeof Shop !== 'undefined') Shop.init();
-                if (typeof Friends !== 'undefined') Friends.init();
-                if (typeof Search !== 'undefined') Search.init();
-            } catch (e) {
-                console.error('Ошибка инициализации модулей:', e);
-            }
-        }, 100);
-    }
-    
-    function initUser() {
-        const tg = window.Telegram?.WebApp;
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('🚀 Запуск Pingster...');
+        
+        // 1. СРАЗУ показываем главный экран
+        const mainScreen = document.getElementById('mainScreen');
+        if (mainScreen) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            mainScreen.classList.add('active');
+        }
+        
+        // 2. Принудительно показываем кнопки
+        forceShowButtons();
+        
+        // 3. Инициализация базовых модулей (не блокирует UI)
+        try {
+            if (typeof Shop !== 'undefined') Shop.init();
+            if (typeof Friends !== 'undefined') Friends.init();
+            if (typeof Search !== 'undefined') Search.init();
+        } catch (e) {
+            console.error('Ошибка инициализации модулей:', e);
+        }
+        
+        const settingsIcon = document.getElementById('settingsIcon');
+        if (settingsIcon) settingsIcon.classList.remove('active');
+        
         const telegram_id = tg?.initDataUnsafe?.user?.id;
         console.log('Telegram ID:', telegram_id);
         
         if (telegram_id) {
+            // 4. Инициализация пользователя
             fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/user/init', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -87,10 +81,30 @@
                     if (data.nick) localStorage.setItem('nick', data.nick);
                     if (data.pingcoins) localStorage.setItem('pingcoins', data.pingcoins);
                 }
+                
+                // ✅ 5. ФОНОВАЯ ЗАГРУЗКА ПРОФИЛЯ И ДРУЗЕЙ (через 100ms)
+                setTimeout(() => {
+                    console.log('📥 Фоновая загрузка профиля...');
+                    if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
+                        Profile.loadProfileFromServer();
+                    }
+                    console.log('👥 Фоновая загрузка друзей...');
+                    if (typeof Friends !== 'undefined' && Friends.loadFriendsList) {
+                        Friends.loadFriendsList();
+                    }
+                }, 100);
+                
+                // ✅ 6. ФОНОВАЯ ЗАГРУЗКА МАГАЗИНА (через 2 секунды, после профиля)
+                setTimeout(() => {
+                    console.log('🛒 Фоновая загрузка магазина...');
+                    if (typeof window.loadShopImages === 'function') {
+                        window.loadShopImages();
+                    }
+                }, 2000);
             })
             .catch(error => console.error('Error initializing user:', error));
             
-            // Проверка матча через 2 секунды
+            // Проверка мэтча через 2 секунды
             setTimeout(() => {
                 if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
                     Search.checkMatchStatus();
@@ -99,7 +113,9 @@
         } else {
             console.warn('Нет Telegram ID');
         }
-    }
+        
+        console.log('Pingster готов к работе!');
+    });
 })();
 
 if (!window.App) {
@@ -127,22 +143,19 @@ Object.assign(window.App, {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         screen.classList.add('active');
         
-        // ✅ ПРОФИЛЬ грузится ТОЛЬКО при открытии и с проверкой telegramId
+        // ✅ Если открываем профиль, а данные еще не загружены — подгружаем
         if (screenId === 'profileScreen') {
             setTimeout(() => {
-                if (typeof Profile !== 'undefined') {
-                    // Убеждаемся, что telegramId установлен
-                    if (!Profile.telegramId) {
-                        Profile.telegramId = Profile.getTelegramId();
-                    }
-                    // Загружаем профиль (только когда открыт экран)
+                if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
                     Profile.loadProfileFromServer();
+                }
+                if (typeof Profile !== 'undefined' && Profile.loadAvatar) {
                     Profile.loadAvatar();
                 }
             }, 50);
         }
         
-        // ✅ Загружаем картинки магазина только при открытии
+        // ✅ Если открываем магазин, а картинки еще не загружены — подгружаем
         if (screenId === 'shopScreen') {
             setTimeout(() => {
                 if (typeof window.loadShopImages === 'function') {
