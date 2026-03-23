@@ -33,6 +33,40 @@
         .screen.active {
             display: flex;
         }
+        
+        /* ===== ПРИНУДИТЕЛЬНЫЙ ПОКАЗ КНОПОК (БЕЗ JS) ===== */
+        .mode-container {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            flex-wrap: wrap !important;
+            gap: 12px !important;
+            justify-content: center !important;
+            margin-top: 20px !important;
+            width: 100% !important;
+        }
+        .mode-btn {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            animation: none !important;
+            display: flex !important;
+            visibility: visible !important;
+            flex: 1 !important;
+            min-width: 100px !important;
+            padding: 12px 24px !important;
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            background: #1A1D24 !important;
+            border: 1px solid #2A2F3A !important;
+            color: #F5F5F5 !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        .mode-btn.faceit, .mode-btn.premier {
+            border-left: 4px solid #FF5500 !important;
+            color: #FF5500 !important;
+        }
     </style>
     
     <!-- Основные CSS (версия добавляется автоматически) -->
@@ -1159,7 +1193,7 @@
         </nav>
     </div>
 
-    <!-- JS ФАЙЛЫ с автоматической версией -->
+    <!-- JS ФАЙЛЫ с автоматической версией и defer -->
     <script>
         (function() {
             const version = window.BUILD_VERSION || Date.now();
@@ -1188,12 +1222,13 @@
                 }
             });
             
-            // Добавляем JS динамически с версией
+            // Добавляем JS динамически с версией и defer
             jsFiles.forEach(file => {
                 const script = document.createElement('script');
                 script.src = file + '?v=' + version;
+                script.defer = true;
                 script.async = false;
-                document.body.appendChild(script);
+                document.head.appendChild(script);
             });
             
             // Функция загрузки картинок магазина
@@ -1216,7 +1251,6 @@
                 const images = document.querySelectorAll('.case-icon img[data-src]');
                 let loadedCount = 0;
                 const total = images.length;
-                
                 images.forEach(img => {
                     if (img.dataset.src && !img.src) {
                         const src = img.dataset.src + '?v=' + version;
@@ -1249,52 +1283,9 @@
                 }
             }, 2000);
             
-            // Перехватываем открытие магазина
-            const originalShowScreen = window.App?.showScreen;
-            if (originalShowScreen) {
-                window.App.showScreen = function(screenId, updateNav) {
-                    originalShowScreen(screenId, updateNav);
-                    if (screenId === 'shopScreen') {
-                        setTimeout(window.loadShopImages, 50);
-                    }
-                };
-            }
-            
-            if (!window.App) {
-                window.addEventListener('load', function() {
-                    if (window.App && window.App.showScreen) {
-                        const orig = window.App.showScreen;
-                        window.App.showScreen = function(screenId, updateNav) {
-                            orig(screenId, updateNav);
-                            if (screenId === 'shopScreen') {
-                                setTimeout(window.loadShopImages, 50);
-                            }
-                        };
-                    }
-                });
-            }
-            
             console.log('✅ Версия сборки:', version);
-            console.log('✅ Все ресурсы загружены с версией');
+            console.log('✅ Все ресурсы загружены с версией и defer');
         })();
     </script>
-    <script>
-    // ГАРАНТИРОВАННЫЙ ЗАПУСК ПОСЛЕ ЗАГРУЗКИ DOM
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('✅ DOM загружен, запускаем главный экран');
-        setTimeout(function() {
-            if (window.App && App.showScreen) {
-                App.showScreen('mainScreen', true);
-            } else {
-                console.warn('⚠️ App не загружен, повторная попытка...');
-                setTimeout(function() {
-                    if (window.App && App.showScreen) {
-                        App.showScreen('mainScreen', true);
-                    }
-                }, 500);
-            }
-        }, 50);
-    });
-</script>
 </body>
 </html>
