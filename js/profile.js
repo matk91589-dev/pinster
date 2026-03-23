@@ -81,9 +81,24 @@ const Profile = {
         });
     },
     
-    // ✅ ЗАГРУЗКА ПРОФИЛЯ (только по запросу)
+    // ✅ ФОНОВАЯ ЗАГРУЗКА ПРОФИЛЯ (вызывается из app.js)
+    async loadProfileInBackground() {
+        if (this.isProfileLoaded) {
+            console.log('✅ Профиль уже загружен, пропускаем');
+            return;
+        }
+        
+        if (this.isLoading) {
+            console.log('⏳ Профиль уже загружается...');
+            return;
+        }
+        
+        console.log('📥 Фоновая загрузка профиля...');
+        await this.loadProfileFromServer();
+    },
+    
+    // ✅ ЗАГРУЗКА ПРОФИЛЯ (основной метод)
     async loadProfileFromServer() {
-        // Проверяем, загружен ли уже профиль
         if (this.isProfileLoaded) {
             console.log('✅ Профиль уже загружен, пропускаем');
             return;
@@ -96,7 +111,6 @@ const Profile = {
         
         this.isLoading = true;
         
-        // ✅ Убеждаемся, что telegramId установлен
         if (!this.telegramId) {
             this.telegramId = this.getTelegramId();
         }
@@ -110,7 +124,6 @@ const Profile = {
         }
         
         try {
-            // ✅ Добавляем таймаут 5 секунд
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 5000);
             
@@ -140,7 +153,7 @@ const Profile = {
                 this.tempFaceitLink = this.savedFaceitLink;
                 
                 this.updateDisplay();
-                this.isProfileLoaded = true; // ✅ Помечаем как загруженный
+                this.isProfileLoaded = true;
                 console.log('✅ Профиль загружен');
             }
         } catch (error) {
@@ -630,7 +643,7 @@ const Profile = {
     loadSavedValues() {
         console.log('Profile: готов к загрузке');
         // ✅ НЕ ГРУЗИМ ПРОФИЛЬ АВТОМАТИЧЕСКИ!
-        // Профиль загрузится только при открытии экрана профиля
+        // Профиль загрузится через фон или при открытии экрана
         setTimeout(() => {
             this.setupListeners();
             this.setupClickHandlers();
