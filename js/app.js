@@ -17,30 +17,56 @@
         });
     }
 
-    // ✅ НЕТ ФУНКЦИИ forceShowButtons() — кнопки уже видны из CSS
-
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('🚀 Запуск Pingster (JS)...');
-        
-        // ✅ ТОЛЬКО АКТИВИРУЕМ ЭКРАН (кнопки уже видны)
+    // ✅ Функция для гарантированного показа главного экрана
+    function showMainScreen() {
         const mainScreen = document.getElementById('mainScreen');
         if (mainScreen) {
+            console.log('✅ mainScreen найден, показываем');
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             mainScreen.classList.add('active');
+            
+            // Активируем навигацию
+            const navMain = document.getElementById('navMain');
+            if (navMain) {
+                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                navMain.classList.add('active');
+            }
+        } else {
+            console.warn('⚠️ mainScreen не найден, повторная попытка через 50ms');
+            setTimeout(showMainScreen, 50);
         }
-        
-        // Инициализация модулей
-        try {
-            if (typeof Shop !== 'undefined') Shop.init();
-            if (typeof Friends !== 'undefined') Friends.init();
-            if (typeof Search !== 'undefined') Search.init();
-        } catch (e) {
-            console.error('Ошибка инициализации модулей:', e);
-        }
-        
-        const settingsIcon = document.getElementById('settingsIcon');
-        if (settingsIcon) settingsIcon.classList.remove('active');
-        
+    }
+
+    // ✅ Ждем полной загрузки DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 DOM загружен, запускаем Pingster...');
+            showMainScreen();
+            initModules();
+            initUser();
+        });
+    } else {
+        console.log('🚀 DOM уже загружен, запускаем Pingster...');
+        showMainScreen();
+        initModules();
+        initUser();
+    }
+    
+    function initModules() {
+        // Инициализация модулей (неблокирующая)
+        setTimeout(() => {
+            try {
+                if (typeof Shop !== 'undefined') Shop.init();
+                if (typeof Friends !== 'undefined') Friends.init();
+                if (typeof Search !== 'undefined') Search.init();
+            } catch (e) {
+                console.error('Ошибка инициализации модулей:', e);
+            }
+        }, 100);
+    }
+    
+    function initUser() {
+        const tg = window.Telegram?.WebApp;
         const telegram_id = tg?.initDataUnsafe?.user?.id;
         console.log('Telegram ID:', telegram_id);
         
@@ -64,6 +90,7 @@
             })
             .catch(error => console.error('Error initializing user:', error));
             
+            // Проверка матча через 2 секунды
             setTimeout(() => {
                 if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
                     Search.checkMatchStatus();
@@ -72,9 +99,7 @@
         } else {
             console.warn('Нет Telegram ID');
         }
-        
-        console.log('Pingster готов!');
-    });
+    }
 })();
 
 if (!window.App) {
@@ -102,16 +127,28 @@ Object.assign(window.App, {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         screen.classList.add('active');
         
-        // ✅ ПРОФИЛЬ грузится ТОЛЬКО при открытии
+        // ✅ ПРОФИЛЬ грузится ТОЛЬКО при открытии и с проверкой telegramId
         if (screenId === 'profileScreen') {
             setTimeout(() => {
-                if (typeof Profile !== 'undefined' && Profile.loadProfileFromServer) {
+                if (typeof Profile !== 'undefined') {
+                    // Убеждаемся, что telegramId установлен
+                    if (!Profile.telegramId) {
+                        Profile.telegramId = Profile.getTelegramId();
+                    }
+                    // Загружаем профиль (только когда открыт экран)
                     Profile.loadProfileFromServer();
-                }
-                if (typeof Profile !== 'undefined' && Profile.loadAvatar) {
                     Profile.loadAvatar();
                 }
             }, 50);
+        }
+        
+        // ✅ Загружаем картинки магазина только при открытии
+        if (screenId === 'shopScreen') {
+            setTimeout(() => {
+                if (typeof window.loadShopImages === 'function') {
+                    window.loadShopImages();
+                }
+            }, 100);
         }
         
         if (updateNav) {
