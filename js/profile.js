@@ -20,6 +20,7 @@ const Profile = {
     toastTimeout: null,
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
     avatarLoaded: false,
+    profileLoaded: false, // ✅ Добавляем флаг, чтобы не грузить дважды
     
     generateRandomNick() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -86,9 +87,19 @@ const Profile = {
         });
     },
     
-    // ✅ ОСНОВНАЯ ЗАГРУЗКА ПРОФИЛЯ
+    // ✅ ОСНОВНАЯ ЗАГРУЗКА ПРОФИЛЯ (с защитой от дублирования)
     async loadProfileFromServer() {
-        this.telegramId = this.getTelegramId();
+        // Защита от повторной загрузки
+        if (this.profileLoaded) {
+            console.log('📦 Профиль уже загружен, пропускаем');
+            return;
+        }
+        
+        // Если telegramId не установлен, пробуем получить
+        if (!this.telegramId) {
+            this.telegramId = this.getTelegramId();
+        }
+        
         console.log('🔥 Загрузка профиля для telegram_id:', this.telegramId);
         
         if (!this.telegramId) {
@@ -104,6 +115,11 @@ const Profile = {
             });
             
             console.log('📡 Статус ответа:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            
             const data = await response.json();
             console.log('📦 Данные профиля:', data);
             
@@ -119,6 +135,7 @@ const Profile = {
                 this.tempFaceitLink = this.savedFaceitLink;
                 
                 this.updateDisplay();
+                this.profileLoaded = true;
                 console.log('✅ Профиль загружен');
             }
         } catch (error) {
@@ -151,6 +168,10 @@ const Profile = {
                 body: JSON.stringify({ telegram_id: this.telegramId })
             });
             
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            
             const data = await response.json();
             console.log('📦 Данные аватара:', data);
             
@@ -159,6 +180,7 @@ const Profile = {
                 this.tempAvatarUrl = data.avatar;
                 this.updateAvatarDisplay();
                 this.avatarLoaded = true;
+                console.log('✅ Аватар загружен');
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки аватара:', error);
@@ -370,6 +392,10 @@ const Profile = {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dataToSend)
             });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
             
             const data = await response.json();
             
