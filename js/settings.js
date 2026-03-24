@@ -7,8 +7,34 @@ const Settings = {
     
     init() {
         this.loadSettings();
-        this.setupSoundButtons();
+        // Ждем появления кнопок в DOM
+        this.waitForSoundButtons();
         console.log('Настройки загружены');
+    },
+    
+    waitForSoundButtons() {
+        let attempts = 0;
+        const maxAttempts = 20; // 2 секунды максимум
+        
+        const checkButtons = () => {
+            const soundOn = document.getElementById('soundOn');
+            const soundOff = document.getElementById('soundOff');
+            
+            if (soundOn && soundOff) {
+                console.log('✅ Кнопки звука найдены');
+                this.setupSoundButtons();
+            } else {
+                attempts++;
+                if (attempts < maxAttempts) {
+                    console.log(`⏳ Ждем появления кнопок... (${attempts}/${maxAttempts})`);
+                    setTimeout(checkButtons, 100);
+                } else {
+                    console.error('❌ Кнопки звука не найдены после ожидания');
+                }
+            }
+        };
+        
+        checkButtons();
     },
     
     loadSettings() {
@@ -25,7 +51,7 @@ const Settings = {
             return;
         }
         
-        console.log('✅ Кнопки найдены');
+        console.log('✅ Кнопки найдены, настраиваем обработчики');
         
         // Убираем старые обработчики
         soundOn.onclick = null;
@@ -60,7 +86,6 @@ const Settings = {
         
         if (!soundOn || !soundOff) return;
         
-        // Используем тот же класс что в HTML (sound-option)
         if (this.sound) {
             soundOn.classList.add('active');
             soundOff.classList.remove('active');
@@ -79,7 +104,6 @@ const Settings = {
     playSound(type = 'light') {
         if (!this.sound) return;
         
-        // Вибрация для Telegram WebApp
         const tg = window.Telegram?.WebApp;
         if (tg?.HapticFeedback) {
             tg.HapticFeedback.notificationOccurred('success');
@@ -98,7 +122,7 @@ const Settings = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => Settings.init(), 100);
+    setTimeout(() => Settings.init(), 200);
 });
 
 window.Settings = Settings;
