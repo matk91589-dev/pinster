@@ -203,8 +203,18 @@ Object.assign(window.App, {
         // ✅ ИНИЦИАЛИЗАЦИЯ МАГАЗИНА
         if (screenId === 'shopScreen' && typeof Shop !== 'undefined') {
             setTimeout(() => {
-                if (typeof Shop.renderShop === 'function') Shop.renderShop();
-                if (typeof window.loadShopImages === 'function') window.loadShopImages();
+                // Сначала инициализируем, если еще не инициализирован
+                if (!Shop._initialized && Shop.init) {
+                    Shop.init();
+                    console.log('🛒 Shop инициализирован при открытии');
+                }
+                // Потом отрисовываем
+                if (typeof Shop.renderShop === 'function') {
+                    Shop.renderShop();
+                }
+                if (typeof window.loadShopImages === 'function') {
+                    window.loadShopImages();
+                }
             }, 100);
         }
         
