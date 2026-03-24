@@ -299,20 +299,37 @@ const App = {
             screen.classList.add('active');
             this.currentScreen = screenId;
             
-            // ✅ ИСПРАВЛЕНО: вместо loadSavedValues вызываем init или updateDisplay
+            // ✅ ИНИЦИАЛИЗАЦИЯ ПРОФИЛЯ
             if (screenId === 'profileScreen' && typeof Profile !== 'undefined') {
-                // Если профиль уже загружен - обновляем отображение
                 if (Profile.isProfileLoaded) {
                     Profile.updateDisplay();
                 } else if (Profile.init) {
                     Profile.init();
                 } else {
-                    // Если нет init, просто обновляем отображение
                     Profile.updateDisplay();
                 }
-            } else if (screenId === 'shopScreen' && typeof Shop !== 'undefined') {
+            }
+            
+            // ✅ ИНИЦИАЛИЗАЦИЯ МАГАЗИНА
+            if (screenId === 'shopScreen' && typeof Shop !== 'undefined') {
                 if (Shop.renderShop) {
                     Shop.renderShop();
+                }
+            }
+            
+            // ✅ ИНИЦИАЛИЗАЦИЯ НАСТРОЕК (КНОПКИ ЗВУКА)
+            if (screenId === 'settingsScreen') {
+                console.log('⚙️ Открыты настройки, инициализируем звук');
+                if (typeof Settings !== 'undefined') {
+                    // Принудительно вызываем инициализацию кнопок
+                    if (Settings.init) {
+                        Settings.init();
+                    } else {
+                        Settings.loadSettings();
+                        Settings.setupSoundButtons();
+                    }
+                } else {
+                    console.error('❌ Settings не определен');
                 }
             }
             
