@@ -32,12 +32,21 @@
         .screen.active {
             display: flex;
         }
+        /* Быстрая загрузка */
+        .loading-fast {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            color: #fff;
+            opacity: 0.7;
+        }
     </style>
     
-    <!-- Основные CSS -->
-    <link rel="stylesheet" href="css/style.css?v=<?= time() ?>">
-    <link rel="stylesheet" href="css/shop-cases.css?v=<?= time() ?>">
-    <link rel="stylesheet" href="css/animations.css?v=<?= time() ?>">
+    <!-- Основные CSS - правильная версия через JS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/shop-cases.css">
+    <link rel="stylesheet" href="css/animations.css">
     
     <!-- ВСЕ ТВОИ СТИЛИ (полностью сохранены) -->
     <style>
@@ -589,6 +598,14 @@
 <body>
     <script>
         (function() {
+            // Добавляем версию ко всем CSS
+            const version = Date.now();
+            document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+                if (link.href && !link.href.includes('telegram')) {
+                    link.href = link.href.split('?')[0] + '?v=' + version;
+                }
+            });
+            
             function showContent() {
                 document.body.classList.add('loaded');
             }
@@ -1241,7 +1258,7 @@
             
             loadAllScripts();
             
-            // ЛЕНИВАЯ ЗАГРУЗКА КЕЙСОВ - только когда нужны
+            // ЛЕНИВАЯ ЗАГРУЗКА КЕЙСОВ
             window.loadShopImages = function() {
                 const images = document.querySelectorAll('.case-icon img[data-src]');
                 images.forEach(img => {
