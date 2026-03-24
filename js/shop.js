@@ -1,9 +1,9 @@
 // ============================================
-// МАГАЗИН (Telegram Mini App версия) - СО ЗВУКАМИ
+// МАГАЗИН (Telegram Mini App версия) - С ХРАНЕНИЕМ В localStorage
 // ============================================
 
 const Shop = {
-    coins: 99999,
+    coins: 0,
     currentTab: 'cases',
     ownedCases: [],
     newItems: [],
@@ -49,12 +49,49 @@ const Shop = {
         if (this._initialized) return;
         this._initialized = true;
         
+        this.loadFromStorage();
         this.updateCoinsDisplay();
         this.setupEventListeners();
         console.log('✅ Shop инициализирован');
     },
     
-    // ✅ Отрисовка магазина
+    loadFromStorage() {
+        const savedCoins = localStorage.getItem('shop_coins');
+        if (savedCoins !== null) {
+            this.coins = parseInt(savedCoins) || 0;
+        } else {
+            this.coins = 99999;
+        }
+        
+        const savedInventory = localStorage.getItem('shop_inventory');
+        if (savedInventory !== null) {
+            try {
+                this.ownedCases = JSON.parse(savedInventory);
+            } catch(e) {
+                this.ownedCases = [];
+            }
+        } else {
+            this.ownedCases = [];
+        }
+        
+        const savedNewItems = localStorage.getItem('shop_new_items');
+        if (savedNewItems !== null) {
+            try {
+                this.newItems = JSON.parse(savedNewItems);
+            } catch(e) {
+                this.newItems = [];
+            }
+        } else {
+            this.newItems = [];
+        }
+    },
+    
+    saveToStorage() {
+        localStorage.setItem('shop_coins', this.coins);
+        localStorage.setItem('shop_inventory', JSON.stringify(this.ownedCases));
+        localStorage.setItem('shop_new_items', JSON.stringify(this.newItems));
+    },
+    
     renderShop() {
         this.renderCases();
         this.renderInventory();
@@ -241,9 +278,7 @@ const Shop = {
     buyCase(caseId) {
         if (window.Settings) Settings.click();
         
-        if (this.processingIds.has(caseId)) {
-            return;
-        }
+        if (this.processingIds.has(caseId)) return;
         
         const caseItem = this.cases.find(c => c.id === caseId);
         if (!caseItem) return;
@@ -276,6 +311,7 @@ const Shop = {
         });
         
         this.newItems.push(uniqueId);
+        this.saveToStorage();
         this.updateInventoryBadge();
         
         if (window.Settings) Settings.success();
@@ -299,12 +335,12 @@ const Shop = {
         if (newIndex !== -1) {
             this.newItems.splice(newIndex, 1);
             this.updateInventoryBadge();
+            this.saveToStorage();
         }
         
         this.renderInventory();
         
         if (window.App) App.hapticFeedback('light');
-        
         if (window.Settings) Settings.success();
         
         if (window.App) {
@@ -330,6 +366,7 @@ const Shop = {
         });
         
         this.newItems.push(uniqueId);
+        this.saveToStorage();
         this.updateInventoryBadge();
         
         if (this.currentTab === 'inventory') {
@@ -341,7 +378,7 @@ const Shop = {
     }
 };
 
-// ===== ПОКАЗ МАГАЗИНА (ОТКРЫТИЕ) =====
+// ===== ПОКАЗ МАГАЗИНА =====
 Shop.show = function() {
     const content = document.querySelector('.content');
     if (content) {
@@ -365,7 +402,6 @@ Shop.hide = function() {
     document.getElementById('shopScreen')?.classList.remove('active');
 };
 
-// ===== ЭКСПОРТ =====
 window.Shop = Shop;
 
 console.log('✅ shop.js загружен');
