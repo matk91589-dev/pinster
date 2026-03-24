@@ -591,12 +591,10 @@
                 }
             });
             
-            // Предзагрузка профиля
             let telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
             if (telegramId) {
                 localStorage.setItem('telegram_id', telegramId);
                 
-                // Мгновенная загрузка из кэша
                 const cachedNick = localStorage.getItem('profile_nick');
                 if (cachedNick) {
                     setTimeout(() => {
@@ -619,7 +617,6 @@
                     }, 50);
                 }
                 
-                // Фоновая загрузка с сервера
                 fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/profile/get', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -676,7 +673,6 @@
         </header>
 
         <main class="content">
-
             <div id="mainScreen" class="screen main-screen active">
                 <div class="section-title">Выбор режима</div>
                 <div class="section-subtitle">Подберите подходящий</div>
@@ -699,126 +695,21 @@
                 </div>
                 <div class="cases-section">
                     <div class="cases-grid">
-                        <div class="case-item">
-                            <div class="case-icon"><img data-src="cases/common_case.webp" alt="common case" loading="lazy"></div>
-                            <div class="case-info">
-                                <div class="case-name">Базовый кейс</div>
-                                <div class="case-price-row">
-                                    <span class="price-value">100</span>
-                                    <button class="buy-btn-simple" onclick="Shop.buyCase('common_case')">Купить</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="case-item">
-                            <div class="case-icon"><img data-src="cases/rare_case.webp" alt="rare case" loading="lazy"></div>
-                            <div class="case-info">
-                                <div class="case-name">Редкий кейс</div>
-                                <div class="case-price-row">
-                                    <span class="price-value">250</span>
-                                    <button class="buy-btn-simple" onclick="Shop.buyCase('rare_case')">Купить</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="case-item">
-                            <div class="case-icon"><img data-src="cases/premium_case.webp" alt="premium case" loading="lazy"></div>
-                            <div class="case-info">
-                                <div class="case-name">Легендарный кейс</div>
-                                <div class="case-price-row">
-                                    <span class="price-value">500</span>
-                                    <button class="buy-btn-simple" onclick="Shop.buyCase('premium_case')">Купить</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="case-item">
-                            <div class="case-icon"><img data-src="cases/secret_case.webp" alt="secret case" loading="lazy"></div>
-                            <div class="case-info">
-                                <div class="case-name">Секретный кейс</div>
-                                <div class="case-price-row">
-                                    <span class="price-value">1000</span>
-                                    <button class="buy-btn-simple" onclick="Shop.buyCase('secret_case')">Купить</button>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="case-item"><div class="case-icon"><img data-src="cases/common_case.webp" alt="common case" loading="lazy"></div><div class="case-info"><div class="case-name">Базовый кейс</div><div class="case-price-row"><span class="price-value">100</span><button class="buy-btn-simple" onclick="Shop.buyCase('common_case')">Купить</button></div></div></div>
+                        <div class="case-item"><div class="case-icon"><img data-src="cases/rare_case.webp" alt="rare case" loading="lazy"></div><div class="case-info"><div class="case-name">Редкий кейс</div><div class="case-price-row"><span class="price-value">250</span><button class="buy-btn-simple" onclick="Shop.buyCase('rare_case')">Купить</button></div></div></div>
+                        <div class="case-item"><div class="case-icon"><img data-src="cases/premium_case.webp" alt="premium case" loading="lazy"></div><div class="case-info"><div class="case-name">Легендарный кейс</div><div class="case-price-row"><span class="price-value">500</span><button class="buy-btn-simple" onclick="Shop.buyCase('premium_case')">Купить</button></div></div></div>
+                        <div class="case-item"><div class="case-icon"><img data-src="cases/secret_case.webp" alt="secret case" loading="lazy"></div><div class="case-info"><div class="case-name">Секретный кейс</div><div class="case-price-row"><span class="price-value">1000</span><button class="buy-btn-simple" onclick="Shop.buyCase('secret_case')">Купить</button></div></div></div>
                     </div>
                 </div>
-                <div class="inventory-section hidden">
-                    <div class="inventory-grid"></div>
-                </div>
+                <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
             </div>
 
             <div id="profileScreen" class="screen profile-screen">
-                <div class="title-row">
-                    <div class="title-left">
-                        <div class="section-title">Ваш профиль</div>
-                        <div class="edit-controls">
-                            <div id="editToggle" class="edit-title-icon" onclick="Profile.toggleEditMode()">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M12 20h9" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                                    <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <div id="applyBtn" class="apply-btn" onclick="Profile.applyChanges()">Применить</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="profile-header">
-                    <div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()">
-                        <div class="tg-avatar-svg">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                                <circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2" fill="none"/>
-                                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#ffffff" stroke-width="2" fill="none"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="profile-info">
-                        <div class="profile-name-label">ваш никнейм</div>
-                        <div class="profile-name-row">
-                            <span id="profileName" class="profile-name" onclick="Profile.editName()">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stats-row">
-                    <div class="stat-card" id="ratingCard">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" id="ratingValue" placeholder="0" value="0" readonly disabled>
-                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
-                        </div>
-                    </div>
-                    <div class="stat-card" id="ageCard">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="ageValueContainer">
-                            <input type="text" id="ageValue" placeholder="0-100" value="" maxlength="3" readonly>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="profile-stats">
-                    <div class="profile-stat-card" id="steamCard">
-                        <div class="profile-stat-label">Ссылка Steam</div>
-                        <input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" value="" maxlength="50" readonly>
-                    </div>
-                    <div class="profile-stat-card" id="faceitLinkCard">
-                        <div class="profile-stat-label">Ссылка Faceit</div>
-                        <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit / пропустите" value="" maxlength="50" readonly>
-                    </div>
-                </div>
-
-                <div class="friends-section" id="friendsSection">
-                    <div id="friendsHeader" class="friends-header">
-                        <span class="friends-title">Ваши друзья: 0</span>
-                        <div class="friends-actions">
-                            <div class="friends-arrow" onclick="Team.showTeamPage()">
-                                <svg viewBox="0 0 24 24" width="20" height="20">
-                                    <path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="friends-list" id="friendsList"></div>
-                </div>
+                <div class="title-row"><div class="title-left"><div class="section-title">Ваш профиль</div><div class="edit-controls"><div id="editToggle" class="edit-title-icon" onclick="Profile.toggleEditMode()"><svg viewBox="0 0 24 24"><path d="M12 20h9" stroke="white" stroke-width="2"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="white" stroke-width="2"/></svg></div><div id="applyBtn" class="apply-btn" onclick="Profile.applyChanges()">Применить</div></div></div></div>
+                <div class="profile-header"><div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()"><div class="tg-avatar-svg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#ffffff" stroke-width="2" fill="none"/></svg></div></div><div class="profile-info"><div class="profile-name-label">ваш никнейм</div><div class="profile-name-row"><span id="profileName" class="profile-name" onclick="Profile.editName()">-</span></div></div></div>
+                <div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input id="ratingValue" placeholder="0" value="0" readonly disabled><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card"><div class="stat-label">Возраст</div><div class="stat-value"><input id="ageValue" placeholder="0-100" maxlength="3" readonly></div></div></div>
+                <div class="profile-stats"><div class="profile-stat-card"><div class="profile-stat-label">Ссылка Steam</div><input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" readonly></div><div class="profile-stat-card"><div class="profile-stat-label">Ссылка Faceit</div><input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit" readonly></div></div>
+                <div class="friends-section"><div class="friends-header"><span class="friends-title">Ваши друзья: 0</span><div class="friends-actions"><div class="friends-arrow" onclick="Team.showTeamPage()"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div></div><div class="friends-list" id="friendsList"></div></div>
             </div>
 
             <div id="teamScreen" class="screen team-screen">
@@ -834,388 +725,85 @@
             </div>
 
             <div id="swipeScreen" class="screen swipe-screen">
-                <div class="swipe-header">
-                    <div class="swipe-title">Поиск тиммейтов</div>
-                    <div class="swipe-subtitle">
-                        <span class="swipe-subtitle-left">← отклонить</span>
-                        <span class="swipe-subtitle-divider">|</span>
-                        <span class="swipe-subtitle-right">принять →</span>
-                    </div>
-                </div>
-                <div class="swipe-container" id="swipeContainer">
-                    <div class="swipe-card" id="swipeCard">
-                        <div class="swipe-label swipe-label-left" id="swipeLabelLeft">SKIP</div>
-                        <div class="swipe-label swipe-label-right" id="swipeLabelRight">INVITE</div>
-                        <div class="swipe-card-content">
-                            <div class="swipe-timer" id="swipeTimer">30с</div>
-                            <div class="swipe-player-row">
-                                <div class="swipe-avatar">
-                                    <div class="tg-avatar-svg" style="width: 70px; height: 70px;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="35" height="35">
-                                            <circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/>
-                                            <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="swipe-name-block">
-                                    <div class="swipe-player-id" id="swipePlayerId"></div>
-                                    <div class="swipe-player-nick" id="swipePlayerNick"></div>
-                                </div>
-                                <div class="swipe-rating-block">
-                                    <span class="swipe-rating-value" id="swipeRatingValue"></span>
-                                    <span class="heart-icon">
-                                        <svg viewBox="0 0 24 24" width="18" height="18">
-                                            <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#F5F5F5" stroke-width="2" fill="none"/>
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="swipe-rating-line"></div>
-                            <div class="swipe-stats-row three-cols">
-                                <div class="swipe-stat-item">
-                                    <div class="swipe-stat-label">РАНГ</div>
-                                    <div class="swipe-stat-value" id="swipeRank"></div>
-                                </div>
-                                <div class="swipe-stat-item">
-                                    <div class="swipe-stat-label">ВОЗРАСТ</div>
-                                    <div class="swipe-stat-value" id="swipeAge"></div>
-                                </div>
-                                <div class="swipe-stat-item">
-                                    <div class="swipe-stat-label">СТИЛЬ</div>
-                                    <div class="swipe-stat-value" id="swipeStyle"></div>
-                                </div>
-                            </div>
-                            <div class="swipe-steam-container">
-                                <div class="swipe-link-label">Ссылка Steam</div>
-                                <div class="swipe-link-value" id="swipeSteamLink"></div>
-                            </div>
-                            <div class="swipe-faceit-container">
-                                <div class="swipe-link-label">Ссылка Faceit</div>
-                                <div class="swipe-link-value" id="swipeFaceitLink"></div>
-                            </div>
-                            <div class="swipe-comment">
-                                <div class="swipe-comment-label">Комментарий</div>
-                                <div class="swipe-comment-text" id="swipeComment"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="swipe-loading" id="swipeLoading">
-                    <div class="spinner-small"></div>
-                </div>
+                <div class="swipe-header"><div class="swipe-title">Поиск тиммейтов</div><div class="swipe-subtitle"><span class="swipe-subtitle-left">← отклонить</span><span class="swipe-subtitle-divider">|</span><span class="swipe-subtitle-right">принять →</span></div></div>
+                <div class="swipe-container"><div class="swipe-card"><div class="swipe-timer">30с</div><div class="swipe-card-content"><div class="swipe-player-row"><div class="swipe-avatar"><div class="tg-avatar-svg" style="width:70px;height:70px"><svg width="35" height="35" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div><div class="swipe-name-block"><div class="swipe-player-id" id="swipePlayerId"></div><div class="swipe-player-nick" id="swipePlayerNick"></div></div><div class="swipe-rating-block"><span class="swipe-rating-value" id="swipeRatingValue"></span><span class="heart-icon"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#F5F5F5" stroke-width="2" fill="none"/></svg></span></div></div><div class="swipe-stats-row three-cols"><div class="swipe-stat-item"><div class="swipe-stat-label">РАНГ</div><div class="swipe-stat-value" id="swipeRank"></div></div><div class="swipe-stat-item"><div class="swipe-stat-label">ВОЗРАСТ</div><div class="swipe-stat-value" id="swipeAge"></div></div><div class="swipe-stat-item"><div class="swipe-stat-label">СТИЛЬ</div><div class="swipe-stat-value" id="swipeStyle"></div></div></div><div class="swipe-steam-container"><div class="swipe-link-label">Ссылка Steam</div><div class="swipe-link-value" id="swipeSteamLink"></div></div><div class="swipe-faceit-container"><div class="swipe-link-label">Ссылка Faceit</div><div class="swipe-link-value" id="swipeFaceitLink"></div></div><div class="swipe-comment"><div class="swipe-comment-label">Комментарий</div><div class="swipe-comment-text" id="swipeComment"></div></div></div></div></div>
+                <div class="swipe-loading"><div class="spinner-small"></div></div>
             </div>
 
             <div id="connectionScreen" class="screen connection-screen">
-                <div class="swipe-header">
-                    <div class="swipe-title">Тиммейт найден</div>
-                </div>
-                <div class="swipe-container" id="connectionContainer">
-                    <div class="swipe-card" id="connectionCard">
-                        <div class="connection-timer" id="connectionTimer">30с</div>
-                        <div class="swipe-card-content connection-mode">
-                            <div class="connection-avatars">
-                                <div class="connection-avatar self-avatar">
-                                    <div class="tg-avatar-svg"></div>
-                                </div>
-                                <div class="connection-line">
-                                    <div class="line-pulse"></div>
-                                </div>
-                                <div class="connection-avatar teammate-avatar">
-                                    <div class="tg-avatar-svg"></div>
-                                </div>
-                            </div>
-                            <div class="teammate-info" data-player-id="">
-                                <span class="teammate-nick" id="teammateNick"></span>
-                            </div>
-                            <div class="connection-status" id="connectionStatus">Ожидание тиммейта</div>
-                            <div class="connection-button">
-                                <button class="tg-chat-button disabled" id="tgChatButton" disabled>
-                                    <span id="tgChatButtonText">Перейти в чат</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="swipe-loading" id="connectionLoading">
-                    <div class="spinner-small"></div>
-                </div>
+                <div class="swipe-header"><div class="swipe-title">Тиммейт найден</div></div>
+                <div class="swipe-container"><div class="swipe-card"><div class="connection-timer">30с</div><div class="swipe-card-content connection-mode"><div class="connection-avatars"><div class="connection-avatar self-avatar"><div class="tg-avatar-svg"></div></div><div class="connection-line"><div class="line-pulse"></div></div><div class="connection-avatar teammate-avatar"><div class="tg-avatar-svg"></div></div></div><div class="teammate-info"><span class="teammate-nick" id="teammateNick"></span></div><div class="connection-status" id="connectionStatus">Ожидание тиммейта</div><div class="connection-button"><button class="tg-chat-button disabled" id="tgChatButton" disabled>Перейти в чат</button></div></div></div></div>
+                <div class="swipe-loading"><div class="spinner-small"></div></div>
             </div>
 
             <div id="settingsScreen" class="screen settings-screen">
-                <div class="settings-header">
-                    <div class="settings-title">Настройки</div>
-                </div>
-                <div class="settings-section">
-                    <div class="settings-section-title">ОФОРМЛЕНИЕ</div>
-                    <div class="settings-row">
-                        <span class="settings-row-label">Звук</span>
-                        <div class="sound-toggle">
-                            <span class="sound-option" id="soundOff">выкл</span>
-                            <span class="sound-separator">/</span>
-                            <span class="sound-option" id="soundOn">вкл</span>
-                        </div>
-                    </div>
-                    <div class="settings-row">
-                        <span class="settings-row-label">тема</span>
-                        <span class="settings-value">черный</span>
-                    </div>
-                    <div class="settings-row">
-                        <span class="settings-row-label">язык</span>
-                        <span class="settings-value">русский</span>
-                    </div>
-                </div>
-                <div class="settings-section">
-                    <div class="settings-section-title">ОСНОВНЫЕ</div>
-                    <div class="settings-row">
-                        <span class="settings-row-label">реферальная система</span>
-                        <span class="settings-arrow">→</span>
-                    </div>
-                    <div class="settings-row" onclick="Team.showTeamPage()">
-                        <span class="settings-row-label">друзья</span>
-                        <span class="settings-arrow">→</span>
-                    </div>
-                    <div class="settings-row" onclick="App.showScreen('shopScreen', true)">
-                        <span class="settings-row-label">инвентарь</span>
-                        <span class="settings-arrow">→</span>
-                    </div>
-                </div>
-                <div class="settings-section">
-                    <div class="settings-section-title">СОЦСЕТИ</div>
-                    <a href="#" class="settings-row-link">
-                        <span class="settings-row-label">TikTok</span>
-                        <span class="settings-arrow">→</span>
-                    </a>
-                    <a href="#" class="settings-row-link">
-                        <span class="settings-row-label">Telegram канал</span>
-                        <span class="settings-arrow">→</span>
-                    </a>
-                </div>
-                <div class="settings-section">
-                    <div class="settings-section-title">ПОДДЕРЖКА</div>
-                    <a href="mailto:support@pingster.com" class="settings-row-link">
-                        <span class="settings-row-label">Gmail</span>
-                        <span class="settings-value">support@pingster.com</span>
-                    </a>
-                    <div class="settings-row">
-                        <span class="settings-row-label">Telegram</span>
-                        <span class="settings-value">@pingster_support</span>
-                    </div>
-                </div>
+                <div class="settings-header"><div class="settings-title">Настройки</div></div>
+                <div class="settings-section"><div class="settings-section-title">ОФОРМЛЕНИЕ</div><div class="settings-row"><span class="settings-row-label">Звук</span><div class="sound-toggle"><span class="sound-option" id="soundOff">выкл</span><span class="sound-separator">/</span><span class="sound-option" id="soundOn">вкл</span></div></div><div class="settings-row"><span class="settings-row-label">тема</span><span class="settings-value">черный</span></div><div class="settings-row"><span class="settings-row-label">язык</span><span class="settings-value">русский</span></div></div>
+                <div class="settings-section"><div class="settings-section-title">ОСНОВНЫЕ</div><div class="settings-row"><span class="settings-row-label">реферальная система</span><span class="settings-arrow">→</span></div><div class="settings-row" onclick="Team.showTeamPage()"><span class="settings-row-label">друзья</span><span class="settings-arrow">→</span></div><div class="settings-row" onclick="App.showScreen('shopScreen', true)"><span class="settings-row-label">инвентарь</span><span class="settings-arrow">→</span></div></div>
+                <div class="settings-section"><div class="settings-section-title">СОЦСЕТИ</div><a href="#" class="settings-row-link"><span class="settings-row-label">TikTok</span><span class="settings-arrow">→</span></a><a href="#" class="settings-row-link"><span class="settings-row-label">Telegram канал</span><span class="settings-arrow">→</span></a></div>
+                <div class="settings-section"><div class="settings-section-title">ПОДДЕРЖКА</div><a href="mailto:support@pingster.com" class="settings-row-link"><span class="settings-row-label">Gmail</span><span class="settings-value">support@pingster.com</span></a><div class="settings-row"><span class="settings-row-label">Telegram</span><span class="settings-value">@pingster_support</span></div></div>
             </div>
 
             <div id="faceitScreen" class="screen faceit-screen">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
-                    <div class="mode-title faceit">FACEIT</div>
-                </div>
+                <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title faceit">FACEIT</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">Faceit ELO</div>
-                <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="-" min="0" max="5000">
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" placeholder="0" value="0" readonly>
-                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
-                        </div>
-                    </div>
-                    <div class="stat-card" onclick="Profile.editFaceitAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value">
-                            <input type="text" id="faceitAgeValue" placeholder="21" value="21">
-                        </div>
-                    </div>
-                </div>
-                <div class="input-label">Ссылка Faceit</div>
-                <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="">
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
-                </div>
-                <div class="comment-section">
-                    <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="faceitComment" placeholder="Введите комментарий" maxlength="100"></textarea>
-                </div>
+                <div class="input-label">Faceit ELO</div><input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000">
+                <div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card" onclick="Profile.editFaceitAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="faceitAgeValue" placeholder="21" value="21"></div></div></div>
+                <div class="input-label">Ссылка Faceit</div><input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit">
+                <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
+                <div class="comment-section"><textarea class="comment-input" id="faceitComment" placeholder="Комментарий"></textarea></div>
                 <button class="mode-search-btn" onclick="Search.start('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
             </div>
 
             <div id="premierScreen" class="screen premier-screen">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
-                    <div class="mode-title premier">PREMIER</div>
-                </div>
+                <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title premier">PREMIER</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">CS Rating</div>
-                <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="12500" min="0" max="35000">
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" placeholder="0" value="0" readonly>
-                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
-                        </div>
-                    </div>
-                    <div class="stat-card" onclick="Profile.editPremierAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value">
-                            <input type="text" id="premierAgeValue" placeholder="21" value="21">
-                        </div>
-                    </div>
-                </div>
-                <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="">
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
-                </div>
-                <div class="comment-section">
-                    <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="premierComment" placeholder="Введите комментарий" maxlength="100"></textarea>
-                </div>
+                <div class="input-label">CS Rating</div><input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000">
+                <div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card" onclick="Profile.editPremierAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="premierAgeValue" placeholder="21" value="21"></div></div></div>
+                <div class="input-label">Ссылка Steam</div><input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam">
+                <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
+                <div class="comment-section"><textarea class="comment-input" id="premierComment" placeholder="Комментарий"></textarea></div>
                 <button class="mode-search-btn" onclick="Search.start('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
             </div>
 
             <div id="primeScreen" class="screen prime-screen">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
-                    <div class="mode-title prime">PRIME</div>
-                </div>
+                <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title prime">PRIME</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">Звание</div>
-                <select class="rank-select" id="primeRankSelect">
-                    <option selected>Выберите ранг</option>
-                    <option>Silver 1</option>
-                    <option>Silver 2</option>
-                    <option>Silver 3</option>
-                    <option>Silver 4</option>
-                    <option>Silver Elite</option>
-                    <option>Gold Nova 1</option>
-                    <option>Gold Nova 2</option>
-                    <option>Gold Nova 3</option>
-                    <option>Gold Nova Master</option>
-                    <option>Master Guardian 1</option>
-                    <option>Master Guardian 2</option>
-                    <option>Master Guardian Elite</option>
-                    <option>Distinguished Master Guardian</option>
-                    <option>Legendary Eagle</option>
-                    <option>Legendary Eagle Master</option>
-                    <option>Supreme Master First Class</option>
-                    <option>Global Elite</option>
-                </select>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" placeholder="0" value="0" readonly>
-                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
-                        </div>
-                    </div>
-                    <div class="stat-card" onclick="Profile.editPrimeAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value">
-                            <input type="text" id="primeAgeValue" placeholder="21" value="21">
-                        </div>
-                    </div>
-                </div>
-                <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="">
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
-                </div>
-                <div class="comment-section">
-                    <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="primeComment" placeholder="Введите комментарий" maxlength="100"></textarea>
-                </div>
+                <div class="input-label">Звание</div><select class="rank-select" id="primeRankSelect"><option>Silver 1</option><option>Silver 2</option><option>Gold Nova 1</option></select>
+                <div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card" onclick="Profile.editPrimeAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="primeAgeValue" placeholder="21" value="21"></div></div></div>
+                <div class="input-label">Ссылка Steam</div><input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam">
+                <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
+                <div class="comment-section"><textarea class="comment-input" id="primeComment" placeholder="Комментарий"></textarea></div>
                 <button class="mode-search-btn" onclick="Search.start('PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
             </div>
 
             <div id="publicScreen" class="screen public-screen">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
-                    <div class="mode-title public">PUBLIC</div>
-                </div>
+                <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title public">PUBLIC</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">Звание</div>
-                <select class="rank-select" id="publicRankSelect">
-                    <option selected>Выберите ранг</option>
-                    <option>Silver 1</option>
-                    <option>Silver 2</option>
-                    <option>Silver 3</option>
-                    <option>Silver 4</option>
-                    <option>Silver Elite</option>
-                    <option>Gold Nova 1</option>
-                    <option>Gold Nova 2</option>
-                    <option>Gold Nova 3</option>
-                    <option>Gold Nova Master</option>
-                    <option>Master Guardian 1</option>
-                    <option>Master Guardian 2</option>
-                    <option>Master Guardian Elite</option>
-                    <option>Distinguished Master Guardian</option>
-                    <option>Legendary Eagle</option>
-                    <option>Legendary Eagle Master</option>
-                    <option>Supreme Master First Class</option>
-                    <option>Global Elite</option>
-                </select>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" placeholder="0" value="0" readonly>
-                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
-                        </div>
-                    </div>
-                    <div class="stat-card" onclick="Profile.editPublicAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value">
-                            <input type="text" id="publicAgeValue" placeholder="21" value="21">
-                        </div>
-                    </div>
-                </div>
-                <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="">
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
-                </div>
-                <div class="comment-section">
-                    <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="publicComment" placeholder="Введите комментарий" maxlength="100"></textarea>
-                </div>
+                <div class="input-label">Звание</div><select class="rank-select" id="publicRankSelect"><option>Silver 1</option><option>Silver 2</option></select>
+                <div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card" onclick="Profile.editPublicAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="publicAgeValue" placeholder="21" value="21"></div></div></div>
+                <div class="input-label">Ссылка Steam</div><input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam">
+                <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
+                <div class="comment-section"><textarea class="comment-input" id="publicComment" placeholder="Комментарий"></textarea></div>
                 <button class="mode-search-btn" onclick="Search.start('PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
             </div>
 
             <div id="searchScreen" class="screen search-screen">
-                <div class="search-header">
-                    <div class="search-title" id="searchModeTitle">FACEIT</div>
-                    <div class="search-timer" id="searchTimer">00:00</div>
-                </div>
+                <div class="search-header"><div class="search-title" id="searchModeTitle">FACEIT</div><div class="search-timer" id="searchTimer">00:00</div></div>
                 <div class="search-status" id="searchStatus">Поиск тиммейта начат</div>
-                <div class="search-loading">
-                    <div class="spinner"></div>
-                </div>
+                <div class="spinner"></div>
                 <button class="cancel-search-btn" onclick="Search.cancel()">Отменить поиск</button>
             </div>
-            
         </main>
 
         <nav class="bottom-nav">
-            <div class="nav-item active" onclick="App.showScreen('mainScreen', true)" id="navMain">
-                <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
-                <span class="nav-label">Главная</span>
-            </div>
-            <div class="nav-item" onclick="App.showScreen('shopScreen', true)" id="navShop">
-                <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span>
-                <span class="nav-label">Магазин</span>
-            </div>
-            <div class="nav-item" onclick="App.showScreen('profileScreen', true)" id="navProfile">
-                <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
-                <span class="nav-label">Профиль</span>
-            </div>
+            <div class="nav-item active" onclick="App.showScreen('mainScreen', true)" id="navMain"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span><span class="nav-label">Главная</span></div>
+            <div class="nav-item" onclick="App.showScreen('shopScreen', true)" id="navShop"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span><span class="nav-label">Магазин</span></div>
+            <div class="nav-item" onclick="App.showScreen('profileScreen', true)" id="navProfile"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span><span class="nav-label">Профиль</span></div>
         </nav>
     </div>
 
-    <!-- ОПТИМИЗИРОВАННАЯ ЗАГРУЗКА JS -->
+    <!-- ОПТИМИЗИРОВАННАЯ ЗАГРУЗКА JS - ВСЕ ПАРАЛЛЕЛЬНО -->
     <script>
         (function() {
             const version = window.BUILD_VERSION || Date.now();
@@ -1237,11 +825,11 @@
             
             let loadedCount = 0;
             
-            function loadScript(src, isAsync = false) {
+            function loadScript(src) {
                 return new Promise((resolve) => {
                     const script = document.createElement('script');
                     script.src = src + '?v=' + version;
-                    script.async = isAsync;
+                    script.async = true;  // ВСЕ АСИНХРОННО
                     script.onload = () => {
                         loadedCount++;
                         console.log(`✅ ${src.split('/').pop()} (${loadedCount}/${jsFiles.length})`);
@@ -1257,23 +845,16 @@
             }
             
             async function loadAllScripts() {
-                console.log('🚀 Загрузка скриптов...');
+                console.log('🚀 Загрузка скриптов (параллельно)...');
                 
-                for (let i = 0; i < 3; i++) {
-                    await loadScript(jsFiles[i], false);
-                }
-                
-                document.body.classList.add('loaded');
-                console.log('✅ Интерфейс активен');
-                
-                const promises = [];
-                for (let i = 3; i < jsFiles.length; i++) {
-                    promises.push(loadScript(jsFiles[i], true));
-                }
+                // ВСЕ СКРИПТЫ ЗАГРУЖАЮТСЯ ПАРАЛЛЕЛЬНО
+                const promises = jsFiles.map(file => loadScript(file));
                 await Promise.all(promises);
                 
                 console.log('🎉 Все скрипты загружены');
+                document.body.classList.add('loaded');
                 
+                // Фоновая загрузка данных после загрузки всех скриптов
                 setTimeout(() => {
                     if (window.Profile && !window.Profile.isProfileLoaded) {
                         if (!window.Profile.telegramId) {
@@ -1292,6 +873,24 @@
             }
             
             loadAllScripts();
+            
+            // Защита от кликов до загрузки Team
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('.friends-arrow, [onclick*="Team.showTeamPage"]');
+                if (target && typeof Team === 'undefined') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('⏳ Team загружается, подождите...');
+                    const checkTeam = setInterval(() => {
+                        if (typeof Team !== 'undefined') {
+                            clearInterval(checkTeam);
+                            console.log('✅ Team загружен, открываем');
+                            Team.showTeamPage();
+                        }
+                    }, 50);
+                    setTimeout(() => clearInterval(checkTeam), 5000);
+                }
+            });
             
             window.loadShopImages = function() {
                 const images = document.querySelectorAll('.case-icon img[data-src]');
@@ -1325,7 +924,6 @@
                 }
             }, 500);
         })();
-        
-    </script>    
+    </script>
 </body>
 </html>
