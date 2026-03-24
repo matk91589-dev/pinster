@@ -52,7 +52,7 @@ const Shop = {
         this.loadFromStorage();
         this.updateCoinsDisplay();
         this.setupEventListeners();
-        console.log('✅ Shop инициализирован, монет:', this.coins);
+        console.log('✅ Shop инициализирован, монет:', this.coins, 'предметов:', this.ownedCases.length);
     },
     
     loadFromStorage() {
@@ -171,12 +171,16 @@ const Shop = {
         if (activeTab) activeTab.classList.add('active');
         
         if (tab === 'cases') {
-            document.querySelector('.cases-section')?.classList.remove('hidden');
-            document.querySelector('.inventory-section')?.classList.add('hidden');
+            const casesSection = document.querySelector('.cases-section');
+            const inventorySection = document.querySelector('.inventory-section');
+            if (casesSection) casesSection.classList.remove('hidden');
+            if (inventorySection) inventorySection.classList.add('hidden');
             this.renderCases();
         } else {
-            document.querySelector('.cases-section')?.classList.add('hidden');
-            document.querySelector('.inventory-section')?.classList.remove('hidden');
+            const casesSection = document.querySelector('.cases-section');
+            const inventorySection = document.querySelector('.inventory-section');
+            if (casesSection) casesSection.classList.add('hidden');
+            if (inventorySection) inventorySection.classList.remove('hidden');
             this.renderInventory();
         }
         
@@ -374,30 +378,6 @@ const Shop = {
         if (window.Settings) Settings.success();
         if (window.App) App.hapticFeedback('medium');
     }
-};
-
-// ===== ПОКАЗ МАГАЗИНА =====
-Shop.show = function() {
-    const content = document.querySelector('.content');
-    if (content) {
-        content.classList.add('shop-mode');
-    }
-    
-    document.getElementById('shopScreen')?.classList.add('active');
-    
-    this.init();
-    this.renderShop();
-    
-    console.log('🛒 Магазин открыт');
-};
-
-// ===== СКРЫТИЕ МАГАЗИНА =====
-Shop.hide = function() {
-    const content = document.querySelector('.content');
-    if (content) {
-        content.classList.remove('shop-mode');
-    }
-    document.getElementById('shopScreen')?.classList.remove('active');
 };
 
 window.Shop = Shop;
