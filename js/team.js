@@ -1,5 +1,5 @@
 // ============================================
-// КОМАНДА - С КЭШИРОВАНИЕМ И МГНОВЕННОЙ ЗАГРУЗКОЙ
+// КОМАНДА - С ЛИДЕРБОРДОМ И ДРУЗЬЯМИ
 // ============================================
 
 const Team = {
@@ -13,6 +13,8 @@ const Team = {
     isInitialized: false,
     isFriendsLoaded: false,
     isPlayersLoaded: false,
+    leaderboard: [],  // массив для лидерборда
+    currentPlayerId: null,  // ID текущего игрока
 
     init() {
         if (this.isInitialized) return;
@@ -20,14 +22,18 @@ const Team = {
         
         console.log('🚀 Team.init() запущен');
         
-        // Получаем Telegram ID
+        // Получаем Telegram ID и player_id
         if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
             this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
         } else if (window.Profile && Profile.getTelegramId) {
             this.telegramId = Profile.getTelegramId();
         }
         
+        // Получаем player_id из localStorage
+        this.currentPlayerId = localStorage.getItem('player_id');
+        
         console.log('Team Telegram ID:', this.telegramId);
+        console.log('Team Player ID:', this.currentPlayerId);
         
         if (!this.telegramId) return;
         
@@ -37,16 +43,14 @@ const Team = {
         // Фоново обновляем с сервера
         setTimeout(() => {
             this.loadFriendsList();
-            this.loadAllPlayers();
+            this.loadLeaderboard();
         }, 500);
     },
     
-    // ✅ ЗАГРУЗКА ИЗ КЭША (мгновенно)
+    // ✅ ЗАГРУЗКА ИЗ КЭША
     loadFromCache() {
         const cachedFriends = localStorage.getItem(`team_friends_${this.telegramId}`);
-        const cachedPlayers = localStorage.getItem(`team_players_${this.telegramId}`);
-        
-        let updated = false;
+        const cachedLeaderboard = localStorage.getItem(`team_leaderboard_${this.telegramId}`);
         
         if (cachedFriends) {
             try {
@@ -56,33 +60,31 @@ const Team = {
                     this.filteredFriends = [...friends];
                     this.isFriendsLoaded = true;
                     console.log('✅ Друзья из кэша Team:', friends.length);
-                    updated = true;
                 }
             } catch (e) {
                 console.error('Ошибка парсинга кэша друзей Team:', e);
             }
         }
         
-        if (cachedPlayers) {
+        if (cachedLeaderboard) {
             try {
-                const players = JSON.parse(cachedPlayers);
-                if (players && players.length > 0) {
-                    this.allPlayers = players;
+                const leaderboard = JSON.parse(cachedLeaderboard);
+                if (leaderboard && leaderboard.length > 0) {
+                    this.leaderboard = leaderboard;
                     this.isPlayersLoaded = true;
-                    console.log('✅ Игроки из кэша Team:', players.length);
-                    updated = true;
+                    console.log('✅ Лидерборд из кэша Team:', leaderboard.length);
                 }
             } catch (e) {
-                console.error('Ошибка парсинга кэша игроков Team:', e);
+                console.error('Ошибка парсинга кэша лидерборда Team:', e);
             }
         }
         
         // Если открыт экран, отрисовываем
-        if (updated && document.getElementById('teamScreen')?.classList.contains('active')) {
+        if (document.getElementById('teamScreen')?.classList.contains('active')) {
             if (this.currentTab === 'friends') {
                 this.renderFriendsTab();
             } else {
-                this.renderSearchTab();
+                this.renderLeaderboardTab();
             }
         }
     },
@@ -107,22 +109,22 @@ const Team = {
                 if (this.friendsList.length > 0 || this.isFriendsLoaded) {
                     this.renderFriendsTab();
                 } else {
-                    this.renderFriendsTab(); // покажет загрузку
+                    this.renderFriendsTab();
                     this.loadFriendsList();
                 }
             } else {
-                if (this.allPlayers.length > 0 || this.isPlayersLoaded) {
-                    this.renderSearchTab();
+                if (this.leaderboard.length > 0 || this.isPlayersLoaded) {
+                    this.renderLeaderboardTab();
                 } else {
-                    this.renderSearchTab(); // покажет загрузку
-                    this.loadAllPlayers();
+                    this.renderLeaderboardTab();
+                    this.loadLeaderboard();
                 }
             }
             
             // Фоново обновляем
             setTimeout(() => {
                 this.loadFriendsList();
-                this.loadAllPlayers();
+                this.loadLeaderboard();
             }, 100);
             
             if (window.Telegram?.WebApp?.HapticFeedback) {
@@ -169,7 +171,6 @@ const Team = {
                 this.filteredFriends = [...this.friendsList];
                 this.isFriendsLoaded = true;
                 
-                // Сохраняем в кэш
                 localStorage.setItem(`team_friends_${this.telegramId}`, JSON.stringify(this.friendsList));
                 console.log('✅ Team: загружено друзей:', this.friendsList.length);
             } else {
@@ -189,24 +190,24 @@ const Team = {
         }
     },
     
-    async loadAllPlayers() {
-        if (this.isPlayersLoaded && this.allPlayers.length > 0) {
-            console.log('📦 Игроки уже загружены');
+    async loadLeaderboard() {
+        if (this.isPlayersLoaded && this.leaderboard.length > 0) {
+            console.log('📦 Лидерборд уже загружен');
             return;
         }
         
         if (!this.telegramId) {
-            console.error('❌ Нет telegram_id для загрузки игроков');
+            console.error('❌ Нет telegram_id для загрузки лидерборда');
             return;
         }
         
-        console.log('📥 Team: загрузка всех игроков...');
+        console.log('📥 Team: загрузка лидерборда...');
         
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 3000);
             
-            const response = await fetch(`${this.BACKEND_URL}/api/users/all`, {
+            const response = await fetch(`${this.BACKEND_URL}/api/users/leaderboard`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ telegram_id: this.telegramId }),
@@ -220,25 +221,24 @@ const Team = {
             }
             
             const data = await response.json();
-            console.log('📦 Team ответ (игроки):', data);
+            console.log('📦 Team ответ (лидерборд):', data);
             
-            if (data.status === 'ok' && data.users) {
-                this.allPlayers = data.users;
+            if (data.status === 'ok' && data.leaderboard) {
+                this.leaderboard = data.leaderboard;
                 this.isPlayersLoaded = true;
                 
-                // Сохраняем в кэш
-                localStorage.setItem(`team_players_${this.telegramId}`, JSON.stringify(this.allPlayers));
-                console.log('✅ Team: загружено игроков:', this.allPlayers.length);
+                localStorage.setItem(`team_leaderboard_${this.telegramId}`, JSON.stringify(this.leaderboard));
+                console.log('✅ Team: загружено лидеров:', this.leaderboard.length);
             }
             
-            if (this.currentTab === 'search' && document.getElementById('teamScreen')?.classList.contains('active')) {
-                this.renderSearchTab();
+            if (this.currentTab === 'leaderboard' && document.getElementById('teamScreen')?.classList.contains('active')) {
+                this.renderLeaderboardTab();
             }
         } catch (error) {
             if (error.name === 'AbortError') {
-                console.error('❌ Таймаут загрузки игроков Team (3 сек)');
+                console.error('❌ Таймаут загрузки лидерборда Team (3 сек)');
             } else {
-                console.error('❌ Ошибка загрузки игроков Team:', error);
+                console.error('❌ Ошибка загрузки лидерборда Team:', error);
             }
         }
     },
@@ -254,7 +254,7 @@ const Team = {
         if (tab === 'friends') {
             this.renderFriendsTab();
         } else {
-            this.renderSearchTab();
+            this.renderLeaderboardTab();
         }
     },
     
@@ -276,7 +276,6 @@ const Team = {
             <div class="friends-list-container" id="friendsTabList">
         `;
         
-        // Показываем загрузку если нет данных
         if (!this.isFriendsLoaded && this.friendsList.length === 0) {
             html += `
                 <div class="empty-friends">
@@ -390,254 +389,169 @@ const Team = {
     },
     
     // ============================================
-    // ВКЛАДКА ПОИСКА
+    // ВКЛАДКА ЛИДЕРБОРД
     // ============================================
-    renderSearchTab() {
+    renderLeaderboardTab() {
         const content = document.getElementById('teamContent');
         if (!content) return;
         
-        const searchDiv = document.createElement('div');
-        searchDiv.className = 'players-search';
-        searchDiv.innerHTML = `
-            <input type="search" 
-                   id="teamSearchInput" 
-                   class="players-search-input" 
-                   placeholder="поиск: введите id или ник игрока"
-                   autocomplete="off">
-        `;
-        
         const listDiv = document.createElement('div');
-        listDiv.className = 'players-list';
-        listDiv.id = 'teamSearchResults';
+        listDiv.className = 'leaderboard-list';
+        listDiv.id = 'leaderboardList';
         
-        // Показываем загрузку или данные из кэша
-        if (!this.isPlayersLoaded && this.allPlayers.length === 0) {
+        if (!this.isPlayersLoaded && this.leaderboard.length === 0) {
             listDiv.innerHTML = `
                 <div class="empty-friends">
-                    <div class="empty-friends-text">⏳ загрузка игроков...</div>
+                    <div class="empty-friends-text">⏳ загрузка лидерборда...</div>
                 </div>
             `;
-        } else if (this.allPlayers.length > 0) {
-            this.renderSearchResults(this.allPlayers, listDiv);
+        } else if (this.leaderboard.length === 0) {
+            listDiv.innerHTML = `
+                <div class="empty-friends">
+                    <div class="empty-friends-text">пока нет игроков</div>
+                </div>
+            `;
         } else {
-            listDiv.innerHTML = `
-                <div class="empty-friends">
-                    <div class="empty-friends-text">игроки не найдены</div>
-                </div>
-            `;
+            this.renderLeaderboardList(listDiv);
         }
         
         content.innerHTML = '';
-        content.appendChild(searchDiv);
         content.appendChild(listDiv);
         
-        this.injectForcedStyles();
-        
-        const input = document.getElementById('teamSearchInput');
-        if (input) {
-            this.attachSearchHandler(input);
-        }
-        
-        // Если еще нет данных, грузим
-        if (this.allPlayers.length === 0 && !this.isPlayersLoaded) {
-            this.loadAllPlayers();
-        }
+        this.injectLeaderboardStyles();
     },
     
-    injectForcedStyles() {
-        if (document.getElementById('forced-search-styles')) return;
+    renderLeaderboardList(container) {
+        if (!container) return;
+        
+        let html = '';
+        this.leaderboard.forEach((player, index) => {
+            const place = index + 1;
+            const isCurrent = player.player_id === this.currentPlayerId;
+            const medal = place === 1 ? '🥇' : place === 2 ? '🥈' : place === 3 ? '🥉' : `#${place}`;
+            
+            html += `
+                <div class="leaderboard-row ${isCurrent ? 'current-player' : ''}" 
+                     onclick="Team.showPlayerProfile('${player.player_id}')">
+                    <div class="leaderboard-place">${medal}</div>
+                    <div class="leaderboard-avatar">
+                        ${player.avatar 
+                            ? `<img src="${player.avatar}" alt="avatar">` 
+                            : `<div class="avatar-placeholder">${player.nick?.[0] || '?'}</div>`
+                        }
+                    </div>
+                    <div class="leaderboard-info">
+                        <span class="leaderboard-nick">${player.nick || 'Без имени'}</span>
+                        <span class="leaderboard-id">ID: ${player.player_id}</span>
+                    </div>
+                    ${isCurrent ? '<span class="leaderboard-badge">ВЫ</span>' : ''}
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+    },
+    
+    injectLeaderboardStyles() {
+        if (document.getElementById('leaderboard-styles')) return;
         
         const style = document.createElement('style');
-        style.id = 'forced-search-styles';
+        style.id = 'leaderboard-styles';
         style.textContent = `
-            .players-list .player-row {
-                min-height: 58px !important;
-                padding: 8px 0 !important;
-                display: flex !important;
-                align-items: center !important;
-                gap: 12px !important;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
-                background: transparent !important;
-                cursor: pointer !important;
+            .leaderboard-list {
+                padding: 8px 16px;
+                flex: 1;
+                overflow-y: auto;
             }
-            .players-list .player-avatar {
-                width: 38px !important;
-                height: 38px !important;
-                border-radius: 50% !important;
-                background: #1A1D24 !important;
-                flex-shrink: 0 !important;
-                overflow: hidden !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
+            
+            .leaderboard-row {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 16px;
+                background: rgba(26, 29, 36, 0.5);
+                border-radius: 12px;
+                margin-bottom: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                border-left: 3px solid transparent;
             }
-            .players-list .player-id {
-                font-size: 10px !important;
-                color: #FF5500 !important;
-                font-weight: 600 !important;
-                letter-spacing: 0.3px !important;
-                margin-bottom: 2px !important;
-                font-family: 'Montserrat', sans-serif !important;
-                line-height: normal !important;
+            
+            .leaderboard-row:hover {
+                background: rgba(255, 85, 0, 0.1);
+                transform: translateX(2px);
             }
-            .players-list .player-nick {
-                font-size: 15px !important;
-                font-weight: 600 !important;
-                color: #ffffff !important;
-                font-family: 'Montserrat', sans-serif !important;
-                white-space: nowrap !important;
-                overflow: hidden !important;
-                text-overflow: ellipsis !important;
+            
+            .leaderboard-row.current-player {
+                background: rgba(255, 85, 0, 0.15);
+                border-left-color: #FF5500;
             }
-            .players-list .player-arrow {
-                color: #FF5500 !important;
-                font-size: 20px !important;
-                font-weight: 600 !important;
-                margin-left: auto !important;
-                padding-right: 4px !important;
-                cursor: pointer !important;
+            
+            .leaderboard-place {
+                width: 36px;
+                font-size: 14px;
+                font-weight: 700;
+                color: #FF5500;
+                text-align: center;
             }
-            .players-search-input {
-                font-family: 'Montserrat', sans-serif !important;
-                font-size: 13px !important;
-                font-weight: 500 !important;
-                line-height: 28px !important;
+            
+            .leaderboard-avatar {
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                overflow: hidden;
+                background: #1A1D24;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
             }
-            .players-search-input::placeholder {
-                font-family: 'Montserrat', sans-serif !important;
-                font-size: 13px !important;
-                font-weight: 400 !important;
-                color: #9BA1B0 !important;
-                opacity: 0.8 !important;
+            
+            .leaderboard-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            
+            .leaderboard-avatar .avatar-placeholder {
+                font-size: 18px;
+                font-weight: 600;
+                color: #fff;
+            }
+            
+            .leaderboard-info {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+            
+            .leaderboard-nick {
+                font-size: 16px;
+                font-weight: 600;
+                color: #fff;
+            }
+            
+            .leaderboard-row.current-player .leaderboard-nick {
+                color: #FF5500;
+            }
+            
+            .leaderboard-id {
+                font-size: 11px;
+                color: #8E97A6;
+            }
+            
+            .leaderboard-badge {
+                background: #FF5500;
+                color: #fff;
+                font-size: 10px;
+                font-weight: 700;
+                padding: 4px 8px;
+                border-radius: 12px;
+                white-space: nowrap;
             }
         `;
         document.head.appendChild(style);
-    },
-    
-    attachSearchHandler(input) {
-        console.log('✅ Инпут поиска активирован');
-        
-        input.removeAttribute('readonly');
-        input.removeAttribute('disabled');
-        
-        if (this.searchTimeout) clearTimeout(this.searchTimeout);
-        
-        input.oninput = (e) => {
-            const query = e.target.value.trim();
-            
-            if (this.searchTimeout) clearTimeout(this.searchTimeout);
-            
-            if (query === '') {
-                this.renderSearchResults(this.allPlayers);
-                return;
-            }
-            
-            this.searchTimeout = setTimeout(() => {
-                this.searchPlayers(query);
-            }, 300);
-        };
-    },
-    
-    renderSearchResults(players, container = null) {
-        const targetContainer = container || document.getElementById('teamSearchResults');
-        if (!targetContainer) return;
-        
-        if (!players || players.length === 0) {
-            targetContainer.innerHTML = `
-                <div class="empty-friends">
-                    <div class="empty-friends-text">игроки не найдены</div>
-                </div>
-            `;
-            return;
-        }
-        
-        let html = '';
-        players.forEach(player => {
-            html += `
-            <div class="player-row" onclick="Team.showPlayerProfile('${player.player_id}')">
-                <div class="player-avatar">
-                    ${player.avatar 
-                        ? `<img src="${player.avatar}" alt="avatar">` 
-                        : `<div class="avatar-placeholder">${player.nick?.[0] || '?'}</div>`
-                    }
-                </div>
-                <div class="player-info">
-                    <span class="player-id">ID: ${player.player_id}</span>
-                    <span class="player-nick">${player.nick || 'Без имени'}</span>
-                </div>
-                <span class="player-arrow" onclick="event.stopPropagation(); Team.showPlayerProfile('${player.player_id}')">→</span>
-            </div>
-            `;
-        });
-        
-        targetContainer.innerHTML = html;
-    },
-    
-    async searchPlayers(query) {
-        if (!query) {
-            this.renderSearchResults(this.allPlayers);
-            return;
-        }
-        
-        console.log('🔍 Поиск игроков:', query);
-        
-        // Сначала ищем в кэше
-        const cachedResults = this.allPlayers.filter(player => {
-            const nickMatch = player.nick?.toLowerCase().includes(query.toLowerCase());
-            const idMatch = player.player_id?.toLowerCase().includes(query.toLowerCase());
-            return nickMatch || idMatch;
-        });
-        
-        if (cachedResults.length > 0) {
-            this.renderSearchResults(cachedResults);
-        } else {
-            const container = document.getElementById('teamSearchResults');
-            if (container) {
-                container.innerHTML = `<div class="empty-friends"><div class="empty-friends-text">⏳ поиск...</div></div>`;
-            }
-        }
-        
-        // Запрос на сервер
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
-            
-            const response = await fetch(`${this.BACKEND_URL}/api/users/search`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    telegram_id: this.telegramId,
-                    query: query
-                }),
-                signal: controller.signal
-            });
-            
-            clearTimeout(timeoutId);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            
-            const data = await response.json();
-            console.log('📦 Результаты поиска:', data);
-            
-            if (data.status === 'ok' && data.users) {
-                this.renderSearchResults(data.users);
-            } else {
-                if (cachedResults.length === 0) {
-                    this.renderSearchResults([]);
-                }
-            }
-        } catch (error) {
-            if (error.name === 'AbortError') {
-                console.error('❌ Таймаут поиска игроков (3 сек)');
-            } else {
-                console.error('❌ Ошибка поиска:', error);
-            }
-            if (cachedResults.length === 0) {
-                this.renderSearchResults([]);
-            }
-        }
     },
     
     showFriendProfile(playerId) {
@@ -655,15 +569,6 @@ const Team = {
             App.showAlert(`Профиль игрока ${playerId}\n(функция в разработке)`);
         } else {
             alert(`Профиль игрока ${playerId}\n(функция в разработке)`);
-        }
-    },
-    
-    openTelegramChat(playerId) {
-        console.log('📨 Открыть чат с игроком:', playerId);
-        if (window.App) {
-            App.showAlert(`Чат с игроком ${playerId}\n(функция в разработке)`);
-        } else {
-            alert(`Чат с игроком ${playerId}\n(функция в разработке)`);
         }
     },
     
@@ -686,34 +591,10 @@ const Team = {
         }
     },
     
-    showRequests() {
-        if (window.App) {
-            App.showAlert('📨 Запросы в друзья\n(функция в разработке)');
-        } else {
-            alert('📨 Запросы в друзья (функция в разработке)');
-        }
-    },
-    
     goBack() {
         if (window.App && App.showScreen) {
             App.showScreen('profileScreen', true);
         }
-    },
-    
-    // ✅ Добавить друга (из поиска)
-    addFriend(friend) {
-        if (this.friendsList.some(f => f.player_id === friend.player_id)) {
-            return false;
-        }
-        
-        this.friendsList.unshift(friend);
-        this.filteredFriends = [...this.friendsList];
-        localStorage.setItem(`team_friends_${this.telegramId}`, JSON.stringify(this.friendsList));
-        
-        if (this.currentTab === 'friends') {
-            this.renderFriendsTab();
-        }
-        return true;
     }
 };
 
