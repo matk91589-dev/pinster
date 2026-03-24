@@ -7,14 +7,35 @@ const Settings = {
     
     init() {
         this.loadSettings();
-        // Ждем появления кнопок в DOM
-        this.waitForSoundButtons();
+        // Ждем появления экрана настроек и кнопок
+        this.waitForSettingsScreen();
         console.log('Настройки загружены');
+    },
+    
+    waitForSettingsScreen() {
+        let attempts = 0;
+        const maxAttempts = 30; // 3 секунды
+        
+        const check = () => {
+            const settingsScreen = document.getElementById('settingsScreen');
+            if (settingsScreen) {
+                console.log('✅ Экран настроек найден');
+                this.waitForSoundButtons();
+            } else {
+                attempts++;
+                if (attempts < maxAttempts) {
+                    setTimeout(check, 100);
+                } else {
+                    console.error('❌ Экран настроек не найден');
+                }
+            }
+        };
+        check();
     },
     
     waitForSoundButtons() {
         let attempts = 0;
-        const maxAttempts = 20; // 2 секунды максимум
+        const maxAttempts = 20; // 2 секунды
         
         const checkButtons = () => {
             const soundOn = document.getElementById('soundOn');
@@ -26,10 +47,12 @@ const Settings = {
             } else {
                 attempts++;
                 if (attempts < maxAttempts) {
-                    console.log(`⏳ Ждем появления кнопок... (${attempts}/${maxAttempts})`);
+                    console.log(`⏳ Ждем кнопки звука... (${attempts}/${maxAttempts})`);
                     setTimeout(checkButtons, 100);
                 } else {
-                    console.error('❌ Кнопки звука не найдены после ожидания');
+                    console.error('❌ Кнопки звука не найдены');
+                    console.log('🔍 Ищем #soundOn:', document.getElementById('soundOn'));
+                    console.log('🔍 Ищем #soundOff:', document.getElementById('soundOff'));
                 }
             }
         };
@@ -53,11 +76,9 @@ const Settings = {
         
         console.log('✅ Кнопки найдены, настраиваем обработчики');
         
-        // Убираем старые обработчики
         soundOn.onclick = null;
         soundOff.onclick = null;
         
-        // Добавляем новые
         soundOn.onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
