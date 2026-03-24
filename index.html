@@ -579,6 +579,43 @@
         .case-icon img.loaded {
             opacity: 1;
         }
+        
+        /* Стили для звука */
+        .sound-option {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
+        .sound-option.active {
+            color: #FF5500 !important;
+            font-weight: 600;
+            background: rgba(255, 85, 0, 0.1);
+        }
+        .sound-separator {
+            margin: 0 4px;
+            color: #8E97A6;
+        }
+        
+        /* Стили для лидерборда */
+        .friend-row.current-player {
+            background: rgba(255, 85, 0, 0.1);
+            border-left: 3px solid #FF5500;
+            margin-left: -3px;
+            padding-left: 19px;
+        }
+        .friend-row.current-player .friend-name {
+            color: #FF5500;
+        }
+        .leaderboard-badge {
+            background: #FF5500;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -803,7 +840,7 @@
         </nav>
     </div>
 
-    <!-- ОПТИМИЗИРОВАННАЯ ЗАГРУЗКА JS - ВСЕ ПАРАЛЛЕЛЬНО -->
+    <!-- ОПТИМИЗИРОВАННАЯ ЗАГРУЗКА JS - ВСЕ ПАРАЛЛЕЛЬНО + ПОКАЗ ИНТЕРФЕЙСА СРАЗУ -->
     <script>
         (function() {
             const version = window.BUILD_VERSION || Date.now();
@@ -829,7 +866,7 @@
                 return new Promise((resolve) => {
                     const script = document.createElement('script');
                     script.src = src + '?v=' + version;
-                    script.async = true;  // ВСЕ АСИНХРОННО
+                    script.async = true;
                     script.onload = () => {
                         loadedCount++;
                         console.log(`✅ ${src.split('/').pop()} (${loadedCount}/${jsFiles.length})`);
@@ -844,17 +881,15 @@
                 });
             }
             
-            async function loadAllScripts() {
-                console.log('🚀 Загрузка скриптов (параллельно)...');
-                
-                // ВСЕ СКРИПТЫ ЗАГРУЖАЮТСЯ ПАРАЛЛЕЛЬНО
-                const promises = jsFiles.map(file => loadScript(file));
-                await Promise.all(promises);
-                
+            // 🔥 СРАЗУ ПОКАЗЫВАЕМ ИНТЕРФЕЙС
+            document.body.classList.add('loaded');
+            console.log('✅ Интерфейс активен (скрипты грузятся в фоне)');
+            
+            // 🔥 ГРУЗИМ ВСЕ СКРИПТЫ ПАРАЛЛЕЛЬНО
+            Promise.all(jsFiles.map(file => loadScript(file))).then(() => {
                 console.log('🎉 Все скрипты загружены');
-                document.body.classList.add('loaded');
                 
-                // Фоновая загрузка данных после загрузки всех скриптов
+                // Фоновая загрузка только профиля
                 setTimeout(() => {
                     if (window.Profile && !window.Profile.isProfileLoaded) {
                         if (!window.Profile.telegramId) {
@@ -863,16 +898,10 @@
                         window.Profile.loadProfileFromServer();
                         window.Profile.loadAvatar();
                     }
-                    if (window.Friends && !window.Friends.friendsListLoaded) {
-                        window.Friends.loadFriendsList();
-                    }
-                    if (window.Shop && window.Shop.loadShopItems) {
-                        window.Shop.loadShopItems();
-                    }
-                }, 100);
-            }
-            
-            loadAllScripts();
+                }, 200);
+                
+                // Друзья и лидерборд НЕ грузим при старте - только при открытии экрана
+            });
             
             // Защита от кликов до загрузки Team
             document.addEventListener('click', function(e) {
@@ -892,6 +921,7 @@
                 }
             });
             
+            // Ленивая загрузка картинок кейсов (только при открытии магазина)
             window.loadShopImages = function() {
                 const images = document.querySelectorAll('.case-icon img[data-src]');
                 images.forEach(img => {
@@ -909,20 +939,6 @@
                     }
                 });
             };
-            
-            setTimeout(() => {
-                if (document.getElementById('shopScreen')?.classList.contains('active')) {
-                    window.loadShopImages();
-                } else {
-                    const observer = new MutationObserver(() => {
-                        if (document.getElementById('shopScreen')?.classList.contains('active')) {
-                            window.loadShopImages();
-                            observer.disconnect();
-                        }
-                    });
-                    observer.observe(document.body, { attributes: true, subtree: true });
-                }
-            }, 500);
         })();
     </script>
 </body>
