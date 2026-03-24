@@ -5,16 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Pingster — Telegram Mini App</title>
     
-    <!-- Глобальная версия -->
     <script>
         window.BUILD_VERSION = Date.now();
         console.log('🔄 Версия сборки:', window.BUILD_VERSION);
     </script>
     
-    <!-- Telegram Mini App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- КРИТИЧЕСКИЙ CSS -->
     <style>
         body {
             background-color: #0D0F15;
@@ -32,23 +29,12 @@
         .screen.active {
             display: flex;
         }
-        /* Быстрая загрузка */
-        .loading-fast {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 200px;
-            color: #fff;
-            opacity: 0.7;
-        }
     </style>
     
-    <!-- Основные CSS - правильная версия через JS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
     
-    <!-- ВСЕ ТВОИ СТИЛИ (полностью сохранены) -->
     <style>
         .screen {
             transition: opacity 0.2s ease;
@@ -598,13 +584,67 @@
 <body>
     <script>
         (function() {
-            // Добавляем версию ко всем CSS
             const version = Date.now();
             document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
                 if (link.href && !link.href.includes('telegram')) {
                     link.href = link.href.split('?')[0] + '?v=' + version;
                 }
             });
+            
+            // Предзагрузка профиля
+            let telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+            if (telegramId) {
+                localStorage.setItem('telegram_id', telegramId);
+                
+                // Мгновенная загрузка из кэша
+                const cachedNick = localStorage.getItem('profile_nick');
+                if (cachedNick) {
+                    setTimeout(() => {
+                        const nameEl = document.getElementById('profileName');
+                        if (nameEl && nameEl.textContent === '-') {
+                            nameEl.textContent = cachedNick;
+                        }
+                        const ageEl = document.getElementById('ageValue');
+                        if (ageEl && !ageEl.value) {
+                            ageEl.value = localStorage.getItem('profile_age') || '';
+                        }
+                        const steamEl = document.getElementById('steamDisplay');
+                        if (steamEl && !steamEl.value) {
+                            steamEl.value = localStorage.getItem('profile_steam') || '';
+                        }
+                        const faceitEl = document.getElementById('faceitLinkDisplay');
+                        if (faceitEl && !faceitEl.value) {
+                            faceitEl.value = localStorage.getItem('profile_faceit') || '';
+                        }
+                    }, 50);
+                }
+                
+                // Фоновая загрузка с сервера
+                fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/profile/get', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegram_id: telegramId })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        if (data.nick) localStorage.setItem('profile_nick', data.nick);
+                        if (data.age) localStorage.setItem('profile_age', data.age);
+                        if (data.steam_link) localStorage.setItem('profile_steam', data.steam_link);
+                        if (data.faceit_link) localStorage.setItem('profile_faceit', data.faceit_link);
+                        
+                        const nameEl = document.getElementById('profileName');
+                        if (nameEl) nameEl.textContent = data.nick || '-';
+                        const ageEl = document.getElementById('ageValue');
+                        if (ageEl) ageEl.value = data.age || '';
+                        const steamEl = document.getElementById('steamDisplay');
+                        if (steamEl) steamEl.value = data.steam_link || '';
+                        const faceitEl = document.getElementById('faceitLinkDisplay');
+                        if (faceitEl) faceitEl.value = data.faceit_link || '';
+                    }
+                })
+                .catch(e => console.error('Profile preload error:', e));
+            }
             
             function showContent() {
                 document.body.classList.add('loaded');
@@ -637,7 +677,7 @@
 
         <main class="content">
 
-            <div id="mainScreen" class="screen main-screen">
+            <div id="mainScreen" class="screen main-screen active">
                 <div class="section-title">Выбор режима</div>
                 <div class="section-subtitle">Подберите подходящий</div>
                 <div class="mode-container">
@@ -1220,16 +1260,13 @@
             async function loadAllScripts() {
                 console.log('🚀 Загрузка скриптов...');
                 
-                // Критические - последовательно
                 for (let i = 0; i < 3; i++) {
                     await loadScript(jsFiles[i], false);
                 }
                 
-                // Показываем интерфейс
                 document.body.classList.add('loaded');
                 console.log('✅ Интерфейс активен');
                 
-                // Остальные - параллельно
                 const promises = [];
                 for (let i = 3; i < jsFiles.length; i++) {
                     promises.push(loadScript(jsFiles[i], true));
@@ -1238,7 +1275,6 @@
                 
                 console.log('🎉 Все скрипты загружены');
                 
-                // Фоновая загрузка данных
                 setTimeout(() => {
                     if (window.Profile && !window.Profile.isProfileLoaded) {
                         if (!window.Profile.telegramId) {
@@ -1258,7 +1294,6 @@
             
             loadAllScripts();
             
-            // ЛЕНИВАЯ ЗАГРУЗКА КЕЙСОВ
             window.loadShopImages = function() {
                 const images = document.querySelectorAll('.case-icon img[data-src]');
                 images.forEach(img => {
@@ -1277,7 +1312,6 @@
                 });
             };
             
-            // Загружаем кейсы только при открытии магазина
             setTimeout(() => {
                 if (document.getElementById('shopScreen')?.classList.contains('active')) {
                     window.loadShopImages();
