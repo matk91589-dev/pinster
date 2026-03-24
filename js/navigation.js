@@ -30,13 +30,8 @@ const App = {
         this.setupModeButtons();
         this.setupLogoHandler();
         
-        const startScreen = document.getElementById('startScreen');
-        if (startScreen) {
-            this.showScreen('startScreen', false);
-        } else {
-            console.log('startScreen не найден, показываем mainScreen');
-            this.showScreen('mainScreen', true);
-        }
+        // Показываем главный экран
+        this.showScreen('mainScreen', true);
     },
     
     setupBackButton() {
@@ -269,8 +264,9 @@ const App = {
     showScreen(screenId, showNav = true) {
         console.log('Переход с экрана:', this.currentScreen, 'на экран:', screenId);
         
+        // Останавливаем поиск если уходим
         if (this.currentScreen === 'searchScreen' && screenId !== 'searchScreen' && screenId !== 'swipeScreen') {
-            console.log('⚠️ Уходим с экрана поиска (не на свайп), принудительно останавливаем поиск');
+            console.log('⚠️ Уходим с экрана поиска, останавливаем поиск');
             if (typeof Search !== 'undefined' && Search.cancel) {
                 Search.cancel();
             } else {
@@ -285,6 +281,7 @@ const App = {
             }
         }
         
+        // Чистим свайп если уходим
         if (this.currentScreen === 'swipeScreen' && screenId !== 'swipeScreen') {
             console.log('⚠️ Уходим с экрана свайпа, чистим данные');
             if (typeof Swipe !== 'undefined' && Swipe.destroy) {
@@ -292,6 +289,7 @@ const App = {
             }
         }
         
+        // Переключаем экраны
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
         });
@@ -301,10 +299,21 @@ const App = {
             screen.classList.add('active');
             this.currentScreen = screenId;
             
+            // ✅ ИСПРАВЛЕНО: вместо loadSavedValues вызываем init или updateDisplay
             if (screenId === 'profileScreen' && typeof Profile !== 'undefined') {
-                Profile.loadSavedValues();
+                // Если профиль уже загружен - обновляем отображение
+                if (Profile.isProfileLoaded) {
+                    Profile.updateDisplay();
+                } else if (Profile.init) {
+                    Profile.init();
+                } else {
+                    // Если нет init, просто обновляем отображение
+                    Profile.updateDisplay();
+                }
             } else if (screenId === 'shopScreen' && typeof Shop !== 'undefined') {
-                Shop.renderShop();
+                if (Shop.renderShop) {
+                    Shop.renderShop();
+                }
             }
             
             if (screenId === 'swipeScreen') {
@@ -327,6 +336,5 @@ const App = {
 document.addEventListener('DOMContentLoaded', () => {
     App.init();
 });
-
 
 window.App = App;
