@@ -4265,3 +4265,15 @@ html {
 .friend-row {
     min-height: 58px !important; /* На всякий случай фиксируем и друзей */
 }
+
+/* Подсветка текущего игрока в лидерборде */
+.leaderboard-row.current-player {
+    background: rgba(255, 85, 0, 0.15);
+    border-left: 3px solid #FF5500;
+    margin-left: -3px;
+}
+
+.leaderboard-row.current-player .player-nick {
+    color: #FF5500;
+    font-weight: 700;
+}
