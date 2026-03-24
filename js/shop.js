@@ -52,7 +52,7 @@ const Shop = {
         this.loadFromStorage();
         this.updateCoinsDisplay();
         this.setupEventListeners();
-        console.log('✅ Shop инициализирован');
+        console.log('✅ Shop инициализирован, монет:', this.coins);
     },
     
     loadFromStorage() {
@@ -105,7 +105,7 @@ const Shop = {
         
         this.clickHandler = (e) => {
             const buyBtn = e.target.closest('.buy-btn-simple');
-            if (buyBtn && !buyBtn.classList.contains('disabled')) {
+            if (buyBtn) {
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
@@ -188,8 +188,6 @@ const Shop = {
         if (!container) return;
         
         container.innerHTML = this.cases.map(caseItem => {
-            const canAfford = this.coins >= caseItem.price;
-            
             if (caseItem.isSecret) {
                 return `
                     <div class="case-item ${caseItem.class} secret-case">
@@ -209,7 +207,7 @@ const Shop = {
                         <div class="case-name">${caseItem.name}</div>
                         <div class="case-price-row">
                             <span class="price-value">${caseItem.price}</span>
-                            <button class="buy-btn-simple ${!canAfford ? 'disabled' : ''}" 
+                            <button class="buy-btn-simple" 
                                     data-case-id="${caseItem.id}">
                                 Купить
                             </button>
