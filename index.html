@@ -3,615 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
     <title>Pingster — Telegram Mini App</title>
     
-    <!-- Глобальная версия (timestamp при загрузке) -->
+    <!-- Telegram Mini App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Глобальная версия -->
     <script>
         window.BUILD_VERSION = Date.now();
         console.log('🔄 Версия сборки:', window.BUILD_VERSION);
     </script>
     
-    <!-- Telegram Mini App SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <!-- ========== ЗАЩИТА ОТ FOUC ========== -->
+    <!-- КРИТИЧЕСКИЙ CSS - встроен для мгновенного отображения -->
     <style>
-        body {
-            background-color: #0D0F15;
+        /* Базовые стили для быстрого старта */
+        * {
             margin: 0;
             padding: 0;
-            opacity: 0;
-            transition: opacity 0.15s ease;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
+        
+        body {
+            background: #0D0F15;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
         body.loaded {
             opacity: 1;
         }
+        
         .screen {
             display: none;
-        }
-        .screen.active {
-            display: flex;
-        }
-    </style>
-    
-    <!-- Основные CSS (версия добавляется автоматически) -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/shop-cases.css">
-    <link rel="stylesheet" href="css/animations.css">
-    
-    <!-- Дополнительные стили -->
-    <style>
-        .screen {
-            transition: opacity 0.2s ease;
             opacity: 0;
-            display: none;
+            transition: opacity 0.15s ease;
         }
+        
         .screen.active {
+            display: block;
             opacity: 1;
+        }
+        
+        .phone-frame {
+            max-width: 450px;
+            margin: 0 auto;
+            background: #0D0F15;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .loading-placeholder {
             display: flex;
-        }
-        .edit-name-input {
-            width: 100%;
-            padding: 8px 12px;
-            background: #1A1D24;
-            border: 2px solid #FF5500;
-            border-radius: 8px;
-            color: #F5F5F5;
-            font-size: 18px;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            outline: none;
-            margin: 0;
-            box-sizing: border-box;
-        }
-        .edit-name-input:focus {
-            border-color: #FF5500;
-            box-shadow: 0 0 0 2px rgba(255, 85, 0, 0.2);
-        }
-        .profile-name-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            width: 100%;
-        }
-        .profile-name-row .profile-name,
-        .profile-name-row .edit-name-input {
-            flex: 1;
-            min-width: 0;
-        }
-        .tg-avatar-svg {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: #2B2F36;
-            display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            color: #fff;
+            opacity: 0.6;
+            font-size: 14px;
         }
-        .tg-avatar-svg svg {
-            width: 42px;
-            height: 42px;
-        }
-        #diagnostic-badge {
+        
+        /* Навигация */
+        .bottom-nav {
             position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: #FF5500;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            z-index: 9999;
-            display: none;
-        }
-        .connection-button {
-            width: 100%;
-            margin-top: 24px;
-            padding: 0 16px;
-        }
-        .tg-chat-button {
-            width: 100%;
-            height: 52px;
-            border-radius: 12px;
-            border: none;
-            font-size: 18px;
-            font-weight: 600;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 450px;
+            margin: 0 auto;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: transparent;
-            border: 1.5px solid rgba(255, 255, 255, 0.2);
-            color: rgba(255, 255, 255, 0.5);
-            pointer-events: none;
+            background: rgba(13, 15, 21, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding: 8px 24px 12px;
+            z-index: 100;
         }
-        .tg-chat-button.active {
-            background: #37AEE2;
-            border: none;
-            color: white;
-            pointer-events: auto;
-            box-shadow: 0 4px 12px rgba(55, 174, 226, 0.3);
-        }
-        .tg-chat-button.active:hover {
-            background: #2E9AC9;
-            transform: scale(1.02);
-        }
-        .tg-chat-button svg {
-            width: 22px;
-            height: 22px;
-        }
-        .tg-chat-button.active svg {
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-        }
-        .connection-tooltip {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.3);
-            text-align: center;
-            margin-top: 8px;
-            transition: color 0.2s ease;
-        }
-        .connection-tooltip.active {
-            color: #37AEE2;
-        }
-
-        /* ===== ФИКС ДЛЯ НАСТРОЕК ===== */
-        .settings-screen {
-            padding: 0 !important;
-            margin: 0 !important;
-            width: 100% !important;
-            height: 100%;
-            overflow-y: auto !important;
-            scrollbar-width: thin;
-            scrollbar-color: #FF5500 #2A2F3A;
-        }
-        .settings-screen .content {
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-        .settings-screen .phone-frame,
-        .settings-screen main,
-        .settings-screen .screen,
-        .settings-screen .settings-content {
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-        .settings-screen::-webkit-scrollbar {
-            width: 4px;
-        }
-        .settings-screen::-webkit-scrollbar-track {
-            background: #2A2F3A;
-        }
-        .settings-screen::-webkit-scrollbar-thumb {
-            background: #FF5500;
-            border-radius: 4px;
-        }
-        .settings-screen::-webkit-scrollbar-thumb:hover {
-            background: #ff7700;
-        }
-        .settings-header {
-            padding: 12px 16px 8px 16px !important;
-            margin: 0 !important;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        .settings-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-            text-align: center;
-            margin: 0;
-        }
-        .settings-section {
-            margin: 0 0 24px 0 !important;
-            padding: 0 !important;
-            width: 100%;
-        }
-        .settings-section-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: #8E97A6;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            margin: 0 0 8px 0 !important;
-            padding: 0 16px !important;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        .settings-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 16px !important;
-            margin: 0 !important;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            cursor: pointer;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        .settings-row:last-child {
-            border-bottom: none;
-        }
-        .settings-row-link {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 16px !important;
-            margin: 0 !important;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            text-decoration: none;
-            color: inherit;
-            cursor: pointer;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        .settings-row-link:last-child {
-            border-bottom: none;
-        }
-        .settings-row-label {
-            font-size: 16px;
-            font-weight: 400;
-            color: var(--text-primary);
-        }
-        .settings-value {
-            font-size: 14px;
-            color: #8E97A6;
-        }
-        .settings-arrow {
-            font-size: 18px;
-            color: #8E97A6;
-            font-weight: 300;
-        }
-        .toggle-switch {
-            width: 46px;
-            height: 26px;
-            background: #2A2F3A;
-            border-radius: 30px;
-            position: relative;
-            cursor: pointer;
-            transition: background 0.2s ease;
-            flex-shrink: 0;
-        }
-        .toggle-switch.active {
-            background: #FF5500;
-        }
-        .toggle-switch-handle {
-            width: 22px;
-            height: 22px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            transition: transform 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
-        .toggle-switch.active .toggle-switch-handle {
-            transform: translateX(20px);
-        }
-        .sound-buttons {
-            display: flex;
-            gap: 8px;
-        }
-        .sound-btn {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: #2A2F3A;
-            color: #8E97A6;
-        }
-        .sound-btn.active {
-            background: #FF5500;
-            color: white;
-        }
-        .teammate-avatar {
-            width: 50px;
-            height: 50px;
-            transition: all 0.3s ease;
-        }
-        .teammate-avatar.connected {
-            width: 60px;
-            height: 60px;
-            filter: grayscale(0);
-            opacity: 1;
-            animation: avatarPulse 0.5s ease;
-        }
-        @keyframes avatarPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        .connection-status {
-            font-size: 16px;
-            color: var(--text-secondary);
-            text-align: center;
-            margin: 8px 0;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        .connection-status.active {
-            color: #4CAF50;
-        }
-        .connection-line {
-            position: relative;
-            width: 60px;
-            height: 2px;
-            background: var(--border-color);
-            overflow: hidden;
-        }
-        .line-pulse {
-            position: absolute;
-            width: 30px;
-            height: 100%;
-            background: var(--accent);
-            animation: pulse 1.5s infinite;
-        }
-        .connection-line.connected {
-            background: #4CAF50;
-        }
-        .connection-line.connected .line-pulse {
-            display: none;
-        }
-        @keyframes pulse {
-            0% { left: -30px; }
-            100% { left: 100%; }
-        }
-        .teammate-info {
-            text-align: center;
-            margin: 8px 0;
-        }
-        .teammate-nick {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .connection-rank-age {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin: 8px 0;
-        }
-        .connection-rank,
-        .connection-age {
-            background: var(--surface);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-        }
-        .tg-chat-button.active {
-            background: var(--accent) !important;
-            border: none;
-            color: white;
-            box-shadow: 0 4px 12px rgba(255, 85, 0, 0.3);
-        }
-        .tg-chat-button.active:hover {
-            background: var(--accent-soft) !important;
-        }
-        .self-avatar .tg-avatar-svg img,
-        .teammate-avatar .tg-avatar-svg img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .friend-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            cursor: pointer;
-            background: transparent;
-            transition: background 0.2s ease;
-        }
-        .friend-row:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
-        .friend-row:last-child {
-            border-bottom: none;
-        }
-        .friend-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: none;
-            flex-shrink: 0;
-            background: #1A1D24;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            font-weight: 600;
-            color: #F5F5F5;
-        }
-        .friend-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .friend-info {
+        
+        .nav-item {
             flex: 1;
-            min-width: 0;
             display: flex;
             flex-direction: column;
-        }
-        .friend-id {
-            font-size: 10px;
-            color: #FF5500;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            margin-bottom: 2px;
-        }
-        .friend-name {
-            font-size: 15px;
-            font-weight: 600;
-            color: #ffffff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .friend-actions {
-            display: flex;
             align-items: center;
-            gap: 2px;
-            flex-shrink: 0;
-            margin-right: -6px;
-        }
-        .friend-profile-btn,
-        .friend-tg-btn,
-        .friend-delete-btn {
-            width: 36px;
-            height: 36px;
-            border: none;
-            background: transparent !important;
+            gap: 4px;
             cursor: pointer;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s ease;
-            overflow: visible;
-            transform: translateZ(0);
-            -webkit-transform: translateZ(0);
+            opacity: 0.5;
+            transition: opacity 0.2s;
         }
-        .friend-profile-btn svg,
-        .friend-tg-btn svg,
-        .friend-delete-btn svg {
-            background: transparent !important;
-            display: block;
-            width: 32px;
-            height: 32px;
-            max-width: none;
-            flex-shrink: 0;
-        }
-        .friend-profile-btn:hover,
-        .friend-tg-btn:hover,
-        .friend-delete-btn:hover {
-            transform: scale(1.1);
-            z-index: 10;
-            position: relative;
-        }
-        .friend-profile-btn svg circle,
-        .friend-tg-btn svg circle,
-        .friend-delete-btn svg circle {
-            fill: #000000;
-        }
-        .friend-profile-btn svg path,
-        .friend-tg-btn svg path {
-            fill: #FFFFFF;
-        }
-        .friend-delete-btn svg g {
-            stroke: #FFFFFF;
-        }
-        .friends-search {
-            padding: 6px 16px 0 16px;
-            width: 100%;
-            margin-bottom: 8px;
-            position: relative;
-            background: transparent;
-        }
-        .friends-search-input {
-            width: 100%;
-            height: 28px;
-            background: rgba(15, 17, 21, 0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px 8px 0 0;
-            padding: 0 12px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #F5F5F5;
-            outline: none;
-            box-sizing: border-box;
-            line-height: 28px;
-        }
-        .friends-search-input::placeholder {
-            color: #9BA1B0;
-            font-weight: 400;
-            opacity: 0.8;
-        }
-        .friends-search-input:focus {
-            border-color: rgba(255, 255, 255, 0.2);
-            background: rgba(15, 17, 21, 0.8);
-        }
-        .friends-search::after {
-            content: "";
-            position: absolute;
-            bottom: -2px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-            opacity: 0.4;
-            filter: blur(0.3px);
-            z-index: 101;
-            pointer-events: none;
-        }
-        .friends-list-container {
-            padding: 4px 16px 0 16px;
-            flex: 1;
-            overflow-y: auto;
-        }
-        .case-icon {
-            background: #1A1D24;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100px;
-        }
-        .case-icon img {
-            max-width: 100%;
-            height: auto;
-            transition: opacity 0.2s ease;
-        }
-        .case-icon img[data-src] {
-            opacity: 0;
-        }
-        .case-icon img.loaded {
+        
+        .nav-item.active {
             opacity: 1;
         }
+        
+        .nav-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 1.5;
+        }
+        
+        .nav-label {
+            font-size: 11px;
+            color: #fff;
+            font-weight: 500;
+        }
+        
+        /* Заголовок */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: transparent;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        
+        .ping {
+            color: #FF5500;
+        }
+        
+        .ster {
+            color: #fff;
+        }
+        
+        .icon-settings svg {
+            width: 24px;
+            height: 24px;
+            stroke: #fff;
+            fill: none;
+            stroke-width: 1.5;
+            cursor: pointer;
+        }
+        
+        /* Контент с отступом под навигацию */
+        .content {
+            padding-bottom: 70px;
+        }
+        
+        /* Загрузка */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,85,0,0.2);
+            border-top-color: #FF5500;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Базовые стили для модов */
+        .section-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            padding: 20px 16px 4px;
+        }
+        
+        .section-subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+            padding: 0 16px 20px;
+        }
+        
+        .mode-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 0 16px;
+        }
+        
+        .mode-btn {
+            padding: 16px;
+            border-radius: 16px;
+            border: none;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            background: #1A1D24;
+            color: #fff;
+        }
+        
+        .mode-btn.faceit {
+            background: #FF5500;
+        }
+        
+        .mode-btn.premier {
+            background: #2A2F3A;
+        }
+        
+        .mode-btn.prime {
+            background: #1A1D24;
+            border: 1px solid #FF5500;
+        }
+        
+        .mode-btn.public {
+            background: #0F1117;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .mode-btn:active {
+            transform: scale(0.98);
+        }
     </style>
+    
+    <!-- НЕКРИТИЧЕСКИЙ CSS - загружаем асинхронно -->
+    <link rel="preload" href="css/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="css/shop-cases.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="css/animations.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/shop-cases.css">
+        <link rel="stylesheet" href="css/animations.css">
+    </noscript>
+    
+    <!-- Шрифты - асинхронно -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 </head>
 <body>
-    <script>
-        (function() {
-            function showContent() {
-                document.body.classList.add('loaded');
-            }
-            if (document.readyState === 'complete') {
-                setTimeout(showContent, 50);
-            } else {
-                window.addEventListener('load', function() {
-                    setTimeout(showContent, 50);
-                });
-            }
-        })();
-    </script>
-    
-    <div id="diagnostic-badge">⚠️</div>
-    
     <div class="phone-frame">
-        
         <header class="header">
-            <div class="logo" onclick="Logo.handleClick()">
+            <div class="logo" onclick="if(window.Logo)Logo.handleClick()">
                 <span class="ping">Ping</span><span class="ster">ster</span>
             </div>
-            <div id="settingsIcon" class="icon-settings" onclick="App.showScreen('settingsScreen', true)">
+            <div id="settingsIcon" class="icon-settings" onclick="if(window.App)App.showScreen('settingsScreen', true)">
                 <svg viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="3"/>
                     <path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/>
@@ -620,618 +250,928 @@
         </header>
 
         <main class="content">
-
-            <div id="mainScreen" class="screen main-screen">
+            <!-- Главный экран -->
+            <div id="mainScreen" class="screen active">
                 <div class="section-title">Выбор режима</div>
                 <div class="section-subtitle">Подберите подходящий</div>
                 <div class="mode-container">
-                    <button class="mode-btn faceit" onclick="App.showScreen('faceitScreen', false)">FACEIT</button>
-                    <button class="mode-btn premier" onclick="App.showScreen('premierScreen', false)">PREMIER</button>
-                    <button class="mode-btn prime" onclick="App.showScreen('primeScreen', false)">PRIME</button>
-                    <button class="mode-btn public" onclick="App.showScreen('publicScreen', false)">PUBLIC</button>
+                    <button class="mode-btn faceit" onclick="if(window.App)App.showScreen('faceitScreen', false)">FACEIT</button>
+                    <button class="mode-btn premier" onclick="if(window.App)App.showScreen('premierScreen', false)">PREMIER</button>
+                    <button class="mode-btn prime" onclick="if(window.App)App.showScreen('primeScreen', false)">PRIME</button>
+                    <button class="mode-btn public" onclick="if(window.App)App.showScreen('publicScreen', false)">PUBLIC</button>
                 </div>
-            </div>
-
-            <div id="shopScreen" class="screen shop-screen">
-                <div class="title-row">
-                    <div class="title-left"><div class="section-title">Магазин</div></div>
-                    <div class="coins-header">Pingcoins: <span id="coinsAmount">99999</span></div>
-                </div>
-                <div class="shop-tabs">
-                    <div class="shop-tab active" onclick="Shop.showTab('cases')">Кейсы</div>
-                    <div class="shop-tab" onclick="Shop.showTab('inventory')" id="inventoryTab">Инвентарь</div>
-                </div>
-                <div class="cases-section">
-                    <div class="cases-grid">
-                        <div class="case-item">
-                            <div class="case-icon"><img data-src="cases/common_case.webp" alt="common case" loading="lazy"></div>
-                            <div class="case-info">
-                                <div class="case-name">Базовый кейс</div>
-                                <div class="case-price-row">
-                                    <span class="price-value">100</span>
-                                    <button class="buy-btn-simple" onclick="Shop.buyCase('common_case')">Купить</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="case-item">
-                            <div class="case-icon"><img data-src="cases/rare_case.webp" alt="rare case" loading="lazy"></div>
-                            <div class="case-info">
-                                <div class="case-name">Редкий кейс</div>
-                                <div class="case-price-row">
-                                    <span class="price-value">250</span>
-                                    <button class="buy-btn-simple" onclick="Shop.buyCase('rare_case')">Купить</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="case-item">
-                            <div class="case-icon"><img data-src="cases/premium_case.webp" alt="premium case" loading="lazy"></div>
-                            <div class="case-info">
-                                <div class="case-name">Легендарный кейс</div>
-                                <div class="case-price-row">
-                                    <span class="price-value">500</span>
-                                    <button class="buy-btn-simple" onclick="Shop.buyCase('premium_case')">Купить</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="case-item">
-                            <div class="case-icon"><img data-src="cases/secret_case.webp" alt="secret case" loading="lazy"></div>
-                            <div class="case-info">
-                                <div class="case-name">Секретный кейс</div>
-                                <div class="case-price-row">
-                                    <span class="price-value">1000</span>
-                                    <button class="buy-btn-simple" onclick="Shop.buyCase('secret_case')">Купить</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="inventory-section hidden">
-                    <div class="inventory-grid"></div>
-                </div>
-            </div>
-
-            <div id="profileScreen" class="screen profile-screen">
-                <div class="title-row">
-                    <div class="title-left">
-                        <div class="section-title">Ваш профиль</div>
-                        <div class="edit-controls">
-                            <div id="editToggle" class="edit-title-icon" onclick="Profile.toggleEditMode()">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M12 20h9" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                                    <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <div id="applyBtn" class="apply-btn" onclick="Profile.applyChanges()">Применить</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="profile-header">
-                    <div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()">
-                        <div class="tg-avatar-svg">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                                <circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2" fill="none"/>
-                                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#ffffff" stroke-width="2" fill="none"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="profile-info">
-                        <div class="profile-name-label">ваш никнейм</div>
-                        <div class="profile-name-row">
-                            <span id="profileName" class="profile-name" onclick="Profile.editName()">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stats-row">
-                    <div class="stat-card" id="ratingCard">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" id="ratingValue" placeholder="0" value="0" readonly disabled>
-                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
-                        </div>
-                    </div>
-                    <div class="stat-card" id="ageCard">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value" id="ageValueContainer">
-                            <input type="text" id="ageValue" placeholder="0-100" value="" maxlength="3" readonly>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="profile-stats">
-                    <div class="profile-stat-card" id="steamCard">
-                        <div class="profile-stat-label">Ссылка Steam</div>
-                        <input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" value="" maxlength="50" readonly>
-                    </div>
-                    <div class="profile-stat-card" id="faceitLinkCard">
-                        <div class="profile-stat-label">Ссылка Faceit</div>
-                        <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit / пропустите" value="" maxlength="50" readonly>
-                    </div>
-                </div>
-
-                <div class="friends-section" id="friendsSection">
-                    <div id="friendsHeader" class="friends-header">
-                        <span class="friends-title">Ваши друзья: 0</span>
-                        <div class="friends-actions">
-                            <div class="friends-arrow" onclick="Team.showTeamPage()">
-                                <svg viewBox="0 0 24 24" width="20" height="20">
-                                    <path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="friends-list" id="friendsList"></div>
-                </div>
-            </div>
-
-            <div id="teamScreen" class="screen team-screen">
-                <div class="team-header" style="display: flex; align-items: center; justify-content: center; position: relative;">
-                    <div class="team-back" onclick="Team.goBack()" style="position: absolute; left: 0;">←</div>
-                    <div class="team-title">ДРУЗЬЯ</div>
-                </div>
-                <div class="team-tabs">
-                    <div class="team-tab active" onclick="Team.switchTab('friends', this)">ВАШИ ДРУЗЬЯ</div>
-                    <div class="team-tab" onclick="Team.switchTab('search', this)">ПОИСК ИГРОКА</div>
-                </div>
-                <div class="team-content" id="teamContent"></div>
-            </div>
-
-            <div id="swipeScreen" class="screen swipe-screen">
-                <div class="swipe-header">
-                    <div class="swipe-title">Поиск тиммейтов</div>
-                    <div class="swipe-subtitle">
-                        <span class="swipe-subtitle-left">← отклонить</span>
-                        <span class="swipe-subtitle-divider">|</span>
-                        <span class="swipe-subtitle-right">принять →</span>
-                    </div>
-                </div>
-                <div class="swipe-container" id="swipeContainer">
-                    <div class="swipe-card" id="swipeCard">
-                        <div class="swipe-label swipe-label-left" id="swipeLabelLeft">SKIP</div>
-                        <div class="swipe-label swipe-label-right" id="swipeLabelRight">INVITE</div>
-                        <div class="swipe-card-content">
-                            <div class="swipe-timer" id="swipeTimer">30с</div>
-                            <div class="swipe-player-row">
-                                <div class="swipe-avatar">
-                                    <div class="tg-avatar-svg" style="width: 70px; height: 70px;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="35" height="35">
-                                            <circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/>
-                                            <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="swipe-name-block">
-                                    <div class="swipe-player-id" id="swipePlayerId"></div>
-                                    <div class="swipe-player-nick" id="swipePlayerNick"></div>
-                                </div>
-                                <div class="swipe-rating-block">
-                                    <span class="swipe-rating-value" id="swipeRatingValue"></span>
-                                    <span class="heart-icon">
-                                        <svg viewBox="0 0 24 24" width="18" height="18">
-                                            <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#F5F5F5" stroke-width="2" fill="none"/>
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="swipe-rating-line"></div>
-                            <div class="swipe-stats-row three-cols">
-                                <div class="swipe-stat-item">
-                                    <div class="swipe-stat-label">РАНГ</div>
-                                    <div class="swipe-stat-value" id="swipeRank"></div>
-                                </div>
-                                <div class="swipe-stat-item">
-                                    <div class="swipe-stat-label">ВОЗРАСТ</div>
-                                    <div class="swipe-stat-value" id="swipeAge"></div>
-                                </div>
-                                <div class="swipe-stat-item">
-                                    <div class="swipe-stat-label">СТИЛЬ</div>
-                                    <div class="swipe-stat-value" id="swipeStyle"></div>
-                                </div>
-                            </div>
-                            <div class="swipe-steam-container">
-                                <div class="swipe-link-label">Ссылка Steam</div>
-                                <div class="swipe-link-value" id="swipeSteamLink"></div>
-                            </div>
-                            <div class="swipe-faceit-container">
-                                <div class="swipe-link-label">Ссылка Faceit</div>
-                                <div class="swipe-link-value" id="swipeFaceitLink"></div>
-                            </div>
-                            <div class="swipe-comment">
-                                <div class="swipe-comment-label">Комментарий</div>
-                                <div class="swipe-comment-text" id="swipeComment"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="swipe-loading" id="swipeLoading">
-                    <div class="spinner-small"></div>
-                </div>
-            </div>
-
-            <div id="connectionScreen" class="screen connection-screen">
-                <div class="swipe-header">
-                    <div class="swipe-title">Тиммейт найден</div>
-                </div>
-                <div class="swipe-container" id="connectionContainer">
-                    <div class="swipe-card" id="connectionCard">
-                        <div class="connection-timer" id="connectionTimer">30с</div>
-                        <div class="swipe-card-content connection-mode">
-                            <div class="connection-avatars">
-                                <div class="connection-avatar self-avatar">
-                                    <div class="tg-avatar-svg"></div>
-                                </div>
-                                <div class="connection-line">
-                                    <div class="line-pulse"></div>
-                                </div>
-                                <div class="connection-avatar teammate-avatar">
-                                    <div class="tg-avatar-svg"></div>
-                                </div>
-                            </div>
-                            <div class="teammate-info" data-player-id="">
-                                <span class="teammate-nick" id="teammateNick"></span>
-                            </div>
-                            <div class="connection-status" id="connectionStatus">Ожидание тиммейта</div>
-                            <div class="connection-button">
-                                <button class="tg-chat-button disabled" id="tgChatButton" disabled>
-                                    <span id="tgChatButtonText">Перейти в чат</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="swipe-loading" id="connectionLoading">
-                    <div class="spinner-small"></div>
-                </div>
-            </div>
-
-            <div id="settingsScreen" class="screen settings-screen">
-                <div class="settings-header">
-                    <div class="settings-title">Настройки</div>
-                </div>
-                <div class="settings-section">
-                    <div class="settings-section-title">ОФОРМЛЕНИЕ</div>
-                    <div class="settings-row">
-                        <span class="settings-row-label">Звук</span>
-                        <div class="sound-toggle">
-                            <span class="sound-option" id="soundOff">выкл</span>
-                            <span class="sound-separator">/</span>
-                            <span class="sound-option" id="soundOn">вкл</span>
-                        </div>
-                    </div>
-                    <div class="settings-row">
-                        <span class="settings-row-label">тема</span>
-                        <span class="settings-value">черный</span>
-                    </div>
-                    <div class="settings-row">
-                        <span class="settings-row-label">язык</span>
-                        <span class="settings-value">русский</span>
-                    </div>
-                </div>
-                <div class="settings-section">
-                    <div class="settings-section-title">ОСНОВНЫЕ</div>
-                    <div class="settings-row">
-                        <span class="settings-row-label">реферальная система</span>
-                        <span class="settings-arrow">→</span>
-                    </div>
-                    <div class="settings-row" onclick="Team.showTeamPage()">
-                        <span class="settings-row-label">друзья</span>
-                        <span class="settings-arrow">→</span>
-                    </div>
-                    <div class="settings-row" onclick="App.showScreen('shopScreen', true)">
-                        <span class="settings-row-label">инвентарь</span>
-                        <span class="settings-arrow">→</span>
-                    </div>
-                </div>
-                <div class="settings-section">
-                    <div class="settings-section-title">СОЦСЕТИ</div>
-                    <a href="#" class="settings-row-link">
-                        <span class="settings-row-label">TikTok</span>
-                        <span class="settings-arrow">→</span>
-                    </a>
-                    <a href="#" class="settings-row-link">
-                        <span class="settings-row-label">Telegram канал</span>
-                        <span class="settings-arrow">→</span>
-                    </a>
-                </div>
-                <div class="settings-section">
-                    <div class="settings-section-title">ПОДДЕРЖКА</div>
-                    <a href="mailto:support@pingster.com" class="settings-row-link">
-                        <span class="settings-row-label">Gmail</span>
-                        <span class="settings-value">support@pingster.com</span>
-                    </a>
-                    <div class="settings-row">
-                        <span class="settings-row-label">Telegram</span>
-                        <span class="settings-value">@pingster_support</span>
-                    </div>
-                </div>
-            </div>
-
-            <div id="faceitScreen" class="screen faceit-screen">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
-                    <div class="mode-title faceit">FACEIT</div>
-                </div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">Faceit ELO</div>
-                <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000" value="-" min="0" max="5000">
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" placeholder="0" value="0" readonly>
-                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
-                        </div>
-                    </div>
-                    <div class="stat-card" onclick="Profile.editFaceitAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value">
-                            <input type="text" id="faceitAgeValue" placeholder="21" value="21">
-                        </div>
-                    </div>
-                </div>
-                <div class="input-label">Ссылка Faceit</div>
-                <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit" value="">
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
-                </div>
-                <div class="comment-section">
-                    <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="faceitComment" placeholder="Введите комментарий" maxlength="100"></textarea>
-                </div>
-                <button class="mode-search-btn" onclick="Search.start('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
-            </div>
-
-            <div id="premierScreen" class="screen premier-screen">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
-                    <div class="mode-title premier">PREMIER</div>
-                </div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">CS Rating</div>
-                <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000" value="12500" min="0" max="35000">
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" placeholder="0" value="0" readonly>
-                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
-                        </div>
-                    </div>
-                    <div class="stat-card" onclick="Profile.editPremierAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value">
-                            <input type="text" id="premierAgeValue" placeholder="21" value="21">
-                        </div>
-                    </div>
-                </div>
-                <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam" value="">
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
-                </div>
-                <div class="comment-section">
-                    <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="premierComment" placeholder="Введите комментарий" maxlength="100"></textarea>
-                </div>
-                <button class="mode-search-btn" onclick="Search.start('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
-            </div>
-
-            <div id="primeScreen" class="screen prime-screen">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
-                    <div class="mode-title prime">PRIME</div>
-                </div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">Звание</div>
-                <select class="rank-select" id="primeRankSelect">
-                    <option selected>Выберите ранг</option>
-                    <option>Silver 1</option>
-                    <option>Silver 2</option>
-                    <option>Silver 3</option>
-                    <option>Silver 4</option>
-                    <option>Silver Elite</option>
-                    <option>Gold Nova 1</option>
-                    <option>Gold Nova 2</option>
-                    <option>Gold Nova 3</option>
-                    <option>Gold Nova Master</option>
-                    <option>Master Guardian 1</option>
-                    <option>Master Guardian 2</option>
-                    <option>Master Guardian Elite</option>
-                    <option>Distinguished Master Guardian</option>
-                    <option>Legendary Eagle</option>
-                    <option>Legendary Eagle Master</option>
-                    <option>Supreme Master First Class</option>
-                    <option>Global Elite</option>
-                </select>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" placeholder="0" value="0" readonly>
-                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
-                        </div>
-                    </div>
-                    <div class="stat-card" onclick="Profile.editPrimeAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value">
-                            <input type="text" id="primeAgeValue" placeholder="21" value="21">
-                        </div>
-                    </div>
-                </div>
-                <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam" value="">
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
-                </div>
-                <div class="comment-section">
-                    <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="primeComment" placeholder="Введите комментарий" maxlength="100"></textarea>
-                </div>
-                <button class="mode-search-btn" onclick="Search.start('PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
-            </div>
-
-            <div id="publicScreen" class="screen public-screen">
-                <div class="mode-header">
-                    <button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button>
-                    <div class="mode-title public">PUBLIC</div>
-                </div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">Звание</div>
-                <select class="rank-select" id="publicRankSelect">
-                    <option selected>Выберите ранг</option>
-                    <option>Silver 1</option>
-                    <option>Silver 2</option>
-                    <option>Silver 3</option>
-                    <option>Silver 4</option>
-                    <option>Silver Elite</option>
-                    <option>Gold Nova 1</option>
-                    <option>Gold Nova 2</option>
-                    <option>Gold Nova 3</option>
-                    <option>Gold Nova Master</option>
-                    <option>Master Guardian 1</option>
-                    <option>Master Guardian 2</option>
-                    <option>Master Guardian Elite</option>
-                    <option>Distinguished Master Guardian</option>
-                    <option>Legendary Eagle</option>
-                    <option>Legendary Eagle Master</option>
-                    <option>Supreme Master First Class</option>
-                    <option>Global Elite</option>
-                </select>
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Рейтинг</div>
-                        <div class="stat-value">
-                            <input type="text" placeholder="0" value="0" readonly>
-                            <span class="heart-icon"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2"/></svg></span>
-                        </div>
-                    </div>
-                    <div class="stat-card" onclick="Profile.editPublicAge()">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value">
-                            <input type="text" id="publicAgeValue" placeholder="21" value="21">
-                        </div>
-                    </div>
-                </div>
-                <div class="input-label">Ссылка Steam</div>
-                <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam" value="">
-                <div class="play-style">
-                    <div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div>
-                    <div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div>
-                </div>
-                <div class="comment-section">
-                    <div class="comment-label">Комментарий к поиску</div>
-                    <textarea class="comment-input" id="publicComment" placeholder="Введите комментарий" maxlength="100"></textarea>
-                </div>
-                <button class="mode-search-btn" onclick="Search.start('PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
-            </div>
-
-            <div id="searchScreen" class="screen search-screen">
-                <div class="search-header">
-                    <div class="search-title" id="searchModeTitle">FACEIT</div>
-                    <div class="search-timer" id="searchTimer">00:00</div>
-                </div>
-                <div class="search-status" id="searchStatus">Поиск тиммейта начат</div>
-                <div class="search-loading">
-                    <div class="spinner"></div>
-                </div>
-                <button class="cancel-search-btn" onclick="Search.cancel()">Отменить поиск</button>
             </div>
             
+            <!-- Остальные экраны - будут заполнены JS -->
+            <div id="shopScreen" class="screen"><div class="loading-placeholder">Загрузка магазина...</div></div>
+            <div id="profileScreen" class="screen"><div class="loading-placeholder">Загрузка профиля...</div></div>
+            <div id="teamScreen" class="screen"><div class="loading-placeholder">Загрузка друзей...</div></div>
+            <div id="swipeScreen" class="screen"><div class="loading-placeholder">Загрузка...</div></div>
+            <div id="connectionScreen" class="screen"><div class="loading-placeholder">Загрузка...</div></div>
+            <div id="settingsScreen" class="screen"><div class="loading-placeholder">Загрузка настроек...</div></div>
+            <div id="faceitScreen" class="screen"><div class="loading-placeholder">Загрузка...</div></div>
+            <div id="premierScreen" class="screen"><div class="loading-placeholder">Загрузка...</div></div>
+            <div id="primeScreen" class="screen"><div class="loading-placeholder">Загрузка...</div></div>
+            <div id="publicScreen" class="screen"><div class="loading-placeholder">Загрузка...</div></div>
+            <div id="searchScreen" class="screen"><div class="loading-placeholder">Загрузка...</div></div>
         </main>
 
         <nav class="bottom-nav">
-            <div class="nav-item active" onclick="App.showScreen('mainScreen', true)" id="navMain">
-                <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
+            <div class="nav-item active" id="navMain" onclick="if(window.App)App.showScreen('mainScreen', true)">
+                <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span>
                 <span class="nav-label">Главная</span>
             </div>
-            <div class="nav-item" onclick="App.showScreen('shopScreen', true)" id="navShop">
-                <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span>
+            <div class="nav-item" id="navShop" onclick="if(window.App)App.showScreen('shopScreen', true)">
+                <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12zM9 21h0M18 21h0" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span>
                 <span class="nav-label">Магазин</span>
             </div>
-            <div class="nav-item" onclick="App.showScreen('profileScreen', true)" id="navProfile">
-                <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
+            <div class="nav-item" id="navProfile" onclick="if(window.App)App.showScreen('profileScreen', true)">
+                <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M4 21c2-4 14-4 16 0" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span>
                 <span class="nav-label">Профиль</span>
             </div>
         </nav>
     </div>
 
-    <!-- JS ФАЙЛЫ с автоматической версией и defer -->
+    <!-- ОПТИМИЗИРОВАННАЯ ЗАГРУЗКА JS -->
     <script>
         (function() {
             const version = window.BUILD_VERSION || Date.now();
             
+            // Все JS файлы
             const jsFiles = [
-                'js/config.js', 'js/globals.js', 'js/navigation.js', 'js/settings.js',
-                'js/profile.js', 'js/avatar.js', 'js/friends.js', 'js/shop.js',
-                'js/search.js', 'js/logo.js', 'js/app.js', 'js/team.js', 'js/swipe.js'
+                'js/config.js',
+                'js/globals.js', 
+                'js/app.js',
+                'js/navigation.js',
+                'js/settings.js',
+                'js/profile.js',
+                'js/avatar.js',
+                'js/friends.js',
+                'js/shop.js',
+                'js/search.js',
+                'js/logo.js',
+                'js/team.js',
+                'js/swipe.js'
             ];
             
-            document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-                if (link.href && !link.href.includes('telegram')) {
-                    link.href = link.href.split('?')[0] + '?v=' + version;
-                }
-            });
+            let loadedCount = 0;
+            const totalFiles = jsFiles.length;
             
-            // ✅ Добавляем JS с defer в head
-            jsFiles.forEach(file => {
-                const script = document.createElement('script');
-                script.src = file + '?v=' + version;
-                script.defer = true;
-                document.head.appendChild(script);
-            });
-            
-            window.loadShopImages = function() {
-                const images = document.querySelectorAll('.case-icon img[data-src]');
-                images.forEach(img => {
-                    if (img.dataset.src && !img.src) {
-                        img.src = img.dataset.src + '?v=' + version;
-                        img.onload = () => img.classList.add('loaded');
+            function loadScript(src, index) {
+                return new Promise((resolve) => {
+                    const script = document.createElement('script');
+                    script.src = src + '?v=' + version;
+                    
+                    // Первые 3 файла грузим без async (критические)
+                    if (index < 3) {
+                        script.async = false;
+                        script.defer = true;
+                    } else {
+                        script.async = true;
+                        script.defer = true;
                     }
-                });
-            };
-            
-            function preloadCaseImagesBackground() {
-                console.log('🔄 Фоновая загрузка кейсов...');
-                const images = document.querySelectorAll('.case-icon img[data-src]');
-                let loadedCount = 0;
-                const total = images.length;
-                images.forEach(img => {
-                    if (img.dataset.src && !img.src) {
-                        img.src = img.dataset.src + '?v=' + version;
-                        img.onload = () => {
-                            loadedCount++;
-                            console.log(`✅ Кейс загружен (${loadedCount}/${total})`);
-                        };
-                        img.onerror = () => {
-                            loadedCount++;
-                            console.warn(`⚠️ Ошибка загрузки кейса`);
-                        };
-                    }
+                    
+                    script.onload = () => {
+                        loadedCount++;
+                        console.log(`✅ Загружен: ${src.split('/').pop()} (${loadedCount}/${totalFiles})`);
+                        resolve();
+                    };
+                    
+                    script.onerror = () => {
+                        console.error(`❌ Ошибка: ${src}`);
+                        loadedCount++;
+                        resolve();
+                    };
+                    
+                    document.head.appendChild(script);
                 });
             }
             
-            setTimeout(() => {
-                if (document.getElementById('mainScreen')?.classList.contains('active')) {
-                    preloadCaseImagesBackground();
-                } else {
-                    const observer = new MutationObserver(() => {
-                        if (document.getElementById('mainScreen')?.classList.contains('active')) {
-                            preloadCaseImagesBackground();
-                            observer.disconnect();
-                        }
-                    });
-                    observer.observe(document.body, { attributes: true, subtree: true });
-                    setTimeout(() => observer.disconnect(), 5000);
+            async function loadAllScripts() {
+                console.log('🚀 Старт загрузки скриптов...');
+                
+                // Загружаем последовательно первые 3 критических
+                for (let i = 0; i < Math.min(3, jsFiles.length); i++) {
+                    await loadScript(jsFiles[i], i);
                 }
-            }, 2000);
+                
+                // Показываем интерфейс
+                document.body.classList.add('loaded');
+                console.log('✅ Критические модули загружены, интерфейс активен');
+                
+                // Загружаем остальные параллельно
+                const remainingPromises = [];
+                for (let i = 3; i < jsFiles.length; i++) {
+                    remainingPromises.push(loadScript(jsFiles[i], i));
+                }
+                await Promise.all(remainingPromises);
+                
+                console.log('🎉 Все модули загружены!');
+                
+                // Фоновая загрузка данных
+                setTimeout(() => {
+                    if (window.Profile && !window.Profile.isProfileLoaded) {
+                        if (!window.Profile.telegramId) {
+                            window.Profile.telegramId = window.Profile.getTelegramId();
+                        }
+                        window.Profile.loadProfileFromServer();
+                        window.Profile.loadAvatar();
+                    }
+                    if (window.Friends && !window.Friends.friendsListLoaded) {
+                        window.Friends.loadFriendsList();
+                    }
+                    if (window.Shop && window.Shop.loadShopItems) {
+                        window.Shop.loadShopItems();
+                    }
+                }, 100);
+            }
             
-            console.log('✅ Версия сборки:', version);
-            console.log('✅ JS загружен с defer');
+            loadAllScripts();
+            
+            // Предзагрузка изображений кейсов
+            window.preloadCaseImages = function() {
+                const images = [
+                    'cases/common_case.webp',
+                    'cases/rare_case.webp',
+                    'cases/premium_case.webp',
+                    'cases/secret_case.webp'
+                ];
+                images.forEach(img => {
+                    const link = document.createElement('link');
+                    link.rel = 'preload';
+                    link.as = 'image';
+                    link.href = img + '?v=' + version;
+                    document.head.appendChild(link);
+                });
+            };
+            setTimeout(() => window.preloadCaseImages(), 500);
         })();
     </script>
+    
+    <!-- Дополнительные стили для полной функциональности -->
+    <style>
+        /* Стили для профиля */
+        .profile-screen .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+        }
+        .title-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .edit-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .edit-title-icon {
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            background: rgba(255,85,0,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .edit-title-icon.active {
+            background: #FF5500;
+        }
+        .edit-title-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+        .apply-btn {
+            background: #FF5500;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+        }
+        .apply-btn.visible {
+            display: inline-block;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: rgba(26,29,36,0.5);
+            border-radius: 20px;
+            margin: 12px;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #2B2F36;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            overflow: hidden;
+        }
+        .profile-avatar.editable-avatar {
+            border: 2px solid #FF5500;
+            transform: scale(1.02);
+        }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-info {
+            flex: 1;
+        }
+        .profile-name-label {
+            font-size: 12px;
+            color: #8E97A6;
+            margin-bottom: 4px;
+        }
+        .profile-name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .profile-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FF5500;
+            cursor: pointer;
+        }
+        .profile-name.editable {
+            cursor: text;
+            border-bottom: 1px dashed #FF5500;
+        }
+        .stats-row {
+            display: flex;
+            gap: 12px;
+            padding: 0 16px;
+            margin-bottom: 16px;
+        }
+        .stat-card {
+            flex: 1;
+            background: rgba(26,29,36,0.5);
+            border-radius: 16px;
+            padding: 12px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #8E97A6;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .stat-value input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700;
+            outline: none;
+            width: 80px;
+        }
+        .stat-value input:read-only {
+            cursor: default;
+        }
+        .heart-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+        .profile-stats {
+            padding: 0 16px;
+            margin-bottom: 16px;
+        }
+        .profile-stat-card {
+            background: rgba(26,29,36,0.5);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .profile-stat-label {
+            font-size: 12px;
+            color: #8E97A6;
+            margin-bottom: 8px;
+        }
+        .profile-stat-value {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            width: 100%;
+            outline: none;
+        }
+        .profile-stat-value:read-only {
+            cursor: default;
+        }
+        .friends-section {
+            margin: 16px;
+            background: rgba(26,29,36,0.3);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .friends-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(26,29,36,0.5);
+        }
+        .friends-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .friends-arrow svg {
+            width: 20px;
+            height: 20px;
+        }
+        .friends-list {
+            padding: 8px 16px;
+        }
+        
+        /* Стили для друзей */
+        .friend-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            cursor: pointer;
+        }
+        .friend-row:last-child {
+            border-bottom: none;
+        }
+        .friend-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #2B2F36;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .friend-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .friend-info {
+            flex: 1;
+        }
+        .friend-id {
+            font-size: 11px;
+            color: #FF5500;
+            font-weight: 600;
+            display: block;
+        }
+        .friend-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .friend-arrow {
+            color: #8E97A6;
+            font-size: 18px;
+        }
+        .friend-actions {
+            display: flex;
+            gap: 4px;
+        }
+        .friend-profile-btn, .friend-tg-btn, .friend-delete-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+        .friend-profile-btn:hover, .friend-tg-btn:hover, .friend-delete-btn:hover {
+            transform: scale(1.1);
+        }
+        .empty-friends {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8E97A6;
+        }
+        .empty-friends-text {
+            font-size: 14px;
+        }
+        
+        /* Стили для магазина */
+        .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            margin-bottom: 16px;
+        }
+        .coins-header {
+            background: #FF5500;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .shop-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 0 16px;
+            margin-bottom: 20px;
+        }
+        .shop-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            color: #8E97A6;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .shop-tab.active {
+            background: #FF5500;
+            color: #fff;
+        }
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 0 16px;
+        }
+        .case-item {
+            background: rgba(26,29,36,0.5);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .case-icon {
+            width: 100%;
+            height: 120px;
+            background: #1A1D24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .case-icon img {
+            max-width: 80%;
+            max-height: 80%;
+        }
+        .case-info {
+            padding: 12px;
+        }
+        .case-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .case-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .price-value {
+            color: #FF5500;
+            font-weight: 700;
+        }
+        .buy-btn-simple {
+            background: #FF5500;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .inventory-section.hidden {
+            display: none;
+        }
+        
+        /* Стили для поиска */
+        .mode-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 24px;
+            color: #fff;
+            cursor: pointer;
+        }
+        .mode-title {
+            font-size: 28px;
+            font-weight: 800;
+        }
+        .mode-title.faceit { color: #FF5500; }
+        .mode-title.premier { color: #fff; }
+        .mode-title.prime { color: #FF5500; }
+        .mode-title.public { color: #fff; }
+        .mode-subtitle {
+            font-size: 14px;
+            color: #8E97A6;
+            padding: 0 16px 20px;
+        }
+        .input-label {
+            font-size: 12px;
+            color: #8E97A6;
+            padding: 0 16px 8px;
+        }
+        .search-input-field, .input-field, .rank-select {
+            width: calc(100% - 32px);
+            margin: 0 16px 20px;
+            padding: 12px;
+            background: rgba(26,29,36,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+        }
+        .play-style {
+            display: flex;
+            gap: 12px;
+            padding: 0 16px;
+            margin-bottom: 20px;
+        }
+        .style-option {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: rgba(26,29,36,0.5);
+            border-radius: 12px;
+            color: #8E97A6;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .style-option.active {
+            background: #FF5500;
+            color: #fff;
+        }
+        .comment-section {
+            padding: 0 16px;
+            margin-bottom: 20px;
+        }
+        .comment-label {
+            font-size: 12px;
+            color: #8E97A6;
+            margin-bottom: 8px;
+        }
+        .comment-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(26,29,36,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        .mode-search-btn {
+            width: calc(100% - 32px);
+            margin: 0 16px;
+            padding: 14px;
+            background: #FF5500;
+            border: none;
+            border-radius: 30px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        
+        /* Стили для экрана поиска */
+        .search-header {
+            text-align: center;
+            padding: 40px 16px 20px;
+        }
+        .search-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .search-timer {
+            font-size: 48px;
+            font-weight: 800;
+            color: #FF5500;
+        }
+        .search-status {
+            text-align: center;
+            color: #8E97A6;
+            margin-bottom: 40px;
+        }
+        .search-loading {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+        .cancel-search-btn {
+            width: calc(100% - 32px);
+            margin: 0 16px;
+            padding: 14px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,85,0,0.5);
+            border-radius: 30px;
+            color: #FF5500;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        /* Стили для свайпа */
+        .swipe-header {
+            text-align: center;
+            padding: 20px 16px;
+        }
+        .swipe-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .swipe-subtitle {
+            font-size: 12px;
+            color: #8E97A6;
+        }
+        .swipe-container {
+            padding: 0 16px;
+        }
+        .swipe-card {
+            background: rgba(26,29,36,0.8);
+            border-radius: 24px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .swipe-timer, .connection-timer {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.5);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #FF5500;
+        }
+        .swipe-player-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .swipe-avatar {
+            width: 70px;
+            height: 70px;
+        }
+        .tg-avatar-svg {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #2B2F36;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .swipe-name-block {
+            flex: 1;
+        }
+        .swipe-player-id {
+            font-size: 12px;
+            color: #FF5500;
+            margin-bottom: 4px;
+        }
+        .swipe-player-nick {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .swipe-rating-block {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .swipe-rating-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .swipe-stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .swipe-stat-item {
+            text-align: center;
+        }
+        .swipe-stat-label {
+            font-size: 10px;
+            color: #8E97A6;
+            margin-bottom: 4px;
+        }
+        .swipe-stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .swipe-steam-container, .swipe-faceit-container {
+            margin: 12px 0;
+        }
+        .swipe-link-label {
+            font-size: 10px;
+            color: #8E97A6;
+            margin-bottom: 4px;
+        }
+        .swipe-link-value {
+            font-size: 12px;
+            color: #FF5500;
+            word-break: break-all;
+        }
+        .swipe-comment {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .swipe-comment-label {
+            font-size: 10px;
+            color: #8E97A6;
+            margin-bottom: 4px;
+        }
+        .swipe-comment-text {
+            font-size: 12px;
+            color: #fff;
+        }
+        
+        /* Стили для соединения */
+        .connection-avatars {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .connection-avatar {
+            width: 80px;
+            height: 80px;
+        }
+        .connection-line {
+            width: 60px;
+            height: 2px;
+            background: rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .line-pulse {
+            position: absolute;
+            width: 30px;
+            height: 100%;
+            background: #FF5500;
+            animation: pulse 1.5s infinite;
+        }
+        .teammate-info {
+            text-align: center;
+            margin: 16px 0;
+        }
+        .teammate-nick {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .connection-status {
+            text-align: center;
+            color: #8E97A6;
+            margin: 16px 0;
+        }
+        .tg-chat-button {
+            width: 100%;
+            padding: 14px;
+            background: #37AEE2;
+            border: none;
+            border-radius: 30px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .tg-chat-button.disabled {
+            background: #2A2F3A;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        @keyframes pulse {
+            0% { left: -30px; }
+            100% { left: 100%; }
+        }
+        
+        /* Стили для настроек */
+        .settings-screen {
+            padding: 0 !important;
+        }
+        .settings-header {
+            padding: 16px;
+            text-align: center;
+        }
+        .settings-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .settings-section {
+            margin-bottom: 24px;
+        }
+        .settings-section-title {
+            font-size: 12px;
+            color: #8E97A6;
+            padding: 0 16px 8px;
+            text-transform: uppercase;
+        }
+        .settings-row, .settings-row-link {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            text-decoration: none;
+            color: #fff;
+        }
+        .settings-row-label {
+            font-size: 16px;
+        }
+        .settings-value {
+            font-size: 14px;
+            color: #8E97A6;
+        }
+        .settings-arrow {
+            font-size: 18px;
+            color: #8E97A6;
+        }
+        .sound-toggle {
+            display: flex;
+            gap: 4px;
+        }
+        .sound-option {
+            cursor: pointer;
+            color: #8E97A6;
+        }
+        .sound-option.active {
+            color: #FF5500;
+            font-weight: 600;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 450px) {
+            .phone-frame {
+                width: 100%;
+            }
+        }
+        
+        /* Скрытые классы */
+        .hidden {
+            display: none !important;
+        }
+        .error-message {
+            color: #FF5500;
+            font-size: 11px;
+            margin-top: 4px;
+            padding-left: 12px;
+        }
+        .profile-toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0,0,0,0.9);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            white-space: nowrap;
+        }
+        .profile-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
 </body>
 </html>
