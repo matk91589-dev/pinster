@@ -161,6 +161,13 @@ window.App = window.App || {};
 Object.assign(window.App, {
     currentScreen: null,
     
+    hapticFeedback: function(style = 'light') {
+        const tg = window.Telegram?.WebApp;
+        if (tg?.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred(style);
+        }
+    },
+    
     showScreen: function(screenId, updateNav = true) {
         const screen = document.getElementById(screenId);
         if (!screen) {
@@ -237,11 +244,8 @@ Object.assign(window.App, {
             }
         }
         
-        // Вибрация при переходе (только если есть поддержка)
-        const tg = window.Telegram?.WebApp;
-        if (tg?.HapticFeedback) {
-            tg.HapticFeedback.impactOccurred('light');
-        }
+        // Вибрация при переходе
+        this.hapticFeedback('light');
     },
     
     showAlert: function(message) {
@@ -253,5 +257,4 @@ Object.assign(window.App, {
     }
 });
 
-// Для обратной совместимости
 window.App = window.App;
