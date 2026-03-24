@@ -822,13 +822,13 @@
             </div>
 
             <div id="teamScreen" class="screen team-screen">
-                <div class="team-header" style="display: flex; align-items: center; justify-content: center; position: relative;">
-                    <div class="team-back" onclick="Team.goBack()" style="position: absolute; left: 0;">←</div>
-                    <div class="team-title">ДРУЗЬЯ</div>
+                <div class="team-header" style="display: flex; align-items: center; justify-content: flex-start; position: relative; padding: 12px 16px;">
+                    <div class="team-back" onclick="Team.goBack()" style="cursor: pointer; font-size: 24px; color: #FF5500;">←</div>
+                    <div style="flex: 1;"></div>
                 </div>
                 <div class="team-tabs">
                     <div class="team-tab active" onclick="Team.switchTab('friends', this)">ВАШИ ДРУЗЬЯ</div>
-                    <div class="team-tab" onclick="Team.switchTab('search', this)">ПОИСК ИГРОКА</div>
+                    <div class="team-tab" onclick="Team.switchTab('leaderboard', this)">ЛИДЕРБОРД</div>
                 </div>
                 <div class="team-content" id="teamContent"></div>
             </div>
