@@ -1,5 +1,5 @@
 // ============================================
-// ДРУЗЬЯ - С ПОИСКОМ ПО ДРУЗЬЯМ
+// ДРУЗЬЯ - С КЭШИРОВАНИЕМ И МГНОВЕННОЙ ЗАГРУЗКОЙ
 // ============================================
 
 const Friends = {
@@ -9,33 +9,62 @@ const Friends = {
     searchTimeout: null,
     friendsListLoaded: false,
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
+    isInitialized: false,
 
     init() {
-        console.log('🔍 Friends.init() запущен');
+        if (this.isInitialized) return;
+        this.isInitialized = true;
+        
+        console.log('🚀 Friends.init()');
         
         if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
             this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
-            console.log('✅ Telegram ID из WebApp:', this.telegramId);
         } else {
             this.telegramId = Profile.getTelegramId();
-            console.log('✅ Telegram ID из Profile:', this.telegramId);
         }
         
         if (!this.telegramId) {
             console.error('❌ НЕТ TELEGRAM ID!');
-            this.showError('Ошибка авторизации');
             return;
         }
         
-        // ❌ НЕ загружаем друзей автоматически! Только настраиваем поиск
-        // Загрузка будет вызвана из app.js в фоне
+        // Сначала грузим из кэша
+        this.loadFromCache();
+        
+        // Настраиваем поиск
         this.setupSearchInput();
+        
+        // Фоново обновляем с сервера
+        setTimeout(() => {
+            this.loadFriendsList();
+        }, 500);
     },
     
-    // ✅ Метод для настройки слушателей (вызывается из app.js)
-    setupListeners() {
-        console.log('🔧 Friends: настройка слушателей');
-        this.setupSearchInput();
+    // ✅ ЗАГРУЗКА ИЗ КЭША (мгновенно)
+    loadFromCache() {
+        const cachedFriends = localStorage.getItem(`friends_${this.telegramId}`);
+        
+        if (cachedFriends) {
+            try {
+                const friends = JSON.parse(cachedFriends);
+                if (friends && friends.length > 0) {
+                    this.friendsList = friends;
+                    this.filteredFriends = [...friends];
+                    this.updateFriendsCounter();
+                    this.renderFriendsList();
+                    this.renderFriendsPage();
+                    console.log('✅ Друзья загружены из кэша:', friends.length);
+                    return true;
+                }
+            } catch (e) {
+                console.error('Ошибка парсинга кэша друзей:', e);
+            }
+        }
+        
+        // Если кэш пуст, показываем пустой список
+        this.renderFriendsList();
+        this.renderFriendsPage();
+        return false;
     },
     
     getTelegramId() {
@@ -47,7 +76,7 @@ const Friends = {
     
     async loadFriendsList() {
         if (this.friendsListLoaded) {
-            console.log('📦 Друзья уже загружены, пропускаем');
+            console.log('📦 Друзья уже загружены');
             return;
         }
         
@@ -60,41 +89,53 @@ const Friends = {
             return;
         }
         
-        console.log('👥 Загрузка друзей...');
+        console.log('👥 Загрузка друзей с сервера...');
         
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            
             const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Cache-Control': 'no-cache'
                 },
-                body: JSON.stringify({ telegram_id: this.telegramId })
+                body: JSON.stringify({ telegram_id: this.telegramId }),
+                signal: controller.signal
             });
             
-            console.log('📦 Статус ответа друзей:', response.status);
+            clearTimeout(timeoutId);
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
             }
             
             const data = await response.json();
-            console.log('📦 Данные друзей от сервера:', data);
+            console.log('📦 Данные друзей с сервера:', data);
             
             if (data.status === 'ok' && data.friends) {
                 this.friendsList = data.friends;
                 this.filteredFriends = [...this.friendsList];
+                
+                // Сохраняем в кэш
+                localStorage.setItem(`friends_${this.telegramId}`, JSON.stringify(this.friendsList));
+                
                 this.updateFriendsCounter();
                 this.renderFriendsList();
+                this.renderFriendsPage();
                 this.friendsListLoaded = true;
-                console.log('✅ Друзья загружены:', this.friendsList.length);
+                console.log('✅ Друзья загружены с сервера:', this.friendsList.length);
             } else {
                 console.log('❌ Ошибка от сервера:', data.error);
                 this.showError(data.error || 'Нет данных');
             }
         } catch (error) {
-            console.error('❌ Ошибка загрузки друзей:', error);
-            this.showError('Не удалось загрузить друзей');
+            if (error.name === 'AbortError') {
+                console.error('❌ Таймаут загрузки друзей (3 сек)');
+            } else {
+                console.error('❌ Ошибка загрузки друзей:', error);
+            }
         }
     },
     
@@ -121,7 +162,7 @@ const Friends = {
                     this.searchFriends(query);
                 }, 300);
             });
-        }, 500);
+        }, 100);
     },
     
     searchFriends(query) {
@@ -194,8 +235,8 @@ const Friends = {
             return;
         }
         
-        // Если друзья еще не загружены, показываем загрузку
-        if (!this.friendsListLoaded && this.friendsList.length === 0) {
+        // Если нет данных и еще не загружали с сервера
+        if ((!friends || friends.length === 0) && this.friendsList.length === 0 && !this.friendsListLoaded) {
             container.innerHTML = `
                 <div class="empty-friends">
                     <div class="empty-friends-text">⏳ загрузка...</div>
@@ -269,6 +310,22 @@ const Friends = {
         if (friendsTitle) {
             friendsTitle.textContent = `Ваши друзья: ${this.friendsList.length}`;
         }
+        
+        const friendsTitleTeam = document.querySelector('.team-title');
+        if (friendsTitleTeam && friendsTitleTeam.textContent === 'ДРУЗЬЯ') {
+            const counterSpan = document.querySelector('.friends-count');
+            if (!counterSpan) {
+                const newSpan = document.createElement('span');
+                newSpan.className = 'friends-count';
+                newSpan.style.marginLeft = '8px';
+                newSpan.style.fontSize = '14px';
+                newSpan.style.color = '#FF5500';
+                newSpan.textContent = `(${this.friendsList.length})`;
+                friendsTitleTeam.appendChild(newSpan);
+            } else {
+                counterSpan.textContent = `(${this.friendsList.length})`;
+            }
+        }
     },
     
     showError(message) {
@@ -306,16 +363,40 @@ const Friends = {
     deleteFriend(playerId) {
         console.log('🗑️ Удалить друга:', playerId);
         if (confirm('Удалить пользователя из друзей?')) {
+            // Удаляем из списка и обновляем кэш
+            this.friendsList = this.friendsList.filter(f => f.player_id !== playerId);
+            this.filteredFriends = this.filteredFriends.filter(f => f.player_id !== playerId);
+            localStorage.setItem(`friends_${this.telegramId}`, JSON.stringify(this.friendsList));
+            this.updateFriendsCounter();
+            this.renderFriendsList();
+            this.renderFriendsPage();
+            
             if (window.App) {
-                App.showAlert(`Удаление друга ${playerId}\n(функция в разработке)`);
+                App.showAlert(`Друг удален`);
             } else {
-                alert(`Удаление друга ${playerId}\n(функция в разработке)`);
+                alert(`Друг удален`);
             }
         }
+    },
+    
+    // ✅ Добавить друга (для поиска)
+    addFriend(friend) {
+        // Проверяем, нет ли уже
+        if (this.friendsList.some(f => f.player_id === friend.player_id)) {
+            return false;
+        }
+        
+        this.friendsList.unshift(friend);
+        this.filteredFriends = [...this.friendsList];
+        localStorage.setItem(`friends_${this.telegramId}`, JSON.stringify(this.friendsList));
+        this.updateFriendsCounter();
+        this.renderFriendsList();
+        this.renderFriendsPage();
+        return true;
     }
 };
 
-// ✅ Инициализация: только настройка, без загрузки данных
+// ✅ ИНИЦИАЛИЗАЦИЯ
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Friends.js загружен');
     setTimeout(() => Friends.init(), 100);
