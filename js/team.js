@@ -11,6 +11,10 @@ const Team = {
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
     leaderboard: [],
     currentPlayerId: null,
+    isFriendsLoaded: false,
+    isLeaderboardLoaded: false,
+    isLoadingFriends: false,
+    isLoadingLeaderboard: false,
 
     init() {
         console.log('🚀 Team.init()');
@@ -28,9 +32,9 @@ const Team = {
             return;
         }
         
-        // Грузим данные
-        this.loadFriendsList();
-        this.loadLeaderboard();
+        // ❌ НЕ ГРУЗИМ ДАННЫЕ ПРИ СТАРТЕ
+        // this.loadFriendsList();
+        // this.loadLeaderboard();
     },
     
     showTeamPage() {
@@ -44,15 +48,30 @@ const Team = {
         });
         teamScreen.classList.add('active');
         
+        // Грузим данные только при открытии экрана
         if (this.currentTab === 'friends') {
             this.renderFriendsTab();
+            if (!this.isFriendsLoaded && !this.isLoadingFriends) {
+                this.loadFriendsList();
+            }
         } else {
             this.renderLeaderboardTab();
+            if (!this.isLeaderboardLoaded && !this.isLoadingLeaderboard) {
+                this.loadLeaderboard();
+            }
         }
     },
     
     async loadFriendsList() {
         if (!this.telegramId) return;
+        
+        if (this.isLoadingFriends) {
+            console.log('⏳ Уже загружаем друзей');
+            return;
+        }
+        
+        this.isLoadingFriends = true;
+        console.log('👥 Загрузка друзей...');
         
         try {
             const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
@@ -68,16 +87,44 @@ const Team = {
             if (data.status === 'ok' && data.friends) {
                 this.friendsList = data.friends;
                 this.filteredFriends = [...this.friendsList];
+                this.isFriendsLoaded = true;
                 console.log('✅ Друзья загружены:', this.friendsList.length);
-                if (this.currentTab === 'friends') this.renderFriendsTab();
+                
+                if (this.currentTab === 'friends') {
+                    this.renderFriendsTab();
+                }
+            } else {
+                console.log('❌ Нет друзей');
+                this.friendsList = [];
+                this.filteredFriends = [];
+                this.isFriendsLoaded = true;
+                if (this.currentTab === 'friends') {
+                    this.renderFriendsTab();
+                }
             }
         } catch (error) {
             console.error('❌ Ошибка друзей:', error);
+            this.friendsList = [];
+            this.filteredFriends = [];
+            this.isFriendsLoaded = true;
+            if (this.currentTab === 'friends') {
+                this.renderFriendsTab();
+            }
+        } finally {
+            this.isLoadingFriends = false;
         }
     },
     
     async loadLeaderboard() {
         if (!this.telegramId) return;
+        
+        if (this.isLoadingLeaderboard) {
+            console.log('⏳ Уже загружаем лидерборд');
+            return;
+        }
+        
+        this.isLoadingLeaderboard = true;
+        console.log('📥 Загрузка лидерборда...');
         
         try {
             const response = await fetch(`${this.BACKEND_URL}/api/users/leaderboard`, {
@@ -92,11 +139,29 @@ const Team = {
             
             if (data.status === 'ok' && data.leaderboard) {
                 this.leaderboard = data.leaderboard;
+                this.isLeaderboardLoaded = true;
                 console.log('✅ Лидерборд загружен:', this.leaderboard.length);
-                if (this.currentTab === 'leaderboard') this.renderLeaderboardTab();
+                
+                if (this.currentTab === 'leaderboard') {
+                    this.renderLeaderboardTab();
+                }
+            } else {
+                console.log('❌ Нет данных лидерборда');
+                this.leaderboard = [];
+                this.isLeaderboardLoaded = true;
+                if (this.currentTab === 'leaderboard') {
+                    this.renderLeaderboardTab();
+                }
             }
         } catch (error) {
             console.error('❌ Ошибка лидерборда:', error);
+            this.leaderboard = [];
+            this.isLeaderboardLoaded = true;
+            if (this.currentTab === 'leaderboard') {
+                this.renderLeaderboardTab();
+            }
+        } finally {
+            this.isLoadingLeaderboard = false;
         }
     },
     
@@ -110,8 +175,14 @@ const Team = {
         
         if (tab === 'friends') {
             this.renderFriendsTab();
+            if (!this.isFriendsLoaded && !this.isLoadingFriends) {
+                this.loadFriendsList();
+            }
         } else {
             this.renderLeaderboardTab();
+            if (!this.isLeaderboardLoaded && !this.isLoadingLeaderboard) {
+                this.loadLeaderboard();
+            }
         }
     },
     
@@ -127,7 +198,9 @@ const Team = {
             <div class="friends-list-container" id="friendsTabList">
         `;
         
-        if (this.friendsList.length === 0) {
+        if (!this.isFriendsLoaded && this.friendsList.length === 0) {
+            html += `<div class="empty-friends"><div class="empty-friends-text">загрузка друзей...</div></div>`;
+        } else if (this.friendsList.length === 0) {
             html += `<div class="empty-friends"><div class="empty-friends-text">у вас пока нет друзей</div></div>`;
         } else {
             this.filteredFriends.forEach(friend => {
@@ -200,8 +273,13 @@ const Team = {
         const content = document.getElementById('teamContent');
         if (!content) return;
         
-        if (!this.leaderboard.length) {
+        if (!this.isLeaderboardLoaded && this.leaderboard.length === 0) {
             content.innerHTML = `<div class="empty-friends"><div class="empty-friends-text">загрузка лидерборда...</div></div>`;
+            return;
+        }
+        
+        if (this.leaderboard.length === 0) {
+            content.innerHTML = `<div class="empty-friends"><div class="empty-friends-text">пока нет игроков</div></div>`;
             return;
         }
         
