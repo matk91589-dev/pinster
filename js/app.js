@@ -31,34 +31,116 @@
                 document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
                 navMain.classList.add('active');
             }
+            return true;
         } else {
             console.warn('⚠️ mainScreen не найден, повторная попытка через 50ms');
-            setTimeout(showMainScreen, 50);
+            return false;
         }
+    }
+
+    // ✅ Фоновая загрузка данных (последовательная)
+    async function backgroundLoadData() {
+        console.log('🚀 Начинаем фоновую загрузку данных...');
+        
+        // 1. Загружаем профиль
+        try {
+            if (typeof Profile !== 'undefined') {
+                // Убеждаемся, что telegramId установлен
+                if (!Profile.telegramId) {
+                    Profile.telegramId = Profile.getTelegramId();
+                }
+                console.log('📥 1/3 Загружаем профиль...');
+                await Profile.loadProfileFromServer();
+                console.log('✅ Профиль загружен');
+                
+                // Загружаем аватар
+                await Profile.loadAvatar();
+                console.log('✅ Аватар загружен');
+            }
+        } catch (error) {
+            console.error('❌ Ошибка загрузки профиля:', error);
+        }
+        
+        // 2. Загружаем друзей (после профиля)
+        try {
+            if (typeof Friends !== 'undefined') {
+                console.log('📥 2/3 Загружаем друзей...');
+                await Friends.loadFriendsList();
+                console.log('✅ Друзья загружены');
+            }
+        } catch (error) {
+            console.error('❌ Ошибка загрузки друзей:', error);
+        }
+        
+        // 3. Загружаем магазин (после друзей)
+        try {
+            if (typeof Shop !== 'undefined') {
+                console.log('📥 3/3 Загружаем магазин...');
+                if (typeof Shop.loadShopItems === 'function') {
+                    await Shop.loadShopItems();
+                } else if (typeof Shop.init === 'function') {
+                    await Shop.init();
+                }
+                console.log('✅ Магазин загружен');
+            }
+        } catch (error) {
+            console.error('❌ Ошибка загрузки магазина:', error);
+        }
+        
+        console.log('🎉 Все данные загружены!');
     }
 
     // ✅ Ждем полной загрузки DOM
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
             console.log('🚀 DOM загружен, запускаем Pingster...');
-            showMainScreen();
-            initModules();
+            
+            // Показываем главный экран
+            if (showMainScreen()) {
+                // Запускаем фоновую загрузку данных
+                setTimeout(() => {
+                    backgroundLoadData();
+                }, 100);
+            }
+            
+            // Инициализируем пользователя (Telegram)
             initUser();
+            
+            // Инициализируем модули (неблокирующая, для обработчиков событий)
+            initModules();
         });
     } else {
         console.log('🚀 DOM уже загружен, запускаем Pingster...');
-        showMainScreen();
-        initModules();
+        
+        // Показываем главный экран
+        if (showMainScreen()) {
+            // Запускаем фоновую загрузку данных
+            setTimeout(() => {
+                backgroundLoadData();
+            }, 100);
+        }
+        
+        // Инициализируем пользователя (Telegram)
         initUser();
+        
+        // Инициализируем модули (неблокирующая, для обработчиков событий)
+        initModules();
     }
     
     function initModules() {
-        // Инициализация модулей (неблокирующая)
+        // Инициализация модулей (только настройка обработчиков, без загрузки данных)
         setTimeout(() => {
             try {
-                if (typeof Shop !== 'undefined') Shop.init();
-                if (typeof Friends !== 'undefined') Friends.init();
+                if (typeof Shop !== 'undefined' && Shop.setupListeners) {
+                    Shop.setupListeners();
+                } else if (typeof Shop !== 'undefined' && typeof Shop.init === 'function') {
+                    // Если нет setupListeners, но есть init - вызываем его
+                    Shop.init();
+                }
+                
                 if (typeof Search !== 'undefined') Search.init();
+                
+                console.log('✅ Модули инициализированы');
             } catch (e) {
                 console.error('Ошибка инициализации модулей:', e);
             }
@@ -127,28 +209,49 @@ Object.assign(window.App, {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         screen.classList.add('active');
         
-        // ✅ ПРОФИЛЬ грузится ТОЛЬКО при открытии и с проверкой telegramId
+        // ✅ ПРОФИЛЬ - если данные уже загружены, просто отображаем
         if (screenId === 'profileScreen') {
             setTimeout(() => {
                 if (typeof Profile !== 'undefined') {
-                    // Убеждаемся, что telegramId установлен
-                    if (!Profile.telegramId) {
-                        Profile.telegramId = Profile.getTelegramId();
+                    // Если профиль еще не загружен - загружаем
+                    if (!Profile.isProfileLoaded && !Profile.isLoading) {
+                        Profile.loadProfileFromServer();
+                        Profile.loadAvatar();
+                    } else {
+                        // Если уже загружен - просто обновляем отображение
+                        Profile.updateDisplay();
                     }
-                    // Загружаем профиль (только когда открыт экран)
-                    Profile.loadProfileFromServer();
-                    Profile.loadAvatar();
                 }
             }, 50);
         }
         
-        // ✅ Загружаем картинки магазина только при открытии
+        // ✅ МАГАЗИН - если данные уже загружены, отображаем
         if (screenId === 'shopScreen') {
             setTimeout(() => {
+                if (typeof Shop !== 'undefined') {
+                    if (typeof Shop.renderShop === 'function') {
+                        Shop.renderShop();
+                    }
+                }
                 if (typeof window.loadShopImages === 'function') {
                     window.loadShopImages();
                 }
             }, 100);
+        }
+        
+        // ✅ ДРУЗЬЯ - если данные уже загружены, отображаем
+        if (screenId === 'friendsScreen') {
+            setTimeout(() => {
+                if (typeof Friends !== 'undefined') {
+                    // Если друзья еще не загружены - загружаем
+                    if (!Friends.friendsListLoaded && Friends.friendsList.length === 0) {
+                        Friends.loadFriendsList();
+                    } else {
+                        // Если уже загружены - просто отрисовываем
+                        Friends.renderFriendsPage();
+                    }
+                }
+            }, 50);
         }
         
         if (updateNav) {
@@ -159,9 +262,10 @@ Object.assign(window.App, {
                 document.getElementById('navMain')?.classList.add('active');
             } else if (screenId === 'shopScreen') {
                 document.getElementById('navShop')?.classList.add('active');
-                if (typeof Shop !== 'undefined' && Shop.renderShop) Shop.renderShop();
             } else if (screenId === 'profileScreen') {
                 document.getElementById('navProfile')?.classList.add('active');
+            } else if (screenId === 'friendsScreen') {
+                document.getElementById('navFriends')?.classList.add('active');
             }
         }
     },
