@@ -211,10 +211,12 @@ const Team = {
             clearTimeout(timeoutId);
             
             if (!response.ok) {
-                console.warn(`⚠️ Сервер ответил ${response.status}, используем кэш`);
+                console.warn(`⚠️ Сервер ответил ${response.status}`);
                 if (this.leaderboard.length === 0) {
-                    this.setMockLeaderboard();
+                    this.leaderboard = [];
+                    this.isPlayersLoaded = true;
                 }
+                if (this.currentTab === 'leaderboard') this.renderLeaderboardTab();
                 return;
             }
             
@@ -227,10 +229,9 @@ const Team = {
                 localStorage.setItem(`team_leaderboard_${this.telegramId}`, JSON.stringify(this.leaderboard));
                 console.log('✅ Загружено лидеров:', this.leaderboard.length);
             } else {
-                console.warn('⚠️ Нет данных лидерборда, используем кэш или заглушку');
-                if (this.leaderboard.length === 0) {
-                    this.setMockLeaderboard();
-                }
+                console.warn('⚠️ Нет данных лидерборда');
+                this.leaderboard = [];
+                this.isPlayersLoaded = true;
             }
             
             if (this.currentTab === 'leaderboard' && document.getElementById('teamScreen')?.classList.contains('active')) {
@@ -238,24 +239,9 @@ const Team = {
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки лидерборда:', error);
-            if (this.leaderboard.length === 0) {
-                this.setMockLeaderboard();
-            }
+            this.leaderboard = [];
+            this.isPlayersLoaded = true;
         }
-    },
-    
-    setMockLeaderboard() {
-        console.log('📊 Устанавливаем тестовый лидерборд');
-        this.leaderboard = [
-            { player_id: '34035931', nick: 'wwwwwwwwww', avatar: null, pingcoins: 60999 },
-            { player_id: '12345678', nick: 'АНГЕЛ', avatar: null, pingcoins: 45000 },
-            { player_id: '87654321', nick: 'ГРОМ', avatar: null, pingcoins: 32000 },
-            { player_id: '11111111', nick: 'КАЙФОЛОВ', avatar: null, pingcoins: 28000 },
-            { player_id: '22222222', nick: 'СНАЙПЕР', avatar: null, pingcoins: 25000 },
-            { player_id: '33333333', nick: 'ТАНК', avatar: null, pingcoins: 22000 },
-        ];
-        this.isPlayersLoaded = true;
-        localStorage.setItem(`team_leaderboard_${this.telegramId}`, JSON.stringify(this.leaderboard));
     },
     
     switchTab(tab, element) {
@@ -407,20 +393,19 @@ const Team = {
             const placeText = place === 1 ? '#1' : place === 2 ? '#2' : place === 3 ? '#3' : `#${place}`;
             
             html += `
-                <div class="leaderboard-row ${isCurrent ? 'current-player' : ''}" 
+                <div class="friend-row ${isCurrent ? 'current-player' : ''}" 
                      onclick="Team.showPlayerProfile('${player.player_id}')">
-                    <div class="leaderboard-place">${placeText}</div>
-                    <div class="leaderboard-avatar">
+                    <div class="friend-avatar">
                         ${player.avatar 
                             ? `<img src="${player.avatar}" alt="avatar">` 
-                            : `<div class="avatar-placeholder">${player.nick?.[0] || '?'}</div>`
+                            : `<span>${player.nick?.[0] || '?'}</span>`
                         }
                     </div>
-                    <div class="leaderboard-info">
-                        <span class="leaderboard-nick">${player.nick || 'Без имени'}</span>
-                        <span class="leaderboard-id">ID: ${player.player_id}</span>
+                    <div class="friend-info">
+                        <span class="friend-id">${placeText}</span>
+                        <span class="friend-name">${player.nick || 'Без имени'}</span>
                     </div>
-                    ${isCurrent ? '<span class="leaderboard-badge">ВЫ</span>' : ''}
+                    ${isCurrent ? '<span class="leaderboard-badge">ВЫ</span>' : '<span class="friend-arrow">→</span>'}
                 </div>
             `;
         });
@@ -439,71 +424,14 @@ const Team = {
                 flex: 1;
                 overflow-y: auto;
             }
-            .leaderboard-row {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                padding: 12px 16px;
-                background: rgba(26, 29, 36, 0.5);
-                border-radius: 12px;
-                margin-bottom: 8px;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                border-left: 3px solid transparent;
-            }
-            .leaderboard-row:hover {
+            .friend-row.current-player {
                 background: rgba(255, 85, 0, 0.1);
-                transform: translateX(2px);
+                border-left: 3px solid #FF5500;
+                margin-left: -3px;
+                padding-left: 19px;
             }
-            .leaderboard-row.current-player {
-                background: rgba(255, 85, 0, 0.15);
-                border-left-color: #FF5500;
-            }
-            .leaderboard-place {
-                width: 36px;
-                font-size: 14px;
-                font-weight: 700;
+            .friend-row.current-player .friend-name {
                 color: #FF5500;
-                text-align: center;
-            }
-            .leaderboard-avatar {
-                width: 44px;
-                height: 44px;
-                border-radius: 50%;
-                overflow: hidden;
-                background: #1A1D24;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-shrink: 0;
-            }
-            .leaderboard-avatar img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-            .leaderboard-avatar .avatar-placeholder {
-                font-size: 18px;
-                font-weight: 600;
-                color: #fff;
-            }
-            .leaderboard-info {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                gap: 2px;
-            }
-            .leaderboard-nick {
-                font-size: 16px;
-                font-weight: 600;
-                color: #fff;
-            }
-            .leaderboard-row.current-player .leaderboard-nick {
-                color: #FF5500;
-            }
-            .leaderboard-id {
-                font-size: 11px;
-                color: #8E97A6;
             }
             .leaderboard-badge {
                 background: #FF5500;
