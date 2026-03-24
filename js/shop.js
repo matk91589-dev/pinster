@@ -9,6 +9,7 @@ const Shop = {
     newItems: [],
     processingIds: new Set(),
     _initialized: false,
+    shopLoaded: false,
     
     cases: [
         { 
@@ -49,10 +50,13 @@ const Shop = {
         if (this._initialized) return;
         this._initialized = true;
         
-        this.loadFromStorage();
-        this.updateCoinsDisplay();
+        // ❌ НЕ ГРУЗИМ ДАННЫЕ ПРИ СТАРТЕ
+        // this.loadFromStorage();
+        // this.updateCoinsDisplay();
+        // this.setupEventListeners();
+        
         this.setupEventListeners();
-        console.log('✅ Shop инициализирован, монет:', this.coins, 'предметов:', this.ownedCases.length);
+        console.log('✅ Shop инициализирован (слушатели настроены)');
     },
     
     loadFromStorage() {
@@ -84,6 +88,8 @@ const Shop = {
         } else {
             this.newItems = [];
         }
+        
+        console.log('💰 Загружено из localStorage:', this.coins, 'монет,', this.ownedCases.length, 'предметов');
     },
     
     saveToStorage() {
@@ -92,10 +98,16 @@ const Shop = {
         localStorage.setItem('shop_new_items', JSON.stringify(this.newItems));
     },
     
+    // ✅ Рендер магазина - загружаем данные только здесь
     renderShop() {
+        if (!this.shopLoaded) {
+            this.loadFromStorage();
+            this.shopLoaded = true;
+        }
         this.renderCases();
         this.renderInventory();
-        console.log('🛒 Магазин отрисован');
+        this.updateCoinsDisplay();
+        console.log('🛒 Магазин отрисован, монет:', this.coins);
     },
     
     setupEventListeners() {
