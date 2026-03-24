@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ - ОПТИМИЗИРОВАННЫЙ
+// ПРОФИЛЬ - ОПТИМИЗИРОВАННЫЙ С КЭШИРОВАНИЕМ
 // ============================================
 
 const Profile = {
@@ -20,7 +20,8 @@ const Profile = {
     toastTimeout: null,
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
     isLoading: false,
-    isProfileLoaded: false, // ✅ флаг, что профиль уже загружен
+    isProfileLoaded: false,
+    isInitialized: false,
     
     generateRandomNick() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -41,9 +42,7 @@ const Profile = {
     },
     
     showToast(message) {
-        if (this.toastTimeout) {
-            clearTimeout(this.toastTimeout);
-        }
+        if (this.toastTimeout) clearTimeout(this.toastTimeout);
         const existingToast = document.querySelector('.profile-toast');
         if (existingToast) existingToast.remove();
         const toast = document.createElement('div');
@@ -81,11 +80,33 @@ const Profile = {
         });
     },
     
-    // ✅ ЗАГРУЗКА ПРОФИЛЯ (только по запросу)
-    async loadProfileFromServer() {
-        // Проверяем, загружен ли уже профиль
-        if (this.isProfileLoaded) {
-            console.log('✅ Профиль уже загружен, пропускаем');
+    // ✅ ЗАГРУЗКА ИЗ КЭША (мгновенно)
+    loadFromCache() {
+        const cachedNick = localStorage.getItem('profile_nick');
+        const cachedAge = localStorage.getItem('profile_age');
+        const cachedSteam = localStorage.getItem('profile_steam');
+        const cachedFaceit = localStorage.getItem('profile_faceit');
+        const cachedAvatar = localStorage.getItem('profile_avatar');
+        
+        if (cachedNick) {
+            this.savedName = cachedNick;
+            this.tempName = cachedNick;
+            if (cachedAge) this.savedAge = cachedAge;
+            if (cachedSteam) this.savedSteam = cachedSteam;
+            if (cachedFaceit) this.savedFaceitLink = cachedFaceit;
+            if (cachedAvatar) this.savedAvatarUrl = cachedAvatar;
+            
+            this.updateDisplay();
+            console.log('✅ Профиль загружен из кэша');
+            return true;
+        }
+        return false;
+    },
+    
+    // ✅ ЗАГРУЗКА С СЕРВЕРА (фоновая)
+    async loadProfileFromServer(force = false) {
+        if (!force && this.isProfileLoaded) {
+            console.log('✅ Профиль уже загружен');
             return;
         }
         
@@ -96,12 +117,9 @@ const Profile = {
         
         this.isLoading = true;
         
-        // ✅ Убеждаемся, что telegramId установлен
         if (!this.telegramId) {
             this.telegramId = this.getTelegramId();
         }
-        
-        console.log('🔥 Загрузка профиля для:', this.telegramId);
         
         if (!this.telegramId) {
             console.error('❌ Нет telegram_id');
@@ -109,10 +127,11 @@ const Profile = {
             return;
         }
         
+        console.log('🔥 Загрузка профиля с сервера...');
+        
         try {
-            // ✅ Добавляем таймаут 5 секунд
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
             
             const response = await fetch(`${this.BACKEND_URL}/api/profile/get`, {
                 method: 'POST',
@@ -126,7 +145,7 @@ const Profile = {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
-            console.log('📦 Данные профиля:', data);
+            console.log('📦 Данные профиля с сервера:', data);
             
             if (data.status === 'ok') {
                 this.savedName = data.nick || '-';
@@ -139,13 +158,19 @@ const Profile = {
                 this.tempSteam = this.savedSteam;
                 this.tempFaceitLink = this.savedFaceitLink;
                 
+                // Сохраняем в кэш
+                localStorage.setItem('profile_nick', this.savedName);
+                localStorage.setItem('profile_age', this.savedAge);
+                localStorage.setItem('profile_steam', this.savedSteam);
+                localStorage.setItem('profile_faceit', this.savedFaceitLink);
+                
                 this.updateDisplay();
-                this.isProfileLoaded = true; // ✅ Помечаем как загруженный
-                console.log('✅ Профиль загружен');
+                this.isProfileLoaded = true;
+                console.log('✅ Профиль загружен с сервера');
             }
         } catch (error) {
             if (error.name === 'AbortError') {
-                console.error('❌ Таймаут загрузки профиля (5 сек)');
+                console.error('❌ Таймаут загрузки профиля (3 сек)');
             } else {
                 console.error('❌ Ошибка загрузки профиля:', error);
             }
@@ -154,12 +179,21 @@ const Profile = {
         }
     },
     
-    // ✅ ЗАГРУЗКА АВАТАРА (отдельно)
+    // ✅ ЗАГРУЗКА АВАТАРА
     async loadAvatar() {
         if (!this.telegramId) this.telegramId = this.getTelegramId();
         if (!this.telegramId) return;
         
-        console.log('🖼️ Загрузка аватара...');
+        // Проверяем кэш аватара
+        const cachedAvatar = localStorage.getItem('profile_avatar');
+        if (cachedAvatar && !this.savedAvatarUrl) {
+            this.savedAvatarUrl = cachedAvatar;
+            this.tempAvatarUrl = cachedAvatar;
+            this.updateAvatarDisplay();
+            console.log('✅ Аватар из кэша');
+        }
+        
+        console.log('🖼️ Загрузка аватара с сервера...');
         
         try {
             const response = await fetch(`${this.BACKEND_URL}/api/profile/avatar`, {
@@ -175,6 +209,7 @@ const Profile = {
             if (data.status === 'ok' && data.avatar) {
                 this.savedAvatarUrl = data.avatar;
                 this.tempAvatarUrl = data.avatar;
+                localStorage.setItem('profile_avatar', data.avatar);
                 this.updateAvatarDisplay();
                 console.log('✅ Аватар загружен');
             }
@@ -183,18 +218,48 @@ const Profile = {
         }
     },
     
+    // ✅ ИНИЦИАЛИЗАЦИЯ (вызывается один раз)
+    init() {
+        if (this.isInitialized) return;
+        this.isInitialized = true;
+        
+        console.log('🚀 Profile.init()');
+        
+        this.telegramId = this.getTelegramId();
+        
+        // Сначала грузим из кэша
+        this.loadFromCache();
+        
+        // Потом фоново обновляем с сервера
+        setTimeout(() => {
+            this.loadProfileFromServer();
+            this.loadAvatar();
+        }, 500);
+        
+        this.setupListeners();
+        this.setupClickHandlers();
+    },
+    
     updateDisplay() {
         const profileNameEl = document.getElementById('profileName');
-        if (profileNameEl) profileNameEl.textContent = this.savedName;
+        if (profileNameEl && profileNameEl.textContent !== this.savedName) {
+            profileNameEl.textContent = this.savedName;
+        }
         
         const ageValueEl = document.getElementById('ageValue');
-        if (ageValueEl) ageValueEl.value = this.savedAge || '';
+        if (ageValueEl && ageValueEl.value !== this.savedAge) {
+            ageValueEl.value = this.savedAge || '';
+        }
         
         const steamDisplayEl = document.getElementById('steamDisplay');
-        if (steamDisplayEl) steamDisplayEl.value = this.savedSteam || '';
+        if (steamDisplayEl && steamDisplayEl.value !== this.savedSteam) {
+            steamDisplayEl.value = this.savedSteam || '';
+        }
         
         const faceitLinkDisplayEl = document.getElementById('faceitLinkDisplay');
-        if (faceitLinkDisplayEl) faceitLinkDisplayEl.value = this.savedFaceitLink || '';
+        if (faceitLinkDisplayEl && faceitLinkDisplayEl.value !== this.savedFaceitLink) {
+            faceitLinkDisplayEl.value = this.savedFaceitLink || '';
+        }
         
         this.updateAvatarDisplay();
         this.clearAllErrors();
@@ -227,7 +292,7 @@ const Profile = {
         this.clearAllErrors();
         
         if (this.editMode) {
-            profileScreen.classList.add('editable');
+            if (profileScreen) profileScreen.classList.add('editable');
             if (editToggle) editToggle.classList.add('active');
             if (applyBtn) {
                 applyBtn.classList.add('visible');
@@ -239,7 +304,7 @@ const Profile = {
             if (profileName) profileName.classList.add('editable');
             if (avatar) avatar.classList.add('editable-avatar');
         } else {
-            profileScreen.classList.remove('editable');
+            if (profileScreen) profileScreen.classList.remove('editable');
             if (editToggle) editToggle.classList.remove('active');
             if (applyBtn) {
                 applyBtn.classList.remove('visible');
@@ -397,6 +462,13 @@ const Profile = {
                 this.savedFaceitLink = faceitInput ? faceitInput.value : '';
                 this.savedAvatarUrl = this.tempAvatarUrl;
                 
+                // Обновляем кэш
+                localStorage.setItem('profile_nick', this.savedName);
+                localStorage.setItem('profile_age', this.savedAge);
+                localStorage.setItem('profile_steam', this.savedSteam);
+                localStorage.setItem('profile_faceit', this.savedFaceitLink);
+                if (this.savedAvatarUrl) localStorage.setItem('profile_avatar', this.savedAvatarUrl);
+                
                 this.updateDisplay();
                 this.toggleEditMode();
                 this.showToast('Профиль сохранен');
@@ -493,7 +565,8 @@ const Profile = {
     setupClickHandlers() {
         const avatar = document.getElementById('profileAvatar');
         if (avatar) {
-            avatar.addEventListener('click', (e) => {
+            avatar.removeEventListener('click', this.avatarClickHandler);
+            this.avatarClickHandler = (e) => {
                 if (this.editMode) {
                     if (window.Avatar && Avatar.select) {
                         if (window.Settings) Settings.click();
@@ -504,70 +577,86 @@ const Profile = {
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
-            });
+            };
+            avatar.addEventListener('click', this.avatarClickHandler);
         }
         
         const profileName = document.getElementById('profileName');
         if (profileName) {
-            profileName.addEventListener('click', (e) => {
+            profileName.removeEventListener('click', this.profileNameClickHandler);
+            this.profileNameClickHandler = (e) => {
                 if (this.editMode) this.editName();
                 else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
-            });
+            };
+            profileName.addEventListener('click', this.profileNameClickHandler);
         }
         
         const ageCard = document.getElementById('ageCard');
         if (ageCard) {
-            ageCard.addEventListener('click', (e) => {
+            ageCard.removeEventListener('click', this.ageCardClickHandler);
+            this.ageCardClickHandler = (e) => {
                 if (this.editMode) this.editAge();
                 else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
-            });
+            };
+            ageCard.addEventListener('click', this.ageCardClickHandler);
         }
         
         const steamCard = document.getElementById('steamCard');
         if (steamCard) {
-            steamCard.addEventListener('click', (e) => {
+            steamCard.removeEventListener('click', this.steamCardClickHandler);
+            this.steamCardClickHandler = (e) => {
                 if (this.editMode) this.editSteam();
                 else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
-            });
+            };
+            steamCard.addEventListener('click', this.steamCardClickHandler);
         }
         
         const faceitCard = document.getElementById('faceitLinkCard');
         if (faceitCard) {
-            faceitCard.addEventListener('click', (e) => {
+            faceitCard.removeEventListener('click', this.faceitCardClickHandler);
+            this.faceitCardClickHandler = (e) => {
                 if (this.editMode) this.editFaceitLink();
                 else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
-            });
+            };
+            faceitCard.addEventListener('click', this.faceitCardClickHandler);
         }
     },
     
     setupListeners() {
         const ageInput = document.getElementById('ageValue');
         if (ageInput) {
-            ageInput.addEventListener('blur', (e) => { if (this.editMode) this.validateAge(e.target.value); });
-            ageInput.addEventListener('focus', () => {
+            ageInput.removeEventListener('blur', this.ageBlurHandler);
+            this.ageBlurHandler = (e) => { if (this.editMode) this.validateAge(e.target.value); };
+            ageInput.addEventListener('blur', this.ageBlurHandler);
+            
+            ageInput.removeEventListener('focus', this.ageFocusHandler);
+            this.ageFocusHandler = () => {
                 if (this.editMode) {
                     const container = ageInput.closest('.stat-value');
                     this.removeErrorMessage(container);
                     container?.classList.remove('error');
                 }
-            });
-            ageInput.addEventListener('input', (e) => {
+            };
+            ageInput.addEventListener('focus', this.ageFocusHandler);
+            
+            ageInput.removeEventListener('input', this.ageInputHandler);
+            this.ageInputHandler = (e) => {
                 if (this.editMode) {
                     const val = e.target.value;
                     const container = ageInput.closest('.stat-value');
@@ -576,20 +665,28 @@ const Profile = {
                         container?.classList.remove('error');
                     }
                 }
-            });
+            };
+            ageInput.addEventListener('input', this.ageInputHandler);
         }
         
         const steamInput = document.getElementById('steamDisplay');
         if (steamInput) {
-            steamInput.addEventListener('blur', (e) => { if (this.editMode) this.validateSteamLink(e.target.value); });
-            steamInput.addEventListener('focus', () => {
+            steamInput.removeEventListener('blur', this.steamBlurHandler);
+            this.steamBlurHandler = (e) => { if (this.editMode) this.validateSteamLink(e.target.value); };
+            steamInput.addEventListener('blur', this.steamBlurHandler);
+            
+            steamInput.removeEventListener('focus', this.steamFocusHandler);
+            this.steamFocusHandler = () => {
                 if (this.editMode) {
                     const container = steamInput.closest('.profile-stat-value');
                     this.removeErrorMessage(container);
                     container?.classList.remove('error');
                 }
-            });
-            steamInput.addEventListener('input', (e) => {
+            };
+            steamInput.addEventListener('focus', this.steamFocusHandler);
+            
+            steamInput.removeEventListener('input', this.steamInputHandler);
+            this.steamInputHandler = (e) => {
                 if (this.editMode) {
                     const val = e.target.value;
                     const container = steamInput.closest('.profile-stat-value');
@@ -598,20 +695,28 @@ const Profile = {
                         container?.classList.remove('error');
                     }
                 }
-            });
+            };
+            steamInput.addEventListener('input', this.steamInputHandler);
         }
         
         const faceitInput = document.getElementById('faceitLinkDisplay');
         if (faceitInput) {
-            faceitInput.addEventListener('blur', (e) => { if (this.editMode) this.validateFaceitLink(e.target.value); });
-            faceitInput.addEventListener('focus', () => {
+            faceitInput.removeEventListener('blur', this.faceitBlurHandler);
+            this.faceitBlurHandler = (e) => { if (this.editMode) this.validateFaceitLink(e.target.value); };
+            faceitInput.addEventListener('blur', this.faceitBlurHandler);
+            
+            faceitInput.removeEventListener('focus', this.faceitFocusHandler);
+            this.faceitFocusHandler = () => {
                 if (this.editMode) {
                     const container = faceitInput.closest('.profile-stat-value');
                     this.removeErrorMessage(container);
                     container?.classList.remove('error');
                 }
-            });
-            faceitInput.addEventListener('input', (e) => {
+            };
+            faceitInput.addEventListener('focus', this.faceitFocusHandler);
+            
+            faceitInput.removeEventListener('input', this.faceitInputHandler);
+            this.faceitInputHandler = (e) => {
                 if (this.editMode) {
                     const val = e.target.value;
                     const container = faceitInput.closest('.profile-stat-value');
@@ -620,29 +725,19 @@ const Profile = {
                         container?.classList.remove('error');
                     }
                 }
-            });
+            };
+            faceitInput.addEventListener('input', this.faceitInputHandler);
         }
         
         const applyBtn = document.getElementById('applyBtn');
         if (applyBtn) applyBtn.style.display = 'none';
-    },
-    
-    loadSavedValues() {
-        console.log('Profile: готов к загрузке');
-        // ✅ НЕ ГРУЗИМ ПРОФИЛЬ АВТОМАТИЧЕСКИ!
-        // Профиль загрузится только при открытии экрана профиля
-        setTimeout(() => {
-            this.setupListeners();
-            this.setupClickHandlers();
-        }, 200);
     }
 };
 
-// ✅ ИНИЦИАЛИЗАЦИЯ (только слушатели, без загрузки данных)
+// ✅ ИНИЦИАЛИЗАЦИЯ - грузим сразу при загрузке
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Profile: DOM загружен, инициализация слушателей');
-    Profile.loadSavedValues();
-    // ❌ НЕТ вызова Profile.loadProfileFromServer() здесь!
+    console.log('Profile: DOM загружен');
+    Profile.init();
 });
 
 window.Profile = Profile;
