@@ -4,40 +4,48 @@
 
 const Settings = {
     sound: true,
+    initialized: false,
     
     init() {
+        if (this.initialized) return;
+        this.initialized = true;
+        
         this.loadSettings();
-        // Ждем появления экрана настроек и кнопок
-        this.waitForSettingsScreen();
         console.log('Настройки загружены');
+        
+        // Слушаем открытие экрана настроек
+        this.setupScreenObserver();
     },
     
-    waitForSettingsScreen() {
-        let attempts = 0;
-        const maxAttempts = 30; // 3 секунды
+    setupScreenObserver() {
+        // Проверяем сразу
+        this.checkAndSetup();
         
-        const check = () => {
-            const settingsScreen = document.getElementById('settingsScreen');
-            if (settingsScreen) {
-                console.log('✅ Экран настроек найден');
-                this.waitForSoundButtons();
-            } else {
-                attempts++;
-                if (attempts < maxAttempts) {
-                    setTimeout(check, 100);
-                } else {
-                    console.error('❌ Экран настроек не найден');
-                }
-            }
-        };
-        check();
+        // Слушаем изменения экранов через MutationObserver
+        const observer = new MutationObserver(() => {
+            this.checkAndSetup();
+        });
+        
+        observer.observe(document.body, { 
+            attributes: true, 
+            subtree: true,
+            attributeFilter: ['class']
+        });
+    },
+    
+    checkAndSetup() {
+        const settingsScreen = document.getElementById('settingsScreen');
+        if (settingsScreen && settingsScreen.classList.contains('active')) {
+            console.log('📱 Экран настроек активен, ищем кнопки');
+            this.waitForSoundButtons();
+        }
     },
     
     waitForSoundButtons() {
         let attempts = 0;
-        const maxAttempts = 20; // 2 секунды
+        const maxAttempts = 30;
         
-        const checkButtons = () => {
+        const check = () => {
             const soundOn = document.getElementById('soundOn');
             const soundOff = document.getElementById('soundOff');
             
@@ -47,17 +55,17 @@ const Settings = {
             } else {
                 attempts++;
                 if (attempts < maxAttempts) {
-                    console.log(`⏳ Ждем кнопки звука... (${attempts}/${maxAttempts})`);
-                    setTimeout(checkButtons, 100);
+                    console.log(`⏳ Ждем кнопки... (${attempts}/${maxAttempts})`);
+                    setTimeout(check, 100);
                 } else {
                     console.error('❌ Кнопки звука не найдены');
-                    console.log('🔍 Ищем #soundOn:', document.getElementById('soundOn'));
-                    console.log('🔍 Ищем #soundOff:', document.getElementById('soundOff'));
+                    console.log('🔍 #soundOn:', document.getElementById('soundOn'));
+                    console.log('🔍 #soundOff:', document.getElementById('soundOff'));
                 }
             }
         };
         
-        checkButtons();
+        check();
     },
     
     loadSettings() {
@@ -74,11 +82,13 @@ const Settings = {
             return;
         }
         
-        console.log('✅ Кнопки найдены, настраиваем обработчики');
+        console.log('✅ Настраиваем обработчики кнопок');
         
+        // Убираем старые обработчики
         soundOn.onclick = null;
         soundOff.onclick = null;
         
+        // Добавляем новые
         soundOn.onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
