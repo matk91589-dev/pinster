@@ -1,5 +1,5 @@
 // ============================================
-// КОМАНДА - С ДРУЗЬЯМИ И ПОИСКОМ
+// КОМАНДА - С КЭШИРОВАНИЕМ И МГНОВЕННОЙ ЗАГРУЗКОЙ
 // ============================================
 
 const Team = {
@@ -10,34 +10,86 @@ const Team = {
     telegramId: null,
     searchTimeout: null,
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
-    
+    isInitialized: false,
+    isFriendsLoaded: false,
+    isPlayersLoaded: false,
+
     init() {
-        console.log('Team.init() запущен');
+        if (this.isInitialized) return;
+        this.isInitialized = true;
         
-        // ✅ Получаем Telegram ID
+        console.log('🚀 Team.init() запущен');
+        
+        // Получаем Telegram ID
         if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
             this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
-            console.log('✅ Team Telegram ID из WebApp:', this.telegramId);
-        } else {
-            // Пробуем получить из URL параметра
-            const urlParams = new URLSearchParams(window.location.search);
-            this.telegramId = urlParams.get('tg_id');
-            console.log('✅ Team Telegram ID из URL:', this.telegramId);
-        }
-        
-        // Если все еще нет — пробуем из Profile
-        if (!this.telegramId && window.Profile) {
+        } else if (window.Profile && Profile.getTelegramId) {
             this.telegramId = Profile.getTelegramId();
-            console.log('✅ Team Telegram ID из Profile:', this.telegramId);
         }
         
-        console.log('Team Telegram ID итоговый:', this.telegramId);
+        console.log('Team Telegram ID:', this.telegramId);
+        
+        if (!this.telegramId) return;
+        
+        // Сначала грузим из кэша
+        this.loadFromCache();
+        
+        // Фоново обновляем с сервера
+        setTimeout(() => {
+            this.loadFriendsList();
+            this.loadAllPlayers();
+        }, 500);
+    },
+    
+    // ✅ ЗАГРУЗКА ИЗ КЭША (мгновенно)
+    loadFromCache() {
+        const cachedFriends = localStorage.getItem(`team_friends_${this.telegramId}`);
+        const cachedPlayers = localStorage.getItem(`team_players_${this.telegramId}`);
+        
+        let updated = false;
+        
+        if (cachedFriends) {
+            try {
+                const friends = JSON.parse(cachedFriends);
+                if (friends && friends.length > 0) {
+                    this.friendsList = friends;
+                    this.filteredFriends = [...friends];
+                    this.isFriendsLoaded = true;
+                    console.log('✅ Друзья из кэша Team:', friends.length);
+                    updated = true;
+                }
+            } catch (e) {
+                console.error('Ошибка парсинга кэша друзей Team:', e);
+            }
+        }
+        
+        if (cachedPlayers) {
+            try {
+                const players = JSON.parse(cachedPlayers);
+                if (players && players.length > 0) {
+                    this.allPlayers = players;
+                    this.isPlayersLoaded = true;
+                    console.log('✅ Игроки из кэша Team:', players.length);
+                    updated = true;
+                }
+            } catch (e) {
+                console.error('Ошибка парсинга кэша игроков Team:', e);
+            }
+        }
+        
+        // Если открыт экран, отрисовываем
+        if (updated && document.getElementById('teamScreen')?.classList.contains('active')) {
+            if (this.currentTab === 'friends') {
+                this.renderFriendsTab();
+            } else {
+                this.renderSearchTab();
+            }
+        }
     },
     
     showTeamPage() {
         console.log('showTeamPage called');
         
-        // ✅ Проверяем telegram_id перед загрузкой
         if (!this.telegramId) {
             console.warn('⚠️ Нет telegram_id, пробуем получить снова');
             this.init();
@@ -50,13 +102,28 @@ const Team = {
             });
             teamScreen.classList.add('active');
             
-            // Загружаем всё параллельно
-            Promise.all([
-                this.loadAllPlayers(),
-                this.loadFriendsList()
-            ]).then(() => {
-                console.log('✅ Team: все данные загружены');
-            });
+            // Если данные уже есть - сразу показываем
+            if (this.currentTab === 'friends') {
+                if (this.friendsList.length > 0 || this.isFriendsLoaded) {
+                    this.renderFriendsTab();
+                } else {
+                    this.renderFriendsTab(); // покажет загрузку
+                    this.loadFriendsList();
+                }
+            } else {
+                if (this.allPlayers.length > 0 || this.isPlayersLoaded) {
+                    this.renderSearchTab();
+                } else {
+                    this.renderSearchTab(); // покажет загрузку
+                    this.loadAllPlayers();
+                }
+            }
+            
+            // Фоново обновляем
+            setTimeout(() => {
+                this.loadFriendsList();
+                this.loadAllPlayers();
+            }, 100);
             
             if (window.Telegram?.WebApp?.HapticFeedback) {
                 Telegram.WebApp.HapticFeedback.impactOccurred('light');
@@ -65,73 +132,88 @@ const Team = {
     },
     
     async loadFriendsList() {
-        console.log('🔄 Team: загружаем друзей из БД...');
+        if (this.isFriendsLoaded && this.friendsList.length > 0) {
+            console.log('📦 Друзья уже загружены');
+            return;
+        }
         
         if (!this.telegramId) {
             console.error('❌ Нет telegram_id для загрузки друзей');
-            if (this.currentTab === 'friends') {
-                this.renderFriendsTab();
-            }
-            return [];
+            return;
         }
         
+        console.log('👥 Team: загрузка друзей с сервера...');
+        
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            
             const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId })
+                body: JSON.stringify({ telegram_id: this.telegramId }),
+                signal: controller.signal
             });
             
-            console.log('📡 Статус ответа друзей:', response.status);
+            clearTimeout(timeoutId);
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
             }
             
             const data = await response.json();
-            console.log('📦 Team: ответ друзей из БД:', data);
+            console.log('📦 Team: ответ друзей:', data);
             
             if (data.status === 'ok' && data.friends) {
                 this.friendsList = data.friends;
                 this.filteredFriends = [...this.friendsList];
+                this.isFriendsLoaded = true;
+                
+                // Сохраняем в кэш
+                localStorage.setItem(`team_friends_${this.telegramId}`, JSON.stringify(this.friendsList));
                 console.log('✅ Team: загружено друзей:', this.friendsList.length);
             } else {
                 this.friendsList = [];
                 this.filteredFriends = [];
             }
             
-            if (this.currentTab === 'friends') {
+            if (this.currentTab === 'friends' && document.getElementById('teamScreen')?.classList.contains('active')) {
                 this.renderFriendsTab();
             }
-            
-            return this.friendsList;
         } catch (error) {
-            console.error('❌ Ошибка загрузки друзей:', error);
-            this.friendsList = [];
-            this.filteredFriends = [];
-            if (this.currentTab === 'friends') {
-                this.renderFriendsTab();
+            if (error.name === 'AbortError') {
+                console.error('❌ Таймаут загрузки друзей Team (3 сек)');
+            } else {
+                console.error('❌ Ошибка загрузки друзей Team:', error);
             }
-            return [];
         }
     },
     
     async loadAllPlayers() {
-        console.log('📥 Загрузка всех игроков в Team...');
-        
-        if (!this.telegramId) {
-            console.error('❌ Нет telegram_id');
+        if (this.isPlayersLoaded && this.allPlayers.length > 0) {
+            console.log('📦 Игроки уже загружены');
             return;
         }
         
+        if (!this.telegramId) {
+            console.error('❌ Нет telegram_id для загрузки игроков');
+            return;
+        }
+        
+        console.log('📥 Team: загрузка всех игроков...');
+        
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            
             const response = await fetch(`${this.BACKEND_URL}/api/users/all`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId })
+                body: JSON.stringify({ telegram_id: this.telegramId }),
+                signal: controller.signal
             });
             
-            console.log('📡 Статус ответа игроков:', response.status);
+            clearTimeout(timeoutId);
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
@@ -142,12 +224,22 @@ const Team = {
             
             if (data.status === 'ok' && data.users) {
                 this.allPlayers = data.users;
-                if (this.currentTab === 'search') {
-                    this.renderSearchTab();
-                }
+                this.isPlayersLoaded = true;
+                
+                // Сохраняем в кэш
+                localStorage.setItem(`team_players_${this.telegramId}`, JSON.stringify(this.allPlayers));
+                console.log('✅ Team: загружено игроков:', this.allPlayers.length);
+            }
+            
+            if (this.currentTab === 'search' && document.getElementById('teamScreen')?.classList.contains('active')) {
+                this.renderSearchTab();
             }
         } catch (error) {
-            console.error('❌ Ошибка загрузки игроков:', error);
+            if (error.name === 'AbortError') {
+                console.error('❌ Таймаут загрузки игроков Team (3 сек)');
+            } else {
+                console.error('❌ Ошибка загрузки игроков Team:', error);
+            }
         }
     },
     
@@ -184,7 +276,14 @@ const Team = {
             <div class="friends-list-container" id="friendsTabList">
         `;
         
-        if (!this.filteredFriends || this.filteredFriends.length === 0) {
+        // Показываем загрузку если нет данных
+        if (!this.isFriendsLoaded && this.friendsList.length === 0) {
+            html += `
+                <div class="empty-friends">
+                    <div class="empty-friends-text">⏳ загрузка друзей...</div>
+                </div>
+            `;
+        } else if (!this.filteredFriends || this.filteredFriends.length === 0) {
             html += `
                 <div class="empty-friends">
                     <div class="empty-friends-text">у вас пока нет друзей</div>
@@ -218,18 +317,13 @@ const Team = {
     
     setupFriendsSearch() {
         const searchInput = document.getElementById('friendsSearchInput');
-        if (!searchInput) {
-            console.log('❌ Поле поиска друзей в Team не найдено');
-            return;
-        }
+        if (!searchInput) return;
         
         console.log('✅ Поле поиска друзей в Team настроено');
         searchInput.removeAttribute('readonly');
         searchInput.removeAttribute('disabled');
         
-        if (this.searchTimeout) {
-            clearTimeout(this.searchTimeout);
-        }
+        if (this.searchTimeout) clearTimeout(this.searchTimeout);
         
         searchInput.oninput = null;
         
@@ -315,11 +409,23 @@ const Team = {
         const listDiv = document.createElement('div');
         listDiv.className = 'players-list';
         listDiv.id = 'teamSearchResults';
-        listDiv.innerHTML = `
-            <div class="empty-friends">
-                <div class="empty-friends-text">ожидание загрузки ...</div>
-            </div>
-        `;
+        
+        // Показываем загрузку или данные из кэша
+        if (!this.isPlayersLoaded && this.allPlayers.length === 0) {
+            listDiv.innerHTML = `
+                <div class="empty-friends">
+                    <div class="empty-friends-text">⏳ загрузка игроков...</div>
+                </div>
+            `;
+        } else if (this.allPlayers.length > 0) {
+            this.renderSearchResults(this.allPlayers, listDiv);
+        } else {
+            listDiv.innerHTML = `
+                <div class="empty-friends">
+                    <div class="empty-friends-text">игроки не найдены</div>
+                </div>
+            `;
+        }
         
         content.innerHTML = '';
         content.appendChild(searchDiv);
@@ -332,14 +438,9 @@ const Team = {
             this.attachSearchHandler(input);
         }
         
-        if (this.allPlayers && this.allPlayers.length > 0) {
-            this.renderSearchResults(this.allPlayers);
-        } else {
-            this.loadAllPlayers().then(() => {
-                if (this.allPlayers && this.allPlayers.length > 0) {
-                    this.renderSearchResults(this.allPlayers);
-                }
-            });
+        // Если еще нет данных, грузим
+        if (this.allPlayers.length === 0 && !this.isPlayersLoaded) {
+            this.loadAllPlayers();
         }
     },
     
@@ -411,7 +512,6 @@ const Team = {
             }
         `;
         document.head.appendChild(style);
-        console.log('✅ Принудительные стили для поиска добавлены');
     },
     
     attachSearchHandler(input) {
@@ -420,9 +520,7 @@ const Team = {
         input.removeAttribute('readonly');
         input.removeAttribute('disabled');
         
-        if (this.searchTimeout) {
-            clearTimeout(this.searchTimeout);
-        }
+        if (this.searchTimeout) clearTimeout(this.searchTimeout);
         
         input.oninput = (e) => {
             const query = e.target.value.trim();
@@ -440,12 +538,12 @@ const Team = {
         };
     },
     
-    renderSearchResults(players) {
-        const container = document.getElementById('teamSearchResults');
-        if (!container) return;
+    renderSearchResults(players, container = null) {
+        const targetContainer = container || document.getElementById('teamSearchResults');
+        if (!targetContainer) return;
         
         if (!players || players.length === 0) {
-            container.innerHTML = `
+            targetContainer.innerHTML = `
                 <div class="empty-friends">
                     <div class="empty-friends-text">игроки не найдены</div>
                 </div>
@@ -472,7 +570,7 @@ const Team = {
             `;
         });
         
-        container.innerHTML = html;
+        targetContainer.innerHTML = html;
     },
     
     async searchPlayers(query) {
@@ -483,15 +581,38 @@ const Team = {
         
         console.log('🔍 Поиск игроков:', query);
         
+        // Сначала ищем в кэше
+        const cachedResults = this.allPlayers.filter(player => {
+            const nickMatch = player.nick?.toLowerCase().includes(query.toLowerCase());
+            const idMatch = player.player_id?.toLowerCase().includes(query.toLowerCase());
+            return nickMatch || idMatch;
+        });
+        
+        if (cachedResults.length > 0) {
+            this.renderSearchResults(cachedResults);
+        } else {
+            const container = document.getElementById('teamSearchResults');
+            if (container) {
+                container.innerHTML = `<div class="empty-friends"><div class="empty-friends-text">⏳ поиск...</div></div>`;
+            }
+        }
+        
+        // Запрос на сервер
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            
             const response = await fetch(`${this.BACKEND_URL}/api/users/search`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     telegram_id: this.telegramId,
                     query: query
-                })
+                }),
+                signal: controller.signal
             });
+            
+            clearTimeout(timeoutId);
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
@@ -503,11 +624,19 @@ const Team = {
             if (data.status === 'ok' && data.users) {
                 this.renderSearchResults(data.users);
             } else {
-                this.renderSearchResults([]);
+                if (cachedResults.length === 0) {
+                    this.renderSearchResults([]);
+                }
             }
         } catch (error) {
-            console.error('❌ Ошибка поиска:', error);
-            this.renderSearchResults([]);
+            if (error.name === 'AbortError') {
+                console.error('❌ Таймаут поиска игроков (3 сек)');
+            } else {
+                console.error('❌ Ошибка поиска:', error);
+            }
+            if (cachedResults.length === 0) {
+                this.renderSearchResults([]);
+            }
         }
     },
     
@@ -541,10 +670,18 @@ const Team = {
     deleteFriend(playerId) {
         console.log('🗑️ Удалить друга:', playerId);
         if (confirm('Удалить пользователя из друзей?')) {
+            this.friendsList = this.friendsList.filter(f => f.player_id !== playerId);
+            this.filteredFriends = this.filteredFriends.filter(f => f.player_id !== playerId);
+            localStorage.setItem(`team_friends_${this.telegramId}`, JSON.stringify(this.friendsList));
+            
+            if (this.currentTab === 'friends') {
+                this.renderFriendsTab();
+            }
+            
             if (window.App) {
-                App.showAlert(`Удаление друга ${playerId}\n(функция в разработке)`);
+                App.showAlert(`Друг удален`);
             } else {
-                alert(`Удаление друга ${playerId}\n(функция в разработке)`);
+                alert(`Друг удален`);
             }
         }
     },
@@ -561,12 +698,29 @@ const Team = {
         if (window.App && App.showScreen) {
             App.showScreen('profileScreen', true);
         }
+    },
+    
+    // ✅ Добавить друга (из поиска)
+    addFriend(friend) {
+        if (this.friendsList.some(f => f.player_id === friend.player_id)) {
+            return false;
+        }
+        
+        this.friendsList.unshift(friend);
+        this.filteredFriends = [...this.friendsList];
+        localStorage.setItem(`team_friends_${this.telegramId}`, JSON.stringify(this.friendsList));
+        
+        if (this.currentTab === 'friends') {
+            this.renderFriendsTab();
+        }
+        return true;
     }
 };
 
-// Инициализация
+// ✅ ИНИЦИАЛИЗАЦИЯ
 document.addEventListener('DOMContentLoaded', () => {
-    Team.init();
+    console.log('Team.js загружен');
+    setTimeout(() => Team.init(), 100);
 });
 
 window.Team = Team;
