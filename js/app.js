@@ -25,7 +25,6 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             mainScreen.classList.add('active');
             
-            // Активируем навигацию
             const navMain = document.getElementById('navMain');
             if (navMain) {
                 document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -38,33 +37,27 @@
         }
     }
 
-    // ✅ Фоновая загрузка данных (последовательная)
+    // ✅ Фоновая загрузка данных
     async function backgroundLoadData() {
         console.log('🚀 Начинаем фоновую загрузку данных...');
         
-        // 1. Загружаем профиль
         try {
             if (typeof Profile !== 'undefined') {
-                // Убеждаемся, что telegramId установлен
                 if (!Profile.telegramId) {
                     Profile.telegramId = Profile.getTelegramId();
                 }
-                console.log('📥 1/3 Загружаем профиль...');
+                console.log('📥 Загружаем профиль...');
                 await Profile.loadProfileFromServer();
-                console.log('✅ Профиль загружен');
-                
-                // Загружаем аватар
                 await Profile.loadAvatar();
-                console.log('✅ Аватар загружен');
+                console.log('✅ Профиль загружен');
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки профиля:', error);
         }
         
-        // 2. Загружаем друзей (после профиля)
         try {
             if (typeof Friends !== 'undefined') {
-                console.log('📥 2/3 Загружаем друзей...');
+                console.log('📥 Загружаем друзей...');
                 await Friends.loadFriendsList();
                 console.log('✅ Друзья загружены');
             }
@@ -72,10 +65,9 @@
             console.error('❌ Ошибка загрузки друзей:', error);
         }
         
-        // 3. Загружаем магазин (после друзей)
         try {
             if (typeof Shop !== 'undefined') {
-                console.log('📥 3/3 Загружаем магазин...');
+                console.log('📥 Загружаем магазин...');
                 if (typeof Shop.loadShopItems === 'function') {
                     await Shop.loadShopItems();
                 } else if (typeof Shop.init === 'function') {
@@ -90,56 +82,33 @@
         console.log('🎉 Все данные загружены!');
     }
 
-    // ✅ Ждем полной загрузки DOM
+    // ✅ Инициализация
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
             console.log('🚀 DOM загружен, запускаем Pingster...');
-            
-            // Показываем главный экран
             if (showMainScreen()) {
-                // Запускаем фоновую загрузку данных
-                setTimeout(() => {
-                    backgroundLoadData();
-                }, 100);
+                setTimeout(() => backgroundLoadData(), 100);
             }
-            
-            // Инициализируем пользователя (Telegram)
             initUser();
-            
-            // Инициализируем модули (неблокирующая, для обработчиков событий)
             initModules();
         });
     } else {
         console.log('🚀 DOM уже загружен, запускаем Pingster...');
-        
-        // Показываем главный экран
         if (showMainScreen()) {
-            // Запускаем фоновую загрузку данных
-            setTimeout(() => {
-                backgroundLoadData();
-            }, 100);
+            setTimeout(() => backgroundLoadData(), 100);
         }
-        
-        // Инициализируем пользователя (Telegram)
         initUser();
-        
-        // Инициализируем модули (неблокирующая, для обработчиков событий)
         initModules();
     }
     
     function initModules() {
-        // Инициализация модулей (только настройка обработчиков, без загрузки данных)
         setTimeout(() => {
             try {
-                if (typeof Shop !== 'undefined' && Shop.setupListeners) {
-                    Shop.setupListeners();
-                } else if (typeof Shop !== 'undefined' && typeof Shop.init === 'function') {
-                    // Если нет setupListeners, но есть init - вызываем его
-                    Shop.init();
+                if (typeof Shop !== 'undefined') {
+                    if (Shop.setupListeners) Shop.setupListeners();
+                    else if (Shop.init) Shop.init();
                 }
-                
                 if (typeof Search !== 'undefined') Search.init();
-                
                 console.log('✅ Модули инициализированы');
             } catch (e) {
                 console.error('Ошибка инициализации модулей:', e);
@@ -172,7 +141,6 @@
             })
             .catch(error => console.error('Error initializing user:', error));
             
-            // Проверка матча через 2 секунды
             setTimeout(() => {
                 if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
                     Search.checkMatchStatus();
@@ -184,11 +152,15 @@
     }
 })();
 
-if (!window.App) {
-    window.App = {};
-}
+// ============================================
+// НАВИГАЦИЯ (ЕДИНЫЙ ОБЪЕКТ App)
+// ============================================
+
+window.App = window.App || {};
 
 Object.assign(window.App, {
+    currentScreen: null,
+    
     showScreen: function(screenId, updateNav = true) {
         const screen = document.getElementById(screenId);
         if (!screen) {
@@ -196,77 +168,79 @@ Object.assign(window.App, {
             return;
         }
         
-        console.log('App.showScreen:', screenId);
+        console.log('📱 Переход на экран:', screenId);
         
         const content = document.querySelector('.content');
         if (content) {
-            content.classList.remove('settings-mode');
-            content.classList.remove('shop-mode');
+            content.classList.remove('settings-mode', 'shop-mode');
         }
-        if (screenId === 'settingsScreen' && content) content.classList.add('settings-mode');
-        if (screenId === 'shopScreen' && content) content.classList.add('shop-mode');
+        if (screenId === 'settingsScreen') content?.classList.add('settings-mode');
+        if (screenId === 'shopScreen') content?.classList.add('shop-mode');
         
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         screen.classList.add('active');
+        this.currentScreen = screenId;
         
-        // ✅ ПРОФИЛЬ - если данные уже загружены, просто отображаем
-        if (screenId === 'profileScreen') {
+        // ✅ ИНИЦИАЛИЗАЦИЯ ПРОФИЛЯ
+        if (screenId === 'profileScreen' && typeof Profile !== 'undefined') {
             setTimeout(() => {
-                if (typeof Profile !== 'undefined') {
-                    // Если профиль еще не загружен - загружаем
-                    if (!Profile.isProfileLoaded && !Profile.isLoading) {
-                        Profile.loadProfileFromServer();
-                        Profile.loadAvatar();
-                    } else {
-                        // Если уже загружен - просто обновляем отображение
-                        Profile.updateDisplay();
-                    }
+                if (!Profile.isProfileLoaded && !Profile.isLoading) {
+                    Profile.loadProfileFromServer();
+                    Profile.loadAvatar();
+                } else {
+                    Profile.updateDisplay();
                 }
             }, 50);
         }
         
-        // ✅ МАГАЗИН - если данные уже загружены, отображаем
-        if (screenId === 'shopScreen') {
+        // ✅ ИНИЦИАЛИЗАЦИЯ МАГАЗИНА
+        if (screenId === 'shopScreen' && typeof Shop !== 'undefined') {
             setTimeout(() => {
-                if (typeof Shop !== 'undefined') {
-                    if (typeof Shop.renderShop === 'function') {
-                        Shop.renderShop();
-                    }
+                if (typeof Shop.renderShop === 'function') Shop.renderShop();
+                if (typeof window.loadShopImages === 'function') window.loadShopImages();
+            }, 100);
+        }
+        
+        // ✅ ИНИЦИАЛИЗАЦИЯ ДРУЗЕЙ
+        if (screenId === 'friendsScreen' && typeof Friends !== 'undefined') {
+            setTimeout(() => {
+                if (!Friends.friendsListLoaded && Friends.friendsList.length === 0) {
+                    Friends.loadFriendsList();
+                } else {
+                    Friends.renderFriendsPage();
                 }
-                if (typeof window.loadShopImages === 'function') {
-                    window.loadShopImages();
+            }, 50);
+        }
+        
+        // ✅ ИНИЦИАЛИЗАЦИЯ НАСТРОЕК (КНОПКИ ЗВУКА)
+        if (screenId === 'settingsScreen' && typeof Settings !== 'undefined') {
+            setTimeout(() => {
+                console.log('⚙️ Инициализация настроек');
+                if (Settings.init) {
+                    Settings.init();
                 }
             }, 100);
         }
         
-        // ✅ ДРУЗЬЯ - если данные уже загружены, отображаем
-        if (screenId === 'friendsScreen') {
-            setTimeout(() => {
-                if (typeof Friends !== 'undefined') {
-                    // Если друзья еще не загружены - загружаем
-                    if (!Friends.friendsListLoaded && Friends.friendsList.length === 0) {
-                        Friends.loadFriendsList();
-                    } else {
-                        // Если уже загружены - просто отрисовываем
-                        Friends.renderFriendsPage();
-                    }
-                }
-            }, 50);
-        }
-        
+        // Обновляем навигацию
         if (updateNav) {
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
+            
             if (screenId === 'mainScreen') {
                 document.getElementById('navMain')?.classList.add('active');
             } else if (screenId === 'shopScreen') {
                 document.getElementById('navShop')?.classList.add('active');
             } else if (screenId === 'profileScreen') {
                 document.getElementById('navProfile')?.classList.add('active');
-            } else if (screenId === 'friendsScreen') {
-                document.getElementById('navFriends')?.classList.add('active');
             }
+        }
+        
+        // Вибрация при переходе (только если есть поддержка)
+        const tg = window.Telegram?.WebApp;
+        if (tg?.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred('light');
         }
     },
     
@@ -279,4 +253,5 @@ Object.assign(window.App, {
     }
 });
 
+// Для обратной совместимости
 window.App = window.App;
