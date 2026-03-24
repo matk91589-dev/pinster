@@ -806,7 +806,27 @@
             <div id="primeScreen" class="screen prime-screen">
                 <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title prime">PRIME</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">Звание</div><select class="rank-select" id="primeRankSelect"><option>Silver 1</option><option>Silver 2</option><option>Gold Nova 1</option></select>
+                <div class="input-label">Звание</div>
+                <select class="rank-select" id="primeRankSelect">
+                    <option selected>Выберите ранг</option>
+                    <option>Silver 1</option>
+                    <option>Silver 2</option>
+                    <option>Silver 3</option>
+                    <option>Silver 4</option>
+                    <option>Silver Elite</option>
+                    <option>Gold Nova 1</option>
+                    <option>Gold Nova 2</option>
+                    <option>Gold Nova 3</option>
+                    <option>Gold Nova Master</option>
+                    <option>Master Guardian 1</option>
+                    <option>Master Guardian 2</option>
+                    <option>Master Guardian Elite</option>
+                    <option>Distinguished Master Guardian</option>
+                    <option>Legendary Eagle</option>
+                    <option>Legendary Eagle Master</option>
+                    <option>Supreme Master First Class</option>
+                    <option>Global Elite</option>
+                </select>
                 <div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card" onclick="Profile.editPrimeAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="primeAgeValue" placeholder="21" value="21"></div></div></div>
                 <div class="input-label">Ссылка Steam</div><input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam">
                 <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
@@ -817,7 +837,27 @@
             <div id="publicScreen" class="screen public-screen">
                 <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title public">PUBLIC</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">Звание</div><select class="rank-select" id="publicRankSelect"><option>Silver 1</option><option>Silver 2</option></select>
+                <div class="input-label">Звание</div>
+                <select class="rank-select" id="publicRankSelect">
+                    <option selected>Выберите ранг</option>
+                    <option>Silver 1</option>
+                    <option>Silver 2</option>
+                    <option>Silver 3</option>
+                    <option>Silver 4</option>
+                    <option>Silver Elite</option>
+                    <option>Gold Nova 1</option>
+                    <option>Gold Nova 2</option>
+                    <option>Gold Nova 3</option>
+                    <option>Gold Nova Master</option>
+                    <option>Master Guardian 1</option>
+                    <option>Master Guardian 2</option>
+                    <option>Master Guardian Elite</option>
+                    <option>Distinguished Master Guardian</option>
+                    <option>Legendary Eagle</option>
+                    <option>Legendary Eagle Master</option>
+                    <option>Supreme Master First Class</option>
+                    <option>Global Elite</option>
+                </select>
                 <div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card" onclick="Profile.editPublicAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="publicAgeValue" placeholder="21" value="21"></div></div></div>
                 <div class="input-label">Ссылка Steam</div><input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam">
                 <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
@@ -899,8 +939,6 @@
                         window.Profile.loadAvatar();
                     }
                 }, 200);
-                
-                // Друзья и лидерборд НЕ грузим при старте - только при открытии экрана
             });
             
             // Защита от кликов до загрузки Team
