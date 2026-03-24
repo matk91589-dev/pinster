@@ -1,5 +1,5 @@
 // ============================================
-// КОМАНДА - С ЛИДЕРБОРДОМ И ДРУЗЬЯМИ
+// КОМАНДА - МАКСИМАЛЬНО ПРОСТАЯ ВЕРСИЯ
 // ============================================
 
 const Team = {
@@ -11,10 +11,9 @@ const Team = {
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
     leaderboard: [],
     currentPlayerId: null,
-    isLeaderboardLoaded: false,
 
     init() {
-        console.log('🚀 Team.init() запущен');
+        console.log('🚀 Team.init()');
         
         if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
             this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
@@ -24,15 +23,12 @@ const Team = {
         
         this.currentPlayerId = localStorage.getItem('player_id');
         
-        console.log('Team Telegram ID:', this.telegramId);
-        console.log('Team Player ID:', this.currentPlayerId);
-        
         if (!this.telegramId) {
             console.error('❌ Нет telegram_id');
             return;
         }
         
-        // Сразу грузим данные
+        // Грузим данные
         this.loadFriendsList();
         this.loadLeaderboard();
     },
@@ -40,15 +36,8 @@ const Team = {
     showTeamPage() {
         console.log('showTeamPage called');
         
-        if (!this.telegramId) {
-            this.init();
-        }
-        
         const teamScreen = document.getElementById('teamScreen');
-        if (!teamScreen) {
-            console.error('❌ teamScreen не найден');
-            return;
-        }
+        if (!teamScreen) return;
         
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
@@ -60,19 +49,10 @@ const Team = {
         } else {
             this.renderLeaderboardTab();
         }
-        
-        if (window.Telegram?.WebApp?.HapticFeedback) {
-            Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        }
     },
     
     async loadFriendsList() {
-        if (!this.telegramId) {
-            console.error('❌ Нет telegram_id для загрузки друзей');
-            return;
-        }
-        
-        console.log('👥 Загрузка друзей с сервера...');
+        if (!this.telegramId) return;
         
         try {
             const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
@@ -81,44 +61,23 @@ const Team = {
                 body: JSON.stringify({ telegram_id: this.telegramId })
             });
             
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
-            console.log('📦 Ответ друзей:', data);
             
             if (data.status === 'ok' && data.friends) {
                 this.friendsList = data.friends;
                 this.filteredFriends = [...this.friendsList];
-                console.log('✅ Загружено друзей:', this.friendsList.length);
-            } else {
-                this.friendsList = [];
-                this.filteredFriends = [];
-            }
-            
-            if (this.currentTab === 'friends') {
-                this.renderFriendsTab();
+                console.log('✅ Друзья загружены:', this.friendsList.length);
+                if (this.currentTab === 'friends') this.renderFriendsTab();
             }
         } catch (error) {
-            console.error('❌ Ошибка загрузки друзей:', error);
-            this.friendsList = [];
-            this.filteredFriends = [];
+            console.error('❌ Ошибка друзей:', error);
         }
     },
     
     async loadLeaderboard() {
-        if (this.isLeaderboardLoaded && this.leaderboard.length > 0) {
-            console.log('📦 Лидерборд уже загружен');
-            return;
-        }
-        
-        if (!this.telegramId) {
-            console.error('❌ Нет telegram_id для загрузки лидерборда');
-            return;
-        }
-        
-        console.log('📥 Загрузка лидерборда с сервера...');
+        if (!this.telegramId) return;
         
         try {
             const response = await fetch(`${this.BACKEND_URL}/api/users/leaderboard`, {
@@ -127,32 +86,17 @@ const Team = {
                 body: JSON.stringify({ telegram_id: this.telegramId })
             });
             
-            if (!response.ok) {
-                console.warn(`⚠️ Сервер ответил ${response.status}`);
-                this.leaderboard = [];
-                this.isLeaderboardLoaded = true;
-                return;
-            }
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
-            console.log('📦 Ответ лидерборда:', data);
             
-            if (data.status === 'ok' && data.leaderboard && data.leaderboard.length > 0) {
+            if (data.status === 'ok' && data.leaderboard) {
                 this.leaderboard = data.leaderboard;
-                this.isLeaderboardLoaded = true;
-                console.log('✅ Загружено лидеров:', this.leaderboard.length);
-            } else {
-                this.leaderboard = [];
-                this.isLeaderboardLoaded = true;
-            }
-            
-            if (this.currentTab === 'leaderboard') {
-                this.renderLeaderboardTab();
+                console.log('✅ Лидерборд загружен:', this.leaderboard.length);
+                if (this.currentTab === 'leaderboard') this.renderLeaderboardTab();
             }
         } catch (error) {
-            console.error('❌ Ошибка загрузки лидерборда:', error);
-            this.leaderboard = [];
-            this.isLeaderboardLoaded = true;
+            console.error('❌ Ошибка лидерборда:', error);
         }
     },
     
@@ -177,11 +121,8 @@ const Team = {
         
         let html = `
             <div class="friends-search">
-                <input type="search" 
-                       id="friendsSearchInput" 
-                       class="friends-search-input" 
-                       placeholder="поиск: введите id или ник друга"
-                       autocomplete="off">
+                <input type="search" id="friendsSearchInput" class="friends-search-input" 
+                       placeholder="поиск: введите id или ник друга" autocomplete="off">
             </div>
             <div class="friends-list-container" id="friendsTabList">
         `;
@@ -193,10 +134,7 @@ const Team = {
                 html += `
                 <div class="friend-row" onclick="Team.showFriendProfile('${friend.player_id}')">
                     <div class="friend-avatar">
-                        ${friend.avatar 
-                            ? `<img src="${friend.avatar}" alt="avatar">` 
-                            : `<span>${friend.nick?.[0] || '?'}</span>`
-                        }
+                        ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${friend.nick?.[0] || '?'}</span>`}
                     </div>
                     <div class="friend-info">
                         <span class="friend-id">ID: ${friend.player_id}</span>
@@ -217,37 +155,28 @@ const Team = {
         const searchInput = document.getElementById('friendsSearchInput');
         if (!searchInput) return;
         
-        searchInput.removeAttribute('readonly');
-        searchInput.removeAttribute('disabled');
-        
-        if (this.searchTimeout) clearTimeout(this.searchTimeout);
-        
-        searchInput.oninput = null;
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.trim().toLowerCase();
+        searchInput.oninput = (e) => {
             if (this.searchTimeout) clearTimeout(this.searchTimeout);
-            this.searchTimeout = setTimeout(() => this.searchFriends(query), 300);
-        });
-    },
-    
-    searchFriends(query) {
-        if (!query) {
-            this.filteredFriends = [...this.friendsList];
-        } else {
-            this.filteredFriends = this.friendsList.filter(friend => {
-                const nickMatch = friend.nick?.toLowerCase().includes(query);
-                const idMatch = friend.player_id?.toLowerCase().includes(query);
-                return nickMatch || idMatch;
-            });
-        }
-        this.updateFriendsTabList();
+            this.searchTimeout = setTimeout(() => {
+                const query = e.target.value.trim().toLowerCase();
+                if (!query) {
+                    this.filteredFriends = [...this.friendsList];
+                } else {
+                    this.filteredFriends = this.friendsList.filter(f => 
+                        f.nick?.toLowerCase().includes(query) || 
+                        f.player_id?.toLowerCase().includes(query)
+                    );
+                }
+                this.updateFriendsTabList();
+            }, 300);
+        };
     },
     
     updateFriendsTabList() {
         const container = document.getElementById('friendsTabList');
         if (!container) return;
         
-        if (!this.filteredFriends || this.filteredFriends.length === 0) {
+        if (!this.filteredFriends.length) {
             container.innerHTML = `<div class="empty-friends"><div class="empty-friends-text">друзья не найдены</div></div>`;
             return;
         }
@@ -256,12 +185,7 @@ const Team = {
         this.filteredFriends.forEach(friend => {
             html += `
             <div class="friend-row" onclick="Team.showFriendProfile('${friend.player_id}')">
-                <div class="friend-avatar">
-                    ${friend.avatar 
-                        ? `<img src="${friend.avatar}" alt="avatar">` 
-                        : `<span>${friend.nick?.[0] || '?'}</span>`
-                    }
-                </div>
+                <div class="friend-avatar">${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${friend.nick?.[0] || '?'}</span>`}</div>
                 <div class="friend-info">
                     <span class="friend-id">ID: ${friend.player_id}</span>
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
@@ -276,25 +200,10 @@ const Team = {
         const content = document.getElementById('teamContent');
         if (!content) return;
         
-        const listDiv = document.createElement('div');
-        listDiv.className = 'leaderboard-list';
-        listDiv.id = 'leaderboardList';
-        
-        if (!this.isLeaderboardLoaded && this.leaderboard.length === 0) {
-            listDiv.innerHTML = `<div class="empty-friends"><div class="empty-friends-text">загрузка лидерборда...</div></div>`;
-        } else if (this.leaderboard.length === 0) {
-            listDiv.innerHTML = `<div class="empty-friends"><div class="empty-friends-text">пока нет игроков</div></div>`;
-        } else {
-            this.renderLeaderboardList(listDiv);
+        if (!this.leaderboard.length) {
+            content.innerHTML = `<div class="empty-friends"><div class="empty-friends-text">загрузка лидерборда...</div></div>`;
+            return;
         }
-        
-        content.innerHTML = '';
-        content.appendChild(listDiv);
-        this.injectLeaderboardStyles();
-    },
-    
-    renderLeaderboardList(container) {
-        if (!container) return;
         
         let html = '';
         this.leaderboard.forEach((player, index) => {
@@ -306,10 +215,7 @@ const Team = {
                 <div class="friend-row ${isCurrent ? 'current-player' : ''}" 
                      onclick="Team.showPlayerProfile('${player.player_id}')">
                     <div class="friend-avatar">
-                        ${player.avatar 
-                            ? `<img src="${player.avatar}" alt="avatar">` 
-                            : `<span>${player.nick?.[0] || '?'}</span>`
-                        }
+                        ${player.avatar ? `<img src="${player.avatar}">` : `<span>${player.nick?.[0] || '?'}</span>`}
                     </div>
                     <div class="friend-info">
                         <span class="friend-id">${placeText}</span>
@@ -320,7 +226,8 @@ const Team = {
             `;
         });
         
-        container.innerHTML = html;
+        content.innerHTML = html;
+        this.injectLeaderboardStyles();
     },
     
     injectLeaderboardStyles() {
@@ -329,11 +236,6 @@ const Team = {
         const style = document.createElement('style');
         style.id = 'leaderboard-styles';
         style.textContent = `
-            .leaderboard-list {
-                padding: 8px 16px;
-                flex: 1;
-                overflow-y: auto;
-            }
             .friend-row.current-player {
                 background: rgba(255, 85, 0, 0.1);
                 border-left: 3px solid #FF5500;
@@ -357,51 +259,21 @@ const Team = {
     },
     
     showFriendProfile(playerId) {
-        console.log('👤 Профиль друга:', playerId);
-        if (window.App) {
-            App.showAlert(`Профиль друга ${playerId}\n(функция в разработке)`);
-        } else {
-            alert(`Профиль друга ${playerId}\n(функция в разработке)`);
-        }
+        if (window.App) App.showAlert(`Профиль друга ${playerId}\n(функция в разработке)`);
     },
     
     showPlayerProfile(playerId) {
-        console.log('👤 Профиль игрока:', playerId);
-        if (window.App) {
-            App.showAlert(`Профиль игрока ${playerId}\n(функция в разработке)`);
-        } else {
-            alert(`Профиль игрока ${playerId}\n(функция в разработке)`);
-        }
-    },
-    
-    deleteFriend(playerId) {
-        console.log('🗑️ Удалить друга:', playerId);
-        if (confirm('Удалить пользователя из друзей?')) {
-            this.friendsList = this.friendsList.filter(f => f.player_id !== playerId);
-            this.filteredFriends = this.filteredFriends.filter(f => f.player_id !== playerId);
-            
-            if (this.currentTab === 'friends') {
-                this.renderFriendsTab();
-            }
-            
-            if (window.App) {
-                App.showAlert('Друг удален');
-            } else {
-                alert('Друг удален');
-            }
-        }
+        if (window.App) App.showAlert(`Профиль игрока ${playerId}\n(функция в разработке)`);
     },
     
     goBack() {
-        if (window.App && App.showScreen) {
-            App.showScreen('profileScreen', true);
-        }
+        if (window.App) App.showScreen('profileScreen', true);
     }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Team.js загружен');
-    setTimeout(() => Team.init(), 100);
+    setTimeout(() => Team.init(), 50);
 });
 
 window.Team = Team;
