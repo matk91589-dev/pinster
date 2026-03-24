@@ -27,8 +27,14 @@ const Friends = {
             return;
         }
         
-        console.log('🚀 Загружаем список друзей...');
-        this.loadFriendsList();
+        // ❌ НЕ загружаем друзей автоматически! Только настраиваем поиск
+        // Загрузка будет вызвана из app.js в фоне
+        this.setupSearchInput();
+    },
+    
+    // ✅ Метод для настройки слушателей (вызывается из app.js)
+    setupListeners() {
+        console.log('🔧 Friends: настройка слушателей');
         this.setupSearchInput();
     },
     
@@ -41,12 +47,17 @@ const Friends = {
     
     async loadFriendsList() {
         if (this.friendsListLoaded) {
-            console.log('📦 Друзья уже загружены');
+            console.log('📦 Друзья уже загружены, пропускаем');
             return;
         }
         
         if (!this.telegramId) {
             this.telegramId = this.getTelegramId();
+        }
+        
+        if (!this.telegramId) {
+            console.error('❌ Нет telegram_id для загрузки друзей');
+            return;
         }
         
         console.log('👥 Загрузка друзей...');
@@ -61,14 +72,14 @@ const Friends = {
                 body: JSON.stringify({ telegram_id: this.telegramId })
             });
             
-            console.log('📦 Статус ответа:', response.status);
+            console.log('📦 Статус ответа друзей:', response.status);
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
             }
             
             const data = await response.json();
-            console.log('📦 Данные от сервера:', data);
+            console.log('📦 Данные друзей от сервера:', data);
             
             if (data.status === 'ok' && data.friends) {
                 this.friendsList = data.friends;
@@ -183,6 +194,16 @@ const Friends = {
             return;
         }
         
+        // Если друзья еще не загружены, показываем загрузку
+        if (!this.friendsListLoaded && this.friendsList.length === 0) {
+            container.innerHTML = `
+                <div class="empty-friends">
+                    <div class="empty-friends-text">⏳ загрузка...</div>
+                </div>
+            `;
+            return;
+        }
+        
         const friendsToRender = friends || this.filteredFriends;
         
         if (!friendsToRender || friendsToRender.length === 0) {
@@ -294,9 +315,10 @@ const Friends = {
     }
 };
 
+// ✅ Инициализация: только настройка, без загрузки данных
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Friends.js загружен');
-    setTimeout(() => Friends.init(), 1000);
+    setTimeout(() => Friends.init(), 100);
 });
 
 window.Friends = Friends;
