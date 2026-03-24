@@ -19,13 +19,18 @@ const Team = {
     init() {
         console.log('🚀 Team.init()');
         
+        // Получаем Telegram ID
         if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
             this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
         } else if (window.Profile && Profile.getTelegramId) {
             this.telegramId = Profile.getTelegramId();
         }
         
+        // Получаем player_id из localStorage
         this.currentPlayerId = localStorage.getItem('player_id');
+        
+        console.log('Team Telegram ID:', this.telegramId);
+        console.log('Team Player ID:', this.currentPlayerId);
         
         if (!this.telegramId) {
             console.error('❌ Нет telegram_id');
@@ -33,37 +38,52 @@ const Team = {
         }
         
         // ❌ НЕ ГРУЗИМ ДАННЫЕ ПРИ СТАРТЕ
-        // this.loadFriendsList();
-        // this.loadLeaderboard();
     },
     
     showTeamPage() {
         console.log('showTeamPage called');
         
         const teamScreen = document.getElementById('teamScreen');
-        if (!teamScreen) return;
+        if (!teamScreen) {
+            console.error('❌ teamScreen не найден');
+            return;
+        }
         
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
         });
         teamScreen.classList.add('active');
         
+        // Проверяем telegramId
+        if (!this.telegramId) {
+            console.log('⚠️ Нет telegram_id, пробуем получить снова');
+            if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
+                this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
+            } else if (window.Profile && Profile.getTelegramId) {
+                this.telegramId = Profile.getTelegramId();
+            }
+            this.currentPlayerId = localStorage.getItem('player_id');
+        }
+        
         // Грузим данные только при открытии экрана
         if (this.currentTab === 'friends') {
             this.renderFriendsTab();
-            if (!this.isFriendsLoaded && !this.isLoadingFriends) {
+            if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
                 this.loadFriendsList();
             }
         } else {
             this.renderLeaderboardTab();
-            if (!this.isLeaderboardLoaded && !this.isLoadingLeaderboard) {
+            if (!this.isLeaderboardLoaded && !this.isLoadingLeaderboard && this.telegramId) {
                 this.loadLeaderboard();
             }
         }
     },
     
     async loadFriendsList() {
-        if (!this.telegramId) return;
+        if (!this.telegramId) {
+            console.error('❌ Нет telegram_id для загрузки друзей');
+            return;
+        }
         
         if (this.isLoadingFriends) {
             console.log('⏳ Уже загружаем друзей');
@@ -83,8 +103,9 @@ const Team = {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
+            console.log('📦 Ответ друзей:', data);
             
-            if (data.status === 'ok' && data.friends) {
+            if (data.status === 'ok' && data.friends && data.friends.length > 0) {
                 this.friendsList = data.friends;
                 this.filteredFriends = [...this.friendsList];
                 this.isFriendsLoaded = true;
@@ -94,7 +115,7 @@ const Team = {
                     this.renderFriendsTab();
                 }
             } else {
-                console.log('❌ Нет друзей');
+                console.log('❌ Нет друзей или пустой ответ');
                 this.friendsList = [];
                 this.filteredFriends = [];
                 this.isFriendsLoaded = true;
@@ -103,7 +124,7 @@ const Team = {
                 }
             }
         } catch (error) {
-            console.error('❌ Ошибка друзей:', error);
+            console.error('❌ Ошибка загрузки друзей:', error);
             this.friendsList = [];
             this.filteredFriends = [];
             this.isFriendsLoaded = true;
@@ -116,7 +137,10 @@ const Team = {
     },
     
     async loadLeaderboard() {
-        if (!this.telegramId) return;
+        if (!this.telegramId) {
+            console.error('❌ Нет telegram_id для загрузки лидерборда');
+            return;
+        }
         
         if (this.isLoadingLeaderboard) {
             console.log('⏳ Уже загружаем лидерборд');
@@ -136,8 +160,9 @@ const Team = {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
+            console.log('📦 Ответ лидерборда:', data);
             
-            if (data.status === 'ok' && data.leaderboard) {
+            if (data.status === 'ok' && data.leaderboard && data.leaderboard.length > 0) {
                 this.leaderboard = data.leaderboard;
                 this.isLeaderboardLoaded = true;
                 console.log('✅ Лидерборд загружен:', this.leaderboard.length);
@@ -146,7 +171,7 @@ const Team = {
                     this.renderLeaderboardTab();
                 }
             } else {
-                console.log('❌ Нет данных лидерборда');
+                console.log('❌ Нет данных лидерборда или пустой ответ');
                 this.leaderboard = [];
                 this.isLeaderboardLoaded = true;
                 if (this.currentTab === 'leaderboard') {
@@ -154,7 +179,7 @@ const Team = {
                 }
             }
         } catch (error) {
-            console.error('❌ Ошибка лидерборда:', error);
+            console.error('❌ Ошибка загрузки лидерборда:', error);
             this.leaderboard = [];
             this.isLeaderboardLoaded = true;
             if (this.currentTab === 'leaderboard') {
@@ -175,12 +200,12 @@ const Team = {
         
         if (tab === 'friends') {
             this.renderFriendsTab();
-            if (!this.isFriendsLoaded && !this.isLoadingFriends) {
+            if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
                 this.loadFriendsList();
             }
         } else {
             this.renderLeaderboardTab();
-            if (!this.isLeaderboardLoaded && !this.isLoadingLeaderboard) {
+            if (!this.isLeaderboardLoaded && !this.isLoadingLeaderboard && this.telegramId) {
                 this.loadLeaderboard();
             }
         }
