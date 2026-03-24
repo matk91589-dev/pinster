@@ -14,6 +14,9 @@ const Team = {
     isLeaderboardLoaded: false,
     leaderboard: [],
     currentPlayerId: null,
+    loadingFriends: false,      // флаг, чтобы не грузить дважды
+    loadingLeaderboard: false,  // флаг, чтобы не грузить дважды
+    abortController: null,      // для отмены запросов
 
     init() {
         if (this.isInitialized) return;
@@ -36,9 +39,6 @@ const Team = {
             console.error('❌ Нет telegram_id');
             return;
         }
-        
-        // Не грузим из кэша - всегда с сервера
-        // this.loadFromCache(); - УБРАНО
         
         // Загружаем данные при инициализации
         this.loadFriendsList();
@@ -67,13 +67,12 @@ const Team = {
         // Всегда показываем актуальные данные
         if (this.currentTab === 'friends') {
             this.renderFriendsTab();
-            // Фоново обновляем, если нужно
-            if (!this.isFriendsLoaded) {
+            if (!this.isFriendsLoaded && !this.loadingFriends) {
                 this.loadFriendsList();
             }
         } else {
             this.renderLeaderboardTab();
-            if (!this.isLeaderboardLoaded) {
+            if (!this.isLeaderboardLoaded && !this.loadingLeaderboard) {
                 this.loadLeaderboard();
             }
         }
@@ -84,22 +83,39 @@ const Team = {
     },
     
     async loadFriendsList() {
+        if (this.loadingFriends) {
+            console.log('⏳ Уже загружаем друзей, пропускаем');
+            return;
+        }
+        
+        if (this.isFriendsLoaded && this.friendsList.length > 0) {
+            console.log('📦 Друзья уже загружены');
+            return;
+        }
+        
         if (!this.telegramId) {
             console.error('❌ Нет telegram_id для загрузки друзей');
             return;
         }
         
+        this.loadingFriends = true;
+        
+        // Отменяем предыдущий запрос, если был
+        if (this.abortController) {
+            this.abortController.abort();
+        }
+        this.abortController = new AbortController();
+        
         console.log('👥 Загрузка друзей с сервера...');
         
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            const timeoutId = setTimeout(() => this.abortController.abort(), 5000);
             
             const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ telegram_id: this.telegramId }),
-                signal: controller.signal
+                signal: this.abortController.signal
             });
             
             clearTimeout(timeoutId);
@@ -125,26 +141,41 @@ const Team = {
                 this.renderFriendsTab();
             }
         } catch (error) {
-            console.error('❌ Ошибка загрузки друзей:', error);
-            this.friendsList = [];
-            this.filteredFriends = [];
-            if (this.currentTab === 'friends') {
-                this.renderFriendsTab();
+            if (error.name === 'AbortError') {
+                console.log('⚠️ Запрос друзей отменен');
+            } else {
+                console.error('❌ Ошибка загрузки друзей:', error);
+                this.friendsList = [];
+                this.filteredFriends = [];
             }
+        } finally {
+            this.loadingFriends = false;
         }
     },
     
     async loadLeaderboard() {
+        if (this.loadingLeaderboard) {
+            console.log('⏳ Уже загружаем лидерборд, пропускаем');
+            return;
+        }
+        
+        if (this.isLeaderboardLoaded && this.leaderboard.length > 0) {
+            console.log('📦 Лидерборд уже загружен');
+            return;
+        }
+        
         if (!this.telegramId) {
             console.error('❌ Нет telegram_id для загрузки лидерборда');
             return;
         }
         
+        this.loadingLeaderboard = true;
+        
         console.log('📥 Загрузка лидерборда с сервера...');
         
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
             
             const response = await fetch(`${this.BACKEND_URL}/api/users/leaderboard`, {
                 method: 'POST',
@@ -180,12 +211,15 @@ const Team = {
                 this.renderLeaderboardTab();
             }
         } catch (error) {
-            console.error('❌ Ошибка загрузки лидерборда:', error);
-            this.leaderboard = [];
-            this.isLeaderboardLoaded = true;
-            if (this.currentTab === 'leaderboard') {
-                this.renderLeaderboardTab();
+            if (error.name === 'AbortError') {
+                console.log('⚠️ Запрос лидерборда отменен');
+            } else {
+                console.error('❌ Ошибка загрузки лидерборда:', error);
+                this.leaderboard = [];
+                this.isLeaderboardLoaded = true;
             }
+        } finally {
+            this.loadingLeaderboard = false;
         }
     },
     
@@ -199,13 +233,12 @@ const Team = {
         
         if (tab === 'friends') {
             this.renderFriendsTab();
-            // Если данные еще не загружены - грузим
-            if (!this.isFriendsLoaded) {
+            if (!this.isFriendsLoaded && !this.loadingFriends) {
                 this.loadFriendsList();
             }
         } else {
             this.renderLeaderboardTab();
-            if (!this.isLeaderboardLoaded) {
+            if (!this.isLeaderboardLoaded && !this.loadingLeaderboard) {
                 this.loadLeaderboard();
             }
         }
