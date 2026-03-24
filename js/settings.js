@@ -26,10 +26,16 @@ const Settings = {
         }
         
         console.log('✅ Кнопки найдены');
-        this.updateButtons();
         
+        // Убираем старые обработчики
+        soundOn.onclick = null;
+        soundOff.onclick = null;
+        
+        // Добавляем новые
         soundOn.onclick = (e) => {
             e.preventDefault();
+            e.stopPropagation();
+            console.log('🔊 Звук включен');
             this.sound = true;
             localStorage.setItem('settings_sound', 'true');
             this.updateButtons();
@@ -38,10 +44,14 @@ const Settings = {
         
         soundOff.onclick = (e) => {
             e.preventDefault();
+            e.stopPropagation();
+            console.log('🔇 Звук выключен');
             this.sound = false;
             localStorage.setItem('settings_sound', 'false');
             this.updateButtons();
         };
+        
+        this.updateButtons();
     },
     
     updateButtons() {
@@ -50,13 +60,20 @@ const Settings = {
         
         if (!soundOn || !soundOff) return;
         
+        // Используем тот же класс что в HTML (sound-option)
         if (this.sound) {
-            soundOn.classList.add('sound-active');
-            soundOff.classList.remove('sound-active');
+            soundOn.classList.add('active');
+            soundOff.classList.remove('active');
+            soundOn.style.color = '#FF5500';
+            soundOff.style.color = '#8E97A6';
         } else {
-            soundOff.classList.add('sound-active');
-            soundOn.classList.remove('sound-active');
+            soundOff.classList.add('active');
+            soundOn.classList.remove('active');
+            soundOff.style.color = '#FF5500';
+            soundOn.style.color = '#8E97A6';
         }
+        
+        console.log('✅ Кнопки обновлены:', this.sound ? 'вкл' : 'выкл');
     },
     
     playSound(type = 'light') {
