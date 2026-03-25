@@ -157,7 +157,10 @@ const Profile = {
     // ✅ ОБНОВЛЕНИЕ ОТОБРАЖЕНИЯ ДРУЗЕЙ
     updateFriendsDisplay() {
         const friendsListEl = document.getElementById('friendsList');
-        if (!friendsListEl) return;
+        if (!friendsListEl) {
+            console.warn('⚠️ friendsList не найден в DOM');
+            return;
+        }
         
         const friendsTitle = document.querySelector('.friends-title');
         if (friendsTitle) {
@@ -170,11 +173,15 @@ const Profile = {
         }
         
         let html = '';
-        this.friendsList.slice(0, 5).forEach(friend => {
+        const showCount = Math.min(this.friendsList.length, 5);
+        
+        for (let i = 0; i < showCount; i++) {
+            const friend = this.friendsList[i];
+            const firstChar = friend.nick && friend.nick.length > 0 ? friend.nick[0].toUpperCase() : '?';
             html += `
                 <div class="friend-row" onclick="Profile.showFriendProfile('${friend.player_id}')">
                     <div class="friend-avatar">
-                        ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${friend.nick?.[0] || '?'}</span>`}
+                        ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}
                     </div>
                     <div class="friend-info">
                         <span class="friend-id">ID: ${friend.player_id}</span>
@@ -183,13 +190,13 @@ const Profile = {
                     <span class="friend-arrow">→</span>
                 </div>
             `;
-        });
+        }
         
         if (this.friendsList.length > 5) {
             html += `<div class="friend-row more-friends" onclick="Profile.showAllFriends()">
                         <div class="friend-avatar"><span>+</span></div>
                         <div class="friend-info">
-                            <span class="friend-name">и еще ${this.friendsList.length - 5} друзей</span>
+                            <span class="friend-name">и еще ${this.friendsList.length - 5} ${this.getFriendsWord(this.friendsList.length - 5)}</span>
                         </div>
                         <span class="friend-arrow">→</span>
                     </div>`;
@@ -198,12 +205,22 @@ const Profile = {
         friendsListEl.innerHTML = html;
     },
     
+    getFriendsWord(count) {
+        if (count % 10 === 1 && count % 100 !== 11) return 'друг';
+        if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) return 'друга';
+        return 'друзей';
+    },
+    
     showFriendProfile(playerId) {
         if (window.App) App.showAlert(`Профиль друга ${playerId}\n(функция в разработке)`);
     },
     
     showAllFriends() {
-        if (window.Team) Team.showTeamPage();
+        if (window.Team && Team.showTeamPage) {
+            Team.showTeamPage();
+        } else {
+            if (window.App) App.showScreen('teamScreen', true);
+        }
     },
     
     // ✅ ЗАГРУЗКА С СЕРВЕРА (фоновая)
@@ -342,6 +359,11 @@ const Profile = {
         
         this.setupListeners();
         this.setupClickHandlers();
+        
+        // Проверяем, что friendsList существует в DOM после загрузки
+        setTimeout(() => {
+            this.updateFriendsDisplay();
+        }, 100);
     },
     
     updateDisplay() {
@@ -739,6 +761,16 @@ const Profile = {
                 }
             };
             faceitCard.addEventListener('click', this.faceitCardClickHandler);
+        }
+        
+        // Добавляем обработчик для кнопки друзей (стрелка в профиле)
+        const friendsArrow = document.querySelector('.friends-arrow');
+        if (friendsArrow) {
+            friendsArrow.removeEventListener('click', this.friendsArrowHandler);
+            this.friendsArrowHandler = () => {
+                this.showAllFriends();
+            };
+            friendsArrow.addEventListener('click', this.friendsArrowHandler);
         }
     },
     
