@@ -17,11 +17,6 @@
             background-color: #0D0F15;
             margin: 0;
             padding: 0;
-            opacity: 0;
-            transition: opacity 0.15s ease;
-        }
-        body.loaded {
-            opacity: 1;
         }
         .screen {
             display: none;
@@ -679,17 +674,6 @@
                 })
                 .catch(e => console.error('Profile preload error:', e));
             }
-            
-            function showContent() {
-                document.body.classList.add('loaded');
-            }
-            if (document.readyState === 'complete') {
-                setTimeout(showContent, 50);
-            } else {
-                window.addEventListener('load', function() {
-                    setTimeout(showContent, 50);
-                });
-            }
         })();
     </script>
     
@@ -880,7 +864,7 @@
         </nav>
     </div>
 
-    <!-- ОПТИМИЗИРОВАННАЯ ЗАГРУЗКА JS - ВСЕ ПАРАЛЛЕЛЬНО + ПОКАЗ ИНТЕРФЕЙСА СРАЗУ -->
+    <!-- ЗАГРУЗКА JS -->
     <script>
         (function() {
             const version = window.BUILD_VERSION || Date.now();
@@ -921,15 +905,9 @@
                 });
             }
             
-            // 🔥 СРАЗУ ПОКАЗЫВАЕМ ИНТЕРФЕЙС
-            document.body.classList.add('loaded');
-            console.log('✅ Интерфейс активен (скрипты грузятся в фоне)');
-            
-            // 🔥 ГРУЗИМ ВСЕ СКРИПТЫ ПАРАЛЛЕЛЬНО
             Promise.all(jsFiles.map(file => loadScript(file))).then(() => {
                 console.log('🎉 Все скрипты загружены');
                 
-                // Фоновая загрузка только профиля
                 setTimeout(() => {
                     if (window.Profile && !window.Profile.isProfileLoaded) {
                         if (!window.Profile.telegramId) {
@@ -941,7 +919,6 @@
                 }, 200);
             });
             
-            // Защита от кликов до загрузки Team
             document.addEventListener('click', function(e) {
                 const target = e.target.closest('.friends-arrow, [onclick*="Team.showTeamPage"]');
                 if (target && typeof Team === 'undefined') {
@@ -959,7 +936,6 @@
                 }
             });
             
-            // Ленивая загрузка картинок кейсов (только при открытии магазина)
             window.loadShopImages = function() {
                 const images = document.querySelectorAll('.case-icon img[data-src]');
                 images.forEach(img => {
