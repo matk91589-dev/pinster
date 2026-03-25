@@ -329,7 +329,7 @@ const Team = {
                         </div>
                         <div class="leaderboard-right">
                             <span class="leaderboard-place">#${place}</span>
-                            ${isCurrent ? '<span class="leaderboard-current-badge">вы</span>' : '<span class="friend-arrow">→</span>'}
+                            ${isCurrent ? '<span class="leaderboard-current-badge">вы</span>' : '<span class="friend-arrow leaderboard-arrow">→</span>'}
                         </div>
                     </div>
                 `;
@@ -390,7 +390,7 @@ const Team = {
                     </div>
                     <div class="leaderboard-right">
                         <span class="leaderboard-place">#${place}</span>
-                        ${isCurrent ? '<span class="leaderboard-current-badge">вы</span>' : '<span class="friend-arrow">→</span>'}
+                        ${isCurrent ? '<span class="leaderboard-current-badge">вы</span>' : '<span class="friend-arrow leaderboard-arrow">→</span>'}
                     </div>
                 </div>
             `;
@@ -410,22 +410,33 @@ const Team = {
                 gap: 12px;
                 margin-left: auto;
                 flex-shrink: 0;
+                min-width: 60px;
+                justify-content: flex-end;
             }
             .leaderboard-place {
                 font-size: 13px;
                 font-weight: 500;
                 color: #8E97A6;
+                min-width: 28px;
+                text-align: right;
             }
             .leaderboard-current-badge {
                 color: #FF5500;
                 font-size: 12px;
                 font-weight: 500;
                 opacity: 0.9;
+                min-width: 28px;
+                text-align: right;
             }
             .friend-arrow {
                 font-size: 18px;
                 color: #8E97A6;
                 font-weight: 300;
+                min-width: 28px;
+                text-align: right;
+            }
+            .leaderboard-arrow {
+                color: #FF5500 !important;
             }
         `;
         document.head.appendChild(style);
