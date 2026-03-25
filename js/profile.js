@@ -203,6 +203,13 @@ const Profile = {
         }
     },
     
+    // ✅ ЗАГРУЗКА АВАТАРА (заглушка)
+    async loadAvatar() {
+        console.log('🖼️ loadAvatar вызван (заглушка)');
+        // Заглушка — не делаем ничего
+        return;
+    },
+    
     updateDisplay() {
         const profileNameEl = document.getElementById('profileName');
         if (profileNameEl) profileNameEl.textContent = this.savedName;
@@ -231,7 +238,6 @@ const Profile = {
     },
     
     toggleEditMode() {
-        // Заглушка для совместимости
         this.editMode = !this.editMode;
         const applyBtn = document.getElementById('applyBtn');
         if (applyBtn) {
@@ -245,6 +251,27 @@ const Profile = {
     
     editName() {
         this.showToast('Редактирование в разработке');
+    },
+    
+    editFaceitAge() {
+        this.showToast('Редактирование в разработке');
+    },
+    
+    editPremierAge() {
+        this.showToast('Редактирование в разработке');
+    },
+    
+    editPrimeAge() {
+        this.showToast('Редактирование в разработке');
+    },
+    
+    editPublicAge() {
+        this.showToast('Редактирование в разработке');
+    },
+    
+    applyChanges() {
+        this.showToast('Сохранение в разработке');
+        this.toggleEditMode();
     },
     
     init() {
@@ -269,6 +296,7 @@ const Profile = {
         // Загружаем всё
         setTimeout(() => {
             this.loadProfileFromServer();
+            this.loadAvatar();  // Теперь есть
             this.loadFriends();  // 👈 ЗАГРУЖАЕМ ДРУЗЕЙ
         }, 500);
         
@@ -289,8 +317,7 @@ const Profile = {
         const applyBtn = document.getElementById('applyBtn');
         if (applyBtn) {
             applyBtn.onclick = () => {
-                this.showToast('Сохранение в разработке');
-                this.toggleEditMode();
+                this.applyChanges();
             };
         }
     }
