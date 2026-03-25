@@ -12,8 +12,25 @@
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- ЛОАДЕР - ПОЛНОСТЬЮ ПЕРЕКРЫВАЕТ СТРАНИЦУ ПОКА НЕ ЗАГРУЗЯТСЯ СТИЛИ -->
     <style>
+        /* БАЗОВЫЕ СТИЛИ ДЛЯ СКРОЛЛА */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+            background-color: #0D0F15;
+        }
+        
+        body {
+            background-color: #0D0F15;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
         /* Лоадер на весь экран */
         #app-loader {
             position: fixed;
@@ -52,29 +69,47 @@
             to { transform: rotate(360deg); }
         }
         
-        /* Основной контент изначально скрыт */
+        /* Основной контент */
         #app-content {
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            display: block;
+            min-height: 100vh;
         }
         
-        /* После загрузки показываем контент */
-        body.loaded #app-content {
-            opacity: 1;
-            visibility: visible;
+        /* Контейнер для скролла */
+        .phone-frame {
+            max-width: 450px;
+            margin: 0 auto;
+            background: #0D0F15;
+            min-height: 100vh;
+            position: relative;
         }
         
-        body {
-            background-color: #0D0F15;
-            margin: 0;
-            padding: 0;
+        /* Основной контент с возможностью скролла */
+        .content {
+            padding-bottom: 70px;
+            overflow-y: visible;
         }
+        
         .screen {
             display: none;
+            flex-direction: column;
+            width: 100%;
         }
         .screen.active {
             display: flex;
+        }
+        
+        /* Для экранов, которым нужен скролл */
+        .settings-screen,
+        .profile-screen,
+        .team-screen,
+        .friends-screen,
+        .shop-screen,
+        .swipe-screen,
+        .connection-screen,
+        .search-screen {
+            overflow-y: auto;
+            max-height: calc(100vh - 60px);
         }
     </style>
     
@@ -86,6 +121,7 @@
         .screen {
             transition: none;
             display: none;
+            flex-direction: column;
         }
         .screen.active {
             display: flex;
@@ -661,6 +697,38 @@
             border-radius: 12px;
             white-space: nowrap;
         }
+        
+        /* Стили для магазина */
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 16px;
+        }
+        
+        /* Стили для инвентаря */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 16px;
+        }
+        
+        /* Стили для экранов, чтобы они не расширялись, а скроллились */
+        .shop-screen,
+        .profile-screen,
+        .team-screen,
+        .settings-screen,
+        .swipe-screen,
+        .connection-screen,
+        .search-screen,
+        .faceit-screen,
+        .premier-screen,
+        .prime-screen,
+        .public-screen {
+            overflow-y: auto;
+            max-height: 100vh;
+        }
     </style>
 </head>
 <body>
@@ -670,7 +738,7 @@
         <div class="loader-text">ЗАГРУЗКА...</div>
     </div>
     
-    <!-- ОСНОВНОЙ КОНТЕНТ - СКРЫТ ДО ПОЛНОЙ ЗАГРУЗКИ -->
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
     <div id="app-content">
         <div class="phone-frame">
             
@@ -910,7 +978,7 @@
             Promise.all(jsFiles.map(file => loadScript(file))).then(() => {
                 console.log('🎉 Все скрипты загружены');
                 
-                // Скрываем лоадер и показываем контент
+                // Скрываем лоадер
                 const loader = document.getElementById('app-loader');
                 if (loader) {
                     loader.style.opacity = '0';
