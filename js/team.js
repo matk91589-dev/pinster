@@ -1,15 +1,16 @@
 // ============================================
-// КОМАНДА - МАКСИМАЛЬНО ПРОСТАЯ ВЕРСИЯ
+// КОМАНДА - С ПОИСКОМ В ЛИДЕРБОРДЕ
 // ============================================
 
 const Team = {
     currentTab: 'friends',
     friendsList: [],
     filteredFriends: [],
+    leaderboard: [],
+    filteredLeaderboard: [],
     telegramId: null,
     searchTimeout: null,
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
-    leaderboard: [],
     currentPlayerId: null,
     isFriendsLoaded: false,
     isLeaderboardLoaded: false,
@@ -36,8 +37,6 @@ const Team = {
             console.error('❌ Нет telegram_id');
             return;
         }
-        
-        // ❌ НЕ ГРУЗИМ ДАННЫЕ ПРИ СТАРТЕ
     },
     
     showTeamPage() {
@@ -164,6 +163,7 @@ const Team = {
             
             if (data.status === 'ok' && data.leaderboard && data.leaderboard.length > 0) {
                 this.leaderboard = data.leaderboard;
+                this.filteredLeaderboard = [...this.leaderboard];
                 this.isLeaderboardLoaded = true;
                 console.log('✅ Лидерборд загружен:', this.leaderboard.length);
                 
@@ -173,6 +173,7 @@ const Team = {
             } else {
                 console.log('❌ Нет данных лидерборда или пустой ответ');
                 this.leaderboard = [];
+                this.filteredLeaderboard = [];
                 this.isLeaderboardLoaded = true;
                 if (this.currentTab === 'leaderboard') {
                     this.renderLeaderboardTab();
@@ -181,6 +182,7 @@ const Team = {
         } catch (error) {
             console.error('❌ Ошибка загрузки лидерборда:', error);
             this.leaderboard = [];
+            this.filteredLeaderboard = [];
             this.isLeaderboardLoaded = true;
             if (this.currentTab === 'leaderboard') {
                 this.renderLeaderboardTab();
@@ -298,19 +300,82 @@ const Team = {
         const content = document.getElementById('teamContent');
         if (!content) return;
         
+        let html = `
+            <div class="friends-search">
+                <input type="search" id="leaderboardSearchInput" class="friends-search-input" 
+                       placeholder="поиск: введите id или ник игрока" autocomplete="off">
+            </div>
+            <div class="friends-list-container" id="leaderboardTabList">
+        `;
+        
         if (!this.isLeaderboardLoaded && this.leaderboard.length === 0) {
-            content.innerHTML = `<div class="empty-friends"><div class="empty-friends-text">загрузка лидерборда...</div></div>`;
-            return;
+            html += `<div class="empty-friends"><div class="empty-friends-text">загрузка лидерборда...</div></div>`;
+        } else if (this.leaderboard.length === 0) {
+            html += `<div class="empty-friends"><div class="empty-friends-text">пока нет игроков</div></div>`;
+        } else {
+            this.filteredLeaderboard.forEach((player, index) => {
+                const originalIndex = this.leaderboard.findIndex(p => p.player_id === player.player_id);
+                const place = originalIndex + 1;
+                const isCurrent = player.player_id === this.currentPlayerId;
+                const placeText = place === 1 ? '#1' : place === 2 ? '#2' : place === 3 ? '#3' : `#${place}`;
+                
+                html += `
+                    <div class="friend-row ${isCurrent ? 'current-player' : ''}" 
+                         onclick="Team.showPlayerProfile('${player.player_id}')">
+                        <div class="friend-avatar">
+                            ${player.avatar ? `<img src="${player.avatar}">` : `<span>${player.nick?.[0] || '?'}</span>`}
+                        </div>
+                        <div class="friend-info">
+                            <span class="friend-id">${placeText}</span>
+                            <span class="friend-name">${player.nick || 'Без имени'}</span>
+                        </div>
+                        ${isCurrent ? '<span class="leaderboard-badge">ВЫ</span>' : '<span class="friend-arrow">→</span>'}
+                    </div>
+                `;
+            });
         }
         
-        if (this.leaderboard.length === 0) {
-            content.innerHTML = `<div class="empty-friends"><div class="empty-friends-text">пока нет игроков</div></div>`;
+        html += '</div>';
+        content.innerHTML = html;
+        
+        setTimeout(() => this.setupLeaderboardSearch(), 50);
+        this.injectLeaderboardStyles();
+    },
+    
+    setupLeaderboardSearch() {
+        const searchInput = document.getElementById('leaderboardSearchInput');
+        if (!searchInput) return;
+        
+        searchInput.oninput = (e) => {
+            if (this.searchTimeout) clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(() => {
+                const query = e.target.value.trim().toLowerCase();
+                if (!query) {
+                    this.filteredLeaderboard = [...this.leaderboard];
+                } else {
+                    this.filteredLeaderboard = this.leaderboard.filter(p => 
+                        p.nick?.toLowerCase().includes(query) || 
+                        p.player_id?.toLowerCase().includes(query)
+                    );
+                }
+                this.updateLeaderboardTabList();
+            }, 300);
+        };
+    },
+    
+    updateLeaderboardTabList() {
+        const container = document.getElementById('leaderboardTabList');
+        if (!container) return;
+        
+        if (!this.filteredLeaderboard.length) {
+            container.innerHTML = `<div class="empty-friends"><div class="empty-friends-text">игроки не найдены</div></div>`;
             return;
         }
         
         let html = '';
-        this.leaderboard.forEach((player, index) => {
-            const place = index + 1;
+        this.filteredLeaderboard.forEach((player) => {
+            const originalIndex = this.leaderboard.findIndex(p => p.player_id === player.player_id);
+            const place = originalIndex + 1;
             const isCurrent = player.player_id === this.currentPlayerId;
             const placeText = place === 1 ? '#1' : place === 2 ? '#2' : place === 3 ? '#3' : `#${place}`;
             
@@ -328,9 +393,7 @@ const Team = {
                 </div>
             `;
         });
-        
-        content.innerHTML = html;
-        this.injectLeaderboardStyles();
+        container.innerHTML = html;
     },
     
     injectLeaderboardStyles() {
