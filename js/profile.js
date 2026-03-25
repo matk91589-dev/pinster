@@ -116,13 +116,7 @@ const Profile = {
             return;
         }
         
-        if (this.isFriendsLoaded && this.friendsList.length > 0) {
-            console.log('✅ Друзья уже загружены, обновляем отображение');
-            this.updateFriendsDisplay();
-            return;
-        }
-        
-        console.log('👥 Загрузка друзей в профиль...');
+        console.log('👥 Profile: Загрузка друзей...');
         
         try {
             const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
@@ -134,21 +128,21 @@ const Profile = {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
-            console.log('📦 Ответ друзей:', data);
+            console.log('📦 Profile: Ответ друзей:', data);
             
             if (data.status === 'ok' && data.friends && data.friends.length > 0) {
                 this.friendsList = data.friends;
                 this.isFriendsLoaded = true;
-                console.log('✅ Друзья загружены:', this.friendsList.length);
+                console.log('✅ Profile: Друзья загружены:', this.friendsList.length);
             } else {
                 this.friendsList = [];
                 this.isFriendsLoaded = true;
-                console.log('❌ Нет друзей');
+                console.log('❌ Profile: Нет друзей');
             }
             
             this.updateFriendsDisplay();
         } catch (error) {
-            console.error('❌ Ошибка загрузки друзей:', error);
+            console.error('❌ Profile: Ошибка загрузки друзей:', error);
             this.friendsList = [];
             this.isFriendsLoaded = true;
             this.updateFriendsDisplay();
@@ -159,8 +153,7 @@ const Profile = {
     updateFriendsDisplay() {
         const friendsListEl = document.getElementById('friendsList');
         if (!friendsListEl) {
-            console.warn('⚠️ friendsList не найден в DOM, повторная попытка через 100ms');
-            setTimeout(() => this.updateFriendsDisplay(), 100);
+            console.warn('⚠️ friendsList не найден в DOM');
             return;
         }
         
@@ -207,7 +200,7 @@ const Profile = {
         }
         
         friendsListEl.innerHTML = html;
-        console.log('✅ Отображение друзей обновлено, показано:', showCount, 'из', this.friendsList.length);
+        console.log('✅ Profile: Отображение друзей обновлено, показано:', showCount, 'из', this.friendsList.length);
     },
     
     getFriendsWord(count) {
@@ -355,18 +348,20 @@ const Profile = {
         setTimeout(() => {
             this.loadProfileFromServer();
             this.loadAvatar();
-            this.loadFriends();
+            this.loadFriends();  // 👈 ДОБАВЛЯЕМ ЗАГРУЗКУ ДРУЗЕЙ
         }, 500);
         
         this.setupListeners();
         this.setupClickHandlers();
         
-        // Дополнительная проверка для отображения друзей
+        // Дополнительная проверка через 1.5 секунды
         setTimeout(() => {
             if (this.friendsList.length > 0 || this.isFriendsLoaded) {
                 this.updateFriendsDisplay();
+            } else if (!this.isFriendsLoaded) {
+                this.loadFriends();
             }
-        }, 1000);
+        }, 1500);
     },
     
     updateDisplay() {
