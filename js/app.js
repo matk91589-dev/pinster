@@ -35,6 +35,17 @@
         return false;
     }
 
+    // ✅ Удаление лоадера (оверлея)
+    function removeLoader() {
+        const loader = document.getElementById('app-loader');
+        if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.remove();
+            }, 300);
+        }
+    }
+
     // ✅ Инициализация
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
@@ -42,12 +53,16 @@
             showMainScreen();
             initUser();
             initModules();
+            // Удаляем лоадер после того как DOM готов и экран показан
+            removeLoader();
         });
     } else {
         console.log('🚀 DOM уже загружен, запускаем Pingster...');
         showMainScreen();
         initUser();
         initModules();
+        // Удаляем лоадер сразу
+        removeLoader();
     }
     
     function initModules() {
