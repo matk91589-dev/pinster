@@ -22,6 +22,8 @@ const Profile = {
     isLoading: false,
     isProfileLoaded: false,
     isInitialized: false,
+    friendsList: [],
+    isFriendsLoaded: false,
     
     generateRandomNick() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -101,6 +103,107 @@ const Profile = {
             return true;
         }
         return false;
+    },
+    
+    // ✅ ЗАГРУЗКА ДРУЗЕЙ
+    async loadFriends() {
+        if (!this.telegramId) {
+            this.telegramId = this.getTelegramId();
+        }
+        
+        if (!this.telegramId) {
+            console.error('❌ Нет telegram_id для загрузки друзей');
+            return;
+        }
+        
+        if (this.isFriendsLoaded) {
+            console.log('✅ Друзья уже загружены');
+            return;
+        }
+        
+        console.log('👥 Загрузка друзей в профиль...');
+        
+        try {
+            const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telegram_id: this.telegramId })
+            });
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            
+            const data = await response.json();
+            console.log('📦 Ответ друзей:', data);
+            
+            if (data.status === 'ok' && data.friends && data.friends.length > 0) {
+                this.friendsList = data.friends;
+                this.isFriendsLoaded = true;
+                console.log('✅ Друзья загружены:', this.friendsList.length);
+            } else {
+                this.friendsList = [];
+                this.isFriendsLoaded = true;
+                console.log('❌ Нет друзей');
+            }
+            
+            this.updateFriendsDisplay();
+        } catch (error) {
+            console.error('❌ Ошибка загрузки друзей:', error);
+            this.friendsList = [];
+            this.isFriendsLoaded = true;
+            this.updateFriendsDisplay();
+        }
+    },
+    
+    // ✅ ОБНОВЛЕНИЕ ОТОБРАЖЕНИЯ ДРУЗЕЙ
+    updateFriendsDisplay() {
+        const friendsListEl = document.getElementById('friendsList');
+        if (!friendsListEl) return;
+        
+        const friendsTitle = document.querySelector('.friends-title');
+        if (friendsTitle) {
+            friendsTitle.textContent = `Ваши друзья: ${this.friendsList.length}`;
+        }
+        
+        if (!this.friendsList.length) {
+            friendsListEl.innerHTML = '<div class="empty-friends"><div class="empty-friends-text">у вас пока нет друзей</div></div>';
+            return;
+        }
+        
+        let html = '';
+        this.friendsList.slice(0, 5).forEach(friend => {
+            html += `
+                <div class="friend-row" onclick="Profile.showFriendProfile('${friend.player_id}')">
+                    <div class="friend-avatar">
+                        ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${friend.nick?.[0] || '?'}</span>`}
+                    </div>
+                    <div class="friend-info">
+                        <span class="friend-id">ID: ${friend.player_id}</span>
+                        <span class="friend-name">${friend.nick || 'Без имени'}</span>
+                    </div>
+                    <span class="friend-arrow">→</span>
+                </div>
+            `;
+        });
+        
+        if (this.friendsList.length > 5) {
+            html += `<div class="friend-row more-friends" onclick="Profile.showAllFriends()">
+                        <div class="friend-avatar"><span>+</span></div>
+                        <div class="friend-info">
+                            <span class="friend-name">и еще ${this.friendsList.length - 5} друзей</span>
+                        </div>
+                        <span class="friend-arrow">→</span>
+                    </div>`;
+        }
+        
+        friendsListEl.innerHTML = html;
+    },
+    
+    showFriendProfile(playerId) {
+        if (window.App) App.showAlert(`Профиль друга ${playerId}\n(функция в разработке)`);
+    },
+    
+    showAllFriends() {
+        if (window.Team) Team.showTeamPage();
     },
     
     // ✅ ЗАГРУЗКА С СЕРВЕРА (фоновая)
@@ -234,6 +337,7 @@ const Profile = {
         setTimeout(() => {
             this.loadProfileFromServer();
             this.loadAvatar();
+            this.loadFriends();
         }, 500);
         
         this.setupListeners();
