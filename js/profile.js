@@ -116,8 +116,9 @@ const Profile = {
             return;
         }
         
-        if (this.isFriendsLoaded) {
-            console.log('✅ Друзья уже загружены');
+        if (this.isFriendsLoaded && this.friendsList.length > 0) {
+            console.log('✅ Друзья уже загружены, обновляем отображение');
+            this.updateFriendsDisplay();
             return;
         }
         
@@ -158,7 +159,8 @@ const Profile = {
     updateFriendsDisplay() {
         const friendsListEl = document.getElementById('friendsList');
         if (!friendsListEl) {
-            console.warn('⚠️ friendsList не найден в DOM');
+            console.warn('⚠️ friendsList не найден в DOM, повторная попытка через 100ms');
+            setTimeout(() => this.updateFriendsDisplay(), 100);
             return;
         }
         
@@ -193,16 +195,19 @@ const Profile = {
         }
         
         if (this.friendsList.length > 5) {
+            const remaining = this.friendsList.length - 5;
+            const word = this.getFriendsWord(remaining);
             html += `<div class="friend-row more-friends" onclick="Profile.showAllFriends()">
                         <div class="friend-avatar"><span>+</span></div>
                         <div class="friend-info">
-                            <span class="friend-name">и еще ${this.friendsList.length - 5} ${this.getFriendsWord(this.friendsList.length - 5)}</span>
+                            <span class="friend-name">и еще ${remaining} ${word}</span>
                         </div>
                         <span class="friend-arrow">→</span>
                     </div>`;
         }
         
         friendsListEl.innerHTML = html;
+        console.log('✅ Отображение друзей обновлено, показано:', showCount, 'из', this.friendsList.length);
     },
     
     getFriendsWord(count) {
@@ -278,7 +283,6 @@ const Profile = {
                 this.tempSteam = this.savedSteam;
                 this.tempFaceitLink = this.savedFaceitLink;
                 
-                // Сохраняем в кэш
                 localStorage.setItem('profile_nick', this.savedName);
                 localStorage.setItem('profile_age', this.savedAge);
                 localStorage.setItem('profile_steam', this.savedSteam);
@@ -304,7 +308,6 @@ const Profile = {
         if (!this.telegramId) this.telegramId = this.getTelegramId();
         if (!this.telegramId) return;
         
-        // Проверяем кэш аватара
         const cachedAvatar = localStorage.getItem('profile_avatar');
         if (cachedAvatar && !this.savedAvatarUrl) {
             this.savedAvatarUrl = cachedAvatar;
@@ -338,7 +341,7 @@ const Profile = {
         }
     },
     
-    // ✅ ИНИЦИАЛИЗАЦИЯ (вызывается один раз)
+    // ✅ ИНИЦИАЛИЗАЦИЯ
     init() {
         if (this.isInitialized) return;
         this.isInitialized = true;
@@ -347,10 +350,8 @@ const Profile = {
         
         this.telegramId = this.getTelegramId();
         
-        // Сначала грузим из кэша
         this.loadFromCache();
         
-        // Потом фоново обновляем с сервера
         setTimeout(() => {
             this.loadProfileFromServer();
             this.loadAvatar();
@@ -360,10 +361,12 @@ const Profile = {
         this.setupListeners();
         this.setupClickHandlers();
         
-        // Проверяем, что friendsList существует в DOM после загрузки
+        // Дополнительная проверка для отображения друзей
         setTimeout(() => {
-            this.updateFriendsDisplay();
-        }, 100);
+            if (this.friendsList.length > 0 || this.isFriendsLoaded) {
+                this.updateFriendsDisplay();
+            }
+        }, 1000);
     },
     
     updateDisplay() {
@@ -588,7 +591,6 @@ const Profile = {
                 this.savedFaceitLink = faceitInput ? faceitInput.value : '';
                 this.savedAvatarUrl = this.tempAvatarUrl;
                 
-                // Обновляем кэш
                 localStorage.setItem('profile_nick', this.savedName);
                 localStorage.setItem('profile_age', this.savedAge);
                 localStorage.setItem('profile_steam', this.savedSteam);
@@ -763,7 +765,6 @@ const Profile = {
             faceitCard.addEventListener('click', this.faceitCardClickHandler);
         }
         
-        // Добавляем обработчик для кнопки друзей (стрелка в профиле)
         const friendsArrow = document.querySelector('.friends-arrow');
         if (friendsArrow) {
             friendsArrow.removeEventListener('click', this.friendsArrowHandler);
@@ -870,7 +871,7 @@ const Profile = {
     }
 };
 
-// ✅ ИНИЦИАЛИЗАЦИЯ - грузим сразу при загрузке
+// ✅ ИНИЦИАЛИЗАЦИЯ
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Profile: DOM загружен');
     Profile.init();
