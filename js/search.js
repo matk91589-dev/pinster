@@ -1,5 +1,5 @@
 // ============================================
-// ПОИСК (Telegram Mini App версия) - БЕЗ ПЕРЕКРЫТИЙ
+// ПОИСК (Telegram Mini App версия) - ИСПРАВЛЕННЫЙ
 // ============================================
 
 const Search = {
@@ -184,8 +184,8 @@ const Search = {
         this.isSearching = false;
         this.waitingForPartner = false;
     
-        // МГНОВЕННО переключаем экран
-        document.getElementById('searchScreen')?.classList.remove('active');
+        // ✅ СКРЫВАЕМ ВСЕ ЭКРАНЫ, потом показываем нужный
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('swipeScreen')?.classList.add('active');
     
         if (typeof Swipe !== 'undefined' && Swipe) {
@@ -251,7 +251,8 @@ const Search = {
         const telegram_id = this.getTelegramId();
         const data = this.collectSearchData(mode);
         
-        // МГНОВЕННО переключаем на экран поиска
+        // ✅ СКРЫВАЕМ ВСЕ ЭКРАНЫ, потом показываем экран поиска
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('searchScreen')?.classList.add('active');
         document.getElementById('searchModeTitle').textContent = mode;
         
