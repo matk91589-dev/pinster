@@ -320,8 +320,7 @@ const Team = {
                 const placeText = place === 1 ? '#1' : place === 2 ? '#2' : place === 3 ? '#3' : `#${place}`;
                 
                 html += `
-                    <div class="friend-row ${isCurrent ? 'current-player' : ''}" 
-                         onclick="Team.showPlayerProfile('${player.player_id}')">
+                    <div class="friend-row" onclick="Team.showPlayerProfile('${player.player_id}')">
                         <div class="friend-avatar">
                             ${player.avatar ? `<img src="${player.avatar}">` : `<span>${player.nick?.[0] || '?'}</span>`}
                         </div>
@@ -329,7 +328,7 @@ const Team = {
                             <span class="friend-id">${placeText}</span>
                             <span class="friend-name">${player.nick || 'Без имени'}</span>
                         </div>
-                        ${isCurrent ? '<span class="leaderboard-badge">ВЫ</span>' : '<span class="friend-arrow">→</span>'}
+                        ${isCurrent ? '<span class="leaderboard-current-badge">#вы</span>' : '<span class="friend-arrow">→</span>'}
                     </div>
                 `;
             });
@@ -380,8 +379,7 @@ const Team = {
             const placeText = place === 1 ? '#1' : place === 2 ? '#2' : place === 3 ? '#3' : `#${place}`;
             
             html += `
-                <div class="friend-row ${isCurrent ? 'current-player' : ''}" 
-                     onclick="Team.showPlayerProfile('${player.player_id}')">
+                <div class="friend-row" onclick="Team.showPlayerProfile('${player.player_id}')">
                     <div class="friend-avatar">
                         ${player.avatar ? `<img src="${player.avatar}">` : `<span>${player.nick?.[0] || '?'}</span>`}
                     </div>
@@ -389,7 +387,7 @@ const Team = {
                         <span class="friend-id">${placeText}</span>
                         <span class="friend-name">${player.nick || 'Без имени'}</span>
                     </div>
-                    ${isCurrent ? '<span class="leaderboard-badge">ВЫ</span>' : '<span class="friend-arrow">→</span>'}
+                    ${isCurrent ? '<span class="leaderboard-current-badge">#вы</span>' : '<span class="friend-arrow">→</span>'}
                 </div>
             `;
         });
@@ -402,23 +400,13 @@ const Team = {
         const style = document.createElement('style');
         style.id = 'leaderboard-styles';
         style.textContent = `
-            .friend-row.current-player {
-                background: rgba(255, 85, 0, 0.1);
-                border-left: 3px solid #FF5500;
-                margin-left: -3px;
-                padding-left: 19px;
-            }
-            .friend-row.current-player .friend-name {
+            .leaderboard-current-badge {
                 color: #FF5500;
-            }
-            .leaderboard-badge {
-                background: #FF5500;
-                color: #fff;
-                font-size: 10px;
-                font-weight: 700;
-                padding: 4px 8px;
-                border-radius: 12px;
-                white-space: nowrap;
+                font-size: 12px;
+                font-weight: 500;
+                opacity: 0.9;
+                margin-left: auto;
+                padding-right: 4px;
             }
         `;
         document.head.appendChild(style);
