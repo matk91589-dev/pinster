@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ - ОПТИМИЗИРОВАННЫЙ С КЭШИРОВАНИЕМ
+// ПРОФИЛЬ - ПОЛНАЯ ВЕРСИЯ С РАБОЧЕЙ ЗАГРУЗКОЙ ДРУЗЕЙ
 // ============================================
 
 const Profile = {
@@ -11,7 +11,6 @@ const Profile = {
     savedFaceitLink: '',
     savedAvatarUrl: null,
     tempName: '-',
-    tempAvatar: '<div class="tg-avatar-svg"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#ffffff"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="#ffffff"/></svg></div>',
     tempAge: '',
     tempSteam: '',
     tempFaceitLink: '',
@@ -39,8 +38,7 @@ const Profile = {
         if (tg?.initDataUnsafe?.user?.id) {
             return tg.initDataUnsafe.user.id;
         }
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('tg_id');
+        return null;
     },
     
     showToast(message) {
@@ -104,8 +102,10 @@ const Profile = {
         return false;
     },
     
-    // ✅ ЗАГРУЗКА ДРУЗЕЙ
+    // ✅ ЗАГРУЗКА ДРУЗЕЙ (РАБОТАЕТ)
     async loadFriends() {
+        console.log('🔵🔵🔵 PROFILE.loadFriends() ВЫЗВАН 🔵🔵🔵');
+        
         if (!this.telegramId) {
             this.telegramId = this.getTelegramId();
         }
@@ -124,22 +124,20 @@ const Profile = {
                 body: JSON.stringify({ telegram_id: this.telegramId })
             });
             
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            
             const data = await response.json();
             console.log('📦 PROFILE: Ответ друзей:', data);
             
-            if (data.status === 'ok' && data.friends && data.friends.length > 0) {
+            if (data.status === 'ok' && data.friends) {
                 this.friendsList = data.friends;
                 this.isFriendsLoaded = true;
-                console.log('✅ PROFILE: Друзья загружены:', this.friendsList.length);
+                console.log('✅ PROFILE: Друзей загружено:', this.friendsList.length);
+                this.updateFriendsDisplay();
             } else {
                 this.friendsList = [];
                 this.isFriendsLoaded = true;
                 console.log('❌ PROFILE: Нет друзей');
+                this.updateFriendsDisplay();
             }
-            
-            this.updateFriendsDisplay();
         } catch (error) {
             console.error('❌ PROFILE: Ошибка загрузки друзей:', error);
             this.friendsList = [];
@@ -152,7 +150,7 @@ const Profile = {
     updateFriendsDisplay() {
         const friendsListEl = document.getElementById('friendsList');
         if (!friendsListEl) {
-            console.warn('⚠️ friendsList не найден в DOM, повтор через 100ms');
+            console.warn('⚠️ friendsList не найден, повтор через 100ms');
             setTimeout(() => this.updateFriendsDisplay(), 100);
             return;
         }
@@ -164,14 +162,11 @@ const Profile = {
         
         if (!this.friendsList.length) {
             friendsListEl.innerHTML = '<div class="empty-friends"><div class="empty-friends-text">у вас пока нет друзей</div></div>';
-            console.log('📋 PROFILE: Отображение друзей — пусто');
             return;
         }
         
         let html = '';
-        const showCount = Math.min(this.friendsList.length, 5);
-        
-        for (let i = 0; i < showCount; i++) {
+        for (let i = 0; i < Math.min(this.friendsList.length, 5); i++) {
             const friend = this.friendsList[i];
             const firstChar = friend.nick && friend.nick.length > 0 ? friend.nick[0].toUpperCase() : '?';
             html += `
@@ -201,7 +196,7 @@ const Profile = {
         }
         
         friendsListEl.innerHTML = html;
-        console.log('✅ PROFILE: Отображение друзей обновлено, показано:', showCount, 'из', this.friendsList.length);
+        console.log('✅ PROFILE: Друзья отображены, показано:', Math.min(this.friendsList.length, 5));
     },
     
     getFriendsWord(count) {
@@ -248,17 +243,11 @@ const Profile = {
         console.log('🔥 Загрузка профиля с сервера...');
         
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
-            
             const response = await fetch(`${this.BACKEND_URL}/api/profile/get`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId }),
-                signal: controller.signal
+                body: JSON.stringify({ telegram_id: this.telegramId })
             });
-            
-            clearTimeout(timeoutId);
             
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
@@ -286,11 +275,7 @@ const Profile = {
                 console.log('✅ Профиль загружен с сервера');
             }
         } catch (error) {
-            if (error.name === 'AbortError') {
-                console.error('❌ Таймаут загрузки профиля (3 сек)');
-            } else {
-                console.error('❌ Ошибка загрузки профиля:', error);
-            }
+            console.error('❌ Ошибка загрузки профиля:', error);
         } finally {
             this.isLoading = false;
         }
@@ -333,7 +318,6 @@ const Profile = {
         }
     },
     
-    // ✅ ИНИЦИАЛИЗАЦИЯ
     init() {
         if (this.isInitialized) return;
         this.isInitialized = true;
@@ -354,16 +338,6 @@ const Profile = {
         
         this.setupListeners();
         this.setupClickHandlers();
-        
-        // Дополнительная проверка через 2 секунды
-        setTimeout(() => {
-            if (!this.isFriendsLoaded) {
-                console.log('⚠️ Друзья не загружены, пробуем еще раз');
-                this.loadFriends();
-            } else {
-                this.updateFriendsDisplay();
-            }
-        }, 2000);
     },
     
     updateDisplay() {
@@ -687,11 +661,42 @@ const Profile = {
         document.getElementById('faceitLinkDisplay')?.focus();
     },
     
+    editFaceitAge() {
+        if (!this.editMode) {
+            this.showToast('Для изменений перейдите в режим редактирования');
+            return;
+        }
+        document.getElementById('faceitAgeValue')?.focus();
+    },
+    
+    editPremierAge() {
+        if (!this.editMode) {
+            this.showToast('Для изменений перейдите в режим редактирования');
+            return;
+        }
+        document.getElementById('premierAgeValue')?.focus();
+    },
+    
+    editPrimeAge() {
+        if (!this.editMode) {
+            this.showToast('Для изменений перейдите в режим редактирования');
+            return;
+        }
+        document.getElementById('primeAgeValue')?.focus();
+    },
+    
+    editPublicAge() {
+        if (!this.editMode) {
+            this.showToast('Для изменений перейдите в режим редактирования');
+            return;
+        }
+        document.getElementById('publicAgeValue')?.focus();
+    },
+    
     setupClickHandlers() {
         const avatar = document.getElementById('profileAvatar');
         if (avatar) {
-            avatar.removeEventListener('click', this.avatarClickHandler);
-            this.avatarClickHandler = (e) => {
+            avatar.onclick = (e) => {
                 if (this.editMode) {
                     if (window.Avatar && Avatar.select) {
                         if (window.Settings) Settings.click();
@@ -699,100 +704,52 @@ const Profile = {
                     }
                 } else {
                     e.preventDefault();
-                    e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
             };
-            avatar.addEventListener('click', this.avatarClickHandler);
         }
         
         const profileName = document.getElementById('profileName');
         if (profileName) {
-            profileName.removeEventListener('click', this.profileNameClickHandler);
-            this.profileNameClickHandler = (e) => {
+            profileName.onclick = (e) => {
                 if (this.editMode) this.editName();
                 else {
                     e.preventDefault();
-                    e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
             };
-            profileName.addEventListener('click', this.profileNameClickHandler);
-        }
-        
-        const ageCard = document.getElementById('ageCard');
-        if (ageCard) {
-            ageCard.removeEventListener('click', this.ageCardClickHandler);
-            this.ageCardClickHandler = (e) => {
-                if (this.editMode) this.editAge();
-                else {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.showToast('Для изменений перейдите в режим редактирования');
-                }
-            };
-            ageCard.addEventListener('click', this.ageCardClickHandler);
-        }
-        
-        const steamCard = document.getElementById('steamCard');
-        if (steamCard) {
-            steamCard.removeEventListener('click', this.steamCardClickHandler);
-            this.steamCardClickHandler = (e) => {
-                if (this.editMode) this.editSteam();
-                else {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.showToast('Для изменений перейдите в режим редактирования');
-                }
-            };
-            steamCard.addEventListener('click', this.steamCardClickHandler);
-        }
-        
-        const faceitCard = document.getElementById('faceitLinkCard');
-        if (faceitCard) {
-            faceitCard.removeEventListener('click', this.faceitCardClickHandler);
-            this.faceitCardClickHandler = (e) => {
-                if (this.editMode) this.editFaceitLink();
-                else {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.showToast('Для изменений перейдите в режим редактирования');
-                }
-            };
-            faceitCard.addEventListener('click', this.faceitCardClickHandler);
         }
         
         const friendsArrow = document.querySelector('.friends-arrow');
         if (friendsArrow) {
-            friendsArrow.removeEventListener('click', this.friendsArrowHandler);
-            this.friendsArrowHandler = () => {
-                this.showAllFriends();
-            };
-            friendsArrow.addEventListener('click', this.friendsArrowHandler);
+            friendsArrow.onclick = () => this.showAllFriends();
+        }
+        
+        const editToggle = document.getElementById('editToggle');
+        if (editToggle) {
+            editToggle.onclick = () => this.toggleEditMode();
+        }
+        
+        const applyBtn = document.getElementById('applyBtn');
+        if (applyBtn) {
+            applyBtn.onclick = () => this.applyChanges();
         }
     },
     
     setupListeners() {
         const ageInput = document.getElementById('ageValue');
         if (ageInput) {
-            ageInput.removeEventListener('blur', this.ageBlurHandler);
-            this.ageBlurHandler = (e) => { if (this.editMode) this.validateAge(e.target.value); };
-            ageInput.addEventListener('blur', this.ageBlurHandler);
-            
-            ageInput.removeEventListener('focus', this.ageFocusHandler);
-            this.ageFocusHandler = () => {
+            ageInput.onblur = () => { if (this.editMode) this.validateAge(ageInput.value); };
+            ageInput.onfocus = () => {
                 if (this.editMode) {
                     const container = ageInput.closest('.stat-value');
                     this.removeErrorMessage(container);
                     container?.classList.remove('error');
                 }
             };
-            ageInput.addEventListener('focus', this.ageFocusHandler);
-            
-            ageInput.removeEventListener('input', this.ageInputHandler);
-            this.ageInputHandler = (e) => {
+            ageInput.oninput = () => {
                 if (this.editMode) {
-                    const val = e.target.value;
+                    const val = ageInput.value;
                     const container = ageInput.closest('.stat-value');
                     if (val === '' || (val.length <= 3 && !isNaN(parseInt(val)) && parseInt(val) >= 0 && parseInt(val) <= 100)) {
                         this.removeErrorMessage(container);
@@ -800,29 +757,21 @@ const Profile = {
                     }
                 }
             };
-            ageInput.addEventListener('input', this.ageInputHandler);
         }
         
         const steamInput = document.getElementById('steamDisplay');
         if (steamInput) {
-            steamInput.removeEventListener('blur', this.steamBlurHandler);
-            this.steamBlurHandler = (e) => { if (this.editMode) this.validateSteamLink(e.target.value); };
-            steamInput.addEventListener('blur', this.steamBlurHandler);
-            
-            steamInput.removeEventListener('focus', this.steamFocusHandler);
-            this.steamFocusHandler = () => {
+            steamInput.onblur = () => { if (this.editMode) this.validateSteamLink(steamInput.value); };
+            steamInput.onfocus = () => {
                 if (this.editMode) {
                     const container = steamInput.closest('.profile-stat-value');
                     this.removeErrorMessage(container);
                     container?.classList.remove('error');
                 }
             };
-            steamInput.addEventListener('focus', this.steamFocusHandler);
-            
-            steamInput.removeEventListener('input', this.steamInputHandler);
-            this.steamInputHandler = (e) => {
+            steamInput.oninput = () => {
                 if (this.editMode) {
-                    const val = e.target.value;
+                    const val = steamInput.value;
                     const container = steamInput.closest('.profile-stat-value');
                     if (val.length <= 100) {
                         this.removeErrorMessage(container);
@@ -830,29 +779,21 @@ const Profile = {
                     }
                 }
             };
-            steamInput.addEventListener('input', this.steamInputHandler);
         }
         
         const faceitInput = document.getElementById('faceitLinkDisplay');
         if (faceitInput) {
-            faceitInput.removeEventListener('blur', this.faceitBlurHandler);
-            this.faceitBlurHandler = (e) => { if (this.editMode) this.validateFaceitLink(e.target.value); };
-            faceitInput.addEventListener('blur', this.faceitBlurHandler);
-            
-            faceitInput.removeEventListener('focus', this.faceitFocusHandler);
-            this.faceitFocusHandler = () => {
+            faceitInput.onblur = () => { if (this.editMode) this.validateFaceitLink(faceitInput.value); };
+            faceitInput.onfocus = () => {
                 if (this.editMode) {
                     const container = faceitInput.closest('.profile-stat-value');
                     this.removeErrorMessage(container);
                     container?.classList.remove('error');
                 }
             };
-            faceitInput.addEventListener('focus', this.faceitFocusHandler);
-            
-            faceitInput.removeEventListener('input', this.faceitInputHandler);
-            this.faceitInputHandler = (e) => {
+            faceitInput.oninput = () => {
                 if (this.editMode) {
-                    const val = e.target.value;
+                    const val = faceitInput.value;
                     const container = faceitInput.closest('.profile-stat-value');
                     if (val.length <= 100) {
                         this.removeErrorMessage(container);
@@ -860,7 +801,6 @@ const Profile = {
                     }
                 }
             };
-            faceitInput.addEventListener('input', this.faceitInputHandler);
         }
         
         const applyBtn = document.getElementById('applyBtn');
