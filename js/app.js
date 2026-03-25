@@ -2,6 +2,9 @@
 // ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
 // ============================================
 
+// ✅ Создаем глобальный объект App сразу
+window.App = window.App || {};
+
 (function() {
     const tg = window.Telegram?.WebApp;
     
@@ -81,40 +84,6 @@
         
         console.log('🎉 Все данные загружены!');
     }
-
-    // ✅ Инициализация
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀 DOM загружен, запускаем Pingster...');
-            if (showMainScreen()) {
-                setTimeout(() => backgroundLoadData(), 100);
-            }
-            initUser();
-            initModules();
-        });
-    } else {
-        console.log('🚀 DOM уже загружен, запускаем Pingster...');
-        if (showMainScreen()) {
-            setTimeout(() => backgroundLoadData(), 100);
-        }
-        initUser();
-        initModules();
-    }
-    
-    function initModules() {
-        setTimeout(() => {
-            try {
-                if (typeof Shop !== 'undefined') {
-                    if (Shop.setupListeners) Shop.setupListeners();
-                    else if (Shop.init) Shop.init();
-                }
-                if (typeof Search !== 'undefined') Search.init();
-                console.log('✅ Модули инициализированы');
-            } catch (e) {
-                console.error('Ошибка инициализации модулей:', e);
-            }
-        }, 100);
-    }
     
     function initUser() {
         const tg = window.Telegram?.WebApp;
@@ -150,15 +119,51 @@
             console.warn('Нет Telegram ID');
         }
     }
+
+    // ✅ Инициализация - ждем полной загрузки DOM и всех скриптов
+    function init() {
+        console.log('🚀 Запускаем Pingster...');
+        
+        // Показываем главный экран
+        if (showMainScreen()) {
+            setTimeout(() => backgroundLoadData(), 100);
+        }
+        
+        initUser();
+        
+        // Инициализируем модули после небольшой задержки
+        setTimeout(() => {
+            try {
+                if (typeof Shop !== 'undefined' && Shop.setupListeners) {
+                    Shop.setupListeners();
+                }
+                if (typeof Search !== 'undefined' && Search.init) {
+                    Search.init();
+                }
+                if (typeof Settings !== 'undefined' && Settings.init) {
+                    Settings.init();
+                }
+                console.log('✅ Модули инициализированы');
+            } catch (e) {
+                console.error('Ошибка инициализации модулей:', e);
+            }
+        }, 200);
+    }
+
+    // Запускаем после полной загрузки
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 })();
 
 // ============================================
 // НАВИГАЦИЯ (ЕДИНЫЙ ОБЪЕКТ App)
 // ============================================
 
-window.App = window.App || {};
-
-Object.assign(window.App, {
+// ✅ Переопределяем App с гарантированным наличием всех методов
+window.App = {
     currentScreen: null,
     
     hapticFeedback: function(style = 'light') {
@@ -194,7 +199,7 @@ Object.assign(window.App, {
                 if (!Profile.isProfileLoaded && !Profile.isLoading) {
                     Profile.loadProfileFromServer();
                     Profile.loadAvatar();
-                } else {
+                } else if (Profile.updateDisplay) {
                     Profile.updateDisplay();
                 }
             }, 50);
@@ -203,12 +208,10 @@ Object.assign(window.App, {
         // ✅ ИНИЦИАЛИЗАЦИЯ МАГАЗИНА
         if (screenId === 'shopScreen' && typeof Shop !== 'undefined') {
             setTimeout(() => {
-                // Сначала инициализируем, если еще не инициализирован
                 if (!Shop._initialized && Shop.init) {
                     Shop.init();
                     console.log('🛒 Shop инициализирован при открытии');
                 }
-                // Потом отрисовываем
                 if (typeof Shop.renderShop === 'function') {
                     Shop.renderShop();
                 }
@@ -221,15 +224,15 @@ Object.assign(window.App, {
         // ✅ ИНИЦИАЛИЗАЦИЯ ДРУЗЕЙ
         if (screenId === 'friendsScreen' && typeof Friends !== 'undefined') {
             setTimeout(() => {
-                if (!Friends.friendsListLoaded && Friends.friendsList.length === 0) {
+                if (!Friends.friendsListLoaded && Friends.friendsList?.length === 0) {
                     Friends.loadFriendsList();
-                } else {
+                } else if (Friends.renderFriendsPage) {
                     Friends.renderFriendsPage();
                 }
             }, 50);
         }
         
-        // ✅ ИНИЦИАЛИЗАЦИЯ НАСТРОЕК (КНОПКИ ЗВУКА)
+        // ✅ ИНИЦИАЛИЗАЦИЯ НАСТРОЕК
         if (screenId === 'settingsScreen' && typeof Settings !== 'undefined') {
             setTimeout(() => {
                 console.log('⚙️ Инициализация настроек');
@@ -238,6 +241,18 @@ Object.assign(window.App, {
                 }
             }, 100);
         }
+        
+        // ✅ Убираем лишние элементы Telegram
+        setTimeout(() => {
+            const wrappers = document.querySelectorAll('div:not(#app-wrapper):not(#app-loader)');
+            wrappers.forEach(el => {
+                if (el.id !== 'app-wrapper' && el.id !== 'app-loader' && 
+                    !el.closest('#app-wrapper') && !el.closest('#app-loader')) {
+                    el.style.display = 'none';
+                    el.style.pointerEvents = 'none';
+                }
+            });
+        }, 50);
         
         // Обновляем навигацию
         if (updateNav) {
@@ -265,6 +280,9 @@ Object.assign(window.App, {
             alert(message);
         }
     }
-});
+};
 
-window.App = window.App;
+// ✅ Дублируем для надежности
+if (typeof window.App === 'undefined') {
+    window.App = window.App;
+}
