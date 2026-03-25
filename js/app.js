@@ -35,7 +35,7 @@
         return false;
     }
 
-    // ✅ Удаление лоадера (оверлея)
+    // ✅ Удаление лоадера (будет вызвано после загрузки всех скриптов)
     function removeLoader() {
         const loader = document.getElementById('app-loader');
         if (loader) {
@@ -53,16 +53,14 @@
             showMainScreen();
             initUser();
             initModules();
-            // Удаляем лоадер после того как DOM готов и экран показан
-            removeLoader();
+            // НЕ УДАЛЯЕМ ЛОАДЕР ЗДЕСЬ - ждем загрузки скриптов
         });
     } else {
         console.log('🚀 DOM уже загружен, запускаем Pingster...');
         showMainScreen();
         initUser();
         initModules();
-        // Удаляем лоадер сразу
-        removeLoader();
+        // НЕ УДАЛЯЕМ ЛОАДЕР ЗДЕСЬ - ждем загрузки скриптов
     }
     
     function initModules() {
@@ -207,3 +205,22 @@ Object.assign(window.App, {
 });
 
 window.App = window.App;
+
+// ============================================
+// УДАЛЕНИЕ ЛОАДЕРА ПОСЛЕ ЗАГРУЗКИ ВСЕХ СКРИПТОВ
+// ============================================
+
+// Ждем полной загрузки страницы (все скрипты, стили, DOM)
+window.addEventListener('load', function() {
+    // Небольшая задержка для гарантии, что все анимации и рендер завершены
+    setTimeout(function() {
+        const loader = document.getElementById('app-loader');
+        if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(function() {
+                loader.remove();
+            }, 300);
+        }
+        console.log('✅ Лоадер удален после полной загрузки');
+    }, 100);
+});
