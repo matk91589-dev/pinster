@@ -13,21 +13,84 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        body {
-            background-color: #0D0F15;
+        /* Базовые стили - БЕЗ СКРОЛЛА */
+        * {
             margin: 0;
             padding: 0;
-            opacity: 0;
-            transition: opacity 0.15s ease;
+            box-sizing: border-box;
         }
-        body.loaded {
-            opacity: 1;
+        
+        html, body {
+            height: 100%;
+            overflow: hidden;  /* ← главное: убираем скролл пока не загрузилось */
         }
+        
+        body {
+            background-color: #0D0F15;
+        }
+        
         .screen {
             display: none;
         }
         .screen.active {
             display: flex;
+        }
+        
+        /* Лоадер на весь экран */
+        #app-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0D0F15;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease;
+        }
+        
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,85,0,0.2);
+            border-top-color: #FF5500;
+            border-radius: 50%;
+            animation: loaderSpin 0.8s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        .loader-text {
+            color: #FF5500;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        @keyframes loaderSpin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* После загрузки - возвращаем скролл */
+        body.loaded {
+            overflow-y: auto;  /* ← после загрузки включаем скролл */
+        }
+        
+        /* Контейнер приложения */
+        .phone-frame {
+            max-width: 450px;
+            margin: 0 auto;
+            background: #0D0F15;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* Контент с отступом под навигацию */
+        .content {
+            padding-bottom: 70px;
         }
     </style>
     
@@ -616,9 +679,102 @@
             border-radius: 12px;
             white-space: nowrap;
         }
+        
+        /* Стили для экрана поиска */
+        .search-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            min-height: 100%;
+        }
+        
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 2.5vh 0 3vh 0;
+            border-bottom: 1px solid #1E2128;
+            margin-bottom: 3vh;
+            gap: 3vw;
+        }
+        
+        .search-title {
+            font-size: clamp(20px, 6vw, 24px);
+            font-weight: 700;
+            color: #FF5500;
+            white-space: nowrap;
+        }
+        
+        .search-timer {
+            font-size: clamp(16px, 5vw, 20px);
+            font-weight: 600;
+            color: #F5F5F5;
+            background: #1A1D24;
+            padding: 1vh 4vw;
+            border-radius: 8px;
+            border: 1px solid #2A2F3A;
+            white-space: nowrap;
+        }
+        
+        .search-status {
+            text-align: center;
+            font-size: clamp(14px, 4vw, 16px);
+            color: #9BA1B0;
+            margin: 3vh 0;
+            font-weight: 500;
+        }
+        
+        .search-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            width: clamp(40px, 12vw, 50px);
+            height: clamp(40px, 12vw, 50px);
+            border: 4px solid #1A1D24;
+            border-top-color: #FF5500;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .cancel-search-btn {
+            width: 80%;
+            max-width: 280px;
+            padding: 14px;
+            background: transparent;
+            border: 2px solid #FF5500;
+            border-radius: 30px;
+            color: #FF5500;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 20px auto 30px auto;
+            text-align: center;
+            transition: background 0.2s ease;
+        }
+        
+        .cancel-search-btn:hover {
+            background: rgba(255, 85, 0, 0.1);
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <!-- Лоадер -->
+    <div id="app-loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">ЗАГРУЗКА...</div>
+    </div>
+    
     <script>
         (function() {
             const version = Date.now();
@@ -880,7 +1036,7 @@
         </nav>
     </div>
 
-    <!-- ОПТИМИЗИРОВАННАЯ ЗАГРУЗКА JS - ВСЕ ПАРАЛЛЕЛЬНО + ПОКАЗ ИНТЕРФЕЙСА СРАЗУ -->
+    <!-- ОПТИМИЗИРОВАННАЯ ЗАГРУЗКА JS - ВСЕ ПАРАЛЛЕЛЬНО + СКРЫТИЕ ЛОАДЕРА -->
     <script>
         (function() {
             const version = window.BUILD_VERSION || Date.now();
@@ -921,13 +1077,21 @@
                 });
             }
             
-            // 🔥 СРАЗУ ПОКАЗЫВАЕМ ИНТЕРФЕЙС
-            document.body.classList.add('loaded');
-            console.log('✅ Интерфейс активен (скрипты грузятся в фоне)');
-            
-            // 🔥 ГРУЗИМ ВСЕ СКРИПТЫ ПАРАЛЛЕЛЬНО
+            // ГРУЗИМ ВСЕ СКРИПТЫ ПАРАЛЛЕЛЬНО
             Promise.all(jsFiles.map(file => loadScript(file))).then(() => {
                 console.log('🎉 Все скрипты загружены');
+                
+                // Скрываем лоадер
+                const loader = document.getElementById('app-loader');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                    }, 300);
+                }
+                
+                // Показываем интерфейс (включаем скролл)
+                document.body.classList.add('loaded');
                 
                 // Фоновая загрузка только профиля
                 setTimeout(() => {
@@ -959,7 +1123,7 @@
                 }
             });
             
-            // Ленивая загрузка картинок кейсов (только при открытии магазина)
+            // Ленивая загрузка картинок кейсов
             window.loadShopImages = function() {
                 const images = document.querySelectorAll('.case-icon img[data-src]');
                 images.forEach(img => {
