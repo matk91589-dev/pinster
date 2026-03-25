@@ -82,7 +82,6 @@ const Profile = {
         });
     },
     
-    // ✅ ЗАГРУЗКА ИЗ КЭША (мгновенно)
     loadFromCache() {
         const cachedNick = localStorage.getItem('profile_nick');
         const cachedAge = localStorage.getItem('profile_age');
@@ -116,7 +115,7 @@ const Profile = {
             return;
         }
         
-        console.log('👥 Profile: Загрузка друзей...');
+        console.log('👥 PROFILE: Загрузка друзей...');
         
         try {
             const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
@@ -128,21 +127,21 @@ const Profile = {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
-            console.log('📦 Profile: Ответ друзей:', data);
+            console.log('📦 PROFILE: Ответ друзей:', data);
             
             if (data.status === 'ok' && data.friends && data.friends.length > 0) {
                 this.friendsList = data.friends;
                 this.isFriendsLoaded = true;
-                console.log('✅ Profile: Друзья загружены:', this.friendsList.length);
+                console.log('✅ PROFILE: Друзья загружены:', this.friendsList.length);
             } else {
                 this.friendsList = [];
                 this.isFriendsLoaded = true;
-                console.log('❌ Profile: Нет друзей');
+                console.log('❌ PROFILE: Нет друзей');
             }
             
             this.updateFriendsDisplay();
         } catch (error) {
-            console.error('❌ Profile: Ошибка загрузки друзей:', error);
+            console.error('❌ PROFILE: Ошибка загрузки друзей:', error);
             this.friendsList = [];
             this.isFriendsLoaded = true;
             this.updateFriendsDisplay();
@@ -153,7 +152,8 @@ const Profile = {
     updateFriendsDisplay() {
         const friendsListEl = document.getElementById('friendsList');
         if (!friendsListEl) {
-            console.warn('⚠️ friendsList не найден в DOM');
+            console.warn('⚠️ friendsList не найден в DOM, повтор через 100ms');
+            setTimeout(() => this.updateFriendsDisplay(), 100);
             return;
         }
         
@@ -164,6 +164,7 @@ const Profile = {
         
         if (!this.friendsList.length) {
             friendsListEl.innerHTML = '<div class="empty-friends"><div class="empty-friends-text">у вас пока нет друзей</div></div>';
+            console.log('📋 PROFILE: Отображение друзей — пусто');
             return;
         }
         
@@ -200,7 +201,7 @@ const Profile = {
         }
         
         friendsListEl.innerHTML = html;
-        console.log('✅ Profile: Отображение друзей обновлено, показано:', showCount, 'из', this.friendsList.length);
+        console.log('✅ PROFILE: Отображение друзей обновлено, показано:', showCount, 'из', this.friendsList.length);
     },
     
     getFriendsWord(count) {
@@ -221,7 +222,6 @@ const Profile = {
         }
     },
     
-    // ✅ ЗАГРУЗКА С СЕРВЕРА (фоновая)
     async loadProfileFromServer(force = false) {
         if (!force && this.isProfileLoaded) {
             console.log('✅ Профиль уже загружен');
@@ -296,7 +296,6 @@ const Profile = {
         }
     },
     
-    // ✅ ЗАГРУЗКА АВАТАРА
     async loadAvatar() {
         if (!this.telegramId) this.telegramId = this.getTelegramId();
         if (!this.telegramId) return;
@@ -342,26 +341,29 @@ const Profile = {
         console.log('🚀 Profile.init()');
         
         this.telegramId = this.getTelegramId();
+        console.log('📱 Profile telegramId:', this.telegramId);
         
         this.loadFromCache();
         
+        // Загружаем всё
         setTimeout(() => {
             this.loadProfileFromServer();
             this.loadAvatar();
-            this.loadFriends();  // 👈 ДОБАВЛЯЕМ ЗАГРУЗКУ ДРУЗЕЙ
+            this.loadFriends();  // 👈 ОБЯЗАТЕЛЬНО загружаем друзей
         }, 500);
         
         this.setupListeners();
         this.setupClickHandlers();
         
-        // Дополнительная проверка через 1.5 секунды
+        // Дополнительная проверка через 2 секунды
         setTimeout(() => {
-            if (this.friendsList.length > 0 || this.isFriendsLoaded) {
-                this.updateFriendsDisplay();
-            } else if (!this.isFriendsLoaded) {
+            if (!this.isFriendsLoaded) {
+                console.log('⚠️ Друзья не загружены, пробуем еще раз');
                 this.loadFriends();
+            } else {
+                this.updateFriendsDisplay();
             }
-        }, 1500);
+        }, 2000);
     },
     
     updateDisplay() {
