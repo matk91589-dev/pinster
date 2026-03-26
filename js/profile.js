@@ -381,57 +381,64 @@ const Profile = {
         this.setupListeners();
         this.setupClickHandlers();
         
-        // Добавляем прямые обработчики для карточек (на случай если не сработало)
-        setTimeout(() => {
-            this.setupDirectHandlers();
-        }, 100);
+        // Устанавливаем прямые обработчики на карточки
+        this.setupCardHandlers();
     },
     
-    // ПРЯМЫЕ ОБРАБОТЧИКИ
-    setupDirectHandlers() {
+    // ПРЯМЫЕ ОБРАБОТЧИКИ ДЛЯ КАРТОЧЕК
+    setupCardHandlers() {
+        console.log('🔧 Устанавливаем обработчики на карточки...');
+        
         // Возраст
         const ageCard = document.getElementById('ageCard');
         if (ageCard) {
+            ageCard.style.cursor = 'pointer';
             ageCard.onclick = (e) => {
+                console.log('🖱️ Клик по возрасту, editMode:', this.editMode);
                 if (this.editMode) {
                     this.editAge();
                 } else {
-                    e.preventDefault();
-                    e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
             };
+            console.log('✅ Обработчик возраста установлен');
+        } else {
+            console.warn('⚠️ ageCard не найден');
         }
         
         // Steam
         const steamCard = document.getElementById('steamCard');
         if (steamCard) {
+            steamCard.style.cursor = 'pointer';
             steamCard.onclick = (e) => {
+                console.log('🖱️ Клик по Steam, editMode:', this.editMode);
                 if (this.editMode) {
                     this.editSteam();
                 } else {
-                    e.preventDefault();
-                    e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
             };
+            console.log('✅ Обработчик Steam установлен');
+        } else {
+            console.warn('⚠️ steamCard не найден');
         }
         
         // Faceit
         const faceitCard = document.getElementById('faceitCard');
         if (faceitCard) {
+            faceitCard.style.cursor = 'pointer';
             faceitCard.onclick = (e) => {
+                console.log('🖱️ Клик по Faceit, editMode:', this.editMode);
                 if (this.editMode) {
                     this.editFaceitLink();
                 } else {
-                    e.preventDefault();
-                    e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
             };
+            console.log('✅ Обработчик Faceit установлен');
+        } else {
+            console.warn('⚠️ faceitCard не найден');
         }
-        
-        console.log('✅ Прямые обработчики установлены');
     },
     
     updateDisplay() {
@@ -791,6 +798,7 @@ const Profile = {
         // Аватар
         const avatar = document.getElementById('profileAvatar');
         if (avatar) {
+            avatar.style.cursor = 'pointer';
             avatar.onclick = (e) => {
                 if (this.editMode) {
                     if (window.Avatar && Avatar.select) {
@@ -798,8 +806,6 @@ const Profile = {
                         Avatar.select();
                     }
                 } else {
-                    e.preventDefault();
-                    e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
             };
@@ -808,13 +814,10 @@ const Profile = {
         // Ник
         const profileName = document.getElementById('profileName');
         if (profileName) {
+            profileName.style.cursor = 'pointer';
             profileName.onclick = (e) => {
                 if (this.editMode) this.editName();
-                else {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.showToast('Для изменений перейдите в режим редактирования');
-                }
+                else this.showToast('Для изменений перейдите в режим редактирования');
             };
         }
         
