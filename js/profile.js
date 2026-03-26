@@ -380,6 +380,58 @@ const Profile = {
         
         this.setupListeners();
         this.setupClickHandlers();
+        
+        // Добавляем прямые обработчики для карточек (на случай если не сработало)
+        setTimeout(() => {
+            this.setupDirectHandlers();
+        }, 100);
+    },
+    
+    // ПРЯМЫЕ ОБРАБОТЧИКИ
+    setupDirectHandlers() {
+        // Возраст
+        const ageCard = document.getElementById('ageCard');
+        if (ageCard) {
+            ageCard.onclick = (e) => {
+                if (this.editMode) {
+                    this.editAge();
+                } else {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.showToast('Для изменений перейдите в режим редактирования');
+                }
+            };
+        }
+        
+        // Steam
+        const steamCard = document.getElementById('steamCard');
+        if (steamCard) {
+            steamCard.onclick = (e) => {
+                if (this.editMode) {
+                    this.editSteam();
+                } else {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.showToast('Для изменений перейдите в режим редактирования');
+                }
+            };
+        }
+        
+        // Faceit
+        const faceitCard = document.getElementById('faceitCard');
+        if (faceitCard) {
+            faceitCard.onclick = (e) => {
+                if (this.editMode) {
+                    this.editFaceitLink();
+                } else {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.showToast('Для изменений перейдите в режим редактирования');
+                }
+            };
+        }
+        
+        console.log('✅ Прямые обработчики установлены');
     },
     
     updateDisplay() {
@@ -739,8 +791,7 @@ const Profile = {
         // Аватар
         const avatar = document.getElementById('profileAvatar');
         if (avatar) {
-            avatar.removeEventListener('click', this.avatarClickHandler);
-            this.avatarClickHandler = (e) => {
+            avatar.onclick = (e) => {
                 if (this.editMode) {
                     if (window.Avatar && Avatar.select) {
                         if (window.Settings) Settings.click();
@@ -752,14 +803,12 @@ const Profile = {
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
             };
-            avatar.addEventListener('click', this.avatarClickHandler);
         }
         
         // Ник
         const profileName = document.getElementById('profileName');
         if (profileName) {
-            profileName.removeEventListener('click', this.profileNameClickHandler);
-            this.profileNameClickHandler = (e) => {
+            profileName.onclick = (e) => {
                 if (this.editMode) this.editName();
                 else {
                     e.preventDefault();
@@ -767,134 +816,31 @@ const Profile = {
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
             };
-            profileName.addEventListener('click', this.profileNameClickHandler);
-        }
-        
-        // Возраст — вешаем на родительский элемент .stat-card или на сам инпут
-        const ageContainer = document.getElementById('ageValue')?.closest('.stat-card');
-        if (ageContainer) {
-            ageContainer.removeEventListener('click', this.ageContainerHandler);
-            this.ageContainerHandler = (e) => {
-                if (this.editMode) {
-                    this.editAge();
-                } else {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.showToast('Для изменений перейдите в режим редактирования');
-                }
-            };
-            ageContainer.addEventListener('click', this.ageContainerHandler);
-        } else {
-            const ageInput = document.getElementById('ageValue');
-            if (ageInput) {
-                ageInput.removeEventListener('click', this.ageInputClickHandler);
-                this.ageInputClickHandler = (e) => {
-                    if (this.editMode) {
-                        this.editAge();
-                    } else {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        this.showToast('Для изменений перейдите в режим редактирования');
-                    }
-                };
-                ageInput.addEventListener('click', this.ageInputClickHandler);
-            }
-        }
-        
-        // Steam
-        const steamContainer = document.getElementById('steamDisplay')?.closest('.profile-stat-card');
-        if (steamContainer) {
-            steamContainer.removeEventListener('click', this.steamContainerHandler);
-            this.steamContainerHandler = (e) => {
-                if (this.editMode) {
-                    this.editSteam();
-                } else {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.showToast('Для изменений перейдите в режим редактирования');
-                }
-            };
-            steamContainer.addEventListener('click', this.steamContainerHandler);
-        } else {
-            const steamInput = document.getElementById('steamDisplay');
-            if (steamInput) {
-                steamInput.removeEventListener('click', this.steamInputClickHandler);
-                this.steamInputClickHandler = (e) => {
-                    if (this.editMode) {
-                        this.editSteam();
-                    } else {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        this.showToast('Для изменений перейдите в режим редактирования');
-                    }
-                };
-                steamInput.addEventListener('click', this.steamInputClickHandler);
-            }
-        }
-        
-        // Faceit
-        const faceitContainer = document.getElementById('faceitLinkDisplay')?.closest('.profile-stat-card');
-        if (faceitContainer) {
-            faceitContainer.removeEventListener('click', this.faceitContainerHandler);
-            this.faceitContainerHandler = (e) => {
-                if (this.editMode) {
-                    this.editFaceitLink();
-                } else {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.showToast('Для изменений перейдите в режим редактирования');
-                }
-            };
-            faceitContainer.addEventListener('click', this.faceitContainerHandler);
-        } else {
-            const faceitInput = document.getElementById('faceitLinkDisplay');
-            if (faceitInput) {
-                faceitInput.removeEventListener('click', this.faceitInputClickHandler);
-                this.faceitInputClickHandler = (e) => {
-                    if (this.editMode) {
-                        this.editFaceitLink();
-                    } else {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        this.showToast('Для изменений перейдите в режим редактирования');
-                    }
-                };
-                faceitInput.addEventListener('click', this.faceitInputClickHandler);
-            }
         }
         
         // Стрелка друзей
         const friendsArrow = document.querySelector('.friends-arrow');
         if (friendsArrow) {
-            friendsArrow.removeEventListener('click', this.friendsArrowHandler);
-            this.friendsArrowHandler = () => {
+            friendsArrow.onclick = () => {
                 this.showAllFriends();
             };
-            friendsArrow.addEventListener('click', this.friendsArrowHandler);
         }
     },
     
     setupListeners() {
         const ageInput = document.getElementById('ageValue');
         if (ageInput) {
-            ageInput.removeEventListener('blur', this.ageBlurHandler);
-            this.ageBlurHandler = (e) => { if (this.editMode) this.validateAge(e.target.value); };
-            ageInput.addEventListener('blur', this.ageBlurHandler);
-            
-            ageInput.removeEventListener('focus', this.ageFocusHandler);
-            this.ageFocusHandler = () => {
+            ageInput.onblur = () => { if (this.editMode) this.validateAge(ageInput.value); };
+            ageInput.onfocus = () => {
                 if (this.editMode) {
                     const container = ageInput.closest('.stat-value');
                     this.removeErrorMessage(container);
                     container?.classList.remove('error');
                 }
             };
-            ageInput.addEventListener('focus', this.ageFocusHandler);
-            
-            ageInput.removeEventListener('input', this.ageInputHandler);
-            this.ageInputHandler = (e) => {
+            ageInput.oninput = () => {
                 if (this.editMode) {
-                    const val = e.target.value;
+                    const val = ageInput.value;
                     const container = ageInput.closest('.stat-value');
                     if (val === '' || (val.length <= 3 && !isNaN(parseInt(val)) && parseInt(val) >= 0 && parseInt(val) <= 100)) {
                         this.removeErrorMessage(container);
@@ -902,29 +848,21 @@ const Profile = {
                     }
                 }
             };
-            ageInput.addEventListener('input', this.ageInputHandler);
         }
         
         const steamInput = document.getElementById('steamDisplay');
         if (steamInput) {
-            steamInput.removeEventListener('blur', this.steamBlurHandler);
-            this.steamBlurHandler = (e) => { if (this.editMode) this.validateSteamLink(e.target.value); };
-            steamInput.addEventListener('blur', this.steamBlurHandler);
-            
-            steamInput.removeEventListener('focus', this.steamFocusHandler);
-            this.steamFocusHandler = () => {
+            steamInput.onblur = () => { if (this.editMode) this.validateSteamLink(steamInput.value); };
+            steamInput.onfocus = () => {
                 if (this.editMode) {
                     const container = steamInput.closest('.profile-stat-value');
                     this.removeErrorMessage(container);
                     container?.classList.remove('error');
                 }
             };
-            steamInput.addEventListener('focus', this.steamFocusHandler);
-            
-            steamInput.removeEventListener('input', this.steamInputHandler);
-            this.steamInputHandler = (e) => {
+            steamInput.oninput = () => {
                 if (this.editMode) {
-                    const val = e.target.value;
+                    const val = steamInput.value;
                     const container = steamInput.closest('.profile-stat-value');
                     if (val.length <= 100) {
                         this.removeErrorMessage(container);
@@ -932,29 +870,21 @@ const Profile = {
                     }
                 }
             };
-            steamInput.addEventListener('input', this.steamInputHandler);
         }
         
         const faceitInput = document.getElementById('faceitLinkDisplay');
         if (faceitInput) {
-            faceitInput.removeEventListener('blur', this.faceitBlurHandler);
-            this.faceitBlurHandler = (e) => { if (this.editMode) this.validateFaceitLink(e.target.value); };
-            faceitInput.addEventListener('blur', this.faceitBlurHandler);
-            
-            faceitInput.removeEventListener('focus', this.faceitFocusHandler);
-            this.faceitFocusHandler = () => {
+            faceitInput.onblur = () => { if (this.editMode) this.validateFaceitLink(faceitInput.value); };
+            faceitInput.onfocus = () => {
                 if (this.editMode) {
                     const container = faceitInput.closest('.profile-stat-value');
                     this.removeErrorMessage(container);
                     container?.classList.remove('error');
                 }
             };
-            faceitInput.addEventListener('focus', this.faceitFocusHandler);
-            
-            faceitInput.removeEventListener('input', this.faceitInputHandler);
-            this.faceitInputHandler = (e) => {
+            faceitInput.oninput = () => {
                 if (this.editMode) {
-                    const val = e.target.value;
+                    const val = faceitInput.value;
                     const container = faceitInput.closest('.profile-stat-value');
                     if (val.length <= 100) {
                         this.removeErrorMessage(container);
@@ -962,7 +892,6 @@ const Profile = {
                     }
                 }
             };
-            faceitInput.addEventListener('input', this.faceitInputHandler);
         }
         
         const applyBtn = document.getElementById('applyBtn');
@@ -978,7 +907,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.Profile = Profile;
 
-// 🔥 ФОРСИРОВАННАЯ ЗАГРУЗКА ДРУЗЕЙ (на случай если не загрузились)
+// 🔥 ФОРСИРОВАННАЯ ЗАГРУЗКА ДРУЗЕЙ
 setTimeout(() => {
     if (window.Profile && !window.Profile.isFriendsLoaded) {
         console.log('🔥🔥🔥 ФОРСИРОВАННАЯ ЗАГРУЗКА ДРУЗЕЙ 🔥🔥🔥');
