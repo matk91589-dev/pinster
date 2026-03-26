@@ -762,11 +762,40 @@
                 <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
             </div>
 
+            <!-- ПРОФИЛЬ С ID ДЛЯ КЛИКОВ -->
             <div id="profileScreen" class="screen profile-screen">
                 <div class="title-row"><div class="title-left"><div class="section-title">Ваш профиль</div><div class="edit-controls"><div id="editToggle" class="edit-title-icon" onclick="Profile.toggleEditMode()"><svg viewBox="0 0 24 24"><path d="M12 20h9" stroke="white" stroke-width="2"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="white" stroke-width="2"/></svg></div><div id="applyBtn" class="apply-btn" onclick="Profile.applyChanges()">Применить</div></div></div></div>
                 <div class="profile-header"><div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()"><div class="tg-avatar-svg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#ffffff" stroke-width="2" fill="none"/></svg></div></div><div class="profile-info"><div class="profile-name-label">ваш никнейм</div><div class="profile-name-row"><span id="profileName" class="profile-name" onclick="Profile.editName()">-</span></div></div></div>
-                <div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input id="ratingValue" placeholder="0" value="0" readonly disabled><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card"><div class="stat-label">Возраст</div><div class="stat-value"><input id="ageValue" placeholder="0-100" maxlength="3" readonly></div></div></div>
-                <div class="profile-stats"><div class="profile-stat-card"><div class="profile-stat-label">Ссылка Steam</div><input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" readonly></div><div class="profile-stat-card"><div class="profile-stat-label">Ссылка Faceit</div><input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit" readonly></div></div>
+                
+                <!-- СТАТИСТИКА С ID ДЛЯ КЛИКОВ -->
+                <div class="stats-row">
+                    <div class="stat-card" id="ratingCard">
+                        <div class="stat-label">Рейтинг</div>
+                        <div class="stat-value">
+                            <input id="ratingValue" placeholder="0" value="0" readonly disabled>
+                            <span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="ageCard">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value">
+                            <input id="ageValue" placeholder="0-100" maxlength="3" readonly>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ССЫЛКИ С ID ДЛЯ КЛИКОВ -->
+                <div class="profile-stats">
+                    <div class="profile-stat-card" id="steamCard">
+                        <div class="profile-stat-label">Ссылка Steam</div>
+                        <input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" readonly>
+                    </div>
+                    <div class="profile-stat-card" id="faceitCard">
+                        <div class="profile-stat-label">Ссылка Faceit</div>
+                        <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit" readonly>
+                    </div>
+                </div>
+                
                 <div class="friends-section"><div class="friends-header"><span class="friends-title">Ваши друзья: 0</span><div class="friends-actions"><div class="friends-arrow" onclick="Team.showTeamPage()"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div></div><div class="friends-list" id="friendsList"></div></div>
             </div>
 
