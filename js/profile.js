@@ -375,7 +375,7 @@ const Profile = {
         setTimeout(() => {
             this.loadProfileFromServer();
             this.loadAvatar();
-            this.loadFriends();  // 👈 ЗАГРУЖАЕМ ДРУЗЕЙ
+            this.loadFriends();
         }, 500);
         
         this.setupListeners();
@@ -736,6 +736,7 @@ const Profile = {
     },
     
     setupClickHandlers() {
+        // Аватар
         const avatar = document.getElementById('profileAvatar');
         if (avatar) {
             avatar.removeEventListener('click', this.avatarClickHandler);
@@ -754,6 +755,7 @@ const Profile = {
             avatar.addEventListener('click', this.avatarClickHandler);
         }
         
+        // Ник
         const profileName = document.getElementById('profileName');
         if (profileName) {
             profileName.removeEventListener('click', this.profileNameClickHandler);
@@ -768,11 +770,11 @@ const Profile = {
             profileName.addEventListener('click', this.profileNameClickHandler);
         }
         
-        // Возраст
-        const ageCard = document.getElementById('ageCard');
-        if (ageCard) {
-            ageCard.removeEventListener('click', this.ageCardClickHandler);
-            this.ageCardClickHandler = (e) => {
+        // Возраст — вешаем на родительский элемент .stat-card или на сам инпут
+        const ageContainer = document.getElementById('ageValue')?.closest('.stat-card');
+        if (ageContainer) {
+            ageContainer.removeEventListener('click', this.ageContainerHandler);
+            this.ageContainerHandler = (e) => {
                 if (this.editMode) {
                     this.editAge();
                 } else {
@@ -781,9 +783,8 @@ const Profile = {
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
             };
-            ageCard.addEventListener('click', this.ageCardClickHandler);
+            ageContainer.addEventListener('click', this.ageContainerHandler);
         } else {
-            // Если нет отдельной карточки, вешаем на сам инпут
             const ageInput = document.getElementById('ageValue');
             if (ageInput) {
                 ageInput.removeEventListener('click', this.ageInputClickHandler);
@@ -801,10 +802,10 @@ const Profile = {
         }
         
         // Steam
-        const steamCard = document.getElementById('steamCard');
-        if (steamCard) {
-            steamCard.removeEventListener('click', this.steamCardClickHandler);
-            this.steamCardClickHandler = (e) => {
+        const steamContainer = document.getElementById('steamDisplay')?.closest('.profile-stat-card');
+        if (steamContainer) {
+            steamContainer.removeEventListener('click', this.steamContainerHandler);
+            this.steamContainerHandler = (e) => {
                 if (this.editMode) {
                     this.editSteam();
                 } else {
@@ -813,7 +814,7 @@ const Profile = {
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
             };
-            steamCard.addEventListener('click', this.steamCardClickHandler);
+            steamContainer.addEventListener('click', this.steamContainerHandler);
         } else {
             const steamInput = document.getElementById('steamDisplay');
             if (steamInput) {
@@ -832,10 +833,10 @@ const Profile = {
         }
         
         // Faceit
-        const faceitCard = document.getElementById('faceitLinkCard');
-        if (faceitCard) {
-            faceitCard.removeEventListener('click', this.faceitCardClickHandler);
-            this.faceitCardClickHandler = (e) => {
+        const faceitContainer = document.getElementById('faceitLinkDisplay')?.closest('.profile-stat-card');
+        if (faceitContainer) {
+            faceitContainer.removeEventListener('click', this.faceitContainerHandler);
+            this.faceitContainerHandler = (e) => {
                 if (this.editMode) {
                     this.editFaceitLink();
                 } else {
@@ -844,7 +845,7 @@ const Profile = {
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
             };
-            faceitCard.addEventListener('click', this.faceitCardClickHandler);
+            faceitContainer.addEventListener('click', this.faceitContainerHandler);
         } else {
             const faceitInput = document.getElementById('faceitLinkDisplay');
             if (faceitInput) {
@@ -862,6 +863,7 @@ const Profile = {
             }
         }
         
+        // Стрелка друзей
         const friendsArrow = document.querySelector('.friends-arrow');
         if (friendsArrow) {
             friendsArrow.removeEventListener('click', this.friendsArrowHandler);
