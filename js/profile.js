@@ -104,7 +104,7 @@ const Profile = {
         return false;
     },
     
-    // ✅ ЗАГРУЗКА ДРУЗЕЙ (С ТЕСТОВЫМИ ДАННЫМИ)
+    // ✅ ЗАГРУЗКА ДРУЗЕЙ
     async loadFriends() {
         console.log('🔵🔵🔵 PROFILE.loadFriends() ВЫЗВАН 🔵🔵🔵');
         
@@ -141,45 +141,13 @@ const Profile = {
                 console.log('❌ PROFILE: Нет друзей');
             }
             
-            // 🧪 ТЕСТОВЫЕ ДРУЗЬЯ (для проверки отображения 5+)
-            this.addTestFriends();
-            
             this.updateFriendsDisplay();
         } catch (error) {
             console.error('❌ PROFILE: Ошибка загрузки друзей:', error);
             this.friendsList = [];
             this.isFriendsLoaded = true;
-            
-            // 🧪 ТЕСТОВЫЕ ДРУЗЬЯ (для проверки отображения 5+)
-            this.addTestFriends();
-            
             this.updateFriendsDisplay();
         }
-    },
-    
-    // 🧪 ДОБАВЛЯЕМ ТЕСТОВЫХ ДРУЗЕЙ (5+)
-    addTestFriends() {
-        // Если уже есть друзья, добавляем тестовых к ним
-        const existingCount = this.friendsList.length;
-        
-        // Нужно чтобы всего было 7 друзей (2 реальных + 5 тестовых = 7)
-        if (existingCount < 7) {
-            const needed = 7 - existingCount;
-            console.log(`🧪 Добавляем ${needed} тестовых друзей для проверки UI`);
-            
-            for (let i = 1; i <= needed; i++) {
-                this.friendsList.push({
-                    player_id: `test_${i}`,
-                    nick: `Тестовый игрок ${i}`,
-                    avatar: null,
-                    age: 20 + i,
-                    steam_link: null,
-                    faceit_link: null
-                });
-            }
-        }
-        
-        console.log(`📊 Итоговое количество друзей: ${this.friendsList.length}`);
     },
     
     // ✅ ОБНОВЛЕНИЕ ОТОБРАЖЕНИЯ ДРУЗЕЙ
@@ -800,46 +768,98 @@ const Profile = {
             profileName.addEventListener('click', this.profileNameClickHandler);
         }
         
+        // Возраст
         const ageCard = document.getElementById('ageCard');
         if (ageCard) {
             ageCard.removeEventListener('click', this.ageCardClickHandler);
             this.ageCardClickHandler = (e) => {
-                if (this.editMode) this.editAge();
-                else {
+                if (this.editMode) {
+                    this.editAge();
+                } else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
             };
             ageCard.addEventListener('click', this.ageCardClickHandler);
+        } else {
+            // Если нет отдельной карточки, вешаем на сам инпут
+            const ageInput = document.getElementById('ageValue');
+            if (ageInput) {
+                ageInput.removeEventListener('click', this.ageInputClickHandler);
+                this.ageInputClickHandler = (e) => {
+                    if (this.editMode) {
+                        this.editAge();
+                    } else {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.showToast('Для изменений перейдите в режим редактирования');
+                    }
+                };
+                ageInput.addEventListener('click', this.ageInputClickHandler);
+            }
         }
         
+        // Steam
         const steamCard = document.getElementById('steamCard');
         if (steamCard) {
             steamCard.removeEventListener('click', this.steamCardClickHandler);
             this.steamCardClickHandler = (e) => {
-                if (this.editMode) this.editSteam();
-                else {
+                if (this.editMode) {
+                    this.editSteam();
+                } else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
             };
             steamCard.addEventListener('click', this.steamCardClickHandler);
+        } else {
+            const steamInput = document.getElementById('steamDisplay');
+            if (steamInput) {
+                steamInput.removeEventListener('click', this.steamInputClickHandler);
+                this.steamInputClickHandler = (e) => {
+                    if (this.editMode) {
+                        this.editSteam();
+                    } else {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.showToast('Для изменений перейдите в режим редактирования');
+                    }
+                };
+                steamInput.addEventListener('click', this.steamInputClickHandler);
+            }
         }
         
+        // Faceit
         const faceitCard = document.getElementById('faceitLinkCard');
         if (faceitCard) {
             faceitCard.removeEventListener('click', this.faceitCardClickHandler);
             this.faceitCardClickHandler = (e) => {
-                if (this.editMode) this.editFaceitLink();
-                else {
+                if (this.editMode) {
+                    this.editFaceitLink();
+                } else {
                     e.preventDefault();
                     e.stopPropagation();
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
             };
             faceitCard.addEventListener('click', this.faceitCardClickHandler);
+        } else {
+            const faceitInput = document.getElementById('faceitLinkDisplay');
+            if (faceitInput) {
+                faceitInput.removeEventListener('click', this.faceitInputClickHandler);
+                this.faceitInputClickHandler = (e) => {
+                    if (this.editMode) {
+                        this.editFaceitLink();
+                    } else {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.showToast('Для изменений перейдите в режим редактирования');
+                    }
+                };
+                faceitInput.addEventListener('click', this.faceitInputClickHandler);
+            }
         }
         
         const friendsArrow = document.querySelector('.friends-arrow');
