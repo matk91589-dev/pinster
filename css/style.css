@@ -2271,7 +2271,7 @@ input:checked + .slider:before {
     min-height: 0;
 }
 
-/* ПРОПОРЦИЯ 4:5 (0.8) - идеальный баланс */
+/* ПРОПОРЦИЯ 4:5 - карточка с правильными пропорциями */
 .swipe-card {
     width: 80%;
     max-width: 420px;
@@ -2289,16 +2289,16 @@ input:checked + .slider:before {
     
     display: flex;
     flex-direction: column;
-    overflow: visible;
+    overflow: hidden;
 }
 
-/* Контент внутри карточки */
+/* Контент внутри карточки - без скролла, всё помещается */
 .swipe-card-content {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    overflow: visible;
+    gap: 10px;
     height: 100%;
+    overflow: visible;
 }
 
 /* Аватар и имя */
@@ -2335,7 +2335,7 @@ input:checked + .slider:before {
 }
 
 .swipe-player-id {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--accent);
     font-family: monospace;
     font-weight: 600;
@@ -2343,7 +2343,7 @@ input:checked + .slider:before {
 }
 
 .swipe-player-nick {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--text-primary);
     white-space: nowrap;
@@ -2359,7 +2359,7 @@ input:checked + .slider:before {
 }
 
 .swipe-rating-value {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--text-primary);
 }
@@ -2381,7 +2381,7 @@ input:checked + .slider:before {
     color: var(--text-secondary);
     font-weight: 600;
     text-transform: uppercase;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     display: block;
 }
 
@@ -2389,9 +2389,9 @@ input:checked + .slider:before {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
-    padding: 10px 8px;
+    padding: 8px 6px;
     color: var(--text-primary);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     text-align: center;
     white-space: nowrap;
@@ -2402,8 +2402,7 @@ input:checked + .slider:before {
 /* Steam и Faceit ссылки */
 .swipe-steam-container,
 .swipe-faceit-container {
-    position: relative;
-    margin: 4px 0;
+    margin: 2px 0;
 }
 
 .swipe-link-label {
@@ -2411,7 +2410,7 @@ input:checked + .slider:before {
     color: var(--text-secondary);
     font-weight: 600;
     text-transform: uppercase;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     display: block;
 }
 
@@ -2419,9 +2418,9 @@ input:checked + .slider:before {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
-    padding: 10px 12px;
+    padding: 8px 10px;
     color: var(--text-primary);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
@@ -2430,9 +2429,7 @@ input:checked + .slider:before {
 
 /* Комментарий */
 .swipe-comment {
-    position: relative;
-    margin: 4px 0;
-    flex-shrink: 0;
+    margin: 2px 0;
 }
 
 .swipe-comment-label {
@@ -2440,7 +2437,7 @@ input:checked + .slider:before {
     color: var(--text-secondary);
     font-weight: 600;
     text-transform: uppercase;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     display: block;
 }
 
@@ -2448,17 +2445,17 @@ input:checked + .slider:before {
     background: #1A1D24;
     border: 1px solid #2A2F3A;
     border-radius: 8px;
-    padding: 10px 12px;
+    padding: 8px 10px;
     color: var(--text-primary);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
     word-wrap: break-word;
     line-height: 1.4;
-    max-height: 70px;
+    max-height: 65px;
     overflow-y: auto;
 }
 
-/* Стилизуем скролл для комментария (только он может скроллиться) */
+/* Стилизуем скролл для комментария */
 .swipe-comment-text::-webkit-scrollbar {
     width: 3px;
 }
@@ -2478,10 +2475,10 @@ input:checked + .slider:before {
     position: absolute;
     top: 12px;
     left: 18px;
-    font-size: 13px;
+    font-size: 12px;
     color: #7A808E;
     background: rgba(0, 0, 0, 0.4);
-    padding: 5px 12px;
+    padding: 4px 10px;
     border-radius: 30px;
     backdrop-filter: blur(4px);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -2497,23 +2494,14 @@ input:checked + .slider:before {
 /* Подсказка */
 .swipe-hint {
     text-align: center;
-    font-size: 12px;
+    font-size: 11px;
     color: #6B7280;
     margin-top: 12px;
     user-select: none;
 }
 
-/* Убираем скролл у основного контента */
-.swipe-card-content::-webkit-scrollbar {
-    display: none;
-}
-
-.swipe-card-content {
-    scrollbar-width: none;
-}
-
 /* =========================
-   ЭКРАН СОЕДИНЕНИЯ - ТОЖЕ 4:5
+   ЭКРАН СОЕДИНЕНИЯ
    ========================= */
 .connection-screen .swipe-card {
     aspect-ratio: 4 / 5;
@@ -2662,61 +2650,6 @@ input:checked + .slider:before {
         height: 60px;
     }
     
-    .swipe-avatar .tg-avatar-svg {
-        width: 60px;
-        height: 60px;
-    }
-    
-    .swipe-player-nick {
-        font-size: 18px;
-    }
-    
-    .swipe-rating-value {
-        font-size: 18px;
-    }
-    
-    .swipe-card-content {
-        gap: 10px;
-    }
-    
-    .swipe-stats-row.three-cols {
-        gap: 6px;
-    }
-    
-    .swipe-stat-value {
-        padding: 8px 6px;
-        font-size: 12px;
-    }
-    
-    .swipe-link-value {
-        padding: 8px 10px;
-        font-size: 11px;
-    }
-    
-    .swipe-comment-text {
-        padding: 8px 10px;
-        font-size: 11px;
-        max-height: 60px;
-    }
-}
-
-/* Для совсем маленьких экранов */
-@media (max-width: 340px) {
-    .swipe-card {
-        width: 90%;
-        padding: 14px;
-    }
-    
-    .swipe-avatar {
-        width: 52px;
-        height: 52px;
-    }
-    
-    .swipe-avatar .tg-avatar-svg {
-        width: 52px;
-        height: 52px;
-    }
-    
     .swipe-player-nick {
         font-size: 16px;
     }
@@ -2730,22 +2663,22 @@ input:checked + .slider:before {
     }
     
     .swipe-stats-row.three-cols {
-        gap: 4px;
+        gap: 6px;
     }
     
     .swipe-stat-value {
-        font-size: 11px;
         padding: 6px 4px;
+        font-size: 11px;
     }
     
     .swipe-link-value {
-        font-size: 10px;
         padding: 6px 8px;
+        font-size: 10px;
     }
     
     .swipe-comment-text {
-        font-size: 10px;
         padding: 6px 8px;
+        font-size: 10px;
         max-height: 55px;
     }
 }
