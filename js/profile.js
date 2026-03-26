@@ -2,6 +2,8 @@
 // ПРОФИЛЬ - ОПТИМИЗИРОВАННЫЙ С КЭШИРОВАНИЕМ
 // ============================================
 
+console.log('🔥🔥🔥 PROFILE.JS ЗАГРУЖЕН 🔥🔥🔥');
+
 const Profile = {
     editMode: false,
     savedName: '-',
@@ -403,7 +405,7 @@ const Profile = {
             };
             console.log('✅ Обработчик возраста установлен');
         } else {
-            console.warn('⚠️ ageCard не найден');
+            console.warn('⚠️ ageCard не найден в DOM');
         }
         
         // Steam
@@ -420,7 +422,7 @@ const Profile = {
             };
             console.log('✅ Обработчик Steam установлен');
         } else {
-            console.warn('⚠️ steamCard не найден');
+            console.warn('⚠️ steamCard не найден в DOM');
         }
         
         // Faceit
@@ -437,7 +439,7 @@ const Profile = {
             };
             console.log('✅ Обработчик Faceit установлен');
         } else {
-            console.warn('⚠️ faceitCard не найден');
+            console.warn('⚠️ faceitCard не найден в DOM');
         }
     },
     
@@ -917,3 +919,53 @@ setTimeout(() => {
         window.Profile.loadFriends();
     }
 }, 1500);
+
+// 🟢 ДОПОЛНИТЕЛЬНЫЕ ОБРАБОТЧИКИ (НА ВСЯКИЙ СЛУЧАЙ)
+setTimeout(() => {
+    console.log('🟢 ДОБАВЛЯЕМ ОБРАБОТЧИКИ ПРЯМО СЕЙЧАС');
+    
+    const ageCard = document.getElementById('ageCard');
+    if (ageCard) {
+        ageCard.style.cursor = 'pointer';
+        ageCard.onclick = () => {
+            if (Profile.editMode) {
+                Profile.editAge();
+            } else {
+                Profile.showToast('Для изменений перейдите в режим редактирования');
+            }
+        };
+        console.log('✅ Дополнительный обработчик возраста добавлен');
+    } else {
+        console.warn('⚠️ ageCard не найден при повторной попытке');
+    }
+    
+    const steamCard = document.getElementById('steamCard');
+    if (steamCard) {
+        steamCard.style.cursor = 'pointer';
+        steamCard.onclick = () => {
+            if (Profile.editMode) {
+                Profile.editSteam();
+            } else {
+                Profile.showToast('Для изменений перейдите в режим редактирования');
+            }
+        };
+        console.log('✅ Дополнительный обработчик Steam добавлен');
+    } else {
+        console.warn('⚠️ steamCard не найден при повторной попытке');
+    }
+    
+    const faceitCard = document.getElementById('faceitCard');
+    if (faceitCard) {
+        faceitCard.style.cursor = 'pointer';
+        faceitCard.onclick = () => {
+            if (Profile.editMode) {
+                Profile.editFaceitLink();
+            } else {
+                Profile.showToast('Для изменений перейдите в режим редактирования');
+            }
+        };
+        console.log('✅ Дополнительный обработчик Faceit добавлен');
+    } else {
+        console.warn('⚠️ faceitCard не найден при повторной попытке');
+    }
+}, 2000);
