@@ -22,7 +22,6 @@ const Swipe = {
     SWIPE_THRESHOLD: 0.25,
     MAX_ROTATE: 6,
     ANIMATION_DURATION: 250,
-    AUTO_COMPLETE_DURATION: 300,
     MIN_THRESHOLD_PX: 150,
     
     // Цвета для подсветки
@@ -816,25 +815,6 @@ const Swipe = {
             if (ratingValueEl) ratingValueEl.textContent = player.trust_rating || '0';
             
             const modeFromDB = this.mode ? this.mode.toUpperCase() : null;
-            
-            const statItems = document.querySelectorAll('.swipe-stats-row.three-cols .swipe-stat-item');
-            if (statItems && statItems.length >= 3) {
-                const rankLabelEl = statItems[0].querySelector('.swipe-stat-label');
-                if (rankLabelEl) {
-                    if (modeFromDB === 'FACEIT') {
-                        rankLabelEl.textContent = 'ELO FACEIT';
-                    } 
-                    else if (modeFromDB === 'PREMIER') {
-                        rankLabelEl.textContent = 'CS RATING';
-                    }
-                    else if (modeFromDB === 'PRIME' || modeFromDB === 'PUBLIC') {
-                        rankLabelEl.textContent = 'РАНГ';
-                    }
-                    else {
-                        rankLabelEl.textContent = '—';
-                    }
-                }
-            }
             
             const rankEl = document.getElementById('swipeRank');
             if (rankEl) {
