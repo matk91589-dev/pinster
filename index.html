@@ -25,7 +25,7 @@
             display: flex;
         }
         
-        /* ===== ЛОАДЕР-ОВЕРЛЕЙ (НЕ КОНФЛИКТУЕТ) ===== */
+        /* ===== ЛОАДЕР-ОВЕРЛЕЙ ===== */
         #app-loader {
             position: fixed;
             top: 0;
@@ -51,10 +51,6 @@
         
         @keyframes loaderSpin {
             to { transform: rotate(360deg); }
-        }
-        
-        .loader-spinner.hidden {
-            display: none;
         }
     </style>
     
@@ -607,7 +603,6 @@
             opacity: 1;
         }
         
-        /* Стили для звука */
         .sound-option {
             cursor: pointer;
             transition: all 0.2s ease;
@@ -624,7 +619,6 @@
             color: #8E97A6;
         }
         
-        /* Стили для лидерборда */
         .friend-row.current-player {
             background: rgba(255, 85, 0, 0.1);
             border-left: 3px solid #FF5500;
@@ -646,7 +640,6 @@
     </style>
 </head>
 <body>
-    <!-- ЛОАДЕР-ОВЕРЛЕЙ -->
     <div id="app-loader">
         <div class="loader-spinner"></div>
     </div>
@@ -717,7 +710,6 @@
     <div id="diagnostic-badge">⚠️</div>
     
     <div class="phone-frame">
-        
         <header class="header">
             <div class="logo" onclick="Logo.handleClick()">
                 <span class="ping">Ping</span><span class="ster">ster</span>
@@ -762,12 +754,9 @@
                 <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
             </div>
 
-            <!-- ПРОФИЛЬ С ID ДЛЯ КЛИКОВ -->
             <div id="profileScreen" class="screen profile-screen">
                 <div class="title-row"><div class="title-left"><div class="section-title">Ваш профиль</div><div class="edit-controls"><div id="editToggle" class="edit-title-icon" onclick="Profile.toggleEditMode()"><svg viewBox="0 0 24 24"><path d="M12 20h9" stroke="white" stroke-width="2"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="white" stroke-width="2"/></svg></div><div id="applyBtn" class="apply-btn" onclick="Profile.applyChanges()">Применить</div></div></div></div>
                 <div class="profile-header"><div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()"><div class="tg-avatar-svg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#ffffff" stroke-width="2" fill="none"/></svg></div></div><div class="profile-info"><div class="profile-name-label">ваш никнейм</div><div class="profile-name-row"><span id="profileName" class="profile-name" onclick="Profile.editName()">-</span></div></div></div>
-                
-                <!-- СТАТИСТИКА С ID ДЛЯ КЛИКОВ -->
                 <div class="stats-row">
                     <div class="stat-card" id="ratingCard">
                         <div class="stat-label">Рейтинг</div>
@@ -783,8 +772,6 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- ССЫЛКИ С ID ДЛЯ КЛИКОВ -->
                 <div class="profile-stats">
                     <div class="profile-stat-card" id="steamCard">
                         <div class="profile-stat-label">Ссылка Steam</div>
@@ -795,7 +782,6 @@
                         <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit" readonly>
                     </div>
                 </div>
-                
                 <div class="friends-section"><div class="friends-header"><span class="friends-title">Ваши друзья: 0</span><div class="friends-actions"><div class="friends-arrow" onclick="Team.showTeamPage()"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div></div><div class="friends-list" id="friendsList"></div></div>
             </div>
 
@@ -811,15 +797,84 @@
                 <div class="team-content" id="teamContent"></div>
             </div>
 
+            <!-- ИСПРАВЛЕННЫЙ СВАЙП-ЭКРАН -->
             <div id="swipeScreen" class="screen swipe-screen">
-                <div class="swipe-header"><div class="swipe-title">Поиск тиммейтов</div><div class="swipe-subtitle"><span class="swipe-subtitle-left">← отклонить</span><span class="swipe-subtitle-divider">|</span><span class="swipe-subtitle-right">принять →</span></div></div>
-                <div class="swipe-container"><div class="swipe-card"><div class="swipe-timer">30с</div><div class="swipe-card-content"><div class="swipe-player-row"><div class="swipe-avatar"><div class="tg-avatar-svg" style="width:70px;height:70px"><svg width="35" height="35" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div><div class="swipe-name-block"><div class="swipe-player-id" id="swipePlayerId"></div><div class="swipe-player-nick" id="swipePlayerNick"></div></div><div class="swipe-rating-block"><span class="swipe-rating-value" id="swipeRatingValue"></span><span class="heart-icon"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#F5F5F5" stroke-width="2" fill="none"/></svg></span></div></div><div class="swipe-stats-row three-cols"><div class="swipe-stat-item"><div class="swipe-stat-label">РАНГ</div><div class="swipe-stat-value" id="swipeRank"></div></div><div class="swipe-stat-item"><div class="swipe-stat-label">ВОЗРАСТ</div><div class="swipe-stat-value" id="swipeAge"></div></div><div class="swipe-stat-item"><div class="swipe-stat-label">СТИЛЬ</div><div class="swipe-stat-value" id="swipeStyle"></div></div></div><div class="swipe-steam-container"><div class="swipe-link-label">Ссылка Steam</div><div class="swipe-link-value" id="swipeSteamLink"></div></div><div class="swipe-faceit-container"><div class="swipe-link-label">Ссылка Faceit</div><div class="swipe-link-value" id="swipeFaceitLink"></div></div><div class="swipe-comment"><div class="swipe-comment-label">Комментарий</div><div class="swipe-comment-text" id="swipeComment"></div></div></div></div></div>
-                <div class="swipe-loading"><div class="spinner-small"></div></div>
+                <div class="swipe-header">
+                    <div class="swipe-title">Поиск тиммейтов</div>
+                    <div class="swipe-subtitle">
+                        <span class="swipe-subtitle-left">← отклонить</span>
+                        <span class="swipe-subtitle-divider">|</span>
+                        <span class="swipe-subtitle-right">принять →</span>
+                    </div>
+                </div>
+                <div class="swipe-container">
+                    <div id="swipeCard" class="swipe-card">
+                        <div class="swipe-timer" id="swipeTimer">30с</div>
+                        <div class="swipe-card-content">
+                            <div class="swipe-player-row">
+                                <div class="swipe-avatar">
+                                    <div class="tg-avatar-svg" id="swipeAvatar">
+                                        <svg width="35" height="35" viewBox="0 0 24 24">
+                                            <circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/>
+                                            <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="swipe-name-block">
+                                    <div class="swipe-player-id" id="swipePlayerId"></div>
+                                    <div class="swipe-player-nick" id="swipePlayerNick"></div>
+                                </div>
+                                <div class="swipe-rating-block">
+                                    <span class="swipe-rating-value" id="swipeRatingValue"></span>
+                                    <span class="heart-icon">
+                                        <svg width="18" height="18" viewBox="0 0 24 24">
+                                            <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#F5F5F5" stroke-width="2" fill="none"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="swipe-stats-row three-cols">
+                                <div class="swipe-stat-item">
+                                    <div class="swipe-stat-label">РАНГ</div>
+                                    <div class="swipe-stat-value" id="swipeRank"></div>
+                                </div>
+                                <div class="swipe-stat-item">
+                                    <div class="swipe-stat-label">ВОЗРАСТ</div>
+                                    <div class="swipe-stat-value" id="swipeAge"></div>
+                                </div>
+                                <div class="swipe-stat-item">
+                                    <div class="swipe-stat-label">СТИЛЬ</div>
+                                    <div class="swipe-stat-value" id="swipeStyle"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="swipe-steam-container">
+                                <div class="swipe-link-label">Ссылка Steam</div>
+                                <div class="swipe-link-value" id="swipeSteamLink"></div>
+                            </div>
+                            
+                            <div class="swipe-faceit-container">
+                                <div class="swipe-link-label">Ссылка Faceit</div>
+                                <div class="swipe-link-value" id="swipeFaceitLink"></div>
+                            </div>
+                            
+                            <div class="swipe-comment">
+                                <div class="swipe-comment-label">Комментарий</div>
+                                <div class="swipe-comment-text" id="swipeComment"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swipe-loading" id="swipeLoading">
+                    <div class="spinner-small"></div>
+                </div>
+                <div class="swipe-hint" id="swipeHint">👆 потяните карточку влево или вправо</div>
             </div>
 
             <div id="connectionScreen" class="screen connection-screen">
                 <div class="swipe-header"><div class="swipe-title">Тиммейт найден</div></div>
-                <div class="swipe-container"><div class="swipe-card"><div class="connection-timer">30с</div><div class="swipe-card-content connection-mode"><div class="connection-avatars"><div class="connection-avatar self-avatar"><div class="tg-avatar-svg"></div></div><div class="connection-line"><div class="line-pulse"></div></div><div class="connection-avatar teammate-avatar"><div class="tg-avatar-svg"></div></div></div><div class="teammate-info"><span class="teammate-nick" id="teammateNick"></span></div><div class="connection-status" id="connectionStatus">Ожидание тиммейта</div><div class="connection-button"><button class="tg-chat-button disabled" id="tgChatButton" disabled>Перейти в чат</button></div></div></div></div>
+                <div class="swipe-container"><div class="swipe-card" id="connectionCard"><div class="connection-timer" id="connectionTimer">30с</div><div class="swipe-card-content connection-mode"><div class="connection-avatars"><div class="connection-avatar self-avatar"><div class="tg-avatar-svg"></div></div><div class="connection-line"><div class="line-pulse"></div></div><div class="connection-avatar teammate-avatar"><div class="tg-avatar-svg"></div></div></div><div class="teammate-info"><span class="teammate-nick" id="teammateNick"></span></div><div class="connection-status" id="connectionStatus">Ожидание тиммейта</div><div class="connection-button"><button class="tg-chat-button disabled" id="tgChatButton" disabled><span id="tgChatButtonText">Перейти в чат</span></button></div></div></div></div>
                 <div class="swipe-loading"><div class="spinner-small"></div></div>
             </div>
 
@@ -859,23 +914,11 @@
                 <div class="input-label">Звание</div>
                 <select class="rank-select" id="primeRankSelect">
                     <option selected>Выберите ранг</option>
-                    <option>Silver 1</option>
-                    <option>Silver 2</option>
-                    <option>Silver 3</option>
-                    <option>Silver 4</option>
-                    <option>Silver Elite</option>
-                    <option>Gold Nova 1</option>
-                    <option>Gold Nova 2</option>
-                    <option>Gold Nova 3</option>
-                    <option>Gold Nova Master</option>
-                    <option>Master Guardian 1</option>
-                    <option>Master Guardian 2</option>
-                    <option>Master Guardian Elite</option>
-                    <option>Distinguished Master Guardian</option>
-                    <option>Legendary Eagle</option>
-                    <option>Legendary Eagle Master</option>
-                    <option>Supreme Master First Class</option>
-                    <option>Global Elite</option>
+                    <option>Silver 1</option><option>Silver 2</option><option>Silver 3</option><option>Silver 4</option>
+                    <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option><option>Gold Nova 3</option>
+                    <option>Gold Nova Master</option><option>Master Guardian 1</option><option>Master Guardian 2</option>
+                    <option>Master Guardian Elite</option><option>Distinguished Master Guardian</option><option>Legendary Eagle</option>
+                    <option>Legendary Eagle Master</option><option>Supreme Master First Class</option><option>Global Elite</option>
                 </select>
                 <div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card" onclick="Profile.editPrimeAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="primeAgeValue" placeholder="21" value="21"></div></div></div>
                 <div class="input-label">Ссылка Steam</div><input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam">
@@ -890,23 +933,11 @@
                 <div class="input-label">Звание</div>
                 <select class="rank-select" id="publicRankSelect">
                     <option selected>Выберите ранг</option>
-                    <option>Silver 1</option>
-                    <option>Silver 2</option>
-                    <option>Silver 3</option>
-                    <option>Silver 4</option>
-                    <option>Silver Elite</option>
-                    <option>Gold Nova 1</option>
-                    <option>Gold Nova 2</option>
-                    <option>Gold Nova 3</option>
-                    <option>Gold Nova Master</option>
-                    <option>Master Guardian 1</option>
-                    <option>Master Guardian 2</option>
-                    <option>Master Guardian Elite</option>
-                    <option>Distinguished Master Guardian</option>
-                    <option>Legendary Eagle</option>
-                    <option>Legendary Eagle Master</option>
-                    <option>Supreme Master First Class</option>
-                    <option>Global Elite</option>
+                    <option>Silver 1</option><option>Silver 2</option><option>Silver 3</option><option>Silver 4</option>
+                    <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option><option>Gold Nova 3</option>
+                    <option>Gold Nova Master</option><option>Master Guardian 1</option><option>Master Guardian 2</option>
+                    <option>Master Guardian Elite</option><option>Distinguished Master Guardian</option><option>Legendary Eagle</option>
+                    <option>Legendary Eagle Master</option><option>Supreme Master First Class</option><option>Global Elite</option>
                 </select>
                 <div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card" onclick="Profile.editPublicAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="publicAgeValue" placeholder="21" value="21"></div></div></div>
                 <div class="input-label">Ссылка Steam</div><input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam">
@@ -930,7 +961,6 @@
         </nav>
     </div>
 
-    <!-- ЗАГРУЗКА JS С УДАЛЕНИЕМ ЛОАДЕРА -->
     <script>
         (function() {
             const version = window.BUILD_VERSION || Date.now();
@@ -971,11 +1001,9 @@
                 });
             }
             
-            // Грузим все скрипты
             Promise.all(jsFiles.map(file => loadScript(file))).then(() => {
                 console.log('🎉 Все скрипты загружены');
                 
-                // Удаляем лоадер после полной загрузки
                 const loader = document.getElementById('app-loader');
                 if (loader) {
                     loader.style.opacity = '0';
@@ -984,7 +1012,6 @@
                     }, 300);
                 }
                 
-                // Фоновая загрузка профиля
                 setTimeout(() => {
                     if (window.Profile && !window.Profile.isProfileLoaded) {
                         if (!window.Profile.telegramId) {
@@ -996,7 +1023,6 @@
                 }, 200);
             });
             
-            // Защита от кликов до загрузки Team
             document.addEventListener('click', function(e) {
                 const target = e.target.closest('.friends-arrow, [onclick*="Team.showTeamPage"]');
                 if (target && typeof Team === 'undefined') {
@@ -1014,7 +1040,6 @@
                 }
             });
             
-            // Ленивая загрузка картинок кейсов
             window.loadShopImages = function() {
                 const images = document.querySelectorAll('.case-icon img[data-src]');
                 images.forEach(img => {
