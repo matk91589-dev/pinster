@@ -104,7 +104,7 @@ const Profile = {
         return false;
     },
     
-    // ✅ ЗАГРУЗКА ДРУЗЕЙ
+    // ✅ ЗАГРУЗКА ДРУЗЕЙ (С ТЕСТОВЫМИ ДАННЫМИ)
     async loadFriends() {
         console.log('🔵🔵🔵 PROFILE.loadFriends() ВЫЗВАН 🔵🔵🔵');
         
@@ -141,13 +141,45 @@ const Profile = {
                 console.log('❌ PROFILE: Нет друзей');
             }
             
+            // 🧪 ТЕСТОВЫЕ ДРУЗЬЯ (для проверки отображения 5+)
+            this.addTestFriends();
+            
             this.updateFriendsDisplay();
         } catch (error) {
             console.error('❌ PROFILE: Ошибка загрузки друзей:', error);
             this.friendsList = [];
             this.isFriendsLoaded = true;
+            
+            // 🧪 ТЕСТОВЫЕ ДРУЗЬЯ (для проверки отображения 5+)
+            this.addTestFriends();
+            
             this.updateFriendsDisplay();
         }
+    },
+    
+    // 🧪 ДОБАВЛЯЕМ ТЕСТОВЫХ ДРУЗЕЙ (5+)
+    addTestFriends() {
+        // Если уже есть друзья, добавляем тестовых к ним
+        const existingCount = this.friendsList.length;
+        
+        // Нужно чтобы всего было 7 друзей (2 реальных + 5 тестовых = 7)
+        if (existingCount < 7) {
+            const needed = 7 - existingCount;
+            console.log(`🧪 Добавляем ${needed} тестовых друзей для проверки UI`);
+            
+            for (let i = 1; i <= needed; i++) {
+                this.friendsList.push({
+                    player_id: `test_${i}`,
+                    nick: `Тестовый игрок ${i}`,
+                    avatar: null,
+                    age: 20 + i,
+                    steam_link: null,
+                    faceit_link: null
+                });
+            }
+        }
+        
+        console.log(`📊 Итоговое количество друзей: ${this.friendsList.length}`);
     },
     
     // ✅ ОБНОВЛЕНИЕ ОТОБРАЖЕНИЯ ДРУЗЕЙ
@@ -185,7 +217,7 @@ const Profile = {
                         <span class="friend-id">ID: ${friend.player_id}</span>
                         <span class="friend-name">${friend.nick || 'Без имени'}</span>
                     </div>
-                    <span class="friend-arrow">→</span>
+                    <span class="friend-arrow orange-arrow">→</span>
                 </div>
             `;
         }
@@ -198,12 +230,36 @@ const Profile = {
                         <div class="friend-info">
                             <span class="friend-name">и еще ${remaining} ${word}</span>
                         </div>
-                        <span class="friend-arrow">→</span>
+                        <span class="friend-arrow orange-arrow">→</span>
                     </div>`;
         }
         
         friendsListEl.innerHTML = html;
+        
+        // Добавляем стили для оранжевых стрелок
+        this.injectArrowStyles();
+        
         console.log('✅ PROFILE: Отображение друзей обновлено, показано:', showCount, 'из', this.friendsList.length);
+    },
+    
+    // 🎨 ДОБАВЛЯЕМ СТИЛИ ДЛЯ ОРАНЖЕВЫХ СТРЕЛОК
+    injectArrowStyles() {
+        if (document.getElementById('profile-arrow-styles')) return;
+        
+        const style = document.createElement('style');
+        style.id = 'profile-arrow-styles';
+        style.textContent = `
+            .friend-arrow.orange-arrow {
+                color: #FF5500 !important;
+                font-size: 18px;
+                font-weight: 300;
+                opacity: 0.9;
+            }
+            .more-friends .friend-arrow.orange-arrow {
+                color: #FF5500 !important;
+            }
+        `;
+        document.head.appendChild(style);
     },
     
     getFriendsWord(count) {
