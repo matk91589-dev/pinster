@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - БЕЗ ПЕРЕОПРЕДЕЛЕНИЯ СТИЛЕЙ
+// СВАЙП-КАРТОЧКИ - ПОЛНОСТЬЮ БЕЗ ИНЛАЙН-СТИЛЕЙ
 // ============================================
 
 const Swipe = {
@@ -71,16 +71,6 @@ const Swipe = {
         }
     },
     
-    // ========== НЕ ТРОГАЕМ РАЗМЕРЫ КАРТОЧКИ, ПОЛНОСТЬЮ ПОЛАГАЕМСЯ НА CSS ==========
-    // Функция удалена, так как CSS сам управляет размерами через width: 80% и aspect-ratio
-    
-    // ========== ФУНКЦИЯ ДЛЯ ЭКРАНА ОЖИДАНИЯ - ТОЖЕ НЕ ТРОГАЕМ РАЗМЕРЫ ==========
-    adjustConnectionCardSize() {
-        // Больше не переопределяем размеры карточки
-        // CSS сам справляется через width: 80% и aspect-ratio: 4/5
-        console.log('📏 Размеры карточки управляются через CSS');
-    },
-    
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
         if (this.currentMatchId === matchId) {
             console.log('⚠️ startWithOpponent: уже показываем этот матч, игнорируем');
@@ -146,6 +136,7 @@ const Swipe = {
         
         if (this.loading) this.loading.classList.remove('active');
         
+        // Сбрасываем только transform, не трогаем width/height
         this.card.style.transition = 'none';
         this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
         this.card.style.opacity = '1';
@@ -337,7 +328,6 @@ const Swipe = {
         
         if (Math.abs(this.currentX) > threshold) {
             
-            // 👇 ЗВУК ПРИ СВАЙПЕ
             if (window.Settings) Settings.swipe();
             
             this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
@@ -382,7 +372,6 @@ const Swipe = {
         console.log('✅ Принят игрок:', this.currentPlayer);
         console.log('🎯 matchId:', this.currentMatchId);
         
-        // 👇 ЗВУК ПРИ ПРИНЯТИИ
         if (window.Settings) Settings.success();
         
         if (this.cardTimerInterval) {
@@ -459,8 +448,6 @@ const Swipe = {
                     
                     this.updateConnectionUI('both_accepted');
                     this.createGame();
-                    
-                    // 👇 ДОБАВЛЯЕМ В ДРУЗЬЯ
                     this.addFriendAfterMatch();
                 }
                 
@@ -885,8 +872,6 @@ const Swipe = {
             if (commentEl) commentEl.textContent = player.comment || '';
             
             this.updateLinksVisibility();
-            
-            // УДАЛЕН ВЫЗОВ adjustCardSize() - CSS сам управляет размерами
         }
     },
     
