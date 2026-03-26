@@ -2271,11 +2271,10 @@ input:checked + .slider:before {
     min-height: 0;
 }
 
-/* ФИКС: свайп-карточка с внутренним скроллом и фиксированной высотой */
+/* ФИКС: карточка 80% ширины, высота автоматическая от контента */
 .swipe-card {
-    width: 100%;
+    width: 80%;
     max-width: 420px;
-    margin: 0 auto;
     background: var(--surface);
     border-radius: 24px;
     border: 1px solid #2A2F3A;
@@ -2287,21 +2286,27 @@ input:checked + .slider:before {
     position: relative;
     z-index: 10;
     
-    /* ФИКС: фиксируем минимальную высоту и добавляем внутренний скролл */
-    min-height: 500px;
-    max-height: 70vh;
+    /* НЕТ скролла, высота по контенту */
     display: flex;
     flex-direction: column;
+    overflow: visible;
 }
 
-/* Контент внутри карточки скроллится, если не помещается */
+/* Контент внутри карточки - без скролла, просто вертикальный флекс */
 .swipe-card-content {
-    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    overflow-y: auto;
-    min-height: 0;
+    overflow: visible;
+}
+
+/* Убираем все скроллы */
+.swipe-card-content::-webkit-scrollbar {
+    display: none;
+}
+
+.swipe-card-content {
+    scrollbar-width: none;
 }
 
 /* Стилизуем скролл внутри карточки */
