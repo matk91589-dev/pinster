@@ -4370,7 +4370,7 @@ html {
 }
 
 /* ============================================
-   СВАЙП-КАРТОЧКИ — ИДЕАЛЬНЫЕ ПРОПОРЦИИ 70%
+   СВАЙП-КАРТОЧКИ — ЖЁСТКАЯ ФИКСАЦИЯ РАЗМЕРОВ
    ============================================ */
 
 /* Контейнер для центрирования */
@@ -4383,11 +4383,12 @@ html {
     min-height: 0;
 }
 
-/* Сама карточка — 70% ширины экрана, пропорция 5:6 */
+/* Сама карточка — фиксированные пропорции */
 .swipe-card {
     width: 70vw;
     max-width: 420px;
-    aspect-ratio: 5 / 6;
+    height: auto;
+    aspect-ratio: 4 / 5;
     
     background: var(--surface);
     border-radius: 28px;
@@ -4402,13 +4403,17 @@ html {
     
     display: flex;
     flex-direction: column;
+    
+    /* Центрирование */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .swipe-card:active {
     cursor: grabbing;
 }
 
-/* Внутренний контент — заполняет всю карточку */
+/* Внутренний контент — скроллится если не влезает */
 .swipe-card-content {
     display: flex;
     flex-direction: column;
@@ -4416,6 +4421,7 @@ html {
     padding: 20px 18px;
     flex: 1;
     overflow-y: auto;
+    min-height: 0;
 }
 
 /* Скрываем скролл, но оставляем прокрутку */
@@ -4688,13 +4694,43 @@ html {
     to { transform: rotate(360deg); }
 }
 
-/* Адаптив под маленькие экраны */
-@media (max-width: 600px) {
+/* Адаптив под разные экраны */
+@media (min-width: 1200px) {
     .swipe-card {
-        width: 75vw;
+        width: 420px;
+    }
+}
+
+@media (max-width: 1199px) and (min-width: 768px) {
+    .swipe-card {
+        width: 45vw;
+        max-width: 400px;
+    }
+}
+
+@media (max-width: 767px) and (min-width: 600px) {
+    .swipe-card {
+        width: 55vw;
         max-width: 380px;
     }
-    
+}
+
+@media (max-width: 599px) and (min-width: 480px) {
+    .swipe-card {
+        width: 65vw;
+        max-width: 360px;
+    }
+}
+
+@media (max-width: 479px) {
+    .swipe-card {
+        width: 75vw;
+        max-width: 320px;
+    }
+}
+
+/* Адаптив внутренних элементов */
+@media (max-width: 600px) {
     .swipe-card-content {
         padding: 16px 14px;
         gap: 10px;
@@ -4715,11 +4751,6 @@ html {
 }
 
 @media (max-width: 480px) {
-    .swipe-card {
-        width: 80vw;
-        max-width: 340px;
-    }
-    
     .swipe-card-content {
         padding: 14px 12px;
     }
