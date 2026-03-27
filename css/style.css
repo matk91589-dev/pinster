@@ -4370,7 +4370,7 @@ html {
 }
 
 /* ============================================
-   СВАЙП-КАРТОЧКИ — СТИЛИ (РАЗМЕРЫ ЗАДАЁТ JS)
+   СВАЙП-КАРТОЧКИ — ПРОСТО И РАБОТАЕТ
    ============================================ */
 
 /* Контейнер для центрирования */
@@ -4380,11 +4380,14 @@ html {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    min-height: 0;
 }
 
-/* Сама карточка — размеры задаются через JS, здесь только стилизация */
+/* Карточка — фиксированная ширина, пропорция 4:5 */
 .swipe-card {
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 4 / 5;
+    
     background: var(--surface);
     border-radius: 28px;
     border: 1px solid var(--border-color);
@@ -4399,7 +4402,6 @@ html {
     display: flex;
     flex-direction: column;
     
-    /* Центрирование — JS задаст ширину/высоту, а margin автоцентрирует */
     margin: 0 auto;
 }
 
@@ -4407,7 +4409,7 @@ html {
     cursor: grabbing;
 }
 
-/* Внутренний контент — скроллится если не влезает */
+/* Внутренний контент */
 .swipe-card-content {
     display: flex;
     flex-direction: column;
@@ -4415,16 +4417,15 @@ html {
     padding: 20px 18px;
     flex: 1;
     overflow-y: auto;
-    min-height: 0;
 }
 
-/* Скрываем скролл, но оставляем прокрутку */
+/* Скрываем скролл */
 .swipe-card-content::-webkit-scrollbar {
     width: 0;
     background: transparent;
 }
 
-/* Верхняя строка: аватар + ник + рейтинг */
+/* Верхняя строка */
 .swipe-player-row {
     display: flex;
     align-items: center;
@@ -4497,16 +4498,14 @@ html {
     background: linear-gradient(90deg, transparent, var(--text-primary), transparent);
     opacity: 0.2;
     margin: 4px 0;
-    flex-shrink: 0;
 }
 
-/* Три колонки (ранг/возраст/стиль) */
+/* Три колонки */
 .swipe-stats-row.three-cols {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
     margin: 6px 0;
-    flex-shrink: 0;
 }
 
 .swipe-stats-row.three-cols .swipe-stat-item {
@@ -4541,7 +4540,6 @@ html {
 .swipe-steam-container,
 .swipe-faceit-container {
     margin: 4px 0;
-    flex-shrink: 0;
 }
 
 .swipe-link-label {
@@ -4570,7 +4568,6 @@ html {
 /* Комментарий */
 .swipe-comment {
     margin: 4px 0;
-    flex-shrink: 0;
 }
 
 .swipe-comment-label {
@@ -4596,7 +4593,7 @@ html {
     line-height: 1.4;
 }
 
-/* Таймер — правый верхний угол */
+/* Таймер */
 .swipe-timer {
     position: absolute;
     top: 14px;
@@ -4609,7 +4606,6 @@ html {
     font-weight: 600;
     color: #fff;
     z-index: 20;
-    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .swipe-timer.warning {
@@ -4633,7 +4629,6 @@ html {
     transition: opacity 0.1s ease;
     z-index: 25;
     pointer-events: none;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .swipe-label-left {
@@ -4654,7 +4649,6 @@ html {
     font-size: 11px;
     color: var(--text-secondary);
     margin-top: 16px;
-    user-select: none;
     opacity: 0.6;
 }
 
@@ -4663,33 +4657,12 @@ html {
     transition: opacity 0.5s ease;
 }
 
-/* Лоадер */
-.swipe-loading {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 30px;
-}
-
-.swipe-loading.active {
-    display: flex;
-}
-
-.spinner-small {
-    width: 32px;
-    height: 32px;
-    border: 3px solid var(--border-color);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* Адаптив внутренних элементов — только паддинги и размеры текста */
-@media (max-width: 600px) {
+/* Адаптив */
+@media (max-width: 480px) {
+    .swipe-card {
+        max-width: 320px;
+    }
+    
     .swipe-card-content {
         padding: 16px 14px;
         gap: 10px;
@@ -4704,36 +4677,8 @@ html {
         font-size: 16px;
     }
     
-    .swipe-rating-value {
-        font-size: 14px;
-    }
-}
-
-@media (max-width: 480px) {
-    .swipe-card-content {
-        padding: 14px 12px;
-    }
-    
     .swipe-stats-row.three-cols .swipe-stat-value {
         font-size: 12px;
         padding: 6px 3px;
-    }
-    
-    .swipe-link-value,
-    .swipe-comment-text {
-        font-size: 11px;
-        padding: 8px 10px;
-    }
-    
-    .swipe-label {
-        font-size: 18px;
-        top: 20px;
-    }
-    
-    .swipe-timer {
-        top: 10px;
-        right: 10px;
-        padding: 4px 10px;
-        font-size: 12px;
     }
 }
