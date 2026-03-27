@@ -46,10 +46,6 @@ const Swipe = {
     chatLink: null,
     inviteLink: null,
     
-    // Сохраненные размеры для экрана ожидания
-    lastSwipeCardWidth: 0,
-    lastSwipeCardHeight: 0,
-    
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
         this.card = document.getElementById('swipeCard');
@@ -75,121 +71,21 @@ const Swipe = {
         }
     },
     
-    // ========== ФУНКЦИЯ ДЛЯ АВТО-ПОДГОНА РАЗМЕРА КАРТОЧКИ СВАЙПА ==========
+    // JS больше НЕ ТРОГАЕТ размеры карточки! Только центрирование
     adjustCardSize() {
         if (!this.card || this.isConnectionMode) return;
-        
-        setTimeout(() => {
-            const screenHeight = window.innerHeight;
-            const header = document.querySelector('.header');
-            const headerHeight = header ? header.offsetHeight : 60;
-            const bottomNav = document.querySelector('.bottom-nav');
-            const navHeight = bottomNav ? bottomNav.offsetHeight : 60;
-            const swipeHeader = document.querySelector('.swipe-header');
-            const headerTitleHeight = swipeHeader ? swipeHeader.offsetHeight : 80;
-            const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 20;
-            const maxWidth = 420;
-            let idealWidth = Math.min(maxWidth, window.innerWidth * 0.9);
-            const neededHeight = idealWidth * 1.25;
-            
-            console.log(`📐 Подгон карточки свайпа: экран=${screenHeight}, доступно=${availableHeight}, нужно=${neededHeight}, ширина=${idealWidth}`);
-            
-            if (neededHeight > availableHeight) {
-                const newWidth = Math.max(availableHeight / 1.25, 320);
-                
-                if (newWidth <= maxWidth) {
-                    this.card.style.width = newWidth + 'px';
-                    this.card.style.maxWidth = newWidth + 'px';
-                    this.card.style.margin = '0 auto';
-                    console.log(`✅ Карточка свайпа уменьшена до ${newWidth}px`);
-                } else {
-                    this.card.style.width = maxWidth + 'px';
-                    this.card.style.maxWidth = maxWidth + 'px';
-                }
-            } else {
-                this.card.style.width = '100%';
-                this.card.style.maxWidth = maxWidth + 'px';
-                this.card.style.margin = '0 auto';
-            }
-            
-            this.card.style.marginLeft = 'auto';
-            this.card.style.marginRight = 'auto';
-            
-            this.lastSwipeCardWidth = this.card.offsetWidth;
-            this.lastSwipeCardHeight = this.card.offsetHeight;
-            
-            console.log(`💾 Сохранены размеры: ${this.lastSwipeCardWidth}px x ${this.lastSwipeCardHeight}px`);
-        }, 100);
+        // Только центрирование — всё остальное делает CSS
+        this.card.style.marginLeft = 'auto';
+        this.card.style.marginRight = 'auto';
     },
     
-    // ========== ФУНКЦИЯ ДЛЯ АВТО-ПОДГОНА РАЗМЕРА КАРТОЧКИ ОЖИДАНИЯ ==========
     adjustConnectionCardSize() {
         const connectionCard = document.getElementById('connectionCard');
         if (!connectionCard || !this.isConnectionMode) return;
         
-        setTimeout(() => {
-            const swipeCard = document.getElementById('swipeCard');
-            let targetWidth = 0;
-            let targetHeight = 0;
-            
-            if (swipeCard && swipeCard.offsetWidth > 0 && swipeCard.offsetHeight > 0) {
-                targetWidth = swipeCard.offsetWidth;
-                targetHeight = swipeCard.offsetHeight;
-                console.log(`📏 Берем размер от карточки свайпа: ${targetWidth}px x ${targetHeight}px`);
-            } else if (this.lastSwipeCardWidth > 0 && this.lastSwipeCardHeight > 0) {
-                targetWidth = this.lastSwipeCardWidth;
-                targetHeight = this.lastSwipeCardHeight;
-                console.log(`📏 Берем сохраненные размеры: ${targetWidth}px x ${targetHeight}px`);
-            } else {
-                const screenHeight = window.innerHeight;
-                const header = document.querySelector('.header');
-                const headerHeight = header ? header.offsetHeight : 60;
-                const bottomNav = document.querySelector('.bottom-nav');
-                const navHeight = bottomNav ? bottomNav.offsetHeight : 60;
-                const swipeHeader = document.querySelector('.swipe-header');
-                const headerTitleHeight = swipeHeader ? swipeHeader.offsetHeight : 80;
-                const availableHeight = screenHeight - headerHeight - navHeight - headerTitleHeight - 20;
-                const maxWidth = 420;
-                let idealWidth = Math.min(maxWidth, window.innerWidth * 0.9);
-                const neededHeight = idealWidth * 1.25;
-                
-                if (neededHeight > availableHeight) {
-                    targetWidth = Math.max(availableHeight / 1.25, 320);
-                    targetHeight = targetWidth * 1.25;
-                } else {
-                    targetWidth = maxWidth;
-                    targetHeight = targetWidth * 1.25;
-                }
-                console.log(`📏 Рассчитали размер: ${targetWidth}px x ${targetHeight}px`);
-            }
-            
-            connectionCard.style.width = targetWidth + 'px';
-            connectionCard.style.maxWidth = targetWidth + 'px';
-            connectionCard.style.height = targetHeight + 'px';
-            connectionCard.style.minHeight = targetHeight + 'px';
-            connectionCard.style.maxHeight = targetHeight + 'px';
-            connectionCard.style.margin = '0 auto';
-            connectionCard.style.boxSizing = 'border-box';
-            
-            const content = connectionCard.querySelector('.swipe-card-content');
-            if (content) {
-                content.style.height = '100%';
-                content.style.display = 'flex';
-                content.style.flexDirection = 'column';
-                content.style.justifyContent = 'space-between';
-            }
-            
-            console.log(`✅ Экран ожидания установлен: ${targetWidth}px x ${targetHeight}px`);
-            
-            setTimeout(() => {
-                if (connectionCard.offsetWidth !== targetWidth || connectionCard.offsetHeight !== targetHeight) {
-                    connectionCard.style.width = targetWidth + 'px';
-                    connectionCard.style.height = targetHeight + 'px';
-                    console.log(`✅ Повторная подгонка: ${targetWidth}px x ${targetHeight}px`);
-                }
-            }, 200);
-            
-        }, 150);
+        // Только центрирование — всё остальное делает CSS
+        connectionCard.style.marginLeft = 'auto';
+        connectionCard.style.marginRight = 'auto';
     },
     
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
@@ -203,17 +99,12 @@ const Swipe = {
         }
 
         console.log('🔄 Swipe.startWithOpponent() вызван');
-        console.log('📦 opponent:', opponent);
-        console.log('📦 matchId:', matchId);
-        console.log('📦 expiresAt:', expiresAt);
-        console.log('📦 serverTime:', serverTime);
         
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
         this.isConnectionMode = false;
         
         this.mode = opponent.mode;
-        console.log('🎯 РЕЖИМ ИЗ БАЗЫ ДАННЫХ (matches.mode):', this.mode);
         
         this.gameCreated = false;
         this.gameCreating = false;
@@ -226,16 +117,9 @@ const Swipe = {
             } else {
                 this.matchExpiresAt = expiresAt;
             }
-            console.log('✅ matchExpiresAt (timestamp):', this.matchExpiresAt);
         }
         
-        const clientNow = Date.now();
-        let timeLeft = Math.floor((this.matchExpiresAt - clientNow) / 1000);
-        
-        console.log(`⏰ clientNow (timestamp): ${clientNow}`);
-        console.log(`⏰ expiresAt (timestamp): ${this.matchExpiresAt}`);
-        console.log(`⏰ Разница (мс): ${this.matchExpiresAt - clientNow}`);
-        console.log(`⏰ Осталось секунд: ${timeLeft}`);
+        const timeLeft = this.getTimeLeft();
         
         if (timeLeft <= 0) {
             console.warn('⚠️ Время на принятие истекло');
@@ -276,28 +160,20 @@ const Swipe = {
     },
     
     getTimeLeft() {
-        if (!this.matchExpiresAt) {
-            return 30;
-        }
-        
+        if (!this.matchExpiresAt) return 30;
         const clientNow = Date.now();
         const timeLeft = Math.max(0, Math.floor((this.matchExpiresAt - clientNow) / 1000));
         return Math.min(timeLeft, 30);
     },
     
     startCardTimer() {
-        console.log('⏱️ Запуск таймера на карточке');
-        
         if (this.cardTimerInterval) {
             clearInterval(this.cardTimerInterval);
             this.cardTimerInterval = null;
         }
         
         const timerElement = document.getElementById('swipeTimer');
-        if (!timerElement) {
-            console.warn('⚠️ timerElement не найден');
-            return;
-        }
+        if (!timerElement) return;
         
         const updateTimer = () => {
             const timeLeft = this.getTimeLeft();
@@ -447,8 +323,6 @@ const Swipe = {
         const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
         
         if (Math.abs(this.currentX) > threshold) {
-            
-            // 👇 ЗВУК ПРИ СВАЙПЕ
             if (window.Settings) Settings.swipe();
             
             this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
@@ -489,12 +363,9 @@ const Swipe = {
         }, this.ANIMATION_DURATION);
     },
     
-    // ========== ИСПРАВЛЕННЫЙ acceptPlayer ==========
     acceptPlayer() {
         console.log('✅ Принят игрок:', this.currentPlayer);
-        console.log('🎯 matchId:', this.currentMatchId);
         
-        // 👇 ЗВУК ПРИ ПРИНЯТИИ
         if (window.Settings) Settings.success();
         
         if (this.cardTimerInterval) {
@@ -536,7 +407,6 @@ const Swipe = {
         });
     },
     
-    // ========== ИСПРАВЛЕННЫЙ POLLING ==========
     startMatchStatusPolling(matchId) {
         console.log('🔄 Запускаем polling статуса матча для ID:', matchId);
         
@@ -552,7 +422,6 @@ const Swipe = {
             attempts++;
             
             if (attempts > MAX_ATTEMPTS) {
-                console.log('⏰ Polling превысил лимит попыток');
                 clearInterval(this.matchPolling);
                 this.matchPolling = null;
                 this.connectionTimeout();
@@ -563,30 +432,21 @@ const Swipe = {
                 const res = await fetch(`https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/status/${matchId}`);
                 const data = await res.json();
                 
-                console.log(`📦 Polling status response (${attempts}):`, data);
-                
                 if (data.status === 'both_accepted') {
-                    console.log('🎉 Оба приняли!');
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
-                    
                     this.updateConnectionUI('both_accepted');
                     this.createGame();
-                    this.adjustConnectionCardSize();
-                    
-                    // 👇 ДОБАВЛЯЕМ В ДРУЗЬЯ
                     this.addFriendAfterMatch();
                 }
                 
                 if (data.status === 'rejected') {
-                    console.log('❌ Матч отклонен');
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
                     this.handleRejection();
                 }
                 
                 if (data.status === 'expired') {
-                    console.log('⏰ Матч истек');
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
                     this.connectionTimeout();
@@ -598,69 +458,35 @@ const Swipe = {
         }, 1500);
     },
     
-    // ========== ОБНОВЛЕНИЕ UI СОЕДИНЕНИЯ ==========
     updateConnectionUI(status) {
-        console.log('🔄 Обновляем UI соединения, статус:', status);
-        
         const statusEl = document.getElementById('connectionStatus');
         const connectionLine = document.querySelector('.connection-line');
         const teammateAvatar = document.querySelector('.teammate-avatar');
         const connectionTimer = document.getElementById('connectionTimer');
         
         if (status === 'both_accepted') {
-            // Меняем статус
             if (statusEl) {
                 statusEl.innerHTML = 'Матч создан';
                 statusEl.classList.add('active');
             }
-            
-            // Аватарка становится нормальной
-            if (teammateAvatar) {
-                teammateAvatar.classList.add('connected');
-                const img = teammateAvatar.querySelector('img');
-                if (img) {
-                    img.style.filter = 'none';
-                    img.style.opacity = '1';
-                }
-            }
-            
-            // Полоска останавливается и становится оранжевой
-            if (connectionLine) {
-                connectionLine.classList.add('connected');
-            }
-            
-            // Таймер НЕ МЕНЯЕМ, просто убираем warning
-            if (connectionTimer) {
-                connectionTimer.classList.remove('warning');
-            }
-            
-            // Звук успеха
+            if (teammateAvatar) teammateAvatar.classList.add('connected');
+            if (connectionLine) connectionLine.classList.add('connected');
+            if (connectionTimer) connectionTimer.classList.remove('warning');
             if (window.Settings) Settings.success();
-            
         } else if (status === 'rejected') {
             if (statusEl) {
                 statusEl.innerHTML = 'Тиммейт отклонил';
                 statusEl.style.color = '#FF3B30';
             }
-            
             if (window.Settings) Settings.error();
         }
     },
     
-    // ========== ДОБАВЛЕНИЕ В ДРУЗЬЯ ==========
     async addFriendAfterMatch() {
-        console.log('👥 Добавляем тиммейта в друзья...');
-        
-        if (!this.currentPlayer) {
-            console.error('❌ Нет данных о тиммейте');
-            return;
-        }
+        if (!this.currentPlayer) return;
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        if (!telegram_id) {
-            console.error('❌ Нет telegram_id');
-            return;
-        }
+        if (!telegram_id) return;
         
         try {
             const response = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/friends/add', {
@@ -674,14 +500,6 @@ const Swipe = {
             
             const data = await response.json();
             console.log('📦 Добавление в друзья:', data);
-            
-            if (data.status === 'ok') {
-                console.log('✅ Тиммейт добавлен в друзья');
-                // Показываем уведомление (можно добавить позже)
-                // if (window.Notifications) Notifications.show('Тиммейт добавлен в друзья');
-            } else if (data.status === 'already_friends') {
-                console.log('ℹ️ Уже друзья');
-            }
         } catch (error) {
             console.error('❌ Ошибка добавления в друзья:', error);
         }
@@ -689,9 +507,7 @@ const Swipe = {
     
     rejectPlayer() {
         console.log('❌ Пропущен игрок:', this.currentPlayer);
-        console.log('🎯 matchId:', this.currentMatchId);
         
-        // 👇 ЗВУК ПРИ ОТКЛОНЕНИИ
         if (window.Settings) Settings.error();
         
         if (this.cardTimerInterval) {
@@ -717,7 +533,6 @@ const Swipe = {
                 })
             })
             .then(res => res.json())
-            .then(data => console.log('📦 Reject response:', data))
             .catch(error => console.error('Error rejecting:', error));
         }
         
@@ -727,8 +542,6 @@ const Swipe = {
     },
     
     startConnectionTimer() {
-        console.log('⏱️ Запуск таймера на экране ожидания');
-        
         if (this.connectionTimer) {
             clearInterval(this.connectionTimer);
             this.connectionTimer = null;
@@ -744,21 +557,16 @@ const Swipe = {
                 timerElement.innerHTML = `0с`;
                 clearInterval(this.connectionTimer);
                 this.connectionTimer = null;
-                
                 if (this.matchPolling) {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
                 }
-                
                 this.connectionTimeout();
                 return;
             }
             
-            if (timeLeft < 10) {
-                timerElement.classList.add('warning');
-            } else {
-                timerElement.classList.remove('warning');
-            }
+            if (timeLeft < 10) timerElement.classList.add('warning');
+            else timerElement.classList.remove('warning');
             
             timerElement.innerHTML = `${timeLeft}с`;
         };
@@ -767,7 +575,6 @@ const Swipe = {
         this.connectionTimer = setInterval(updateTimer, 1000);
     },
     
-    // ========== ИСПРАВЛЕННЫЙ showConnectionMode ==========
     showConnectionMode() {
         console.log('🔄 Показываем экран соединения');
         this.isConnectionMode = true;
@@ -776,26 +583,21 @@ const Swipe = {
         if (this.labelRight) this.labelRight.style.display = 'none';
         if (this.hint) this.hint.style.display = 'none';
         
-        // Скрываем экран свайпа и показываем экран соединения
         document.getElementById('swipeScreen').classList.remove('active');
         document.getElementById('connectionScreen').classList.add('active');
         
-        // Заполняем ник
         document.getElementById('teammateNick').textContent = this.currentPlayer?.nick || '';
         
-        // Добавляем ID для отображения через CSS
         const teammateInfo = document.querySelector('.teammate-info');
         if (teammateInfo && this.currentPlayer) {
             teammateInfo.setAttribute('data-player-id', this.currentPlayer.player_id || '');
         }
         
-        // Аватарка тиммейта (размытая в ожидании)
         const teammateAvatar = document.querySelector('.teammate-avatar .tg-avatar-svg');
         if (teammateAvatar && this.currentPlayer?.avatar) {
             teammateAvatar.innerHTML = `<img src="${this.currentPlayer.avatar}" class="teammate-avatar-img" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
         }
         
-        // Аватарка своя (нормальная)
         const selfAvatar = document.querySelector('.self-avatar .tg-avatar-svg');
         if (selfAvatar) {
             const myAvatar = localStorage.getItem('pingster_avatar') || Profile?.savedAvatarUrl;
@@ -804,11 +606,9 @@ const Swipe = {
             }
         }
         
-        // Убираем классы connected
         document.querySelector('.teammate-avatar')?.classList.remove('connected');
         document.querySelector('.connection-line')?.classList.remove('connected');
         
-        // Статус "Ожидание тиммейта"
         const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
             statusEl.innerHTML = 'Ожидание тиммейта';
@@ -816,29 +616,21 @@ const Swipe = {
             statusEl.style.color = '';
         }
         
-        // Кнопка всегда видна, но серая (текст уже "Перейти в чат")
         this.updateChatButton(false);
-        
-        // Запускаем таймер
         this.startConnectionTimer();
-        
-        // Подгоняем размер карточки
         this.adjustConnectionCardSize();
     },
     
-    // ========== ИСПРАВЛЕННЫЙ updateChatButton ==========
     updateChatButton(active, chatLink = null, inviteLink = null) {
         const button = document.getElementById('tgChatButton');
         const buttonText = document.getElementById('tgChatButtonText');
         
         if (!button || !buttonText) return;
         
-        // Кнопка всегда видна и текст всегда "Перейти в чат"
         button.style.display = 'flex';
         buttonText.textContent = 'Перейти в чат';
         
         if (active && chatLink) {
-            // Матч создан - активная кнопка
             button.classList.remove('disabled');
             button.classList.add('active');
             button.disabled = false;
@@ -846,15 +638,10 @@ const Swipe = {
             this.chatLink = chatLink;
             this.inviteLink = inviteLink;
             localStorage.setItem('currentChatLink', chatLink);
-            if (inviteLink) {
-                localStorage.setItem('currentInviteLink', inviteLink);
-            }
+            if (inviteLink) localStorage.setItem('currentInviteLink', inviteLink);
             
-            button.onclick = () => {
-                this.openChatLink();
-            };
+            button.onclick = () => this.openChatLink();
         } else {
-            // Ожидание - серая кнопка (нельзя нажать)
             button.classList.remove('active');
             button.classList.add('disabled');
             button.disabled = true;
@@ -866,33 +653,20 @@ const Swipe = {
         let chatLink = this.chatLink || localStorage.getItem('currentChatLink');
         let inviteLink = this.inviteLink || localStorage.getItem('currentInviteLink');
         
-        console.log('🚀 openChatLink() вызван');
-        console.log('📌 chatLink:', chatLink);
-        console.log('📌 inviteLink:', inviteLink);
-        
         if (chatLink) {
-            console.log('✅ Открываем чат:', chatLink);
-            
             const tg = window.Telegram?.WebApp;
             
             if (inviteLink) {
                 if (tg?.openTelegramLink) {
                     tg.openTelegramLink(inviteLink);
-                    setTimeout(() => {
-                        tg.openTelegramLink(chatLink);
-                    }, 1500);
+                    setTimeout(() => tg.openTelegramLink(chatLink), 1500);
                 } else {
                     window.open(inviteLink, '_blank');
-                    setTimeout(() => {
-                        window.open(chatLink, '_blank');
-                    }, 1500);
+                    setTimeout(() => window.open(chatLink, '_blank'), 1500);
                 }
             } else {
-                if (tg?.openTelegramLink) {
-                    tg.openTelegramLink(chatLink);
-                } else {
-                    window.open(chatLink, '_blank');
-                }
+                if (tg?.openTelegramLink) tg.openTelegramLink(chatLink);
+                else window.open(chatLink, '_blank');
             }
         } else {
             console.error('❌ Ссылка не найдена');
@@ -900,17 +674,10 @@ const Swipe = {
         }
     },
     
-    // ========== ИСПРАВЛЕННЫЙ createGame ==========
     createGame() {
-        if (this.gameCreating) {
-            console.log('⚠️ Игра уже создается, пропускаем');
-            return;
-        }
-        
-        console.log('Создаем игру для match_id:', this.currentMatchId);
+        if (this.gameCreating) return;
         
         if (!this.currentMatchId) {
-            console.log('Нет active match');
             this.exitSwipeMode('createGame: нет matchId');
             return;
         }
@@ -920,29 +687,15 @@ const Swipe = {
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/game/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                match_id: this.currentMatchId
-            })
+            body: JSON.stringify({ match_id: this.currentMatchId })
         })
         .then(res => res.json())
         .then(data => {
-            console.log('Game create response:', data);
-            
             if (data.status === 'ok' && data.chat_link) {
-                if (data.already_exists) {
-                    console.log('ℹ️ Игра уже существовала, используем существующую');
-                }
-                
                 this.updateChatButton(true, data.chat_link, data.invite_link);
-                console.log('✅ Кнопка чата активирована');
-                if (data.invite_link) {
-                    console.log('🔗 Invite link получен:', data.invite_link);
-                }
-                
                 this.gameCreated = true;
                 this.adjustConnectionCardSize();
             } else {
-                console.error('createGame error: no chat_link', data);
                 this.updateChatButton(false);
             }
         })
@@ -951,13 +704,10 @@ const Swipe = {
             this.updateChatButton(false);
         })
         .finally(() => {
-            setTimeout(() => {
-                this.gameCreating = false;
-            }, 3000);
+            setTimeout(() => { this.gameCreating = false; }, 3000);
         });
     },
     
-    // ========== ИСПРАВЛЕННЫЙ showPlayer ==========
     showPlayer(player) {
         this.currentPlayer = player;
         
@@ -979,35 +729,19 @@ const Swipe = {
             if (statItems && statItems.length >= 3) {
                 const rankLabelEl = statItems[0].querySelector('.swipe-stat-label');
                 if (rankLabelEl) {
-                    if (modeFromDB === 'FACEIT') {
-                        rankLabelEl.textContent = 'ELO FACEIT';
-                    } 
-                    else if (modeFromDB === 'PREMIER') {
-                        rankLabelEl.textContent = 'CS RATING';
-                    }
-                    else if (modeFromDB === 'PRIME' || modeFromDB === 'PUBLIC') {
-                        rankLabelEl.textContent = 'РАНГ';
-                    }
-                    else {
-                        rankLabelEl.textContent = '—';
-                    }
+                    if (modeFromDB === 'FACEIT') rankLabelEl.textContent = 'ELO FACEIT';
+                    else if (modeFromDB === 'PREMIER') rankLabelEl.textContent = 'CS RATING';
+                    else if (modeFromDB === 'PRIME' || modeFromDB === 'PUBLIC') rankLabelEl.textContent = 'РАНГ';
+                    else rankLabelEl.textContent = '—';
                 }
             }
             
             const rankEl = document.getElementById('swipeRank');
             if (rankEl) {
-                if (modeFromDB === 'FACEIT') {
-                    rankEl.textContent = player.rating ? player.rating : '0';
-                } 
-                else if (modeFromDB === 'PREMIER') {
-                    rankEl.textContent = player.rating ? player.rating : '0';
-                }
-                else if (modeFromDB === 'PRIME' || modeFromDB === 'PUBLIC') {
-                    rankEl.textContent = player.rank || '—';
-                }
-                else {
-                    rankEl.textContent = '—';
-                }
+                if (modeFromDB === 'FACEIT') rankEl.textContent = player.rating ? player.rating : '0';
+                else if (modeFromDB === 'PREMIER') rankEl.textContent = player.rating ? player.rating : '0';
+                else if (modeFromDB === 'PRIME' || modeFromDB === 'PUBLIC') rankEl.textContent = player.rank || '—';
+                else rankEl.textContent = '—';
             }
             
             const ageEl = document.getElementById('swipeAge');
@@ -1015,8 +749,7 @@ const Swipe = {
             
             const styleEl = document.getElementById('swipeStyle');
             if (styleEl) {
-                const styleText = player.style === 'fan' ? 'Fan' : 'Tryhard';
-                styleEl.textContent = styleText;
+                styleEl.textContent = player.style === 'fan' ? 'Fan' : 'Tryhard';
                 styleEl.setAttribute('data-style', player.style || 'fan');
             }
             
@@ -1054,9 +787,7 @@ const Swipe = {
         
         if (!hintShown) {
             this.hint.classList.remove('fade-out');
-            setTimeout(() => {
-                this.hint.classList.add('fade-out');
-            }, 3000);
+            setTimeout(() => this.hint.classList.add('fade-out'), 3000);
             localStorage.setItem('swipeHintShown', 'true');
         } else {
             this.hint.classList.add('fade-out');
@@ -1068,7 +799,6 @@ const Swipe = {
         this.mode = mode;
         this.playersQueue = [];
         this.isConnectionMode = false;
-        
         this.blockScroll();
         
         if (this.card) {
@@ -1088,18 +818,10 @@ const Swipe = {
             this.card.removeEventListener('pointercancel', this.onDragEndBound);
         }
         
-        if (this.connectionTimer) {
-            clearInterval(this.connectionTimer);
-            this.connectionTimer = null;
-        }
-        if (this.cardTimerInterval) {
-            clearInterval(this.cardTimerInterval);
-            this.cardTimerInterval = null;
-        }
-        if (this.matchPolling) {
-            clearInterval(this.matchPolling);
-            this.matchPolling = null;
-        }
+        if (this.connectionTimer) clearInterval(this.connectionTimer);
+        if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
+        if (this.matchPolling) clearInterval(this.matchPolling);
+        
         this.gameCreated = false;
         this.gameCreating = false;
         this.chatLink = null;
@@ -1107,8 +829,6 @@ const Swipe = {
     },
     
     connectionTimeout() {
-        console.log('⏰ Время истекло');
-        
         if (this.matchPolling) {
             clearInterval(this.matchPolling);
             this.matchPolling = null;
@@ -1116,54 +836,34 @@ const Swipe = {
         
         const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
-            statusEl.innerHTML = `Время истекло`;
+            statusEl.innerHTML = 'Время истекло';
             statusEl.style.color = '#FF3B30';
         }
         
-        setTimeout(() => {
-            this.exitSwipeMode('connectionTimeout');
-        }, 2000);
+        setTimeout(() => this.exitSwipeMode('connectionTimeout'), 2000);
     },
     
     handleRejection() {
-        console.log('❌ Тиммейт отклонил');
-        
-        if (this.connectionTimer) {
-            clearInterval(this.connectionTimer);
-            this.connectionTimer = null;
-        }
-        
-        if (this.matchPolling) {
-            clearInterval(this.matchPolling);
-            this.matchPolling = null;
-        }
+        if (this.connectionTimer) clearInterval(this.connectionTimer);
+        if (this.matchPolling) clearInterval(this.matchPolling);
         
         const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
-            statusEl.innerHTML = `Тиммейт отклонил`;
+            statusEl.innerHTML = 'Тиммейт отклонил';
             statusEl.style.color = '#FF3B30';
         }
         
         if (window.Settings) Settings.error();
         
-        setTimeout(() => {
-            this.exitSwipeMode('handleRejection');
-        }, 2000);
+        setTimeout(() => this.exitSwipeMode('handleRejection'), 2000);
     },
     
     exitConnectionMode() {
-        console.log('🔄 Выход из режима соединения');
         this.isConnectionMode = false;
-        
-        if (this.matchPolling) {
-            clearInterval(this.matchPolling);
-            this.matchPolling = null;
-        }
-        
+        if (this.matchPolling) clearInterval(this.matchPolling);
         if (this.labelLeft) this.labelLeft.style.display = 'block';
         if (this.labelRight) this.labelRight.style.display = 'block';
         if (this.hint) this.hint.style.display = 'block';
-        
         this.exitSwipeMode('exitConnectionMode');
     },
     
@@ -1180,54 +880,33 @@ const Swipe = {
         this.chatLink = null;
         this.inviteLink = null;
         
-        if (this.cardTimerInterval) {
-            clearInterval(this.cardTimerInterval);
-            this.cardTimerInterval = null;
-        }
-        if (this.connectionTimer) {
-            clearInterval(this.connectionTimer);
-            this.connectionTimer = null;
-        }
-        if (this.matchPolling) {
-            clearInterval(this.matchPolling);
-            this.matchPolling = null;
-        }
+        if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
+        if (this.connectionTimer) clearInterval(this.connectionTimer);
+        if (this.matchPolling) clearInterval(this.matchPolling);
         
         document.getElementById('connectionScreen').classList.remove('active');
-        if (window.App) {
-            App.showScreen('mainScreen', true);
-        } else {
-            window.location.href = '/';
-        }
+        if (window.App) App.showScreen('mainScreen', true);
+        else window.location.href = '/';
     }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('✅ Swipe: DOM загружен, финальная версия');
+    console.log('✅ Swipe: DOM загружен');
     window.Swipe = Swipe;
     
     window.addEventListener('resize', () => {
-        if (Swipe.card && !Swipe.isConnectionMode) {
-            Swipe.adjustCardSize();
-        }
-        if (Swipe.isConnectionMode) {
-            Swipe.adjustConnectionCardSize();
-        }
+        if (Swipe.card && !Swipe.isConnectionMode) Swipe.adjustCardSize();
+        if (Swipe.isConnectionMode) Swipe.adjustConnectionCardSize();
     });
     
     window.addEventListener('orientationchange', () => {
         setTimeout(() => {
-            if (Swipe.card && !Swipe.isConnectionMode) {
-                Swipe.adjustCardSize();
-            }
-            if (Swipe.isConnectionMode) {
-                Swipe.adjustConnectionCardSize();
-            }
+            if (Swipe.card && !Swipe.isConnectionMode) Swipe.adjustCardSize();
+            if (Swipe.isConnectionMode) Swipe.adjustConnectionCardSize();
         }, 200);
     });
 });
 
 if (document.getElementById('swipeScreen')?.classList.contains('active')) {
-    console.log('Swipe экран уже активен, инициализируем');
     setTimeout(() => Swipe.init(), 100);
 }
