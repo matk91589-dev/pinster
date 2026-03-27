@@ -4370,7 +4370,7 @@ html {
 }
 
 /* ============================================
-   СВАЙП-КАРТОЧКИ — ЧИСТОВАЯ ВЕРСИЯ
+   СВАЙП-КАРТОЧКИ — ПРАВИЛЬНЫЕ ПРОПОРЦИИ
    ============================================ */
 
 /* Контейнер для центрирования */
@@ -4383,10 +4383,12 @@ html {
     min-height: 0;
 }
 
-/* Сама карточка — без aspect-ratio, без фиксированной высоты */
+/* Сама карточка — 80% ширины экрана, пропорция 4:5 */
 .swipe-card {
-    width: 100%;
-    max-width: 380px;
+    width: 80vw;
+    max-width: 420px;
+    aspect-ratio: 4 / 5;
+    
     background: var(--surface);
     border-radius: 28px;
     border: 1px solid var(--border-color);
@@ -4397,18 +4399,29 @@ html {
     will-change: transform;
     transition: transform 0.1s ease-out;
     overflow: hidden;
+    
+    display: flex;
+    flex-direction: column;
 }
 
 .swipe-card:active {
     cursor: grabbing;
 }
 
-/* Внутренний контент — гибкая колонка */
+/* Внутренний контент — заполняет всю карточку */
 .swipe-card-content {
     display: flex;
     flex-direction: column;
     gap: 12px;
     padding: 20px 18px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Скрываем скролл, но оставляем прокрутку */
+.swipe-card-content::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
 }
 
 /* Верхняя строка: аватар + ник + рейтинг */
@@ -4416,6 +4429,7 @@ html {
     display: flex;
     align-items: center;
     gap: 14px;
+    flex-shrink: 0;
 }
 
 .swipe-avatar {
@@ -4483,6 +4497,7 @@ html {
     background: linear-gradient(90deg, transparent, var(--text-primary), transparent);
     opacity: 0.2;
     margin: 4px 0;
+    flex-shrink: 0;
 }
 
 /* Три колонки (ранг/возраст/стиль) */
@@ -4491,6 +4506,7 @@ html {
     grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
     margin: 6px 0;
+    flex-shrink: 0;
 }
 
 .swipe-stats-row.three-cols .swipe-stat-item {
@@ -4525,6 +4541,7 @@ html {
 .swipe-steam-container,
 .swipe-faceit-container {
     margin: 4px 0;
+    flex-shrink: 0;
 }
 
 .swipe-link-label {
@@ -4553,6 +4570,7 @@ html {
 /* Комментарий */
 .swipe-comment {
     margin: 4px 0;
+    flex-shrink: 0;
 }
 
 .swipe-comment-label {
@@ -4671,9 +4689,10 @@ html {
 }
 
 /* Адаптив под маленькие экраны */
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     .swipe-card {
-        max-width: 340px;
+        width: 85vw;
+        max-width: 380px;
     }
     
     .swipe-card-content {
@@ -4692,6 +4711,17 @@ html {
     
     .swipe-rating-value {
         font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .swipe-card {
+        width: 90vw;
+        max-width: 340px;
+    }
+    
+    .swipe-card-content {
+        padding: 14px 12px;
     }
     
     .swipe-stats-row.three-cols .swipe-stat-value {
