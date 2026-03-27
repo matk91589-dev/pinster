@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "description": "Pingster frontend static files",
   "scripts": {
-    "build": "exit 0"
+    "build": "cp -r . ./dist || xcopy . dist /E /I"
   }
 }
