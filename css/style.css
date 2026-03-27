@@ -4383,11 +4383,11 @@ html {
     min-height: 0;
 }
 
-/* Сама карточка — 70% ширины экрана, пропорция 4:5 */
+/* Сама карточка — 70% ширины экрана, пропорция 5:6 */
 .swipe-card {
     width: 70vw;
     max-width: 420px;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 5 / 6;
     
     background: var(--surface);
     border-radius: 28px;
