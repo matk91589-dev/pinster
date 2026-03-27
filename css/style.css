@@ -4370,23 +4370,24 @@ html {
 }
 
 /* ============================================
-   СВАЙП-КАРТОЧКИ — ПРОСТО И РАБОТАЕТ
+   СВАЙП-КАРТОЧКИ — ШИРЕ, ВЫШЕ, ЦЕНТР
    ============================================ */
 
-/* Контейнер для центрирования */
+/* Контейнер для центрирования — убираем вертикальное центрирование */
 .swipe-container {
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* Прижимаем к верху */
     justify-content: center;
     padding: 20px;
+    min-height: 0;
 }
 
-/* Карточка — фиксированная ширина, пропорция 4:5 */
+/* Сама карточка — шире, пропорция 3:4 (более широкая) */
 .swipe-card {
     width: 100%;
-    max-width: 360px;
-    aspect-ratio: 4 / 5;
+    max-width: 400px; /* Увеличил с 360px до 400px */
+    aspect-ratio: 3 / 4; /* 3:4 — шире, чем 4:5 */
     
     background: var(--surface);
     border-radius: 28px;
@@ -4403,18 +4404,33 @@ html {
     flex-direction: column;
     
     margin: 0 auto;
+    /* Добавляем отступ сверху, чтобы поднять карточку */
+    margin-top: 20px;
+}
+
+/* Для экранов с маленькой высотой — уменьшаем отступ сверху */
+@media (max-height: 700px) {
+    .swipe-card {
+        margin-top: 10px;
+    }
+}
+
+@media (max-height: 600px) {
+    .swipe-card {
+        margin-top: 5px;
+    }
 }
 
 .swipe-card:active {
     cursor: grabbing;
 }
 
-/* Внутренний контент */
+/* Внутренний контент — уменьшаем отступы сверху/снизу */
 .swipe-card-content {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 20px 18px;
+    gap: 10px; /* Уменьшил gap */
+    padding: 16px 18px; /* Уменьшил вертикальный паддинг с 20px до 16px */
     flex: 1;
     overflow-y: auto;
 }
@@ -4425,17 +4441,17 @@ html {
     background: transparent;
 }
 
-/* Верхняя строка */
+/* Верхняя строка — чуть меньше отступы */
 .swipe-player-row {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     flex-shrink: 0;
 }
 
 .swipe-avatar {
-    width: 65px;
-    height: 65px;
+    width: 60px; /* Чуть меньше */
+    height: 60px;
     flex-shrink: 0;
     border-radius: 50%;
     overflow: hidden;
@@ -4476,19 +4492,19 @@ html {
     gap: 6px;
     flex-shrink: 0;
     background: var(--input-bg);
-    padding: 6px 12px;
+    padding: 5px 10px; /* Уменьшил паддинг */
     border-radius: 30px;
 }
 
 .swipe-rating-value {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     color: var(--text-primary);
 }
 
 .swipe-rating-block .heart-icon svg {
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
 }
 
 /* Разделитель */
@@ -4497,15 +4513,15 @@ html {
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--text-primary), transparent);
     opacity: 0.2;
-    margin: 4px 0;
+    margin: 2px 0;
 }
 
 /* Три колонки */
 .swipe-stats-row.three-cols {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-    margin: 6px 0;
+    gap: 8px;
+    margin: 4px 0;
 }
 
 .swipe-stats-row.three-cols .swipe-stat-item {
@@ -4513,21 +4529,21 @@ html {
 }
 
 .swipe-stats-row.three-cols .swipe-stat-label {
-    font-size: 9px;
+    font-size: 8px;
     color: var(--text-secondary);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     display: block;
 }
 
 .swipe-stats-row.three-cols .swipe-stat-value {
     background: var(--input-bg);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 8px 6px;
-    font-size: 14px;
+    border-radius: 10px;
+    padding: 6px 4px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--text-primary);
     text-align: center;
@@ -4539,25 +4555,25 @@ html {
 /* Ссылки */
 .swipe-steam-container,
 .swipe-faceit-container {
-    margin: 4px 0;
+    margin: 2px 0;
 }
 
 .swipe-link-label {
-    font-size: 9px;
+    font-size: 8px;
     color: var(--text-secondary);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     display: block;
 }
 
 .swipe-link-value {
     background: var(--input-bg);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 10px 12px;
-    font-size: 12px;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 11px;
     font-weight: 500;
     color: var(--text-primary);
     white-space: nowrap;
@@ -4567,28 +4583,28 @@ html {
 
 /* Комментарий */
 .swipe-comment {
-    margin: 4px 0;
+    margin: 2px 0;
 }
 
 .swipe-comment-label {
-    font-size: 9px;
+    font-size: 8px;
     color: var(--text-secondary);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     display: block;
 }
 
 .swipe-comment-text {
     background: var(--input-bg);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 10px 12px;
-    font-size: 12px;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 11px;
     font-weight: 500;
     color: var(--text-primary);
-    min-height: 60px;
+    min-height: 55px;
     word-wrap: break-word;
     line-height: 1.4;
 }
@@ -4596,13 +4612,13 @@ html {
 /* Таймер */
 .swipe-timer {
     position: absolute;
-    top: 14px;
-    right: 14px;
+    top: 12px;
+    right: 12px;
     background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(8px);
-    padding: 5px 12px;
+    padding: 4px 10px;
     border-radius: 30px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     color: #fff;
     z-index: 20;
@@ -4621,8 +4637,8 @@ html {
 /* Лейблы свайпа */
 .swipe-label {
     position: absolute;
-    top: 28px;
-    font-size: 22px;
+    top: 24px;
+    font-size: 20px;
     font-weight: 800;
     letter-spacing: 2px;
     opacity: 0;
@@ -4632,13 +4648,13 @@ html {
 }
 
 .swipe-label-left {
-    left: 20px;
+    left: 18px;
     color: #FF5E5E;
     transform: rotate(-10deg);
 }
 
 .swipe-label-right {
-    right: 20px;
+    right: 18px;
     color: #5ACE5A;
     transform: rotate(10deg);
 }
@@ -4646,9 +4662,9 @@ html {
 /* Подсказка */
 .swipe-hint {
     text-align: center;
-    font-size: 11px;
+    font-size: 10px;
     color: var(--text-secondary);
-    margin-top: 16px;
+    margin-top: 12px;
     opacity: 0.6;
 }
 
@@ -4660,25 +4676,25 @@ html {
 /* Адаптив */
 @media (max-width: 480px) {
     .swipe-card {
-        max-width: 320px;
+        max-width: 340px;
     }
     
     .swipe-card-content {
-        padding: 16px 14px;
-        gap: 10px;
+        padding: 14px 12px;
+        gap: 8px;
     }
     
     .swipe-avatar {
-        width: 55px;
-        height: 55px;
+        width: 50px;
+        height: 50px;
     }
     
     .swipe-player-nick {
-        font-size: 16px;
+        font-size: 15px;
     }
     
     .swipe-stats-row.three-cols .swipe-stat-value {
-        font-size: 12px;
-        padding: 6px 3px;
+        font-size: 11px;
+        padding: 5px 2px;
     }
 }
