@@ -4370,103 +4370,61 @@ html {
 }
 
 /* ============================================
-   СВАЙП-КАРТОЧКИ — ФИКС ВЁРСТКИ (ЕДИНЫЙ)
+   СВАЙП-КАРТОЧКИ — ЧИСТОВАЯ ВЕРСИЯ
    ============================================ */
 
-/* Контейнер для карточки — центрирование */
-.swipe-card-container {
+/* Контейнер для центрирования */
+.swipe-container {
     flex: 1;
-    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: visible;
-    min-height: 0;
     padding: 20px;
+    min-height: 0;
 }
 
-/* Основа карточки */
+/* Сама карточка — без aspect-ratio, без фиксированной высоты */
 .swipe-card {
     width: 100%;
-    max-width: 360px;
-    height: auto;
-    min-height: 0;
-    
-    display: flex;
-    flex-direction: column;
-    
-    padding: 20px 16px;
-    box-sizing: border-box;
-    overflow: visible;
-    
+    max-width: 380px;
     background: var(--surface);
-    border-radius: 24px;
+    border-radius: 28px;
     border: 1px solid var(--border-color);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
     cursor: grab;
-    
-    margin: 0 auto;
     position: relative;
     touch-action: pan-y pinch-zoom;
     will-change: transform;
+    transition: transform 0.1s ease-out;
+    overflow: hidden;
 }
 
 .swipe-card:active {
     cursor: grabbing;
 }
 
-/* Анимация при свайпе */
-.swipe-card.right-swipe {
-    transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
-}
-
-.swipe-card.left-swipe {
-    transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
-}
-
-/* Контент внутри карточки */
+/* Внутренний контент — гибкая колонка */
 .swipe-card-content {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    min-height: 0;
+    padding: 20px 18px;
 }
 
-/* Скрываем скролл, но оставляем возможность прокрутки */
-.swipe-card-content::-webkit-scrollbar {
-    width: 0;
-    background: transparent;
-}
-
-/* Верхняя часть с аватаркой и ником */
+/* Верхняя строка: аватар + ник + рейтинг */
 .swipe-player-row {
     display: flex;
     align-items: center;
-    gap: 15px;
-    flex-shrink: 0;
+    gap: 14px;
 }
 
-/* Аватарка — фиксированный размер */
 .swipe-avatar {
-    width: 70px;
-    height: 70px;
+    width: 65px;
+    height: 65px;
     flex-shrink: 0;
     border-radius: 50%;
     overflow: hidden;
-    background: var(--surface-light);
-}
-
-.swipe-avatar .tg-avatar-svg {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: var(--input-bg);
 }
 
 .swipe-avatar img {
@@ -4475,14 +4433,13 @@ html {
     object-fit: cover;
 }
 
-/* Блок с ником */
 .swipe-name-block {
     flex: 1;
     min-width: 0;
 }
 
 .swipe-player-id {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--accent);
     font-family: monospace;
     font-weight: 600;
@@ -4498,23 +4455,25 @@ html {
     text-overflow: ellipsis;
 }
 
-/* Рейтинг доверия */
 .swipe-rating-block {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     flex-shrink: 0;
+    background: var(--input-bg);
+    padding: 6px 12px;
+    border-radius: 30px;
 }
 
 .swipe-rating-value {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--text-primary);
 }
 
 .swipe-rating-block .heart-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
 }
 
 /* Разделитель */
@@ -4522,22 +4481,20 @@ html {
     width: 100%;
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--text-primary), transparent);
-    opacity: 0.3;
-    margin: 4px 0 8px 0;
+    opacity: 0.2;
+    margin: 4px 0;
 }
 
 /* Три колонки (ранг/возраст/стиль) */
 .swipe-stats-row.three-cols {
-    display: grid !important;
+    display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    margin: 8px 0;
+    gap: 10px;
+    margin: 6px 0;
 }
 
 .swipe-stats-row.three-cols .swipe-stat-item {
-    position: relative;
-    background: transparent;
-    padding: 0;
+    text-align: center;
 }
 
 .swipe-stats-row.three-cols .swipe-stat-label {
@@ -4545,35 +4502,29 @@ html {
     color: var(--text-secondary);
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.5px;
     margin-bottom: 6px;
     display: block;
 }
 
 .swipe-stats-row.three-cols .swipe-stat-value {
-    width: 100%;
     background: var(--input-bg);
     border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 8px 4px;
-    color: var(--text-primary);
+    border-radius: 12px;
+    padding: 8px 6px;
     font-size: 14px;
     font-weight: 600;
+    color: var(--text-primary);
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-/* Ссылки Steam / Faceit */
+/* Ссылки */
 .swipe-steam-container,
 .swipe-faceit-container {
     margin: 4px 0;
-    position: relative;
 }
 
 .swipe-link-label {
@@ -4581,20 +4532,19 @@ html {
     color: var(--text-secondary);
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.5px;
     margin-bottom: 6px;
     display: block;
 }
 
 .swipe-link-value {
-    width: 100%;
     background: var(--input-bg);
     border: 1px solid var(--border-color);
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 10px 12px;
-    color: var(--text-primary);
     font-size: 12px;
     font-weight: 500;
+    color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -4603,7 +4553,6 @@ html {
 /* Комментарий */
 .swipe-comment {
     margin: 4px 0;
-    position: relative;
 }
 
 .swipe-comment-label {
@@ -4611,43 +4560,43 @@ html {
     color: var(--text-secondary);
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.5px;
     margin-bottom: 6px;
     display: block;
 }
 
 .swipe-comment-text {
-    width: 100%;
     background: var(--input-bg);
     border: 1px solid var(--border-color);
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 10px 12px;
-    color: var(--text-primary);
     font-size: 12px;
     font-weight: 500;
+    color: var(--text-primary);
     min-height: 60px;
     word-wrap: break-word;
     line-height: 1.4;
 }
 
-/* Таймер на карточке */
+/* Таймер — правый верхний угол */
 .swipe-timer {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    background: rgba(0, 0, 0, 0.6);
-    padding: 4px 10px;
-    border-radius: 20px;
+    top: 14px;
+    right: 14px;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(8px);
+    padding: 5px 12px;
+    border-radius: 30px;
     font-size: 13px;
     font-weight: 600;
-    backdrop-filter: blur(4px);
-    color: var(--text-primary);
-    z-index: 15;
+    color: #fff;
+    z-index: 20;
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .swipe-timer.warning {
-    color: #FF3B30;
-    animation: timerPulse 1s infinite;
+    color: #FF6B4A;
+    animation: timerPulse 0.8s infinite;
 }
 
 @keyframes timerPulse {
@@ -4655,29 +4604,30 @@ html {
     50% { opacity: 0.6; }
 }
 
-/* Лейблы для свайпа (влево/вправо) */
+/* Лейблы свайпа */
 .swipe-label {
     position: absolute;
-    top: 24px;
+    top: 28px;
     font-size: 22px;
     font-weight: 800;
     letter-spacing: 2px;
     opacity: 0;
     transition: opacity 0.1s ease;
-    z-index: 20;
+    z-index: 25;
     pointer-events: none;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .swipe-label-left {
     left: 20px;
-    color: #FF3B30;
-    transform: rotate(-8deg);
+    color: #FF5E5E;
+    transform: rotate(-10deg);
 }
 
 .swipe-label-right {
     right: 20px;
-    color: #4CAF50;
-    transform: rotate(8deg);
+    color: #5ACE5A;
+    transform: rotate(10deg);
 }
 
 /* Подсказка */
@@ -4685,9 +4635,9 @@ html {
     text-align: center;
     font-size: 11px;
     color: var(--text-secondary);
-    margin-top: 12px;
+    margin-top: 16px;
     user-select: none;
-    opacity: 0.7;
+    opacity: 0.6;
 }
 
 .swipe-hint.fade-out {
@@ -4700,7 +4650,7 @@ html {
     display: none;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 30px;
 }
 
 .swipe-loading.active {
@@ -4708,24 +4658,32 @@ html {
 }
 
 .spinner-small {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border: 3px solid var(--border-color);
     border-top-color: var(--accent);
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: spin 0.8s linear infinite;
 }
 
-/* Адаптив */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Адаптив под маленькие экраны */
 @media (max-width: 480px) {
     .swipe-card {
-        max-width: 320px;
-        padding: 16px 12px;
+        max-width: 340px;
+    }
+    
+    .swipe-card-content {
+        padding: 16px 14px;
+        gap: 10px;
     }
     
     .swipe-avatar {
-        width: 60px;
-        height: 60px;
+        width: 55px;
+        height: 55px;
     }
     
     .swipe-player-nick {
@@ -4733,17 +4691,12 @@ html {
     }
     
     .swipe-rating-value {
-        font-size: 16px;
+        font-size: 14px;
     }
     
     .swipe-stats-row.three-cols .swipe-stat-value {
         font-size: 12px;
-        padding: 6px 2px;
-        min-height: 38px;
-    }
-    
-    .swipe-stats-row.three-cols .swipe-stat-label {
-        font-size: 8px;
+        padding: 6px 3px;
     }
     
     .swipe-link-value,
@@ -4754,6 +4707,13 @@ html {
     
     .swipe-label {
         font-size: 18px;
-        top: 16px;
+        top: 20px;
+    }
+    
+    .swipe-timer {
+        top: 10px;
+        right: 10px;
+        padding: 4px 10px;
+        font-size: 12px;
     }
 }
