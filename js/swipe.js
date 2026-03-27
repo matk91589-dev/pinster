@@ -71,19 +71,101 @@ const Swipe = {
         }
     },
     
-    // JS больше НЕ ТРОГАЕТ размеры карточки! Только центрирование
+    // ========== ГЛАВНАЯ ФУНКЦИЯ — РАЗМЕРЫ КАРТОЧКИ ==========
     adjustCardSize() {
         if (!this.card || this.isConnectionMode) return;
-        // Только центрирование — всё остальное делает CSS
+        
+        // Получаем размеры экрана
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        
+        // Хедеры
+        const header = document.querySelector('.header');
+        const bottomNav = document.querySelector('.bottom-nav');
+        const telegramHeader = window.Telegram?.WebApp?.headerHeight || 0;
+        
+        const headerHeight = header ? header.offsetHeight : 60;
+        const navHeight = bottomNav ? bottomNav.offsetHeight : 60;
+        
+        // ДОСТУПНОЕ ПРОСТРАНСТВО (минус все хедеры и отступы)
+        const availableWidth = screenWidth - 32; // отступы по бокам 16px + 16px
+        const availableHeight = screenHeight - headerHeight - navHeight - telegramHeader - 32;
+        
+        // ПРОПОРЦИЯ доступного пространства
+        const containerRatio = availableWidth / availableHeight;
+        
+        // Карточка занимает 85% от доступного пространства
+        // и сохраняет ту же пропорцию, что и контейнер
+        const cardPercent = 0.85;
+        
+        let cardWidth, cardHeight;
+        
+        // Вычисляем размеры карточки с сохранением пропорции контейнера
+        const widthByHeight = availableHeight * cardPercent * containerRatio;
+        const heightByWidth = availableWidth * cardPercent / containerRatio;
+        
+        if (widthByHeight <= availableWidth * cardPercent) {
+            // Ограничиваем по высоте
+            cardHeight = availableHeight * cardPercent;
+            cardWidth = cardHeight * containerRatio;
+        } else {
+            // Ограничиваем по ширине
+            cardWidth = availableWidth * cardPercent;
+            cardHeight = cardWidth / containerRatio;
+        }
+        
+        // Применяем размеры
+        this.card.style.width = cardWidth + 'px';
+        this.card.style.height = cardHeight + 'px';
+        this.card.style.maxWidth = cardWidth + 'px';
+        this.card.style.maxHeight = cardHeight + 'px';
+        
+        // Центрирование
         this.card.style.marginLeft = 'auto';
         this.card.style.marginRight = 'auto';
+        
+        console.log(`📐 Экран: ${screenWidth}x${screenHeight}`);
+        console.log(`📐 Контейнер: ${availableWidth}x${availableHeight}, пропорция: ${containerRatio.toFixed(3)}`);
+        console.log(`📐 Карточка: ${cardWidth.toFixed(0)}x${cardHeight.toFixed(0)}, пропорция: ${(cardWidth/cardHeight).toFixed(3)}`);
     },
     
     adjustConnectionCardSize() {
         const connectionCard = document.getElementById('connectionCard');
         if (!connectionCard || !this.isConnectionMode) return;
         
-        // Только центрирование — всё остальное делает CSS
+        // Используем ту же логику для карточки ожидания
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        
+        const header = document.querySelector('.header');
+        const bottomNav = document.querySelector('.bottom-nav');
+        const telegramHeader = window.Telegram?.WebApp?.headerHeight || 0;
+        
+        const headerHeight = header ? header.offsetHeight : 60;
+        const navHeight = bottomNav ? bottomNav.offsetHeight : 60;
+        
+        const availableWidth = screenWidth - 32;
+        const availableHeight = screenHeight - headerHeight - navHeight - telegramHeader - 32;
+        
+        const containerRatio = availableWidth / availableHeight;
+        const cardPercent = 0.85;
+        
+        let cardWidth, cardHeight;
+        
+        const widthByHeight = availableHeight * cardPercent * containerRatio;
+        
+        if (widthByHeight <= availableWidth * cardPercent) {
+            cardHeight = availableHeight * cardPercent;
+            cardWidth = cardHeight * containerRatio;
+        } else {
+            cardWidth = availableWidth * cardPercent;
+            cardHeight = cardWidth / containerRatio;
+        }
+        
+        connectionCard.style.width = cardWidth + 'px';
+        connectionCard.style.height = cardHeight + 'px';
+        connectionCard.style.maxWidth = cardWidth + 'px';
+        connectionCard.style.maxHeight = cardHeight + 'px';
         connectionCard.style.marginLeft = 'auto';
         connectionCard.style.marginRight = 'auto';
     },
@@ -155,6 +237,9 @@ const Swipe = {
             this.setupEventListeners();
             this.isInitialized = true;
         }
+        
+        // Применяем размеры карточки
+        setTimeout(() => this.adjustCardSize(), 50);
         
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
     },
@@ -618,7 +703,7 @@ const Swipe = {
         
         this.updateChatButton(false);
         this.startConnectionTimer();
-        this.adjustConnectionCardSize();
+        setTimeout(() => this.adjustConnectionCardSize(), 50);
     },
     
     updateChatButton(active, chatLink = null, inviteLink = null) {
@@ -694,7 +779,7 @@ const Swipe = {
             if (data.status === 'ok' && data.chat_link) {
                 this.updateChatButton(true, data.chat_link, data.invite_link);
                 this.gameCreated = true;
-                this.adjustConnectionCardSize();
+                setTimeout(() => this.adjustConnectionCardSize(), 50);
             } else {
                 this.updateChatButton(false);
             }
@@ -763,7 +848,7 @@ const Swipe = {
             if (commentEl) commentEl.textContent = player.comment || '';
             
             this.updateLinksVisibility();
-            this.adjustCardSize();
+            setTimeout(() => this.adjustCardSize(), 50);
         }
     },
     
