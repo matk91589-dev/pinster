@@ -4370,7 +4370,7 @@ html {
 }
 
 /* ============================================
-   СВАЙП-КАРТОЧКИ — ЖЁСТКАЯ ФИКСАЦИЯ РАЗМЕРОВ
+   СВАЙП-КАРТОЧКИ — СТИЛИ (РАЗМЕРЫ ЗАДАЁТ JS)
    ============================================ */
 
 /* Контейнер для центрирования */
@@ -4383,13 +4383,8 @@ html {
     min-height: 0;
 }
 
-/* Сама карточка — фиксированные пропорции */
+/* Сама карточка — размеры задаются через JS, здесь только стилизация */
 .swipe-card {
-    width: 70vw;
-    max-width: 420px;
-    height: auto;
-    aspect-ratio: 4 / 5;
-    
     background: var(--surface);
     border-radius: 28px;
     border: 1px solid var(--border-color);
@@ -4404,9 +4399,8 @@ html {
     display: flex;
     flex-direction: column;
     
-    /* Центрирование */
-    margin-left: auto;
-    margin-right: auto;
+    /* Центрирование — JS задаст ширину/высоту, а margin автоцентрирует */
+    margin: 0 auto;
 }
 
 .swipe-card:active {
@@ -4694,42 +4688,7 @@ html {
     to { transform: rotate(360deg); }
 }
 
-/* Адаптив под разные экраны */
-@media (min-width: 1200px) {
-    .swipe-card {
-        width: 420px;
-    }
-}
-
-@media (max-width: 1199px) and (min-width: 768px) {
-    .swipe-card {
-        width: 45vw;
-        max-width: 400px;
-    }
-}
-
-@media (max-width: 767px) and (min-width: 600px) {
-    .swipe-card {
-        width: 55vw;
-        max-width: 380px;
-    }
-}
-
-@media (max-width: 599px) and (min-width: 480px) {
-    .swipe-card {
-        width: 65vw;
-        max-width: 360px;
-    }
-}
-
-@media (max-width: 479px) {
-    .swipe-card {
-        width: 75vw;
-        max-width: 320px;
-    }
-}
-
-/* Адаптив внутренних элементов */
+/* Адаптив внутренних элементов — только паддинги и размеры текста */
 @media (max-width: 600px) {
     .swipe-card-content {
         padding: 16px 14px;
