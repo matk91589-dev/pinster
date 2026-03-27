@@ -1,0 +1,8 @@
+{
+  "name": "pingster-frontend",
+  "version": "1.0.0",
+  "description": "Pingster frontend static files",
+  "scripts": {
+    "build": "exit 0"
+  }
+}
