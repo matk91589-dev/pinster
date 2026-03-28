@@ -3919,3 +3919,11 @@ html {
     pointer-events: none;
     z-index: 5;
 }
+
+/* ===== ОПТИМИЗАЦИЯ ДЛЯ ПЛАВНОЙ АНИМАЦИИ ===== */
+.swipe-card {
+    will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
