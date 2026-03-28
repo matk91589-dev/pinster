@@ -109,10 +109,9 @@ const Swipe = {
         };
         
         const doCycle = () => {
-            if (this.hintAnimationStopped || this.hintCycles >= MAX_CYCLES) {
-                stopAnimation();
-                return;
-            }
+            if (this.hintAnimationStopped) return;
+            
+            this.hintCycles++;
             
             // ВПРАВО (зелёный)
             card.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
@@ -135,18 +134,19 @@ const Swipe = {
                     card.style.transform = 'translateX(0) rotate(0deg)';
                     card.classList.remove('idle-left', 'idle-right');
                     
-                    this.hintCycles++;
-                    
-                    if (this.hintCycles < MAX_CYCLES && !this.hintAnimationStopped) {
-                        const t3 = setTimeout(() => {
-                            if (!this.hintAnimationStopped) {
-                                doCycle();
-                            }
-                        }, 2000);
-                        this.hintTimeoutIds.push(t3);
-                    } else {
+                    // Если сделали все циклы — останавливаемся
+                    if (this.hintCycles >= MAX_CYCLES) {
                         stopAnimation();
+                        return;
                     }
+                    
+                    // Пауза 2 секунды перед следующим циклом
+                    const t3 = setTimeout(() => {
+                        if (!this.hintAnimationStopped) {
+                            doCycle();
+                        }
+                    }, 2000);
+                    this.hintTimeoutIds.push(t3);
                     
                 }, 400);
                 this.hintTimeoutIds.push(t2);
@@ -380,7 +380,6 @@ const Swipe = {
     onDragStart(e) {
         if (this.isConnectionMode) return;
         
-        // Останавливаем анимацию подсказки
         this.hintAnimationStopped = true;
         this.card.classList.remove('idle-left', 'idle-right');
         
