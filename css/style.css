@@ -3783,30 +3783,10 @@ html {
     to { transform: rotate(360deg); }
 }
 
-/* ===== АНИМАЦИЯ КАРТОЧКИ ===== */
-@keyframes tinderSway {
-    0% {
-        transform: rotate(0deg) translateX(0);
-    }
-    25% {
-        transform: rotate(8deg) translateX(35px);
-    }
-    75% {
-        transform: rotate(-8deg) translateX(-35px);
-    }
-    100% {
-        transform: rotate(0deg) translateX(0);
-    }
-}
-
+/* ===== АНИМАЦИЯ КАРТОЧКИ — ТОЛЬКО ЧЕРЕЗ JS ===== */
+/* Убираем бесконечную CSS-анимацию, теперь всё через JS */
 .swipe-card:not(.dragging):not(.swiping-right):not(.swiping-left) {
-    animation: tinderSway 2.2s ease-in-out infinite;
-}
-
-.swipe-card.dragging,
-.swipe-card.swiping-right,
-.swipe-card.swiping-left {
-    animation: none;
+    /* НЕТ АНИМАЦИИ! Всё управляется через JS */
 }
 
 /* ===== ОСНОВНОЙ ПСЕВДОЭЛЕМЕНТ ДЛЯ ЗАЛИВАНИЯ ===== */
