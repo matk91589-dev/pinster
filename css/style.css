@@ -3806,55 +3806,7 @@ html {
     animation: none;
 }
 
-/* ===== ЦВЕТНЫЕ УГОЛКИ ПРИ НАКЛОНЕ ===== */
-.swipe-card::before,
-.swipe-card::after {
-    content: "";
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    pointer-events: none;
-    z-index: 15;
-    border-radius: 50%;
-    filter: blur(30px);
-}
-
-/* Зелёный уголок — левый верхний (при наклоне вправо) */
-.swipe-card::before {
-    top: -30px;
-    left: -30px;
-    background: radial-gradient(circle, rgba(80, 200, 120, 0.8), rgba(80, 200, 120, 0));
-}
-
-/* Красный уголок — правый верхний (при наклоне влево) */
-.swipe-card::after {
-    top: -30px;
-    right: -30px;
-    background: radial-gradient(circle, rgba(255, 80, 80, 0.8), rgba(255, 80, 80, 0));
-}
-
-/* При наклоне вправо — зелёный левый уголок */
-.swipe-card.swiping-right::before {
-    opacity: 1;
-}
-
-/* При наклоне влево — красный правый уголок */
-.swipe-card.swiping-left::after {
-    opacity: 1;
-}
-
-/* ===== ПОДСКАЗКА (ПОКАЧИВАНИЕ) ===== */
-.swipe-card.idle-left::before {
-    background: linear-gradient(-135deg, rgba(255, 80, 80, 0.15), transparent 40%);
-}
-
-.swipe-card.idle-right::before {
-    background: linear-gradient(135deg, rgba(80, 200, 120, 0.15), transparent 40%);
-}
-
-/* ===== ЭФФЕКТ ПРИ СВАЙПЕ ===== */
+/* ===== ОСНОВНОЙ ПСЕВДОЭЛЕМЕНТ ДЛЯ ЗАЛИВАНИЯ ===== */
 .swipe-card::after {
     content: "";
     position: absolute;
@@ -3872,4 +3824,49 @@ html {
 
 .swipe-card.swiping-left::after {
     background: rgba(255, 80, 80, 0.25);
+}
+
+/* ===== ЦВЕТНЫЕ УГОЛКИ ПРИ НАКЛОНЕ ===== */
+.swipe-card::before {
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    z-index: 15;
+    border-radius: 50%;
+    filter: blur(30px);
+    top: -30px;
+    left: -30px;
+    background: radial-gradient(circle, rgba(80, 200, 120, 0.8), rgba(80, 200, 120, 0));
+}
+
+/* При наклоне вправо — зелёный левый уголок */
+.swipe-card.swiping-right::before {
+    opacity: 1;
+}
+
+/* Красный уголок для наклона влево — отдельный псевдоэлемент не нужен, меняем цвет и позицию */
+.swipe-card.swiping-left::before {
+    left: auto;
+    right: -30px;
+    background: radial-gradient(circle, rgba(255, 80, 80, 0.8), rgba(255, 80, 80, 0));
+    opacity: 1;
+}
+
+/* ===== ПОДСКАЗКА (ПОКАЧИВАНИЕ) — отдельный класс, не конфликтует ===== */
+.swipe-card.idle-left::before {
+    opacity: 0.5;
+    background: linear-gradient(-135deg, rgba(255, 80, 80, 0.15), transparent 40%);
+    left: -30px;
+    right: auto;
+}
+
+.swipe-card.idle-right::before {
+    opacity: 0.5;
+    background: linear-gradient(135deg, rgba(80, 200, 120, 0.15), transparent 40%);
+    left: auto;
+    right: -30px;
 }
