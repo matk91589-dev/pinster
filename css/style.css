@@ -2471,13 +2471,13 @@ input:checked + .slider:before {
 /* Таймер — левый верхний угол карточки */
 .swipe-timer {
     position: absolute;
-    top: 12px;
-    left: 12px;
-    background: rgba(0, 0, 0, 0.6);
+    top: 14px;
+    left: 14px;
+    background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(8px);
-    padding: 4px 10px;
+    padding: 6px 14px;
     border-radius: 30px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     color: #fff;
     z-index: 20;
@@ -2496,19 +2496,19 @@ input:checked + .slider:before {
 /* Адаптивные отступы внутри карточки */
 @media (max-width: 600px) {
     .swipe-timer {
-        top: 8px;
-        left: 8px;
-        padding: 3px 8px;
-        font-size: 11px;
+        top: 10px;
+        left: 10px;
+        padding: 5px 12px;
+        font-size: 13px;
     }
 }
 
 @media (max-width: 400px) {
     .swipe-timer {
-        top: 6px;
-        left: 6px;
-        padding: 3px 7px;
-        font-size: 10px;
+        top: 8px;
+        left: 8px;
+        padding: 4px 10px;
+        font-size: 12px;
     }
 }
 
@@ -2574,6 +2574,12 @@ input:checked + .slider:before {
         height: 60px;
     }
     
+    /* SVG внутри аватара на планшетах */
+    .swipe-avatar .tg-avatar-svg svg {
+        width: 32px;
+        height: 32px;
+    }
+    
     .swipe-player-nick {
         font-size: 16px;
     }
@@ -2599,6 +2605,12 @@ input:checked + .slider:before {
         height: 52px;
     }
     
+    /* SVG внутри аватара на телефонах */
+    .swipe-avatar .tg-avatar-svg svg {
+        width: 28px;
+        height: 28px;
+    }
+    
     .swipe-player-nick {
         font-size: 15px;
     }
@@ -2612,7 +2624,6 @@ input:checked + .slider:before {
         padding: 6px 4px;
     }
 }
-
 /* ===== PINGSTER PREMIUM PATCH ===== */
 .phone-frame {
     padding: 0;
