@@ -806,7 +806,7 @@ const Swipe = {
             const commentEl = document.getElementById('swipeComment');
             if (commentEl) commentEl.textContent = player.comment || '';
             
-            // Обновляем аватарку
+            // Обновляем аватарку с принудительными размерами
             this.updateAvatar(player);
             
             this.updateLinksVisibility();
@@ -821,9 +821,11 @@ const Swipe = {
         const hasAvatar = player.avatar && player.avatar !== 'null' && player.avatar !== '';
         
         if (hasAvatar) {
-            avatarContainer.innerHTML = `<img src="${player.avatar}" alt="avatar">`;
+            // Принудительные инлайн-стили для аватарки
+            avatarContainer.innerHTML = `<img src="${player.avatar}" alt="avatar" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:50%;">`;
         } else {
-            avatarContainer.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            // SVG-заглушка с инлайн-стилями
+            avatarContainer.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block; margin:auto;">
                 <circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/>
                 <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/>
             </svg>`;
