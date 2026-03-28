@@ -99,14 +99,23 @@ const Swipe = {
             this.hintTimeoutIds = [];
         };
         
+        const stopAnimation = () => {
+            if (this.hintAnimationStopped) return;
+            this.hintAnimationStopped = true;
+            clearTimeouts();
+            card.style.transition = '';
+            card.style.transform = 'translateX(0) rotate(0deg)';
+            card.classList.remove('idle-left', 'idle-right');
+        };
+        
         const doCycle = () => {
             if (this.hintAnimationStopped || this.hintCycles >= MAX_CYCLES) {
-                clearTimeouts();
+                stopAnimation();
                 return;
             }
             
-            // ВПРАВО (наклон вправо, зелёный градиент)
-            card.style.transition = 'transform 0.4s ease';
+            // ВПРАВО (зелёный)
+            card.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
             card.style.transform = 'translateX(40px) rotate(12deg)';
             card.classList.add('idle-right');
             card.classList.remove('idle-left');
@@ -114,7 +123,7 @@ const Swipe = {
             const t1 = setTimeout(() => {
                 if (this.hintAnimationStopped) return;
                 
-                // ВЛЕВО (наклон влево, красный градиент)
+                // ВЛЕВО (красный)
                 card.style.transform = 'translateX(-40px) rotate(-12deg)';
                 card.classList.add('idle-left');
                 card.classList.remove('idle-right');
@@ -136,9 +145,7 @@ const Swipe = {
                         }, 2000);
                         this.hintTimeoutIds.push(t3);
                     } else {
-                        this.hintAnimationStopped = true;
-                        card.style.transition = '';
-                        card.classList.remove('idle-left', 'idle-right');
+                        stopAnimation();
                     }
                     
                 }, 400);
@@ -157,12 +164,7 @@ const Swipe = {
         
         const stopHint = () => {
             if (this.hintAnimationStopped) return;
-            this.hintAnimationStopped = true;
-            this.hintTimeoutIds.forEach(id => clearTimeout(id));
-            this.hintTimeoutIds = [];
-            card.style.transition = '';
-            card.style.transform = 'translateX(0) rotate(0deg)';
-            card.classList.remove('idle-left', 'idle-right');
+            stopAnimation();
         };
         
         card.addEventListener('touchstart', stopHint, { once: true });
@@ -378,6 +380,7 @@ const Swipe = {
     onDragStart(e) {
         if (this.isConnectionMode) return;
         
+        // Останавливаем анимацию подсказки
         this.hintAnimationStopped = true;
         this.card.classList.remove('idle-left', 'idle-right');
         
