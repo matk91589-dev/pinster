@@ -40,9 +40,9 @@ const Swipe = {
     chatLink: null,
     inviteLink: null,
     
-    // Для подсказки (RAF)
+    // Для подсказки
     hintAnimationStopped: false,
-    hintRafId: null,
+    hintTimeoutIds: [],
     
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
@@ -82,119 +82,101 @@ const Swipe = {
         connectionCard.style.marginRight = 'auto';
     },
     
-    // ========== ПОДСКАЗКА (ПОКАЧИВАНИЕ) - RAF ВЕРСИЯ ==========
+    // ========== ПОДСКАЗКА (ПОКАЧИВАНИЕ) ==========
     startSwipeHint() {
         if (!this.card) return;
         
         const card = this.card;
         
+        // Останавливаем предыдущую анимацию
+        this.hintAnimationStopped = true;
+        
+        // Очищаем все старые таймауты
+        if (this.hintTimeoutIds && this.hintTimeoutIds.length) {
+            this.hintTimeoutIds.forEach(id => clearTimeout(id));
+        }
+        this.hintTimeoutIds = [];
+        
         this.hintAnimationStopped = false;
         
-        if (this.hintRafId) {
-            cancelAnimationFrame(this.hintRafId);
-            this.hintRafId = null;
-        }
-        
-        let startTime = null;
-        let phaseStart = null;
-        let cycle = 0;
-        let phase = 'delay'; // delay → right → left → center → pause → (repeat) → stop
-        
-        const durations = {
-            delay: 1000,
-            right: 800,
-            left: 800,
-            center: 200,
-            pause: 5000
+        const sleep = (ms) => {
+            return new Promise(resolve => {
+                const id = setTimeout(resolve, ms);
+                this.hintTimeoutIds.push(id);
+            });
         };
-        
-        const easeOut = (t) => 1 - Math.pow(1 - t, 3);
-        const easeInOut = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
         
         const stopAnimation = () => {
             if (this.hintAnimationStopped) return;
             this.hintAnimationStopped = true;
-            if (this.hintRafId) {
-                cancelAnimationFrame(this.hintRafId);
-                this.hintRafId = null;
+            
+            if (this.hintTimeoutIds && this.hintTimeoutIds.length) {
+                this.hintTimeoutIds.forEach(id => clearTimeout(id));
+                this.hintTimeoutIds = [];
             }
+            
             card.style.transition = '';
             card.style.transform = 'translateX(0) rotate(0deg)';
             card.classList.remove('idle-left', 'idle-right');
         };
         
-        const animate = (timestamp) => {
+        const runCycle = async () => {
             if (this.hintAnimationStopped) return;
             
-            if (!startTime) {
-                startTime = timestamp;
-                phaseStart = timestamp;
-            }
+            // ВПРАВО
+            card.style.transition = 'transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
+            card.style.transform = 'translateX(35px) rotate(10deg)';
+            card.classList.add('idle-right');
+            card.classList.remove('idle-left');
             
-            const phaseTime = timestamp - phaseStart;
-            const duration = durations[phase];
-            let progress = Math.min(phaseTime / duration, 1);
+            await sleep(800);
+            if (this.hintAnimationStopped) return;
             
-            switch (phase) {
-                case 'right': {
-                    const p = easeOut(progress);
-                    const x = 35 * p;
-                    const r = 10 * p;
-                    card.style.transform = `translateX(${x}px) rotate(${r}deg)`;
-                    card.classList.add('idle-right');
-                    card.classList.remove('idle-left');
-                    break;
-                }
-                case 'left': {
-                    const p = easeInOut(progress);
-                    const x = 35 - 70 * p;
-                    const r = 10 - 20 * p;
-                    card.style.transform = `translateX(${x}px) rotate(${r}deg)`;
-                    card.classList.add('idle-left');
-                    card.classList.remove('idle-right');
-                    break;
-                }
-                case 'center': {
-                    const p = easeOut(progress);
-                    const x = -35 + 35 * p;
-                    const r = -10 + 10 * p;
-                    card.style.transform = `translateX(${x}px) rotate(${r}deg)`;
-                    card.classList.remove('idle-left', 'idle-right');
-                    break;
-                }
-                case 'delay':
-                case 'pause':
-                    // ничего не делаем
-                    break;
-            }
+            // ВЛЕВО
+            card.style.transition = 'transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
+            card.style.transform = 'translateX(-35px) rotate(-10deg)';
+            card.classList.add('idle-left');
+            card.classList.remove('idle-right');
             
-            if (progress >= 1) {
-                phaseStart = timestamp;
-                
-                if (phase === 'delay') {
-                    phase = 'right';
-                } else if (phase === 'right') {
-                    phase = 'left';
-                } else if (phase === 'left') {
-                    phase = 'center';
-                } else if (phase === 'center') {
-                    cycle++;
-                    if (cycle >= 2) {
-                        stopAnimation();
-                        return;
-                    }
-                    phase = 'pause';
-                } else if (phase === 'pause') {
-                    phase = 'right';
-                }
-            }
+            await sleep(800);
+            if (this.hintAnimationStopped) return;
             
-            this.hintRafId = requestAnimationFrame(animate);
+            // ВОЗВРАТ В ЦЕНТР
+            card.style.transition = 'transform 0.2s ease';
+            card.style.transform = 'translateX(0) rotate(0deg)';
+            card.classList.remove('idle-left', 'idle-right');
+            
+            await sleep(200);
         };
         
-        this.hintRafId = requestAnimationFrame(animate);
+        const run = async () => {
+            // Старт через 1 сек
+            await sleep(1000);
+            if (this.hintAnimationStopped) return;
+            
+            // ЦИКЛ 1
+            await runCycle();
+            if (this.hintAnimationStopped) return;
+            
+            // ПАУЗА 5 СЕКУНД
+            await sleep(5000);
+            if (this.hintAnimationStopped) return;
+            
+            // ЦИКЛ 2
+            await runCycle();
+            if (this.hintAnimationStopped) return;
+            
+            // ПОЛНАЯ ОСТАНОВКА
+            stopAnimation();
+        };
         
-        const stopHint = () => stopAnimation();
+        run();
+        
+        const stopHint = () => {
+            if (this.hintAnimationStopped) return;
+            stopAnimation();
+        };
+        
         card.addEventListener('touchstart', stopHint, { once: true });
         card.addEventListener('mousedown', stopHint, { once: true });
     },
@@ -408,10 +390,11 @@ const Swipe = {
     onDragStart(e) {
         if (this.isConnectionMode) return;
         
+        // Останавливаем анимацию подсказки
         this.hintAnimationStopped = true;
-        if (this.hintRafId) {
-            cancelAnimationFrame(this.hintRafId);
-            this.hintRafId = null;
+        if (this.hintTimeoutIds && this.hintTimeoutIds.length) {
+            this.hintTimeoutIds.forEach(id => clearTimeout(id));
+            this.hintTimeoutIds = [];
         }
         this.card.classList.remove('idle-left', 'idle-right');
         
@@ -982,9 +965,9 @@ const Swipe = {
         if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
         if (this.matchPolling) clearInterval(this.matchPolling);
         
-        if (this.hintRafId) {
-            cancelAnimationFrame(this.hintRafId);
-            this.hintRafId = null;
+        if (this.hintTimeoutIds && this.hintTimeoutIds.length) {
+            this.hintTimeoutIds.forEach(id => clearTimeout(id));
+            this.hintTimeoutIds = [];
         }
         
         this.gameCreated = false;
@@ -1049,9 +1032,9 @@ const Swipe = {
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         if (this.matchPolling) clearInterval(this.matchPolling);
         
-        if (this.hintRafId) {
-            cancelAnimationFrame(this.hintRafId);
-            this.hintRafId = null;
+        if (this.hintTimeoutIds && this.hintTimeoutIds.length) {
+            this.hintTimeoutIds.forEach(id => clearTimeout(id));
+            this.hintTimeoutIds = [];
         }
         
         document.getElementById('connectionScreen').classList.remove('active');
