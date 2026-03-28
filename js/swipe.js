@@ -24,6 +24,7 @@ const Swipe = {
     ANIMATION_DURATION: 250,
     AUTO_COMPLETE_DURATION: 300,
     MIN_THRESHOLD_PX: 150,
+    STRONG_SWIPE_THRESHOLD: 100, // Порог для сильного свайпа (заливание)
     
     // Цвета для подсветки
     BRIGHT_GREEN: 'rgba(76, 175, 80, 0.25)',
@@ -97,13 +98,11 @@ const Swipe = {
 
         console.log('🔄 Swipe.startWithOpponent() вызван');
         
-        // Сохраняем данные для отложенного запуска
         this._pendingOpponent = opponent;
         this._pendingMatchId = matchId;
         this._pendingExpiresAt = expiresAt;
         this._pendingServerTime = serverTime;
         
-        // Ждем появления карточки
         this._waitForCardAndStart();
     },
     
@@ -135,7 +134,6 @@ const Swipe = {
         const expiresAt = this._pendingExpiresAt;
         const serverTime = this._pendingServerTime;
         
-        // Очищаем временные данные
         this._pendingOpponent = null;
         this._pendingMatchId = null;
         this._pendingExpiresAt = null;
@@ -173,7 +171,7 @@ const Swipe = {
         this.card.style.transition = 'none';
         this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
         this.card.style.opacity = '1';
-        this.card.classList.remove('both-accepted', 'rejected', 'right-swipe', 'left-swipe');
+        this.card.classList.remove('both-accepted', 'rejected', 'right-swipe', 'left-swipe', 'accept-overlay', 'reject-overlay');
         
         this.showPlayer(opponent);
         this.startCardTimer();
@@ -185,7 +183,6 @@ const Swipe = {
             this.isInitialized = true;
         }
         
-        // Центрируем карточку
         setTimeout(() => this.adjustCardSize(), 50);
         
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
@@ -270,19 +267,18 @@ const Swipe = {
         this.onDragMoveBound = this.onDragMove.bind(this);
         this.onDragEndBound = this.onDragEnd.bind(this);
         
-        // Touch события для мобильных устройств
+        // Touch события
         this.card.addEventListener('touchstart', this.onDragStartBound, { passive: false });
         this.card.addEventListener('touchmove', this.onDragMoveBound, { passive: false });
         this.card.addEventListener('touchend', this.onDragEndBound);
         this.card.addEventListener('touchcancel', this.onDragEndBound);
         
-        // Pointer события для десктопа
+        // Pointer события
         this.card.addEventListener('pointerdown', this.onDragStartBound);
         this.card.addEventListener('pointermove', this.onDragMoveBound);
         this.card.addEventListener('pointerup', this.onDragEndBound);
         this.card.addEventListener('pointercancel', this.onDragEndBound);
         
-        // Блокируем dragstart
         this.card.addEventListener('dragstart', (e) => e.preventDefault());
         
         console.log('✅ Обработчики событий свайпа установлены');
@@ -303,7 +299,6 @@ const Swipe = {
     onDragStart(e) {
         if (this.isConnectionMode) return;
         
-        // Проверяем, что клик именно по карточке или её содержимому
         const target = e.target;
         if (!this.card.contains(target)) return;
         
@@ -311,7 +306,6 @@ const Swipe = {
         this.startX = this.getClientX(e);
         this.initialX = this.currentX || 0;
         
-        // Добавляем класс dragging для визуального эффекта
         this.card.classList.add('dragging');
         this.card.style.transition = 'none';
         this.card.style.cursor = 'grabbing';
@@ -337,21 +331,32 @@ const Swipe = {
         const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
         const progress = Math.min(Math.abs(this.currentX) / threshold, 1);
         
-        // Плавный наклон от свайпа (deltaX * коэффициент)
-        const rotate = deltaX * 0.05;
+        // Увеличенный наклон
+        const rotate = deltaX * 0.08;
         
-        // Применяем трансформацию
         this.card.style.transform = `translateX(${this.currentX}px) rotate(${rotate}deg) scale(${1 + progress * 0.02})`;
         
-        // Добавляем классы для визуальных эффектов (лейблы, затемнение)
-        if (this.currentX > 50) {
+        // Логика для классов свайпа и заливания
+        if (this.currentX > 30) {
             this.card.classList.add('swiping-right');
             this.card.classList.remove('swiping-left');
-        } else if (this.currentX < -50) {
+            this.card.classList.remove('accept-overlay', 'reject-overlay');
+            
+            // При сильном свайпе — зелёное заливание
+            if (this.currentX > this.STRONG_SWIPE_THRESHOLD) {
+                this.card.classList.add('accept-overlay');
+            }
+        } else if (this.currentX < -30) {
             this.card.classList.add('swiping-left');
             this.card.classList.remove('swiping-right');
+            this.card.classList.remove('accept-overlay', 'reject-overlay');
+            
+            // При сильном свайпе — красное заливание
+            if (this.currentX < -this.STRONG_SWIPE_THRESHOLD) {
+                this.card.classList.add('reject-overlay');
+            }
         } else {
-            this.card.classList.remove('swiping-right', 'swiping-left');
+            this.card.classList.remove('swiping-right', 'swiping-left', 'accept-overlay', 'reject-overlay');
         }
     },
     
@@ -361,8 +366,7 @@ const Swipe = {
         this.isDragging = false;
         this.card.style.cursor = 'grab';
         
-        // Убираем класс dragging
-        this.card.classList.remove('dragging');
+        this.card.classList.remove('dragging', 'accept-overlay', 'reject-overlay');
         
         const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
         
@@ -386,7 +390,6 @@ const Swipe = {
             this.resetCardPosition();
         }
         
-        // Убираем классы свайпа после завершения
         setTimeout(() => {
             this.card.classList.remove('swiping-right', 'swiping-left');
         }, 50);
@@ -399,8 +402,7 @@ const Swipe = {
         this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
         this.currentX = 0;
         
-        // Убираем классы
-        this.card.classList.remove('swiping-right', 'swiping-left');
+        this.card.classList.remove('swiping-right', 'swiping-left', 'accept-overlay', 'reject-overlay');
         
         setTimeout(() => {
             this.card.style.transition = 'none';
@@ -806,9 +808,7 @@ const Swipe = {
             const commentEl = document.getElementById('swipeComment');
             if (commentEl) commentEl.textContent = player.comment || '';
             
-            // Обновляем аватарку с принудительными размерами
             this.updateAvatar(player);
-            
             this.updateLinksVisibility();
             setTimeout(() => this.adjustCardSize(), 50);
         }
@@ -821,10 +821,8 @@ const Swipe = {
         const hasAvatar = player.avatar && player.avatar !== 'null' && player.avatar !== '';
         
         if (hasAvatar) {
-            // Принудительные инлайн-стили для аватарки
             avatarContainer.innerHTML = `<img src="${player.avatar}" alt="avatar" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:50%;">`;
         } else {
-            // SVG-заглушка с инлайн-стилями
             avatarContainer.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block; margin:auto;">
                 <circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/>
                 <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/>
