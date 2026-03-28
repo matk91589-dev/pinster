@@ -41,7 +41,7 @@ const Swipe = {
     inviteLink: null,
     
     // Для подсказки
-    hintAnimationStopped: false,
+    hintRunId: 0,
     hintTimeoutIds: [],
     
     init(mode) {
@@ -85,44 +85,45 @@ const Swipe = {
     // ========== ПОДСКАЗКА (ПОКАЧИВАНИЕ) ==========
     startSwipeHint() {
         if (!this.card) return;
-        
+
         const card = this.card;
-        
-        // Останавливаем предыдущую анимацию
-        this.hintAnimationStopped = true;
-        
-        // Очищаем все старые таймауты
+
+        // Уникальный ID запуска — убивает все предыдущие анимации
+        this.hintRunId = (this.hintRunId || 0) + 1;
+        const runId = this.hintRunId;
+
+        // Очистка старых таймаутов
         if (this.hintTimeoutIds && this.hintTimeoutIds.length) {
             this.hintTimeoutIds.forEach(id => clearTimeout(id));
         }
         this.hintTimeoutIds = [];
-        
-        this.hintAnimationStopped = false;
-        
-        const sleep = (ms) => {
-            return new Promise(resolve => {
-                const id = setTimeout(resolve, ms);
-                this.hintTimeoutIds.push(id);
-            });
-        };
-        
+
+        const sleep = (ms) => new Promise(resolve => {
+            const id = setTimeout(() => {
+                if (runId !== this.hintRunId) return;
+                resolve();
+            }, ms);
+            this.hintTimeoutIds.push(id);
+        });
+
         const stopAnimation = () => {
-            if (this.hintAnimationStopped) return;
-            this.hintAnimationStopped = true;
-            
+            if (runId !== this.hintRunId) return;
+
+            this.hintRunId++; // убивает все предыдущие run()
+
             if (this.hintTimeoutIds && this.hintTimeoutIds.length) {
                 this.hintTimeoutIds.forEach(id => clearTimeout(id));
                 this.hintTimeoutIds = [];
             }
-            
+
             card.style.transition = '';
             card.style.transform = 'translateX(0) rotate(0deg)';
             card.classList.remove('idle-left', 'idle-right');
         };
-        
+
         const runCycle = async () => {
-            if (this.hintAnimationStopped) return;
-            
+            if (runId !== this.hintRunId) return;
+
             // ВПРАВО
             card.style.transition = 'transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
             card.style.transform = 'translateX(35px) rotate(10deg)';
@@ -130,8 +131,8 @@ const Swipe = {
             card.classList.remove('idle-left');
             
             await sleep(800);
-            if (this.hintAnimationStopped) return;
-            
+            if (runId !== this.hintRunId) return;
+
             // ВЛЕВО
             card.style.transition = 'transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
             card.style.transform = 'translateX(-35px) rotate(-10deg)';
@@ -139,8 +140,8 @@ const Swipe = {
             card.classList.remove('idle-right');
             
             await sleep(800);
-            if (this.hintAnimationStopped) return;
-            
+            if (runId !== this.hintRunId) return;
+
             // ВОЗВРАТ В ЦЕНТР
             card.style.transition = 'transform 0.2s ease';
             card.style.transform = 'translateX(0) rotate(0deg)';
@@ -148,32 +149,33 @@ const Swipe = {
             
             await sleep(200);
         };
-        
+
         const run = async () => {
             // Старт через 1 сек
             await sleep(1000);
-            if (this.hintAnimationStopped) return;
-            
+            if (runId !== this.hintRunId) return;
+
             // ЦИКЛ 1
             await runCycle();
-            if (this.hintAnimationStopped) return;
-            
+            if (runId !== this.hintRunId) return;
+
             // ПАУЗА 5 СЕКУНД
             await sleep(5000);
-            if (this.hintAnimationStopped) return;
-            
+            if (runId !== this.hintRunId) return;
+
             // ЦИКЛ 2
             await runCycle();
-            if (this.hintAnimationStopped) return;
-            
+            if (runId !== this.hintRunId) return;
+
             // ПОЛНАЯ ОСТАНОВКА
             stopAnimation();
         };
-        
+
         run();
-        
+
+        // Останавливаем при касании
         const stopHint = () => {
-            if (this.hintAnimationStopped) return;
+            if (runId !== this.hintRunId) return;
             stopAnimation();
         };
         
@@ -391,7 +393,7 @@ const Swipe = {
         if (this.isConnectionMode) return;
         
         // Останавливаем анимацию подсказки
-        this.hintAnimationStopped = true;
+        this.hintRunId++;
         if (this.hintTimeoutIds && this.hintTimeoutIds.length) {
             this.hintTimeoutIds.forEach(id => clearTimeout(id));
             this.hintTimeoutIds = [];
