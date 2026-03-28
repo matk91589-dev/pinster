@@ -3844,25 +3844,3 @@ html {
 .swipe-card.swiping-left::after {
     opacity: 1;
 }
-
-/* ===== ПОЛНОЕ ЗАЛИВАНИЕ КАРТОЧКИ ПРИ СИЛЬНОМ СВАЙПЕ ===== */
-.swipe-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: transparent;
-    transition: background 0.25s ease;
-    pointer-events: none;
-    z-index: 10;
-    border-radius: 28px;
-}
-
-/* При сильном свайпе вправо (принять) — зелёное заливание */
-.swipe-card.accept-overlay::after {
-    background: rgba(80, 200, 120, 0.3);
-}
-
-/* При сильном свайпе влево (отклонить) — красное заливание */
-.swipe-card.reject-overlay::after {
-    background: rgba(255, 80, 80, 0.3);
-}
