@@ -2237,13 +2237,13 @@ input:checked + .slider:before {
     width: 360px;
     max-width: 85vw;
     max-height: 85vh;
-    background: linear-gradient(180deg, #1E222B 0%, #16191F 100%);
+    background: linear-gradient(145deg, #1E222B 0%, #16191F 100%);
     border-radius: 28px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 2px 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     cursor: grab;
     position: relative;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     display: flex;
     flex-direction: column;
     margin: 0 auto;
@@ -2254,6 +2254,8 @@ input:checked + .slider:before {
 /* Эффект при перетаскивании */
 .swipe-card.dragging {
     transition: none;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transform: scale(1.01);
 }
 
 .swipe-card:active {
@@ -2273,14 +2275,14 @@ input:checked + .slider:before {
 }
 
 .swipe-card.swiping-right::after {
-    background: rgba(80, 200, 120, 0.15);
+    background: rgba(80, 200, 120, 0.1);
 }
 
 .swipe-card.swiping-left::after {
-    background: rgba(255, 80, 80, 0.15);
+    background: rgba(255, 80, 80, 0.1);
 }
 
-/* Контент */
+/* Контент — с flex для равномерного распределения */
 .swipe-card-content {
     display: flex;
     flex-direction: column;
@@ -2290,6 +2292,7 @@ input:checked + .slider:before {
     overflow-y: auto;
     z-index: 10;
     position: relative;
+    justify-content: space-between;
 }
 
 /* Скрываем скролл */
@@ -2314,6 +2317,7 @@ input:checked + .slider:before {
     border: 2px solid rgba(255, 255, 255, 0.1);
     overflow: hidden;
     background: #2A2F3A;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .swipe-avatar img {
@@ -2351,8 +2355,8 @@ input:checked + .slider:before {
     align-items: center;
     gap: 6px;
     flex-shrink: 0;
-    background: var(--surface);
-    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 40px;
     padding: 8px 14px;
 }
@@ -2380,8 +2384,8 @@ input:checked + .slider:before {
 
 .swipe-stats-row.three-cols .swipe-stat-item {
     text-align: center;
-    background: var(--surface);
-    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
     padding: 12px 8px;
 }
@@ -2394,6 +2398,7 @@ input:checked + .slider:before {
     letter-spacing: 0.5px;
     margin-bottom: 6px;
     display: block;
+    opacity: 0.7;
 }
 
 .swipe-stats-row.three-cols .swipe-stat-value {
@@ -2417,11 +2422,12 @@ input:checked + .slider:before {
     letter-spacing: 0.5px;
     margin-bottom: 6px;
     display: block;
+    opacity: 0.7;
 }
 
 .swipe-link-value {
-    background: var(--surface);
-    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     padding: 10px 12px;
     font-size: 13px;
@@ -2446,11 +2452,12 @@ input:checked + .slider:before {
     letter-spacing: 0.5px;
     margin-bottom: 6px;
     display: block;
+    opacity: 0.7;
 }
 
 .swipe-comment-text {
-    background: var(--surface);
-    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     padding: 12px 14px;
     font-size: 13px;
@@ -2615,349 +2622,6 @@ input:checked + .slider:before {
     .swipe-stats-row.three-cols .swipe-stat-value {
         font-size: 14px;
     }
-}
-/* ===== ТАЙМЕР НА ЭКРАНЕ ОЖИДАНИЯ ===== */
-.connection-timer {
-    position: absolute;
-    top: 12px;
-    left: 18px;
-    font-size: 14px;
-    color: #7A808E;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 6px 14px;
-    border-radius: 30px;
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    font-weight: 600;
-    z-index: 15;
-}
-
-/* ===== НОВАЯ ПОДСВЕТКА АВАТАРОК ===== */
-@keyframes glowPulse {
-    0% { box-shadow: 0 0 0 0 rgba(255, 85, 0, 0.7); }
-    70% { box-shadow: 0 0 0 8px rgba(255, 85, 0, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 85, 0, 0); }
-}
-
-.self-avatar,
-.teammate-avatar {
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.both-accepted .self-avatar,
-.both-accepted .teammate-avatar,
-.self-avatar.connected,
-.teammate-avatar.connected {
-    border: 2px solid var(--accent);
-    animation: glowPulse 2s infinite ease-in-out;
-    box-shadow: 0 0 0 2px rgba(255, 85, 0, 0.3);
-}
-
-.both-accepted .teammate-avatar,
-.teammate-avatar.connected {
-    width: 60px;
-    height: 60px;
-    opacity: 1;
-    filter: grayscale(0);
-}
-
-.both-accepted .teammate-avatar .tg-avatar-svg,
-.teammate-avatar.connected .tg-avatar-svg {
-    width: 56px;
-    height: 56px;
-    border: 2px solid var(--accent);
-}
-
-.both-accepted .teammate-avatar .tg-avatar-svg svg circle,
-.both-accepted .teammate-avatar .tg-avatar-svg svg path,
-.teammate-avatar.connected .tg-avatar-svg svg circle,
-.teammate-avatar.connected .tg-avatar-svg svg path {
-    fill: var(--accent);
-    stroke: var(--accent);
-}
-
-/* ===== СТАТУС БЕЗ СМАЙЛИКОВ ===== */
-.connection-status {
-    font-size: 14px;
-    color: var(--text-secondary);
-    text-align: center;
-    margin: 5px 0;
-    font-weight: 500;
-}
-
-.both-accepted .connection-status {
-    color: var(--accent);
-    font-weight: 600;
-}
-
-.both-accepted .connection-status::before {
-    content: "●";
-    color: var(--accent);
-    margin-right: 6px;
-    font-size: 12px;
-    opacity: 0.8;
-}
-
-/* ===== ОБНОВЛЕННАЯ КНОПКА ЧАТА ===== */
-.connection-button {
-    width: 100%;
-    margin-top: 16px;
-    padding: 0 10px;
-}
-
-.tg-chat-button {
-    width: 100%;
-    height: 52px;
-    border-radius: 40px !important;
-    border: none;
-    font-size: 18px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background: transparent;
-    border: 1.5px solid rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.5);
-    pointer-events: none;
-}
-
-.tg-chat-button.active {
-    background: var(--tg-blue);
-    border: none;
-    color: white;
-    pointer-events: auto;
-    box-shadow: 0 4px 15px rgba(55, 174, 226, 0.4);
-}
-
-.tg-chat-button.active:hover {
-    background: var(--tg-blue-hover);
-    transform: scale(1.02);
-}
-
-.tg-chat-button svg {
-    width: 22px;
-    height: 22px;
-    fill: currentColor;
-}
-
-.tg-chat-button.active svg {
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-}
-
-.connection-tooltip {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.3);
-    text-align: center;
-    margin-top: 8px;
-    transition: color 0.2s ease;
-}
-
-.connection-tooltip.active {
-    color: var(--tg-blue);
-}
-
-/* ===== ЭКРАН ОЖИДАНИЯ - УПРОЩЕННЫЙ ===== */
-.connection-screen .teammate-rating {
-    display: none !important;
-}
-
-.connection-screen .teammate-nick {
-    font-size: 20px !important;
-    font-weight: 700 !important;
-    color: var(--text-primary) !important;
-    text-align: center !important;
-    margin: 5px 0 !important;
-}
-
-.connection-screen .connection-rank-age {
-    display: flex !important;
-    justify-content: center !important;
-    gap: 12px !important;
-    margin: 5px 0 10px 0 !important;
-}
-
-.connection-screen .connection-rank,
-.connection-screen .connection-age {
-    background: #1A1D24 !important;
-    padding: 6px 16px !important;
-    border-radius: 30px !important;
-    border: 1px solid #2A2F3A !important;
-    font-size: 14px !important;
-    font-weight: 500 !important;
-    color: var(--text-secondary) !important;
-}
-
-/* ===== АНИМАЦИИ ===== */
-.primary-btn,
-.mode-search-btn,
-.cancel-search-btn,
-.nav-item,
-.logo,
-.icon-settings,
-.mode-btn,
-.edit-title-icon,
-.apply-btn,
-.back-btn,
-.shop-tab,
-.buy-btn-simple,
-.inventory-item,
-.friend-item,
-.connection-btn,
-.tg-chat-button {
-    transition: all 0.2s ease;
-}
-
-.primary-btn:hover,
-.mode-search-btn:hover,
-.nav-item:hover,
-.logo:hover,
-.icon-settings:hover,
-.edit-title-icon:hover,
-.apply-btn:hover,
-.back-btn:hover,
-.connection-btn:hover,
-.tg-chat-button.active:hover {
-    transform: scale(1.02);
-}
-
-.mode-btn.faceit:hover,
-.mode-btn.premier:hover,
-.mode-btn.prime:hover,
-.mode-btn.public:hover,
-.shop-tab:hover,
-.buy-btn-simple:hover,
-.inventory-item:hover {
-    transform: none;
-}
-
-.primary-btn:active,
-.mode-search-btn:active,
-.cancel-search-btn:active,
-.logo:active,
-.icon-settings:active,
-.mode-btn:active,
-.edit-title-icon:active,
-.apply-btn:active,
-.back-btn:active,
-.shop-tab:active,
-.buy-btn-simple:active,
-.inventory-item:active,
-.friend-item:active,
-.connection-btn:active,
-.tg-chat-button.active:active {
-    transform: scale(0.97);
-}
-
-/* ===== ФИКСЫ ИНПУТОВ ===== */
-input {
-    background: transparent;
-    color: var(--text-primary);
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(255,85,0,0.15), 0 4px 12px rgba(0,0,0,0.35);
-}
-
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: var(--text-primary) !important;
-    transition: background-color 5000s ease-in-out 0s;
-    box-shadow: inset 0 0 20px 20px #1A1D24 !important;
-}
-
-.profile-name-row input[type="text"] {
-    width: 100%;
-    background: transparent;
-    border: none;
-    color: var(--accent);
-    font-size: clamp(16px, 5vw, 20px);
-    font-weight: 600;
-    font-family: 'Montserrat', sans-serif;
-    outline: none;
-    padding: 4px 0;
-    margin: 0;
-}
-
-.profile-name-row input[type="text"]:focus {
-    border: none;
-    outline: none;
-}
-
-.empty-friends {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 15px;
-    text-align: center;
-    color: var(--text-secondary);
-    height: 100%;
-    min-height: 80px;
-}
-
-.empty-friends-text {
-    font-size: 14px;
-    font-weight: 400;
-    color: #5D6472;
-}
-
-.profile-toast {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    right: 20px;
-    transform: translateY(-100px);
-    background: #1A1D24;
-    border: 2px solid #B00000;
-    border-radius: 12px;
-    padding: 16px 20px;
-    color: var(--text-primary);
-    font-size: 15px;
-    font-weight: 600;
-    text-align: center;
-    z-index: 2000;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    opacity: 0;
-    transition: all 0.3s ease;
-    width: auto;
-    line-height: 1.4;
-    word-wrap: break-word;
-    white-space: normal;
-}
-
-.profile-toast.show {
-    transform: translateY(0);
-    opacity: 1;
-}
-
-.stat-value.error,
-.profile-stat-value.error {
-    border-color: #B00000 !important;
-    border-width: 2px !important;
-    background: rgba(176, 0, 0, 0.05) !important;
-    transition: none !important;
-}
-
-.error-message {
-    color: #B00000;
-    font-size: 12px;
-    font-weight: 500;
-    margin-top: 4px;
-    margin-left: 4px;
-    text-align: left;
-    animation: none;
-    transition: none;
 }
 
 /* ===== PINGSTER PREMIUM PATCH ===== */
