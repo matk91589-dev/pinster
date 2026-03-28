@@ -2220,7 +2220,7 @@ input:checked + .slider:before {
 }
 
 /* =========================
-   ЭКРАН СВАЙП-КАРТОЧЕК 
+   ЭКРАН СВАЙП-КАРТОЧЕК — ПРОСТО И РАБОТАЕТ
    ========================= */
 
 .swipe-card-container {
@@ -2282,116 +2282,79 @@ input:checked + .slider:before {
     min-height: 0;
 }
 
+/* КАРТОЧКА — 60% ШИРИНЫ ЭКРАНА */
 .swipe-card {
-    width: 100%;
+    width: 60vw;
     max-width: 420px;
-    margin: 0 auto;
+    min-width: 260px;
+    
     background: var(--surface);
-    border-radius: 24px;
-    border: 1px solid #2A2F3A;
-    padding: 20px;
-    transition: transform 0.25s ease;
-    touch-action: pan-y;
-    will-change: transform;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border-radius: 28px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+    cursor: grab;
     position: relative;
-    z-index: 10;
-}
-
-.swipe-card:hover {
-    transform: none;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    border-color: #2A2F3A;
-}
-
-.swipe-avatar {
-    width: 80px;
-    height: 80px;
-    flex-shrink: 0;
-}
-
-.swipe-avatar .tg-avatar-svg {
-    width: 80px;
-    height: 80px;
-    background: #2B2F36;
-    border-radius: 50%;
+    touch-action: pan-y pinch-zoom;
+    will-change: transform;
+    transition: transform 0.1s ease-out;
+    overflow: hidden;
+    
     display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.swipe-avatar .tg-avatar-svg svg {
-    width: 40px;
-    height: 40px;
+    flex-direction: column;
+    
+    margin: 0 auto;
+    /* Центрирование по вертикали — оставляем на усмотрение контента */
 }
 
 .swipe-card:active {
     cursor: grabbing;
 }
 
-.swipe-card.swiping-right {
-    background: linear-gradient(to right, rgba(76,175,80,0.15), var(--surface));
-}
-
-.swipe-card.swiping-left {
-    background: linear-gradient(to left, rgba(176,0,0,0.15), var(--surface));
-}
-
-.swipe-label {
-    position: absolute;
-    top: 24px;
-    font-size: clamp(18px, 6vw, 24px);
-    font-weight: 800;
-    letter-spacing: 2px;
-    opacity: 0;
-    transition: opacity 0.1s ease;
-    z-index: 20;
-    pointer-events: none;
-}
-
-.swipe-label-left {
-    left: 25px;
-    color: rgba(200, 60, 60, 0.9);
-    transform: rotate(-5deg);
-}
-
-.swipe-label-right {
-    right: 25px;
-    color: rgba(60, 180, 90, 0.9);
-    transform: rotate(5deg);
-}
-
+/* Внутренний контент — сжимается при необходимости */
 .swipe-card-content {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    padding: 20px 18px;
+    flex: 1;
+    overflow-y: auto;
 }
 
+/* Скрываем скролл, но оставляем прокрутку */
+.swipe-card-content::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+/* Аватар и ник */
 .swipe-player-row {
     display: flex;
     align-items: center;
-    gap: 15px;
-}
-
-.swipe-avatar {
-    width: 70px;
-    height: 70px;
+    gap: 14px;
     flex-shrink: 0;
 }
 
-.swipe-avatar .tg-avatar-svg {
-    width: 70px;
-    height: 70px;
-    background: #2B2F36;
+.swipe-avatar {
+    width: 65px;
+    height: 65px;
+    flex-shrink: 0;
     border-radius: 50%;
+    overflow: hidden;
+    background: var(--input-bg);
+}
+
+.swipe-avatar .tg-avatar-svg {
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.swipe-avatar .tg-avatar-svg svg {
-    width: 35px;
-    height: 35px;
+.swipe-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .swipe-name-block {
@@ -2400,7 +2363,7 @@ input:checked + .slider:before {
 }
 
 .swipe-player-id {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--accent);
     font-family: monospace;
     font-weight: 600;
@@ -2408,7 +2371,7 @@ input:checked + .slider:before {
 }
 
 .swipe-player-nick {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--text-primary);
     white-space: nowrap;
@@ -2419,170 +2382,268 @@ input:checked + .slider:before {
 .swipe-rating-block {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     flex-shrink: 0;
-    padding: 5px 0;
+    background: var(--input-bg);
+    padding: 6px 12px;
+    border-radius: 30px;
 }
 
 .swipe-rating-value {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--text-primary);
 }
 
-.swipe-rating-block .heart-icon {
-    margin-left: 0;
-}
-
 .swipe-rating-block .heart-icon svg {
-    width: 18px;
-    height: 18px;
-    stroke: var(--text-primary);
+    width: 16px;
+    height: 16px;
 }
 
+/* Разделитель */
 .swipe-rating-line {
     width: 100%;
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--text-primary), transparent);
-    opacity: 0.3;
-    margin: 2px 0 8px 0;
+    opacity: 0.2;
+    margin: 4px 0;
 }
 
-.swipe-stats-row {
-    display: flex;
-    gap: 12px;
-    margin: 0;
+/* Три колонки */
+.swipe-stats-row.three-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin: 6px 0;
 }
 
-.swipe-stat-item {
-    flex: 1;
-    background: transparent;
-    border: none;
-    padding: 0;
+.swipe-stats-row.three-cols .swipe-stat-item {
+    text-align: center;
 }
 
-.swipe-stat-label {
-    font-size: 10px;
+.swipe-stats-row.three-cols .swipe-stat-label {
+    font-size: 9px;
     color: var(--text-secondary);
-    font-weight: 600;
-    margin-bottom: 6px;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    display: block;
 }
 
-.swipe-stat-value {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 12px 14px;
-    color: var(--text-primary);
+.swipe-stats-row.three-cols .swipe-stat-value {
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 8px 6px;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
+/* Ссылки */
 .swipe-steam-container,
 .swipe-faceit-container {
-    margin: 0;
+    margin: 4px 0;
 }
 
 .swipe-link-label {
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text-secondary);
-    font-weight: 600;
-    margin-bottom: 6px;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    display: block;
 }
 
 .swipe-link-value {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 12px 14px;
-    color: var(--text-primary);
-    font-size: 13px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 12px;
     font-weight: 500;
+    color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
+/* Комментарий */
 .swipe-comment {
-    margin: 0;
+    margin: 4px 0;
 }
 
 .swipe-comment-label {
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text-secondary);
-    font-weight: 600;
-    margin-bottom: 6px;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    display: block;
 }
 
 .swipe-comment-text {
-    width: 100%;
-    background: #1A1D24;
-    border: 1px solid #2A2F3A;
-    border-radius: 8px;
-    padding: 12px 14px;
-    color: var(--text-primary);
-    font-size: 13px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 12px;
     font-weight: 500;
-    min-height: 70px;
+    color: var(--text-primary);
+    min-height: 60px;
     word-wrap: break-word;
-    line-height: 1.5;
+    line-height: 1.4;
 }
 
+/* Таймер — правый верхний угол */
+.swipe-timer {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(8px);
+    padding: 5px 12px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    z-index: 20;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.swipe-timer.warning {
+    color: #FF6B4A;
+    animation: timerPulse 0.8s infinite;
+}
+
+@keyframes timerPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* Лейблы свайпа */
+.swipe-label {
+    position: absolute;
+    top: 28px;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    opacity: 0;
+    transition: opacity 0.1s ease;
+    z-index: 25;
+    pointer-events: none;
+}
+
+.swipe-label-left {
+    left: 20px;
+    color: #FF5E5E;
+    transform: rotate(-10deg);
+}
+
+.swipe-label-right {
+    right: 20px;
+    color: #5ACE5A;
+    transform: rotate(10deg);
+}
+
+/* Подсказка */
+.swipe-hint {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 16px;
+    user-select: none;
+    opacity: 0.6;
+}
+
+.swipe-hint.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+/* Лоадер */
 .swipe-loading {
     display: none;
     align-items: center;
     justify-content: center;
-    padding: 20px 0;
-}
-
-.spinner-small {
-    width: 30px;
-    height: 30px;
-    border: 3px solid #1A1D24;
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+    padding: 30px;
 }
 
 .swipe-loading.active {
     display: flex;
 }
 
-.search-timer-card {
-    position: absolute;
-    top: 12px;
-    right: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    font-size: clamp(14px, 4vw, 16px);
-    color: var(--accent);
-    font-weight: 700;
-    background: rgba(0,0,0,0.3);
-    padding: 6px 12px;
-    border-radius: 20px;
-    backdrop-filter: blur(2px);
-    z-index: 15;
+.spinner-small {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
 }
 
-.swipe-hint {
-    text-align: center;
-    font-size: 12px;
-    color: #6B7280;
-    margin-top: 10px;
-    user-select: none;
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Адаптив */
+@media (max-width: 600px) {
+    .swipe-card {
+        width: 70vw;
+        min-width: 240px;
+    }
+    
+    .swipe-card-content {
+        padding: 16px 14px;
+        gap: 10px;
+    }
+    
+    .swipe-avatar {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .swipe-player-nick {
+        font-size: 16px;
+    }
+    
+    .swipe-rating-value {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .swipe-card {
+        width: 80vw;
+        min-width: 220px;
+    }
+    
+    .swipe-card-content {
+        padding: 14px 12px;
+    }
+    
+    .swipe-avatar {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .swipe-stats-row.three-cols .swipe-stat-value {
+        font-size: 12px;
+        padding: 6px 3px;
+    }
+    
+    .swipe-link-value,
+    .swipe-comment-text {
+        font-size: 11px;
+        padding: 8px 10px;
+    }
 }
 
 /* =========================
