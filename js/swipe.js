@@ -42,7 +42,6 @@ const Swipe = {
     
     // Для подсказки
     hintAnimationStopped: false,
-    hintCycles: 0,
     hintTimeoutIds: [],
     
     init(mode) {
@@ -88,10 +87,10 @@ const Swipe = {
         if (!this.card) return;
         
         this.hintAnimationStopped = false;
-        this.hintCycles = 0;
         this.hintTimeoutIds = [];
         
         const card = this.card;
+        let cycles = 0;
         const MAX_CYCLES = 3;
         
         const clearTimeouts = () => {
@@ -111,9 +110,9 @@ const Swipe = {
         const doCycle = () => {
             if (this.hintAnimationStopped) return;
             
-            this.hintCycles++;
+            cycles++;
             
-            // ВПРАВО (зелёный)
+            // ВПРАВО
             card.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
             card.style.transform = 'translateX(40px) rotate(12deg)';
             card.classList.add('idle-right');
@@ -122,7 +121,7 @@ const Swipe = {
             const t1 = setTimeout(() => {
                 if (this.hintAnimationStopped) return;
                 
-                // ВЛЕВО (красный)
+                // ВЛЕВО
                 card.style.transform = 'translateX(-40px) rotate(-12deg)';
                 card.classList.add('idle-left');
                 card.classList.remove('idle-right');
@@ -135,7 +134,7 @@ const Swipe = {
                     card.classList.remove('idle-left', 'idle-right');
                     
                     // Если сделали все циклы — останавливаемся
-                    if (this.hintCycles >= MAX_CYCLES) {
+                    if (cycles >= MAX_CYCLES) {
                         stopAnimation();
                         return;
                     }
