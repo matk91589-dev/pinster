@@ -2220,7 +2220,7 @@ input:checked + .slider:before {
 }
 
 /* ============================================
-   СВАЙП-КАРТОЧКИ — ЕДИНЫЙ СТИЛЬ С ПРОФИЛЕМ
+   СВАЙП-КАРТОЧКИ — ПРОПОРЦИЯ 5:6
    ============================================ */
 
 /* Контейнер */
@@ -2232,7 +2232,7 @@ input:checked + .slider:before {
     padding: 20px;
 }
 
-/* Карточка */
+/* Карточка — пропорция 5:6 (шире, ниже) */
 .swipe-card {
     width: 360px;
     max-width: 85vw;
@@ -2247,7 +2247,7 @@ input:checked + .slider:before {
     display: flex;
     flex-direction: column;
     margin: 0 auto;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 5 / 6;
     overflow: hidden;
 }
 
@@ -2282,12 +2282,12 @@ input:checked + .slider:before {
     background: rgba(255, 80, 80, 0.1);
 }
 
-/* Контент — с flex для равномерного распределения */
+/* Контент */
 .swipe-card-content {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 22px 20px;
+    gap: 12px;
+    padding: 20px 18px;
     flex: 1;
     overflow-y: auto;
     z-index: 10;
@@ -2305,13 +2305,13 @@ input:checked + .slider:before {
 .swipe-player-row {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     flex-shrink: 0;
 }
 
 .swipe-avatar {
-    width: 72px;
-    height: 72px;
+    width: 65px;
+    height: 65px;
     flex-shrink: 0;
     border-radius: 50%;
     border: 2px solid rgba(255, 255, 255, 0.1);
@@ -2332,7 +2332,7 @@ input:checked + .slider:before {
 }
 
 .swipe-player-id {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--accent);
     font-family: monospace;
     font-weight: 600;
@@ -2341,7 +2341,7 @@ input:checked + .slider:before {
 }
 
 .swipe-player-nick {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--text-primary);
     white-space: nowrap;
@@ -2349,7 +2349,7 @@ input:checked + .slider:before {
     text-overflow: ellipsis;
 }
 
-/* Рейтинг (как в профиле) */
+/* Рейтинг */
 .swipe-rating-block {
     display: flex;
     align-items: center;
@@ -2358,26 +2358,26 @@ input:checked + .slider:before {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 40px;
-    padding: 8px 14px;
+    padding: 6px 12px;
 }
 
 .swipe-rating-value {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     color: var(--text-primary);
 }
 
 .swipe-rating-block .heart-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     stroke: var(--accent);
 }
 
-/* Три колонки — как в профиле */
+/* Три колонки */
 .swipe-stats-row.three-cols {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
+    gap: 10px;
     margin: 0;
     flex-shrink: 0;
 }
@@ -2386,28 +2386,28 @@ input:checked + .slider:before {
     text-align: center;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    padding: 12px 8px;
+    border-radius: 14px;
+    padding: 8px 6px;
 }
 
 .swipe-stats-row.three-cols .swipe-stat-label {
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text-secondary);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     display: block;
     opacity: 0.7;
 }
 
 .swipe-stats-row.three-cols .swipe-stat-value {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--text-primary);
 }
 
-/* Ссылки — как в профиле */
+/* Ссылки */
 .swipe-steam-container,
 .swipe-faceit-container {
     margin: 0;
@@ -2415,12 +2415,12 @@ input:checked + .slider:before {
 }
 
 .swipe-link-label {
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text-secondary);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     display: block;
     opacity: 0.7;
 }
@@ -2429,8 +2429,8 @@ input:checked + .slider:before {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
-    padding: 10px 12px;
-    font-size: 13px;
+    padding: 8px 10px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--text-primary);
     white-space: nowrap;
@@ -2438,19 +2438,19 @@ input:checked + .slider:before {
     text-overflow: ellipsis;
 }
 
-/* Комментарий — как в профиле */
+/* Комментарий */
 .swipe-comment {
     margin: 0;
     flex-shrink: 0;
 }
 
 .swipe-comment-label {
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text-secondary);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     display: block;
     opacity: 0.7;
 }
@@ -2459,11 +2459,11 @@ input:checked + .slider:before {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
-    padding: 12px 14px;
-    font-size: 13px;
+    padding: 10px 12px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--text-primary);
-    min-height: 70px;
+    min-height: 60px;
     word-wrap: break-word;
     line-height: 1.5;
 }
@@ -2471,13 +2471,13 @@ input:checked + .slider:before {
 /* Таймер */
 .swipe-timer {
     position: absolute;
-    top: 14px;
-    right: 14px;
+    top: 12px;
+    right: 12px;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(8px);
-    padding: 5px 12px;
+    padding: 4px 10px;
     border-radius: 30px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     color: #fff;
     z-index: 20;
@@ -2496,8 +2496,8 @@ input:checked + .slider:before {
 /* Лейблы свайпа */
 .swipe-label {
     position: absolute;
-    top: 32px;
-    font-size: 26px;
+    top: 28px;
+    font-size: 24px;
     font-weight: 900;
     letter-spacing: 2px;
     opacity: 0;
@@ -2509,13 +2509,13 @@ input:checked + .slider:before {
 }
 
 .swipe-label-left {
-    left: 24px;
+    left: 20px;
     color: #FF5E5E;
     transform: rotate(-12deg) scale(0.8);
 }
 
 .swipe-label-right {
-    right: 24px;
+    right: 20px;
     color: #5ACE5A;
     transform: rotate(12deg) scale(0.8);
 }
@@ -2533,9 +2533,9 @@ input:checked + .slider:before {
 /* Подсказка */
 .swipe-hint {
     text-align: center;
-    font-size: 11px;
+    font-size: 10px;
     color: var(--text-secondary);
-    margin-top: 14px;
+    margin-top: 12px;
     opacity: 0.6;
 }
 
@@ -2566,61 +2566,61 @@ input:checked + .slider:before {
 
 @media (max-width: 500px) {
     .swipe-card-content {
-        padding: 18px 16px;
-        gap: 14px;
+        padding: 16px 14px;
+        gap: 10px;
     }
     
     .swipe-avatar {
-        width: 60px;
-        height: 60px;
+        width: 55px;
+        height: 55px;
     }
     
     .swipe-player-nick {
-        font-size: 18px;
-    }
-    
-    .swipe-rating-value {
-        font-size: 15px;
-    }
-    
-    .swipe-stats-row.three-cols .swipe-stat-value {
         font-size: 16px;
     }
     
+    .swipe-rating-value {
+        font-size: 14px;
+    }
+    
+    .swipe-stats-row.three-cols .swipe-stat-value {
+        font-size: 14px;
+    }
+    
     .swipe-stats-row.three-cols .swipe-stat-item {
-        padding: 8px 4px;
+        padding: 6px 4px;
     }
     
     .swipe-label {
-        font-size: 22px;
-        top: 24px;
+        font-size: 20px;
+        top: 22px;
     }
     
     .swipe-timer {
         top: 10px;
         right: 10px;
-        padding: 4px 10px;
-        font-size: 12px;
+        padding: 4px 8px;
+        font-size: 11px;
     }
 }
 
 @media (max-width: 400px) {
     .swipe-card-content {
-        padding: 16px 14px;
-        gap: 12px;
+        padding: 14px 12px;
+        gap: 8px;
     }
     
     .swipe-avatar {
-        width: 52px;
-        height: 52px;
+        width: 48px;
+        height: 48px;
     }
     
     .swipe-player-nick {
-        font-size: 16px;
+        font-size: 15px;
     }
     
     .swipe-stats-row.three-cols .swipe-stat-value {
-        font-size: 14px;
+        font-size: 13px;
     }
 }
 
