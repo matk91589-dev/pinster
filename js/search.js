@@ -184,22 +184,52 @@ const Search = {
         this.isSearching = false;
         this.waitingForPartner = false;
     
-        // ✅ СКРЫВАЕМ ВСЕ ЭКРАНЫ, потом показываем нужный
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById('swipeScreen')?.classList.add('active');
-    
-        if (typeof Swipe !== 'undefined' && Swipe) {
-            setTimeout(() => {
+        // ✅ ПРАВИЛЬНОЕ ПОКАЗЫВАНИЕ ЭКРАНА СВАЙПА
+        // Сначала деактивируем все экраны
+        const allScreens = document.querySelectorAll('.screen');
+        allScreens.forEach(screen => {
+            screen.classList.remove('active');
+        });
+        
+        // Активируем экран свайпа
+        const swipeScreen = document.getElementById('swipeScreen');
+        if (swipeScreen) {
+            swipeScreen.classList.add('active');
+            console.log('✅ swipeScreen активирован');
+        } else {
+            console.error('❌ swipeScreen не найден в DOM');
+        }
+        
+        // Даем время на активацию экрана и появление карточки
+        setTimeout(() => {
+            // Проверяем, что карточка появилась
+            const swipeCard = document.getElementById('swipeCard');
+            if (swipeCard) {
+                console.log('✅ swipeCard найден в DOM');
+            } else {
+                console.warn('⚠️ swipeCard еще не в DOM, ждем...');
+                // Если карточки нет, пробуем еще раз через 100ms
+                setTimeout(() => {
+                    const cardAgain = document.getElementById('swipeCard');
+                    if (cardAgain) {
+                        console.log('✅ swipeCard появился после ожидания');
+                    }
+                }, 100);
+            }
+            
+            // Запускаем Swipe
+            if (typeof Swipe !== 'undefined' && Swipe && Swipe.startWithOpponent) {
                 Swipe.startWithOpponent(
                     data.opponent, 
                     this.currentMatchId, 
                     data.expires_at,
                     data.server_time
                 );
-            }, 50);
-        } else {
-            App.showScreen('mainScreen', true);
-        }
+            } else {
+                console.error('❌ Swipe не загружен или нет метода startWithOpponent');
+                App.showScreen('mainScreen', true);
+            }
+        }, 100);
     },
     
     updateWaitingStatus(data) {
@@ -252,9 +282,18 @@ const Search = {
         const data = this.collectSearchData(mode);
         
         // ✅ СКРЫВАЕМ ВСЕ ЭКРАНЫ, потом показываем экран поиска
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById('searchScreen')?.classList.add('active');
-        document.getElementById('searchModeTitle').textContent = mode;
+        const allScreens = document.querySelectorAll('.screen');
+        allScreens.forEach(screen => {
+            screen.classList.remove('active');
+        });
+        
+        const searchScreen = document.getElementById('searchScreen');
+        if (searchScreen) {
+            searchScreen.classList.add('active');
+        }
+        
+        const modeTitle = document.getElementById('searchModeTitle');
+        if (modeTitle) modeTitle.textContent = mode;
         
         const statusEl = document.getElementById('searchStatus');
         if (statusEl) {
