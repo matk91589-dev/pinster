@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - С ДОБАВЛЕНИЕМ В ДРУЗЬЯ
+// СВАЙП-КАРТОЧКИ - КАК В TINDER
 // ============================================
 
 const Swipe = {
@@ -16,19 +16,12 @@ const Swipe = {
     isDragging: false,
     startX: 0,
     currentX: 0,
-    initialX: 0,
+    startTime: 0,
     
     // Константы
-    SWIPE_THRESHOLD: 0.25,
-    MAX_ROTATE: 12,
+    SWIPE_THRESHOLD: 120, // расстояние для свайпа (увеличено)
+    VELOCITY_THRESHOLD: 0.5, // скорость для свайпа
     ANIMATION_DURATION: 250,
-    AUTO_COMPLETE_DURATION: 300,
-    MIN_THRESHOLD_PX: 150,
-    STRONG_SWIPE_THRESHOLD: 100,
-    
-    // Цвета для подсветки
-    BRIGHT_GREEN: 'rgba(76, 175, 80, 0.25)',
-    BRIGHT_RED: 'rgba(244, 67, 54, 0.25)',
     
     // Данные
     currentPlayer: null,
@@ -46,6 +39,10 @@ const Swipe = {
     gameCreating: false,
     chatLink: null,
     inviteLink: null,
+    
+    // Для подсказки
+    hintAnimationStopped: false,
+    hintCycles: 0,
     
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
@@ -83,6 +80,67 @@ const Swipe = {
         if (!connectionCard || !this.isConnectionMode) return;
         connectionCard.style.marginLeft = 'auto';
         connectionCard.style.marginRight = 'auto';
+    },
+    
+    // ========== ПОДСКАЗКА (ПОКАЧИВАНИЕ) ==========
+    startSwipeHint() {
+        if (!this.card) return;
+        
+        this.hintAnimationStopped = false;
+        this.hintCycles = 0;
+        
+        const card = this.card;
+        
+        const loop = () => {
+            if (this.hintAnimationStopped || this.hintCycles >= 2) return;
+            this.hintCycles++;
+            
+            // ВЛЕВО
+            card.style.transition = 'transform 0.4s ease';
+            card.style.transform = 'translateX(-30px) rotate(-6deg)';
+            card.classList.add('idle-left');
+            card.classList.remove('idle-right');
+            
+            setTimeout(() => {
+                if (this.hintAnimationStopped) return;
+                card.style.transform = 'translateX(0) rotate(0deg)';
+                
+                setTimeout(() => {
+                    if (this.hintAnimationStopped) return;
+                    
+                    // ВПРАВО
+                    card.style.transform = 'translateX(30px) rotate(6deg)';
+                    card.classList.add('idle-right');
+                    card.classList.remove('idle-left');
+                    
+                    setTimeout(() => {
+                        if (this.hintAnimationStopped) return;
+                        card.style.transform = 'translateX(0) rotate(0deg)';
+                        
+                        // ПАУЗА
+                        setTimeout(loop, 1500);
+                        
+                    }, 400);
+                    
+                }, 300);
+                
+            }, 400);
+        };
+        
+        // Старт через 500ms
+        setTimeout(loop, 500);
+        
+        // Останавливаем при касании
+        const stopHint = () => {
+            if (this.hintAnimationStopped) return;
+            this.hintAnimationStopped = true;
+            card.style.transform = 'translateX(0) rotate(0deg)';
+            card.classList.remove('idle-left', 'idle-right');
+            card.style.transition = '';
+        };
+        
+        card.addEventListener('touchstart', stopHint, { once: true });
+        card.addEventListener('mousedown', stopHint, { once: true });
     },
     
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
@@ -181,6 +239,9 @@ const Swipe = {
             this.isInitialized = true;
         }
         
+        // Запускаем подсказку (покачивание)
+        setTimeout(() => this.startSwipeHint(), 300);
+        
         setTimeout(() => this.adjustCardSize(), 50);
         
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
@@ -261,24 +322,21 @@ const Swipe = {
             return;
         }
         
+        // Привязываем методы
         this.onDragStartBound = this.onDragStart.bind(this);
         this.onDragMoveBound = this.onDragMove.bind(this);
         this.onDragEndBound = this.onDragEnd.bind(this);
         
-        // Только touch события для мобилок — плавнее
+        // Только touch события (для плавности)
         this.card.addEventListener('touchstart', this.onDragStartBound, { passive: false });
         this.card.addEventListener('touchmove', this.onDragMoveBound, { passive: false });
         this.card.addEventListener('touchend', this.onDragEndBound);
         this.card.addEventListener('touchcancel', this.onDragEndBound);
         
-        // Только для десктопа — pointer события (не для мобилок, чтобы не дублировать)
-        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        if (!isTouchDevice) {
-            this.card.addEventListener('pointerdown', this.onDragStartBound);
-            this.card.addEventListener('pointermove', this.onDragMoveBound);
-            this.card.addEventListener('pointerup', this.onDragEndBound);
-            this.card.addEventListener('pointercancel', this.onDragEndBound);
-        }
+        // Для десктопа
+        this.card.addEventListener('mousedown', this.onDragStartBound);
+        window.addEventListener('mousemove', this.onDragMoveBound);
+        window.addEventListener('mouseup', this.onDragEndBound);
         
         this.card.addEventListener('dragstart', (e) => e.preventDefault());
         
@@ -293,19 +351,21 @@ const Swipe = {
     getClientX(e) {
         if (e.clientX !== undefined) return e.clientX;
         if (e.touches && e.touches[0]) return e.touches[0].clientX;
-        if (e.changedTouches && e.changedTouches[0]) return e.changedTouches[0].clientX;
         return null;
     },
     
     onDragStart(e) {
         if (this.isConnectionMode) return;
         
+        // Останавливаем подсказку
+        this.hintAnimationStopped = true;
+        
         const target = e.target;
         if (!this.card.contains(target)) return;
         
         this.isDragging = true;
         this.startX = this.getClientX(e);
-        this.initialX = this.currentX || 0;
+        this.startTime = Date.now();
         
         this.card.classList.add('dragging');
         this.card.style.transition = 'none';
@@ -318,45 +378,27 @@ const Swipe = {
         if (!this.isDragging || this.isConnectionMode) return;
         
         e.preventDefault();
-        e.stopPropagation();
         
         const clientX = this.getClientX(e);
         if (clientX === null) return;
         
-        const deltaX = clientX - this.startX;
-        this.currentX = this.initialX + deltaX;
+        this.currentX = clientX;
+        const deltaX = this.currentX - this.startX;
         
-        const maxDistance = window.innerWidth * 0.5;
-        this.currentX = Math.max(-maxDistance, Math.min(maxDistance, this.currentX));
+        // Плавный наклон
+        const percent = deltaX / 150;
+        const rotate = percent * 10;
+        const scale = 1 + Math.abs(percent) * 0.05;
         
-        const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
-        const progress = Math.min(Math.abs(this.currentX) / threshold, 1);
+        this.card.style.transform = `translateX(${deltaX}px) rotate(${rotate}deg) scale(${scale})`;
         
-        const rotate = deltaX * 0.08;
-        
-        this.card.style.transform = `translateX(${this.currentX}px) rotate(${rotate}deg) scale(${1 + progress * 0.02})`;
-        
-        // Сначала убираем все классы
-        this.card.classList.remove('swiping-right', 'swiping-left', 'accept-overlay', 'reject-overlay');
-        
-        // Логика для направления свайпа
-        if (this.currentX > 30) {
-            // Наклон вправо — показываем зелёный левый верхний угол
+        // Классы для визуала
+        if (deltaX > 0) {
             this.card.classList.add('swiping-right');
-            
-            // При сильном свайпе (>100px) — полное зелёное заливание
-            if (this.currentX > this.STRONG_SWIPE_THRESHOLD) {
-                this.card.classList.add('accept-overlay');
-            }
-        } 
-        else if (this.currentX < -30) {
-            // Наклон влево — показываем красный правый верхний угол
+            this.card.classList.remove('swiping-left');
+        } else if (deltaX < 0) {
             this.card.classList.add('swiping-left');
-            
-            // При сильном свайпе (<-100px) — полное красное заливание
-            if (this.currentX < -this.STRONG_SWIPE_THRESHOLD) {
-                this.card.classList.add('reject-overlay');
-            }
+            this.card.classList.remove('swiping-right');
         }
     },
     
@@ -366,16 +408,19 @@ const Swipe = {
         this.isDragging = false;
         this.card.style.cursor = 'grab';
         
-        this.card.classList.remove('dragging', 'accept-overlay', 'reject-overlay');
+        const deltaX = this.currentX - this.startX;
+        const time = Date.now() - this.startTime;
+        const velocity = Math.abs(deltaX / time);
         
-        const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
+        // Условие свайпа: расстояние > порога ИЛИ скорость > порога
+        const isSwipe = Math.abs(deltaX) > this.SWIPE_THRESHOLD || velocity > this.VELOCITY_THRESHOLD;
         
-        if (Math.abs(this.currentX) > threshold) {
+        if (isSwipe && Math.abs(deltaX) > 10) {
             if (window.Settings && window.Settings.swipe) window.Settings.swipe();
             
             this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
             
-            if (this.currentX > 0) {
+            if (deltaX > 0) {
                 this.card.style.transform = `translateX(200%) rotate(12deg) scale(0.9)`;
                 setTimeout(() => {
                     this.acceptPlayer();
@@ -387,26 +432,24 @@ const Swipe = {
                 }, this.ANIMATION_DURATION);
             }
         } else {
+            // Возврат на место
             this.resetCardPosition();
         }
         
-        setTimeout(() => {
-            this.card.classList.remove('swiping-right', 'swiping-left');
-        }, 50);
+        // Убираем классы
+        this.card.classList.remove('dragging', 'swiping-right', 'swiping-left');
         
         e.preventDefault();
     },
     
     resetCardPosition() {
-        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.25, 0.8, 0.25, 1)`;
-        this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
+        this.card.style.transition = `transform 0.3s ease`;
+        this.card.style.transform = 'translateX(0) rotate(0deg) scale(1)';
         this.currentX = 0;
         
-        this.card.classList.remove('swiping-right', 'swiping-left', 'accept-overlay', 'reject-overlay');
-        
         setTimeout(() => {
-            this.card.style.transition = 'none';
-        }, this.ANIMATION_DURATION);
+            this.card.style.transition = '';
+        }, 300);
     },
     
     acceptPlayer() {
@@ -879,11 +922,11 @@ const Swipe = {
             this.card.removeEventListener('touchmove', this.onDragMoveBound);
             this.card.removeEventListener('touchend', this.onDragEndBound);
             this.card.removeEventListener('touchcancel', this.onDragEndBound);
-            this.card.removeEventListener('pointerdown', this.onDragStartBound);
-            this.card.removeEventListener('pointermove', this.onDragMoveBound);
-            this.card.removeEventListener('pointerup', this.onDragEndBound);
-            this.card.removeEventListener('pointercancel', this.onDragEndBound);
+            this.card.removeEventListener('mousedown', this.onDragStartBound);
         }
+        
+        window.removeEventListener('mousemove', this.onDragMoveBound);
+        window.removeEventListener('mouseup', this.onDragEndBound);
         
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
