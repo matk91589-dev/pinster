@@ -97,6 +97,50 @@ const Swipe = {
 
         console.log('🔄 Swipe.startWithOpponent() вызван');
         
+        // Сохраняем данные для отложенного запуска
+        this._pendingOpponent = opponent;
+        this._pendingMatchId = matchId;
+        this._pendingExpiresAt = expiresAt;
+        this._pendingServerTime = serverTime;
+        
+        // Ждем появления карточки
+        this._waitForCardAndStart();
+    },
+    
+    _waitForCardAndStart() {
+        const checkCard = () => {
+            this.card = document.getElementById('swipeCard');
+            this.container = document.getElementById('swipeContainer');
+            this.hint = document.getElementById('swipeHint');
+            this.loading = document.getElementById('swipeLoading');
+            this.labelLeft = document.getElementById('swipeLabelLeft');
+            this.labelRight = document.getElementById('swipeLabelRight');
+            
+            if (!this.card) {
+                console.log('⏳ Карточка еще не готова, ждем 50ms...');
+                setTimeout(checkCard, 50);
+                return;
+            }
+            
+            console.log('✅ Карточка найдена, продолжаем');
+            this._executeStartWithOpponent();
+        };
+        
+        checkCard();
+    },
+    
+    _executeStartWithOpponent() {
+        const opponent = this._pendingOpponent;
+        const matchId = this._pendingMatchId;
+        const expiresAt = this._pendingExpiresAt;
+        const serverTime = this._pendingServerTime;
+        
+        // Очищаем временные данные
+        this._pendingOpponent = null;
+        this._pendingMatchId = null;
+        this._pendingExpiresAt = null;
+        this._pendingServerTime = null;
+        
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
         this.isConnectionMode = false;
@@ -121,18 +165,6 @@ const Swipe = {
         if (timeLeft <= 0) {
             console.warn('⚠️ Время на принятие истекло');
             this.exitSwipeMode('timeout_accept');
-            return;
-        }
-        
-        this.card = document.getElementById('swipeCard');
-        this.container = document.getElementById('swipeContainer');
-        this.hint = document.getElementById('swipeHint');
-        this.loading = document.getElementById('swipeLoading');
-        this.labelLeft = document.getElementById('swipeLabelLeft');
-        this.labelRight = document.getElementById('swipeLabelRight');
-        
-        if (!this.card) {
-            console.error('❌ Swipe card not found in startWithOpponent!');
             return;
         }
         
