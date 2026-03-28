@@ -2558,6 +2558,38 @@ input:checked + .slider:before {
     opacity: 0.6;
 }
 
+/* ===== АВАТАР — БАЗОВЫЕ СТИЛИ ===== */
+.swipe-avatar {
+    width: 70px;
+    height: 70px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--input-bg);
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.swipe-avatar .tg-avatar-svg {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.swipe-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Убираем стили для svg — они будут заданы через атрибуты в самом svg */
+/* .swipe-avatar svg — удаляем, не нужны */
+
 /* ===== АДАПТАЦИЯ ===== */
 @media (max-width: 500px) {
     .swipe-card {
@@ -2572,12 +2604,6 @@ input:checked + .slider:before {
     .swipe-avatar {
         width: 60px;
         height: 60px;
-    }
-    
-    /* SVG внутри аватара на планшетах */
-    .swipe-avatar .tg-avatar-svg svg {
-        width: 32px;
-        height: 32px;
     }
     
     .swipe-player-nick {
@@ -2605,12 +2631,6 @@ input:checked + .slider:before {
         height: 52px;
     }
     
-    /* SVG внутри аватара на телефонах */
-    .swipe-avatar .tg-avatar-svg svg {
-        width: 28px;
-        height: 28px;
-    }
-    
     .swipe-player-nick {
         font-size: 15px;
     }
@@ -2624,6 +2644,7 @@ input:checked + .slider:before {
         padding: 6px 4px;
     }
 }
+
 /* ===== PINGSTER PREMIUM PATCH ===== */
 .phone-frame {
     padding: 0;
