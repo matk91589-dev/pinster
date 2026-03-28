@@ -91,6 +91,8 @@ const Swipe = {
         // Уникальный ID запуска — убивает все предыдущие анимации
         this.hintRunId = (this.hintRunId || 0) + 1;
         const runId = this.hintRunId;
+        
+        console.log('🎬 startSwipeHint runId:', runId);
 
         // Очистка старых таймаутов
         if (this.hintTimeoutIds && this.hintTimeoutIds.length) {
@@ -98,9 +100,9 @@ const Swipe = {
         }
         this.hintTimeoutIds = [];
 
+        // sleep — всегда резолвится, проверка снаружи
         const sleep = (ms) => new Promise(resolve => {
             const id = setTimeout(() => {
-                if (runId !== this.hintRunId) return;
                 resolve();
             }, ms);
             this.hintTimeoutIds.push(id);
@@ -119,6 +121,7 @@ const Swipe = {
             card.style.transition = '';
             card.style.transform = 'translateX(0) rotate(0deg)';
             card.classList.remove('idle-left', 'idle-right');
+            console.log('🛑 Анимация остановлена (runId:', runId, ')');
         };
 
         const runCycle = async () => {
