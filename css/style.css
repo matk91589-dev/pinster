@@ -2383,13 +2383,14 @@ input:checked + .slider:before {
 }
 
 .swipe-stats-row.three-cols .swipe-stat-label {
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text-secondary);
-    font-weight: 500;
+    font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
     display: block;
+    opacity: 0.5;
 }
 
 .swipe-stats-row.three-cols .swipe-stat-value {
@@ -2414,13 +2415,14 @@ input:checked + .slider:before {
 }
 
 .swipe-link-label {
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text-secondary);
-    font-weight: 500;
+    font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
     display: block;
+    opacity: 0.5;
 }
 
 .swipe-link-value {
@@ -2443,13 +2445,14 @@ input:checked + .slider:before {
 }
 
 .swipe-comment-label {
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text-secondary);
-    font-weight: 500;
+    font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
     display: block;
+    opacity: 0.5;
 }
 
 .swipe-comment-text {
