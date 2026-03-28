@@ -135,25 +135,25 @@ const Swipe = {
         const runCycle = async () => {
             if (runId !== this.hintRunId) return;
             console.log('🔄 Цикл', runId, '- ВПРАВО');
-            card.style.transition = 'transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
+            card.style.transition = 'transform 1.5s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
             card.style.transform = 'translateX(35px) rotate(10deg)';
             card.classList.add('idle-right');
             card.classList.remove('idle-left');
             
-            await sleep(800);
+            await sleep(1500);
             if (runId !== this.hintRunId) return;
             
             console.log('🔄 Цикл', runId, '- ВЛЕВО');
-            card.style.transition = 'transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
+            card.style.transition = 'transform 1.5s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
             card.style.transform = 'translateX(-35px) rotate(-10deg)';
             card.classList.add('idle-left');
             card.classList.remove('idle-right');
             
-            await sleep(800);
+            await sleep(1500);
             if (runId !== this.hintRunId) return;
             
             console.log('🔄 Цикл', runId, '- В ЦЕНТР');
-            card.style.transition = 'transform 0.2s ease';
+            card.style.transition = 'transform 0.5s ease';
             card.style.transform = 'translateX(0) rotate(0deg)';
             card.classList.remove('idle-left', 'idle-right');
             
