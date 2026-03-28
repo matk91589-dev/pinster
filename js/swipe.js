@@ -24,7 +24,7 @@ const Swipe = {
     ANIMATION_DURATION: 250,
     AUTO_COMPLETE_DURATION: 300,
     MIN_THRESHOLD_PX: 150,
-    STRONG_SWIPE_THRESHOLD: 100, // Порог для сильного свайпа (заливание)
+    STRONG_SWIPE_THRESHOLD: 100,
     
     // Цвета для подсветки
     BRIGHT_GREEN: 'rgba(76, 175, 80, 0.25)',
@@ -72,7 +72,6 @@ const Swipe = {
         }
     },
     
-    // Просто центрирование — все размеры задаёт CSS
     adjustCardSize() {
         if (!this.card || this.isConnectionMode) return;
         this.card.style.marginLeft = 'auto';
@@ -142,7 +141,6 @@ const Swipe = {
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
         this.isConnectionMode = false;
-        
         this.mode = opponent.mode;
         
         this.gameCreated = false;
@@ -267,17 +265,20 @@ const Swipe = {
         this.onDragMoveBound = this.onDragMove.bind(this);
         this.onDragEndBound = this.onDragEnd.bind(this);
         
-        // Touch события
+        // Только touch события для мобилок — плавнее
         this.card.addEventListener('touchstart', this.onDragStartBound, { passive: false });
         this.card.addEventListener('touchmove', this.onDragMoveBound, { passive: false });
         this.card.addEventListener('touchend', this.onDragEndBound);
         this.card.addEventListener('touchcancel', this.onDragEndBound);
         
-        // Pointer события
-        this.card.addEventListener('pointerdown', this.onDragStartBound);
-        this.card.addEventListener('pointermove', this.onDragMoveBound);
-        this.card.addEventListener('pointerup', this.onDragEndBound);
-        this.card.addEventListener('pointercancel', this.onDragEndBound);
+        // Только для десктопа — pointer события (не для мобилок, чтобы не дублировать)
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        if (!isTouchDevice) {
+            this.card.addEventListener('pointerdown', this.onDragStartBound);
+            this.card.addEventListener('pointermove', this.onDragMoveBound);
+            this.card.addEventListener('pointerup', this.onDragEndBound);
+            this.card.addEventListener('pointercancel', this.onDragEndBound);
+        }
         
         this.card.addEventListener('dragstart', (e) => e.preventDefault());
         
@@ -331,32 +332,31 @@ const Swipe = {
         const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
         const progress = Math.min(Math.abs(this.currentX) / threshold, 1);
         
-        // Увеличенный наклон
         const rotate = deltaX * 0.08;
         
         this.card.style.transform = `translateX(${this.currentX}px) rotate(${rotate}deg) scale(${1 + progress * 0.02})`;
         
-        // Логика для классов свайпа и заливания
+        // Сначала убираем все классы
+        this.card.classList.remove('swiping-right', 'swiping-left', 'accept-overlay', 'reject-overlay');
+        
+        // Логика для направления свайпа
         if (this.currentX > 30) {
+            // Наклон вправо — показываем зелёный левый верхний угол
             this.card.classList.add('swiping-right');
-            this.card.classList.remove('swiping-left');
-            this.card.classList.remove('accept-overlay', 'reject-overlay');
             
-            // При сильном свайпе — зелёное заливание
+            // При сильном свайпе (>100px) — полное зелёное заливание
             if (this.currentX > this.STRONG_SWIPE_THRESHOLD) {
                 this.card.classList.add('accept-overlay');
             }
-        } else if (this.currentX < -30) {
+        } 
+        else if (this.currentX < -30) {
+            // Наклон влево — показываем красный правый верхний угол
             this.card.classList.add('swiping-left');
-            this.card.classList.remove('swiping-right');
-            this.card.classList.remove('accept-overlay', 'reject-overlay');
             
-            // При сильном свайпе — красное заливание
+            // При сильном свайпе (<-100px) — полное красное заливание
             if (this.currentX < -this.STRONG_SWIPE_THRESHOLD) {
                 this.card.classList.add('reject-overlay');
             }
-        } else {
-            this.card.classList.remove('swiping-right', 'swiping-left', 'accept-overlay', 'reject-overlay');
         }
     },
     
