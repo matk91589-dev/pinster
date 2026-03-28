@@ -19,8 +19,8 @@ const Swipe = {
     startTime: 0,
     
     // Константы
-    SWIPE_THRESHOLD: 120, // расстояние для свайпа (увеличено)
-    VELOCITY_THRESHOLD: 0.5, // скорость для свайпа
+    SWIPE_THRESHOLD: 120,
+    VELOCITY_THRESHOLD: 0.5,
     ANIMATION_DURATION: 250,
     
     // Данные
@@ -43,6 +43,7 @@ const Swipe = {
     // Для подсказки
     hintAnimationStopped: false,
     hintCycles: 0,
+    hintTimeoutIds: [],
     
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
@@ -88,11 +89,20 @@ const Swipe = {
         
         this.hintAnimationStopped = false;
         this.hintCycles = 0;
+        this.hintTimeoutIds = [];
         
         const card = this.card;
         
+        const clearTimeouts = () => {
+            this.hintTimeoutIds.forEach(id => clearTimeout(id));
+            this.hintTimeoutIds = [];
+        };
+        
         const loop = () => {
-            if (this.hintAnimationStopped || this.hintCycles >= 2) return;
+            if (this.hintAnimationStopped || this.hintCycles >= 2) {
+                clearTimeouts();
+                return;
+            }
             this.hintCycles++;
             
             // ВЛЕВО
@@ -101,11 +111,11 @@ const Swipe = {
             card.classList.add('idle-left');
             card.classList.remove('idle-right');
             
-            setTimeout(() => {
+            const t1 = setTimeout(() => {
                 if (this.hintAnimationStopped) return;
                 card.style.transform = 'translateX(0) rotate(0deg)';
                 
-                setTimeout(() => {
+                const t2 = setTimeout(() => {
                     if (this.hintAnimationStopped) return;
                     
                     // ВПРАВО
@@ -113,30 +123,36 @@ const Swipe = {
                     card.classList.add('idle-right');
                     card.classList.remove('idle-left');
                     
-                    setTimeout(() => {
+                    const t3 = setTimeout(() => {
                         if (this.hintAnimationStopped) return;
                         card.style.transform = 'translateX(0) rotate(0deg)';
                         
                         // ПАУЗА
-                        setTimeout(loop, 1500);
-                        
+                        const t4 = setTimeout(loop, 1500);
+                        this.hintTimeoutIds.push(t4);
                     }, 400);
+                    this.hintTimeoutIds.push(t3);
                     
                 }, 300);
+                this.hintTimeoutIds.push(t2);
                 
             }, 400);
+            this.hintTimeoutIds.push(t1);
         };
         
         // Старт через 500ms
-        setTimeout(loop, 500);
+        const startTimeout = setTimeout(loop, 500);
+        this.hintTimeoutIds.push(startTimeout);
         
         // Останавливаем при касании
         const stopHint = () => {
             if (this.hintAnimationStopped) return;
             this.hintAnimationStopped = true;
+            this.hintTimeoutIds.forEach(id => clearTimeout(id));
+            this.hintTimeoutIds = [];
+            card.style.transition = '';
             card.style.transform = 'translateX(0) rotate(0deg)';
             card.classList.remove('idle-left', 'idle-right');
-            card.style.transition = '';
         };
         
         card.addEventListener('touchstart', stopHint, { once: true });
@@ -322,12 +338,11 @@ const Swipe = {
             return;
         }
         
-        // Привязываем методы
         this.onDragStartBound = this.onDragStart.bind(this);
         this.onDragMoveBound = this.onDragMove.bind(this);
         this.onDragEndBound = this.onDragEnd.bind(this);
         
-        // Только touch события (для плавности)
+        // Touch события
         this.card.addEventListener('touchstart', this.onDragStartBound, { passive: false });
         this.card.addEventListener('touchmove', this.onDragMoveBound, { passive: false });
         this.card.addEventListener('touchend', this.onDragEndBound);
@@ -359,6 +374,7 @@ const Swipe = {
         
         // Останавливаем подсказку
         this.hintAnimationStopped = true;
+        this.card.classList.remove('idle-left', 'idle-right');
         
         const target = e.target;
         if (!this.card.contains(target)) return;
@@ -385,14 +401,12 @@ const Swipe = {
         this.currentX = clientX;
         const deltaX = this.currentX - this.startX;
         
-        // Плавный наклон
         const percent = deltaX / 150;
         const rotate = percent * 10;
         const scale = 1 + Math.abs(percent) * 0.05;
         
         this.card.style.transform = `translateX(${deltaX}px) rotate(${rotate}deg) scale(${scale})`;
         
-        // Классы для визуала
         if (deltaX > 0) {
             this.card.classList.add('swiping-right');
             this.card.classList.remove('swiping-left');
@@ -412,7 +426,6 @@ const Swipe = {
         const time = Date.now() - this.startTime;
         const velocity = Math.abs(deltaX / time);
         
-        // Условие свайпа: расстояние > порога ИЛИ скорость > порога
         const isSwipe = Math.abs(deltaX) > this.SWIPE_THRESHOLD || velocity > this.VELOCITY_THRESHOLD;
         
         if (isSwipe && Math.abs(deltaX) > 10) {
@@ -432,11 +445,9 @@ const Swipe = {
                 }, this.ANIMATION_DURATION);
             }
         } else {
-            // Возврат на место
             this.resetCardPosition();
         }
         
-        // Убираем классы
         this.card.classList.remove('dragging', 'swiping-right', 'swiping-left');
         
         e.preventDefault();
