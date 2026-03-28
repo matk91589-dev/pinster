@@ -3783,16 +3783,19 @@ html {
     to { transform: rotate(360deg); }
 }
 
-/* Эффект "дрожания" при ожидании */
+/* ===== АНИМАЦИЯ КАРТОЧКИ ===== */
 @keyframes tinderSway {
     0% {
         transform: rotate(0deg) translateX(0);
     }
     25% {
-        transform: rotate(0.8deg) translateX(3px);
+        transform: rotate(0.8deg) translateX(5px);
+    }
+    50% {
+        transform: rotate(0deg) translateX(0);
     }
     75% {
-        transform: rotate(-0.8deg) translateX(-3px);
+        transform: rotate(-0.8deg) translateX(-5px);
     }
     100% {
         transform: rotate(0deg) translateX(0);
@@ -3800,11 +3803,50 @@ html {
 }
 
 .swipe-card:not(.dragging):not(.swiping-right):not(.swiping-left) {
-    animation: tinderSway 2.5s ease-in-out infinite;
+    animation: tinderSway 1.2s ease-in-out infinite;
 }
 
 .swipe-card.dragging,
 .swipe-card.swiping-right,
 .swipe-card.swiping-left {
     animation: none;
+}
+
+/* ===== ЦВЕТНЫЕ УГОЛКИ ПРИ СВАЙПЕ ===== */
+.swipe-card::before,
+.swipe-card::after {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+    z-index: 15;
+    border-radius: 50%;
+    filter: blur(25px);
+}
+
+/* Левый верхний угол — красный */
+.swipe-card::before {
+    top: -25px;
+    left: -25px;
+    background: radial-gradient(circle, rgba(255, 80, 80, 0.7), rgba(255, 80, 80, 0));
+}
+
+/* Правый верхний угол — зелёный */
+.swipe-card::after {
+    top: -25px;
+    right: -25px;
+    background: radial-gradient(circle, rgba(80, 200, 120, 0.7), rgba(80, 200, 120, 0));
+}
+
+/* При наклоне вправо — зелёный уголок */
+.swipe-card.swiping-right::after {
+    opacity: 1;
+}
+
+/* При наклоне влево — красный уголок */
+.swipe-card.swiping-left::before {
+    opacity: 1;
 }
