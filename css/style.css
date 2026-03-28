@@ -2220,7 +2220,7 @@ input:checked + .slider:before {
 }
 
 /* =========================
-   ЭКРАН СВАЙП-КАРТОЧЕК — ПРОСТО И РАБОТАЕТ
+   ЭКРАН СВАЙП-КАРТОЧЕК — ВЫСОТА ОТ ЭКРАНА
    ========================= */
 
 .swipe-card-container {
@@ -2282,11 +2282,13 @@ input:checked + .slider:before {
     min-height: 0;
 }
 
-/* КАРТОЧКА — 60% ШИРИНЫ ЭКРАНА */
+/* КАРТОЧКА — высота 70% от доступной высоты, ширина = высота × 0.8 */
 .swipe-card {
-    width: 60vw;
-    max-width: 420px;
-    min-width: 260px;
+    height: 70vh;
+    max-height: 550px;
+    min-height: 400px;
+    width: auto;
+    aspect-ratio: 4 / 5; /* 4:5 = 0.8, ширина меньше высоты */
     
     background: var(--surface);
     border-radius: 28px;
@@ -2303,14 +2305,13 @@ input:checked + .slider:before {
     flex-direction: column;
     
     margin: 0 auto;
-    /* Центрирование по вертикали — оставляем на усмотрение контента */
 }
 
 .swipe-card:active {
     cursor: grabbing;
 }
 
-/* Внутренний контент — сжимается при необходимости */
+/* Внутренний контент */
 .swipe-card-content {
     display: flex;
     flex-direction: column;
@@ -2594,10 +2595,19 @@ input:checked + .slider:before {
 }
 
 /* Адаптив */
+@media (max-width: 768px) {
+    .swipe-card {
+        height: 65vh;
+        min-height: 350px;
+        max-height: 500px;
+    }
+}
+
 @media (max-width: 600px) {
     .swipe-card {
-        width: 70vw;
-        min-width: 240px;
+        height: 60vh;
+        min-height: 320px;
+        max-height: 450px;
     }
     
     .swipe-card-content {
@@ -2621,8 +2631,9 @@ input:checked + .slider:before {
 
 @media (max-width: 480px) {
     .swipe-card {
-        width: 80vw;
-        min-width: 220px;
+        height: 55vh;
+        min-height: 280px;
+        max-height: 400px;
     }
     
     .swipe-card-content {
