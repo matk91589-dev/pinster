@@ -86,14 +86,17 @@ const Swipe = {
     startSwipeHint() {
         if (!this.card) return;
         
+        // Очищаем предыдущие таймауты
+        if (this.hintTimeoutIds.length) {
+            this.hintTimeoutIds.forEach(id => clearTimeout(id));
+            this.hintTimeoutIds = [];
+        }
+        
         this.hintAnimationStopped = false;
-        this.hintTimeoutIds = [];
         
         const card = this.card;
-        let cycles = 0;
-        const MAX_CYCLES = 2; // 2 цикла
         
-        const clearTimeouts = () => {
+        const clearAll = () => {
             this.hintTimeoutIds.forEach(id => clearTimeout(id));
             this.hintTimeoutIds = [];
         };
@@ -101,18 +104,17 @@ const Swipe = {
         const stopAnimation = () => {
             if (this.hintAnimationStopped) return;
             this.hintAnimationStopped = true;
-            clearTimeouts();
+            clearAll();
             card.style.transition = '';
             card.style.transform = 'translateX(0) rotate(0deg)';
             card.classList.remove('idle-left', 'idle-right');
         };
         
-        const doCycle = () => {
+        // Функция для одного цикла (вправо → влево → возврат)
+        const doOneCycle = (callback) => {
             if (this.hintAnimationStopped) return;
             
-            cycles++;
-            
-            // ВПРАВО (0.8 сек)
+            // ВПРАВО
             card.style.transition = 'transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
             card.style.transform = 'translateX(40px) rotate(12deg)';
             card.classList.add('idle-right');
@@ -121,7 +123,7 @@ const Swipe = {
             const t1 = setTimeout(() => {
                 if (this.hintAnimationStopped) return;
                 
-                // ВЛЕВО (0.8 сек)
+                // ВЛЕВО
                 card.style.transition = 'transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
                 card.style.transform = 'translateX(-40px) rotate(-12deg)';
                 card.classList.add('idle-left');
@@ -130,24 +132,14 @@ const Swipe = {
                 const t2 = setTimeout(() => {
                     if (this.hintAnimationStopped) return;
                     
-                    // ВОЗВРАТ В ЦЕНТР (быстро)
+                    // ВОЗВРАТ В ЦЕНТР
                     card.style.transition = 'transform 0.2s ease';
                     card.style.transform = 'translateX(0) rotate(0deg)';
                     card.classList.remove('idle-left', 'idle-right');
                     
-                    // Если сделали все циклы — останавливаемся
-                    if (cycles >= MAX_CYCLES) {
-                        stopAnimation();
-                        return;
+                    if (callback) {
+                        setTimeout(callback, 50);
                     }
-                    
-                    // Пауза 5 секунд перед следующим циклом
-                    const t3 = setTimeout(() => {
-                        if (!this.hintAnimationStopped) {
-                            doCycle();
-                        }
-                    }, 5000);
-                    this.hintTimeoutIds.push(t3);
                     
                 }, 800);
                 this.hintTimeoutIds.push(t2);
@@ -156,11 +148,35 @@ const Swipe = {
             this.hintTimeoutIds.push(t1);
         };
         
-        // Старт через 1 секунду
+        // Сценарий:
+        // 1. Старт через 1 сек
+        // 2. Цикл 1
+        // 3. Пауза 5 сек
+        // 4. Цикл 2
+        // 5. Полная остановка
+        
         const startTimeout = setTimeout(() => {
-            if (!this.hintAnimationStopped) {
-                doCycle();
-            }
+            if (this.hintAnimationStopped) return;
+            
+            // ЦИКЛ 1
+            doOneCycle(() => {
+                if (this.hintAnimationStopped) return;
+                
+                // ПАУЗА 5 СЕКУНД
+                const pauseTimeout = setTimeout(() => {
+                    if (this.hintAnimationStopped) return;
+                    
+                    // ЦИКЛ 2
+                    doOneCycle(() => {
+                        if (this.hintAnimationStopped) return;
+                        // ПОЛНАЯ ОСТАНОВКА
+                        stopAnimation();
+                    });
+                    
+                }, 5000);
+                this.hintTimeoutIds.push(pauseTimeout);
+            });
+            
         }, 1000);
         this.hintTimeoutIds.push(startTimeout);
         
