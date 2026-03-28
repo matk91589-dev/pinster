@@ -2572,6 +2572,7 @@ input:checked + .slider:before {
     justify-content: center;
 }
 
+/* Контейнер для содержимого — обязательно 100% */
 .swipe-avatar .tg-avatar-svg {
     width: 100%;
     height: 100%;
@@ -2580,15 +2581,17 @@ input:checked + .slider:before {
     justify-content: center;
 }
 
-/* Картинка аватара — cover, чтобы заполнить контейнер */
+/* Картинка аватара — принудительно 100% + object-fit */
 .swipe-avatar img {
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
     object-fit: cover;
     display: block;
 }
 
-/* SVG-заглушка — фиксированный размер */
+/* SVG-заглушка */
 .swipe-avatar svg {
     width: 40px;
     height: 40px;
