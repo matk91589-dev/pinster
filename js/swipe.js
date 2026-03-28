@@ -203,11 +203,9 @@ const Swipe = {
         document.body.style.position = 'fixed';
         document.body.style.width = '100%';
         document.body.style.height = '100%';
-        document.body.style.touchAction = 'none';
         
         if (this.container) {
             this.container.style.overflow = 'hidden';
-            this.container.style.touchAction = 'none';
         }
         
         window.addEventListener('scroll', this.preventDefaultScroll, { passive: false });
@@ -220,11 +218,9 @@ const Swipe = {
         document.body.style.position = '';
         document.body.style.width = '';
         document.body.style.height = '';
-        document.body.style.touchAction = '';
         
         if (this.container) {
             this.container.style.overflow = '';
-            this.container.style.touchAction = '';
         }
         
         window.removeEventListener('scroll', this.preventDefaultScroll);
@@ -233,16 +229,31 @@ const Swipe = {
     },
     
     setupEventListeners() {
+        if (!this.card) {
+            console.error('❌ Cannot setup listeners: card not found');
+            return;
+        }
+        
         this.onDragStartBound = this.onDragStart.bind(this);
         this.onDragMoveBound = this.onDragMove.bind(this);
         this.onDragEndBound = this.onDragEnd.bind(this);
         
+        // Touch события для мобильных устройств
+        this.card.addEventListener('touchstart', this.onDragStartBound, { passive: false });
+        this.card.addEventListener('touchmove', this.onDragMoveBound, { passive: false });
+        this.card.addEventListener('touchend', this.onDragEndBound);
+        this.card.addEventListener('touchcancel', this.onDragEndBound);
+        
+        // Pointer события для десктопа
         this.card.addEventListener('pointerdown', this.onDragStartBound);
         this.card.addEventListener('pointermove', this.onDragMoveBound);
         this.card.addEventListener('pointerup', this.onDragEndBound);
         this.card.addEventListener('pointercancel', this.onDragEndBound);
+        
+        // Блокируем dragstart
         this.card.addEventListener('dragstart', (e) => e.preventDefault());
-        console.log('✅ Обработчики событий установлены');
+        
+        console.log('✅ Обработчики событий свайпа установлены');
     },
     
     preventScroll(e) {
@@ -251,11 +262,18 @@ const Swipe = {
     },
     
     getClientX(e) {
-        return e.clientX ?? e.touches?.[0]?.clientX;
+        if (e.clientX !== undefined) return e.clientX;
+        if (e.touches && e.touches[0]) return e.touches[0].clientX;
+        if (e.changedTouches && e.changedTouches[0]) return e.changedTouches[0].clientX;
+        return null;
     },
     
     onDragStart(e) {
         if (this.isConnectionMode) return;
+        
+        // Проверяем, что клик именно по карточке или её содержимому
+        const target = e.target;
+        if (!this.card.contains(target)) return;
         
         this.isDragging = true;
         this.startX = this.getClientX(e);
@@ -276,7 +294,7 @@ const Swipe = {
         e.stopPropagation();
         
         const clientX = this.getClientX(e);
-        if (!clientX) return;
+        if (clientX === null) return;
         
         const deltaX = clientX - this.startX;
         this.currentX = this.initialX + deltaX;
@@ -323,7 +341,7 @@ const Swipe = {
         const threshold = Math.min(window.innerWidth * this.SWIPE_THRESHOLD, this.MIN_THRESHOLD_PX);
         
         if (Math.abs(this.currentX) > threshold) {
-            if (window.Settings) Settings.swipe();
+            if (window.Settings && window.Settings.swipe) window.Settings.swipe();
             
             this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
             
@@ -366,7 +384,7 @@ const Swipe = {
     acceptPlayer() {
         console.log('✅ Принят игрок:', this.currentPlayer);
         
-        if (window.Settings) Settings.success();
+        if (window.Settings && window.Settings.success) window.Settings.success();
         
         if (this.cardTimerInterval) {
             clearInterval(this.cardTimerInterval);
@@ -472,13 +490,13 @@ const Swipe = {
             if (teammateAvatar) teammateAvatar.classList.add('connected');
             if (connectionLine) connectionLine.classList.add('connected');
             if (connectionTimer) connectionTimer.classList.remove('warning');
-            if (window.Settings) Settings.success();
+            if (window.Settings && window.Settings.success) window.Settings.success();
         } else if (status === 'rejected') {
             if (statusEl) {
                 statusEl.innerHTML = 'Тиммейт отклонил';
                 statusEl.style.color = '#FF3B30';
             }
-            if (window.Settings) Settings.error();
+            if (window.Settings && window.Settings.error) window.Settings.error();
         }
     },
     
@@ -508,7 +526,7 @@ const Swipe = {
     rejectPlayer() {
         console.log('❌ Пропущен игрок:', this.currentPlayer);
         
-        if (window.Settings) Settings.error();
+        if (window.Settings && window.Settings.error) window.Settings.error();
         
         if (this.cardTimerInterval) {
             clearInterval(this.cardTimerInterval);
@@ -600,7 +618,7 @@ const Swipe = {
         
         const selfAvatar = document.querySelector('.self-avatar .tg-avatar-svg');
         if (selfAvatar) {
-            const myAvatar = localStorage.getItem('pingster_avatar') || Profile?.savedAvatarUrl;
+            const myAvatar = localStorage.getItem('pingster_avatar') || (window.Profile && Profile.savedAvatarUrl);
             if (myAvatar) {
                 selfAvatar.innerHTML = `<img src="${myAvatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
             }
@@ -812,6 +830,10 @@ const Swipe = {
         this.unblockScroll();
         
         if (this.card) {
+            this.card.removeEventListener('touchstart', this.onDragStartBound);
+            this.card.removeEventListener('touchmove', this.onDragMoveBound);
+            this.card.removeEventListener('touchend', this.onDragEndBound);
+            this.card.removeEventListener('touchcancel', this.onDragEndBound);
             this.card.removeEventListener('pointerdown', this.onDragStartBound);
             this.card.removeEventListener('pointermove', this.onDragMoveBound);
             this.card.removeEventListener('pointerup', this.onDragEndBound);
@@ -853,7 +875,7 @@ const Swipe = {
             statusEl.style.color = '#FF3B30';
         }
         
-        if (window.Settings) Settings.error();
+        if (window.Settings && window.Settings.error) window.Settings.error();
         
         setTimeout(() => this.exitSwipeMode('handleRejection'), 2000);
     },
