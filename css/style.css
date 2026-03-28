@@ -3786,24 +3786,18 @@ html {
 /* ===== АНИМАЦИЯ КАРТОЧКИ ===== */
 @keyframes tinderSway {
     0% {
-        transform: rotate(0deg) translateX(0);
-    }
-    25% {
-        transform: rotate(0.8deg) translateX(5px);
+        transform: rotate(-0.8deg) translateX(-4px);
     }
     50% {
-        transform: rotate(0deg) translateX(0);
-    }
-    75% {
-        transform: rotate(-0.8deg) translateX(-5px);
+        transform: rotate(0.8deg) translateX(4px);
     }
     100% {
-        transform: rotate(0deg) translateX(0);
+        transform: rotate(-0.8deg) translateX(-4px);
     }
 }
 
 .swipe-card:not(.dragging):not(.swiping-right):not(.swiping-left) {
-    animation: tinderSway 1.2s ease-in-out infinite;
+    animation: tinderSway 2.2s ease-in-out infinite;
 }
 
 .swipe-card.dragging,
@@ -3812,41 +3806,63 @@ html {
     animation: none;
 }
 
-/* ===== ЦВЕТНЫЕ УГОЛКИ ПРИ СВАЙПЕ ===== */
+/* ===== ЦВЕТНЫЕ УГОЛКИ ПРИ НАКЛОНЕ ===== */
 .swipe-card::before,
 .swipe-card::after {
     content: "";
     position: absolute;
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     opacity: 0;
-    transition: opacity 0.15s ease;
+    transition: opacity 0.2s ease;
     pointer-events: none;
     z-index: 15;
     border-radius: 50%;
-    filter: blur(25px);
+    filter: blur(30px);
 }
 
-/* Левый верхний угол — красный */
+/* Зелёный уголок — левый верхний (при наклоне вправо) */
 .swipe-card::before {
-    top: -25px;
-    left: -25px;
-    background: radial-gradient(circle, rgba(255, 80, 80, 0.7), rgba(255, 80, 80, 0));
+    top: -30px;
+    left: -30px;
+    background: radial-gradient(circle, rgba(80, 200, 120, 0.8), rgba(80, 200, 120, 0));
 }
 
-/* Правый верхний угол — зелёный */
+/* Красный уголок — правый верхний (при наклоне влево) */
 .swipe-card::after {
-    top: -25px;
-    right: -25px;
-    background: radial-gradient(circle, rgba(80, 200, 120, 0.7), rgba(80, 200, 120, 0));
+    top: -30px;
+    right: -30px;
+    background: radial-gradient(circle, rgba(255, 80, 80, 0.8), rgba(255, 80, 80, 0));
 }
 
-/* При наклоне вправо — зелёный уголок */
-.swipe-card.swiping-right::after {
+/* При наклоне вправо — зелёный левый уголок */
+.swipe-card.swiping-right::before {
     opacity: 1;
 }
 
-/* При наклоне влево — красный уголок */
-.swipe-card.swiping-left::before {
+/* При наклоне влево — красный правый уголок */
+.swipe-card.swiping-left::after {
     opacity: 1;
+}
+
+/* ===== ПОЛНОЕ ЗАЛИВАНИЕ КАРТОЧКИ ПРИ СИЛЬНОМ СВАЙПЕ ===== */
+.swipe-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    transition: background 0.25s ease;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 28px;
+}
+
+/* При сильном свайпе вправо (принять) — зелёное заливание */
+.swipe-card.accept-overlay::after {
+    background: rgba(80, 200, 120, 0.3);
+}
+
+/* При сильном свайпе влево (отклонить) — красное заливание */
+.swipe-card.reject-overlay::after {
+    background: rgba(255, 80, 80, 0.3);
 }
