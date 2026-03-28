@@ -2220,7 +2220,7 @@ input:checked + .slider:before {
 }
 
 /* =========================
-   ЭКРАН СВАЙП-КАРТОЧЕК — ВЫСОТА ОТ ЭКРАНА
+   ЭКРАН СВАЙП-КАРТОЧЕК — ФИКСИРОВАННАЯ ШИРИНА
    ========================= */
 
 .swipe-card-container {
@@ -2282,14 +2282,10 @@ input:checked + .slider:before {
     min-height: 0;
 }
 
-/* КАРТОЧКА — высота 70% от доступной высоты, ширина = высота × 0.8 */
+/* КАРТОЧКА — фиксированная ширина, высота от контента */
 .swipe-card {
-    height: 70vh;
-    max-height: 550px;
-    min-height: 400px;
-    width: auto;
-    aspect-ratio: 4 / 5; /* 4:5 = 0.8, ширина меньше высоты */
-    
+    width: 340px;
+    max-width: 85vw;
     background: var(--surface);
     border-radius: 28px;
     border: 1px solid var(--border-color);
@@ -2594,20 +2590,10 @@ input:checked + .slider:before {
     to { transform: rotate(360deg); }
 }
 
-/* Адаптив */
-@media (max-width: 768px) {
+/* Адаптив — только для маленьких экранов */
+@media (max-width: 480px) {
     .swipe-card {
-        height: 65vh;
-        min-height: 350px;
-        max-height: 500px;
-    }
-}
-
-@media (max-width: 600px) {
-    .swipe-card {
-        height: 60vh;
-        min-height: 320px;
-        max-height: 450px;
+        width: 300px;
     }
     
     .swipe-card-content {
@@ -2626,23 +2612,6 @@ input:checked + .slider:before {
     
     .swipe-rating-value {
         font-size: 14px;
-    }
-}
-
-@media (max-width: 480px) {
-    .swipe-card {
-        height: 55vh;
-        min-height: 280px;
-        max-height: 400px;
-    }
-    
-    .swipe-card-content {
-        padding: 14px 12px;
-    }
-    
-    .swipe-avatar {
-        width: 50px;
-        height: 50px;
     }
     
     .swipe-stats-row.three-cols .swipe-stat-value {
