@@ -3844,3 +3844,32 @@ html {
 .swipe-card.swiping-left::after {
     opacity: 1;
 }
+
+/* ===== ПОДСКАЗКА (ПОКАЧИВАНИЕ) ===== */
+.swipe-card.idle-left::before {
+    background: linear-gradient(-135deg, rgba(255, 80, 80, 0.15), transparent 40%);
+}
+
+.swipe-card.idle-right::before {
+    background: linear-gradient(135deg, rgba(80, 200, 120, 0.15), transparent 40%);
+}
+
+/* ===== ЭФФЕКТ ПРИ СВАЙПЕ ===== */
+.swipe-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    background: transparent;
+    transition: background 0.2s;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.swipe-card.swiping-right::after {
+    background: rgba(80, 200, 120, 0.25);
+}
+
+.swipe-card.swiping-left::after {
+    background: rgba(255, 80, 80, 0.25);
+}
