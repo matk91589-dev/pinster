@@ -3848,7 +3848,7 @@ html {
     opacity: 1;
 }
 
-/* Красный уголок для наклона влево — отдельный псевдоэлемент не нужен, меняем цвет и позицию */
+/* При наклоне влево — красный правый уголок */
 .swipe-card.swiping-left::before {
     left: auto;
     right: -30px;
@@ -3856,17 +3856,31 @@ html {
     opacity: 1;
 }
 
-/* ===== ПОДСКАЗКА (ПОКАЧИВАНИЕ) — отдельный класс, не конфликтует ===== */
-.swipe-card.idle-left::before {
-    opacity: 0.5;
-    background: linear-gradient(-135deg, rgba(255, 80, 80, 0.15), transparent 40%);
-    left: -30px;
-    right: auto;
+/* ===== ПОДСКАЗКА (ПОКАЧИВАНИЕ) — отдельные классы, НЕ перезаписывают ::before ===== */
+.swipe-card.idle-left {
+    position: relative;
 }
 
-.swipe-card.idle-right::before {
-    opacity: 0.5;
+.swipe-card.idle-left::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    background: linear-gradient(-135deg, rgba(255, 80, 80, 0.15), transparent 40%);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.swipe-card.idle-right {
+    position: relative;
+}
+
+.swipe-card.idle-right::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
     background: linear-gradient(135deg, rgba(80, 200, 120, 0.15), transparent 40%);
-    left: auto;
-    right: -30px;
+    pointer-events: none;
+    z-index: 5;
 }
