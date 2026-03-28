@@ -806,8 +806,27 @@ const Swipe = {
             const commentEl = document.getElementById('swipeComment');
             if (commentEl) commentEl.textContent = player.comment || '';
             
+            // Обновляем аватарку
+            this.updateAvatar(player);
+            
             this.updateLinksVisibility();
             setTimeout(() => this.adjustCardSize(), 50);
+        }
+    },
+    
+    updateAvatar(player) {
+        const avatarContainer = document.querySelector('#swipeCard .swipe-avatar .tg-avatar-svg');
+        if (!avatarContainer) return;
+        
+        const hasAvatar = player.avatar && player.avatar !== 'null' && player.avatar !== '';
+        
+        if (hasAvatar) {
+            avatarContainer.innerHTML = `<img src="${player.avatar}" alt="avatar">`;
+        } else {
+            avatarContainer.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/>
+                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/>
+            </svg>`;
         }
     },
     
