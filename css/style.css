@@ -2232,7 +2232,7 @@ input:checked + .slider:before {
     padding: 20px;
 }
 
-/* Карточка — стиль как в профиле */
+/* Карточка */
 .swipe-card {
     width: 360px;
     max-width: 85vw;
@@ -2299,7 +2299,7 @@ input:checked + .slider:before {
     background: transparent;
 }
 
-/* Верхняя строка — как в профиле */
+/* Верхняя строка */
 .swipe-player-row {
     display: flex;
     align-items: center;
@@ -2369,7 +2369,7 @@ input:checked + .slider:before {
     stroke: var(--accent);
 }
 
-/* Три колонки — как в профиле */
+/* Три колонки — лейбл сверху, значение внутри */
 .swipe-stats-row.three-cols {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -2380,10 +2380,6 @@ input:checked + .slider:before {
 
 .swipe-stats-row.three-cols .swipe-stat-item {
     text-align: center;
-    background: var(--surface);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 10px 8px;
 }
 
 .swipe-stats-row.three-cols .swipe-stat-label {
@@ -2397,12 +2393,20 @@ input:checked + .slider:before {
 }
 
 .swipe-stats-row.three-cols .swipe-stat-value {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 8px;
     font-size: 16px;
     font-weight: 600;
     color: var(--text-primary);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Ссылки — как в профиле */
+/* Ссылки — лейбл сверху, значение внутри */
 .swipe-steam-container,
 .swipe-faceit-container {
     margin: 0;
@@ -2432,7 +2436,7 @@ input:checked + .slider:before {
     text-overflow: ellipsis;
 }
 
-/* Комментарий — такой же, как в профиле, но добавляем */
+/* Комментарий — лейбл сверху, текст внутри */
 .swipe-comment {
     margin: 0;
     flex-shrink: 0;
@@ -2554,6 +2558,7 @@ input:checked + .slider:before {
     
     .swipe-stats-row.three-cols .swipe-stat-value {
         font-size: 14px;
+        padding: 8px 6px;
     }
 }
 
@@ -2582,6 +2587,7 @@ input:checked + .slider:before {
     
     .swipe-stats-row.three-cols .swipe-stat-value {
         font-size: 13px;
+        padding: 6px 4px;
     }
 }
 
