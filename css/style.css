@@ -3783,127 +3783,55 @@ html {
     to { transform: rotate(360deg); }
 }
 
-/* ===== АНИМАЦИЯ КАРТОЧКИ — ТОЛЬКО ЧЕРЕЗ JS ===== */
-/* Убираем бесконечную CSS-анимацию, теперь всё через JS */
+/* ===== НОВЫЕ СТИЛИ — БЕЗ ДЁРГАНИЙ, ТОЛЬКО ДЛЯ КНОПОК ===== */
+
+/* Убираем всю старую анимацию карточки */
 .swipe-card:not(.dragging):not(.swiping-right):not(.swiping-left) {
-    /* НЕТ АНИМАЦИИ! Всё управляется через JS */
+    /* НИКАКОЙ АНИМАЦИИ — карточка статична */
 }
 
-/* ===== ОСНОВНОЙ ПСЕВДОЭЛЕМЕНТ ДЛЯ ЗАЛИВАНИЯ ===== */
+/* Убираем старые надписи INVITE/SKIP */
+.swipe-card::before {
+    display: none !important;
+}
+
+/* Оставляем только лёгкую подсветку при свайпе */
 .swipe-card::after {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: 28px;
     background: transparent;
-    transition: background 0.2s;
+    transition: background 0.15s ease;
     z-index: 4;
     pointer-events: none;
 }
 
 .swipe-card.swiping-right::after {
-    background: rgba(80, 200, 120, 0.25);
+    background: rgba(76, 175, 80, 0.2);
 }
 
 .swipe-card.swiping-left::after {
-    background: rgba(255, 80, 80, 0.25);
+    background: rgba(255, 94, 94, 0.2);
 }
 
-/* ===== НАДПИСИ ПРИ СВАЙПЕ ===== */
-.swipe-card.swiping-right::before {
-    content: "INVITE";
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: 3px;
-    color: rgba(80, 200, 120, 0.9);
-    text-transform: uppercase;
-    transform: rotate(12deg);
-    z-index: 30;
-    pointer-events: none;
-    font-family: 'Montserrat', sans-serif;
-    opacity: 1;
-}
-
-.swipe-card.swiping-left::before {
-    content: "SKIP";
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: 3px;
-    color: rgba(255, 80, 80, 0.9);
-    text-transform: uppercase;
-    transform: rotate(-12deg);
-    z-index: 30;
-    pointer-events: none;
-    font-family: 'Montserrat', sans-serif;
-    opacity: 1;
-}
-
-/* ===== НАДПИСИ ПРИ ПОДСКАЗКЕ (ПОКАЧИВАНИИ) ===== */
-.swipe-card.idle-right::before {
-    content: "INVITE";
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: 3px;
-    color: rgba(80, 200, 120, 0.7);
-    text-transform: uppercase;
-    transform: rotate(12deg);
-    z-index: 30;
-    pointer-events: none;
-    font-family: 'Montserrat', sans-serif;
-    opacity: 1;
-}
-
-.swipe-card.idle-left::before {
-    content: "SKIP";
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: 3px;
-    color: rgba(255, 80, 80, 0.7);
-    text-transform: uppercase;
-    transform: rotate(-12deg);
-    z-index: 30;
-    pointer-events: none;
-    font-family: 'Montserrat', sans-serif;
-    opacity: 1;
-}
-
-/* ===== УСИЛЕННЫЕ ГРАДИЕНТЫ ПРИ ПОДСКАЗКЕ ===== */
-.swipe-card.idle-right::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 28px;
-    background: linear-gradient(135deg, rgba(80, 200, 120, 0.25), transparent 60%);
-    pointer-events: none;
-    z-index: 5;
-}
-
+/* Убираем всё, что связано с idle-left/idle-right (старая подсказка) */
+.swipe-card.idle-right::before,
+.swipe-card.idle-left::before,
+.swipe-card.idle-right::after,
 .swipe-card.idle-left::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 28px;
-    background: linear-gradient(-135deg, rgba(255, 80, 80, 0.25), transparent 60%);
-    pointer-events: none;
-    z-index: 5;
+    display: none !important;
 }
 
-/* ===== ОПТИМИЗАЦИЯ ДЛЯ ПЛАВНОЙ АНИМАЦИИ ===== */
+/* Базовая плавность для карточки */
 .swipe-card {
     will-change: transform;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     transform: translateZ(0);
+    transition: transform 0.3s ease;
+}
+
+.swipe-card.dragging {
+    transition: none;
 }
