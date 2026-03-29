@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - КАК В TINDER
+// СВАЙП-КАРТОЧКИ - СТАТИЧНЫЕ КНОПКИ ПО БОКАМ
 // ============================================
 
 const Swipe = {
@@ -11,6 +11,10 @@ const Swipe = {
     labelLeft: null,
     labelRight: null,
     timerElement: null,
+    
+    // Кнопки действия
+    skipBtn: null,
+    inviteBtn: null,
 
     // Переменные для drag
     isDragging: false,
@@ -40,11 +44,6 @@ const Swipe = {
     chatLink: null,
     inviteLink: null,
     
-    // Для подсказки
-    hintRunId: 0,
-    hintTimeoutIds: [],
-    _boundStopHint: null,
-    
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
         this.card = document.getElementById('swipeCard');
@@ -53,6 +52,9 @@ const Swipe = {
         this.loading = document.getElementById('swipeLoading');
         this.labelLeft = document.getElementById('swipeLabelLeft');
         this.labelRight = document.getElementById('swipeLabelRight');
+        
+        // Инициализация полукруглых кнопок
+        this.createSideButtons();
         
         if (!this.card) {
             console.error('❌ Swipe card not found!');
@@ -70,6 +72,102 @@ const Swipe = {
         }
     },
     
+    // ========== СОЗДАНИЕ ПОЛУКРУГЛЫХ КНОПОК ==========
+    createSideButtons() {
+        // Удаляем старые, если есть
+        if (this.skipBtn && this.skipBtn.parentNode) this.skipBtn.parentNode.remove();
+        if (this.inviteBtn && this.inviteBtn.parentNode) this.inviteBtn.parentNode.remove();
+        
+        const container = document.getElementById('swipeContainer');
+        if (!container) return;
+        
+        // Левая кнопка SKIP (красная)
+        const leftWrapper = document.createElement('div');
+        leftWrapper.className = 'swipe-side-btn skip-btn';
+        leftWrapper.innerHTML = `
+            <div class="swipe-side-btn-inner">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="#FF5E5E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        `;
+        
+        // Правая кнопка INVITE (зелёная)
+        const rightWrapper = document.createElement('div');
+        rightWrapper.className = 'swipe-side-btn invite-btn';
+        rightWrapper.innerHTML = `
+            <div class="swipe-side-btn-inner">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 18L15 12L9 6" stroke="#4CAF50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        `;
+        
+        // Добавляем в контейнер
+        container.appendChild(leftWrapper);
+        container.appendChild(rightWrapper);
+        
+        // Сохраняем ссылки
+        this.skipBtn = leftWrapper;
+        this.inviteBtn = rightWrapper;
+        
+        // Добавляем обработчики
+        this.skipBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.onSideButtonClick('skip');
+        });
+        
+        this.inviteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.onSideButtonClick('invite');
+        });
+        
+        // Добавляем анимацию пульсации при нажатии
+        this.skipBtn.addEventListener('mousedown', () => this.pulseButton(this.skipBtn));
+        this.skipBtn.addEventListener('touchstart', () => this.pulseButton(this.skipBtn));
+        this.inviteBtn.addEventListener('mousedown', () => this.pulseButton(this.inviteBtn));
+        this.inviteBtn.addEventListener('touchstart', () => this.pulseButton(this.inviteBtn));
+    },
+    
+    pulseButton(btn) {
+        btn.classList.add('pulse');
+        setTimeout(() => btn.classList.remove('pulse'), 200);
+    },
+    
+    onSideButtonClick(action) {
+        if (this.isConnectionMode) return;
+        
+        if (action === 'skip') {
+            if (window.Settings && window.Settings.error) window.Settings.error();
+            this.animateAndReject();
+        } else if (action === 'invite') {
+            if (window.Settings && window.Settings.swipe) window.Settings.swipe();
+            this.animateAndAccept();
+        }
+    },
+    
+    animateAndAccept() {
+        if (!this.card) return;
+        
+        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
+        this.card.style.transform = `translateX(200%) rotate(12deg) scale(0.9)`;
+        
+        setTimeout(() => {
+            this.acceptPlayer();
+        }, this.ANIMATION_DURATION);
+    },
+    
+    animateAndReject() {
+        if (!this.card) return;
+        
+        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
+        this.card.style.transform = `translateX(-200%) rotate(-12deg) scale(0.9)`;
+        
+        setTimeout(() => {
+            this.rejectPlayer();
+        }, this.ANIMATION_DURATION);
+    },
+    
     adjustCardSize() {
         if (!this.card || this.isConnectionMode) return;
         this.card.style.marginLeft = 'auto';
@@ -83,116 +181,38 @@ const Swipe = {
         connectionCard.style.marginRight = 'auto';
     },
     
-    // ========== ПОДСКАЗКА (ПОКАЧИВАНИЕ) ==========
+    // ========== ПОДСКАЗКА ТЕПЕРЬ ТОЛЬКО НА КНОПКАХ ==========
     startSwipeHint() {
-        if (!this.card) return;
-
-        const card = this.card;
-
-        // Удаляем старые обработчики, чтобы они не сработали сразу
-        if (this._boundStopHint) {
-            card.removeEventListener('touchstart', this._boundStopHint);
-            card.removeEventListener('mousedown', this._boundStopHint);
-            this._boundStopHint = null;
-        }
-
-        // Уникальный ID запуска
-        this.hintRunId = (this.hintRunId || 0) + 1;
-        const runId = this.hintRunId;
+        // Новая подсказка — лёгкое свечение кнопок по очереди
+        if (!this.skipBtn || !this.inviteBtn) return;
         
-        console.log('🎬 startSwipeHint runId:', runId);
-
-        // Очистка старых таймаутов
-        if (this.hintTimeoutIds && this.hintTimeoutIds.length) {
-            this.hintTimeoutIds.forEach(id => clearTimeout(id));
-            this.hintTimeoutIds = [];
-        }
-
-        const sleep = (ms) => new Promise(resolve => {
-            const id = setTimeout(() => {
-                resolve();
-            }, ms);
-            this.hintTimeoutIds.push(id);
-        });
-
-        const stopAnimation = () => {
-            if (runId !== this.hintRunId) return;
+        if (this.hintRunId) clearTimeout(this.hintRunId);
+        
+        const animateHint = () => {
+            if (this.isConnectionMode) return;
             
-            console.log('🛑 stopAnimation вызван для runId:', runId);
-
-            this.hintRunId++; // убивает все предыдущие run()
-
-            if (this.hintTimeoutIds && this.hintTimeoutIds.length) {
-                this.hintTimeoutIds.forEach(id => clearTimeout(id));
-                this.hintTimeoutIds = [];
-            }
-
-            card.style.transition = '';
-            card.style.transform = 'translateX(0) rotate(0deg)';
-            card.classList.remove('idle-left', 'idle-right');
-        };
-
-        const runCycle = async () => {
-            if (runId !== this.hintRunId) return;
-            console.log('🔄 Цикл', runId, '- ВПРАВО');
-            card.style.transition = 'transform 1.5s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
-            card.style.transform = 'translateX(35px) rotate(10deg)';
-            card.classList.add('idle-right');
-            card.classList.remove('idle-left');
-            
-            await sleep(1500);
-            if (runId !== this.hintRunId) return;
-            
-            console.log('🔄 Цикл', runId, '- ВЛЕВО');
-            card.style.transition = 'transform 1.5s cubic-bezier(0.2, 0.9, 0.3, 1.1)';
-            card.style.transform = 'translateX(-35px) rotate(-10deg)';
-            card.classList.add('idle-left');
-            card.classList.remove('idle-right');
-            
-            await sleep(1500);
-            if (runId !== this.hintRunId) return;
-            
-            console.log('🔄 Цикл', runId, '- В ЦЕНТР');
-            card.style.transition = 'transform 0.5s ease';
-            card.style.transform = 'translateX(0) rotate(0deg)';
-            card.classList.remove('idle-left', 'idle-right');
-            
-            await sleep(200);
-        };
-
-        const run = async () => {
-            console.log('⏱️ Старт задержка 1 сек для runId:', runId);
-            await sleep(1000);
-            if (runId !== this.hintRunId) return;
-            
-            console.log('🔄 ЦИКЛ 1 для runId:', runId);
-            await runCycle();
-            if (runId !== this.hintRunId) return;
-            
-            console.log('⏸️ ПАУЗА 5 сек для runId:', runId);
-            await sleep(5000);
-            if (runId !== this.hintRunId) return;
-            
-            console.log('🔄 ЦИКЛ 2 для runId:', runId);
-            await runCycle();
-            if (runId !== this.hintRunId) return;
-            
-            console.log('✅ ЗАВЕРШЕНИЕ анимации для runId:', runId);
-            stopAnimation();
-        };
-
-        run();
-
-        // Добавляем обработчики с новой ссылкой
-        const stopHint = () => {
-            if (runId !== this.hintRunId) return;
-            console.log('🖱️ Касание — останавливаем runId:', runId);
-            stopAnimation();
+            this.skipBtn.classList.add('hint-glow');
+            setTimeout(() => {
+                if (this.isConnectionMode) return;
+                this.skipBtn.classList.remove('hint-glow');
+                this.inviteBtn.classList.add('hint-glow');
+                setTimeout(() => {
+                    if (this.isConnectionMode) return;
+                    this.inviteBtn.classList.remove('hint-glow');
+                }, 800);
+            }, 800);
         };
         
-        this._boundStopHint = stopHint;
-        card.addEventListener('touchstart', this._boundStopHint, { once: true });
-        card.addEventListener('mousedown', this._boundStopHint, { once: true });
+        // Первая подсказка через 1 секунду
+        this.hintRunId = setTimeout(() => {
+            animateHint();
+            // Повторяем каждые 8 секунд, если нет активности
+            this.hintInterval = setInterval(() => {
+                if (!this.isDragging && !this.isConnectionMode && this.currentMatchId) {
+                    animateHint();
+                }
+            }, 8000);
+        }, 1000);
     },
     
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
@@ -291,8 +311,13 @@ const Swipe = {
             this.isInitialized = true;
         }
         
+        // Показываем подсказку на кнопках
         setTimeout(() => this.startSwipeHint(), 300);
         setTimeout(() => this.adjustCardSize(), 50);
+        
+        // Показываем кнопки с анимацией появления
+        if (this.skipBtn) this.skipBtn.classList.add('visible');
+        if (this.inviteBtn) this.inviteBtn.classList.add('visible');
         
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
     },
@@ -404,20 +429,13 @@ const Swipe = {
     onDragStart(e) {
         if (this.isConnectionMode) return;
         
-        // Останавливаем анимацию подсказки
-        this.hintRunId++;
-        if (this.hintTimeoutIds && this.hintTimeoutIds.length) {
-            this.hintTimeoutIds.forEach(id => clearTimeout(id));
-            this.hintTimeoutIds = [];
+        // Останавливаем подсказку при касании
+        if (this.hintRunId) {
+            clearTimeout(this.hintRunId);
+            clearInterval(this.hintInterval);
         }
-        this.card.classList.remove('idle-left', 'idle-right');
-        
-        // Удаляем обработчики подсказки
-        if (this._boundStopHint) {
-            this.card.removeEventListener('touchstart', this._boundStopHint);
-            this.card.removeEventListener('mousedown', this._boundStopHint);
-            this._boundStopHint = null;
-        }
+        if (this.skipBtn) this.skipBtn.classList.remove('hint-glow');
+        if (this.inviteBtn) this.inviteBtn.classList.remove('hint-glow');
         
         const target = e.target;
         if (!this.card.contains(target)) return;
@@ -722,6 +740,9 @@ const Swipe = {
         console.log('🔄 Показываем экран соединения');
         this.isConnectionMode = true;
         
+        // Прячем боковые кнопки
+        if (this.skipBtn) this.skipBtn.style.display = 'none';
+        if (this.inviteBtn) this.inviteBtn.style.display = 'none';
         if (this.labelLeft) this.labelLeft.style.display = 'none';
         if (this.labelRight) this.labelRight.style.display = 'none';
         if (this.hint) this.hint.style.display = 'none';
@@ -982,26 +1003,23 @@ const Swipe = {
         window.removeEventListener('mousemove', this.onDragMoveBound);
         window.removeEventListener('mouseup', this.onDragEndBound);
         
-        // Удаляем обработчики подсказки
-        if (this._boundStopHint && this.card) {
-            this.card.removeEventListener('touchstart', this._boundStopHint);
-            this.card.removeEventListener('mousedown', this._boundStopHint);
-            this._boundStopHint = null;
+        if (this.hintRunId) {
+            clearTimeout(this.hintRunId);
+            clearInterval(this.hintInterval);
         }
         
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
         if (this.matchPolling) clearInterval(this.matchPolling);
         
-        if (this.hintTimeoutIds && this.hintTimeoutIds.length) {
-            this.hintTimeoutIds.forEach(id => clearTimeout(id));
-            this.hintTimeoutIds = [];
-        }
-        
         this.gameCreated = false;
         this.gameCreating = false;
         this.chatLink = null;
         this.inviteLink = null;
+        
+        // Удаляем боковые кнопки
+        if (this.skipBtn && this.skipBtn.parentNode) this.skipBtn.parentNode.remove();
+        if (this.inviteBtn && this.inviteBtn.parentNode) this.inviteBtn.parentNode.remove();
     },
     
     connectionTimeout() {
@@ -1059,11 +1077,6 @@ const Swipe = {
         if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         if (this.matchPolling) clearInterval(this.matchPolling);
-        
-        if (this.hintTimeoutIds && this.hintTimeoutIds.length) {
-            this.hintTimeoutIds.forEach(id => clearTimeout(id));
-            this.hintTimeoutIds = [];
-        }
         
         document.getElementById('connectionScreen').classList.remove('active');
         if (window.App) App.showScreen('mainScreen', true);
