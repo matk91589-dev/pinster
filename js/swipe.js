@@ -50,10 +50,6 @@ const Swipe = {
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
         
-        // ПРИНУДИТЕЛЬНОЕ СОЗДАНИЕ КНОПОК
-        console.log('🔧 Вызываем createSideButtons()');
-        this.createSideButtons();
-        
         this.card = document.getElementById('swipeCard');
         this.container = document.getElementById('swipeContainer');
         this.hint = document.getElementById('swipeHint');
@@ -61,9 +57,8 @@ const Swipe = {
         this.labelLeft = document.getElementById('swipeLabelLeft');
         this.labelRight = document.getElementById('swipeLabelRight');
         
-        console.log('📦 container найден:', this.container);
-        console.log('📦 skipBtn после создания:', this.skipBtn);
-        console.log('📦 inviteBtn после создания:', this.inviteBtn);
+        // Инициализация полукруглых кнопок
+        this.createSideButtons();
         
         if (!this.card) {
             console.error('❌ Swipe card not found!');
@@ -86,20 +81,12 @@ const Swipe = {
         console.log('🔨 createSideButtons() ВЫЗВАН');
         
         // Удаляем старые, если есть
-        if (this.skipBtn && this.skipBtn.parentNode) {
-            console.log('🗑️ Удаляем старые skipBtn');
-            this.skipBtn.parentNode.remove();
-        }
-        if (this.inviteBtn && this.inviteBtn.parentNode) {
-            console.log('🗑️ Удаляем старые inviteBtn');
-            this.inviteBtn.parentNode.remove();
-        }
+        const oldBtns = document.querySelectorAll('.swipe-side-btn');
+        oldBtns.forEach(btn => btn.remove());
         
         const container = document.getElementById('swipeContainer');
-        console.log('📦 swipeContainer элемент:', container);
-        
         if (!container) {
-            console.error('❌ swipeContainer НЕ НАЙДЕН! Кнопки не будут созданы');
+            console.error('❌ swipeContainer НЕ НАЙДЕН!');
             return;
         }
         
@@ -130,8 +117,6 @@ const Swipe = {
         container.appendChild(leftWrapper);
         container.appendChild(rightWrapper);
         
-        console.log('✅ Кнопки добавлены в DOM');
-        
         this.skipBtn = leftWrapper;
         this.inviteBtn = rightWrapper;
         
@@ -148,13 +133,13 @@ const Swipe = {
             this.onSideButtonClick('invite');
         });
         
-        // Добавляем анимацию пульсации при нажатии
+        // Анимация пульсации
         this.skipBtn.addEventListener('mousedown', () => this.pulseButton(this.skipBtn));
         this.skipBtn.addEventListener('touchstart', () => this.pulseButton(this.skipBtn));
         this.inviteBtn.addEventListener('mousedown', () => this.pulseButton(this.inviteBtn));
         this.inviteBtn.addEventListener('touchstart', () => this.pulseButton(this.inviteBtn));
         
-        console.log('✅ Обработчики кнопок добавлены');
+        console.log('✅ Кнопки созданы и добавлены в DOM');
     },
     
     pulseButton(btn) {
@@ -209,9 +194,7 @@ const Swipe = {
         connectionCard.style.marginRight = 'auto';
     },
     
-    // ========== ПОДСКАЗКА ТЕПЕРЬ ТОЛЬКО НА КНОПКАХ ==========
     startSwipeHint() {
-        // Новая подсказка — лёгкое свечение кнопок по очереди
         if (!this.skipBtn || !this.inviteBtn) return;
         
         if (this.hintRunId) clearTimeout(this.hintRunId);
@@ -232,10 +215,8 @@ const Swipe = {
             }, 800);
         };
         
-        // Первая подсказка через 1 секунду
         this.hintRunId = setTimeout(() => {
             animateHint();
-            // Повторяем каждые 8 секунд, если нет активности
             this.hintInterval = setInterval(() => {
                 if (!this.isDragging && !this.isConnectionMode && this.currentMatchId) {
                     animateHint();
@@ -340,11 +321,10 @@ const Swipe = {
             this.isInitialized = true;
         }
         
-        // Показываем подсказку на кнопках
         setTimeout(() => this.startSwipeHint(), 300);
         setTimeout(() => this.adjustCardSize(), 50);
         
-        // Показываем кнопки с анимацией появления
+        // Показываем кнопки
         if (this.skipBtn) this.skipBtn.classList.add('visible');
         if (this.inviteBtn) this.inviteBtn.classList.add('visible');
         
@@ -458,7 +438,6 @@ const Swipe = {
     onDragStart(e) {
         if (this.isConnectionMode) return;
         
-        // Останавливаем подсказку при касании
         if (this.hintRunId) {
             clearTimeout(this.hintRunId);
             clearInterval(this.hintInterval);
@@ -769,7 +748,6 @@ const Swipe = {
         console.log('🔄 Показываем экран соединения');
         this.isConnectionMode = true;
         
-        // Прячем боковые кнопки
         if (this.skipBtn) this.skipBtn.style.display = 'none';
         if (this.inviteBtn) this.inviteBtn.style.display = 'none';
         if (this.labelLeft) this.labelLeft.style.display = 'none';
@@ -1046,9 +1024,8 @@ const Swipe = {
         this.chatLink = null;
         this.inviteLink = null;
         
-        // Удаляем боковые кнопки
-        if (this.skipBtn && this.skipBtn.parentNode) this.skipBtn.parentNode.remove();
-        if (this.inviteBtn && this.inviteBtn.parentNode) this.inviteBtn.parentNode.remove();
+        const btns = document.querySelectorAll('.swipe-side-btn');
+        btns.forEach(btn => btn.remove());
     },
     
     connectionTimeout() {
