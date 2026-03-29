@@ -44,8 +44,16 @@ const Swipe = {
     chatLink: null,
     inviteLink: null,
     
+    hintRunId: null,
+    hintInterval: null,
+    
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
+        
+        // ПРИНУДИТЕЛЬНОЕ СОЗДАНИЕ КНОПОК
+        console.log('🔧 Вызываем createSideButtons()');
+        this.createSideButtons();
+        
         this.card = document.getElementById('swipeCard');
         this.container = document.getElementById('swipeContainer');
         this.hint = document.getElementById('swipeHint');
@@ -53,8 +61,9 @@ const Swipe = {
         this.labelLeft = document.getElementById('swipeLabelLeft');
         this.labelRight = document.getElementById('swipeLabelRight');
         
-        // Инициализация полукруглых кнопок
-        this.createSideButtons();
+        console.log('📦 container найден:', this.container);
+        console.log('📦 skipBtn после создания:', this.skipBtn);
+        console.log('📦 inviteBtn после создания:', this.inviteBtn);
         
         if (!this.card) {
             console.error('❌ Swipe card not found!');
@@ -74,12 +83,27 @@ const Swipe = {
     
     // ========== СОЗДАНИЕ ПОЛУКРУГЛЫХ КНОПОК ==========
     createSideButtons() {
+        console.log('🔨 createSideButtons() ВЫЗВАН');
+        
         // Удаляем старые, если есть
-        if (this.skipBtn && this.skipBtn.parentNode) this.skipBtn.parentNode.remove();
-        if (this.inviteBtn && this.inviteBtn.parentNode) this.inviteBtn.parentNode.remove();
+        if (this.skipBtn && this.skipBtn.parentNode) {
+            console.log('🗑️ Удаляем старые skipBtn');
+            this.skipBtn.parentNode.remove();
+        }
+        if (this.inviteBtn && this.inviteBtn.parentNode) {
+            console.log('🗑️ Удаляем старые inviteBtn');
+            this.inviteBtn.parentNode.remove();
+        }
         
         const container = document.getElementById('swipeContainer');
-        if (!container) return;
+        console.log('📦 swipeContainer элемент:', container);
+        
+        if (!container) {
+            console.error('❌ swipeContainer НЕ НАЙДЕН! Кнопки не будут созданы');
+            return;
+        }
+        
+        console.log('✅ swipeContainer найден, создаём кнопки');
         
         // Левая кнопка SKIP (красная)
         const leftWrapper = document.createElement('div');
@@ -103,22 +127,24 @@ const Swipe = {
             </div>
         `;
         
-        // Добавляем в контейнер
         container.appendChild(leftWrapper);
         container.appendChild(rightWrapper);
         
-        // Сохраняем ссылки
+        console.log('✅ Кнопки добавлены в DOM');
+        
         this.skipBtn = leftWrapper;
         this.inviteBtn = rightWrapper;
         
         // Добавляем обработчики
         this.skipBtn.addEventListener('click', (e) => {
             e.stopPropagation();
+            console.log('🖱️ Нажата кнопка SKIP');
             this.onSideButtonClick('skip');
         });
         
         this.inviteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
+            console.log('🖱️ Нажата кнопка INVITE');
             this.onSideButtonClick('invite');
         });
         
@@ -127,6 +153,8 @@ const Swipe = {
         this.skipBtn.addEventListener('touchstart', () => this.pulseButton(this.skipBtn));
         this.inviteBtn.addEventListener('mousedown', () => this.pulseButton(this.inviteBtn));
         this.inviteBtn.addEventListener('touchstart', () => this.pulseButton(this.inviteBtn));
+        
+        console.log('✅ Обработчики кнопок добавлены');
     },
     
     pulseButton(btn) {
@@ -187,6 +215,7 @@ const Swipe = {
         if (!this.skipBtn || !this.inviteBtn) return;
         
         if (this.hintRunId) clearTimeout(this.hintRunId);
+        if (this.hintInterval) clearInterval(this.hintInterval);
         
         const animateHint = () => {
             if (this.isConnectionMode) return;
