@@ -3836,21 +3836,27 @@ html {
     transition: none;
 }
 
-/* ===== ПОЛУКРУГЛЫЕ КНОПКИ ДЛЯ СВАЙПА ===== */
+/* ===== ПОЛУКРУГЛЫЕ КНОПКИ - ПРИВЯЗАНЫ К КАРТОЧКЕ ===== */
+.swipe-card {
+    position: relative !important;
+}
+
 .swipe-side-btn {
-    position: fixed;
+    position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 56px;
-    min-height: 140px;
-    background: rgba(0, 0, 0, 0.4);
+    width: 48px;
+    height: auto;
+    min-height: 100px;
+    max-height: 140px;
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(8px);
-    border-radius: 28px;
+    border-radius: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 999;
+    z-index: 95;
     opacity: 0;
     transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -3861,15 +3867,15 @@ html {
 }
 
 .swipe-side-btn.skip-btn {
-    left: 10px;
+    left: -20px;
     border-left: 3px solid #FF5E5E;
-    background: rgba(255, 94, 94, 0.15);
+    background: rgba(255, 94, 94, 0.2);
 }
 
 .swipe-side-btn.invite-btn {
-    right: 10px;
+    right: -20px;
     border-right: 3px solid #4CAF50;
-    background: rgba(76, 175, 80, 0.15);
+    background: rgba(76, 175, 80, 0.2);
 }
 
 .swipe-side-btn-inner {
@@ -3909,8 +3915,23 @@ html {
     100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); border-color: rgba(76, 175, 80, 0.3); }
 }
 
+/* Адаптация под мобилки */
 @media (max-width: 480px) {
-    .swipe-side-btn { width: 48px; min-height: 120px; }
-    .swipe-side-btn.skip-btn { left: 6px; }
-    .swipe-side-btn.invite-btn { right: 6px; }
+    .swipe-side-btn {
+        width: 40px;
+        min-height: 80px;
+    }
+    
+    .swipe-side-btn.skip-btn {
+        left: -16px;
+    }
+    
+    .swipe-side-btn.invite-btn {
+        right: -16px;
+    }
+    
+    .swipe-side-btn-inner svg {
+        width: 22px;
+        height: 22px;
+    }
 }
