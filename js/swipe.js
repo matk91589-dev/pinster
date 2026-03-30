@@ -237,6 +237,12 @@ const Swipe = {
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
         console.log('🔄 Swipe.startWithOpponent() вызван, mode:', this.mode);
         
+        // ✅ ЗАЩИТА: если не инициализирован — инициализируем
+        if (!this.isInitialized) {
+            console.log('⚠️ Swipe не инициализирован, вызываем init() с mode:', opponent.mode);
+            this.init(opponent.mode || 'FACEIT');
+        }
+        
         if (this.currentMatchId === matchId) {
             console.log('⚠️ startWithOpponent: уже показываем этот матч, игнорируем');
             return;
