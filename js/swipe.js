@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ДИНАМИЧЕСКИЕ КНОПКИ С ГАРАНТИРОВАННОЙ ВИДИМОСТЬЮ
+// СВАЙП-КАРТОЧКИ - ДИНАМИЧЕСКИЕ КНОПКИ С УЛУЧШЕННЫМ СВАЙПОМ
 // ============================================
 
 const Swipe = {
@@ -24,9 +24,9 @@ const Swipe = {
     startTime: 0,
     
     // Константы
-    SWIPE_THRESHOLD: 120,
-    VELOCITY_THRESHOLD: 0.5,
-    ANIMATION_DURATION: 250,
+    SWIPE_THRESHOLD: 100,
+    VELOCITY_THRESHOLD: 0.4,
+    ANIMATION_DURATION: 350,
     
     // Данные
     currentPlayer: null,
@@ -205,44 +205,32 @@ const Swipe = {
     updateButtonsPosition() {
         if (!this.skipBtn || !this.inviteBtn || !this.card) return;
         
-        // Получаем реальные размеры и позиции
         const cardRect = this.card.getBoundingClientRect();
         const cardHeight = cardRect.height;
         const cardWidth = cardRect.width;
         const cardLeft = cardRect.left;
         const cardRight = cardRect.right;
         
-        // Получаем ширину экрана
         const screenWidth = window.innerWidth;
         
-        // Динамические размеры кнопок
         let btnWidth = Math.min(Math.max(cardWidth * 0.1, 38), 56);
         let btnHeight = Math.min(Math.max(cardHeight * 0.55, 85), 140);
         
-        // МИНИМАЛЬНЫЙ ВЫСТУП - чтобы стрелка всегда была видна
-        const MIN_VISIBLE_OFFSET = 14; // Минимум 14px кнопка должна торчать
-        
-        // Желаемый отступ (кнопка торчит на 60-70% своей ширины)
+        const MIN_VISIBLE_OFFSET = 14;
         let desiredOffset = Math.min(btnWidth * 0.65, 32);
         
-        // Вычисляем доступное пространство слева
         const availableLeft = cardLeft;
-        // Вычисляем доступное пространство справа
         const availableRight = screenWidth - cardRight;
         
-        // Корректируем отступ для левой кнопки
         let leftOffset = desiredOffset;
         if (availableLeft < desiredOffset) {
-            // Если места мало, уменьшаем отступ, но оставляем минимум
             leftOffset = Math.max(availableLeft - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
-            // Если всё равно не влезает, уменьшаем ширину кнопки
             if (leftOffset < MIN_VISIBLE_OFFSET) {
                 btnWidth = Math.min(btnWidth, availableLeft - 5);
                 leftOffset = Math.max(btnWidth * 0.4, MIN_VISIBLE_OFFSET);
             }
         }
         
-        // Корректируем отступ для правой кнопки
         let rightOffset = desiredOffset;
         if (availableRight < desiredOffset) {
             rightOffset = Math.max(availableRight - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
@@ -252,7 +240,6 @@ const Swipe = {
             }
         }
         
-        // Дополнительная корректировка для узких экранов
         if (screenWidth < 400) {
             btnWidth = Math.min(btnWidth, 44);
             btnHeight = Math.min(btnHeight, 100);
@@ -274,7 +261,6 @@ const Swipe = {
             rightOffset = Math.max(rightOffset, 8);
         }
         
-        // Применяем стили
         this.skipBtn.style.width = `${btnWidth}px`;
         this.skipBtn.style.height = `${btnHeight}px`;
         this.skipBtn.style.minHeight = `${btnHeight}px`;
@@ -289,23 +275,11 @@ const Swipe = {
         this.inviteBtn.style.transform = 'translateY(-50%)';
         this.inviteBtn.style.right = `-${rightOffset}px`;
         
-        // Адаптируем размер иконок
         const iconSize = Math.min(btnWidth * 0.55, 22);
         const allSvgs = document.querySelectorAll('.swipe-side-btn svg');
         allSvgs.forEach(svg => {
             svg.style.width = `${iconSize}px`;
             svg.style.height = `${iconSize}px`;
-        });
-        
-        console.log('📐 Позиция кнопок:', { 
-            screenWidth,
-            cardWidth, cardHeight,
-            btnWidth, btnHeight, 
-            leftOffset, rightOffset,
-            iconSize,
-            availableLeft, availableRight,
-            leftBtnVisible: leftOffset,
-            rightBtnVisible: rightOffset
         });
     },
     
@@ -329,8 +303,8 @@ const Swipe = {
     animateAndAccept() {
         if (!this.cardWrapper) return;
         
-        this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
-        this.cardWrapper.style.transform = `translateX(200%) rotate(12deg) scale(0.9)`;
+        this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.34, 1.2, 0.64, 1)`;
+        this.cardWrapper.style.transform = `translateX(200%) rotate(15deg) scale(0.85)`;
         
         setTimeout(() => {
             this.acceptPlayer();
@@ -340,8 +314,8 @@ const Swipe = {
     animateAndReject() {
         if (!this.cardWrapper) return;
         
-        this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
-        this.cardWrapper.style.transform = `translateX(-200%) rotate(-12deg) scale(0.9)`;
+        this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.34, 1.2, 0.64, 1)`;
+        this.cardWrapper.style.transform = `translateX(-200%) rotate(-15deg) scale(0.85)`;
         
         setTimeout(() => {
             this.rejectPlayer();
@@ -350,7 +324,7 @@ const Swipe = {
     
     resetCardPosition() {
         if (!this.cardWrapper) return;
-        this.cardWrapper.style.transition = `transform 0.3s ease`;
+        this.cardWrapper.style.transition = `transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1)`;
         this.cardWrapper.style.transform = 'translateX(0) rotate(0deg) scale(1)';
         this.currentX = 0;
         
@@ -660,6 +634,7 @@ const Swipe = {
         const scale = 1 + Math.abs(percent) * 0.05;
         
         if (this.cardWrapper) {
+            this.cardWrapper.style.transition = 'none';
             this.cardWrapper.style.transform = `translateX(${deltaX}px) rotate(${rotate}deg) scale(${scale})`;
         }
         
@@ -689,16 +664,16 @@ const Swipe = {
             
             if (deltaX > 0) {
                 if (this.cardWrapper) {
-                    this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
-                    this.cardWrapper.style.transform = `translateX(200%) rotate(12deg) scale(0.9)`;
+                    this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.34, 1.2, 0.64, 1)`;
+                    this.cardWrapper.style.transform = `translateX(200%) rotate(15deg) scale(0.85)`;
                 }
                 setTimeout(() => {
                     this.acceptPlayer();
                 }, this.ANIMATION_DURATION);
             } else {
                 if (this.cardWrapper) {
-                    this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
-                    this.cardWrapper.style.transform = `translateX(-200%) rotate(-12deg) scale(0.9)`;
+                    this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.34, 1.2, 0.64, 1)`;
+                    this.cardWrapper.style.transform = `translateX(-200%) rotate(-15deg) scale(0.85)`;
                 }
                 setTimeout(() => {
                     this.rejectPlayer();
