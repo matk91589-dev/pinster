@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ДИНАМИЧЕСКИЕ КНОПКИ С ПОДСТРОЙКОЙ ПОД ЭКРАН
+// СВАЙП-КАРТОЧКИ - ДИНАМИЧЕСКИЕ КНОПКИ С ГАРАНТИРОВАННОЙ ВИДИМОСТЬЮ
 // ============================================
 
 const Swipe = {
@@ -212,50 +212,66 @@ const Swipe = {
         const cardLeft = cardRect.left;
         const cardRight = cardRect.right;
         
-        // Получаем размеры экрана/контейнера
-        const containerRect = this.container ? this.container.getBoundingClientRect() : { left: 0, right: window.innerWidth };
+        // Получаем ширину экрана
         const screenWidth = window.innerWidth;
         
-        // Динамические размеры кнопок (относительно карточки)
+        // Динамические размеры кнопок
         let btnWidth = Math.min(Math.max(cardWidth * 0.1, 38), 56);
         let btnHeight = Math.min(Math.max(cardHeight * 0.55, 85), 140);
         
-        // Базовый отступ от края карточки
-        let offset = Math.min(btnWidth * 0.65, 30);
+        // МИНИМАЛЬНЫЙ ВЫСТУП - чтобы стрелка всегда была видна
+        const MIN_VISIBLE_OFFSET = 14; // Минимум 14px кнопка должна торчать
         
-        // Проверяем левую границу
-        const leftBtnLeft = cardLeft - offset;
-        const leftBtnRight = leftBtnLeft + btnWidth;
-        const minLeftMargin = 8; // Минимальный отступ от края экрана
+        // Желаемый отступ (кнопка торчит на 60-70% своей ширины)
+        let desiredOffset = Math.min(btnWidth * 0.65, 32);
         
-        if (leftBtnLeft < minLeftMargin) {
-            // Корректируем отступ, чтобы кнопка не выходила за левый край
-            const correctedOffset = cardLeft - minLeftMargin;
-            offset = Math.min(offset, Math.max(correctedOffset, btnWidth * 0.35));
+        // Вычисляем доступное пространство слева
+        const availableLeft = cardLeft;
+        // Вычисляем доступное пространство справа
+        const availableRight = screenWidth - cardRight;
+        
+        // Корректируем отступ для левой кнопки
+        let leftOffset = desiredOffset;
+        if (availableLeft < desiredOffset) {
+            // Если места мало, уменьшаем отступ, но оставляем минимум
+            leftOffset = Math.max(availableLeft - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
+            // Если всё равно не влезает, уменьшаем ширину кнопки
+            if (leftOffset < MIN_VISIBLE_OFFSET) {
+                btnWidth = Math.min(btnWidth, availableLeft - 5);
+                leftOffset = Math.max(btnWidth * 0.4, MIN_VISIBLE_OFFSET);
+            }
         }
         
-        // Проверяем правую границу
-        const rightBtnRight = cardRight + offset;
-        const rightBtnLeft = rightBtnRight - btnWidth;
-        const minRightMargin = screenWidth - minLeftMargin;
-        
-        if (rightBtnRight > screenWidth - minLeftMargin) {
-            // Корректируем отступ, чтобы кнопка не выходила за правый край
-            const correctedOffset = (screenWidth - minLeftMargin) - cardRight;
-            offset = Math.min(offset, Math.max(correctedOffset, btnWidth * 0.35));
+        // Корректируем отступ для правой кнопки
+        let rightOffset = desiredOffset;
+        if (availableRight < desiredOffset) {
+            rightOffset = Math.max(availableRight - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
+            if (rightOffset < MIN_VISIBLE_OFFSET) {
+                btnWidth = Math.min(btnWidth, availableRight - 5);
+                rightOffset = Math.max(btnWidth * 0.4, MIN_VISIBLE_OFFSET);
+            }
         }
         
-        // Для очень узких экранов дополнительно уменьшаем
+        // Дополнительная корректировка для узких экранов
         if (screenWidth < 400) {
-            offset = Math.min(offset, btnWidth * 0.5);
             btnWidth = Math.min(btnWidth, 44);
             btnHeight = Math.min(btnHeight, 100);
+            leftOffset = Math.max(leftOffset, 12);
+            rightOffset = Math.max(rightOffset, 12);
         }
         
-        if (screenWidth < 320) {
-            offset = Math.min(offset, btnWidth * 0.4);
+        if (screenWidth < 340) {
             btnWidth = Math.min(btnWidth, 38);
-            btnHeight = Math.min(btnHeight, 85);
+            btnHeight = Math.min(btnHeight, 90);
+            leftOffset = Math.max(leftOffset, 10);
+            rightOffset = Math.max(rightOffset, 10);
+        }
+        
+        if (screenWidth < 300) {
+            btnWidth = Math.min(btnWidth, 34);
+            btnHeight = Math.min(btnHeight, 80);
+            leftOffset = Math.max(leftOffset, 8);
+            rightOffset = Math.max(rightOffset, 8);
         }
         
         // Применяем стили
@@ -264,17 +280,17 @@ const Swipe = {
         this.skipBtn.style.minHeight = `${btnHeight}px`;
         this.skipBtn.style.top = '50%';
         this.skipBtn.style.transform = 'translateY(-50%)';
-        this.skipBtn.style.left = `-${offset}px`;
+        this.skipBtn.style.left = `-${leftOffset}px`;
         
         this.inviteBtn.style.width = `${btnWidth}px`;
         this.inviteBtn.style.height = `${btnHeight}px`;
         this.inviteBtn.style.minHeight = `${btnHeight}px`;
         this.inviteBtn.style.top = '50%';
         this.inviteBtn.style.transform = 'translateY(-50%)';
-        this.inviteBtn.style.right = `-${offset}px`;
+        this.inviteBtn.style.right = `-${rightOffset}px`;
         
         // Адаптируем размер иконок
-        const iconSize = Math.min(btnWidth * 0.6, 22);
+        const iconSize = Math.min(btnWidth * 0.55, 22);
         const allSvgs = document.querySelectorAll('.swipe-side-btn svg');
         allSvgs.forEach(svg => {
             svg.style.width = `${iconSize}px`;
@@ -285,9 +301,11 @@ const Swipe = {
             screenWidth,
             cardWidth, cardHeight,
             btnWidth, btnHeight, 
-            offset, iconSize,
-            leftBtnPos: cardLeft - offset,
-            rightBtnPos: cardRight + offset - btnWidth
+            leftOffset, rightOffset,
+            iconSize,
+            availableLeft, availableRight,
+            leftBtnVisible: leftOffset,
+            rightBtnVisible: rightOffset
         });
     },
     
