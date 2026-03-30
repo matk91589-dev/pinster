@@ -50,6 +50,7 @@ const Swipe = {
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
         
+        this.mode = mode;
         this.card = document.getElementById('swipeCard');
         this.container = document.getElementById('swipeContainer');
         this.hint = document.getElementById('swipeHint');
@@ -74,6 +75,8 @@ const Swipe = {
             this.setupEventListeners();
             this.isInitialized = true;
         }
+        
+        console.log('✅ Swipe.init() завершён, isInitialized:', this.isInitialized);
     },
     
     // ========== СОЗДАНИЕ ПОЛУКРУГЛЫХ КНОПОК ==========
@@ -140,6 +143,12 @@ const Swipe = {
         this.inviteBtn.addEventListener('touchstart', () => this.pulseButton(this.inviteBtn));
         
         console.log('✅ Кнопки созданы и добавлены в DOM');
+        
+        // Показываем кнопки
+        setTimeout(() => {
+            if (this.skipBtn) this.skipBtn.classList.add('visible');
+            if (this.inviteBtn) this.inviteBtn.classList.add('visible');
+        }, 50);
     },
     
     pulseButton(btn) {
@@ -226,6 +235,8 @@ const Swipe = {
     },
     
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
+        console.log('🔄 Swipe.startWithOpponent() вызван, mode:', this.mode);
+        
         if (this.currentMatchId === matchId) {
             console.log('⚠️ startWithOpponent: уже показываем этот матч, игнорируем');
             return;
@@ -234,8 +245,6 @@ const Swipe = {
             console.warn('⚠️ startWithOpponent: заменяем текущий матч', this.currentMatchId, 'на', matchId);
             this.exitSwipeMode('замена матча');
         }
-
-        console.log('🔄 Swipe.startWithOpponent() вызван');
         
         this._pendingOpponent = opponent;
         this._pendingMatchId = matchId;
@@ -281,7 +290,7 @@ const Swipe = {
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
         this.isConnectionMode = false;
-        this.mode = opponent.mode;
+        this.mode = opponent.mode || this.mode;
         
         this.gameCreated = false;
         this.gameCreating = false;
@@ -1090,9 +1099,26 @@ const Swipe = {
     }
 };
 
+// Автоматическая инициализация при активации экрана
 document.addEventListener('DOMContentLoaded', () => {
     console.log('✅ Swipe: DOM загружен');
     window.Swipe = Swipe;
+    
+    // Слушаем активацию свайп-экрана через MutationObserver
+    const swipeScreen = document.getElementById('swipeScreen');
+    if (swipeScreen) {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (swipeScreen.classList.contains('active') && !Swipe.isInitialized) {
+                        console.log('🎬 swipeScreen активирован, инициализируем Swipe');
+                        Swipe.init(Swipe.mode || 'FACEIT');
+                    }
+                }
+            });
+        });
+        observer.observe(swipeScreen, { attributes: true });
+    }
     
     window.addEventListener('resize', () => {
         if (Swipe.card && !Swipe.isConnectionMode) Swipe.adjustCardSize();
@@ -1107,6 +1133,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Если экран уже активен при загрузке
 if (document.getElementById('swipeScreen')?.classList.contains('active')) {
-    setTimeout(() => Swipe.init(), 100);
+    setTimeout(() => {
+        if (!Swipe.isInitialized) {
+            Swipe.init(Swipe.mode || 'FACEIT');
+        }
+    }, 100);
 }
