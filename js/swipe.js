@@ -347,35 +347,37 @@ const Swipe = {
         
         if (!swipeCard || !connectionCard) return;
         
-        // Копируем ВСЕ стили из свайп-карточки
-        const swipeStyles = window.getComputedStyle(swipeCard);
+        // Получаем реальные размеры свайп-карточки
+        const cardRect = swipeCard.getBoundingClientRect();
+        const targetWidth = cardRect.width;
+        const targetHeight = cardRect.height;
         
-        connectionCard.style.width = swipeStyles.width;
-        connectionCard.style.height = swipeStyles.height;
-        connectionCard.style.maxWidth = swipeStyles.maxWidth;
-        connectionCard.style.maxHeight = swipeStyles.maxHeight;
-        connectionCard.style.minWidth = swipeStyles.minWidth;
-        connectionCard.style.minHeight = swipeStyles.minHeight;
-        connectionCard.style.borderRadius = swipeStyles.borderRadius;
-        connectionCard.style.background = swipeStyles.background;
-        connectionCard.style.boxShadow = swipeStyles.boxShadow;
-        connectionCard.style.backdropFilter = swipeStyles.backdropFilter;
+        // Применяем ТОЧНЫЕ размеры к карточке ожидания
+        connectionCard.style.width = `${targetWidth}px`;
+        connectionCard.style.height = `${targetHeight}px`;
+        connectionCard.style.maxWidth = `${targetWidth}px`;
+        connectionCard.style.maxHeight = `${targetHeight}px`;
+        connectionCard.style.minWidth = `${targetWidth}px`;
+        connectionCard.style.minHeight = `${targetHeight}px`;
         
         // Центрируем
         connectionCard.style.marginLeft = 'auto';
         connectionCard.style.marginRight = 'auto';
         
-        // Убеждаемся что контент виден
+        // Настраиваем контент внутри, чтобы он не выходил за границы
         const content = connectionCard.querySelector('.swipe-card-content');
         if (content) {
+            content.style.height = '100%';
             content.style.display = 'flex';
             content.style.flexDirection = 'column';
-            content.style.height = 'auto';
+            content.style.justifyContent = 'space-between';
+            content.style.overflow = 'auto';
+            content.style.scrollbarWidth = 'none';
         }
         
         console.log('📐 Карточка ожидания синхронизирована:', { 
-            width: swipeStyles.width, 
-            height: swipeStyles.height 
+            width: targetWidth, 
+            height: targetHeight 
         });
     },
     
