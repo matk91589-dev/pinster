@@ -3970,10 +3970,11 @@ html {
 #connectionScreen .swipe-card {
     position: relative;
     overflow: visible;
+    transition: all 0.2s ease;
 }
 
 /* Таймер в правом верхнем углу */
-.connection-timer {
+#connectionScreen .connection-timer {
     position: absolute;
     top: 14px;
     right: 14px;
@@ -3989,88 +3990,54 @@ html {
     letter-spacing: 0.5px;
 }
 
-.connection-timer.warning {
-    color: #FF6B4A;
-    animation: timerPulse 0.8s infinite;
-}
-
-/* Контейнер для аватарок */
-.connection-avatars {
+/* Контейнер для аватарок - используем относительные размеры */
+#connectionScreen .connection-avatars {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
-    margin: 20px 0 16px 0;
+    gap: clamp(12px, 5vw, 20px);
+    margin: clamp(12px, 3vh, 20px) 0 clamp(10px, 2vh, 16px) 0;
 }
 
-.connection-avatar {
-    border-radius: 50%;
-    background: var(--surface);
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+/* Аватарки - размер относительно ширины карточки */
+#connectionScreen .self-avatar {
+    width: clamp(40px, 12vw, 50px);
+    height: clamp(40px, 12vw, 50px);
+    border: none !important;
     flex-shrink: 0;
-    border: none !important;
 }
 
-.connection-avatar .tg-avatar-svg {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.connection-avatar .tg-avatar-svg img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
-/* Своя аватарка */
-.self-avatar {
-    width: 50px;
-    height: 50px;
-    border: none !important;
-}
-
-/* Аватар тиммейта в ожидании */
-.teammate-avatar {
-    width: 40px;
-    height: 40px;
+#connectionScreen .teammate-avatar {
+    width: clamp(32px, 10vw, 40px);
+    height: clamp(32px, 10vw, 40px);
     filter: grayscale(0.7);
     opacity: 0.7;
     transition: all 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
     border: none !important;
+    flex-shrink: 0;
 }
 
-/* Аватар тиммейта после принятия */
-.teammate-avatar.connected {
-    width: 50px;
-    height: 50px;
+/* После принятия - размер как у своей аватарки */
+#connectionScreen .teammate-avatar.connected {
+    width: clamp(40px, 12vw, 50px);
+    height: clamp(40px, 12vw, 50px);
     filter: grayscale(0);
     opacity: 1;
-    animation: avatarConnect 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 
-@keyframes avatarConnect {
-    0% { transform: scale(0.9); opacity: 0.7; width: 40px; height: 40px; }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); opacity: 1; width: 50px; height: 50px; }
-}
-
-/* Линия соединения */
-.connection-line {
+/* Линия соединения - относительная ширина */
+#connectionScreen .connection-line {
     position: relative;
-    width: 60px;
+    width: clamp(40px, 12vw, 60px);
     height: 3px;
     background: var(--border-color);
     border-radius: 3px;
     overflow: hidden;
     transition: background 0.3s ease;
+    flex-shrink: 0;
 }
 
-.line-pulse {
+#connectionScreen .line-pulse {
     position: absolute;
     width: 30px;
     height: 100%;
@@ -4079,60 +4046,46 @@ html {
     animation: pulse 1.5s infinite;
 }
 
-/* Линия после соединения */
-.connection-line.connected {
-    background: var(--accent);
-}
-
-.connection-line.connected .line-pulse {
-    display: none;
-}
-
-@keyframes pulse {
-    0% { left: -30px; }
-    100% { left: 100%; }
-}
-
-/* Информация о тиммейте */
-.teammate-info {
-    text-align: center;
-    margin: 8px 0;
-}
-
-.teammate-nick {
-    font-size: 20px;
+/* Ник тиммейта - относительный размер шрифта */
+#connectionScreen .teammate-nick {
+    font-size: clamp(16px, 5vw, 20px);
     font-weight: 700;
     color: var(--text-primary);
+    text-align: center;
+    margin: 8px 0;
+    word-break: break-word;
+    padding: 0 12px;
 }
 
-/* Статус соединения */
-.connection-status {
-    font-size: 14px;
+/* Статус */
+#connectionScreen .connection-status {
+    font-size: clamp(12px, 3.5vw, 14px);
     text-align: center;
     margin: 8px 0;
     font-weight: 500;
     color: var(--text-secondary);
     transition: color 0.3s ease;
     text-transform: lowercase;
+    padding: 0 12px;
 }
 
-.connection-status.active {
+#connectionScreen .connection-status.active {
     color: var(--accent);
 }
 
 /* Кнопка чата */
-.connection-button {
+#connectionScreen .connection-button {
     width: 100%;
-    margin-top: 20px;
-    padding: 0 16px;
+    margin-top: auto;
+    padding: clamp(12px, 3vh, 20px) 16px;
     box-sizing: border-box;
 }
 
-.tg-chat-button {
+#connectionScreen .tg-chat-button {
     width: min(280px, 80%);
-    padding: 14px;
+    padding: clamp(10px, 2.5vh, 14px);
     border-radius: 100px;
-    font-size: 16px;
+    font-size: clamp(14px, 3.5vw, 16px);
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -4145,73 +4098,47 @@ html {
     text-align: center;
 }
 
-/* Неактивная кнопка */
-.tg-chat-button.disabled {
-    background: transparent;
-    border: 2px solid var(--accent, #FF5500);
-    color: var(--accent, #FF5500);
-    pointer-events: none;
-    opacity: 0.5;
+/* Анимация */
+@keyframes pulse {
+    0% { left: -30px; }
+    100% { left: 100%; }
 }
 
-/* Активная кнопка */
-.tg-chat-button.active {
-    background: transparent;
-    border: 2px solid var(--accent, #FF5500);
-    color: var(--accent, #FF5500);
-    pointer-events: auto;
-    cursor: pointer;
-    opacity: 1;
-}
-
-/* Эффект при наведении (на десктопе) */
-.tg-chat-button.active:hover {
-    background: rgba(255, 85, 0, 0.1);
-    transform: scale(1.02);
-}
-
-/* Эффект при нажатии */
-.tg-chat-button.active:active {
-    transform: scale(0.97);
-}
-
-/* Иконка внутри кнопки */
-.tg-chat-button svg {
-    width: 18px;
-    height: 18px;
-    stroke: currentColor;
-    stroke-width: 2;
-    fill: none;
-    transition: transform 0.2s ease;
-}
-
-.tg-chat-button.active:hover svg {
-    transform: translateX(2px);
+@keyframes avatarConnect {
+    0% { 
+        transform: scale(0.9); 
+        opacity: 0.7; 
+        width: clamp(32px, 10vw, 40px); 
+        height: clamp(32px, 10vw, 40px); 
+    }
+    50% { transform: scale(1.1); }
+    100% { 
+        transform: scale(1); 
+        opacity: 1; 
+        width: clamp(40px, 12vw, 50px); 
+        height: clamp(40px, 12vw, 50px); 
+    }
 }
 
 /* Адаптация под мобилки */
 @media (max-width: 480px) {
-    .self-avatar {
+    #connectionScreen .self-avatar {
         width: 45px;
         height: 45px;
     }
     
-    .teammate-avatar {
+    #connectionScreen .teammate-avatar {
         width: 36px;
         height: 36px;
     }
     
-    .teammate-avatar.connected {
+    #connectionScreen .teammate-avatar.connected {
         width: 45px;
         height: 45px;
     }
     
-    .connection-line {
+    #connectionScreen .connection-line {
         width: 45px;
-    }
-    
-    .teammate-nick {
-        font-size: 18px;
     }
     
     .connection-timer {
@@ -4223,26 +4150,26 @@ html {
 }
 
 @media (max-width: 380px) {
-    .self-avatar {
+    #connectionScreen .self-avatar {
         width: 40px;
         height: 40px;
     }
     
-    .teammate-avatar {
+    #connectionScreen .teammate-avatar {
         width: 32px;
         height: 32px;
     }
     
-    .teammate-avatar.connected {
+    #connectionScreen .teammate-avatar.connected {
         width: 40px;
         height: 40px;
     }
     
-    .connection-line {
+    #connectionScreen .connection-line {
         width: 35px;
     }
     
     .teammate-nick {
-        font-size: 16px;
+        font-size: 14px;
     }
 }
