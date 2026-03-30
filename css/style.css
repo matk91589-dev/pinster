@@ -3836,11 +3836,16 @@ html {
     transition: none;
 }
 
-/* ===== ПОЛУКРУГЛЫЕ КНОПКИ - ПРИВЯЗАНЫ К КАРТОЧКЕ ===== */
-.swipe-card {
-    position: relative !important;
+/* ===== ОБЁРТКА ДЛЯ КАРТОЧКИ С КНОПКАМИ ===== */
+.swipe-card-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 0 auto;
+    transition: transform 0.3s ease;
+    will-change: transform;
 }
 
+/* ===== ПОЛУКРУГЛЫЕ КНОПКИ СНАРУЖИ ===== */
 .swipe-side-btn {
     position: absolute;
     top: 50%;
@@ -3867,13 +3872,13 @@ html {
 }
 
 .swipe-side-btn.skip-btn {
-    left: -20px;
+    left: -24px;
     border-left: 3px solid #FF5E5E;
     background: rgba(255, 94, 94, 0.2);
 }
 
 .swipe-side-btn.invite-btn {
-    right: -20px;
+    right: -24px;
     border-right: 3px solid #4CAF50;
     background: rgba(76, 175, 80, 0.2);
 }
@@ -3923,11 +3928,11 @@ html {
     }
     
     .swipe-side-btn.skip-btn {
-        left: -16px;
+        left: -18px;
     }
     
     .swipe-side-btn.invite-btn {
-        right: -16px;
+        right: -18px;
     }
     
     .swipe-side-btn-inner svg {
