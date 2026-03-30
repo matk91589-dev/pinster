@@ -3843,20 +3843,21 @@ html {
     margin: 0 auto;
     transition: transform 0.3s ease;
     will-change: transform;
+    overflow: visible !important; /* Чтобы кнопки не обрезались */
 }
 
-/* ===== ПОЛУКРУГЛЫЕ КНОПКИ СНАРУЖИ ===== */
+/* ===== ПОЛУКРУГЛЫЕ КНОПКИ СНАРУЖИ (не перекрывают карточку) ===== */
 .swipe-side-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 48px;
+    width: 56px;
     height: auto;
-    min-height: 100px;
+    min-height: 120px;
     max-height: 140px;
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(8px);
-    border-radius: 30px;
+    border-radius: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3865,22 +3866,27 @@ html {
     opacity: 0;
     transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    pointer-events: auto;
 }
 
 .swipe-side-btn.visible {
     opacity: 1;
 }
 
+/* Левая кнопка - полностью снаружи, не наезжает на карточку */
 .swipe-side-btn.skip-btn {
-    left: -24px;
+    left: -28px;
     border-left: 3px solid #FF5E5E;
     background: rgba(255, 94, 94, 0.2);
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3);
 }
 
+/* Правая кнопка - полностью снаружи, не наезжает на карточку */
 .swipe-side-btn.invite-btn {
-    right: -24px;
+    right: -28px;
     border-right: 3px solid #4CAF50;
     background: rgba(76, 175, 80, 0.2);
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
 }
 
 .swipe-side-btn-inner {
@@ -3890,6 +3896,14 @@ html {
     justify-content: center;
 }
 
+/* Чтобы контент карточки не заходил под кнопки */
+.swipe-card {
+    position: relative;
+    z-index: 10;
+    overflow: visible;
+}
+
+/* Эффект при нажатии */
 .swipe-side-btn.pulse {
     animation: sideBtnPulse 0.2s ease-out;
 }
@@ -3900,13 +3914,14 @@ html {
     100% { transform: translateY(-50%) scale(1); }
 }
 
+/* Подсказка свечением */
 .swipe-side-btn.hint-glow {
     animation: hintGlow 0.8s ease-out;
 }
 
 @keyframes hintGlow {
     0% { box-shadow: 0 0 0 0 rgba(255, 94, 94, 0); border-color: rgba(255, 94, 94, 0.3); }
-    50% { box-shadow: 0 0 0 6px rgba(255, 94, 94, 0.4); border-color: #FF5E5E; }
+    50% { box-shadow: 0 0 0 8px rgba(255, 94, 94, 0.4); border-color: #FF5E5E; }
     100% { box-shadow: 0 0 0 0 rgba(255, 94, 94, 0); border-color: rgba(255, 94, 94, 0.3); }
 }
 
@@ -3916,14 +3931,34 @@ html {
 
 @keyframes hintGlowGreen {
     0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); border-color: rgba(76, 175, 80, 0.3); }
-    50% { box-shadow: 0 0 0 6px rgba(76, 175, 80, 0.4); border-color: #4CAF50; }
+    50% { box-shadow: 0 0 0 8px rgba(76, 175, 80, 0.4); border-color: #4CAF50; }
     100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); border-color: rgba(76, 175, 80, 0.3); }
 }
 
 /* Адаптация под мобилки */
 @media (max-width: 480px) {
     .swipe-side-btn {
-        width: 40px;
+        width: 44px;
+        min-height: 100px;
+    }
+    
+    .swipe-side-btn.skip-btn {
+        left: -22px;
+    }
+    
+    .swipe-side-btn.invite-btn {
+        right: -22px;
+    }
+    
+    .swipe-side-btn-inner svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+@media (max-width: 380px) {
+    .swipe-side-btn {
+        width: 38px;
         min-height: 80px;
     }
     
@@ -3936,7 +3971,7 @@ html {
     }
     
     .swipe-side-btn-inner svg {
-        width: 22px;
-        height: 22px;
+        width: 20px;
+        height: 20px;
     }
 }
