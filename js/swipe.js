@@ -60,7 +60,6 @@ const Swipe = {
         this.labelLeft = document.getElementById('swipeLabelLeft');
         this.labelRight = document.getElementById('swipeLabelRight');
         
-        // Создаём обёртку для карточки
         this.createCardWrapper();
         
         if (!this.card) {
@@ -78,7 +77,6 @@ const Swipe = {
             this.isInitialized = true;
         }
         
-        // Следим за изменением размеров
         this.initResizeObserver();
         
         console.log('✅ Swipe.init() завершён, isInitialized:', this.isInitialized);
@@ -107,7 +105,6 @@ const Swipe = {
             return;
         }
         
-        // Удаляем старую обёртку
         const oldWrapper = document.querySelector('.swipe-card-wrapper');
         if (oldWrapper) {
             const parent = oldWrapper.parentNode;
@@ -118,7 +115,6 @@ const Swipe = {
             }
         }
         
-        // Создаём новую обёртку
         const wrapper = document.createElement('div');
         wrapper.className = 'swipe-card-wrapper';
         wrapper.style.position = 'relative';
@@ -132,7 +128,6 @@ const Swipe = {
         
         this.cardWrapper = wrapper;
         
-        // Создаём кнопки
         this.createSideButtonsInWrapper();
         
         console.log('✅ Обёртка создана');
@@ -143,11 +138,9 @@ const Swipe = {
         
         if (!this.cardWrapper) return;
         
-        // Удаляем старые кнопки
         const oldBtns = this.cardWrapper.querySelectorAll('.swipe-side-btn');
         oldBtns.forEach(btn => btn.remove());
         
-        // Левая кнопка SKIP
         const leftWrapper = document.createElement('div');
         leftWrapper.className = 'swipe-side-btn skip-btn';
         leftWrapper.innerHTML = `
@@ -158,7 +151,6 @@ const Swipe = {
             </div>
         `;
         
-        // Правая кнопка INVITE
         const rightWrapper = document.createElement('div');
         rightWrapper.className = 'swipe-side-btn invite-btn';
         rightWrapper.innerHTML = `
@@ -175,7 +167,6 @@ const Swipe = {
         this.skipBtn = leftWrapper;
         this.inviteBtn = rightWrapper;
         
-        // Обработчики
         this.skipBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             console.log('🖱️ Нажата кнопка SKIP');
@@ -794,7 +785,6 @@ const Swipe = {
         const connectionTimer = document.getElementById('connectionTimer');
         
         if (status === 'both_accepted') {
-            // Аватар тиммейта — становится 60px
             if (teammateAvatar) {
                 teammateAvatar.classList.add('connected');
                 teammateAvatar.style.width = '60px';
@@ -805,7 +795,6 @@ const Swipe = {
                 teammateAvatar.style.transition = 'all 0.3s cubic-bezier(0.34, 1.2, 0.64, 1)';
             }
             
-            // Полоска — заполняется оранжевым
             if (connectionLine) {
                 connectionLine.classList.add('connected');
                 connectionLine.style.background = 'var(--accent)';
@@ -813,44 +802,19 @@ const Swipe = {
                 if (linePulse) linePulse.style.display = 'none';
             }
             
-            // Статус
             if (statusEl) {
                 statusEl.innerHTML = 'матч создан';
                 statusEl.classList.add('active');
                 statusEl.style.color = 'var(--accent)';
             }
             
-            // Таймер
             if (connectionTimer) {
                 connectionTimer.classList.remove('warning');
             }
             
-            // Останавливаем таймер соединения
             if (this.connectionTimer) {
                 clearInterval(this.connectionTimer);
                 this.connectionTimer = null;
-            }
-            
-            // Активируем кнопку чата
-            if (this.chatLink) {
-                this.updateChatButton(true, this.chatLink, this.inviteLink);
-            } else {
-                // Ждем ссылку с повторными проверками
-                let attempts = 0;
-                const checkChat = setInterval(() => {
-                    attempts++;
-                    if (this.chatLink) {
-                        clearInterval(checkChat);
-                        this.updateChatButton(true, this.chatLink, this.inviteLink);
-                    } else if (attempts >= 30) {
-                        clearInterval(checkChat);
-                        const savedChatLink = localStorage.getItem('currentChatLink');
-                        if (savedChatLink) {
-                            this.chatLink = savedChatLink;
-                            this.updateChatButton(true, this.chatLink, this.inviteLink);
-                        }
-                    }
-                }, 100);
             }
             
             if (window.Settings && window.Settings.success) window.Settings.success();
@@ -969,18 +933,15 @@ const Swipe = {
         document.getElementById('swipeScreen').classList.remove('active');
         document.getElementById('connectionScreen').classList.add('active');
         
-        // Получаем контейнер для контента
         const connectionCard = document.querySelector('#connectionScreen .swipe-card');
         if (connectionCard) {
             connectionCard.style.position = 'relative';
             connectionCard.style.overflow = 'visible';
         }
         
-        // Устанавливаем ник тиммейта
         const teammateNickEl = document.getElementById('teammateNick');
         if (teammateNickEl) teammateNickEl.textContent = this.currentPlayer?.nick || 'Игрок';
         
-        // Устанавливаем аватар тиммейта
         const teammateAvatar = document.querySelector('#connectionScreen .teammate-avatar .tg-avatar-svg');
         if (teammateAvatar && this.currentPlayer?.avatar) {
             teammateAvatar.innerHTML = `<img src="${this.currentPlayer.avatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
@@ -988,7 +949,6 @@ const Swipe = {
             teammateAvatar.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>`;
         }
         
-        // Устанавливаем аватар текущего пользователя
         const selfAvatar = document.querySelector('#connectionScreen .self-avatar .tg-avatar-svg');
         if (selfAvatar) {
             const myAvatar = localStorage.getItem('pingster_avatar') || (window.Profile && Profile.savedAvatarUrl);
@@ -999,11 +959,9 @@ const Swipe = {
             }
         }
         
-        // Настраиваем размеры аватарок
         const selfAvatarContainer = document.querySelector('#connectionScreen .self-avatar');
         const teammateAvatarContainer = document.querySelector('#connectionScreen .teammate-avatar');
         
-        // Твоя аватарка — 60px
         if (selfAvatarContainer) {
             selfAvatarContainer.style.width = '60px';
             selfAvatarContainer.style.height = '60px';
@@ -1012,7 +970,6 @@ const Swipe = {
             selfAvatarContainer.style.opacity = '1';
         }
         
-        // Аватар тиммейта — 40px, серый
         if (teammateAvatarContainer) {
             teammateAvatarContainer.classList.remove('connected');
             teammateAvatarContainer.style.width = '40px';
@@ -1023,7 +980,6 @@ const Swipe = {
             teammateAvatarContainer.style.transform = 'scale(1)';
         }
         
-        // Настраиваем линию соединения
         const connectionLine = document.querySelector('#connectionScreen .connection-line');
         if (connectionLine) {
             connectionLine.classList.remove('connected');
@@ -1037,7 +993,6 @@ const Swipe = {
             }
         }
         
-        // Статус
         const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
             statusEl.innerHTML = 'ожидание тиммейта...';
@@ -1046,10 +1001,7 @@ const Swipe = {
             statusEl.style.fontSize = '14px';
         }
         
-        // Обновляем кнопку чата
         this.updateChatButton(false);
-        
-        // Запускаем таймер
         this.startConnectionTimer();
         
         setTimeout(() => this.adjustConnectionCardSize(), 50);
@@ -1058,38 +1010,67 @@ const Swipe = {
     },
     
     updateChatButton(active, chatLink = null, inviteLink = null) {
-        const button = document.getElementById('tgChatButton');
+        console.log('🔘 updateChatButton called, active:', active, 'chatLink:', chatLink);
+        
+        // Ищем кнопку по разным селекторам
+        let button = document.getElementById('tgChatButton');
+        if (!button) {
+            button = document.querySelector('.tg-chat-button');
+        }
         const buttonText = document.getElementById('tgChatButtonText');
         
-        if (!button || !buttonText) return;
+        if (!button) {
+            console.error('❌ Кнопка чата не найдена в DOM!');
+            return;
+        }
+        
+        console.log('✅ Кнопка чата найдена, текущие классы:', button.className);
         
         button.style.display = 'flex';
-        buttonText.textContent = 'Перейти в чат';
+        if (buttonText) buttonText.textContent = 'Перейти в чат';
         
         if (active && chatLink) {
+            // Убираем все старые классы и добавляем новые
             button.classList.remove('disabled');
             button.classList.add('active');
             button.disabled = false;
+            button.style.pointerEvents = 'auto';
+            button.style.opacity = '1';
+            button.style.background = 'var(--accent, #FF5500)';
+            button.style.border = 'none';
+            button.style.color = 'white';
             
             this.chatLink = chatLink;
             this.inviteLink = inviteLink;
             localStorage.setItem('currentChatLink', chatLink);
             if (inviteLink) localStorage.setItem('currentInviteLink', inviteLink);
             
-            button.onclick = () => this.openChatLink();
+            // Переопределяем onclick на случай если предыдущий был
+            button.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔘 Кнопка чата нажата, открываем:', chatLink);
+                this.openChatLink();
+            };
             
-            console.log('🔘 Кнопка чата активирована, ссылка:', chatLink);
+            console.log('✅ Кнопка чата АКТИВИРОВАНА, классы после:', button.className);
+            console.log('✅ Ссылка чата:', chatLink);
         } else {
             button.classList.remove('active');
             button.classList.add('disabled');
             button.disabled = true;
+            button.style.pointerEvents = 'none';
+            button.style.opacity = '0.5';
             button.onclick = null;
+            console.log('❌ Кнопка чата деактивирована');
         }
     },
     
     openChatLink() {
         let chatLink = this.chatLink || localStorage.getItem('currentChatLink');
         let inviteLink = this.inviteLink || localStorage.getItem('currentInviteLink');
+        
+        console.log('🔗 openChatLink вызван, chatLink:', chatLink, 'inviteLink:', inviteLink);
         
         if (chatLink) {
             const tg = window.Telegram?.WebApp;
@@ -1103,9 +1084,13 @@ const Swipe = {
                     setTimeout(() => window.open(chatLink, '_blank'), 1500);
                 }
             } else {
-                if (tg?.openTelegramLink) tg.openTelegramLink(chatLink);
-                else window.open(chatLink, '_blank');
+                if (tg?.openTelegramLink) {
+                    tg.openTelegramLink(chatLink);
+                } else {
+                    window.open(chatLink, '_blank');
+                }
             }
+            console.log('✅ Открываем ссылку чата:', chatLink);
         } else {
             console.error('❌ Ссылка не найдена');
             alert('Ссылка на чат не найдена');
@@ -1132,7 +1117,34 @@ const Swipe = {
             console.log('📦 Game create response:', data);
             if (data.status === 'ok' && data.chat_link) {
                 console.log('🔗 Получена ссылка чата:', data.chat_link);
+                
+                // Сохраняем ссылки
+                this.chatLink = data.chat_link;
+                this.inviteLink = data.invite_link;
+                localStorage.setItem('currentChatLink', data.chat_link);
+                if (data.invite_link) localStorage.setItem('currentInviteLink', data.invite_link);
+                
+                // ПРЯМОЕ ПРИМЕНЕНИЕ СТИЛЕЙ К КНОПКЕ
+                const button = document.getElementById('tgChatButton');
+                if (button) {
+                    console.log('🔘 Найденная кнопка чата, активируем...');
+                    button.classList.remove('disabled');
+                    button.classList.add('active');
+                    button.disabled = false;
+                    button.style.pointerEvents = 'auto';
+                    button.style.opacity = '1';
+                    button.style.background = '#FF5500';
+                    button.style.border = 'none';
+                    button.style.color = 'white';
+                    button.onclick = () => this.openChatLink();
+                    console.log('✅ Кнопка чата активирована принудительно');
+                } else {
+                    console.error('❌ Кнопка чата не найдена при создании игры');
+                }
+                
+                // Также вызываем updateChatButton для синхронизации
                 this.updateChatButton(true, data.chat_link, data.invite_link);
+                
                 this.gameCreated = true;
                 setTimeout(() => this.adjustConnectionCardSize(), 50);
             } else {
