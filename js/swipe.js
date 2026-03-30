@@ -1,10 +1,11 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - КНОПКИ ПРИВЯЗАНЫ К КАРТОЧКЕ
+// СВАЙП-КАРТОЧКИ - КНОПКИ СНАРУЖИ, ДВИЖУТСЯ С КАРТОЧКОЙ
 // ============================================
 
 const Swipe = {
     // Элементы DOM
     card: null,
+    cardWrapper: null,
     container: null,
     hint: null,
     loading: null,
@@ -58,16 +59,13 @@ const Swipe = {
         this.labelLeft = document.getElementById('swipeLabelLeft');
         this.labelRight = document.getElementById('swipeLabelRight');
         
-        // Инициализация полукруглых кнопок
-        this.createSideButtons();
+        // Создаём обёртку для карточки с кнопками
+        this.createCardWrapper();
         
         if (!this.card) {
             console.error('❌ Swipe card not found!');
             return;
         }
-        
-        // Устанавливаем позиционирование карточки как relative для привязки кнопок
-        this.card.style.position = 'relative';
         
         this.blockScroll();
         this.showHintOnce();
@@ -82,23 +80,59 @@ const Swipe = {
         console.log('✅ Swipe.init() завершён, isInitialized:', this.isInitialized);
     },
     
-    // ========== СОЗДАНИЕ ПОЛУКРУГЛЫХ КНОПОК (привязаны к карточке) ==========
-    createSideButtons() {
-        console.log('🔨 createSideButtons() ВЫЗВАН');
+    // ========== СОЗДАНИЕ ОБЁРТКИ ДЛЯ КАРТОЧКИ С КНОПКАМИ СНАРУЖИ ==========
+    createCardWrapper() {
+        console.log('🔨 createCardWrapper() ВЫЗВАН');
         
-        // Удаляем старые, если есть
-        const oldBtns = document.querySelectorAll('.swipe-side-btn');
-        oldBtns.forEach(btn => btn.remove());
-        
-        const card = document.getElementById('swipeCard');
-        if (!card) {
-            console.error('❌ swipeCard НЕ НАЙДЕН!');
+        const originalCard = document.getElementById('swipeCard');
+        if (!originalCard) {
+            console.error('❌ swipeCard не найден');
             return;
         }
         
-        console.log('✅ swipeCard найден, создаём кнопки внутри карточки');
+        // Удаляем старые кнопки и обёртку
+        const oldWrapper = document.querySelector('.swipe-card-wrapper');
+        if (oldWrapper) {
+            // Возвращаем карточку обратно в контейнер
+            const parent = oldWrapper.parentNode;
+            const card = oldWrapper.querySelector('.swipe-card');
+            if (card) {
+                parent.insertBefore(card, oldWrapper);
+                oldWrapper.remove();
+            }
+        }
         
-        // Левая кнопка SKIP (красная) - привязана к карточке
+        // Создаём обёртку
+        const wrapper = document.createElement('div');
+        wrapper.className = 'swipe-card-wrapper';
+        wrapper.style.position = 'relative';
+        wrapper.style.display = 'inline-block';
+        wrapper.style.margin = '0 auto';
+        
+        // Перемещаем карточку в обёртку
+        const parent = originalCard.parentNode;
+        parent.insertBefore(wrapper, originalCard);
+        wrapper.appendChild(originalCard);
+        
+        this.cardWrapper = wrapper;
+        
+        // Создаём кнопки внутри обёртки (снаружи карточки)
+        this.createSideButtonsInWrapper();
+        
+        console.log('✅ Обёртка создана');
+    },
+    
+    // ========== СОЗДАНИЕ КНОПОК В ОБЁРТКЕ (СНАРУЖИ КАРТОЧКИ) ==========
+    createSideButtonsInWrapper() {
+        console.log('🔨 createSideButtonsInWrapper() ВЫЗВАН');
+        
+        if (!this.cardWrapper) return;
+        
+        // Удаляем старые кнопки
+        const oldBtns = this.cardWrapper.querySelectorAll('.swipe-side-btn');
+        oldBtns.forEach(btn => btn.remove());
+        
+        // Левая кнопка SKIP
         const leftWrapper = document.createElement('div');
         leftWrapper.className = 'swipe-side-btn skip-btn';
         leftWrapper.innerHTML = `
@@ -109,7 +143,7 @@ const Swipe = {
             </div>
         `;
         
-        // Правая кнопка INVITE (зелёная) - привязана к карточке
+        // Правая кнопка INVITE
         const rightWrapper = document.createElement('div');
         rightWrapper.className = 'swipe-side-btn invite-btn';
         rightWrapper.innerHTML = `
@@ -120,9 +154,9 @@ const Swipe = {
             </div>
         `;
         
-        // Добавляем кнопки внутрь карточки
-        card.appendChild(leftWrapper);
-        card.appendChild(rightWrapper);
+        // Добавляем кнопки в обёртку
+        this.cardWrapper.appendChild(leftWrapper);
+        this.cardWrapper.appendChild(rightWrapper);
         
         this.skipBtn = leftWrapper;
         this.inviteBtn = rightWrapper;
@@ -146,13 +180,32 @@ const Swipe = {
         this.inviteBtn.addEventListener('mousedown', () => this.pulseButton(this.inviteBtn));
         this.inviteBtn.addEventListener('touchstart', () => this.pulseButton(this.inviteBtn));
         
-        console.log('✅ Кнопки созданы и добавлены в карточку');
+        console.log('✅ Кнопки созданы в обёртке (снаружи карточки)');
         
         // Показываем кнопки
         setTimeout(() => {
             if (this.skipBtn) this.skipBtn.classList.add('visible');
             if (this.inviteBtn) this.inviteBtn.classList.add('visible');
+            this.updateButtonsPosition();
         }, 50);
+    },
+    
+    updateButtonsPosition() {
+        if (!this.skipBtn || !this.inviteBtn || !this.card) return;
+        
+        const cardHeight = this.card.offsetHeight;
+        const btnHeight = Math.min(cardHeight * 0.7, 140);
+        const cardWidth = this.card.offsetWidth;
+        
+        this.skipBtn.style.height = `${btnHeight}px`;
+        this.skipBtn.style.minHeight = `${btnHeight}px`;
+        this.skipBtn.style.top = '50%';
+        this.skipBtn.style.left = `-${Math.min(btnHeight * 0.4, 28)}px`;
+        
+        this.inviteBtn.style.height = `${btnHeight}px`;
+        this.inviteBtn.style.minHeight = `${btnHeight}px`;
+        this.inviteBtn.style.top = '50%';
+        this.inviteBtn.style.right = `-${Math.min(btnHeight * 0.4, 28)}px`;
     },
     
     pulseButton(btn) {
@@ -173,10 +226,10 @@ const Swipe = {
     },
     
     animateAndAccept() {
-        if (!this.card) return;
+        if (!this.cardWrapper) return;
         
-        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
-        this.card.style.transform = `translateX(200%) rotate(12deg) scale(0.9)`;
+        this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
+        this.cardWrapper.style.transform = `translateX(200%) rotate(12deg) scale(0.9)`;
         
         setTimeout(() => {
             this.acceptPlayer();
@@ -184,41 +237,140 @@ const Swipe = {
     },
     
     animateAndReject() {
-        if (!this.card) return;
+        if (!this.cardWrapper) return;
         
-        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
-        this.card.style.transform = `translateX(-200%) rotate(-12deg) scale(0.9)`;
+        this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
+        this.cardWrapper.style.transform = `translateX(-200%) rotate(-12deg) scale(0.9)`;
         
         setTimeout(() => {
             this.rejectPlayer();
         }, this.ANIMATION_DURATION);
     },
     
+    resetCardPosition() {
+        if (!this.cardWrapper) return;
+        this.cardWrapper.style.transition = `transform 0.3s ease`;
+        this.cardWrapper.style.transform = 'translateX(0) rotate(0deg) scale(1)';
+        this.currentX = 0;
+        
+        setTimeout(() => {
+            if (this.cardWrapper) this.cardWrapper.style.transition = '';
+        }, 300);
+    },
+    
     adjustCardSize() {
         if (!this.card || this.isConnectionMode) return;
-        this.card.style.marginLeft = 'auto';
-        this.card.style.marginRight = 'auto';
-        
-        // Обновляем позицию кнопок относительно карточки
+        if (this.cardWrapper) {
+            this.cardWrapper.style.marginLeft = 'auto';
+            this.cardWrapper.style.marginRight = 'auto';
+        }
         this.updateButtonsPosition();
     },
     
-    updateButtonsPosition() {
-        if (!this.skipBtn || !this.inviteBtn) return;
+    // ========== ОБНОВЛЁННЫЕ МЕТОДЫ ДЛЯ РАБОТЫ С ОБЁРТКОЙ ==========
+    
+    onDragStart(e) {
+        if (this.isConnectionMode) return;
         
-        const cardHeight = this.card.offsetHeight;
-        const btnHeight = Math.min(cardHeight * 0.7, 140);
+        if (this.hintRunId) {
+            clearTimeout(this.hintRunId);
+            clearInterval(this.hintInterval);
+        }
+        if (this.skipBtn) this.skipBtn.classList.remove('hint-glow');
+        if (this.inviteBtn) this.inviteBtn.classList.remove('hint-glow');
         
-        this.skipBtn.style.height = `${btnHeight}px`;
-        this.skipBtn.style.minHeight = `${btnHeight}px`;
-        this.skipBtn.style.top = '50%';
-        this.skipBtn.style.transform = 'translateY(-50%)';
+        // Проверяем, что клик не по кнопке
+        if (this.skipBtn && this.skipBtn.contains(e.target)) return;
+        if (this.inviteBtn && this.inviteBtn.contains(e.target)) return;
         
-        this.inviteBtn.style.height = `${btnHeight}px`;
-        this.inviteBtn.style.minHeight = `${btnHeight}px`;
-        this.inviteBtn.style.top = '50%';
-        this.inviteBtn.style.transform = 'translateY(-50%)';
+        const target = e.target;
+        if (!this.card || !this.card.contains(target)) return;
+        
+        this.isDragging = true;
+        this.startX = this.getClientX(e);
+        this.startTime = Date.now();
+        
+        if (this.cardWrapper) this.cardWrapper.classList.add('dragging');
+        if (this.card) this.card.style.cursor = 'grabbing';
+        
+        e.preventDefault();
     },
+    
+    onDragMove(e) {
+        if (!this.isDragging || this.isConnectionMode) return;
+        
+        e.preventDefault();
+        
+        const clientX = this.getClientX(e);
+        if (clientX === null) return;
+        
+        this.currentX = clientX;
+        const deltaX = this.currentX - this.startX;
+        
+        const percent = deltaX / 150;
+        const rotate = percent * 12;
+        const scale = 1 + Math.abs(percent) * 0.05;
+        
+        if (this.cardWrapper) {
+            this.cardWrapper.style.transform = `translateX(${deltaX}px) rotate(${rotate}deg) scale(${scale})`;
+        }
+        
+        if (deltaX > 0) {
+            if (this.card) this.card.classList.add('swiping-right');
+            if (this.card) this.card.classList.remove('swiping-left');
+        } else if (deltaX < 0) {
+            if (this.card) this.card.classList.add('swiping-left');
+            if (this.card) this.card.classList.remove('swiping-right');
+        }
+    },
+    
+    onDragEnd(e) {
+        if (!this.isDragging || this.isConnectionMode) return;
+        
+        this.isDragging = false;
+        if (this.card) this.card.style.cursor = 'grab';
+        
+        const deltaX = this.currentX - this.startX;
+        const time = Date.now() - this.startTime;
+        const velocity = Math.abs(deltaX / time);
+        
+        const isSwipe = Math.abs(deltaX) > this.SWIPE_THRESHOLD || velocity > this.VELOCITY_THRESHOLD;
+        
+        if (isSwipe && Math.abs(deltaX) > 10) {
+            if (window.Settings && window.Settings.swipe) window.Settings.swipe();
+            
+            if (deltaX > 0) {
+                if (this.cardWrapper) {
+                    this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
+                    this.cardWrapper.style.transform = `translateX(200%) rotate(12deg) scale(0.9)`;
+                }
+                setTimeout(() => {
+                    this.acceptPlayer();
+                }, this.ANIMATION_DURATION);
+            } else {
+                if (this.cardWrapper) {
+                    this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
+                    this.cardWrapper.style.transform = `translateX(-200%) rotate(-12deg) scale(0.9)`;
+                }
+                setTimeout(() => {
+                    this.rejectPlayer();
+                }, this.ANIMATION_DURATION);
+            }
+        } else {
+            this.resetCardPosition();
+        }
+        
+        if (this.card) {
+            this.card.classList.remove('dragging', 'swiping-right', 'swiping-left');
+        }
+        if (this.cardWrapper) {
+            this.cardWrapper.classList.remove('dragging');
+        }
+        
+        e.preventDefault();
+    },
+    
+    // ========== ОСТАЛЬНЫЕ МЕТОДЫ (без изменений) ==========
     
     adjustConnectionCardSize() {
         const connectionCard = document.getElementById('connectionCard');
@@ -261,7 +413,6 @@ const Swipe = {
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
         console.log('🔄 Swipe.startWithOpponent() вызван, mode:', this.mode);
         
-        // ЗАЩИТА: если не инициализирован — инициализируем
         if (!this.isInitialized) {
             console.log('⚠️ Swipe не инициализирован, вызываем init() с mode:', opponent.mode);
             this.init(opponent.mode || 'FACEIT');
@@ -345,10 +496,7 @@ const Swipe = {
         
         if (this.loading) this.loading.classList.remove('active');
         
-        this.card.style.transition = 'none';
-        this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
-        this.card.style.opacity = '1';
-        this.card.classList.remove('both-accepted', 'rejected', 'right-swipe', 'left-swipe', 'accept-overlay', 'reject-overlay');
+        this.resetCardPosition();
         
         this.showPlayer(opponent);
         this.startCardTimer();
@@ -363,11 +511,9 @@ const Swipe = {
         setTimeout(() => this.startSwipeHint(), 300);
         setTimeout(() => this.adjustCardSize(), 50);
         
-        // Показываем кнопки
         if (this.skipBtn) this.skipBtn.classList.add('visible');
         if (this.inviteBtn) this.inviteBtn.classList.add('visible');
         
-        // Обновляем позицию кнопок
         setTimeout(() => this.updateButtonsPosition(), 60);
         
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
@@ -477,103 +623,6 @@ const Swipe = {
         return null;
     },
     
-    onDragStart(e) {
-        if (this.isConnectionMode) return;
-        
-        if (this.hintRunId) {
-            clearTimeout(this.hintRunId);
-            clearInterval(this.hintInterval);
-        }
-        if (this.skipBtn) this.skipBtn.classList.remove('hint-glow');
-        if (this.inviteBtn) this.inviteBtn.classList.remove('hint-glow');
-        
-        const target = e.target;
-        if (!this.card.contains(target)) return;
-        
-        this.isDragging = true;
-        this.startX = this.getClientX(e);
-        this.startTime = Date.now();
-        
-        this.card.classList.add('dragging');
-        this.card.style.transition = 'none';
-        this.card.style.cursor = 'grabbing';
-        
-        e.preventDefault();
-    },
-    
-    onDragMove(e) {
-        if (!this.isDragging || this.isConnectionMode) return;
-        
-        e.preventDefault();
-        
-        const clientX = this.getClientX(e);
-        if (clientX === null) return;
-        
-        this.currentX = clientX;
-        const deltaX = this.currentX - this.startX;
-        
-        const percent = deltaX / 150;
-        const rotate = percent * 12;
-        const scale = 1 + Math.abs(percent) * 0.05;
-        
-        this.card.style.transform = `translateX(${deltaX}px) rotate(${rotate}deg) scale(${scale})`;
-        
-        if (deltaX > 0) {
-            this.card.classList.add('swiping-right');
-            this.card.classList.remove('swiping-left');
-        } else if (deltaX < 0) {
-            this.card.classList.add('swiping-left');
-            this.card.classList.remove('swiping-right');
-        }
-    },
-    
-    onDragEnd(e) {
-        if (!this.isDragging || this.isConnectionMode) return;
-        
-        this.isDragging = false;
-        this.card.style.cursor = 'grab';
-        
-        const deltaX = this.currentX - this.startX;
-        const time = Date.now() - this.startTime;
-        const velocity = Math.abs(deltaX / time);
-        
-        const isSwipe = Math.abs(deltaX) > this.SWIPE_THRESHOLD || velocity > this.VELOCITY_THRESHOLD;
-        
-        if (isSwipe && Math.abs(deltaX) > 10) {
-            if (window.Settings && window.Settings.swipe) window.Settings.swipe();
-            
-            this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
-            
-            if (deltaX > 0) {
-                this.card.style.transform = `translateX(200%) rotate(12deg) scale(0.9)`;
-                setTimeout(() => {
-                    this.acceptPlayer();
-                }, this.ANIMATION_DURATION);
-            } else {
-                this.card.style.transform = `translateX(-200%) rotate(-12deg) scale(0.9)`;
-                setTimeout(() => {
-                    this.rejectPlayer();
-                }, this.ANIMATION_DURATION);
-            }
-        } else {
-            this.resetCardPosition();
-        }
-        
-        this.card.classList.remove('dragging', 'swiping-right', 'swiping-left');
-        
-        e.preventDefault();
-    },
-    
-    resetCardPosition() {
-        this.card.style.transition = `transform 0.3s ease`;
-        this.card.style.transform = 'translateX(0) rotate(0deg) scale(1)';
-        this.currentX = 0;
-        
-        setTimeout(() => {
-            this.card.style.transition = '';
-        }, 300);
-    },
-    
     acceptPlayer() {
         console.log('✅ Принят игрок:', this.currentPlayer);
         
@@ -591,8 +640,8 @@ const Swipe = {
         }
         
         this.showConnectionMode();
-        this.card.style.transition = 'opacity 0.2s ease';
-        this.card.style.opacity = '0';
+        if (this.card) this.card.style.transition = 'opacity 0.2s ease';
+        if (this.card) this.card.style.opacity = '0';
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         
@@ -1066,8 +1115,12 @@ const Swipe = {
         this.chatLink = null;
         this.inviteLink = null;
         
-        const btns = document.querySelectorAll('.swipe-side-btn');
-        btns.forEach(btn => btn.remove());
+        const wrapper = document.querySelector('.swipe-card-wrapper');
+        if (wrapper && this.card) {
+            const parent = wrapper.parentNode;
+            parent.insertBefore(this.card, wrapper);
+            wrapper.remove();
+        }
     },
     
     connectionTimeout() {
@@ -1137,7 +1190,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('✅ Swipe: DOM загружен');
     window.Swipe = Swipe;
     
-    // Слушаем активацию свайп-экрана через MutationObserver
     const swipeScreen = document.getElementById('swipeScreen');
     if (swipeScreen) {
         const observer = new MutationObserver((mutations) => {
@@ -1166,7 +1218,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Если экран уже активен при загрузке
 if (document.getElementById('swipeScreen')?.classList.contains('active')) {
     setTimeout(() => {
         if (!Swipe.isInitialized) {
