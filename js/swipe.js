@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - СТАТИЧНЫЕ КНОПКИ ПО БОКАМ
+// СВАЙП-КАРТОЧКИ - КНОПКИ ПРИВЯЗАНЫ К КАРТОЧКЕ
 // ============================================
 
 const Swipe = {
@@ -66,6 +66,9 @@ const Swipe = {
             return;
         }
         
+        // Устанавливаем позиционирование карточки как relative для привязки кнопок
+        this.card.style.position = 'relative';
+        
         this.blockScroll();
         this.showHintOnce();
         
@@ -79,7 +82,7 @@ const Swipe = {
         console.log('✅ Swipe.init() завершён, isInitialized:', this.isInitialized);
     },
     
-    // ========== СОЗДАНИЕ ПОЛУКРУГЛЫХ КНОПОК ==========
+    // ========== СОЗДАНИЕ ПОЛУКРУГЛЫХ КНОПОК (привязаны к карточке) ==========
     createSideButtons() {
         console.log('🔨 createSideButtons() ВЫЗВАН');
         
@@ -87,15 +90,15 @@ const Swipe = {
         const oldBtns = document.querySelectorAll('.swipe-side-btn');
         oldBtns.forEach(btn => btn.remove());
         
-        const container = document.getElementById('swipeContainer');
-        if (!container) {
-            console.error('❌ swipeContainer НЕ НАЙДЕН!');
+        const card = document.getElementById('swipeCard');
+        if (!card) {
+            console.error('❌ swipeCard НЕ НАЙДЕН!');
             return;
         }
         
-        console.log('✅ swipeContainer найден, создаём кнопки');
+        console.log('✅ swipeCard найден, создаём кнопки внутри карточки');
         
-        // Левая кнопка SKIP (красная)
+        // Левая кнопка SKIP (красная) - привязана к карточке
         const leftWrapper = document.createElement('div');
         leftWrapper.className = 'swipe-side-btn skip-btn';
         leftWrapper.innerHTML = `
@@ -106,7 +109,7 @@ const Swipe = {
             </div>
         `;
         
-        // Правая кнопка INVITE (зелёная)
+        // Правая кнопка INVITE (зелёная) - привязана к карточке
         const rightWrapper = document.createElement('div');
         rightWrapper.className = 'swipe-side-btn invite-btn';
         rightWrapper.innerHTML = `
@@ -117,8 +120,9 @@ const Swipe = {
             </div>
         `;
         
-        container.appendChild(leftWrapper);
-        container.appendChild(rightWrapper);
+        // Добавляем кнопки внутрь карточки
+        card.appendChild(leftWrapper);
+        card.appendChild(rightWrapper);
         
         this.skipBtn = leftWrapper;
         this.inviteBtn = rightWrapper;
@@ -142,7 +146,7 @@ const Swipe = {
         this.inviteBtn.addEventListener('mousedown', () => this.pulseButton(this.inviteBtn));
         this.inviteBtn.addEventListener('touchstart', () => this.pulseButton(this.inviteBtn));
         
-        console.log('✅ Кнопки созданы и добавлены в DOM');
+        console.log('✅ Кнопки созданы и добавлены в карточку');
         
         // Показываем кнопки
         setTimeout(() => {
@@ -194,6 +198,26 @@ const Swipe = {
         if (!this.card || this.isConnectionMode) return;
         this.card.style.marginLeft = 'auto';
         this.card.style.marginRight = 'auto';
+        
+        // Обновляем позицию кнопок относительно карточки
+        this.updateButtonsPosition();
+    },
+    
+    updateButtonsPosition() {
+        if (!this.skipBtn || !this.inviteBtn) return;
+        
+        const cardHeight = this.card.offsetHeight;
+        const btnHeight = Math.min(cardHeight * 0.7, 140);
+        
+        this.skipBtn.style.height = `${btnHeight}px`;
+        this.skipBtn.style.minHeight = `${btnHeight}px`;
+        this.skipBtn.style.top = '50%';
+        this.skipBtn.style.transform = 'translateY(-50%)';
+        
+        this.inviteBtn.style.height = `${btnHeight}px`;
+        this.inviteBtn.style.minHeight = `${btnHeight}px`;
+        this.inviteBtn.style.top = '50%';
+        this.inviteBtn.style.transform = 'translateY(-50%)';
     },
     
     adjustConnectionCardSize() {
@@ -237,7 +261,7 @@ const Swipe = {
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
         console.log('🔄 Swipe.startWithOpponent() вызван, mode:', this.mode);
         
-        // ✅ ЗАЩИТА: если не инициализирован — инициализируем
+        // ЗАЩИТА: если не инициализирован — инициализируем
         if (!this.isInitialized) {
             console.log('⚠️ Swipe не инициализирован, вызываем init() с mode:', opponent.mode);
             this.init(opponent.mode || 'FACEIT');
@@ -342,6 +366,9 @@ const Swipe = {
         // Показываем кнопки
         if (this.skipBtn) this.skipBtn.classList.add('visible');
         if (this.inviteBtn) this.inviteBtn.classList.add('visible');
+        
+        // Обновляем позицию кнопок
+        setTimeout(() => this.updateButtonsPosition(), 60);
         
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
     },
