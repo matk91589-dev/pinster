@@ -192,25 +192,34 @@ const Swipe = {
     
     updateButtonsPosition() {
         if (!this.skipBtn || !this.inviteBtn || !this.card) return;
-        
+    
         const cardHeight = this.card.offsetHeight;
-        const btnHeight = Math.min(cardHeight * 0.7, 140);
         const cardWidth = this.card.offsetWidth;
-        
+        const btnHeight = Math.min(cardHeight * 0.7, 140);
+        const btnWidth = Math.min(cardWidth * 0.12, 56);
+    
+        // Устанавливаем высоту кнопок
         this.skipBtn.style.height = `${btnHeight}px`;
         this.skipBtn.style.minHeight = `${btnHeight}px`;
-        this.skipBtn.style.top = '50%';
-        this.skipBtn.style.left = `-${Math.min(btnHeight * 0.4, 28)}px`;
-        
         this.inviteBtn.style.height = `${btnHeight}px`;
         this.inviteBtn.style.minHeight = `${btnHeight}px`;
-        this.inviteBtn.style.top = '50%';
-        this.inviteBtn.style.right = `-${Math.min(btnHeight * 0.4, 28)}px`;
-    },
     
-    pulseButton(btn) {
-        btn.classList.add('pulse');
-        setTimeout(() => btn.classList.remove('pulse'), 200);
+        // Устанавливаем ширину кнопок
+        this.skipBtn.style.width = `${btnWidth}px`;
+        this.inviteBtn.style.width = `${btnWidth}px`;
+    
+        // Центрируем по вертикали
+        this.skipBtn.style.top = '50%';
+        this.skipBtn.style.transform = 'translateY(-50%)';
+        this.inviteBtn.style.top = '50%';
+        this.inviteBtn.style.transform = 'translateY(-50%)';
+    
+        // Выступ за пределы карточки
+        const offset = Math.max(btnWidth * 0.5, 24);
+        this.skipBtn.style.left = `-${offset}px`;
+        this.inviteBtn.style.right = `-${offset}px`;
+    
+        console.log('Кнопки обновлены:', { btnHeight, btnWidth, offset });
     },
     
     onSideButtonClick(action) {
