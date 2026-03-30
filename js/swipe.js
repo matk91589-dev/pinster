@@ -87,12 +87,20 @@ const Swipe = {
         
         this.resizeObserver = new ResizeObserver(() => {
             this.updateButtonsPosition();
+            if (this.isConnectionMode) {
+                this.adjustConnectionCardSize();
+            }
         });
         
         if (this.card) this.resizeObserver.observe(this.card);
         if (this.cardWrapper) this.resizeObserver.observe(this.cardWrapper);
         
-        window.addEventListener('resize', () => this.updateButtonsPosition());
+        window.addEventListener('resize', () => {
+            this.updateButtonsPosition();
+            if (this.isConnectionMode) {
+                this.adjustConnectionCardSize();
+            }
+        });
         window.addEventListener('scroll', () => this.updateButtonsPosition());
     },
     
@@ -334,10 +342,30 @@ const Swipe = {
     },
     
     adjustConnectionCardSize() {
-        const connectionCard = document.getElementById('connectionCard');
-        if (!connectionCard || !this.isConnectionMode) return;
+        // Берем размеры из свайп-карточки
+        const swipeCard = document.getElementById('swipeCard');
+        const connectionCard = document.querySelector('#connectionScreen .swipe-card');
+        
+        if (!swipeCard || !connectionCard) return;
+        
+        // Получаем реальные размеры свайп-карточки
+        const cardRect = swipeCard.getBoundingClientRect();
+        const cardWidth = cardRect.width;
+        const cardHeight = cardRect.height;
+        
+        // Применяем те же размеры к карточке ожидания
+        connectionCard.style.width = `${cardWidth}px`;
+        connectionCard.style.height = `${cardHeight}px`;
+        connectionCard.style.maxWidth = `${cardWidth}px`;
+        connectionCard.style.maxHeight = `${cardHeight}px`;
+        connectionCard.style.minWidth = `${cardWidth}px`;
+        connectionCard.style.minHeight = `${cardHeight}px`;
+        
+        // Центрируем
         connectionCard.style.marginLeft = 'auto';
         connectionCard.style.marginRight = 'auto';
+        
+        console.log('📐 Карточка ожидания подогнана под размер свайп-карточки:', { cardWidth, cardHeight });
     },
     
     startSwipeHint() {
@@ -963,8 +991,8 @@ const Swipe = {
         const teammateAvatarContainer = document.querySelector('#connectionScreen .teammate-avatar');
         
         if (selfAvatarContainer) {
-            selfAvatarContainer.style.width = '60px';
-            selfAvatarContainer.style.height = '60px';
+            selfAvatarContainer.style.width = '50px';
+            selfAvatarContainer.style.height = '50px';
             selfAvatarContainer.style.border = 'none';
             selfAvatarContainer.style.filter = 'grayscale(0)';
             selfAvatarContainer.style.opacity = '1';
@@ -1004,6 +1032,7 @@ const Swipe = {
         this.updateChatButton(false);
         this.startConnectionTimer();
         
+        // Подгоняем размер карточки под свайп-карточку
         setTimeout(() => this.adjustConnectionCardSize(), 50);
         
         console.log('✅ Экран соединения показан');
@@ -1012,7 +1041,6 @@ const Swipe = {
     updateChatButton(active, chatLink = null, inviteLink = null) {
         console.log('🔘 updateChatButton called, active:', active, 'chatLink:', chatLink);
         
-        // Ищем кнопку по разным селекторам
         let button = document.getElementById('tgChatButton');
         if (!button) {
             button = document.querySelector('.tg-chat-button');
@@ -1030,7 +1058,6 @@ const Swipe = {
         if (buttonText) buttonText.textContent = 'Перейти в чат';
         
         if (active && chatLink) {
-            // Убираем все старые классы и добавляем новые
             button.classList.remove('disabled');
             button.classList.add('active');
             button.disabled = false;
@@ -1045,7 +1072,6 @@ const Swipe = {
             localStorage.setItem('currentChatLink', chatLink);
             if (inviteLink) localStorage.setItem('currentInviteLink', inviteLink);
             
-            // Переопределяем onclick на случай если предыдущий был
             button.onclick = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1118,13 +1144,11 @@ const Swipe = {
             if (data.status === 'ok' && data.chat_link) {
                 console.log('🔗 Получена ссылка чата:', data.chat_link);
                 
-                // Сохраняем ссылки
                 this.chatLink = data.chat_link;
                 this.inviteLink = data.invite_link;
                 localStorage.setItem('currentChatLink', data.chat_link);
                 if (data.invite_link) localStorage.setItem('currentInviteLink', data.invite_link);
                 
-                // ПРЯМОЕ ПРИМЕНЕНИЕ СТИЛЕЙ К КНОПКЕ
                 const button = document.getElementById('tgChatButton');
                 if (button) {
                     console.log('🔘 Найденная кнопка чата, активируем...');
@@ -1142,7 +1166,6 @@ const Swipe = {
                     console.error('❌ Кнопка чата не найдена при создании игры');
                 }
                 
-                // Также вызываем updateChatButton для синхронизации
                 this.updateChatButton(true, data.chat_link, data.invite_link);
                 
                 this.gameCreated = true;
