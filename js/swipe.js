@@ -792,14 +792,13 @@ const Swipe = {
         const connectionLine = document.querySelector('#connectionScreen .connection-line');
         const teammateAvatar = document.querySelector('#connectionScreen .teammate-avatar');
         const connectionTimer = document.getElementById('connectionTimer');
-        const selfAvatar = document.querySelector('#connectionScreen .self-avatar');
         
         if (status === 'both_accepted') {
-            // Аватар тиммейта — становится такого же размера как твой
+            // Аватар тиммейта — становится 60px
             if (teammateAvatar) {
                 teammateAvatar.classList.add('connected');
-                teammateAvatar.style.width = '70px';
-                teammateAvatar.style.height = '70px';
+                teammateAvatar.style.width = '60px';
+                teammateAvatar.style.height = '60px';
                 teammateAvatar.style.filter = 'grayscale(0)';
                 teammateAvatar.style.opacity = '1';
                 teammateAvatar.style.transform = 'scale(1)';
@@ -814,7 +813,7 @@ const Swipe = {
                 if (linePulse) linePulse.style.display = 'none';
             }
             
-            // Статус — "матч создан" без галочки, с маленькой буквы
+            // Статус
             if (statusEl) {
                 statusEl.innerHTML = 'матч создан';
                 statusEl.classList.add('active');
@@ -832,18 +831,26 @@ const Swipe = {
                 this.connectionTimer = null;
             }
             
-            // Активируем кнопку чата (делаем оранжевой)
+            // Активируем кнопку чата
             if (this.chatLink) {
                 this.updateChatButton(true, this.chatLink, this.inviteLink);
             } else {
-                // Если ссылка еще не загружена, ждем
+                // Ждем ссылку с повторными проверками
+                let attempts = 0;
                 const checkChat = setInterval(() => {
+                    attempts++;
                     if (this.chatLink) {
                         clearInterval(checkChat);
                         this.updateChatButton(true, this.chatLink, this.inviteLink);
+                    } else if (attempts >= 30) {
+                        clearInterval(checkChat);
+                        const savedChatLink = localStorage.getItem('currentChatLink');
+                        if (savedChatLink) {
+                            this.chatLink = savedChatLink;
+                            this.updateChatButton(true, this.chatLink, this.inviteLink);
+                        }
                     }
                 }, 100);
-                setTimeout(() => clearInterval(checkChat), 5000);
             }
             
             if (window.Settings && window.Settings.success) window.Settings.success();
@@ -996,20 +1003,20 @@ const Swipe = {
         const selfAvatarContainer = document.querySelector('#connectionScreen .self-avatar');
         const teammateAvatarContainer = document.querySelector('#connectionScreen .teammate-avatar');
         
-        // Твоя аватарка — большой размер
+        // Твоя аватарка — 60px
         if (selfAvatarContainer) {
-            selfAvatarContainer.style.width = '70px';
-            selfAvatarContainer.style.height = '70px';
+            selfAvatarContainer.style.width = '60px';
+            selfAvatarContainer.style.height = '60px';
             selfAvatarContainer.style.border = 'none';
             selfAvatarContainer.style.filter = 'grayscale(0)';
             selfAvatarContainer.style.opacity = '1';
         }
         
-        // Аватар тиммейта — маленький и серый
+        // Аватар тиммейта — 40px, серый
         if (teammateAvatarContainer) {
             teammateAvatarContainer.classList.remove('connected');
-            teammateAvatarContainer.style.width = '55px';
-            teammateAvatarContainer.style.height = '55px';
+            teammateAvatarContainer.style.width = '40px';
+            teammateAvatarContainer.style.height = '40px';
             teammateAvatarContainer.style.border = 'none';
             teammateAvatarContainer.style.filter = 'grayscale(0.7)';
             teammateAvatarContainer.style.opacity = '0.7';
@@ -1070,6 +1077,8 @@ const Swipe = {
             if (inviteLink) localStorage.setItem('currentInviteLink', inviteLink);
             
             button.onclick = () => this.openChatLink();
+            
+            console.log('🔘 Кнопка чата активирована, ссылка:', chatLink);
         } else {
             button.classList.remove('active');
             button.classList.add('disabled');
@@ -1120,11 +1129,14 @@ const Swipe = {
         })
         .then(res => res.json())
         .then(data => {
+            console.log('📦 Game create response:', data);
             if (data.status === 'ok' && data.chat_link) {
+                console.log('🔗 Получена ссылка чата:', data.chat_link);
                 this.updateChatButton(true, data.chat_link, data.invite_link);
                 this.gameCreated = true;
                 setTimeout(() => this.adjustConnectionCardSize(), 50);
             } else {
+                console.warn('⚠️ Нет chat_link в ответе');
                 this.updateChatButton(false);
             }
         })
