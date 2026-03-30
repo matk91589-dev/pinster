@@ -4124,7 +4124,7 @@ html {
 .tg-chat-button {
     width: min(280px, 80%);
     padding: 14px;
-    border-radius: 30px;
+    border-radius: 100px !important; /* Полностью круглые края */
     font-size: 16px;
     font-weight: 700;
     display: flex;
