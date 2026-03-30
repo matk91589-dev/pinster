@@ -87,20 +87,12 @@ const Swipe = {
         
         this.resizeObserver = new ResizeObserver(() => {
             this.updateButtonsPosition();
-            if (this.isConnectionMode) {
-                this.syncConnectionCardSize();
-            }
         });
         
         if (this.card) this.resizeObserver.observe(this.card);
         if (this.cardWrapper) this.resizeObserver.observe(this.cardWrapper);
         
-        window.addEventListener('resize', () => {
-            this.updateButtonsPosition();
-            if (this.isConnectionMode) {
-                this.syncConnectionCardSize();
-            }
-        });
+        window.addEventListener('resize', () => this.updateButtonsPosition());
         window.addEventListener('scroll', () => this.updateButtonsPosition());
     },
     
@@ -341,44 +333,15 @@ const Swipe = {
         this.updateButtonsPosition();
     },
     
-    syncConnectionCardSize() {
-        const swipeCard = document.getElementById('swipeCard');
+    adjustConnectionCardSize() {
         const connectionCard = document.querySelector('#connectionScreen .swipe-card');
+        if (!connectionCard) return;
         
-        if (!swipeCard || !connectionCard) return;
-        
-        // Получаем реальные размеры свайп-карточки
-        const cardRect = swipeCard.getBoundingClientRect();
-        const targetWidth = cardRect.width;
-        const targetHeight = cardRect.height;
-        
-        // Применяем ТОЧНЫЕ размеры к карточке ожидания
-        connectionCard.style.width = `${targetWidth}px`;
-        connectionCard.style.height = `${targetHeight}px`;
-        connectionCard.style.maxWidth = `${targetWidth}px`;
-        connectionCard.style.maxHeight = `${targetHeight}px`;
-        connectionCard.style.minWidth = `${targetWidth}px`;
-        connectionCard.style.minHeight = `${targetHeight}px`;
-        
-        // Центрируем
+        // Просто центрируем карточку
         connectionCard.style.marginLeft = 'auto';
         connectionCard.style.marginRight = 'auto';
         
-        // Настраиваем контент внутри, чтобы он не выходил за границы
-        const content = connectionCard.querySelector('.swipe-card-content');
-        if (content) {
-            content.style.height = '100%';
-            content.style.display = 'flex';
-            content.style.flexDirection = 'column';
-            content.style.justifyContent = 'space-between';
-            content.style.overflow = 'auto';
-            content.style.scrollbarWidth = 'none';
-        }
-        
-        console.log('📐 Карточка ожидания синхронизирована:', { 
-            width: targetWidth, 
-            height: targetHeight 
-        });
+        console.log('📐 Карточка ожидания центрирована');
     },
     
     startSwipeHint() {
@@ -974,10 +937,11 @@ const Swipe = {
         document.getElementById('swipeScreen').classList.remove('active');
         document.getElementById('connectionScreen').classList.add('active');
         
-        // Устанавливаем аватарки и контент
+        // Устанавливаем ник тиммейта
         const teammateNickEl = document.getElementById('teammateNick');
         if (teammateNickEl) teammateNickEl.textContent = this.currentPlayer?.nick || 'Игрок';
         
+        // Устанавливаем аватар тиммейта
         const teammateAvatar = document.querySelector('#connectionScreen .teammate-avatar .tg-avatar-svg');
         if (teammateAvatar && this.currentPlayer?.avatar) {
             teammateAvatar.innerHTML = `<img src="${this.currentPlayer.avatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
@@ -985,6 +949,7 @@ const Swipe = {
             teammateAvatar.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>`;
         }
         
+        // Устанавливаем аватар текущего пользователя
         const selfAvatar = document.querySelector('#connectionScreen .self-avatar .tg-avatar-svg');
         if (selfAvatar) {
             const myAvatar = localStorage.getItem('pingster_avatar') || (window.Profile && Profile.savedAvatarUrl);
@@ -995,6 +960,7 @@ const Swipe = {
             }
         }
         
+        // Настраиваем размеры аватарок
         const selfAvatarContainer = document.querySelector('#connectionScreen .self-avatar');
         const teammateAvatarContainer = document.querySelector('#connectionScreen .teammate-avatar');
         
@@ -1016,6 +982,7 @@ const Swipe = {
             teammateAvatarContainer.style.transform = 'scale(1)';
         }
         
+        // Настраиваем линию соединения
         const connectionLine = document.querySelector('#connectionScreen .connection-line');
         if (connectionLine) {
             connectionLine.classList.remove('connected');
@@ -1029,6 +996,7 @@ const Swipe = {
             }
         }
         
+        // Статус
         const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
             statusEl.innerHTML = 'ожидание тиммейта...';
@@ -1040,8 +1008,8 @@ const Swipe = {
         this.updateChatButton(false);
         this.startConnectionTimer();
         
-        // Синхронизируем размер карточки
-        setTimeout(() => this.syncConnectionCardSize(), 50);
+        // Центрируем карточку
+        setTimeout(() => this.adjustConnectionCardSize(), 50);
         
         console.log('✅ Экран соединения показан');
     },
@@ -1177,7 +1145,7 @@ const Swipe = {
                 this.updateChatButton(true, data.chat_link, data.invite_link);
                 
                 this.gameCreated = true;
-                setTimeout(() => this.syncConnectionCardSize(), 50);
+                setTimeout(() => this.adjustConnectionCardSize(), 50);
             } else {
                 console.warn('⚠️ Нет chat_link в ответе');
                 this.updateChatButton(false);
@@ -1436,13 +1404,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     window.addEventListener('resize', () => {
         if (Swipe.card && !Swipe.isConnectionMode) Swipe.adjustCardSize();
-        if (Swipe.isConnectionMode) Swipe.syncConnectionCardSize();
+        if (Swipe.isConnectionMode) Swipe.adjustConnectionCardSize();
     });
     
     window.addEventListener('orientationchange', () => {
         setTimeout(() => {
             if (Swipe.card && !Swipe.isConnectionMode) Swipe.adjustCardSize();
-            if (Swipe.isConnectionMode) Swipe.syncConnectionCardSize();
+            if (Swipe.isConnectionMode) Swipe.adjustConnectionCardSize();
         }, 200);
     });
 });
