@@ -4004,14 +4004,12 @@ html {
 }
 
 .connection-avatar {
-    width: 70px;
-    height: 70px;
     border-radius: 50%;
     background: var(--surface);
-    border: 2px solid var(--border-color);
     overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    transition: all 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
     flex-shrink: 0;
+    border: none !important;
 }
 
 .connection-avatar .tg-avatar-svg {
@@ -4026,34 +4024,39 @@ html {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 50%;
 }
 
 /* Своя аватарка */
 .self-avatar {
-    border-color: var(--accent);
+    width: 70px;
+    height: 70px;
+    border: none !important;
 }
 
 /* Аватар тиммейта в ожидании */
 .teammate-avatar {
-    filter: grayscale(0.6);
-    opacity: 0.6;
-    transform: scale(0.9);
-    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    width: 55px;
+    height: 55px;
+    filter: grayscale(0.7);
+    opacity: 0.7;
+    transition: all 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+    border: none !important;
 }
 
 /* Аватар тиммейта после принятия */
 .teammate-avatar.connected {
+    width: 70px;
+    height: 70px;
     filter: grayscale(0);
     opacity: 1;
-    transform: scale(1);
-    border-color: #4CAF50;
     animation: avatarConnect 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 
 @keyframes avatarConnect {
-    0% { transform: scale(0.9); opacity: 0.6; }
+    0% { transform: scale(0.9); opacity: 0.7; width: 55px; height: 55px; }
     50% { transform: scale(1.1); }
-    100% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; width: 70px; height: 70px; }
 }
 
 /* Линия соединения */
@@ -4078,7 +4081,7 @@ html {
 
 /* Линия после соединения */
 .connection-line.connected {
-    background: #4CAF50;
+    background: var(--accent);
 }
 
 .connection-line.connected .line-pulse {
@@ -4110,10 +4113,11 @@ html {
     font-weight: 500;
     color: var(--text-secondary);
     transition: color 0.3s ease;
+    text-transform: lowercase;
 }
 
 .connection-status.active {
-    color: #4CAF50;
+    color: var(--accent);
 }
 
 /* Кнопка чата */
@@ -4166,9 +4170,19 @@ html {
 
 /* Адаптация под мобилки */
 @media (max-width: 480px) {
-    .connection-avatar {
-        width: 55px;
-        height: 55px;
+    .self-avatar {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .teammate-avatar {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .teammate-avatar.connected {
+        width: 60px;
+        height: 60px;
     }
     
     .connection-line {
@@ -4188,9 +4202,19 @@ html {
 }
 
 @media (max-width: 380px) {
-    .connection-avatar {
-        width: 48px;
-        height: 48px;
+    .self-avatar {
+        width: 52px;
+        height: 52px;
+    }
+    
+    .teammate-avatar {
+        width: 42px;
+        height: 42px;
+    }
+    
+    .teammate-avatar.connected {
+        width: 52px;
+        height: 52px;
     }
     
     .connection-line {
