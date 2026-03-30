@@ -787,8 +787,8 @@ const Swipe = {
         if (status === 'both_accepted') {
             if (teammateAvatar) {
                 teammateAvatar.classList.add('connected');
-                teammateAvatar.style.width = '60px';
-                teammateAvatar.style.height = '60px';
+                teammateAvatar.style.width = '50px';
+                teammateAvatar.style.height = '50px';
                 teammateAvatar.style.filter = 'grayscale(0)';
                 teammateAvatar.style.opacity = '1';
                 teammateAvatar.style.transform = 'scale(1)';
