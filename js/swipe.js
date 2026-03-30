@@ -87,12 +87,20 @@ const Swipe = {
         
         this.resizeObserver = new ResizeObserver(() => {
             this.updateButtonsPosition();
+            if (this.isConnectionMode) {
+                this.adjustConnectionCardSize();
+            }
         });
         
         if (this.card) this.resizeObserver.observe(this.card);
         if (this.cardWrapper) this.resizeObserver.observe(this.cardWrapper);
         
-        window.addEventListener('resize', () => this.updateButtonsPosition());
+        window.addEventListener('resize', () => {
+            this.updateButtonsPosition();
+            if (this.isConnectionMode) {
+                this.adjustConnectionCardSize();
+            }
+        });
         window.addEventListener('scroll', () => this.updateButtonsPosition());
     },
     
@@ -334,14 +342,37 @@ const Swipe = {
     },
     
     adjustConnectionCardSize() {
+        const swipeCard = document.getElementById('swipeCard');
         const connectionCard = document.querySelector('#connectionScreen .swipe-card');
-        if (!connectionCard) return;
         
-        // Просто центрируем карточку, не меняем размеры
+        if (!swipeCard || !connectionCard) return;
+        
+        // Получаем реальные размеры свайп-карточки
+        const cardRect = swipeCard.getBoundingClientRect();
+        const cardWidth = cardRect.width;
+        const cardHeight = cardRect.height;
+        
+        // Применяем ТОЧНО ТАКИЕ ЖЕ размеры к карточке ожидания
+        connectionCard.style.width = `${cardWidth}px`;
+        connectionCard.style.height = `${cardHeight}px`;
+        connectionCard.style.maxWidth = `${cardWidth}px`;
+        connectionCard.style.maxHeight = `${cardHeight}px`;
+        connectionCard.style.minWidth = `${cardWidth}px`;
+        connectionCard.style.minHeight = `${cardHeight}px`;
+        
+        // Центрируем
         connectionCard.style.marginLeft = 'auto';
         connectionCard.style.marginRight = 'auto';
         
-        console.log('📐 Карточка ожидания центрирована');
+        // Обновляем позицию контента внутри
+        const content = connectionCard.querySelector('.swipe-card-content');
+        if (content) {
+            content.style.height = '100%';
+            content.style.display = 'flex';
+            content.style.flexDirection = 'column';
+        }
+        
+        console.log('📐 Карточка ожидания подогнана под размер свайп-карточки:', { cardWidth, cardHeight });
     },
     
     startSwipeHint() {
@@ -1008,6 +1039,7 @@ const Swipe = {
         this.updateChatButton(false);
         this.startConnectionTimer();
         
+        // Подгоняем размер карточки под свайп-карточку
         setTimeout(() => this.adjustConnectionCardSize(), 50);
         
         console.log('✅ Экран соединения показан');
