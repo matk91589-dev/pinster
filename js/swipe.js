@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ДИНАМИЧЕСКИЕ КНОПКИ
+// СВАЙП-КАРТОЧКИ - ДИНАМИЧЕСКИЕ КНОПКИ С ПОДСТРОЙКОЙ ПОД ЭКРАН
 // ============================================
 
 const Swipe = {
@@ -78,7 +78,7 @@ const Swipe = {
             this.isInitialized = true;
         }
         
-        // Следим за изменением размеров карточки
+        // Следим за изменением размеров
         this.initResizeObserver();
         
         console.log('✅ Swipe.init() завершён, isInitialized:', this.isInitialized);
@@ -95,6 +95,7 @@ const Swipe = {
         if (this.cardWrapper) this.resizeObserver.observe(this.cardWrapper);
         
         window.addEventListener('resize', () => this.updateButtonsPosition());
+        window.addEventListener('scroll', () => this.updateButtonsPosition());
     },
     
     createCardWrapper() {
@@ -204,17 +205,58 @@ const Swipe = {
     updateButtonsPosition() {
         if (!this.skipBtn || !this.inviteBtn || !this.card) return;
         
-        // Получаем реальные размеры
+        // Получаем реальные размеры и позиции
         const cardRect = this.card.getBoundingClientRect();
         const cardHeight = cardRect.height;
         const cardWidth = cardRect.width;
+        const cardLeft = cardRect.left;
+        const cardRight = cardRect.right;
         
-        // Динамические размеры кнопок
-        const btnWidth = Math.min(Math.max(cardWidth * 0.1, 40), 56);
-        const btnHeight = Math.min(Math.max(cardHeight * 0.55, 90), 140);
+        // Получаем размеры экрана/контейнера
+        const containerRect = this.container ? this.container.getBoundingClientRect() : { left: 0, right: window.innerWidth };
+        const screenWidth = window.innerWidth;
         
-        // Вычисляем отступ от края (кнопка должна быть на 60-70% за пределами карточки)
-        const offset = Math.min(btnWidth * 0.7, 32);
+        // Динамические размеры кнопок (относительно карточки)
+        let btnWidth = Math.min(Math.max(cardWidth * 0.1, 38), 56);
+        let btnHeight = Math.min(Math.max(cardHeight * 0.55, 85), 140);
+        
+        // Базовый отступ от края карточки
+        let offset = Math.min(btnWidth * 0.65, 30);
+        
+        // Проверяем левую границу
+        const leftBtnLeft = cardLeft - offset;
+        const leftBtnRight = leftBtnLeft + btnWidth;
+        const minLeftMargin = 8; // Минимальный отступ от края экрана
+        
+        if (leftBtnLeft < minLeftMargin) {
+            // Корректируем отступ, чтобы кнопка не выходила за левый край
+            const correctedOffset = cardLeft - minLeftMargin;
+            offset = Math.min(offset, Math.max(correctedOffset, btnWidth * 0.35));
+        }
+        
+        // Проверяем правую границу
+        const rightBtnRight = cardRight + offset;
+        const rightBtnLeft = rightBtnRight - btnWidth;
+        const minRightMargin = screenWidth - minLeftMargin;
+        
+        if (rightBtnRight > screenWidth - minLeftMargin) {
+            // Корректируем отступ, чтобы кнопка не выходила за правый край
+            const correctedOffset = (screenWidth - minLeftMargin) - cardRight;
+            offset = Math.min(offset, Math.max(correctedOffset, btnWidth * 0.35));
+        }
+        
+        // Для очень узких экранов дополнительно уменьшаем
+        if (screenWidth < 400) {
+            offset = Math.min(offset, btnWidth * 0.5);
+            btnWidth = Math.min(btnWidth, 44);
+            btnHeight = Math.min(btnHeight, 100);
+        }
+        
+        if (screenWidth < 320) {
+            offset = Math.min(offset, btnWidth * 0.4);
+            btnWidth = Math.min(btnWidth, 38);
+            btnHeight = Math.min(btnHeight, 85);
+        }
         
         // Применяем стили
         this.skipBtn.style.width = `${btnWidth}px`;
@@ -231,31 +273,21 @@ const Swipe = {
         this.inviteBtn.style.transform = 'translateY(-50%)';
         this.inviteBtn.style.right = `-${offset}px`;
         
-        // Для очень узких экранов уменьшаем выступ
-        if (cardWidth < 320) {
-            const smallOffset = Math.min(offset * 0.7, 20);
-            this.skipBtn.style.left = `-${smallOffset}px`;
-            this.inviteBtn.style.right = `-${smallOffset}px`;
-        }
-        
         // Адаптируем размер иконок
-        const iconSize = Math.min(btnWidth * 0.6, 24);
-        const svgs = this.skipBtn.querySelectorAll('svg');
-        svgs.forEach(svg => {
-            svg.style.width = `${iconSize}px`;
-            svg.style.height = `${iconSize}px`;
-        });
-        
-        const svgsRight = this.inviteBtn.querySelectorAll('svg');
-        svgsRight.forEach(svg => {
+        const iconSize = Math.min(btnWidth * 0.6, 22);
+        const allSvgs = document.querySelectorAll('.swipe-side-btn svg');
+        allSvgs.forEach(svg => {
             svg.style.width = `${iconSize}px`;
             svg.style.height = `${iconSize}px`;
         });
         
         console.log('📐 Позиция кнопок:', { 
-            cardWidth, cardHeight, 
+            screenWidth,
+            cardWidth, cardHeight,
             btnWidth, btnHeight, 
-            offset, iconSize 
+            offset, iconSize,
+            leftBtnPos: cardLeft - offset,
+            rightBtnPos: cardRight + offset - btnWidth
         });
     },
     
@@ -1150,6 +1182,7 @@ const Swipe = {
         window.removeEventListener('mousemove', this.onDragMoveBound);
         window.removeEventListener('mouseup', this.onDragEndBound);
         window.removeEventListener('resize', this.updateButtonsPosition);
+        window.removeEventListener('scroll', this.updateButtonsPosition);
         
         if (this.hintRunId) {
             clearTimeout(this.hintRunId);
