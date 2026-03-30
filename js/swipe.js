@@ -792,24 +792,36 @@ const Swipe = {
         const connectionLine = document.querySelector('#connectionScreen .connection-line');
         const teammateAvatar = document.querySelector('#connectionScreen .teammate-avatar');
         const connectionTimer = document.getElementById('connectionTimer');
+        const selfAvatar = document.querySelector('#connectionScreen .self-avatar');
         
         if (status === 'both_accepted') {
-            if (statusEl) {
-                statusEl.innerHTML = '✓ Матч создан!';
-                statusEl.classList.add('active');
-                statusEl.style.color = '#4CAF50';
-            }
+            // Аватар тиммейта — становится такого же размера как твой
             if (teammateAvatar) {
                 teammateAvatar.classList.add('connected');
+                teammateAvatar.style.width = '70px';
+                teammateAvatar.style.height = '70px';
                 teammateAvatar.style.filter = 'grayscale(0)';
                 teammateAvatar.style.opacity = '1';
                 teammateAvatar.style.transform = 'scale(1)';
+                teammateAvatar.style.transition = 'all 0.3s cubic-bezier(0.34, 1.2, 0.64, 1)';
             }
+            
+            // Полоска — заполняется оранжевым
             if (connectionLine) {
                 connectionLine.classList.add('connected');
+                connectionLine.style.background = 'var(--accent)';
                 const linePulse = connectionLine.querySelector('.line-pulse');
-                if (linePulse) linePulse.style.animation = 'none';
+                if (linePulse) linePulse.style.display = 'none';
             }
+            
+            // Статус — "матч создан" без галочки, с маленькой буквы
+            if (statusEl) {
+                statusEl.innerHTML = 'матч создан';
+                statusEl.classList.add('active');
+                statusEl.style.color = 'var(--accent)';
+            }
+            
+            // Таймер
             if (connectionTimer) {
                 connectionTimer.classList.remove('warning');
             }
@@ -820,10 +832,24 @@ const Swipe = {
                 this.connectionTimer = null;
             }
             
+            // Активируем кнопку чата (делаем оранжевой)
+            if (this.chatLink) {
+                this.updateChatButton(true, this.chatLink, this.inviteLink);
+            } else {
+                // Если ссылка еще не загружена, ждем
+                const checkChat = setInterval(() => {
+                    if (this.chatLink) {
+                        clearInterval(checkChat);
+                        this.updateChatButton(true, this.chatLink, this.inviteLink);
+                    }
+                }, 100);
+                setTimeout(() => clearInterval(checkChat), 5000);
+            }
+            
             if (window.Settings && window.Settings.success) window.Settings.success();
         } else if (status === 'rejected') {
             if (statusEl) {
-                statusEl.innerHTML = '✗ Тиммейт отклонил';
+                statusEl.innerHTML = 'тиммейт отклонил';
                 statusEl.style.color = '#FF3B30';
             }
             if (window.Settings && window.Settings.error) window.Settings.error();
@@ -966,30 +992,51 @@ const Swipe = {
             }
         }
         
-        // Сбрасываем состояния
+        // Настраиваем размеры аватарок
+        const selfAvatarContainer = document.querySelector('#connectionScreen .self-avatar');
         const teammateAvatarContainer = document.querySelector('#connectionScreen .teammate-avatar');
-        const connectionLine = document.querySelector('#connectionScreen .connection-line');
-        const statusEl = document.getElementById('connectionStatus');
         
-        if (teammateAvatarContainer) {
-            teammateAvatarContainer.classList.remove('connected');
-            teammateAvatarContainer.style.opacity = '0.6';
-            teammateAvatarContainer.style.filter = 'grayscale(0.6)';
-            teammateAvatarContainer.style.transform = 'scale(0.9)';
+        // Твоя аватарка — большой размер
+        if (selfAvatarContainer) {
+            selfAvatarContainer.style.width = '70px';
+            selfAvatarContainer.style.height = '70px';
+            selfAvatarContainer.style.border = 'none';
+            selfAvatarContainer.style.filter = 'grayscale(0)';
+            selfAvatarContainer.style.opacity = '1';
         }
         
+        // Аватар тиммейта — маленький и серый
+        if (teammateAvatarContainer) {
+            teammateAvatarContainer.classList.remove('connected');
+            teammateAvatarContainer.style.width = '55px';
+            teammateAvatarContainer.style.height = '55px';
+            teammateAvatarContainer.style.border = 'none';
+            teammateAvatarContainer.style.filter = 'grayscale(0.7)';
+            teammateAvatarContainer.style.opacity = '0.7';
+            teammateAvatarContainer.style.transform = 'scale(1)';
+        }
+        
+        // Настраиваем линию соединения
+        const connectionLine = document.querySelector('#connectionScreen .connection-line');
         if (connectionLine) {
             connectionLine.classList.remove('connected');
+            connectionLine.style.background = 'var(--border-color)';
+            connectionLine.style.width = '60px';
+            connectionLine.style.height = '3px';
             const linePulse = connectionLine.querySelector('.line-pulse');
             if (linePulse) {
                 linePulse.style.animation = 'pulse 1.5s infinite';
+                linePulse.style.background = 'linear-gradient(90deg, transparent, var(--accent), transparent)';
             }
         }
         
+        // Статус
+        const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
-            statusEl.innerHTML = 'Ожидание тиммейта...';
+            statusEl.innerHTML = 'ожидание тиммейта...';
             statusEl.classList.remove('active');
             statusEl.style.color = 'var(--text-secondary)';
+            statusEl.style.fontSize = '14px';
         }
         
         // Обновляем кнопку чата
