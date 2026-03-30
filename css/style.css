@@ -3843,50 +3843,61 @@ html {
     margin: 0 auto;
     transition: transform 0.3s ease;
     will-change: transform;
-    overflow: visible !important; /* Чтобы кнопки не обрезались */
+    overflow: visible !important;
 }
 
-/* ===== ПОЛУКРУГЛЫЕ КНОПКИ СНАРУЖИ (не перекрывают карточку) ===== */
+/* ===== КАРТОЧКА С ОТСТУПОМ ДЛЯ КНОПОК ===== */
+.swipe-card {
+    position: relative;
+    z-index: 2;
+    background: var(--surface);
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== ПОЛУКРУГЛЫЕ КНОПКИ - ВЫХОДЯТ ИЗ-ПОД КАРТОЧКИ ===== */
 .swipe-side-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 56px;
+    width: 48px;
     height: auto;
-    min-height: 120px;
+    min-height: 100px;
     max-height: 140px;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
-    border-radius: 28px;
+    background: rgba(20, 22, 28, 0.9);
+    backdrop-filter: blur(12px);
+    border-radius: 0 24px 24px 0;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 95;
+    z-index: 1;
     opacity: 0;
     transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    pointer-events: auto;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.2);
 }
 
 .swipe-side-btn.visible {
     opacity: 1;
 }
 
-/* Левая кнопка - полностью снаружи, не наезжает на карточку */
+/* Левая кнопка - выезжает из-под левого края */
 .swipe-side-btn.skip-btn {
-    left: -28px;
+    left: -36px;
+    border-radius: 24px 0 0 24px;
     border-left: 3px solid #FF5E5E;
-    background: rgba(255, 94, 94, 0.2);
-    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(90deg, rgba(255, 94, 94, 0.2), rgba(20, 22, 28, 0.9));
+    box-shadow: -2px 0 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Правая кнопка - полностью снаружи, не наезжает на карточку */
+/* Правая кнопка - выезжает из-под правого края */
 .swipe-side-btn.invite-btn {
-    right: -28px;
+    right: -36px;
+    border-radius: 0 24px 24px 0;
     border-right: 3px solid #4CAF50;
-    background: rgba(76, 175, 80, 0.2);
-    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(270deg, rgba(76, 175, 80, 0.2), rgba(20, 22, 28, 0.9));
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.3);
 }
 
 .swipe-side-btn-inner {
@@ -3894,84 +3905,114 @@ html {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }
 
-/* Чтобы контент карточки не заходил под кнопки */
-.swipe-card {
-    position: relative;
-    z-index: 10;
-    overflow: visible;
-}
-
-/* Эффект при нажатии */
+/* Эффект при нажатии - кнопка "втягивается" */
 .swipe-side-btn.pulse {
-    animation: sideBtnPulse 0.2s ease-out;
+    animation: sideBtnPull 0.2s ease-out;
 }
 
-@keyframes sideBtnPulse {
-    0% { transform: translateY(-50%) scale(1); }
-    50% { transform: translateY(-50%) scale(1.08); }
-    100% { transform: translateY(-50%) scale(1); }
+@keyframes sideBtnPull {
+    0% { transform: translateY(-50%) scale(1); opacity: 1; }
+    50% { transform: translateY(-50%) scale(0.92); opacity: 0.9; }
+    100% { transform: translateY(-50%) scale(1); opacity: 1; }
 }
 
-/* Подсказка свечением */
+/* Подсказка - мягкое свечение от края */
 .swipe-side-btn.hint-glow {
-    animation: hintGlow 0.8s ease-out;
+    animation: hintGlowEdge 0.8s ease-out;
 }
 
-@keyframes hintGlow {
-    0% { box-shadow: 0 0 0 0 rgba(255, 94, 94, 0); border-color: rgba(255, 94, 94, 0.3); }
-    50% { box-shadow: 0 0 0 8px rgba(255, 94, 94, 0.4); border-color: #FF5E5E; }
-    100% { box-shadow: 0 0 0 0 rgba(255, 94, 94, 0); border-color: rgba(255, 94, 94, 0.3); }
+@keyframes hintGlowEdge {
+    0% { 
+        box-shadow: 0 0 0 0 rgba(255, 94, 94, 0);
+        border-left-color: rgba(255, 94, 94, 0.3);
+    }
+    50% { 
+        box-shadow: -4px 0 12px 4px rgba(255, 94, 94, 0.5);
+        border-left-color: #FF5E5E;
+    }
+    100% { 
+        box-shadow: 0 0 0 0 rgba(255, 94, 94, 0);
+        border-left-color: rgba(255, 94, 94, 0.3);
+    }
 }
 
 .invite-btn.hint-glow {
-    animation: hintGlowGreen 0.8s ease-out;
+    animation: hintGlowEdgeGreen 0.8s ease-out;
 }
 
-@keyframes hintGlowGreen {
-    0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); border-color: rgba(76, 175, 80, 0.3); }
-    50% { box-shadow: 0 0 0 8px rgba(76, 175, 80, 0.4); border-color: #4CAF50; }
-    100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); border-color: rgba(76, 175, 80, 0.3); }
+@keyframes hintGlowEdgeGreen {
+    0% { 
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+        border-right-color: rgba(76, 175, 80, 0.3);
+    }
+    50% { 
+        box-shadow: 4px 0 12px 4px rgba(76, 175, 80, 0.5);
+        border-right-color: #4CAF50;
+    }
+    100% { 
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+        border-right-color: rgba(76, 175, 80, 0.3);
+    }
 }
 
 /* Адаптация под мобилки */
 @media (max-width: 480px) {
     .swipe-side-btn {
-        width: 44px;
-        min-height: 100px;
+        width: 40px;
+        min-height: 80px;
     }
     
     .swipe-side-btn.skip-btn {
-        left: -22px;
+        left: -30px;
     }
     
     .swipe-side-btn.invite-btn {
-        right: -22px;
+        right: -30px;
     }
     
     .swipe-side-btn-inner svg {
-        width: 24px;
-        height: 24px;
+        width: 22px;
+        height: 22px;
     }
 }
 
 @media (max-width: 380px) {
     .swipe-side-btn {
-        width: 38px;
-        min-height: 80px;
+        width: 36px;
+        min-height: 70px;
     }
     
     .swipe-side-btn.skip-btn {
-        left: -18px;
+        left: -26px;
     }
     
     .swipe-side-btn.invite-btn {
-        right: -18px;
+        right: -26px;
     }
     
     .swipe-side-btn-inner svg {
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* Эффект при наведении на десктопе */
+@media (hover: hover) {
+    .swipe-side-btn:hover {
+        transform: translateY(-50%) scale(1.05);
+        filter: brightness(1.1);
+    }
+    
+    .swipe-side-btn.skip-btn:hover {
+        left: -32px;
+        box-shadow: -4px 0 16px rgba(255, 94, 94, 0.4);
+    }
+    
+    .swipe-side-btn.invite-btn:hover {
+        right: -32px;
+        box-shadow: 4px 0 16px rgba(76, 175, 80, 0.4);
     }
 }
