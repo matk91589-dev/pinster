@@ -4123,12 +4123,10 @@ html {
 /* ===== КНОПКА ПЕРЕЙТИ В ЧАТ ===== */
 .tg-chat-button {
     width: min(280px, 80%);
-    padding: 2vh 0;
+    padding: 14px;
     border-radius: 30px;
-    font-size: clamp(14px, 4vw, 16px);
+    font-size: 16px;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4136,19 +4134,20 @@ html {
     cursor: pointer;
     transition: all 0.2s ease;
     font-family: 'Montserrat', sans-serif;
-    margin: 1.5vh auto 1vh auto;
+    margin: 20px auto 30px auto;
+    text-align: center;
 }
 
-/* Неактивная кнопка — стиль как у "Отменить поиск" */
+/* Неактивная кнопка */
 .tg-chat-button.disabled {
     background: transparent;
     border: 2px solid var(--accent, #FF5500);
     color: var(--accent, #FF5500);
     pointer-events: none;
-    opacity: 0.7;
+    opacity: 0.5;
 }
 
-/* Активная кнопка — такой же стиль как у "Отменить поиск", но активная */
+/* Активная кнопка */
 .tg-chat-button.active {
     background: transparent;
     border: 2px solid var(--accent, #FF5500);
