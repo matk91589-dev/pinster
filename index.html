@@ -18,14 +18,8 @@
             margin: 0;
             padding: 0;
         }
-        .screen {
-            display: none;
-        }
-        .screen.active {
-            display: flex;
-        }
         
-        /* ===== ЛОАДЕР-ОВЕРЛЕЙ (НЕ КОНФЛИКТУЕТ) ===== */
+        /* ===== ЛОАДЕР-ОВЕРЛЕЙ ===== */
         #app-loader {
             position: fixed;
             top: 0;
@@ -56,22 +50,8 @@
         .loader-spinner.hidden {
             display: none;
         }
-    </style>
-    
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/shop-cases.css">
-    <link rel="stylesheet" href="css/animations.css">
-    
-    <style>
-        .screen {
-            transition: opacity 0.2s ease;
-            opacity: 0;
-            display: none;
-        }
-        .screen.active {
-            opacity: 1;
-            display: flex;
-        }
+        
+        /* ===== ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ===== */
         .edit-name-input {
             width: 100%;
             padding: 8px 12px;
@@ -644,9 +624,8 @@
             white-space: nowrap;
         }
         
-        /* ===== ЭКРАН ОЖИДАНИЯ - ВСТРОЕННЫЕ СТИЛИ ===== */
+        /* ===== ЭКРАН ОЖИДАНИЯ - УНИКАЛЬНЫЕ КЛАССЫ (БЕЗ DISPLAY) ===== */
         #connectionScreen {
-            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -877,6 +856,10 @@
             }
         }
     </style>
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/shop-cases.css">
+    <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
     <!-- ЛОАДЕР-ОВЕРЛЕЙ -->
@@ -1021,7 +1004,7 @@
                 <div class="swipe-loading"><div class="spinner-small"></div></div>
             </div>
 
-            <!-- ИСПРАВЛЕННЫЙ ЭКРАН ОЖИДАНИЯ - УНИКАЛЬНЫЕ КЛАССЫ -->
+            <!-- ЭКРАН ОЖИДАНИЯ - УНИКАЛЬНЫЕ КЛАССЫ -->
             <div id="connectionScreen" class="screen connection-screen">
                 <div class="swipe-header"><div class="swipe-title">Тиммейт найден</div></div>
                 <div class="conn-swipe-container">
