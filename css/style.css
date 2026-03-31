@@ -3966,56 +3966,38 @@ html {
     }
 }
 
-/* ===== ЭКРАН ОЖИДАНИЯ - УНИКАЛЬНЫЕ КЛАССЫ ===== */
-#connectionScreen {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
+/* ===== ФИКС КАРТОЧКИ ОЖИДАНИЯ (ОДИНАКОВЫЙ РАЗМЕР С КАРТОЧКОЙ СВАЙПА) ===== */
 #connectionScreen .conn-swipe-card {
-    width: 100%;
-    max-width: 360px;
-    min-height: 400px;
-    margin: 0 auto;
-    background: #1A1D24;
+    width: 360px;
+    max-width: 85vw;
+    background: var(--surface);
     border-radius: 28px;
-    border: 1px solid #2A2F3A;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     position: relative;
+    margin: 0 auto;
 }
 
 #connectionScreen .conn-card-content {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 24px 20px;
-    flex: 1;
     gap: 16px;
+    padding: 20px 18px;
+    flex: 1;
 }
 
-#connectionScreen .conn-avatars {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    margin: 8px 0;
-}
-
+/* Аватарки — размер как в карточке свайпа */
 #connectionScreen .conn-self-avatar,
 #connectionScreen .conn-teammate-avatar {
-    width: 56px;
-    height: 56px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     overflow: hidden;
-    background: #1A1D24;
-    border: 2px solid #2A2F3A;
+    background: var(--input-bg);
+    border: 2px solid var(--border-color);
     flex-shrink: 0;
 }
 
@@ -4036,23 +4018,12 @@ html {
     border-radius: 50%;
 }
 
-#connectionScreen .conn-teammate-avatar {
-    filter: grayscale(0.5);
-    opacity: 0.8;
-}
-
-#connectionScreen .conn-teammate-avatar.connected {
-    filter: grayscale(0);
-    opacity: 1;
-    border-color: #FF5500;
-    transform: scale(1.05);
-}
-
+/* Линия соединения */
 #connectionScreen .conn-line {
     width: 60px;
-    height: 3px;
-    background: #2A2F3A;
-    border-radius: 3px;
+    height: 2px;
+    background: var(--border-color);
+    border-radius: 2px;
     position: relative;
     overflow: hidden;
     flex-shrink: 0;
@@ -4062,58 +4033,54 @@ html {
     position: absolute;
     width: 30px;
     height: 100%;
-    background: linear-gradient(90deg, transparent, #FF5500, transparent);
-    animation: connPulseMove 1.2s infinite;
-    border-radius: 3px;
+    background: var(--accent);
+    animation: connPulseMove 1.5s infinite;
+    border-radius: 2px;
 }
 
 @keyframes connPulseMove {
-    0% { left: -30px; opacity: 0.5; }
-    50% { opacity: 1; }
-    100% { left: 100%; opacity: 0.5; }
+    0% { left: -30px; }
+    100% { left: 100%; }
 }
 
 #connectionScreen .conn-line.connected {
-    background: #FF5500;
+    background: var(--accent);
 }
 
 #connectionScreen .conn-line.connected .conn-line-pulse {
     display: none;
 }
 
-#connectionScreen .conn-teammate-info {
-    text-align: center;
-    margin: 8px 0;
-}
-
+/* Ник тиммейта */
 #connectionScreen .conn-teammate-nick {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
-    color: #F5F5F5;
+    color: var(--text-primary);
+    text-align: center;
 }
 
+/* Статус */
 #connectionScreen .conn-status {
-    font-size: 14px;
+    font-size: 13px;
     text-align: center;
-    margin: 8px 0;
-    font-weight: 500;
-    color: #9BA1B0;
+    color: var(--text-secondary);
     text-transform: lowercase;
 }
 
 #connectionScreen .conn-status.active {
-    color: #FF5500;
+    color: var(--accent);
 }
 
+/* Таймер в правом верхнем углу */
 #connectionScreen .conn-timer {
     position: absolute;
-    top: 16px;
-    right: 16px;
-    background: rgba(0, 0, 0, 0.6);
+    top: 14px;
+    right: 14px;
+    background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(8px);
-    padding: 5px 12px;
+    padding: 6px 14px;
     border-radius: 30px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     color: #fff;
     z-index: 20;
@@ -4130,41 +4097,28 @@ html {
     50% { opacity: 0.6; }
 }
 
-#connectionScreen .conn-button-wrapper {
-    width: 100%;
-    margin-top: 16px;
-    padding: 0 16px 16px;
-    box-sizing: border-box;
-}
-
+/* Кнопка чата */
 #connectionScreen .conn-chat-button {
     width: 100%;
-    max-width: 280px;
-    margin: 0 auto;
-    padding: 12px 20px;
+    padding: 12px;
     border-radius: 100px;
-    font-size: 15px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
     text-align: center;
+    cursor: pointer;
+    margin-top: 8px;
 }
 
 #connectionScreen .conn-chat-button.disabled {
     background: transparent;
-    border: 1.5px solid #2A2F3A;
-    color: #9BA1B0;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
     pointer-events: none;
     opacity: 0.6;
 }
 
 #connectionScreen .conn-chat-button.active {
-    background: #FF5500;
+    background: var(--accent);
     border: none;
     color: white;
     pointer-events: auto;
@@ -4173,31 +4127,45 @@ html {
 }
 
 #connectionScreen .conn-chat-button.active:hover {
-    background: #FF6A33;
+    background: var(--accent-soft);
     transform: scale(1.02);
 }
 
-@media (max-width: 480px) {
+/* Адаптация под мобилки */
+@media (max-width: 500px) {
     #connectionScreen .conn-swipe-card {
-        max-width: 320px;
-        min-height: 360px;
+        width: 320px;
     }
     
     #connectionScreen .conn-self-avatar,
     #connectionScreen .conn-teammate-avatar {
-        width: 48px;
-        height: 48px;
-    }
-    
-    #connectionScreen .conn-line {
-        width: 45px;
-    }
-    
-    #connectionScreen .conn-teammate-nick {
-        font-size: 18px;
+        width: 60px;
+        height: 60px;
     }
 }
 
+@media (max-width: 400px) {
+    #connectionScreen .conn-swipe-card {
+        width: 280px;
+    }
+    
+    #connectionScreen .conn-self-avatar,
+    #connectionScreen .conn-teammate-avatar {
+        width: 52px;
+        height: 52px;
+    }
+    
+    #connectionScreen .conn-teammate-nick {
+        font-size: 16px;
+    }
+    
+    #connectionScreen .conn-timer {
+        top: 10px;
+        right: 10px;
+        padding: 4px 12px;
+        font-size: 12px;
+    }
+}
 /* ===== ОСНОВНЫЕ СТИЛИ ЭКРАНОВ ===== */
 .screen {
     display: none;
