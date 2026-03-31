@@ -4197,3 +4197,28 @@ html {
         font-size: 18px;
     }
 }
+
+/* ===== ОСНОВНЫЕ СТИЛИ ЭКРАНОВ ===== */
+.screen {
+    display: none;
+    width: 100%;
+    flex: 1;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    min-height: 0;
+}
+
+.screen.active {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* ===== ЭКРАН СВАЙПА БЕЗ ПРОКРУТКИ ===== */
+.swipe-screen,
+.connection-screen {
+    overflow-y: hidden;
+    padding: 0;
+}
