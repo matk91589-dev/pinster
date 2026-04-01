@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ДИНАМИЧЕСКИЕ КНОПКИ С ЭКРАНОМ ОЖИДАНИЯ
+// СВАЙП-КАРТОЧКИ - ЕДИНАЯ КАРТОЧКА С ДВУМЯ РЕЖИМАМИ
 // ============================================
 
 const Swipe = {
@@ -36,7 +36,7 @@ const Swipe = {
     isInitialized: false,
     connectionTimer: null,
     cardTimerInterval: null,
-    isConnectionMode: false,
+    isWaitingMode: false,
     matchExpiresAt: null,
     serverTime: null,
     matchPolling: null,
@@ -79,6 +79,9 @@ const Swipe = {
         
         this.initResizeObserver();
         
+        // Убеждаемся, что режим свайпа активен
+        this.showSwipeMode();
+        
         console.log('✅ Swipe.init() завершён, isInitialized:', this.isInitialized);
     },
     
@@ -87,21 +90,12 @@ const Swipe = {
         
         this.resizeObserver = new ResizeObserver(() => {
             this.updateButtonsPosition();
-            // Обновляем карточку ожидания при изменении размера
-            if (this.isConnectionMode) {
-                this.adjustConnectionCardSize();
-            }
         });
         
         if (this.card) this.resizeObserver.observe(this.card);
         if (this.cardWrapper) this.resizeObserver.observe(this.cardWrapper);
         
-        window.addEventListener('resize', () => {
-            this.updateButtonsPosition();
-            if (this.isConnectionMode) {
-                this.adjustConnectionCardSize();
-            }
-        });
+        window.addEventListener('resize', () => this.updateButtonsPosition());
         window.addEventListener('scroll', () => this.updateButtonsPosition());
     },
     
@@ -277,7 +271,7 @@ const Swipe = {
     },
     
     onSideButtonClick(action) {
-        if (this.isConnectionMode) return;
+        if (this.isWaitingMode) return;
         
         if (action === 'skip') {
             if (window.Settings && window.Settings.error) window.Settings.error();
@@ -322,7 +316,7 @@ const Swipe = {
     },
     
     adjustCardSize() {
-        if (!this.card || this.isConnectionMode) return;
+        if (!this.card || this.isWaitingMode) return;
         if (this.cardWrapper) {
             this.cardWrapper.style.marginLeft = 'auto';
             this.cardWrapper.style.marginRight = 'auto';
@@ -330,73 +324,71 @@ const Swipe = {
         this.updateButtonsPosition();
     },
     
-    adjustConnectionCardSize() {
-        const connectionCard = document.querySelector('#connectionScreen .conn-swipe-card');
-        if (!connectionCard) {
-            console.log('⚠️ Карточка ожидания не найдена');
-            return;
+    // Показать режим свайпа (информация об игроке)
+    showSwipeMode() {
+        console.log('🔄 Переключаем в режим свайпа');
+        
+        const swipeContent = document.getElementById('swipeModeContent');
+        const waitingContent = document.getElementById('waitingModeContent');
+        
+        if (swipeContent) swipeContent.style.display = 'flex';
+        if (waitingContent) waitingContent.style.display = 'none';
+        
+        if (this.skipBtn) this.skipBtn.style.display = 'flex';
+        if (this.inviteBtn) this.inviteBtn.style.display = 'flex';
+        
+        this.isWaitingMode = false;
+        
+        // Обновляем таймер
+        const timerElement = document.getElementById('swipeTimer');
+        if (timerElement) {
+            timerElement.style.display = 'flex';
         }
         
-        // Копируем размеры с карточки свайпа
-        if (this.card) {
-            const swipeCardStyles = window.getComputedStyle(this.card);
-            
-            // Копируем основные размеры
-            connectionCard.style.width = swipeCardStyles.width;
-            connectionCard.style.maxWidth = swipeCardStyles.maxWidth;
-            connectionCard.style.borderRadius = swipeCardStyles.borderRadius;
-            connectionCard.style.boxShadow = swipeCardStyles.boxShadow;
-            
-            // Сбрасываем высоту, чтобы она подстроилась под контент
-            connectionCard.style.minHeight = 'auto';
-            connectionCard.style.height = 'auto';
-            
-            // Центрируем
-            connectionCard.style.marginLeft = 'auto';
-            connectionCard.style.marginRight = 'auto';
-            
-            // Обновляем размеры аватарок
-            const selfAvatar = document.querySelector('#connectionScreen .conn-self-avatar');
-            const teammateAvatar = document.querySelector('#connectionScreen .conn-teammate-avatar');
-            const swipeAvatar = document.querySelector('#swipeCard .swipe-avatar');
-            
-            if (selfAvatar && teammateAvatar && swipeAvatar) {
-                const avatarStyles = window.getComputedStyle(swipeAvatar);
-                const avatarWidth = avatarStyles.width;
-                
-                selfAvatar.style.width = avatarWidth;
-                selfAvatar.style.height = avatarWidth;
-                teammateAvatar.style.width = avatarWidth;
-                teammateAvatar.style.height = avatarWidth;
-            }
-            
-            console.log('📐 Карточка ожидания подогнана под карточку свайпа');
-            console.log('  - Ширина карточки:', connectionCard.style.width);
-            console.log('  - Ширина аватарок:', selfAvatar?.style.width);
-        } else {
-            // Если карточки свайпа нет, просто центрируем
-            connectionCard.style.marginLeft = 'auto';
-            connectionCard.style.marginRight = 'auto';
-            console.log('📐 Карточка ожидания центрирована');
+        console.log('✅ Режим свайпа активирован');
+    },
+    
+    // Показать режим ожидания (после принятия)
+    showWaitingMode() {
+        console.log('🔄 Переключаем в режим ожидания');
+        
+        const swipeContent = document.getElementById('swipeModeContent');
+        const waitingContent = document.getElementById('waitingModeContent');
+        
+        if (swipeContent) swipeContent.style.display = 'none';
+        if (waitingContent) waitingContent.style.display = 'flex';
+        
+        if (this.skipBtn) this.skipBtn.style.display = 'none';
+        if (this.inviteBtn) this.inviteBtn.style.display = 'none';
+        
+        this.isWaitingMode = true;
+        
+        // Скрываем таймер свайпа, показываем таймер ожидания (если есть)
+        const swipeTimer = document.getElementById('swipeTimer');
+        if (swipeTimer) {
+            swipeTimer.style.display = 'none';
         }
+        
+        console.log('✅ Режим ожидания активирован');
     },
     
     startSwipeHint() {
         if (!this.skipBtn || !this.inviteBtn) return;
+        if (this.isWaitingMode) return;
         
         if (this.hintRunId) clearTimeout(this.hintRunId);
         if (this.hintInterval) clearInterval(this.hintInterval);
         
         const animateHint = () => {
-            if (this.isConnectionMode) return;
+            if (this.isWaitingMode) return;
             
             this.skipBtn.classList.add('hint-glow');
             setTimeout(() => {
-                if (this.isConnectionMode) return;
+                if (this.isWaitingMode) return;
                 this.skipBtn.classList.remove('hint-glow');
                 this.inviteBtn.classList.add('hint-glow');
                 setTimeout(() => {
-                    if (this.isConnectionMode) return;
+                    if (this.isWaitingMode) return;
                     this.inviteBtn.classList.remove('hint-glow');
                 }, 800);
             }, 800);
@@ -405,7 +397,7 @@ const Swipe = {
         this.hintRunId = setTimeout(() => {
             animateHint();
             this.hintInterval = setInterval(() => {
-                if (!this.isDragging && !this.isConnectionMode && this.currentMatchId) {
+                if (!this.isDragging && !this.isWaitingMode && this.currentMatchId) {
                     animateHint();
                 }
             }, 8000);
@@ -471,7 +463,6 @@ const Swipe = {
         
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
-        this.isConnectionMode = false;
         this.mode = opponent.mode || this.mode;
         
         this.gameCreated = false;
@@ -498,6 +489,9 @@ const Swipe = {
         if (this.loading) this.loading.classList.remove('active');
         
         this.resetCardPosition();
+        
+        // Показываем режим свайпа
+        this.showSwipeMode();
         
         this.showPlayer(opponent);
         this.startCardTimer();
@@ -625,7 +619,7 @@ const Swipe = {
     },
     
     onDragStart(e) {
-        if (this.isConnectionMode) return;
+        if (this.isWaitingMode) return;
         
         if (this.hintRunId) {
             clearTimeout(this.hintRunId);
@@ -651,7 +645,7 @@ const Swipe = {
     },
     
     onDragMove(e) {
-        if (!this.isDragging || this.isConnectionMode) return;
+        if (!this.isDragging || this.isWaitingMode) return;
         
         e.preventDefault();
         
@@ -680,7 +674,7 @@ const Swipe = {
     },
     
     onDragEnd(e) {
-        if (!this.isDragging || this.isConnectionMode) return;
+        if (!this.isDragging || this.isWaitingMode) return;
         
         this.isDragging = false;
         if (this.card) this.card.style.cursor = 'grab';
@@ -741,8 +735,8 @@ const Swipe = {
             return;
         }
         
-        this.showConnectionMode();
-        if (this.card) this.card.style.opacity = '0';
+        // Переключаем в режим ожидания
+        this.showWaitingMode();
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         
@@ -763,7 +757,7 @@ const Swipe = {
         .catch(error => {
             console.error('❌ Error:', error);
             setTimeout(() => {
-                this.exitConnectionMode();
+                this.exitSwipeMode('acceptError');
             }, 1000);
         });
     },
@@ -796,7 +790,7 @@ const Swipe = {
                 if (data.status === 'both_accepted') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
-                    this.updateConnectionUI('both_accepted');
+                    this.updateWaitingUI('both_accepted');
                     this.createGame();
                     this.addFriendAfterMatch();
                 }
@@ -819,43 +813,23 @@ const Swipe = {
         }, 1500);
     },
     
-    updateConnectionUI(status) {
-        const statusEl = document.getElementById('connectionStatus');
-        const connectionLine = document.querySelector('#connectionScreen .conn-line');
-        const teammateAvatar = document.querySelector('#connectionScreen .conn-teammate-avatar');
-        const connectionTimer = document.getElementById('connectionTimer');
+    updateWaitingUI(status) {
+        const statusEl = document.getElementById('waitingStatus');
+        const line = document.querySelector('.waiting-line');
+        const teammateAvatar = document.querySelector('.waiting-teammate-avatar');
         
         if (status === 'both_accepted') {
             if (teammateAvatar) {
                 teammateAvatar.classList.add('connected');
-                teammateAvatar.style.width = '70px';
-                teammateAvatar.style.height = '70px';
-                teammateAvatar.style.filter = 'grayscale(0)';
-                teammateAvatar.style.opacity = '1';
-                teammateAvatar.style.transform = 'scale(1)';
-                teammateAvatar.style.transition = 'all 0.3s cubic-bezier(0.34, 1.2, 0.64, 1)';
             }
             
-            if (connectionLine) {
-                connectionLine.classList.add('connected');
-                connectionLine.style.background = 'var(--accent)';
-                const linePulse = connectionLine.querySelector('.conn-line-pulse');
-                if (linePulse) linePulse.style.display = 'none';
+            if (line) {
+                line.classList.add('connected');
             }
             
             if (statusEl) {
                 statusEl.innerHTML = 'матч создан';
                 statusEl.classList.add('active');
-                statusEl.style.color = 'var(--accent)';
-            }
-            
-            if (connectionTimer) {
-                connectionTimer.classList.remove('warning');
-            }
-            
-            if (this.connectionTimer) {
-                clearInterval(this.connectionTimer);
-                this.connectionTimer = null;
             }
             
             if (window.Settings && window.Settings.success) window.Settings.success();
@@ -933,7 +907,8 @@ const Swipe = {
             this.connectionTimer = null;
         }
         
-        const timerElement = document.getElementById('connectionTimer');
+        // Используем существующий таймер или создаём новый
+        const timerElement = document.getElementById('waitingTimer');
         if (!timerElement) return;
         
         const updateTimer = () => {
@@ -961,66 +936,16 @@ const Swipe = {
         this.connectionTimer = setInterval(updateTimer, 1000);
     },
     
-    showConnectionMode() {
-        console.log('🔄 Показываем экран соединения');
-        this.isConnectionMode = true;
+    updateWaitingChatButton(active, chatLink, inviteLink) {
+        console.log('🔘 updateWaitingChatButton called, active:', active, 'chatLink:', chatLink);
         
-        if (this.skipBtn) this.skipBtn.style.display = 'none';
-        if (this.inviteBtn) this.inviteBtn.style.display = 'none';
-        if (this.labelLeft) this.labelLeft.style.display = 'none';
-        if (this.labelRight) this.labelRight.style.display = 'none';
-        if (this.hint) this.hint.style.display = 'none';
-        
-        document.getElementById('swipeScreen').classList.remove('active');
-        document.getElementById('connectionScreen').classList.add('active');
-        
-        const teammateNickEl = document.querySelector('#connectionScreen .conn-teammate-nick');
-        if (teammateNickEl) teammateNickEl.textContent = this.currentPlayer?.nick || 'Игрок';
-        
-        const teammateAvatar = document.querySelector('#connectionScreen .conn-teammate-avatar .tg-avatar-svg');
-        if (teammateAvatar && this.currentPlayer?.avatar) {
-            teammateAvatar.innerHTML = '<img src="' + this.currentPlayer.avatar + '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">';
-        } else if (teammateAvatar) {
-            teammateAvatar.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
-        }
-        
-        const selfAvatar = document.querySelector('#connectionScreen .conn-self-avatar .tg-avatar-svg');
-        if (selfAvatar) {
-            const myAvatar = localStorage.getItem('pingster_avatar') || (window.Profile && Profile.savedAvatarUrl);
-            if (myAvatar) {
-                selfAvatar.innerHTML = '<img src="' + myAvatar + '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">';
-            } else {
-                selfAvatar.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
-            }
-        }
-        
-        // Центрируем и подгоняем размеры
-        setTimeout(() => {
-            this.adjustConnectionCardSize();
-        }, 100);
-        
-        this.updateChatButton(false);
-        this.startConnectionTimer();
-        
-        console.log('✅ Экран соединения показан');
-    },
-    
-    updateChatButton(active, chatLink, inviteLink) {
-        console.log('🔘 updateChatButton called, active:', active, 'chatLink:', chatLink);
-        
-        let button = document.querySelector('#connectionScreen .conn-chat-button');
-        if (!button) {
-            button = document.querySelector('.tg-chat-button');
-        }
+        let button = document.getElementById('waitingChatButton');
         
         if (!button) {
             console.error('❌ Кнопка чата не найдена в DOM!');
             return;
         }
         
-        console.log('✅ Кнопка чата найдена, текущие классы:', button.className);
-        
-        button.style.display = 'flex';
         button.textContent = 'Перейти в чат';
         
         if (active && chatLink) {
@@ -1115,18 +1040,17 @@ const Swipe = {
                 localStorage.setItem('currentChatLink', data.chat_link);
                 if (data.invite_link) localStorage.setItem('currentInviteLink', data.invite_link);
                 
-                this.updateChatButton(true, data.chat_link, data.invite_link);
+                this.updateWaitingChatButton(true, data.chat_link, data.invite_link);
                 
                 this.gameCreated = true;
-                setTimeout(() => this.adjustConnectionCardSize(), 50);
             } else {
                 console.warn('⚠️ Нет chat_link в ответе');
-                this.updateChatButton(false);
+                this.updateWaitingChatButton(false);
             }
         })
         .catch(error => {
             console.error('Error creating game:', error);
-            this.updateChatButton(false);
+            this.updateWaitingChatButton(false);
         })
         .finally(() => {
             setTimeout(() => { this.gameCreating = false; }, 3000);
@@ -1136,7 +1060,7 @@ const Swipe = {
     showPlayer(player) {
         this.currentPlayer = player;
         
-        if (!this.isConnectionMode) {
+        if (!this.isWaitingMode) {
             this.resetCardPosition();
             
             const playerIdEl = document.getElementById('swipePlayerId');
@@ -1189,6 +1113,26 @@ const Swipe = {
             
             this.updateAvatar(player);
             this.updateLinksVisibility();
+            
+            // Обновляем данные в режиме ожидания
+            const waitingNick = document.getElementById('waitingTeammateNick');
+            if (waitingNick) waitingNick.textContent = player.nick || 'Игрок';
+            
+            // Обновляем аватар тиммейта в режиме ожидания
+            const waitingTeammateAvatar = document.querySelector('#waitingModeContent .waiting-teammate-avatar .tg-avatar-svg');
+            if (waitingTeammateAvatar && player.avatar) {
+                waitingTeammateAvatar.innerHTML = '<img src="' + player.avatar + '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">';
+            }
+            
+            // Обновляем свой аватар в режиме ожидания
+            const waitingSelfAvatar = document.querySelector('#waitingModeContent .waiting-self-avatar .tg-avatar-svg');
+            if (waitingSelfAvatar) {
+                const myAvatar = localStorage.getItem('pingster_avatar') || (window.Profile && Profile.savedAvatarUrl);
+                if (myAvatar) {
+                    waitingSelfAvatar.innerHTML = '<img src="' + myAvatar + '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">';
+                }
+            }
+            
             setTimeout(() => this.adjustCardSize(), 50);
         }
     },
@@ -1237,11 +1181,12 @@ const Swipe = {
         console.log('Swipe.startSwipe() called with mode:', mode);
         this.mode = mode;
         this.playersQueue = [];
-        this.isConnectionMode = false;
+        this.isWaitingMode = false;
         this.blockScroll();
         
         if (this.card) {
             if (this.loading) this.loading.classList.add('active');
+            this.showSwipeMode();
         } else {
             this.init(mode);
         }
@@ -1296,7 +1241,7 @@ const Swipe = {
             this.matchPolling = null;
         }
         
-        const statusEl = document.querySelector('#connectionScreen .conn-status');
+        const statusEl = document.getElementById('waitingStatus');
         if (statusEl) {
             statusEl.innerHTML = 'Время истекло';
             statusEl.style.color = '#FF3B30';
@@ -1309,7 +1254,7 @@ const Swipe = {
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         if (this.matchPolling) clearInterval(this.matchPolling);
         
-        const statusEl = document.querySelector('#connectionScreen .conn-status');
+        const statusEl = document.getElementById('waitingStatus');
         if (statusEl) {
             statusEl.innerHTML = 'Тиммейт отклонил';
             statusEl.style.color = '#FF3B30';
@@ -1320,20 +1265,11 @@ const Swipe = {
         setTimeout(() => this.exitSwipeMode('handleRejection'), 2000);
     },
     
-    exitConnectionMode() {
-        this.isConnectionMode = false;
-        if (this.matchPolling) clearInterval(this.matchPolling);
-        if (this.labelLeft) this.labelLeft.style.display = 'block';
-        if (this.labelRight) this.labelRight.style.display = 'block';
-        if (this.hint) this.hint.style.display = 'block';
-        this.exitSwipeMode('exitConnectionMode');
-    },
-    
     exitSwipeMode(reason) {
         reason = reason || 'неизвестно';
         console.log('🔄 Выход из свайпа. Причина:', reason);
         this.unblockScroll();
-        this.isConnectionMode = false;
+        this.isWaitingMode = false;
         this.currentMatchId = null;
         this.currentPlayer = null;
         this.matchExpiresAt = null;
@@ -1347,7 +1283,6 @@ const Swipe = {
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         if (this.matchPolling) clearInterval(this.matchPolling);
         
-        document.getElementById('connectionScreen').classList.remove('active');
         if (window.App) App.showScreen('mainScreen', true);
         else window.location.href = '/';
     }
@@ -1374,14 +1309,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     window.addEventListener('resize', function() {
-        if (Swipe.card && !Swipe.isConnectionMode) Swipe.adjustCardSize();
-        if (Swipe.isConnectionMode) Swipe.adjustConnectionCardSize();
+        if (Swipe.card && !Swipe.isWaitingMode) Swipe.adjustCardSize();
     });
     
     window.addEventListener('orientationchange', function() {
         setTimeout(function() {
-            if (Swipe.card && !Swipe.isConnectionMode) Swipe.adjustCardSize();
-            if (Swipe.isConnectionMode) Swipe.adjustConnectionCardSize();
+            if (Swipe.card && !Swipe.isWaitingMode) Swipe.adjustCardSize();
         }, 200);
     });
 });
