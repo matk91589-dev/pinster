@@ -48,6 +48,7 @@ const Swipe = {
     hintRunId: null,
     hintInterval: null,
     resizeObserver: null,
+    connectionObserver: null,
     
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
@@ -87,7 +88,6 @@ const Swipe = {
         
         this.resizeObserver = new ResizeObserver(() => {
             this.updateButtonsPosition();
-            // Обновляем карточку ожидания при изменении размера
             if (this.isConnectionMode) {
                 this.adjustConnectionCardSize();
             }
@@ -337,58 +337,66 @@ const Swipe = {
             return;
         }
         
-        // Копируем размеры с карточки свайпа
-        if (this.card) {
-            const swipeCardStyles = window.getComputedStyle(this.card);
-            const swipeCardRect = this.card.getBoundingClientRect();
-            
-            // Копируем все размеры
-            connectionCard.style.width = swipeCardStyles.width;
-            connectionCard.style.maxWidth = swipeCardStyles.maxWidth;
-            connectionCard.style.maxHeight = swipeCardStyles.maxHeight;
-            connectionCard.style.borderRadius = swipeCardStyles.borderRadius;
-            connectionCard.style.boxShadow = swipeCardStyles.boxShadow;
-            
-            // Устанавливаем такую же высоту, как у карточки свайпа
-            connectionCard.style.height = swipeCardRect.height + 'px';
-            connectionCard.style.minHeight = swipeCardRect.height + 'px';
-            
-            // Центрируем
-            connectionCard.style.marginLeft = 'auto';
-            connectionCard.style.marginRight = 'auto';
-            
-            // Обновляем размеры аватарок
-            const selfAvatar = document.querySelector('#connectionScreen .conn-self-avatar');
-            const teammateAvatar = document.querySelector('#connectionScreen .conn-teammate-avatar');
-            const swipeAvatar = document.querySelector('#swipeCard .swipe-avatar');
-            
-            if (selfAvatar && teammateAvatar && swipeAvatar) {
-                const avatarStyles = window.getComputedStyle(swipeAvatar);
-                const avatarWidth = avatarStyles.width;
+        // Ждем полной отрисовки
+        setTimeout(() => {
+            if (this.card) {
+                const swipeCardRect = this.card.getBoundingClientRect();
+                const swipeCardStyles = window.getComputedStyle(this.card);
                 
-                selfAvatar.style.width = avatarWidth;
-                selfAvatar.style.height = avatarWidth;
-                teammateAvatar.style.width = avatarWidth;
-                teammateAvatar.style.height = avatarWidth;
+                // Принудительно устанавливаем такие же размеры
+                connectionCard.style.width = swipeCardRect.width + 'px';
+                connectionCard.style.minWidth = swipeCardRect.width + 'px';
+                connectionCard.style.maxWidth = swipeCardStyles.maxWidth;
+                connectionCard.style.height = swipeCardRect.height + 'px';
+                connectionCard.style.minHeight = swipeCardRect.height + 'px';
+                connectionCard.style.maxHeight = swipeCardStyles.maxHeight;
+                connectionCard.style.borderRadius = swipeCardStyles.borderRadius;
+                connectionCard.style.boxShadow = swipeCardStyles.boxShadow;
+                
+                // Центрируем
+                connectionCard.style.marginLeft = 'auto';
+                connectionCard.style.marginRight = 'auto';
+                
+                // Обновляем аватарки
+                const selfAvatar = document.querySelector('#connectionScreen .conn-self-avatar');
+                const teammateAvatar = document.querySelector('#connectionScreen .conn-teammate-avatar');
+                const swipeAvatar = document.querySelector('#swipeCard .swipe-avatar');
+                
+                if (selfAvatar && teammateAvatar && swipeAvatar) {
+                    const avatarStyles = window.getComputedStyle(swipeAvatar);
+                    const avatarWidth = avatarStyles.width;
+                    const avatarHeight = avatarStyles.height;
+                    
+                    selfAvatar.style.width = avatarWidth;
+                    selfAvatar.style.height = avatarHeight;
+                    teammateAvatar.style.width = avatarWidth;
+                    teammateAvatar.style.height = avatarHeight;
+                    
+                    // Обновляем внутренние svg/img
+                    const selfSvg = selfAvatar.querySelector('.tg-avatar-svg');
+                    const teammateSvg = teammateAvatar.querySelector('.tg-avatar-svg');
+                    if (selfSvg) selfSvg.style.width = avatarWidth;
+                    if (teammateSvg) teammateSvg.style.width = avatarWidth;
+                }
+                
+                // Компенсируем внутренние отступы
+                const header = document.querySelector('#connectionScreen .swipe-header');
+                const stats = document.querySelector('#connectionScreen .swipe-stats');
+                const button = document.querySelector('#connectionScreen .conn-chat-button');
+                
+                if (header) header.style.marginBottom = '0';
+                if (stats) stats.style.marginTop = '0';
+                if (button) button.style.marginTop = 'auto';
+                
+                console.log('📐 Карточка ожидания подогнана:', {
+                    width: connectionCard.style.width,
+                    height: connectionCard.style.height
+                });
+            } else {
+                connectionCard.style.marginLeft = 'auto';
+                connectionCard.style.marginRight = 'auto';
             }
-            
-            // Скрываем лишние элементы, которые могут увеличивать высоту
-            const header = document.querySelector('#connectionScreen .swipe-header');
-            if (header) {
-                header.style.marginBottom = '0';
-                header.style.paddingBottom = '0';
-            }
-            
-            console.log('📐 Карточка ожидания подогнана под карточку свайпа');
-            console.log('  - Ширина карточки:', connectionCard.style.width);
-            console.log('  - Высота карточки:', connectionCard.style.height);
-            console.log('  - Ширина аватарок:', selfAvatar?.style.width);
-        } else {
-            // Если карточки свайпа нет, просто центрируем
-            connectionCard.style.marginLeft = 'auto';
-            connectionCard.style.marginRight = 'auto';
-            console.log('📐 Карточка ожидания центрирована');
-        }
+        }, 50);
     },
     
     startSwipeHint() {
@@ -1027,10 +1035,24 @@ const Swipe = {
         this.updateChatButton(false);
         this.startConnectionTimer();
         
-        // Ждем рендеринга и подгоняем размеры
+        // Увеличиваем задержку для полной отрисовки
         setTimeout(() => {
             this.adjustConnectionCardSize();
-        }, 150);
+        }, 200);
+        
+        // Добавляем MutationObserver для отслеживания изменений в карточке соединения
+        const connectionCard = document.querySelector('#connectionScreen .conn-swipe-card');
+        if (connectionCard && !this.connectionObserver) {
+            this.connectionObserver = new MutationObserver(() => {
+                this.adjustConnectionCardSize();
+            });
+            this.connectionObserver.observe(connectionCard, { 
+                childList: true, 
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['style', 'class']
+            });
+        }
         
         console.log('✅ Экран соединения показан');
     },
@@ -1074,6 +1096,11 @@ const Swipe = {
                 console.log('🔘 Кнопка чата нажата, открываем:', chatLink);
                 this.openChatLink();
             };
+            
+            // После активации кнопки подгоняем размеры
+            setTimeout(() => {
+                this.adjustConnectionCardSize();
+            }, 50);
             
             console.log('✅ Кнопка чата АКТИВИРОВАНА');
             console.log('✅ Ссылка чата:', chatLink);
@@ -1148,7 +1175,11 @@ const Swipe = {
                 this.updateChatButton(true, data.chat_link, data.invite_link);
                 
                 this.gameCreated = true;
-                setTimeout(() => this.adjustConnectionCardSize(), 50);
+                
+                // После создания игры подгоняем размеры
+                setTimeout(() => {
+                    this.adjustConnectionCardSize();
+                }, 100);
             } else {
                 console.warn('⚠️ Нет chat_link в ответе');
                 this.updateChatButton(false);
@@ -1159,7 +1190,11 @@ const Swipe = {
             this.updateChatButton(false);
         })
         .finally(() => {
-            setTimeout(() => { this.gameCreating = false; }, 3000);
+            setTimeout(() => { 
+                this.gameCreating = false;
+                // Еще раз подгоняем после завершения
+                this.adjustConnectionCardSize();
+            }, 100);
         });
     },
     
@@ -1285,6 +1320,11 @@ const Swipe = {
             this.resizeObserver = null;
         }
         
+        if (this.connectionObserver) {
+            this.connectionObserver.disconnect();
+            this.connectionObserver = null;
+        }
+        
         if (this.card) {
             this.card.removeEventListener('touchstart', this.onDragStartBound);
             this.card.removeEventListener('touchmove', this.onDragMoveBound);
@@ -1372,6 +1412,11 @@ const Swipe = {
         this.gameCreating = false;
         this.chatLink = null;
         this.inviteLink = null;
+        
+        if (this.connectionObserver) {
+            this.connectionObserver.disconnect();
+            this.connectionObserver = null;
+        }
         
         if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
         if (this.connectionTimer) clearInterval(this.connectionTimer);
