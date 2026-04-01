@@ -340,16 +340,18 @@ const Swipe = {
         // Копируем размеры с карточки свайпа
         if (this.card) {
             const swipeCardStyles = window.getComputedStyle(this.card);
+            const swipeCardRect = this.card.getBoundingClientRect();
             
-            // Копируем основные размеры
+            // Копируем все размеры
             connectionCard.style.width = swipeCardStyles.width;
             connectionCard.style.maxWidth = swipeCardStyles.maxWidth;
+            connectionCard.style.maxHeight = swipeCardStyles.maxHeight;
             connectionCard.style.borderRadius = swipeCardStyles.borderRadius;
             connectionCard.style.boxShadow = swipeCardStyles.boxShadow;
             
-            // Сбрасываем высоту, чтобы она подстроилась под контент
-            connectionCard.style.minHeight = 'auto';
-            connectionCard.style.height = 'auto';
+            // Устанавливаем такую же высоту, как у карточки свайпа
+            connectionCard.style.height = swipeCardRect.height + 'px';
+            connectionCard.style.minHeight = swipeCardRect.height + 'px';
             
             // Центрируем
             connectionCard.style.marginLeft = 'auto';
@@ -370,8 +372,16 @@ const Swipe = {
                 teammateAvatar.style.height = avatarWidth;
             }
             
+            // Скрываем лишние элементы, которые могут увеличивать высоту
+            const header = document.querySelector('#connectionScreen .swipe-header');
+            if (header) {
+                header.style.marginBottom = '0';
+                header.style.paddingBottom = '0';
+            }
+            
             console.log('📐 Карточка ожидания подогнана под карточку свайпа');
             console.log('  - Ширина карточки:', connectionCard.style.width);
+            console.log('  - Высота карточки:', connectionCard.style.height);
             console.log('  - Ширина аватарок:', selfAvatar?.style.width);
         } else {
             // Если карточки свайпа нет, просто центрируем
@@ -994,13 +1004,33 @@ const Swipe = {
             }
         }
         
-        // Центрируем и подгоняем размеры
-        setTimeout(() => {
-            this.adjustConnectionCardSize();
-        }, 100);
+        const connectionLine = document.querySelector('#connectionScreen .conn-line');
+        if (connectionLine) {
+            connectionLine.classList.remove('connected');
+            connectionLine.style.background = 'var(--border-color)';
+            connectionLine.style.width = '60px';
+            connectionLine.style.height = '2px';
+            const linePulse = connectionLine.querySelector('.conn-line-pulse');
+            if (linePulse) {
+                linePulse.style.animation = 'connPulse 1.5s infinite';
+            }
+        }
+        
+        const statusEl = document.querySelector('#connectionScreen .conn-status');
+        if (statusEl) {
+            statusEl.innerHTML = 'ожидание тиммейта...';
+            statusEl.classList.remove('active');
+            statusEl.style.color = 'var(--text-secondary)';
+            statusEl.style.fontSize = '14px';
+        }
         
         this.updateChatButton(false);
         this.startConnectionTimer();
+        
+        // Ждем рендеринга и подгоняем размеры
+        setTimeout(() => {
+            this.adjustConnectionCardSize();
+        }, 150);
         
         console.log('✅ Экран соединения показан');
     },
