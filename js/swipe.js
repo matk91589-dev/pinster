@@ -1,11 +1,10 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ДИНАМИЧЕСКИЕ КНОПКИ С ЭКРАНОМ ОЖИДАНИЯ
+// СВАЙП-КАРТОЧКИ - СТАТИЧНЫЕ КНОПКИ ПО БОКАМ
 // ============================================
 
 const Swipe = {
     // Элементы DOM
     card: null,
-    cardWrapper: null,
     container: null,
     hint: null,
     loading: null,
@@ -24,9 +23,9 @@ const Swipe = {
     startTime: 0,
     
     // Константы
-    SWIPE_THRESHOLD: 100,
-    VELOCITY_THRESHOLD: 0.4,
-    ANIMATION_DURATION: 350,
+    SWIPE_THRESHOLD: 120,
+    VELOCITY_THRESHOLD: 0.5,
+    ANIMATION_DURATION: 250,
     
     // Данные
     currentPlayer: null,
@@ -47,7 +46,6 @@ const Swipe = {
     
     hintRunId: null,
     hintInterval: null,
-    resizeObserver: null,
     
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
@@ -60,7 +58,7 @@ const Swipe = {
         this.labelLeft = document.getElementById('swipeLabelLeft');
         this.labelRight = document.getElementById('swipeLabelRight');
         
-        this.createCardWrapper();
+        this.createSideButtons();
         
         if (!this.card) {
             console.error('❌ Swipe card not found!');
@@ -76,96 +74,56 @@ const Swipe = {
             this.setupEventListeners();
             this.isInitialized = true;
         }
-        
-        this.initResizeObserver();
-        
-        console.log('✅ Swipe.init() завершён, isInitialized:', this.isInitialized);
     },
     
-    initResizeObserver() {
-        if (this.resizeObserver) this.resizeObserver.disconnect();
+    createSideButtons() {
+        console.log('🔨 createSideButtons() ВЫЗВАН');
         
-        this.resizeObserver = new ResizeObserver(() => {
-            this.updateButtonsPosition();
-        });
+        // Удаляем старые, если есть
+        if (this.skipBtn && this.skipBtn.parentNode) this.skipBtn.parentNode.remove();
+        if (this.inviteBtn && this.inviteBtn.parentNode) this.inviteBtn.parentNode.remove();
         
-        if (this.card) this.resizeObserver.observe(this.card);
-        if (this.cardWrapper) this.resizeObserver.observe(this.cardWrapper);
-        
-        window.addEventListener('resize', () => {
-            this.updateButtonsPosition();
-        });
-        window.addEventListener('scroll', () => this.updateButtonsPosition());
-    },
-    
-    createCardWrapper() {
-        console.log('🔨 createCardWrapper() ВЫЗВАН');
-        
-        const originalCard = document.getElementById('swipeCard');
-        if (!originalCard) {
-            console.error('❌ swipeCard не найден');
+        const container = document.getElementById('swipeContainer');
+        if (!container) {
+            console.error('❌ swipeContainer не найден');
             return;
         }
         
-        const oldWrapper = document.querySelector('.swipe-card-wrapper');
-        if (oldWrapper) {
-            const parent = oldWrapper.parentNode;
-            const card = oldWrapper.querySelector('.swipe-card');
-            if (card) {
-                parent.insertBefore(card, oldWrapper);
-                oldWrapper.remove();
-            }
-        }
-        
-        const wrapper = document.createElement('div');
-        wrapper.className = 'swipe-card-wrapper';
-        wrapper.style.position = 'relative';
-        wrapper.style.display = 'inline-block';
-        wrapper.style.margin = '0 auto';
-        wrapper.style.overflow = 'visible';
-        
-        const parent = originalCard.parentNode;
-        parent.insertBefore(wrapper, originalCard);
-        wrapper.appendChild(originalCard);
-        
-        this.cardWrapper = wrapper;
-        
-        this.createSideButtonsInWrapper();
-        
-        console.log('✅ Обёртка создана');
-    },
-    
-    createSideButtonsInWrapper() {
-        console.log('🔨 createSideButtonsInWrapper() ВЫЗВАН');
-        
-        if (!this.cardWrapper) return;
-        
-        const oldBtns = this.cardWrapper.querySelectorAll('.swipe-side-btn');
-        oldBtns.forEach(btn => btn.remove());
-        
+        // Левая кнопка SKIP
         const leftWrapper = document.createElement('div');
         leftWrapper.className = 'swipe-side-btn skip-btn';
-        leftWrapper.innerHTML = '<div class="swipe-side-btn-inner"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#FF5E5E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+        leftWrapper.innerHTML = `
+            <div class="swipe-side-btn-inner">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                    <path d="M15 18L9 12L15 6" stroke="#FF5E5E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        `;
         
+        // Правая кнопка INVITE
         const rightWrapper = document.createElement('div');
         rightWrapper.className = 'swipe-side-btn invite-btn';
-        rightWrapper.innerHTML = '<div class="swipe-side-btn-inner"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 18L15 12L9 6" stroke="#4CAF50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+        rightWrapper.innerHTML = `
+            <div class="swipe-side-btn-inner">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                    <path d="M9 18L15 12L9 6" stroke="#4CAF50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        `;
         
-        this.cardWrapper.appendChild(leftWrapper);
-        this.cardWrapper.appendChild(rightWrapper);
+        container.appendChild(leftWrapper);
+        container.appendChild(rightWrapper);
         
         this.skipBtn = leftWrapper;
         this.inviteBtn = rightWrapper;
         
         this.skipBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            console.log('🖱️ Нажата кнопка SKIP');
             this.onSideButtonClick('skip');
         });
         
         this.inviteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            console.log('🖱️ Нажата кнопка INVITE');
             this.onSideButtonClick('invite');
         });
         
@@ -179,89 +137,7 @@ const Swipe = {
         setTimeout(() => {
             if (this.skipBtn) this.skipBtn.classList.add('visible');
             if (this.inviteBtn) this.inviteBtn.classList.add('visible');
-            this.updateButtonsPosition();
         }, 50);
-    },
-    
-    updateButtonsPosition() {
-        if (!this.skipBtn || !this.inviteBtn || !this.card) return;
-        
-        const cardRect = this.card.getBoundingClientRect();
-        const cardHeight = cardRect.height;
-        const cardWidth = cardRect.width;
-        const cardLeft = cardRect.left;
-        const cardRight = cardRect.right;
-        
-        const screenWidth = window.innerWidth;
-        
-        let btnWidth = Math.min(Math.max(cardWidth * 0.1, 38), 56);
-        let btnHeight = Math.min(Math.max(cardHeight * 0.55, 85), 140);
-        
-        const MIN_VISIBLE_OFFSET = 14;
-        let desiredOffset = Math.min(btnWidth * 0.65, 32);
-        
-        const availableLeft = cardLeft;
-        const availableRight = screenWidth - cardRight;
-        
-        let leftOffset = desiredOffset;
-        if (availableLeft < desiredOffset) {
-            leftOffset = Math.max(availableLeft - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
-            if (leftOffset < MIN_VISIBLE_OFFSET) {
-                btnWidth = Math.min(btnWidth, availableLeft - 5);
-                leftOffset = Math.max(btnWidth * 0.4, MIN_VISIBLE_OFFSET);
-            }
-        }
-        
-        let rightOffset = desiredOffset;
-        if (availableRight < desiredOffset) {
-            rightOffset = Math.max(availableRight - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
-            if (rightOffset < MIN_VISIBLE_OFFSET) {
-                btnWidth = Math.min(btnWidth, availableRight - 5);
-                rightOffset = Math.max(btnWidth * 0.4, MIN_VISIBLE_OFFSET);
-            }
-        }
-        
-        if (screenWidth < 400) {
-            btnWidth = Math.min(btnWidth, 44);
-            btnHeight = Math.min(btnHeight, 100);
-            leftOffset = Math.max(leftOffset, 12);
-            rightOffset = Math.max(rightOffset, 12);
-        }
-        
-        if (screenWidth < 340) {
-            btnWidth = Math.min(btnWidth, 38);
-            btnHeight = Math.min(btnHeight, 90);
-            leftOffset = Math.max(leftOffset, 10);
-            rightOffset = Math.max(rightOffset, 10);
-        }
-        
-        if (screenWidth < 300) {
-            btnWidth = Math.min(btnWidth, 34);
-            btnHeight = Math.min(btnHeight, 80);
-            leftOffset = Math.max(leftOffset, 8);
-            rightOffset = Math.max(rightOffset, 8);
-        }
-        
-        this.skipBtn.style.width = btnWidth + 'px';
-        this.skipBtn.style.height = btnHeight + 'px';
-        this.skipBtn.style.minHeight = btnHeight + 'px';
-        this.skipBtn.style.top = '50%';
-        this.skipBtn.style.transform = 'translateY(-50%)';
-        this.skipBtn.style.left = '-' + leftOffset + 'px';
-        
-        this.inviteBtn.style.width = btnWidth + 'px';
-        this.inviteBtn.style.height = btnHeight + 'px';
-        this.inviteBtn.style.minHeight = btnHeight + 'px';
-        this.inviteBtn.style.top = '50%';
-        this.inviteBtn.style.transform = 'translateY(-50%)';
-        this.inviteBtn.style.right = '-' + rightOffset + 'px';
-        
-        const iconSize = Math.min(btnWidth * 0.55, 22);
-        const allSvgs = document.querySelectorAll('.swipe-side-btn svg');
-        allSvgs.forEach(svg => {
-            svg.style.width = iconSize + 'px';
-            svg.style.height = iconSize + 'px';
-        });
     },
     
     pulseButton(btn) {
@@ -282,10 +158,10 @@ const Swipe = {
     },
     
     animateAndAccept() {
-        if (!this.cardWrapper) return;
+        if (!this.card) return;
         
-        this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
-        this.cardWrapper.style.transform = 'translateX(200%) rotate(15deg) scale(0.85)';
+        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
+        this.card.style.transform = `translateX(200%) rotate(12deg) scale(0.9)`;
         
         setTimeout(() => {
             this.acceptPlayer();
@@ -293,45 +169,27 @@ const Swipe = {
     },
     
     animateAndReject() {
-        if (!this.cardWrapper) return;
+        if (!this.card) return;
         
-        this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
-        this.cardWrapper.style.transform = 'translateX(-200%) rotate(-15deg) scale(0.85)';
+        this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
+        this.card.style.transform = `translateX(-200%) rotate(-12deg) scale(0.9)`;
         
         setTimeout(() => {
             this.rejectPlayer();
         }, this.ANIMATION_DURATION);
     },
     
-    resetCardPosition() {
-        if (!this.cardWrapper) return;
-        this.cardWrapper.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1)';
-        this.cardWrapper.style.transform = 'translateX(0) rotate(0deg) scale(1)';
-        this.currentX = 0;
-        
-        setTimeout(() => {
-            if (this.cardWrapper) this.cardWrapper.style.transition = '';
-        }, 300);
-    },
-    
     adjustCardSize() {
         if (!this.card || this.isConnectionMode) return;
-        if (this.cardWrapper) {
-            this.cardWrapper.style.marginLeft = 'auto';
-            this.cardWrapper.style.marginRight = 'auto';
-        }
-        this.updateButtonsPosition();
+        this.card.style.marginLeft = 'auto';
+        this.card.style.marginRight = 'auto';
     },
     
     adjustConnectionCardSize() {
         const connectionCard = document.querySelector('#connectionScreen .conn-swipe-card');
         if (!connectionCard) return;
-        
-        // Просто центрируем карточку, не копируем размеры
         connectionCard.style.marginLeft = 'auto';
         connectionCard.style.marginRight = 'auto';
-        
-        console.log('📐 Карточка ожидания центрирована');
     },
     
     startSwipeHint() {
@@ -366,21 +224,16 @@ const Swipe = {
     },
     
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
-        console.log('🔄 Swipe.startWithOpponent() вызван, mode:', this.mode);
-        
-        if (!this.isInitialized) {
-            console.log('⚠️ Swipe не инициализирован, вызываем init()');
-            this.init(opponent.mode || 'FACEIT');
-        }
-        
         if (this.currentMatchId === matchId) {
-            console.log('⚠️ уже показываем этот матч');
+            console.log('⚠️ startWithOpponent: уже показываем этот матч, игнорируем');
             return;
         }
         if (this.currentMatchId && this.currentMatchId !== matchId) {
-            console.warn('⚠️ заменяем матч', this.currentMatchId, 'на', matchId);
+            console.warn('⚠️ startWithOpponent: заменяем текущий матч', this.currentMatchId, 'на', matchId);
             this.exitSwipeMode('замена матча');
         }
+
+        console.log('🔄 Swipe.startWithOpponent() вызван');
         
         this._pendingOpponent = opponent;
         this._pendingMatchId = matchId;
@@ -400,12 +253,12 @@ const Swipe = {
             this.labelRight = document.getElementById('swipeLabelRight');
             
             if (!this.card) {
-                console.log('⏳ Ждем карточку...');
+                console.log('⏳ Карточка еще не готова, ждем 50ms...');
                 setTimeout(checkCard, 50);
                 return;
             }
             
-            console.log('✅ Карточка найдена');
+            console.log('✅ Карточка найдена, продолжаем');
             this._executeStartWithOpponent();
         };
         
@@ -416,6 +269,7 @@ const Swipe = {
         const opponent = this._pendingOpponent;
         const matchId = this._pendingMatchId;
         const expiresAt = this._pendingExpiresAt;
+        const serverTime = this._pendingServerTime;
         
         this._pendingOpponent = null;
         this._pendingMatchId = null;
@@ -425,7 +279,7 @@ const Swipe = {
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
         this.isConnectionMode = false;
-        this.mode = opponent.mode || this.mode;
+        this.mode = opponent.mode;
         
         this.gameCreated = false;
         this.gameCreating = false;
@@ -443,14 +297,17 @@ const Swipe = {
         const timeLeft = this.getTimeLeft();
         
         if (timeLeft <= 0) {
-            console.warn('⚠️ Время истекло');
+            console.warn('⚠️ Время на принятие истекло');
             this.exitSwipeMode('timeout_accept');
             return;
         }
         
         if (this.loading) this.loading.classList.remove('active');
         
-        this.resetCardPosition();
+        this.card.style.transition = 'none';
+        this.card.style.transform = 'translateX(0) rotate(0) scale(1)';
+        this.card.style.opacity = '1';
+        this.card.classList.remove('both-accepted', 'rejected', 'right-swipe', 'left-swipe', 'accept-overlay', 'reject-overlay');
         
         this.showPlayer(opponent);
         this.startCardTimer();
@@ -467,8 +324,6 @@ const Swipe = {
         
         if (this.skipBtn) this.skipBtn.classList.add('visible');
         if (this.inviteBtn) this.inviteBtn.classList.add('visible');
-        
-        setTimeout(() => this.updateButtonsPosition(), 100);
         
         console.log('✅ Swipe готов с оппонентом:', opponent.nick);
     },
@@ -497,7 +352,7 @@ const Swipe = {
                 timerElement.classList.add('warning');
                 clearInterval(this.cardTimerInterval);
                 this.cardTimerInterval = null;
-                this.exitSwipeMode('таймер истек');
+                this.exitSwipeMode('таймер истек на карточке');
                 return;
             }
             
@@ -544,7 +399,7 @@ const Swipe = {
     
     setupEventListeners() {
         if (!this.card) {
-            console.error('❌ Card not found');
+            console.error('❌ Cannot setup listeners: card not found');
             return;
         }
         
@@ -563,7 +418,7 @@ const Swipe = {
         
         this.card.addEventListener('dragstart', (e) => e.preventDefault());
         
-        console.log('✅ Обработчики свайпа установлены');
+        console.log('✅ Обработчики событий свайпа установлены');
     },
     
     preventScroll(e) {
@@ -587,18 +442,16 @@ const Swipe = {
         if (this.skipBtn) this.skipBtn.classList.remove('hint-glow');
         if (this.inviteBtn) this.inviteBtn.classList.remove('hint-glow');
         
-        if (this.skipBtn && this.skipBtn.contains(e.target)) return;
-        if (this.inviteBtn && this.inviteBtn.contains(e.target)) return;
-        
         const target = e.target;
-        if (!this.card || !this.card.contains(target)) return;
+        if (!this.card.contains(target)) return;
         
         this.isDragging = true;
         this.startX = this.getClientX(e);
         this.startTime = Date.now();
         
-        if (this.cardWrapper) this.cardWrapper.classList.add('dragging');
-        if (this.card) this.card.style.cursor = 'grabbing';
+        this.card.classList.add('dragging');
+        this.card.style.transition = 'none';
+        this.card.style.cursor = 'grabbing';
         
         e.preventDefault();
     },
@@ -618,17 +471,14 @@ const Swipe = {
         const rotate = percent * 12;
         const scale = 1 + Math.abs(percent) * 0.05;
         
-        if (this.cardWrapper) {
-            this.cardWrapper.style.transition = 'none';
-            this.cardWrapper.style.transform = 'translateX(' + deltaX + 'px) rotate(' + rotate + 'deg) scale(' + scale + ')';
-        }
+        this.card.style.transform = `translateX(${deltaX}px) rotate(${rotate}deg) scale(${scale})`;
         
         if (deltaX > 0) {
-            if (this.card) this.card.classList.add('swiping-right');
-            if (this.card) this.card.classList.remove('swiping-left');
+            this.card.classList.add('swiping-right');
+            this.card.classList.remove('swiping-left');
         } else if (deltaX < 0) {
-            if (this.card) this.card.classList.add('swiping-left');
-            if (this.card) this.card.classList.remove('swiping-right');
+            this.card.classList.add('swiping-left');
+            this.card.classList.remove('swiping-right');
         }
     },
     
@@ -636,7 +486,7 @@ const Swipe = {
         if (!this.isDragging || this.isConnectionMode) return;
         
         this.isDragging = false;
-        if (this.card) this.card.style.cursor = 'grab';
+        this.card.style.cursor = 'grab';
         
         const deltaX = this.currentX - this.startX;
         const time = Date.now() - this.startTime;
@@ -647,19 +497,15 @@ const Swipe = {
         if (isSwipe && Math.abs(deltaX) > 10) {
             if (window.Settings && window.Settings.swipe) window.Settings.swipe();
             
+            this.card.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.2, 0.9, 0.3, 1)`;
+            
             if (deltaX > 0) {
-                if (this.cardWrapper) {
-                    this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
-                    this.cardWrapper.style.transform = 'translateX(200%) rotate(15deg) scale(0.85)';
-                }
+                this.card.style.transform = `translateX(200%) rotate(12deg) scale(0.9)`;
                 setTimeout(() => {
                     this.acceptPlayer();
                 }, this.ANIMATION_DURATION);
             } else {
-                if (this.cardWrapper) {
-                    this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
-                    this.cardWrapper.style.transform = 'translateX(-200%) rotate(-15deg) scale(0.85)';
-                }
+                this.card.style.transform = `translateX(-200%) rotate(-12deg) scale(0.9)`;
                 setTimeout(() => {
                     this.rejectPlayer();
                 }, this.ANIMATION_DURATION);
@@ -668,14 +514,19 @@ const Swipe = {
             this.resetCardPosition();
         }
         
-        if (this.card) {
-            this.card.classList.remove('dragging', 'swiping-right', 'swiping-left');
-        }
-        if (this.cardWrapper) {
-            this.cardWrapper.classList.remove('dragging');
-        }
+        this.card.classList.remove('dragging', 'swiping-right', 'swiping-left');
         
         e.preventDefault();
+    },
+    
+    resetCardPosition() {
+        this.card.style.transition = `transform 0.3s ease`;
+        this.card.style.transform = 'translateX(0) rotate(0deg) scale(1)';
+        this.currentX = 0;
+        
+        setTimeout(() => {
+            this.card.style.transition = '';
+        }, 300);
     },
     
     acceptPlayer() {
@@ -695,7 +546,8 @@ const Swipe = {
         }
         
         this.showConnectionMode();
-        if (this.card) this.card.style.opacity = '0';
+        this.card.style.transition = 'opacity 0.2s ease';
+        this.card.style.opacity = '0';
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         
@@ -722,7 +574,7 @@ const Swipe = {
     },
     
     startMatchStatusPolling(matchId) {
-        console.log('🔄 Запускаем polling для ID:', matchId);
+        console.log('🔄 Запускаем polling статуса матча для ID:', matchId);
         
         if (this.matchPolling) {
             clearInterval(this.matchPolling);
@@ -743,7 +595,7 @@ const Swipe = {
             }
             
             try {
-                const res = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/status/' + matchId);
+                const res = await fetch(`https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/status/${matchId}`);
                 const data = await res.json();
                 
                 if (data.status === 'both_accepted') {
@@ -767,54 +619,29 @@ const Swipe = {
                 }
                 
             } catch (error) {
-                console.error('❌ Polling error:', error);
+                console.error('❌ Error in match polling:', error);
             }
         }, 1500);
     },
     
     updateConnectionUI(status) {
         const statusEl = document.getElementById('connectionStatus');
-        const connectionLine = document.querySelector('#connectionScreen .conn-line');
-        const teammateAvatar = document.querySelector('#connectionScreen .conn-teammate-avatar');
+        const connectionLine = document.querySelector('.connection-line');
+        const teammateAvatar = document.querySelector('.teammate-avatar');
         const connectionTimer = document.getElementById('connectionTimer');
         
         if (status === 'both_accepted') {
-            if (teammateAvatar) {
-                teammateAvatar.classList.add('connected');
-                teammateAvatar.style.width = '70px';
-                teammateAvatar.style.height = '70px';
-                teammateAvatar.style.filter = 'grayscale(0)';
-                teammateAvatar.style.opacity = '1';
-                teammateAvatar.style.transform = 'scale(1)';
-                teammateAvatar.style.transition = 'all 0.3s cubic-bezier(0.34, 1.2, 0.64, 1)';
-            }
-            
-            if (connectionLine) {
-                connectionLine.classList.add('connected');
-                connectionLine.style.background = 'var(--accent)';
-                const linePulse = connectionLine.querySelector('.conn-line-pulse');
-                if (linePulse) linePulse.style.display = 'none';
-            }
-            
             if (statusEl) {
-                statusEl.innerHTML = 'матч создан';
+                statusEl.innerHTML = 'Матч создан';
                 statusEl.classList.add('active');
-                statusEl.style.color = 'var(--accent)';
             }
-            
-            if (connectionTimer) {
-                connectionTimer.classList.remove('warning');
-            }
-            
-            if (this.connectionTimer) {
-                clearInterval(this.connectionTimer);
-                this.connectionTimer = null;
-            }
-            
+            if (teammateAvatar) teammateAvatar.classList.add('connected');
+            if (connectionLine) connectionLine.classList.add('connected');
+            if (connectionTimer) connectionTimer.classList.remove('warning');
             if (window.Settings && window.Settings.success) window.Settings.success();
         } else if (status === 'rejected') {
             if (statusEl) {
-                statusEl.innerHTML = 'тиммейт отклонил';
+                statusEl.innerHTML = 'Тиммейт отклонил';
                 statusEl.style.color = '#FF3B30';
             }
             if (window.Settings && window.Settings.error) window.Settings.error();
@@ -893,7 +720,7 @@ const Swipe = {
             const timeLeft = this.getTimeLeft();
             
             if (timeLeft <= 0) {
-                timerElement.innerHTML = '0с';
+                timerElement.innerHTML = `0с`;
                 clearInterval(this.connectionTimer);
                 this.connectionTimer = null;
                 if (this.matchPolling) {
@@ -907,7 +734,7 @@ const Swipe = {
             if (timeLeft < 10) timerElement.classList.add('warning');
             else timerElement.classList.remove('warning');
             
-            timerElement.innerHTML = timeLeft + 'с';
+            timerElement.innerHTML = `${timeLeft}с`;
         };
         
         updateTimer();
@@ -927,133 +754,72 @@ const Swipe = {
         document.getElementById('swipeScreen').classList.remove('active');
         document.getElementById('connectionScreen').classList.add('active');
         
-        const teammateNickEl = document.querySelector('#connectionScreen .conn-teammate-nick');
-        if (teammateNickEl) teammateNickEl.textContent = this.currentPlayer?.nick || 'Игрок';
+        document.getElementById('teammateNick').textContent = this.currentPlayer?.nick || '';
         
-        const teammateAvatar = document.querySelector('#connectionScreen .conn-teammate-avatar .tg-avatar-svg');
-        if (teammateAvatar && this.currentPlayer?.avatar) {
-            teammateAvatar.innerHTML = '<img src="' + this.currentPlayer.avatar + '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">';
-        } else if (teammateAvatar) {
-            teammateAvatar.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+        const teammateInfo = document.querySelector('.teammate-info');
+        if (teammateInfo && this.currentPlayer) {
+            teammateInfo.setAttribute('data-player-id', this.currentPlayer.player_id || '');
         }
         
-        const selfAvatar = document.querySelector('#connectionScreen .conn-self-avatar .tg-avatar-svg');
+        const teammateAvatar = document.querySelector('.teammate-avatar .tg-avatar-svg');
+        if (teammateAvatar && this.currentPlayer?.avatar) {
+            teammateAvatar.innerHTML = `<img src="${this.currentPlayer.avatar}" class="teammate-avatar-img" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+        }
+        
+        const selfAvatar = document.querySelector('.self-avatar .tg-avatar-svg');
         if (selfAvatar) {
             const myAvatar = localStorage.getItem('pingster_avatar') || (window.Profile && Profile.savedAvatarUrl);
             if (myAvatar) {
-                selfAvatar.innerHTML = '<img src="' + myAvatar + '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">';
-            } else {
-                selfAvatar.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+                selfAvatar.innerHTML = `<img src="${myAvatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
             }
         }
         
-        const selfAvatarContainer = document.querySelector('#connectionScreen .conn-self-avatar');
-        const teammateAvatarContainer = document.querySelector('#connectionScreen .conn-teammate-avatar');
+        document.querySelector('.teammate-avatar')?.classList.remove('connected');
+        document.querySelector('.connection-line')?.classList.remove('connected');
         
-        if (selfAvatarContainer) {
-            selfAvatarContainer.style.width = '70px';
-            selfAvatarContainer.style.height = '70px';
-            selfAvatarContainer.style.border = '2px solid var(--border-color)';
-            selfAvatarContainer.style.filter = 'grayscale(0)';
-            selfAvatarContainer.style.opacity = '1';
-        }
-        
-        if (teammateAvatarContainer) {
-            teammateAvatarContainer.classList.remove('connected');
-            teammateAvatarContainer.style.width = '70px';
-            teammateAvatarContainer.style.height = '70px';
-            teammateAvatarContainer.style.border = '2px solid var(--border-color)';
-            teammateAvatarContainer.style.filter = 'grayscale(0.5)';
-            teammateAvatarContainer.style.opacity = '0.8';
-            teammateAvatarContainer.style.transform = 'scale(1)';
-        }
-        
-        const connectionLine = document.querySelector('#connectionScreen .conn-line');
-        if (connectionLine) {
-            connectionLine.classList.remove('connected');
-            connectionLine.style.background = 'var(--border-color)';
-            connectionLine.style.width = '60px';
-            connectionLine.style.height = '2px';
-            const linePulse = connectionLine.querySelector('.conn-line-pulse');
-            if (linePulse) {
-                linePulse.style.animation = 'connPulse 1.5s infinite';
-            }
-        }
-        
-        const statusEl = document.querySelector('#connectionScreen .conn-status');
+        const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
-            statusEl.innerHTML = 'ожидание тиммейта...';
+            statusEl.innerHTML = 'Ожидание тиммейта';
             statusEl.classList.remove('active');
-            statusEl.style.color = 'var(--text-secondary)';
-            statusEl.style.fontSize = '14px';
+            statusEl.style.color = '';
         }
         
         this.updateChatButton(false);
         this.startConnectionTimer();
-        
         setTimeout(() => this.adjustConnectionCardSize(), 50);
-        
-        console.log('✅ Экран соединения показан');
     },
     
-    updateChatButton(active, chatLink, inviteLink) {
-        console.log('🔘 updateChatButton called, active:', active, 'chatLink:', chatLink);
+    updateChatButton(active, chatLink = null, inviteLink = null) {
+        const button = document.getElementById('tgChatButton');
+        const buttonText = document.getElementById('tgChatButtonText');
         
-        let button = document.querySelector('#connectionScreen .conn-chat-button');
-        if (!button) {
-            button = document.querySelector('.tg-chat-button');
-        }
-        
-        if (!button) {
-            console.error('❌ Кнопка чата не найдена в DOM!');
-            return;
-        }
-        
-        console.log('✅ Кнопка чата найдена, текущие классы:', button.className);
+        if (!button || !buttonText) return;
         
         button.style.display = 'flex';
-        button.textContent = 'Перейти в чат';
+        buttonText.textContent = 'Перейти в чат';
         
         if (active && chatLink) {
             button.classList.remove('disabled');
             button.classList.add('active');
             button.disabled = false;
-            button.style.pointerEvents = 'auto';
-            button.style.opacity = '1';
-            button.style.background = '#FF5500';
-            button.style.border = 'none';
-            button.style.color = 'white';
             
             this.chatLink = chatLink;
             this.inviteLink = inviteLink;
             localStorage.setItem('currentChatLink', chatLink);
             if (inviteLink) localStorage.setItem('currentInviteLink', inviteLink);
             
-            button.onclick = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🔘 Кнопка чата нажата, открываем:', chatLink);
-                this.openChatLink();
-            };
-            
-            console.log('✅ Кнопка чата АКТИВИРОВАНА');
-            console.log('✅ Ссылка чата:', chatLink);
+            button.onclick = () => this.openChatLink();
         } else {
             button.classList.remove('active');
             button.classList.add('disabled');
             button.disabled = true;
-            button.style.pointerEvents = 'none';
-            button.style.opacity = '0.5';
             button.onclick = null;
-            console.log('❌ Кнопка чата деактивирована');
         }
     },
     
     openChatLink() {
         let chatLink = this.chatLink || localStorage.getItem('currentChatLink');
         let inviteLink = this.inviteLink || localStorage.getItem('currentInviteLink');
-        
-        console.log('🔗 openChatLink вызван, chatLink:', chatLink, 'inviteLink:', inviteLink);
         
         if (chatLink) {
             const tg = window.Telegram?.WebApp;
@@ -1067,13 +833,9 @@ const Swipe = {
                     setTimeout(() => window.open(chatLink, '_blank'), 1500);
                 }
             } else {
-                if (tg?.openTelegramLink) {
-                    tg.openTelegramLink(chatLink);
-                } else {
-                    window.open(chatLink, '_blank');
-                }
+                if (tg?.openTelegramLink) tg.openTelegramLink(chatLink);
+                else window.open(chatLink, '_blank');
             }
-            console.log('✅ Открываем ссылку чата:', chatLink);
         } else {
             console.error('❌ Ссылка не найдена');
             alert('Ссылка на чат не найдена');
@@ -1097,21 +859,11 @@ const Swipe = {
         })
         .then(res => res.json())
         .then(data => {
-            console.log('📦 Game create response:', data);
             if (data.status === 'ok' && data.chat_link) {
-                console.log('🔗 Получена ссылка чата:', data.chat_link);
-                
-                this.chatLink = data.chat_link;
-                this.inviteLink = data.invite_link;
-                localStorage.setItem('currentChatLink', data.chat_link);
-                if (data.invite_link) localStorage.setItem('currentInviteLink', data.invite_link);
-                
                 this.updateChatButton(true, data.chat_link, data.invite_link);
-                
                 this.gameCreated = true;
                 setTimeout(() => this.adjustConnectionCardSize(), 50);
             } else {
-                console.warn('⚠️ Нет chat_link в ответе');
                 this.updateChatButton(false);
             }
         })
@@ -1191,9 +943,12 @@ const Swipe = {
         const hasAvatar = player.avatar && player.avatar !== 'null' && player.avatar !== '';
         
         if (hasAvatar) {
-            avatarContainer.innerHTML = '<img src="' + player.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:50%;">';
+            avatarContainer.innerHTML = `<img src="${player.avatar}" alt="avatar" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:50%;">`;
         } else {
-            avatarContainer.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" style="display:block; margin:auto;"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+            avatarContainer.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block; margin:auto;">
+                <circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/>
+                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/>
+            </svg>`;
         }
     },
     
@@ -1241,11 +996,6 @@ const Swipe = {
     destroy() {
         this.unblockScroll();
         
-        if (this.resizeObserver) {
-            this.resizeObserver.disconnect();
-            this.resizeObserver = null;
-        }
-        
         if (this.card) {
             this.card.removeEventListener('touchstart', this.onDragStartBound);
             this.card.removeEventListener('touchmove', this.onDragMoveBound);
@@ -1256,8 +1006,6 @@ const Swipe = {
         
         window.removeEventListener('mousemove', this.onDragMoveBound);
         window.removeEventListener('mouseup', this.onDragEndBound);
-        window.removeEventListener('resize', this.updateButtonsPosition);
-        window.removeEventListener('scroll', this.updateButtonsPosition);
         
         if (this.hintRunId) {
             clearTimeout(this.hintRunId);
@@ -1273,12 +1021,8 @@ const Swipe = {
         this.chatLink = null;
         this.inviteLink = null;
         
-        const wrapper = document.querySelector('.swipe-card-wrapper');
-        if (wrapper && this.card) {
-            const parent = wrapper.parentNode;
-            parent.insertBefore(this.card, wrapper);
-            wrapper.remove();
-        }
+        if (this.skipBtn && this.skipBtn.parentNode) this.skipBtn.parentNode.remove();
+        if (this.inviteBtn && this.inviteBtn.parentNode) this.inviteBtn.parentNode.remove();
     },
     
     connectionTimeout() {
@@ -1287,7 +1031,7 @@ const Swipe = {
             this.matchPolling = null;
         }
         
-        const statusEl = document.querySelector('#connectionScreen .conn-status');
+        const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
             statusEl.innerHTML = 'Время истекло';
             statusEl.style.color = '#FF3B30';
@@ -1300,7 +1044,7 @@ const Swipe = {
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         if (this.matchPolling) clearInterval(this.matchPolling);
         
-        const statusEl = document.querySelector('#connectionScreen .conn-status');
+        const statusEl = document.getElementById('connectionStatus');
         if (statusEl) {
             statusEl.innerHTML = 'Тиммейт отклонил';
             statusEl.style.color = '#FF3B30';
@@ -1320,9 +1064,8 @@ const Swipe = {
         this.exitSwipeMode('exitConnectionMode');
     },
     
-    exitSwipeMode(reason) {
-        reason = reason || 'неизвестно';
-        console.log('🔄 Выход из свайпа. Причина:', reason);
+    exitSwipeMode(reason = 'неизвестно') {
+        console.log(`🔄 Выход из режима свайпа. Причина: ${reason}`);
         this.unblockScroll();
         this.isConnectionMode = false;
         this.currentMatchId = null;
@@ -1344,43 +1087,23 @@ const Swipe = {
     }
 };
 
-// Автоматическая инициализация
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     console.log('✅ Swipe: DOM загружен');
     window.Swipe = Swipe;
     
-    var swipeScreen = document.getElementById('swipeScreen');
-    if (swipeScreen) {
-        var observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    if (swipeScreen.classList.contains('active') && !Swipe.isInitialized) {
-                        console.log('🎬 swipeScreen активирован');
-                        Swipe.init(Swipe.mode || 'FACEIT');
-                    }
-                }
-            });
-        });
-        observer.observe(swipeScreen, { attributes: true });
-    }
-    
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', () => {
         if (Swipe.card && !Swipe.isConnectionMode) Swipe.adjustCardSize();
         if (Swipe.isConnectionMode) Swipe.adjustConnectionCardSize();
     });
     
-    window.addEventListener('orientationchange', function() {
-        setTimeout(function() {
+    window.addEventListener('orientationchange', () => {
+        setTimeout(() => {
             if (Swipe.card && !Swipe.isConnectionMode) Swipe.adjustCardSize();
             if (Swipe.isConnectionMode) Swipe.adjustConnectionCardSize();
         }, 200);
     });
 });
 
-if (document.getElementById('swipeScreen') && document.getElementById('swipeScreen').classList.contains('active')) {
-    setTimeout(function() {
-        if (!Swipe.isInitialized) {
-            Swipe.init(Swipe.mode || 'FACEIT');
-        }
-    }, 100);
+if (document.getElementById('swipeScreen')?.classList.contains('active')) {
+    setTimeout(() => Swipe.init(), 100);
 }
