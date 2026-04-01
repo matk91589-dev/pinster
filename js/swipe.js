@@ -79,7 +79,7 @@ const Swipe = {
         
         this.initResizeObserver();
         
-        console.log('✅ Swipe.init() завершён');
+        console.log('✅ Swipe.init() завершён, isInitialized:', this.isInitialized);
     },
     
     initResizeObserver() {
@@ -87,16 +87,22 @@ const Swipe = {
         
         this.resizeObserver = new ResizeObserver(() => {
             this.updateButtonsPosition();
+            // Обновляем карточку ожидания при изменении размера
+            if (this.isConnectionMode) {
+                this.adjustConnectionCardSize();
+            }
         });
         
         if (this.card) this.resizeObserver.observe(this.card);
         if (this.cardWrapper) this.resizeObserver.observe(this.cardWrapper);
         
-        window.addEventListener('resize', () => this.updateButtonsPosition());
-        window.addEventListener('scroll', () => this.updateButtonsPosition());
-        window.addEventListener('orientationchange', () => {
-            setTimeout(() => this.updateButtonsPosition(), 200);
+        window.addEventListener('resize', () => {
+            this.updateButtonsPosition();
+            if (this.isConnectionMode) {
+                this.adjustConnectionCardSize();
+            }
         });
+        window.addEventListener('scroll', () => this.updateButtonsPosition());
     },
     
     createCardWrapper() {
@@ -130,6 +136,7 @@ const Swipe = {
         wrapper.appendChild(originalCard);
         
         this.cardWrapper = wrapper;
+        
         this.createSideButtonsInWrapper();
         
         console.log('✅ Обёртка создана');
@@ -145,23 +152,11 @@ const Swipe = {
         
         const leftWrapper = document.createElement('div');
         leftWrapper.className = 'swipe-side-btn skip-btn';
-        leftWrapper.innerHTML = `
-            <div class="swipe-side-btn-inner">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15 18L9 12L15 6" stroke="#FF5E5E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </div>
-        `;
+        leftWrapper.innerHTML = '<div class="swipe-side-btn-inner"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#FF5E5E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
         
         const rightWrapper = document.createElement('div');
         rightWrapper.className = 'swipe-side-btn invite-btn';
-        rightWrapper.innerHTML = `
-            <div class="swipe-side-btn-inner">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 18L15 12L9 6" stroke="#4CAF50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </div>
-        `;
+        rightWrapper.innerHTML = '<div class="swipe-side-btn-inner"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 18L15 12L9 6" stroke="#4CAF50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
         
         this.cardWrapper.appendChild(leftWrapper);
         this.cardWrapper.appendChild(rightWrapper);
@@ -254,25 +249,25 @@ const Swipe = {
             rightOffset = Math.max(rightOffset, 8);
         }
         
-        this.skipBtn.style.width = `${btnWidth}px`;
-        this.skipBtn.style.height = `${btnHeight}px`;
-        this.skipBtn.style.minHeight = `${btnHeight}px`;
+        this.skipBtn.style.width = btnWidth + 'px';
+        this.skipBtn.style.height = btnHeight + 'px';
+        this.skipBtn.style.minHeight = btnHeight + 'px';
         this.skipBtn.style.top = '50%';
         this.skipBtn.style.transform = 'translateY(-50%)';
-        this.skipBtn.style.left = `-${leftOffset}px`;
+        this.skipBtn.style.left = '-' + leftOffset + 'px';
         
-        this.inviteBtn.style.width = `${btnWidth}px`;
-        this.inviteBtn.style.height = `${btnHeight}px`;
-        this.inviteBtn.style.minHeight = `${btnHeight}px`;
+        this.inviteBtn.style.width = btnWidth + 'px';
+        this.inviteBtn.style.height = btnHeight + 'px';
+        this.inviteBtn.style.minHeight = btnHeight + 'px';
         this.inviteBtn.style.top = '50%';
         this.inviteBtn.style.transform = 'translateY(-50%)';
-        this.inviteBtn.style.right = `-${rightOffset}px`;
+        this.inviteBtn.style.right = '-' + rightOffset + 'px';
         
         const iconSize = Math.min(btnWidth * 0.55, 22);
         const allSvgs = document.querySelectorAll('.swipe-side-btn svg');
         allSvgs.forEach(svg => {
-            svg.style.width = `${iconSize}px`;
-            svg.style.height = `${iconSize}px`;
+            svg.style.width = iconSize + 'px';
+            svg.style.height = iconSize + 'px';
         });
     },
     
@@ -296,8 +291,8 @@ const Swipe = {
     animateAndAccept() {
         if (!this.cardWrapper) return;
         
-        this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.34, 1.2, 0.64, 1)`;
-        this.cardWrapper.style.transform = `translateX(200%) rotate(15deg) scale(0.85)`;
+        this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
+        this.cardWrapper.style.transform = 'translateX(200%) rotate(15deg) scale(0.85)';
         
         setTimeout(() => {
             this.acceptPlayer();
@@ -307,8 +302,8 @@ const Swipe = {
     animateAndReject() {
         if (!this.cardWrapper) return;
         
-        this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.34, 1.2, 0.64, 1)`;
-        this.cardWrapper.style.transform = `translateX(-200%) rotate(-15deg) scale(0.85)`;
+        this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
+        this.cardWrapper.style.transform = 'translateX(-200%) rotate(-15deg) scale(0.85)';
         
         setTimeout(() => {
             this.rejectPlayer();
@@ -317,7 +312,7 @@ const Swipe = {
     
     resetCardPosition() {
         if (!this.cardWrapper) return;
-        this.cardWrapper.style.transition = `transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1)`;
+        this.cardWrapper.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1)';
         this.cardWrapper.style.transform = 'translateX(0) rotate(0deg) scale(1)';
         this.currentX = 0;
         
@@ -337,12 +332,53 @@ const Swipe = {
     
     adjustConnectionCardSize() {
         const connectionCard = document.querySelector('#connectionScreen .conn-swipe-card');
-        if (!connectionCard) return;
+        if (!connectionCard) {
+            console.log('⚠️ Карточка ожидания не найдена');
+            return;
+        }
         
-        connectionCard.style.marginLeft = 'auto';
-        connectionCard.style.marginRight = 'auto';
-        
-        console.log('📐 Карточка ожидания центрирована');
+        // Копируем размеры с карточки свайпа
+        if (this.card) {
+            const swipeCardStyles = window.getComputedStyle(this.card);
+            
+            // Копируем основные размеры
+            connectionCard.style.width = swipeCardStyles.width;
+            connectionCard.style.maxWidth = swipeCardStyles.maxWidth;
+            connectionCard.style.borderRadius = swipeCardStyles.borderRadius;
+            connectionCard.style.boxShadow = swipeCardStyles.boxShadow;
+            
+            // Сбрасываем высоту, чтобы она подстроилась под контент
+            connectionCard.style.minHeight = 'auto';
+            connectionCard.style.height = 'auto';
+            
+            // Центрируем
+            connectionCard.style.marginLeft = 'auto';
+            connectionCard.style.marginRight = 'auto';
+            
+            // Обновляем размеры аватарок
+            const selfAvatar = document.querySelector('#connectionScreen .conn-self-avatar');
+            const teammateAvatar = document.querySelector('#connectionScreen .conn-teammate-avatar');
+            const swipeAvatar = document.querySelector('#swipeCard .swipe-avatar');
+            
+            if (selfAvatar && teammateAvatar && swipeAvatar) {
+                const avatarStyles = window.getComputedStyle(swipeAvatar);
+                const avatarWidth = avatarStyles.width;
+                
+                selfAvatar.style.width = avatarWidth;
+                selfAvatar.style.height = avatarWidth;
+                teammateAvatar.style.width = avatarWidth;
+                teammateAvatar.style.height = avatarWidth;
+            }
+            
+            console.log('📐 Карточка ожидания подогнана под карточку свайпа');
+            console.log('  - Ширина карточки:', connectionCard.style.width);
+            console.log('  - Ширина аватарок:', selfAvatar?.style.width);
+        } else {
+            // Если карточки свайпа нет, просто центрируем
+            connectionCard.style.marginLeft = 'auto';
+            connectionCard.style.marginRight = 'auto';
+            console.log('📐 Карточка ожидания центрирована');
+        }
     },
     
     startSwipeHint() {
@@ -631,7 +667,7 @@ const Swipe = {
         
         if (this.cardWrapper) {
             this.cardWrapper.style.transition = 'none';
-            this.cardWrapper.style.transform = `translateX(${deltaX}px) rotate(${rotate}deg) scale(${scale})`;
+            this.cardWrapper.style.transform = 'translateX(' + deltaX + 'px) rotate(' + rotate + 'deg) scale(' + scale + ')';
         }
         
         if (deltaX > 0) {
@@ -660,16 +696,16 @@ const Swipe = {
             
             if (deltaX > 0) {
                 if (this.cardWrapper) {
-                    this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.34, 1.2, 0.64, 1)`;
-                    this.cardWrapper.style.transform = `translateX(200%) rotate(15deg) scale(0.85)`;
+                    this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
+                    this.cardWrapper.style.transform = 'translateX(200%) rotate(15deg) scale(0.85)';
                 }
                 setTimeout(() => {
                     this.acceptPlayer();
                 }, this.ANIMATION_DURATION);
             } else {
                 if (this.cardWrapper) {
-                    this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.34, 1.2, 0.64, 1)`;
-                    this.cardWrapper.style.transform = `translateX(-200%) rotate(-15deg) scale(0.85)`;
+                    this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
+                    this.cardWrapper.style.transform = 'translateX(-200%) rotate(-15deg) scale(0.85)';
                 }
                 setTimeout(() => {
                     this.rejectPlayer();
@@ -754,7 +790,7 @@ const Swipe = {
             }
             
             try {
-                const res = await fetch(`https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/status/${matchId}`);
+                const res = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/status/' + matchId);
                 const data = await res.json();
                 
                 if (data.status === 'both_accepted') {
@@ -792,8 +828,8 @@ const Swipe = {
         if (status === 'both_accepted') {
             if (teammateAvatar) {
                 teammateAvatar.classList.add('connected');
-                teammateAvatar.style.width = '56px';
-                teammateAvatar.style.height = '56px';
+                teammateAvatar.style.width = '70px';
+                teammateAvatar.style.height = '70px';
                 teammateAvatar.style.filter = 'grayscale(0)';
                 teammateAvatar.style.opacity = '1';
                 teammateAvatar.style.transform = 'scale(1)';
@@ -904,7 +940,7 @@ const Swipe = {
             const timeLeft = this.getTimeLeft();
             
             if (timeLeft <= 0) {
-                timerElement.innerHTML = `0с`;
+                timerElement.innerHTML = '0с';
                 clearInterval(this.connectionTimer);
                 this.connectionTimer = null;
                 if (this.matchPolling) {
@@ -918,7 +954,7 @@ const Swipe = {
             if (timeLeft < 10) timerElement.classList.add('warning');
             else timerElement.classList.remove('warning');
             
-            timerElement.innerHTML = `${timeLeft}с`;
+            timerElement.innerHTML = timeLeft + 'с';
         };
         
         updateTimer();
@@ -929,88 +965,47 @@ const Swipe = {
         console.log('🔄 Показываем экран соединения');
         this.isConnectionMode = true;
         
-        // НЕ СКРЫВАЕМ НИЧЕГО! Все элементы остаются на месте
+        if (this.skipBtn) this.skipBtn.style.display = 'none';
+        if (this.inviteBtn) this.inviteBtn.style.display = 'none';
+        if (this.labelLeft) this.labelLeft.style.display = 'none';
+        if (this.labelRight) this.labelRight.style.display = 'none';
+        if (this.hint) this.hint.style.display = 'none';
         
         document.getElementById('swipeScreen').classList.remove('active');
         document.getElementById('connectionScreen').classList.add('active');
         
-        // Устанавливаем ник тиммейта
         const teammateNickEl = document.querySelector('#connectionScreen .conn-teammate-nick');
         if (teammateNickEl) teammateNickEl.textContent = this.currentPlayer?.nick || 'Игрок';
         
-        // Устанавливаем аватар тиммейта
         const teammateAvatar = document.querySelector('#connectionScreen .conn-teammate-avatar .tg-avatar-svg');
         if (teammateAvatar && this.currentPlayer?.avatar) {
-            teammateAvatar.innerHTML = `<img src="${this.currentPlayer.avatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+            teammateAvatar.innerHTML = '<img src="' + this.currentPlayer.avatar + '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">';
         } else if (teammateAvatar) {
-            teammateAvatar.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>`;
+            teammateAvatar.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
         }
         
-        // Устанавливаем аватар текущего пользователя
         const selfAvatar = document.querySelector('#connectionScreen .conn-self-avatar .tg-avatar-svg');
         if (selfAvatar) {
             const myAvatar = localStorage.getItem('pingster_avatar') || (window.Profile && Profile.savedAvatarUrl);
             if (myAvatar) {
-                selfAvatar.innerHTML = `<img src="${myAvatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                selfAvatar.innerHTML = '<img src="' + myAvatar + '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">';
             } else {
-                selfAvatar.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>`;
+                selfAvatar.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
             }
         }
         
-        // Настраиваем размеры аватарок
-        const selfAvatarContainer = document.querySelector('#connectionScreen .conn-self-avatar');
-        const teammateAvatarContainer = document.querySelector('#connectionScreen .conn-teammate-avatar');
-        
-        if (selfAvatarContainer) {
-            selfAvatarContainer.style.width = '56px';
-            selfAvatarContainer.style.height = '56px';
-            selfAvatarContainer.style.border = '2px solid var(--border-color)';
-            selfAvatarContainer.style.filter = 'grayscale(0)';
-            selfAvatarContainer.style.opacity = '1';
-        }
-        
-        if (teammateAvatarContainer) {
-            teammateAvatarContainer.classList.remove('connected');
-            teammateAvatarContainer.style.width = '48px';
-            teammateAvatarContainer.style.height = '48px';
-            teammateAvatarContainer.style.border = '2px solid var(--border-color)';
-            teammateAvatarContainer.style.filter = 'grayscale(0.7)';
-            teammateAvatarContainer.style.opacity = '0.7';
-            teammateAvatarContainer.style.transform = 'scale(1)';
-        }
-        
-        // Настраиваем линию соединения
-        const connectionLine = document.querySelector('#connectionScreen .conn-line');
-        if (connectionLine) {
-            connectionLine.classList.remove('connected');
-            connectionLine.style.background = 'var(--border-color)';
-            connectionLine.style.width = '60px';
-            connectionLine.style.height = '3px';
-            const linePulse = connectionLine.querySelector('.conn-line-pulse');
-            if (linePulse) {
-                linePulse.style.animation = 'connPulseMove 1.5s infinite';
-            }
-        }
-        
-        // Статус
-        const statusEl = document.querySelector('#connectionScreen .conn-status');
-        if (statusEl) {
-            statusEl.innerHTML = 'ожидание тиммейта...';
-            statusEl.classList.remove('active');
-            statusEl.style.color = 'var(--text-secondary)';
-            statusEl.style.fontSize = '14px';
-        }
+        // Центрируем и подгоняем размеры
+        setTimeout(() => {
+            this.adjustConnectionCardSize();
+        }, 100);
         
         this.updateChatButton(false);
         this.startConnectionTimer();
         
-        // Центрируем карточку
-        setTimeout(() => this.adjustConnectionCardSize(), 50);
-        
         console.log('✅ Экран соединения показан');
     },
     
-    updateChatButton(active, chatLink = null, inviteLink = null) {
+    updateChatButton(active, chatLink, inviteLink) {
         console.log('🔘 updateChatButton called, active:', active, 'chatLink:', chatLink);
         
         let button = document.querySelector('#connectionScreen .conn-chat-button');
@@ -1034,7 +1029,7 @@ const Swipe = {
             button.disabled = false;
             button.style.pointerEvents = 'auto';
             button.style.opacity = '1';
-            button.style.background = 'var(--accent, #FF5500)';
+            button.style.background = '#FF5500';
             button.style.border = 'none';
             button.style.color = 'white';
             
@@ -1050,7 +1045,7 @@ const Swipe = {
                 this.openChatLink();
             };
             
-            console.log('✅ Кнопка чата АКТИВИРОВАНА, классы после:', button.className);
+            console.log('✅ Кнопка чата АКТИВИРОВАНА');
             console.log('✅ Ссылка чата:', chatLink);
         } else {
             button.classList.remove('active');
@@ -1205,12 +1200,9 @@ const Swipe = {
         const hasAvatar = player.avatar && player.avatar !== 'null' && player.avatar !== '';
         
         if (hasAvatar) {
-            avatarContainer.innerHTML = `<img src="${player.avatar}" alt="avatar" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:50%;">`;
+            avatarContainer.innerHTML = '<img src="' + player.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:50%;">';
         } else {
-            avatarContainer.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block; margin:auto;">
-                <circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/>
-                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/>
-            </svg>`;
+            avatarContainer.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" style="display:block; margin:auto;"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
         }
     },
     
@@ -1331,12 +1323,15 @@ const Swipe = {
     exitConnectionMode() {
         this.isConnectionMode = false;
         if (this.matchPolling) clearInterval(this.matchPolling);
-        // НЕ ВОССТАНАВЛИВАЕМ СКРЫТЫЕ ЭЛЕМЕНТЫ, ПОТОМУ ЧТО НИЧЕГО НЕ СКРЫВАЛИ
+        if (this.labelLeft) this.labelLeft.style.display = 'block';
+        if (this.labelRight) this.labelRight.style.display = 'block';
+        if (this.hint) this.hint.style.display = 'block';
         this.exitSwipeMode('exitConnectionMode');
     },
     
-    exitSwipeMode(reason = 'неизвестно') {
-        console.log(`🔄 Выход из свайпа. Причина: ${reason}`);
+    exitSwipeMode(reason) {
+        reason = reason || 'неизвестно';
+        console.log('🔄 Выход из свайпа. Причина:', reason);
         this.unblockScroll();
         this.isConnectionMode = false;
         this.currentMatchId = null;
@@ -1359,14 +1354,14 @@ const Swipe = {
 };
 
 // Автоматическая инициализация
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Swipe: DOM загружен');
     window.Swipe = Swipe;
     
-    const swipeScreen = document.getElementById('swipeScreen');
+    var swipeScreen = document.getElementById('swipeScreen');
     if (swipeScreen) {
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     if (swipeScreen.classList.contains('active') && !Swipe.isInitialized) {
                         console.log('🎬 swipeScreen активирован');
@@ -1378,21 +1373,21 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(swipeScreen, { attributes: true });
     }
     
-    window.addEventListener('resize', () => {
+    window.addEventListener('resize', function() {
         if (Swipe.card && !Swipe.isConnectionMode) Swipe.adjustCardSize();
         if (Swipe.isConnectionMode) Swipe.adjustConnectionCardSize();
     });
     
-    window.addEventListener('orientationchange', () => {
-        setTimeout(() => {
+    window.addEventListener('orientationchange', function() {
+        setTimeout(function() {
             if (Swipe.card && !Swipe.isConnectionMode) Swipe.adjustCardSize();
             if (Swipe.isConnectionMode) Swipe.adjustConnectionCardSize();
         }, 200);
     });
 });
 
-if (document.getElementById('swipeScreen')?.classList.contains('active')) {
-    setTimeout(() => {
+if (document.getElementById('swipeScreen') && document.getElementById('swipeScreen').classList.contains('active')) {
+    setTimeout(function() {
         if (!Swipe.isInitialized) {
             Swipe.init(Swipe.mode || 'FACEIT');
         }
