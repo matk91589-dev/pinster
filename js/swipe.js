@@ -87,12 +87,21 @@ const Swipe = {
         
         this.resizeObserver = new ResizeObserver(() => {
             this.updateButtonsPosition();
+            // При изменении размера карточки свайпа обновляем и карточку ожидания
+            if (this.isConnectionMode) {
+                this.adjustConnectionCardSize();
+            }
         });
         
         if (this.card) this.resizeObserver.observe(this.card);
         if (this.cardWrapper) this.resizeObserver.observe(this.cardWrapper);
         
-        window.addEventListener('resize', () => this.updateButtonsPosition());
+        window.addEventListener('resize', () => {
+            this.updateButtonsPosition();
+            if (this.isConnectionMode) {
+                this.adjustConnectionCardSize();
+            }
+        });
         window.addEventListener('scroll', () => this.updateButtonsPosition());
     },
     
@@ -325,10 +334,28 @@ const Swipe = {
         const connectionCard = document.querySelector('#connectionScreen .conn-swipe-card');
         if (!connectionCard) return;
         
+        // Центрируем карточку
         connectionCard.style.marginLeft = 'auto';
         connectionCard.style.marginRight = 'auto';
         
-        console.log('📐 Карточка ожидания центрирована');
+        // Копируем размеры с карточки свайпа
+        if (this.card) {
+            const swipeCardStyles = window.getComputedStyle(this.card);
+            const swipeCardRect = this.card.getBoundingClientRect();
+            
+            // Устанавливаем такие же размеры
+            connectionCard.style.width = swipeCardStyles.width;
+            connectionCard.style.maxWidth = swipeCardStyles.maxWidth;
+            connectionCard.style.maxHeight = swipeCardStyles.maxHeight;
+            connectionCard.style.borderRadius = swipeCardStyles.borderRadius;
+            
+            // Если нужно, подгоняем высоту
+            if (swipeCardRect.height > 0) {
+                connectionCard.style.minHeight = 'auto';
+            }
+        }
+        
+        console.log('📐 Карточка ожидания подогнана под карточку свайпа');
     },
     
     startSwipeHint() {
@@ -778,8 +805,8 @@ const Swipe = {
         if (status === 'both_accepted') {
             if (teammateAvatar) {
                 teammateAvatar.classList.add('connected');
-                teammateAvatar.style.width = '56px';
-                teammateAvatar.style.height = '56px';
+                teammateAvatar.style.width = '70px';
+                teammateAvatar.style.height = '70px';
                 teammateAvatar.style.filter = 'grayscale(0)';
                 teammateAvatar.style.opacity = '1';
                 teammateAvatar.style.transform = 'scale(1)';
@@ -948,8 +975,8 @@ const Swipe = {
         const teammateAvatarContainer = document.querySelector('#connectionScreen .conn-teammate-avatar');
         
         if (selfAvatarContainer) {
-            selfAvatarContainer.style.width = '56px';
-            selfAvatarContainer.style.height = '56px';
+            selfAvatarContainer.style.width = '70px';
+            selfAvatarContainer.style.height = '70px';
             selfAvatarContainer.style.border = '2px solid var(--border-color)';
             selfAvatarContainer.style.filter = 'grayscale(0)';
             selfAvatarContainer.style.opacity = '1';
@@ -957,11 +984,11 @@ const Swipe = {
         
         if (teammateAvatarContainer) {
             teammateAvatarContainer.classList.remove('connected');
-            teammateAvatarContainer.style.width = '48px';
-            teammateAvatarContainer.style.height = '48px';
+            teammateAvatarContainer.style.width = '70px';
+            teammateAvatarContainer.style.height = '70px';
             teammateAvatarContainer.style.border = '2px solid var(--border-color)';
-            teammateAvatarContainer.style.filter = 'grayscale(0.7)';
-            teammateAvatarContainer.style.opacity = '0.7';
+            teammateAvatarContainer.style.filter = 'grayscale(0.5)';
+            teammateAvatarContainer.style.opacity = '0.8';
             teammateAvatarContainer.style.transform = 'scale(1)';
         }
         
@@ -970,10 +997,10 @@ const Swipe = {
             connectionLine.classList.remove('connected');
             connectionLine.style.background = 'var(--border-color)';
             connectionLine.style.width = '60px';
-            connectionLine.style.height = '3px';
+            connectionLine.style.height = '2px';
             const linePulse = connectionLine.querySelector('.conn-line-pulse');
             if (linePulse) {
-                linePulse.style.animation = 'connPulseMove 1.5s infinite';
+                linePulse.style.animation = 'connPulse 1.5s infinite';
             }
         }
         
