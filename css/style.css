@@ -3965,3 +3965,21 @@ html {
         box-shadow: 4px 0 16px rgba(76, 175, 80, 0.4);
     }
 }
+
+/* ===== ФОРСИРОВАННЫЕ СТИЛИ ЭКРАНОВ (ВРЕМЕННО) ===== */
+.screen {
+    display: none !important;
+    width: 100% !important;
+    flex: 1 !important;
+    flex-direction: column !important;
+    opacity: 0 !important;
+    transform: translateY(8px) scale(0.98) !important;
+    transition: opacity 0.25s ease, transform 0.25s ease !important;
+    min-height: 0 !important;
+}
+
+.screen.active {
+    display: flex !important;
+    opacity: 1 !important;
+    transform: translateY(0) scale(1) !important;
+}
