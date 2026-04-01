@@ -188,8 +188,12 @@ const Swipe = {
     adjustConnectionCardSize() {
         const connectionCard = document.querySelector('#connectionScreen .conn-swipe-card');
         if (!connectionCard) return;
+        
+        // Просто центрируем карточку, не копируем лишние стили
         connectionCard.style.marginLeft = 'auto';
         connectionCard.style.marginRight = 'auto';
+        
+        console.log('📐 Карточка ожидания центрирована');
     },
     
     startSwipeHint() {
@@ -626,22 +630,47 @@ const Swipe = {
     
     updateConnectionUI(status) {
         const statusEl = document.getElementById('connectionStatus');
-        const connectionLine = document.querySelector('.connection-line');
-        const teammateAvatar = document.querySelector('.teammate-avatar');
+        const connectionLine = document.querySelector('#connectionScreen .conn-line');
+        const teammateAvatar = document.querySelector('#connectionScreen .conn-teammate-avatar');
         const connectionTimer = document.getElementById('connectionTimer');
         
         if (status === 'both_accepted') {
-            if (statusEl) {
-                statusEl.innerHTML = 'Матч создан';
-                statusEl.classList.add('active');
+            if (teammateAvatar) {
+                teammateAvatar.classList.add('connected');
+                teammateAvatar.style.width = '70px';
+                teammateAvatar.style.height = '70px';
+                teammateAvatar.style.filter = 'grayscale(0)';
+                teammateAvatar.style.opacity = '1';
+                teammateAvatar.style.transform = 'scale(1)';
+                teammateAvatar.style.transition = 'all 0.3s cubic-bezier(0.34, 1.2, 0.64, 1)';
             }
-            if (teammateAvatar) teammateAvatar.classList.add('connected');
-            if (connectionLine) connectionLine.classList.add('connected');
-            if (connectionTimer) connectionTimer.classList.remove('warning');
+            
+            if (connectionLine) {
+                connectionLine.classList.add('connected');
+                connectionLine.style.background = 'var(--accent)';
+                const linePulse = connectionLine.querySelector('.conn-line-pulse');
+                if (linePulse) linePulse.style.display = 'none';
+            }
+            
+            if (statusEl) {
+                statusEl.innerHTML = 'матч создан';
+                statusEl.classList.add('active');
+                statusEl.style.color = 'var(--accent)';
+            }
+            
+            if (connectionTimer) {
+                connectionTimer.classList.remove('warning');
+            }
+            
+            if (this.connectionTimer) {
+                clearInterval(this.connectionTimer);
+                this.connectionTimer = null;
+            }
+            
             if (window.Settings && window.Settings.success) window.Settings.success();
         } else if (status === 'rejected') {
             if (statusEl) {
-                statusEl.innerHTML = 'Тиммейт отклонил';
+                statusEl.innerHTML = 'тиммейт отклонил';
                 statusEl.style.color = '#FF3B30';
             }
             if (window.Settings && window.Settings.error) window.Settings.error();
@@ -754,72 +783,141 @@ const Swipe = {
         document.getElementById('swipeScreen').classList.remove('active');
         document.getElementById('connectionScreen').classList.add('active');
         
-        document.getElementById('teammateNick').textContent = this.currentPlayer?.nick || '';
+        // Устанавливаем ник тиммейта
+        const teammateNickEl = document.querySelector('#connectionScreen .conn-teammate-nick');
+        if (teammateNickEl) teammateNickEl.textContent = this.currentPlayer?.nick || 'Игрок';
         
-        const teammateInfo = document.querySelector('.teammate-info');
-        if (teammateInfo && this.currentPlayer) {
-            teammateInfo.setAttribute('data-player-id', this.currentPlayer.player_id || '');
-        }
-        
-        const teammateAvatar = document.querySelector('.teammate-avatar .tg-avatar-svg');
+        // Устанавливаем аватар тиммейта
+        const teammateAvatar = document.querySelector('#connectionScreen .conn-teammate-avatar .tg-avatar-svg');
         if (teammateAvatar && this.currentPlayer?.avatar) {
-            teammateAvatar.innerHTML = `<img src="${this.currentPlayer.avatar}" class="teammate-avatar-img" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+            teammateAvatar.innerHTML = `<img src="${this.currentPlayer.avatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+        } else if (teammateAvatar) {
+            teammateAvatar.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>`;
         }
         
-        const selfAvatar = document.querySelector('.self-avatar .tg-avatar-svg');
+        // Устанавливаем аватар текущего пользователя
+        const selfAvatar = document.querySelector('#connectionScreen .conn-self-avatar .tg-avatar-svg');
         if (selfAvatar) {
             const myAvatar = localStorage.getItem('pingster_avatar') || (window.Profile && Profile.savedAvatarUrl);
             if (myAvatar) {
                 selfAvatar.innerHTML = `<img src="${myAvatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+            } else {
+                selfAvatar.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>`;
             }
         }
         
-        document.querySelector('.teammate-avatar')?.classList.remove('connected');
-        document.querySelector('.connection-line')?.classList.remove('connected');
+        // Настраиваем размеры аватарок
+        const selfAvatarContainer = document.querySelector('#connectionScreen .conn-self-avatar');
+        const teammateAvatarContainer = document.querySelector('#connectionScreen .conn-teammate-avatar');
         
-        const statusEl = document.getElementById('connectionStatus');
+        if (selfAvatarContainer) {
+            selfAvatarContainer.style.width = '70px';
+            selfAvatarContainer.style.height = '70px';
+            selfAvatarContainer.style.border = '2px solid var(--border-color)';
+            selfAvatarContainer.style.filter = 'grayscale(0)';
+            selfAvatarContainer.style.opacity = '1';
+        }
+        
+        if (teammateAvatarContainer) {
+            teammateAvatarContainer.classList.remove('connected');
+            teammateAvatarContainer.style.width = '70px';
+            teammateAvatarContainer.style.height = '70px';
+            teammateAvatarContainer.style.border = '2px solid var(--border-color)';
+            teammateAvatarContainer.style.filter = 'grayscale(0.5)';
+            teammateAvatarContainer.style.opacity = '0.8';
+            teammateAvatarContainer.style.transform = 'scale(1)';
+        }
+        
+        // Настраиваем линию соединения
+        const connectionLine = document.querySelector('#connectionScreen .conn-line');
+        if (connectionLine) {
+            connectionLine.classList.remove('connected');
+            connectionLine.style.background = 'var(--border-color)';
+            connectionLine.style.width = '60px';
+            connectionLine.style.height = '2px';
+            const linePulse = connectionLine.querySelector('.conn-line-pulse');
+            if (linePulse) {
+                linePulse.style.animation = 'connPulse 1.5s infinite';
+            }
+        }
+        
+        // Статус
+        const statusEl = document.querySelector('#connectionScreen .conn-status');
         if (statusEl) {
-            statusEl.innerHTML = 'Ожидание тиммейта';
+            statusEl.innerHTML = 'ожидание тиммейта...';
             statusEl.classList.remove('active');
-            statusEl.style.color = '';
+            statusEl.style.color = 'var(--text-secondary)';
+            statusEl.style.fontSize = '14px';
         }
         
         this.updateChatButton(false);
         this.startConnectionTimer();
+        
+        // Центрируем карточку
         setTimeout(() => this.adjustConnectionCardSize(), 50);
+        
+        console.log('✅ Экран соединения показан');
     },
     
     updateChatButton(active, chatLink = null, inviteLink = null) {
-        const button = document.getElementById('tgChatButton');
+        console.log('🔘 updateChatButton called, active:', active, 'chatLink:', chatLink);
+        
+        let button = document.querySelector('#connectionScreen .conn-chat-button');
+        if (!button) {
+            button = document.querySelector('.tg-chat-button');
+        }
         const buttonText = document.getElementById('tgChatButtonText');
         
-        if (!button || !buttonText) return;
+        if (!button) {
+            console.error('❌ Кнопка чата не найдена в DOM!');
+            return;
+        }
+        
+        console.log('✅ Кнопка чата найдена, текущие классы:', button.className);
         
         button.style.display = 'flex';
-        buttonText.textContent = 'Перейти в чат';
+        if (buttonText) buttonText.textContent = 'Перейти в чат';
         
         if (active && chatLink) {
             button.classList.remove('disabled');
             button.classList.add('active');
             button.disabled = false;
+            button.style.pointerEvents = 'auto';
+            button.style.opacity = '1';
+            button.style.background = '#FF5500';
+            button.style.border = 'none';
+            button.style.color = 'white';
             
             this.chatLink = chatLink;
             this.inviteLink = inviteLink;
             localStorage.setItem('currentChatLink', chatLink);
             if (inviteLink) localStorage.setItem('currentInviteLink', inviteLink);
             
-            button.onclick = () => this.openChatLink();
+            button.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔘 Кнопка чата нажата, открываем:', chatLink);
+                this.openChatLink();
+            };
+            
+            console.log('✅ Кнопка чата АКТИВИРОВАНА');
+            console.log('✅ Ссылка чата:', chatLink);
         } else {
             button.classList.remove('active');
             button.classList.add('disabled');
             button.disabled = true;
+            button.style.pointerEvents = 'none';
+            button.style.opacity = '0.5';
             button.onclick = null;
+            console.log('❌ Кнопка чата деактивирована');
         }
     },
     
     openChatLink() {
         let chatLink = this.chatLink || localStorage.getItem('currentChatLink');
         let inviteLink = this.inviteLink || localStorage.getItem('currentInviteLink');
+        
+        console.log('🔗 openChatLink вызван, chatLink:', chatLink, 'inviteLink:', inviteLink);
         
         if (chatLink) {
             const tg = window.Telegram?.WebApp;
@@ -833,9 +931,13 @@ const Swipe = {
                     setTimeout(() => window.open(chatLink, '_blank'), 1500);
                 }
             } else {
-                if (tg?.openTelegramLink) tg.openTelegramLink(chatLink);
-                else window.open(chatLink, '_blank');
+                if (tg?.openTelegramLink) {
+                    tg.openTelegramLink(chatLink);
+                } else {
+                    window.open(chatLink, '_blank');
+                }
             }
+            console.log('✅ Открываем ссылку чата:', chatLink);
         } else {
             console.error('❌ Ссылка не найдена');
             alert('Ссылка на чат не найдена');
@@ -1031,7 +1133,7 @@ const Swipe = {
             this.matchPolling = null;
         }
         
-        const statusEl = document.getElementById('connectionStatus');
+        const statusEl = document.querySelector('#connectionScreen .conn-status');
         if (statusEl) {
             statusEl.innerHTML = 'Время истекло';
             statusEl.style.color = '#FF3B30';
@@ -1044,7 +1146,7 @@ const Swipe = {
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         if (this.matchPolling) clearInterval(this.matchPolling);
         
-        const statusEl = document.getElementById('connectionStatus');
+        const statusEl = document.querySelector('#connectionScreen .conn-status');
         if (statusEl) {
             statusEl.innerHTML = 'Тиммейт отклонил';
             statusEl.style.color = '#FF3B30';
