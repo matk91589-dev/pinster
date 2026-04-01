@@ -831,11 +831,7 @@ const Swipe = {
         console.log('🔄 Показываем экран соединения');
         this.isConnectionMode = true;
         
-        if (this.skipBtn) this.skipBtn.style.display = 'none';
-        if (this.inviteBtn) this.inviteBtn.style.display = 'none';
-        if (this.labelLeft) this.labelLeft.style.display = 'none';
-        if (this.labelRight) this.labelRight.style.display = 'none';
-        if (this.hint) this.hint.style.display = 'none';
+        // НИЧЕГО НЕ СКРЫВАЕМ!
         
         document.getElementById('swipeScreen').classList.remove('active');
         document.getElementById('connectionScreen').classList.add('active');
@@ -1150,9 +1146,6 @@ const Swipe = {
     exitConnectionMode() {
         this.isConnectionMode = false;
         if (this.matchPolling) clearInterval(this.matchPolling);
-        if (this.labelLeft) this.labelLeft.style.display = 'block';
-        if (this.labelRight) this.labelRight.style.display = 'block';
-        if (this.hint) this.hint.style.display = 'block';
         this.exitSwipeMode('exitConnectionMode');
     },
     
