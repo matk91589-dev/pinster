@@ -289,6 +289,11 @@ const Swipe = {
         this.cardWrapper.style.transform = 'translateX(200%) rotate(15deg) scale(0.85)';
         
         setTimeout(() => {
+            // Сбрасываем transform перед переключением режима
+            if (this.cardWrapper) {
+                this.cardWrapper.style.transition = '';
+                this.cardWrapper.style.transform = '';
+            }
             this.acceptPlayer();
         }, this.ANIMATION_DURATION);
     },
@@ -300,6 +305,11 @@ const Swipe = {
         this.cardWrapper.style.transform = 'translateX(-200%) rotate(-15deg) scale(0.85)';
         
         setTimeout(() => {
+            // Сбрасываем transform перед переключением
+            if (this.cardWrapper) {
+                this.cardWrapper.style.transition = '';
+                this.cardWrapper.style.transform = '';
+            }
             this.rejectPlayer();
         }, this.ANIMATION_DURATION);
     },
@@ -363,10 +373,21 @@ const Swipe = {
         
         this.isWaitingMode = true;
         
-        // Скрываем таймер свайпа, показываем таймер ожидания (если есть)
+        // Скрываем таймер свайпа
         const swipeTimer = document.getElementById('swipeTimer');
         if (swipeTimer) {
             swipeTimer.style.display = 'none';
+        }
+        
+        // ВОССТАНАВЛИВАЕМ ПОЗИЦИЮ КАРТОЧКИ
+        if (this.cardWrapper) {
+            this.cardWrapper.style.transition = '';
+            this.cardWrapper.style.transform = 'translateX(0) rotate(0deg) scale(1)';
+        }
+        
+        // Восстанавливаем прозрачность карточки
+        if (this.card) {
+            this.card.style.opacity = '1';
         }
         
         console.log('✅ Режим ожидания активирован');
@@ -694,6 +715,11 @@ const Swipe = {
                     this.cardWrapper.style.transform = 'translateX(200%) rotate(15deg) scale(0.85)';
                 }
                 setTimeout(() => {
+                    // Сбрасываем transform перед acceptPlayer
+                    if (this.cardWrapper) {
+                        this.cardWrapper.style.transition = '';
+                        this.cardWrapper.style.transform = '';
+                    }
                     this.acceptPlayer();
                 }, this.ANIMATION_DURATION);
             } else {
@@ -702,6 +728,11 @@ const Swipe = {
                     this.cardWrapper.style.transform = 'translateX(-200%) rotate(-15deg) scale(0.85)';
                 }
                 setTimeout(() => {
+                    // Сбрасываем transform перед rejectPlayer
+                    if (this.cardWrapper) {
+                        this.cardWrapper.style.transition = '';
+                        this.cardWrapper.style.transform = '';
+                    }
                     this.rejectPlayer();
                 }, this.ANIMATION_DURATION);
             }
@@ -735,7 +766,7 @@ const Swipe = {
             return;
         }
         
-        // Переключаем в режим ожидания
+        // Переключаем в режим ожидания (без скрытия карточки)
         this.showWaitingMode();
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
