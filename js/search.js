@@ -62,6 +62,10 @@ const Search = {
         const options = parent.querySelectorAll('.style-option');
         options.forEach(opt => opt.classList.remove('active'));
         element.classList.add('active');
+        
+        // Сохраняем выбранный стиль
+        localStorage.setItem('selected_style', style);
+        
         if (window.Settings) Settings.click();
         if (window.Telegram?.WebApp?.HapticFeedback) {
             Telegram.WebApp.HapticFeedback.impactOccurred('light');
@@ -69,7 +73,7 @@ const Search = {
     },
     
     start(mode, value) {
-        console.log('Search.start called with mode:', mode);
+        console.log('Search.start called with mode:', mode, 'value:', value);
         if (window.Settings) Settings.click();
         
         if (this.blockUntil && Date.now() < this.blockUntil) {
@@ -84,7 +88,7 @@ const Search = {
         this.processedMatchIds.clear();
         this.currentMode = mode;
         
-        this.showSearchScreen(mode);
+        this.showSearchScreen(mode, value);
     },
     
     collectSearchData(mode) {
@@ -93,40 +97,55 @@ const Search = {
             age: 21,
             steam_link: '',
             faceit_link: '',
-            rating_value: 0,
+            rating: 0,
+            rank: '',
             comment: ''
         };
         
+        // Получаем выбранный стиль
         const activeStyle = document.querySelector('.style-option.active');
         if (activeStyle) {
             data.style = activeStyle.classList.contains('fan') ? 'fan' : 'tryhard';
+        } else {
+            // Пробуем получить из localStorage
+            const savedStyle = localStorage.getItem('selected_style');
+            if (savedStyle) data.style = savedStyle;
         }
         
         if (mode === 'FACEIT') {
-            data.rating_value = parseInt(document.getElementById('faceitELOInput')?.value) || 0;
+            const ratingInput = document.getElementById('faceitELOInput');
+            data.rating = parseInt(ratingInput?.value) || 0;
             data.age = parseInt(document.getElementById('faceitAgeValue')?.value) || 21;
             data.faceit_link = document.getElementById('faceitLinkInput')?.value || '';
             data.comment = document.getElementById('faceitComment')?.value || '';
+            data.rank = ''; // Для FACEIT rank не нужен
         }
         else if (mode === 'PREMIER') {
-            data.rating_value = parseInt(document.getElementById('premierRatingInput')?.value) || 0;
+            const ratingInput = document.getElementById('premierRatingInput');
+            data.rating = parseInt(ratingInput?.value) || 0;
             data.age = parseInt(document.getElementById('premierAgeValue')?.value) || 21;
             data.steam_link = document.getElementById('premierSteamInput')?.value || '';
             data.comment = document.getElementById('premierComment')?.value || '';
+            data.rank = ''; // Для PREMIER rank не нужен
         }
         else if (mode === 'PRIME') {
-            data.rating_value = document.getElementById('primeRankSelect')?.value || 'Silver 1';
+            const rankSelect = document.getElementById('primeRankSelect');
+            data.rank = rankSelect?.value || 'Silver 1';
+            data.rating = 0; // Для PRIME используем rank вместо rating
             data.age = parseInt(document.getElementById('primeAgeValue')?.value) || 21;
             data.steam_link = document.getElementById('primeSteamInput')?.value || '';
             data.comment = document.getElementById('primeComment')?.value || '';
         }
         else if (mode === 'PUBLIC') {
-            data.rating_value = document.getElementById('publicRankSelect')?.value || 'Silver 1';
+            const rankSelect = document.getElementById('publicRankSelect');
+            data.rank = rankSelect?.value || 'Silver 1';
+            data.rating = 0; // Для PUBLIC используем rank вместо rating
             data.age = parseInt(document.getElementById('publicAgeValue')?.value) || 21;
             data.steam_link = document.getElementById('publicSteamInput')?.value || '';
             data.comment = document.getElementById('publicComment')?.value || '';
         }
         
+        console.log('📦 Collected search data:', data);
         return data;
     },
     
@@ -184,40 +203,24 @@ const Search = {
         this.isSearching = false;
         this.waitingForPartner = false;
     
-        // ✅ ПРАВИЛЬНОЕ ПОКАЗЫВАНИЕ ЭКРАНА СВАЙПА
-        // Сначала деактивируем все экраны
+        // Показываем экран свайпа
         const allScreens = document.querySelectorAll('.screen');
         allScreens.forEach(screen => {
             screen.classList.remove('active');
         });
         
-        // Активируем экран свайпа
         const swipeScreen = document.getElementById('swipeScreen');
         if (swipeScreen) {
             swipeScreen.classList.add('active');
             console.log('✅ swipeScreen активирован');
         } else {
             console.error('❌ swipeScreen не найден в DOM');
+            App.showScreen('mainScreen', true);
+            return;
         }
         
-        // Даем время на активацию экрана и появление карточки
+        // Запускаем Swipe после небольшой задержки
         setTimeout(() => {
-            // Проверяем, что карточка появилась
-            const swipeCard = document.getElementById('swipeCard');
-            if (swipeCard) {
-                console.log('✅ swipeCard найден в DOM');
-            } else {
-                console.warn('⚠️ swipeCard еще не в DOM, ждем...');
-                // Если карточки нет, пробуем еще раз через 100ms
-                setTimeout(() => {
-                    const cardAgain = document.getElementById('swipeCard');
-                    if (cardAgain) {
-                        console.log('✅ swipeCard появился после ожидания');
-                    }
-                }, 100);
-            }
-            
-            // Запускаем Swipe
             if (typeof Swipe !== 'undefined' && Swipe && Swipe.startWithOpponent) {
                 Swipe.startWithOpponent(
                     data.opponent, 
@@ -271,7 +274,9 @@ const Search = {
         }
     },
     
-    showSearchScreen(mode) {
+    showSearchScreen(mode, value) {
+        console.log('🔍 showSearchScreen called, mode:', mode, 'value:', value);
+        
         this.currentMode = mode;
         this.waitingForPartner = false;
         this.myResponse = null;
@@ -279,9 +284,15 @@ const Search = {
         this.currentMatchId = null;
         
         const telegram_id = this.getTelegramId();
+        if (!telegram_id) {
+            console.error('❌ Нет telegram_id!');
+            App.showAlert('Ошибка авторизации');
+            return;
+        }
+        
         const data = this.collectSearchData(mode);
         
-        // ✅ СКРЫВАЕМ ВСЕ ЭКРАНЫ, потом показываем экран поиска
+        // Показываем экран поиска
         const allScreens = document.querySelectorAll('.screen');
         allScreens.forEach(screen => {
             screen.classList.remove('active');
@@ -304,31 +315,61 @@ const Search = {
         this.resetTimer();
         this.startTimer();
         
+        // Формируем правильный payload для сервера
+        const payload = {
+            telegram_id: telegram_id,
+            mode: mode,
+            rating: data.rating,  // ← ПРАВИЛЬНОЕ ПОЛЕ
+            rank: data.rank,      // ← ДОБАВЛЯЕМ rank
+            style: data.style,
+            age: data.age,
+            steam_link: data.steam_link,
+            faceit_link: data.faceit_link,
+            comment: data.comment || ''
+        };
+        
+        // Убираем пустые поля, чтобы не отправлять их
+        if (!payload.rank) delete payload.rank;
+        if (!payload.steam_link) delete payload.steam_link;
+        if (!payload.faceit_link) delete payload.faceit_link;
+        
+        console.log('📤 Отправляем запрос на поиск:', payload);
+        
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/start', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                telegram_id: telegram_id,
-                mode: mode,
-                rating_value: data.rating_value,
-                style: data.style,
-                age: data.age,
-                steam_link: data.steam_link,
-                faceit_link: data.faceit_link,
-                comment: data.comment || ''
-            })
+            body: JSON.stringify(payload)
         })
-        .then(res => res.ok ? res.json() : null)
+        .then(async response => {
+            console.log('📡 Response status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ Ошибка сервера:', response.status, errorText);
+                throw new Error(`Server error: ${response.status}`);
+            }
+            
+            return response.json();
+        })
         .then(data => {
-            if (!data) return;
-            console.log('Search start response:', data);
+            console.log('✅ Search start response:', data);
+            
             if (data.status === 'searching') {
                 this.startPolling();
             } else if (data.status === 'match_found') {
                 this.showSwipeScreen(data);
+            } else if (data.status === 'error') {
+                console.error('❌ Ошибка:', data.message);
+                App.showAlert(data.message || 'Ошибка поиска');
+                // Возвращаемся на экран выбора режима
+                App.showScreen('mainScreen', true);
             }
         })
-        .catch(error => console.error('Error starting search:', error));
+        .catch(error => {
+            console.error('❌ Error starting search:', error);
+            App.showAlert('Ошибка соединения с сервером');
+            App.showScreen('mainScreen', true);
+        });
     },
     
     startTimer() {
@@ -377,10 +418,10 @@ const Search = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ telegram_id: telegram_id })
         })
+        .catch(error => console.error('Error stopping search:', error))
         .finally(() => {
             App.showScreen('mainScreen', true);
-        })
-        .catch(error => console.error('Error stopping search:', error));
+        });
     },
     
     showMatchScreen(data) {
