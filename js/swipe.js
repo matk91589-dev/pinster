@@ -48,9 +48,6 @@ const Swipe = {
     hintRunId: null,
     hintInterval: null,
     resizeObserver: null,
-    connectionObserver: null,
-    adjustRetryCount: 0,
-    maxAdjustRetries: 5,
     
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
@@ -92,8 +89,7 @@ const Swipe = {
         this.resizeObserver = new ResizeObserver(() => {
             this.updateButtonsPosition();
             if (this.isConnectionMode) {
-                console.log('📏 ResizeObserver вызвал adjustConnectionCardSize');
-                this.adjustConnectionCardSize();
+                this.syncCardsHeight();
             }
         });
         
@@ -104,20 +100,43 @@ const Swipe = {
             console.log('📱 Window resize');
             this.updateButtonsPosition();
             if (this.isConnectionMode) {
-                this.adjustConnectionCardSize();
+                setTimeout(() => this.syncCardsHeight(), 50);
             }
         });
-        window.addEventListener('scroll', () => this.updateButtonsPosition());
         
-        // Отслеживаем ориентацию экрана
         window.addEventListener('orientationchange', () => {
             console.log('🔄 Orientation change');
             setTimeout(() => {
                 if (this.isConnectionMode) {
-                    this.adjustConnectionCardSize();
+                    this.syncCardsHeight();
                 }
             }, 200);
         });
+        
+        window.addEventListener('scroll', () => this.updateButtonsPosition());
+    },
+    
+    syncCardsHeight() {
+        const swipeCard = document.querySelector('.swipe-card');
+        const connCard = document.querySelector('#connectionScreen .conn-swipe-card');
+        
+        if (!swipeCard || !connCard) {
+            console.log('⚠️ Карточки не найдены для синхронизации высоты');
+            return;
+        }
+        
+        const swipeHeight = swipeCard.offsetHeight;
+        
+        if (swipeHeight === 0) {
+            console.log('⚠️ Высота карточки свайпа 0, пробуем позже');
+            setTimeout(() => this.syncCardsHeight(), 100);
+            return;
+        }
+        
+        connCard.style.height = swipeHeight + 'px';
+        connCard.style.minHeight = swipeHeight + 'px';
+        
+        console.log('✅ Синхронизирована высота карточек:', swipeHeight + 'px');
     },
     
     createCardWrapper() {
@@ -343,125 +362,6 @@ const Swipe = {
             this.cardWrapper.style.marginRight = 'auto';
         }
         this.updateButtonsPosition();
-    },
-    
-    adjustConnectionCardSize() {
-        console.log('🎯 adjustConnectionCardSize вызван, попытка:', this.adjustRetryCount + 1);
-        
-        const connectionCard = document.querySelector('#connectionScreen .conn-swipe-card');
-        if (!connectionCard) {
-            console.log('⚠️ Карточка ожидания не найдена в DOM');
-            return;
-        }
-        
-        // Проверяем наличие карточки свайпа
-        if (!this.card) {
-            console.log('⚠️ Карточка свайпа не найдена');
-            connectionCard.style.marginLeft = 'auto';
-            connectionCard.style.marginRight = 'auto';
-            return;
-        }
-        
-        // Получаем реальные размеры
-        const swipeCardRect = this.card.getBoundingClientRect();
-        console.log('📐 Размеры карточки свайпа:', {
-            width: swipeCardRect.width,
-            height: swipeCardRect.height,
-            top: swipeCardRect.top,
-            left: swipeCardRect.left
-        });
-        
-        // Проверяем, что размеры не нулевые
-        if (swipeCardRect.width === 0 || swipeCardRect.height === 0) {
-            console.warn('⚠️ Карточка свайпа имеет нулевые размеры, повторяем попытку...');
-            
-            if (this.adjustRetryCount < this.maxAdjustRetries) {
-                this.adjustRetryCount++;
-                setTimeout(() => {
-                    this.adjustConnectionCardSize();
-                }, 100);
-            } else {
-                console.error('❌ Не удалось получить размеры карточки после', this.maxAdjustRetries, 'попыток');
-                this.adjustRetryCount = 0;
-                // Используем fallback размеры
-                connectionCard.style.width = '320px';
-                connectionCard.style.minWidth = '280px';
-                connectionCard.style.maxWidth = '85vw';
-                connectionCard.style.marginLeft = 'auto';
-                connectionCard.style.marginRight = 'auto';
-            }
-            return;
-        }
-        
-        // Сброс счетчика при успешном получении размеров
-        this.adjustRetryCount = 0;
-        
-        const swipeCardStyles = window.getComputedStyle(this.card);
-        
-        // Устанавливаем размеры карточки
-        connectionCard.style.width = swipeCardRect.width + 'px';
-        connectionCard.style.minWidth = swipeCardRect.width + 'px';
-        connectionCard.style.maxWidth = swipeCardStyles.maxWidth;
-        connectionCard.style.height = swipeCardRect.height + 'px';
-        connectionCard.style.minHeight = swipeCardRect.height + 'px';
-        connectionCard.style.maxHeight = swipeCardStyles.maxHeight;
-        connectionCard.style.borderRadius = swipeCardStyles.borderRadius;
-        connectionCard.style.boxShadow = swipeCardStyles.boxShadow;
-        
-        // Центрируем
-        connectionCard.style.marginLeft = 'auto';
-        connectionCard.style.marginRight = 'auto';
-        
-        console.log('✅ Карточке установлены размеры:', {
-            width: connectionCard.style.width,
-            height: connectionCard.style.height
-        });
-        
-        // Обновляем аватарки
-        const selfAvatar = document.querySelector('#connectionScreen .conn-self-avatar');
-        const teammateAvatar = document.querySelector('#connectionScreen .conn-teammate-avatar');
-        const swipeAvatar = document.querySelector('#swipeCard .swipe-avatar');
-        
-        if (selfAvatar && teammateAvatar && swipeAvatar) {
-            const avatarRect = swipeAvatar.getBoundingClientRect();
-            console.log('📐 Размеры аватарки свайпа:', avatarRect.width, 'x', avatarRect.height);
-            
-            if (avatarRect.width > 0) {
-                selfAvatar.style.width = avatarRect.width + 'px';
-                selfAvatar.style.height = avatarRect.height + 'px';
-                teammateAvatar.style.width = avatarRect.width + 'px';
-                teammateAvatar.style.height = avatarRect.height + 'px';
-                
-                // Обновляем внутренние svg/img
-                const selfSvg = selfAvatar.querySelector('.tg-avatar-svg');
-                const teammateSvg = teammateAvatar.querySelector('.tg-avatar-svg');
-                if (selfSvg) {
-                    selfSvg.style.width = avatarRect.width + 'px';
-                    selfSvg.style.height = avatarRect.height + 'px';
-                }
-                if (teammateSvg) {
-                    teammateSvg.style.width = avatarRect.width + 'px';
-                    teammateSvg.style.height = avatarRect.height + 'px';
-                }
-                
-                console.log('✅ Аватарки обновлены:', avatarRect.width, 'x', avatarRect.height);
-            } else {
-                console.warn('⚠️ Аватарка свайпа имеет нулевые размеры');
-            }
-        } else {
-            console.log('⚠️ Не найдены элементы аватарок');
-        }
-        
-        // Компенсируем внутренние отступы
-        const header = document.querySelector('#connectionScreen .swipe-header');
-        const stats = document.querySelector('#connectionScreen .swipe-stats');
-        const button = document.querySelector('#connectionScreen .conn-chat-button');
-        
-        if (header) header.style.marginBottom = '0';
-        if (stats) stats.style.marginTop = '0';
-        if (button) button.style.marginTop = 'auto';
-        
-        console.log('✅ Карточка ожидания успешно подогнана');
     },
     
     startSwipeHint() {
@@ -1047,7 +947,6 @@ const Swipe = {
     showConnectionMode() {
         console.log('🔄 Показываем экран соединения');
         this.isConnectionMode = true;
-        this.adjustRetryCount = 0; // Сбрасываем счетчик попыток
         
         if (this.skipBtn) this.skipBtn.style.display = 'none';
         if (this.inviteBtn) this.inviteBtn.style.display = 'none';
@@ -1101,46 +1000,21 @@ const Swipe = {
         this.updateChatButton(false);
         this.startConnectionTimer();
         
-        // Несколько попыток подогнать размеры с увеличивающейся задержкой
+        // Синхронизируем высоту после рендера
         setTimeout(() => {
-            console.log('📐 Первая попытка подгонки карточки');
-            this.adjustConnectionCardSize();
-        }, 100);
+            console.log('📐 Синхронизация высоты карточек (первая)');
+            this.syncCardsHeight();
+        }, 150);
         
         setTimeout(() => {
-            console.log('📐 Вторая попытка подгонки карточки');
-            this.adjustConnectionCardSize();
-        }, 300);
+            console.log('📐 Синхронизация высоты карточек (вторая)');
+            this.syncCardsHeight();
+        }, 500);
         
         setTimeout(() => {
-            console.log('📐 Третья попытка подгонки карточки');
-            this.adjustConnectionCardSize();
-        }, 600);
-        
-        setTimeout(() => {
-            console.log('📐 Четвертая попытка подгонки карточки');
-            this.adjustConnectionCardSize();
+            console.log('📐 Синхронизация высоты карточек (третья)');
+            this.syncCardsHeight();
         }, 1000);
-        
-        // Добавляем MutationObserver для отслеживания изменений в карточке соединения
-        const connectionCard = document.querySelector('#connectionScreen .conn-swipe-card');
-        if (connectionCard && !this.connectionObserver) {
-            console.log('👁️ Создаем MutationObserver для карточки соединения');
-            this.connectionObserver = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.type === 'attributes' || mutation.type === 'childList') {
-                        console.log('👁️ MutationObserver: изменение в карточке');
-                        this.adjustConnectionCardSize();
-                    }
-                });
-            });
-            this.connectionObserver.observe(connectionCard, { 
-                childList: true, 
-                subtree: true,
-                attributes: true,
-                attributeFilter: ['style', 'class']
-            });
-        }
         
         console.log('✅ Экран соединения показан');
     },
@@ -1185,10 +1059,10 @@ const Swipe = {
                 this.openChatLink();
             };
             
-            // После активации кнопки подгоняем размеры
+            // После активации кнопки синхронизируем высоту
             setTimeout(() => {
-                console.log('📐 Подгонка после активации кнопки');
-                this.adjustConnectionCardSize();
+                console.log('📐 Синхронизация после активации кнопки');
+                this.syncCardsHeight();
             }, 50);
             
             console.log('✅ Кнопка чата АКТИВИРОВАНА');
@@ -1265,10 +1139,10 @@ const Swipe = {
                 
                 this.gameCreated = true;
                 
-                // После создания игры подгоняем размеры
+                // После создания игры синхронизируем высоту
                 setTimeout(() => {
-                    console.log('📐 Подгонка после создания игры');
-                    this.adjustConnectionCardSize();
+                    console.log('📐 Синхронизация после создания игры');
+                    this.syncCardsHeight();
                 }, 100);
             } else {
                 console.warn('⚠️ Нет chat_link в ответе');
@@ -1282,8 +1156,7 @@ const Swipe = {
         .finally(() => {
             setTimeout(() => { 
                 this.gameCreating = false;
-                // Еще раз подгоняем после завершения
-                this.adjustConnectionCardSize();
+                this.syncCardsHeight();
             }, 100);
         });
     },
@@ -1410,11 +1283,6 @@ const Swipe = {
             this.resizeObserver = null;
         }
         
-        if (this.connectionObserver) {
-            this.connectionObserver.disconnect();
-            this.connectionObserver = null;
-        }
-        
         if (this.card) {
             this.card.removeEventListener('touchstart', this.onDragStartBound);
             this.card.removeEventListener('touchmove', this.onDragMoveBound);
@@ -1502,12 +1370,6 @@ const Swipe = {
         this.gameCreating = false;
         this.chatLink = null;
         this.inviteLink = null;
-        this.adjustRetryCount = 0;
-        
-        if (this.connectionObserver) {
-            this.connectionObserver.disconnect();
-            this.connectionObserver = null;
-        }
         
         if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
         if (this.connectionTimer) clearInterval(this.connectionTimer);
@@ -1541,13 +1403,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     window.addEventListener('resize', function() {
         if (Swipe.card && !Swipe.isConnectionMode) Swipe.adjustCardSize();
-        if (Swipe.isConnectionMode) Swipe.adjustConnectionCardSize();
+        if (Swipe.isConnectionMode) Swipe.syncCardsHeight();
     });
     
     window.addEventListener('orientationchange', function() {
         setTimeout(function() {
             if (Swipe.card && !Swipe.isConnectionMode) Swipe.adjustCardSize();
-            if (Swipe.isConnectionMode) Swipe.adjustConnectionCardSize();
+            if (Swipe.isConnectionMode) Swipe.syncCardsHeight();
         }, 200);
     });
 });
