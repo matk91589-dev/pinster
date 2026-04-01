@@ -314,98 +314,6 @@
             background: #FF5500;
             color: white;
         }
-        .teammate-avatar {
-            width: 50px;
-            height: 50px;
-            transition: all 0.3s ease;
-        }
-        .teammate-avatar.connected {
-            width: 60px;
-            height: 60px;
-            filter: grayscale(0);
-            opacity: 1;
-            animation: avatarPulse 0.5s ease;
-        }
-        @keyframes avatarPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        .connection-status {
-            font-size: 16px;
-            color: var(--text-secondary);
-            text-align: center;
-            margin: 8px 0;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        .connection-status.active {
-            color: #4CAF50;
-        }
-        .connection-line {
-            position: relative;
-            width: 60px;
-            height: 2px;
-            background: var(--border-color);
-            overflow: hidden;
-        }
-        .line-pulse {
-            position: absolute;
-            width: 30px;
-            height: 100%;
-            background: var(--accent);
-            animation: pulse 1.5s infinite;
-        }
-        .connection-line.connected {
-            background: #4CAF50;
-        }
-        .connection-line.connected .line-pulse {
-            display: none;
-        }
-        @keyframes pulse {
-            0% { left: -30px; }
-            100% { left: 100%; }
-        }
-        .teammate-info {
-            text-align: center;
-            margin: 8px 0;
-        }
-        .teammate-nick {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .connection-rank-age {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin: 8px 0;
-        }
-        .connection-rank,
-        .connection-age {
-            background: var(--surface);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-        }
-        .tg-chat-button.active {
-            background: var(--accent) !important;
-            border: none;
-            color: white;
-            box-shadow: 0 4px 12px rgba(255, 85, 0, 0.3);
-        }
-        .tg-chat-button.active:hover {
-            background: var(--accent-soft) !important;
-        }
-        .self-avatar .tg-avatar-svg img,
-        .teammate-avatar .tg-avatar-svg img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
         .friend-row {
             display: flex;
             align-items: center;
@@ -623,6 +531,181 @@
             border-radius: 12px;
             white-space: nowrap;
         }
+        
+        /* ===== СТИЛИ ДЛЯ ЭКРАНА ОЖИДАНИЯ (ВНУТРИ КАРТОЧКИ СВАЙПА) ===== */
+        .waiting-card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 20px 18px;
+            flex: 1;
+            z-index: 10;
+            position: relative;
+        }
+        
+        .waiting-avatars {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 8px 0;
+        }
+        
+        .waiting-self-avatar,
+        .waiting-teammate-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: var(--input-bg);
+            border: 2px solid var(--border-color);
+            flex-shrink: 0;
+        }
+        
+        .waiting-self-avatar .tg-avatar-svg,
+        .waiting-teammate-avatar .tg-avatar-svg {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .waiting-self-avatar img,
+        .waiting-teammate-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .waiting-teammate-avatar {
+            filter: grayscale(0.5);
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+        
+        .waiting-teammate-avatar.connected {
+            filter: grayscale(0);
+            opacity: 1;
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+        
+        .waiting-line {
+            width: 60px;
+            height: 2px;
+            background: var(--border-color);
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .waiting-line-pulse {
+            position: absolute;
+            width: 30px;
+            height: 100%;
+            background: var(--accent);
+            animation: waitingPulse 1.5s infinite;
+        }
+        
+        @keyframes waitingPulse {
+            0% { left: -30px; }
+            100% { left: 100%; }
+        }
+        
+        .waiting-line.connected {
+            background: var(--accent);
+        }
+        
+        .waiting-line.connected .waiting-line-pulse {
+            display: none;
+        }
+        
+        .waiting-teammate-info {
+            text-align: center;
+            margin: 8px 0;
+        }
+        
+        .waiting-teammate-nick {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .waiting-status {
+            font-size: 14px;
+            text-align: center;
+            margin: 8px 0;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: lowercase;
+        }
+        
+        .waiting-status.active {
+            color: var(--accent);
+        }
+        
+        .waiting-button-wrapper {
+            width: 100%;
+            margin-top: 8px;
+        }
+        
+        .waiting-chat-button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.2s ease;
+        }
+        
+        .waiting-chat-button.disabled {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        
+        .waiting-chat-button.active {
+            background: var(--accent);
+            border: none;
+            color: white;
+            pointer-events: auto;
+            opacity: 1;
+            box-shadow: 0 4px 12px rgba(255, 85, 0, 0.3);
+        }
+        
+        .waiting-chat-button.active:hover {
+            background: var(--accent-soft);
+            transform: scale(1.02);
+        }
+        
+        /* Адаптация под мобилки */
+        @media (max-width: 500px) {
+            .waiting-self-avatar,
+            .waiting-teammate-avatar {
+                width: 60px;
+                height: 60px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .waiting-self-avatar,
+            .waiting-teammate-avatar {
+                width: 52px;
+                height: 52px;
+            }
+            
+            .waiting-teammate-nick {
+                font-size: 16px;
+            }
+        }
     </style>
     
     <link rel="stylesheet" href="css/style.css">
@@ -766,42 +849,64 @@
                 <div class="team-content" id="teamContent"></div>
             </div>
 
+            <!-- ЕДИНАЯ КАРТОЧКА СВАЙПА С ДВУМЯ РЕЖИМАМИ -->
             <div id="swipeScreen" class="screen swipe-screen">
                 <div class="swipe-header"><div class="swipe-title">Поиск тиммейтов</div><div class="swipe-subtitle"><span class="swipe-subtitle-left">← отклонить</span><span class="swipe-subtitle-divider">|</span><span class="swipe-subtitle-right">принять →</span></div></div>
-                <div id="swipeContainer" class="swipe-container"><div id="swipeCard" class="swipe-card"><div class="swipe-timer">30с</div><div class="swipe-card-content"><div class="swipe-player-row"><div class="swipe-avatar"><div class="tg-avatar-svg" style="width:70px;height:70px"><svg width="35" height="35" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div><div class="swipe-name-block"><div class="swipe-player-id" id="swipePlayerId"></div><div class="swipe-player-nick" id="swipePlayerNick"></div></div><div class="swipe-rating-block"><span class="swipe-rating-value" id="swipeRatingValue"></span><span class="heart-icon"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#F5F5F5" stroke-width="2" fill="none"/></svg></span></div></div><div class="swipe-stats-row three-cols"><div class="swipe-stat-item"><div class="swipe-stat-label">РАНГ</div><div class="swipe-stat-value" id="swipeRank"></div></div><div class="swipe-stat-item"><div class="swipe-stat-label">ВОЗРАСТ</div><div class="swipe-stat-value" id="swipeAge"></div></div><div class="swipe-stat-item"><div class="swipe-stat-label">СТИЛЬ</div><div class="swipe-stat-value" id="swipeStyle"></div></div></div><div class="swipe-steam-container"><div class="swipe-link-label">Ссылка Steam</div><div class="swipe-link-value" id="swipeSteamLink"></div></div><div class="swipe-faceit-container"><div class="swipe-link-label">Ссылка Faceit</div><div class="swipe-link-value" id="swipeFaceitLink"></div></div><div class="swipe-comment"><div class="swipe-comment-label">Комментарий</div><div class="swipe-comment-text" id="swipeComment"></div></div></div></div></div>
-                <div class="swipe-loading"><div class="spinner-small"></div></div>
-            </div>
-
-            <!-- ЭКРАН ОЖИДАНИЯ -->
-            <div id="connectionScreen" class="screen connection-screen">
-                <div class="swipe-header"><div class="swipe-title">Тиммейт найден</div></div>
-                <div class="conn-swipe-container">
-                    <div class="conn-swipe-card">
-                        <div class="conn-timer">30с</div>
-                        <div class="conn-card-content">
-                            <div class="conn-avatars">
-                                <div class="conn-self-avatar">
+                <div id="swipeContainer" class="swipe-container">
+                    <div id="swipeCard" class="swipe-card">
+                        <div class="swipe-timer" id="swipeTimer">30с</div>
+                        
+                        <!-- РЕЖИМ 1: СВАЙП (информация об игроке) -->
+                        <div id="swipeModeContent" class="swipe-card-content">
+                            <div class="swipe-player-row">
+                                <div class="swipe-avatar"><div class="tg-avatar-svg" style="width:70px;height:70px"><svg width="35" height="35" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div>
+                                <div class="swipe-name-block">
+                                    <div class="swipe-player-id" id="swipePlayerId"></div>
+                                    <div class="swipe-player-nick" id="swipePlayerNick"></div>
+                                </div>
+                                <div class="swipe-rating-block">
+                                    <span class="swipe-rating-value" id="swipeRatingValue"></span>
+                                    <span class="heart-icon"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#F5F5F5" stroke-width="2" fill="none"/></svg></span>
+                                </div>
+                            </div>
+                            <div class="swipe-stats-row three-cols">
+                                <div class="swipe-stat-item"><div class="swipe-stat-label">РАНГ</div><div class="swipe-stat-value" id="swipeRank"></div></div>
+                                <div class="swipe-stat-item"><div class="swipe-stat-label">ВОЗРАСТ</div><div class="swipe-stat-value" id="swipeAge"></div></div>
+                                <div class="swipe-stat-item"><div class="swipe-stat-label">СТИЛЬ</div><div class="swipe-stat-value" id="swipeStyle"></div></div>
+                            </div>
+                            <div class="swipe-steam-container"><div class="swipe-link-label">Ссылка Steam</div><div class="swipe-link-value" id="swipeSteamLink"></div></div>
+                            <div class="swipe-faceit-container"><div class="swipe-link-label">Ссылка Faceit</div><div class="swipe-link-value" id="swipeFaceitLink"></div></div>
+                            <div class="swipe-comment"><div class="swipe-comment-label">Комментарий</div><div class="swipe-comment-text" id="swipeComment"></div></div>
+                        </div>
+                        
+                        <!-- РЕЖИМ 2: ОЖИДАНИЕ (после принятия) -->
+                        <div id="waitingModeContent" class="waiting-card-content" style="display: none;">
+                            <div class="waiting-avatars">
+                                <div class="waiting-self-avatar">
                                     <div class="tg-avatar-svg"></div>
                                 </div>
-                                <div class="conn-line">
-                                    <div class="conn-line-pulse"></div>
+                                <div class="waiting-line">
+                                    <div class="waiting-line-pulse"></div>
                                 </div>
-                                <div class="conn-teammate-avatar">
+                                <div class="waiting-teammate-avatar">
                                     <div class="tg-avatar-svg"></div>
                                 </div>
                             </div>
-                            <div class="conn-teammate-info">
-                                <span class="conn-teammate-nick" id="teammateNick"></span>
+                            <div class="waiting-teammate-info">
+                                <span class="waiting-teammate-nick" id="waitingTeammateNick"></span>
                             </div>
-                            <div class="conn-status" id="connectionStatus">Ожидание тиммейта</div>
-                            <div class="conn-button-wrapper">
-                                <button class="conn-chat-button disabled" id="tgChatButton" disabled>Перейти в чат</button>
+                            <div class="waiting-status" id="waitingStatus">Ожидание тиммейта</div>
+                            <div class="waiting-button-wrapper">
+                                <button class="waiting-chat-button disabled" id="waitingChatButton" disabled>Перейти в чат</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="swipe-loading"><div class="spinner-small"></div></div>
             </div>
+
+            <!-- УДАЛЯЕМ СТАРЫЙ ЭКРАН ОЖИДАНИЯ (connectionScreen) -->
+            <!-- <div id="connectionScreen" class="screen connection-screen">...</div> -->
 
             <div id="settingsScreen" class="screen settings-screen">
                 <div class="settings-header"><div class="settings-title">Настройки</div></div>
