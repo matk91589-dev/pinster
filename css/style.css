@@ -3970,7 +3970,6 @@ html {
 #connectionScreen .conn-swipe-card {
     width: 360px;
     max-width: 85vw;
-    max-height: 85vh;
     background: var(--surface);
     border-radius: 28px;
     border: 1px solid var(--border-color);
@@ -3988,15 +3987,6 @@ html {
     gap: 16px;
     padding: 20px 18px;
     flex: 1;
-    overflow-y: auto;
-    z-index: 10;
-    position: relative;
-}
-
-/* Скрываем скролл */
-#connectionScreen .conn-card-content::-webkit-scrollbar {
-    width: 0;
-    background: transparent;
 }
 
 /* Аватарки — как в карточке свайпа */
