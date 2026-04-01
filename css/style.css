@@ -4234,3 +4234,14 @@ html {
         font-size: 12px;
     }
 }
+
+/* Убираем лишние отступы в заголовке экрана ожидания */
+#connectionScreen .swipe-header {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+#connectionScreen .swipe-title {
+    font-size: 18px;
+    margin-bottom: 0;
+}
