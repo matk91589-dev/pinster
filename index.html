@@ -532,15 +532,40 @@
             white-space: nowrap;
         }
         
-        /* ===== СТИЛИ ДЛЯ ЭКРАНА ОЖИДАНИЯ (ВНУТРИ КАРТОЧКИ СВАЙПА) ===== */
-        .waiting-card-content {
+        /* ===== СТИЛИ ДЛЯ КАРТОЧКИ СВАЙПА ===== */
+        .swipe-card {
+            background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3a 100%);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+        
+        /* Контейнеры контента */
+        .swipe-mode-content,
+        .waiting-mode-content {
+            width: 100%;
+            transition: opacity 0.3s ease;
+        }
+        
+        .swipe-mode-content {
+            display: block;
+        }
+        
+        .waiting-mode-content {
+            display: none;
+        }
+        
+        /* Стили для режима ожидания */
+        .waiting-mode-content {
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            padding: 20px 18px;
-            flex: 1;
-            z-index: 10;
-            position: relative;
+            gap: 20px;
         }
         
         .waiting-avatars {
@@ -557,8 +582,8 @@
             height: 70px;
             border-radius: 50%;
             overflow: hidden;
-            background: var(--input-bg);
-            border: 2px solid var(--border-color);
+            background: #2B2F36;
+            border: 2px solid rgba(255, 255, 255, 0.2);
             flex-shrink: 0;
         }
         
@@ -588,14 +613,14 @@
         .waiting-teammate-avatar.connected {
             filter: grayscale(0);
             opacity: 1;
-            border-color: var(--accent);
+            border-color: #FF5500;
             transform: scale(1.05);
         }
         
         .waiting-line {
-            width: 60px;
+            width: 40px;
             height: 2px;
-            background: var(--border-color);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 2px;
             position: relative;
             overflow: hidden;
@@ -604,19 +629,19 @@
         
         .waiting-line-pulse {
             position: absolute;
-            width: 30px;
+            width: 20px;
             height: 100%;
-            background: var(--accent);
+            background: #FF5500;
             animation: waitingPulse 1.5s infinite;
         }
         
         @keyframes waitingPulse {
-            0% { left: -30px; }
+            0% { left: -20px; }
             100% { left: 100%; }
         }
         
         .waiting-line.connected {
-            background: var(--accent);
+            background: #FF5500;
         }
         
         .waiting-line.connected .waiting-line-pulse {
@@ -625,31 +650,56 @@
         
         .waiting-teammate-info {
             text-align: center;
-            margin: 8px 0;
         }
         
         .waiting-teammate-nick {
             font-size: 20px;
             font-weight: 700;
-            color: var(--text-primary);
+            color: #FFFFFF;
         }
         
         .waiting-status {
             font-size: 14px;
             text-align: center;
-            margin: 8px 0;
             font-weight: 500;
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.6);
             text-transform: lowercase;
         }
         
         .waiting-status.active {
-            color: var(--accent);
+            color: #FF5500;
         }
         
-        .waiting-button-wrapper {
-            width: 100%;
-            margin-top: 8px;
+        .waiting-timer-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 8px 0;
+        }
+        
+        .waiting-timer-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .waiting-timer {
+            font-size: 16px;
+            font-weight: bold;
+            color: #FF5500;
+            background: rgba(255, 85, 0, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        
+        .waiting-timer.warning {
+            color: #FF3B30;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
         }
         
         .waiting-chat-button {
@@ -662,18 +712,19 @@
             cursor: pointer;
             font-family: 'Montserrat', sans-serif;
             transition: all 0.2s ease;
+            margin-top: 8px;
         }
         
         .waiting-chat-button.disabled {
             background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.5);
             pointer-events: none;
             opacity: 0.6;
         }
         
         .waiting-chat-button.active {
-            background: var(--accent);
+            background: #FF5500;
             border: none;
             color: white;
             pointer-events: auto;
@@ -682,7 +733,7 @@
         }
         
         .waiting-chat-button.active:hover {
-            background: var(--accent-soft);
+            background: #ff7700;
             transform: scale(1.02);
         }
         
@@ -857,7 +908,7 @@
                         <div class="swipe-timer" id="swipeTimer">30с</div>
                         
                         <!-- РЕЖИМ 1: СВАЙП (информация об игроке) -->
-                        <div id="swipeModeContent" class="swipe-card-content">
+                        <div id="swipeModeContent" class="swipe-mode-content">
                             <div class="swipe-player-row">
                                 <div class="swipe-avatar"><div class="tg-avatar-svg" style="width:70px;height:70px"><svg width="35" height="35" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div>
                                 <div class="swipe-name-block">
@@ -880,7 +931,7 @@
                         </div>
                         
                         <!-- РЕЖИМ 2: ОЖИДАНИЕ (после принятия) -->
-                        <div id="waitingModeContent" class="waiting-card-content" style="display: none;">
+                        <div id="waitingModeContent" class="waiting-mode-content" style="display: none;">
                             <div class="waiting-avatars">
                                 <div class="waiting-self-avatar">
                                     <div class="tg-avatar-svg"></div>
@@ -893,20 +944,19 @@
                                 </div>
                             </div>
                             <div class="waiting-teammate-info">
-                                <span class="waiting-teammate-nick" id="waitingTeammateNick"></span>
+                                <div class="waiting-teammate-nick" id="waitingTeammateNick"></div>
                             </div>
                             <div class="waiting-status" id="waitingStatus">Ожидание тиммейта</div>
-                            <div class="waiting-button-wrapper">
-                                <button class="waiting-chat-button disabled" id="waitingChatButton" disabled>Перейти в чат</button>
+                            <div class="waiting-timer-container">
+                                <span class="waiting-timer-label">Время ожидания:</span>
+                                <span class="waiting-timer" id="waitingTimer">30с</span>
                             </div>
+                            <button class="waiting-chat-button disabled" id="waitingChatButton" disabled>Перейти в чат</button>
                         </div>
                     </div>
                 </div>
                 <div class="swipe-loading"><div class="spinner-small"></div></div>
             </div>
-
-            <!-- УДАЛЯЕМ СТАРЫЙ ЭКРАН ОЖИДАНИЯ (connectionScreen) -->
-            <!-- <div id="connectionScreen" class="screen connection-screen">...</div> -->
 
             <div id="settingsScreen" class="screen settings-screen">
                 <div class="settings-header"><div class="settings-title">Настройки</div></div>
