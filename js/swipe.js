@@ -87,10 +87,6 @@ const Swipe = {
         
         this.resizeObserver = new ResizeObserver(() => {
             this.updateButtonsPosition();
-            // При изменении размера карточки свайпа обновляем и карточку ожидания
-            if (this.isConnectionMode) {
-                this.adjustConnectionCardSize();
-            }
         });
         
         if (this.card) this.resizeObserver.observe(this.card);
@@ -98,9 +94,6 @@ const Swipe = {
         
         window.addEventListener('resize', () => {
             this.updateButtonsPosition();
-            if (this.isConnectionMode) {
-                this.adjustConnectionCardSize();
-            }
         });
         window.addEventListener('scroll', () => this.updateButtonsPosition());
     },
@@ -334,28 +327,11 @@ const Swipe = {
         const connectionCard = document.querySelector('#connectionScreen .conn-swipe-card');
         if (!connectionCard) return;
         
-        // Центрируем карточку
+        // Просто центрируем карточку, не копируем размеры
         connectionCard.style.marginLeft = 'auto';
         connectionCard.style.marginRight = 'auto';
         
-        // Копируем размеры с карточки свайпа
-        if (this.card) {
-            const swipeCardStyles = window.getComputedStyle(this.card);
-            const swipeCardRect = this.card.getBoundingClientRect();
-            
-            // Устанавливаем такие же размеры
-            connectionCard.style.width = swipeCardStyles.width;
-            connectionCard.style.maxWidth = swipeCardStyles.maxWidth;
-            connectionCard.style.maxHeight = swipeCardStyles.maxHeight;
-            connectionCard.style.borderRadius = swipeCardStyles.borderRadius;
-            
-            // Если нужно, подгоняем высоту
-            if (swipeCardRect.height > 0) {
-                connectionCard.style.minHeight = 'auto';
-            }
-        }
-        
-        console.log('📐 Карточка ожидания подогнана под карточку свайпа');
+        console.log('📐 Карточка ожидания центрирована');
     },
     
     startSwipeHint() {
