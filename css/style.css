@@ -2219,9 +2219,7 @@ input:checked + .slider:before {
     background: rgba(255, 85, 0, 0.1);
 }
 
-/* ============================================
-   СВАЙП-КАРТОЧКА - АДАПТИВНАЯ ВЕРСИЯ
-   ============================================ */
+/* ===== СВАЙП-КАРТОЧКА - ИСПРАВЛЕННАЯ ===== */
 
 /* Контейнер */
 .swipe-container {
@@ -2233,10 +2231,11 @@ input:checked + .slider:before {
     min-height: 0;
 }
 
-/* Карточка - без фиксированной высоты */
+/* Карточка */
 .swipe-card {
     width: 100%;
     max-width: 360px;
+    min-width: 280px;
     background: var(--surface);
     border-radius: 28px;
     border: 1px solid var(--border-color);
@@ -2248,52 +2247,89 @@ input:checked + .slider:before {
     flex-direction: column;
     margin: 0 auto;
     overflow: hidden;
-    height: auto !important;
-    min-height: auto !important;
 }
 
-/* Эффект при перетаскивании */
-.swipe-card.dragging {
-    transition: none;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
-    transform: scale(1.01);
-}
-
-.swipe-card:active {
-    cursor: grabbing;
-}
-
-/* Затемнение при свайпе */
-.swipe-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: transparent;
-    transition: background 0.2s;
-    pointer-events: none;
-    border-radius: 28px;
-    z-index: 5;
-}
-
-.swipe-card.swiping-right::after {
-    background: rgba(80, 200, 120, 0.1);
-}
-
-.swipe-card.swiping-left::after {
-    background: rgba(255, 80, 80, 0.1);
-}
-
-/* Общий контент карточки - оба режима */
-.swipe-mode-content,
-.waiting-mode-content {
-    width: 100%;
-    transition: opacity 0.3s ease;
-    box-sizing: border-box;
-}
-
+/* Контент карточки */
 .swipe-mode-content {
     display: block;
+    padding: 20px 18px;
 }
+
+/* Плашки для текста */
+.swipe-stats-row.three-cols .swipe-stat-value,
+.swipe-link-value,
+.swipe-comment-text {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Три колонки */
+.swipe-stats-row.three-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.swipe-stats-row.three-cols .swipe-stat-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.swipe-stats-row.three-cols .swipe-stat-value {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 10px 8px;
+    text-align: center;
+}
+
+/* Ссылки */
+.swipe-steam-container,
+.swipe-faceit-container {
+    margin-bottom: 16px;
+}
+
+.swipe-link-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.swipe-link-value {
+    font-size: 13px;
+    word-break: break-all;
+}
+
+/* Комментарий */
+.swipe-comment {
+    margin-top: 16px;
+}
+
+.swipe-comment-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.swipe-comment-text {
+    font-size: 13px;
+    line-height: 1.4;
+    min-height: 60px;
+}
+
+/* ===== РЕЖИМ ОЖИДАНИЯ - АДАПТИВНЫЙ (ТОЛЬКО ЭТОТ БЛОК!) ===== */
 
 .waiting-mode-content {
     display: none;
@@ -2302,34 +2338,6 @@ input:checked + .slider:before {
     padding: 20px 18px;
 }
 
-/* Таймер */
-.swipe-timer {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(8px);
-    padding: 6px 14px;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #fff;
-    z-index: 20;
-}
-
-.swipe-timer.warning {
-    color: #FF6B4A;
-    animation: timerPulse 0.8s infinite;
-}
-
-@keyframes timerPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-}
-
-/* ===== РЕЖИМ ОЖИДАНИЯ - ПОЛНОСТЬЮ ПЕРЕПИСАН ===== */
-
-/* Аватарки */
 .waiting-avatars {
     display: flex;
     align-items: center;
@@ -2344,30 +2352,12 @@ input:checked + .slider:before {
     height: clamp(65px, 18vw, 80px);
     border-radius: 50%;
     overflow: hidden;
-    background: #2B2F36;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: var(--input-bg);
+    border: 2px solid var(--border-color);
     flex-shrink: 0;
     transition: all 0.3s ease;
 }
 
-.waiting-self-avatar .tg-avatar-svg,
-.waiting-teammate-avatar .tg-avatar-svg {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.waiting-self-avatar img,
-.waiting-teammate-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
-/* Аватар тиммейта */
 .waiting-teammate-avatar {
     filter: grayscale(0.5);
     opacity: 0.8;
@@ -2376,9 +2366,8 @@ input:checked + .slider:before {
 .waiting-teammate-avatar.connected {
     filter: grayscale(0);
     opacity: 1;
-    border-color: #FF5500;
+    border-color: var(--accent);
     transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(255, 85, 0, 0.3);
 }
 
 /* Линия соединения */
@@ -2396,8 +2385,7 @@ input:checked + .slider:before {
     position: absolute;
     width: 25px;
     height: 100%;
-    background: #FF5500;
-    border-radius: 3px;
+    background: var(--accent);
     animation: waitingLinePulse 1.5s ease-in-out infinite;
 }
 
@@ -2408,8 +2396,7 @@ input:checked + .slider:before {
 }
 
 .waiting-line.connected {
-    background: #FF5500;
-    box-shadow: 0 0 8px rgba(255, 85, 0, 0.5);
+    background: var(--accent);
 }
 
 .waiting-line.connected .waiting-line-pulse {
@@ -2419,15 +2406,12 @@ input:checked + .slider:before {
 /* Информация о тиммейте */
 .waiting-teammate-info {
     text-align: center;
-    margin: 0;
 }
 
 .waiting-teammate-nick {
     font-size: clamp(18px, 5vw, 20px);
     font-weight: 700;
-    color: #FFFFFF;
-    letter-spacing: -0.3px;
-    word-break: break-word;
+    color: var(--text-primary);
 }
 
 /* Статус */
@@ -2435,14 +2419,12 @@ input:checked + .slider:before {
     font-size: clamp(13px, 3.5vw, 14px);
     text-align: center;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--text-secondary);
     margin: 8px 0;
-    text-transform: lowercase;
 }
 
 .waiting-status.active {
-    color: #FF5500;
-    font-weight: 600;
+    color: var(--accent);
 }
 
 /* Таймер ожидания */
@@ -2451,7 +2433,7 @@ input:checked + .slider:before {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin: 12px 0;
+    margin: 8px 0;
     padding: 6px 12px;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 40px;
@@ -2461,14 +2443,13 @@ input:checked + .slider:before {
 
 .waiting-timer-label {
     font-size: clamp(12px, 3vw, 13px);
-    color: rgba(255, 255, 255, 0.5);
-    font-weight: 500;
+    color: var(--text-secondary);
 }
 
 .waiting-timer {
     font-size: clamp(14px, 4vw, 16px);
     font-weight: 700;
-    color: #FF5500;
+    color: var(--accent);
     background: rgba(255, 85, 0, 0.2);
     padding: 3px 12px;
     border-radius: 30px;
@@ -2477,8 +2458,7 @@ input:checked + .slider:before {
 
 .waiting-timer.warning {
     color: #FF3B30;
-    background: rgba(255, 59, 48, 0.2);
-    animation: timerWarning 1s ease-in-out infinite;
+    animation: timerWarning 1s infinite;
 }
 
 @keyframes timerWarning {
@@ -2489,56 +2469,37 @@ input:checked + .slider:before {
 /* Кнопка чата */
 .waiting-chat-button {
     width: 100%;
-    padding: clamp(12px, 3.5vw, 14px) clamp(16px, 4vw, 20px);
+    padding: 14px;
     border-radius: 100px;
-    font-size: clamp(14px, 3.5vw, 15px);
+    font-size: 15px;
     font-weight: 600;
     text-align: center;
     cursor: pointer;
     transition: all 0.25s ease;
-    margin-top: 16px;
+    margin-top: 8px;
     border: none;
 }
 
 .waiting-chat-button.disabled {
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
     pointer-events: none;
 }
 
 .waiting-chat-button.active {
-    background: linear-gradient(135deg, #FF5500 0%, #FF7700 100%);
-    border: none;
+    background: var(--accent);
     color: white;
     pointer-events: auto;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(255, 85, 0, 0.4);
 }
 
-.waiting-chat-button.active:active {
-    transform: scale(0.97);
-}
-
-/* Адаптация под маленькие экраны */
+/* Адаптация */
 @media (max-width: 480px) {
     .swipe-card {
         max-width: 92%;
     }
-    
     .waiting-mode-content {
-        gap: 12px;
         padding: 16px 14px;
-    }
-}
-
-@media (max-width: 380px) {
-    .waiting-avatars {
-        gap: 12px;
-    }
-    
-    .waiting-teammate-nick {
-        font-size: 16px;
     }
 }
 
