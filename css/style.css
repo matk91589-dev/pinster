@@ -4259,3 +4259,88 @@ html {
         text-shadow: 0 0 8px rgba(255, 85, 0, 0.5);
     }
 }
+
+/* ===== СВАЙП-КАРТОЧКА - ПЛАШКИ ДЛЯ ТЕКСТА ===== */
+
+/* Контейнер с тремя колонками (ранг/возраст/стиль) */
+.swipe-stats-row.three-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+/* Каждая плашка */
+.swipe-stat-item {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 8px;
+    text-align: center;
+}
+
+/* Заголовок плашки */
+.swipe-stat-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+}
+
+/* Значение в плашке */
+.swipe-stat-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: block;
+}
+
+/* Ссылки (Steam/FACEIT) */
+.swipe-steam-container,
+.swipe-faceit-container {
+    margin-bottom: 16px;
+}
+
+.swipe-link-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.swipe-link-value {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    word-break: break-all;
+}
+
+/* Комментарий */
+.swipe-comment {
+    margin-top: 16px;
+}
+
+.swipe-comment-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.swipe-comment-text {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.4;
+    min-height: 60px;
+    color: var(--text-primary);
+}
