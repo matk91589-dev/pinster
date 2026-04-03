@@ -2234,7 +2234,6 @@ input:checked + .slider:before {
 .swipe-card {
     width: 360px;
     max-width: 85vw;
-    max-height: 85vh;
     background: var(--surface);
     border-radius: 28px;
     border: 1px solid var(--border-color);
@@ -2246,6 +2245,21 @@ input:checked + .slider:before {
     flex-direction: column;
     margin: 0 auto;
     overflow: hidden;
+    height: auto;
+    max-height: 85vh;
+}
+
+/* Контент с прокруткой если нужно */
+.swipe-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px 18px;
+    flex: 1;
+    overflow-y: auto;
+    z-index: 10;
+    position: relative;
+    max-height: calc(85vh - 40px);
 }
 
 /* Эффект при перетаскивании */
