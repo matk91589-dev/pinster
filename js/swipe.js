@@ -44,7 +44,6 @@ const Swipe = {
     gameCreating: false,
     chatLink: null,
     inviteLink: null,
-    cardHeightFixed: false,
     
     hintRunId: null,
     hintInterval: null,
@@ -84,30 +83,6 @@ const Swipe = {
         this.showSwipeMode();
         
         console.log('✅ Swipe.init() завершён, isInitialized:', this.isInitialized);
-    },
-    
-    // ФИКСАЦИЯ ВЫСОТЫ КАРТОЧКИ
-    fixCardHeight() {
-        if (!this.card) return;
-        if (this.cardHeightFixed) return;
-        
-        // Получаем текущую высоту карточки с контентом свайпа
-        const currentHeight = this.card.offsetHeight;
-        
-        if (currentHeight > 0) {
-            // Фиксируем высоту
-            this.card.style.height = currentHeight + 'px';
-            this.cardHeightFixed = true;
-            console.log('📏 Высота карточки зафиксирована:', currentHeight + 'px');
-        }
-    },
-    
-    // СБРОС ФИКСИРОВАННОЙ ВЫСОТЫ (при выходе из свайпа)
-    resetCardHeight() {
-        if (!this.card) return;
-        this.card.style.height = '';
-        this.cardHeightFixed = false;
-        console.log('📏 Высота карточки сброшена');
     },
     
     initResizeObserver() {
@@ -504,7 +479,6 @@ const Swipe = {
         this.gameCreating = false;
         this.chatLink = null;
         this.inviteLink = null;
-        this.cardHeightFixed = false;
         
         if (expiresAt) {
             if (typeof expiresAt === 'string') {
@@ -1156,9 +1130,6 @@ const Swipe = {
             
             this.updateAvatar(player);
             this.updateLinksVisibility();
-            
-            // ФИКСИРУЕМ ВЫСОТУ КАРТОЧКИ ПОСЛЕ ОТОБРАЖЕНИЯ ИГРОКА
-            setTimeout(() => this.fixCardHeight(), 100);
         }
         
         // Обновляем данные в режиме ожидания
@@ -1240,7 +1211,6 @@ const Swipe = {
     
     destroy() {
         this.unblockScroll();
-        this.resetCardHeight();
         
         if (this.resizeObserver) {
             this.resizeObserver.disconnect();
@@ -1273,7 +1243,6 @@ const Swipe = {
         this.gameCreating = false;
         this.chatLink = null;
         this.inviteLink = null;
-        this.cardHeightFixed = false;
         
         const wrapper = document.querySelector('.swipe-card-wrapper');
         if (wrapper && this.card) {
@@ -1317,7 +1286,6 @@ const Swipe = {
         reason = reason || 'неизвестно';
         console.log('🔄 Выход из свайпа. Причина:', reason);
         this.unblockScroll();
-        this.resetCardHeight();
         this.isWaitingMode = false;
         this.currentMatchId = null;
         this.currentPlayer = null;
@@ -1327,7 +1295,6 @@ const Swipe = {
         this.gameCreating = false;
         this.chatLink = null;
         this.inviteLink = null;
-        this.cardHeightFixed = false;
         
         if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
         if (this.connectionTimer) clearInterval(this.connectionTimer);
