@@ -44,6 +44,7 @@ const Swipe = {
     gameCreating: false,
     chatLink: null,
     inviteLink: null,
+    cardHeightFixed: false,
     
     hintRunId: null,
     hintInterval: null,
@@ -83,6 +84,30 @@ const Swipe = {
         this.showSwipeMode();
         
         console.log('✅ Swipe.init() завершён, isInitialized:', this.isInitialized);
+    },
+    
+    // ФИКСАЦИЯ ВЫСОТЫ КАРТОЧКИ
+    fixCardHeight() {
+        if (!this.card) return;
+        if (this.cardHeightFixed) return;
+        
+        // Получаем текущую высоту карточки с контентом свайпа
+        const currentHeight = this.card.offsetHeight;
+        
+        if (currentHeight > 0) {
+            // Фиксируем высоту
+            this.card.style.height = currentHeight + 'px';
+            this.cardHeightFixed = true;
+            console.log('📏 Высота карточки зафиксирована:', currentHeight + 'px');
+        }
+    },
+    
+    // СБРОС ФИКСИРОВАННОЙ ВЫСОТЫ (при выходе из свайпа)
+    resetCardHeight() {
+        if (!this.card) return;
+        this.card.style.height = '';
+        this.cardHeightFixed = false;
+        console.log('📏 Высота карточки сброшена');
     },
     
     initResizeObserver() {
@@ -350,9 +375,6 @@ const Swipe = {
         const timerElement = document.getElementById('swipeTimer');
         if (timerElement) timerElement.style.display = 'flex';
         
-        // Обновляем позицию кнопок после смены режима
-        setTimeout(() => this.updateButtonsPosition(), 50);
-        
         console.log('✅ Режим свайпа активирован');
     },
     
@@ -364,7 +386,7 @@ const Swipe = {
         const waitingContent = document.getElementById('waitingModeContent');
         
         if (swipeContent) swipeContent.style.display = 'none';
-        if (waitingContent) waitingContent.style.display = 'flex';
+        if (waitingContent) waitingContent.style.display = 'block';
         
         if (this.skipBtn) this.skipBtn.style.display = 'none';
         if (this.inviteBtn) this.inviteBtn.style.display = 'none';
@@ -381,9 +403,6 @@ const Swipe = {
         }
         
         if (this.card) this.card.style.opacity = '1';
-        
-        // Обновляем позицию кнопок
-        setTimeout(() => this.updateButtonsPosition(), 50);
         
         console.log('✅ Режим ожидания активирован');
     },
@@ -485,6 +504,7 @@ const Swipe = {
         this.gameCreating = false;
         this.chatLink = null;
         this.inviteLink = null;
+        this.cardHeightFixed = false;
         
         if (expiresAt) {
             if (typeof expiresAt === 'string') {
@@ -1136,6 +1156,9 @@ const Swipe = {
             
             this.updateAvatar(player);
             this.updateLinksVisibility();
+            
+            // ФИКСИРУЕМ ВЫСОТУ КАРТОЧКИ ПОСЛЕ ОТОБРАЖЕНИЯ ИГРОКА
+            setTimeout(() => this.fixCardHeight(), 100);
         }
         
         // Обновляем данные в режиме ожидания
@@ -1144,22 +1167,16 @@ const Swipe = {
         
         // Обновляем аватар тиммейта в режиме ожидания
         const waitingTeammateAvatar = document.querySelector('#waitingModeContent .waiting-teammate-avatar .tg-avatar-svg');
-        if (waitingTeammateAvatar) {
-            if (player.avatar && player.avatar !== 'null' && player.avatar !== '') {
-                waitingTeammateAvatar.innerHTML = '<img src="' + player.avatar + '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">';
-            } else {
-                waitingTeammateAvatar.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
-            }
+        if (waitingTeammateAvatar && player.avatar) {
+            waitingTeammateAvatar.innerHTML = '<img src="' + player.avatar + '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">';
         }
         
         // Обновляем свой аватар в режиме ожидания
         const waitingSelfAvatar = document.querySelector('#waitingModeContent .waiting-self-avatar .tg-avatar-svg');
         if (waitingSelfAvatar) {
             const myAvatar = localStorage.getItem('pingster_avatar') || (window.Profile && Profile.savedAvatarUrl);
-            if (myAvatar && myAvatar !== 'null' && myAvatar !== '') {
+            if (myAvatar) {
                 waitingSelfAvatar.innerHTML = '<img src="' + myAvatar + '" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">';
-            } else {
-                waitingSelfAvatar.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
             }
         }
         
@@ -1223,6 +1240,7 @@ const Swipe = {
     
     destroy() {
         this.unblockScroll();
+        this.resetCardHeight();
         
         if (this.resizeObserver) {
             this.resizeObserver.disconnect();
@@ -1255,6 +1273,7 @@ const Swipe = {
         this.gameCreating = false;
         this.chatLink = null;
         this.inviteLink = null;
+        this.cardHeightFixed = false;
         
         const wrapper = document.querySelector('.swipe-card-wrapper');
         if (wrapper && this.card) {
@@ -1298,6 +1317,7 @@ const Swipe = {
         reason = reason || 'неизвестно';
         console.log('🔄 Выход из свайпа. Причина:', reason);
         this.unblockScroll();
+        this.resetCardHeight();
         this.isWaitingMode = false;
         this.currentMatchId = null;
         this.currentPlayer = null;
@@ -1307,6 +1327,7 @@ const Swipe = {
         this.gameCreating = false;
         this.chatLink = null;
         this.inviteLink = null;
+        this.cardHeightFixed = false;
         
         if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
         if (this.connectionTimer) clearInterval(this.connectionTimer);
