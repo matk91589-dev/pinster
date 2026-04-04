@@ -2230,7 +2230,7 @@ input:checked + .slider:before {
     padding: 20px;
 }
 
-/* Карточка */
+/* Карточка — всегда 80% */
 .swipe-card {
     width: 80% !important;
     max-width: 360px !important;
@@ -2533,7 +2533,7 @@ input:checked + .slider:before {
     transform: rotate(-12deg) scale(1);
 }
 
-/* Обёртка для кнопок */
+/* Обёртка для кнопок — важно overflow: visible */
 .swipe-card-wrapper {
     position: relative;
     display: inline-block;
@@ -2543,7 +2543,7 @@ input:checked + .slider:before {
     overflow: visible !important;
 }
 
-/* Полукруглые кнопки */
+/* Кнопки — выезжают из-под карточки */
 .swipe-side-btn {
     position: absolute;
     top: 50%;
@@ -2564,12 +2564,14 @@ input:checked + .slider:before {
     opacity: 1;
 }
 
+/* Левая кнопка — выезжает влево */
 .swipe-side-btn.skip-btn {
     border-left: 3px solid #FF5E5E;
     background: linear-gradient(90deg, rgba(255, 94, 94, 0.25), rgba(20, 22, 28, 0.95));
     border-radius: 24px 0 0 24px;
 }
 
+/* Правая кнопка — выезжает вправо */
 .swipe-side-btn.invite-btn {
     border-right: 3px solid #4CAF50;
     background: linear-gradient(270deg, rgba(76, 175, 80, 0.25), rgba(20, 22, 28, 0.95));
@@ -2641,25 +2643,6 @@ input:checked + .slider:before {
     }
     .swipe-side-btn.invite-btn:hover {
         box-shadow: 4px 0 16px rgba(76, 175, 80, 0.4);
-    }
-}
-
-/* Адаптация */
-@media (max-width: 500px) {
-    .swipe-card {
-        width: 85% !important;
-    }
-}
-
-@media (max-width: 400px) {
-    .swipe-card {
-        width: 90% !important;
-    }
-}
-
-@media (max-width: 350px) {
-    .swipe-card {
-        width: 95% !important;
     }
 }
 
