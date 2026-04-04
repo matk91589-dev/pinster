@@ -2228,7 +2228,6 @@ input:checked + .slider:before {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    min-height: 0;
 }
 
 /* Карточка */
@@ -2244,9 +2243,9 @@ input:checked + .slider:before {
     display: flex;
     flex-direction: column;
     margin: 0 auto;
-    overflow: visible !important;
+    overflow: hidden;
     height: auto;
-    max-height: 85vh;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* Эффект при перетаскивании */
@@ -2286,7 +2285,6 @@ input:checked + .slider:before {
     flex-direction: column;
     gap: 16px;
     padding: 20px 18px;
-    flex: 1;
     overflow-y: auto;
     z-index: 10;
     position: relative;
@@ -2304,7 +2302,199 @@ input:checked + .slider:before {
     width: 100%;
 }
 
-/* Лейблы свайпа (INVITE/SKIP) */
+/* Верхняя строка */
+.swipe-player-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+.swipe-avatar {
+    width: 70px;
+    height: 70px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--input-bg);
+    border: 2px solid var(--border-color);
+}
+
+.swipe-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.swipe-name-block {
+    flex: 1;
+    min-width: 0;
+}
+
+.swipe-player-id {
+    font-size: 11px;
+    color: var(--accent);
+    font-family: monospace;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.swipe-player-nick {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Рейтинг */
+.swipe-rating-block {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    padding: 6px 12px;
+}
+
+.swipe-rating-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.swipe-rating-block .heart-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--accent);
+}
+
+/* Три колонки */
+.swipe-stats-row.three-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.swipe-stats-row.three-cols .swipe-stat-item {
+    text-align: center;
+}
+
+.swipe-stats-row.three-cols .swipe-stat-label {
+    font-size: 9px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+    display: block;
+    opacity: 0.5;
+}
+
+.swipe-stats-row.three-cols .swipe-stat-value {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Ссылки */
+.swipe-steam-container,
+.swipe-faceit-container {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.swipe-link-label {
+    font-size: 9px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+    display: block;
+    opacity: 0.5;
+}
+
+.swipe-link-value {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    word-break: break-all;
+}
+
+/* Комментарий */
+.swipe-comment {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.swipe-comment-label {
+    font-size: 9px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+    display: block;
+    opacity: 0.5;
+}
+
+.swipe-comment-text {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    min-height: 70px;
+    word-wrap: break-word;
+    line-height: 1.5;
+}
+
+/* Таймер */
+.swipe-timer {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(8px);
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    z-index: 20;
+}
+
+.swipe-timer.warning {
+    color: #FF6B4A;
+    animation: timerPulse 0.8s infinite;
+}
+
+@keyframes timerPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* Лейблы свайпа */
 .swipe-label {
     position: absolute;
     top: 28px;
@@ -2341,32 +2531,7 @@ input:checked + .slider:before {
     transform: rotate(-12deg) scale(1);
 }
 
-/* Таймер */
-.swipe-timer {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(8px);
-    padding: 6px 14px;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #fff;
-    z-index: 20;
-}
-
-.swipe-timer.warning {
-    color: #FF6B4A;
-    animation: timerPulse 0.8s infinite;
-}
-
-@keyframes timerPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-}
-
-/* ===== ОБЁРТКА ДЛЯ КАРТОЧКИ С КНОПКАМИ ===== */
+/* Обёртка для кнопок */
 .swipe-card-wrapper {
     position: relative;
     display: inline-block;
@@ -2376,7 +2541,7 @@ input:checked + .slider:before {
     overflow: visible !important;
 }
 
-/* ===== ПОЛУКРУГЛЫЕ КНОПКИ ===== */
+/* Полукруглые кнопки */
 .swipe-side-btn {
     position: absolute;
     top: 50%;
@@ -2397,14 +2562,12 @@ input:checked + .slider:before {
     opacity: 1;
 }
 
-/* Левая кнопка (SKIP) */
 .swipe-side-btn.skip-btn {
     border-left: 3px solid #FF5E5E;
     background: linear-gradient(90deg, rgba(255, 94, 94, 0.25), rgba(20, 22, 28, 0.95));
     border-radius: 24px 0 0 24px;
 }
 
-/* Правая кнопка (INVITE) */
 .swipe-side-btn.invite-btn {
     border-right: 3px solid #4CAF50;
     background: linear-gradient(270deg, rgba(76, 175, 80, 0.25), rgba(20, 22, 28, 0.95));
@@ -2419,7 +2582,6 @@ input:checked + .slider:before {
     width: 100%;
 }
 
-/* Анимация при нажатии */
 .swipe-side-btn.pulse {
     animation: sideBtnPull 0.2s ease-out;
 }
@@ -2430,7 +2592,6 @@ input:checked + .slider:before {
     100% { transform: translateY(-50%) scale(1); opacity: 1; }
 }
 
-/* Подсказка для кнопок */
 .swipe-side-btn.skip-btn.hint-glow {
     animation: hintGlowSkip 0.8s ease-out;
 }
@@ -2469,7 +2630,6 @@ input:checked + .slider:before {
     }
 }
 
-/* Эффект при наведении на десктопе */
 @media (hover: hover) {
     .swipe-side-btn:hover {
         filter: brightness(1.1);
