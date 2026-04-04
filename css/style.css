@@ -4118,14 +4118,31 @@ button:active { transform: scale(0.96); }
     gap: 12px !important;
     overflow-y: auto !important;
     flex: 1 !important;
+    position: relative !important;
 }
 
-#swipeModeContent, 
-#waitingModeContent {
+/* Важно: показываем только активный режим */
+#swipeModeContent {
     display: flex !important;
     flex-direction: column !important;
     gap: 12px !important;
     width: 100% !important;
+}
+
+#waitingModeContent {
+    display: none !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+}
+
+/* Когда активен режим ожидания */
+#waitingModeContent[style*="display: block"] {
+    display: flex !important;
+}
+
+#waitingModeContent[style*="display: block"] ~ #swipeModeContent {
+    display: none !important;
 }
 
 @media (max-width: 500px) {
