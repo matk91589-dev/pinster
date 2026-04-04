@@ -2219,6 +2219,464 @@ input:checked + .slider:before {
     background: rgba(255, 85, 0, 0.1);
 }
 
+/* ===== СВАЙП-КАРТОЧКИ ===== */
+
+/* Контейнер */
+.swipe-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Карточка */
+.swipe-card {
+    width: 360px;
+    max-width: 85vw;
+    background: var(--surface);
+    border-radius: 28px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    cursor: grab;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Эффект при перетаскивании */
+.swipe-card.dragging {
+    transition: none;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+    transform: scale(1.01);
+}
+
+.swipe-card:active {
+    cursor: grabbing;
+}
+
+/* Затемнение при свайпе */
+.swipe-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    transition: background 0.15s ease;
+    pointer-events: none;
+    border-radius: 28px;
+    z-index: 4;
+}
+
+.swipe-card.swiping-right::after {
+    background: rgba(76, 175, 80, 0.2);
+}
+
+.swipe-card.swiping-left::after {
+    background: rgba(255, 94, 94, 0.2);
+}
+
+/* Единый контейнер контента */
+.swipe-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px 18px;
+    flex: 1;
+    overflow-y: auto;
+    z-index: 10;
+    position: relative;
+}
+
+/* Скрываем скролл */
+.swipe-card-content::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+/* Внутренние блоки */
+#swipeModeContent,
+#waitingModeContent {
+    width: 100%;
+}
+
+/* Верхняя строка */
+.swipe-player-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+.swipe-avatar {
+    width: 70px;
+    height: 70px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--input-bg);
+    border: 2px solid var(--border-color);
+}
+
+.swipe-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.swipe-name-block {
+    flex: 1;
+    min-width: 0;
+}
+
+.swipe-player-id {
+    font-size: 11px;
+    color: var(--accent);
+    font-family: monospace;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.swipe-player-nick {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Рейтинг */
+.swipe-rating-block {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    padding: 6px 12px;
+}
+
+.swipe-rating-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.swipe-rating-block .heart-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--accent);
+}
+
+/* Три колонки */
+.swipe-stats-row.three-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.swipe-stats-row.three-cols .swipe-stat-item {
+    text-align: center;
+}
+
+.swipe-stats-row.three-cols .swipe-stat-label {
+    font-size: 9px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+    display: block;
+    opacity: 0.5;
+}
+
+.swipe-stats-row.three-cols .swipe-stat-value {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Ссылки */
+.swipe-steam-container,
+.swipe-faceit-container {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.swipe-link-label {
+    font-size: 9px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+    display: block;
+    opacity: 0.5;
+}
+
+.swipe-link-value {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    word-break: break-all;
+}
+
+/* Комментарий */
+.swipe-comment {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.swipe-comment-label {
+    font-size: 9px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+    display: block;
+    opacity: 0.5;
+}
+
+.swipe-comment-text {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    min-height: 70px;
+    word-wrap: break-word;
+    line-height: 1.5;
+}
+
+/* Таймер */
+.swipe-timer {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(8px);
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    z-index: 20;
+}
+
+.swipe-timer.warning {
+    color: #FF6B4A;
+    animation: timerPulse 0.8s infinite;
+}
+
+@keyframes timerPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* Лейблы свайпа */
+.swipe-label {
+    position: absolute;
+    top: 28px;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.2s ease;
+    z-index: 25;
+    pointer-events: none;
+    text-transform: uppercase;
+}
+
+.swipe-label-left {
+    left: 20px;
+    color: #FF5E5E;
+    transform: rotate(-12deg) scale(0.8);
+}
+
+.swipe-label-right {
+    right: 20px;
+    color: #5ACE5A;
+    transform: rotate(12deg) scale(0.8);
+}
+
+.swipe-card.swiping-right .swipe-label-right {
+    opacity: 1;
+    transform: rotate(12deg) scale(1);
+}
+
+.swipe-card.swiping-left .swipe-label-left {
+    opacity: 1;
+    transform: rotate(-12deg) scale(1);
+}
+
+/* Обёртка для кнопок */
+.swipe-card-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 0 auto;
+    transition: transform 0.3s ease;
+    will-change: transform;
+    overflow: visible !important;
+}
+
+/* Кнопки */
+.swipe-side-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(20, 22, 28, 0.95);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 15;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.swipe-side-btn.visible {
+    opacity: 1;
+}
+
+.swipe-side-btn.skip-btn {
+    border-left: 3px solid #FF5E5E;
+    background: linear-gradient(90deg, rgba(255, 94, 94, 0.25), rgba(20, 22, 28, 0.95));
+    border-radius: 24px 0 0 24px;
+}
+
+.swipe-side-btn.invite-btn {
+    border-right: 3px solid #4CAF50;
+    background: linear-gradient(270deg, rgba(76, 175, 80, 0.25), rgba(20, 22, 28, 0.95));
+    border-radius: 0 24px 24px 0;
+}
+
+.swipe-side-btn-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.swipe-side-btn.pulse {
+    animation: sideBtnPull 0.2s ease-out;
+}
+
+@keyframes sideBtnPull {
+    0% { transform: translateY(-50%) scale(1); opacity: 1; }
+    50% { transform: translateY(-50%) scale(0.92); opacity: 0.9; }
+    100% { transform: translateY(-50%) scale(1); opacity: 1; }
+}
+
+.swipe-side-btn.skip-btn.hint-glow {
+    animation: hintGlowSkip 0.8s ease-out;
+}
+
+@keyframes hintGlowSkip {
+    0% { 
+        box-shadow: 0 0 0 0 rgba(255, 94, 94, 0);
+        border-left-color: rgba(255, 94, 94, 0.3);
+    }
+    50% { 
+        box-shadow: -4px 0 12px 4px rgba(255, 94, 94, 0.5);
+        border-left-color: #FF5E5E;
+    }
+    100% { 
+        box-shadow: 0 0 0 0 rgba(255, 94, 94, 0);
+        border-left-color: rgba(255, 94, 94, 0.3);
+    }
+}
+
+.swipe-side-btn.invite-btn.hint-glow {
+    animation: hintGlowInvite 0.8s ease-out;
+}
+
+@keyframes hintGlowInvite {
+    0% { 
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+        border-right-color: rgba(76, 175, 80, 0.3);
+    }
+    50% { 
+        box-shadow: 4px 0 12px 4px rgba(76, 175, 80, 0.5);
+        border-right-color: #4CAF50;
+    }
+    100% { 
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+        border-right-color: rgba(76, 175, 80, 0.3);
+    }
+}
+
+@media (hover: hover) {
+    .swipe-side-btn:hover {
+        filter: brightness(1.1);
+    }
+    .swipe-side-btn.skip-btn:hover {
+        box-shadow: -4px 0 16px rgba(255, 94, 94, 0.4);
+    }
+    .swipe-side-btn.invite-btn:hover {
+        box-shadow: 4px 0 16px rgba(76, 175, 80, 0.4);
+    }
+}
+
+/* Адаптация */
+@media (max-width: 500px) {
+    .swipe-card {
+        width: 320px;
+    }
+    .swipe-card-content {
+        padding: 16px 14px;
+        gap: 12px;
+    }
+    .swipe-avatar {
+        width: 60px;
+        height: 60px;
+    }
+    .swipe-player-nick {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 400px) {
+    .swipe-card {
+        width: 280px;
+    }
+    .swipe-card-content {
+        padding: 14px 12px;
+        gap: 10px;
+    }
+    .swipe-avatar {
+        width: 52px;
+        height: 52px;
+    }
+    .swipe-player-nick {
+        font-size: 15px;
+    }
+}
+
 /* ===== РЕЖИМ ОЖИДАНИЯ - АДАПТИВНЫЙ (ТОЛЬКО ЭТОТ БЛОК!) ===== */
 
 .waiting-mode-content {
@@ -3653,159 +4111,4 @@ button:active { transform: scale(0.96); }
     opacity: 1 !important;
     transform: translateY(0) scale(1) !important;
     transition: opacity 0.25s ease, transform 0.25s ease !important;
-}
-
-/* ===== ПРИНУДИТЕЛЬНЫЕ СТИЛИ ДЛЯ КАРТОЧКИ ===== */
-.swipe-card {
-    width: 60vw !important;
-    max-width: 400px !important;
-    min-width: 280px !important;
-    aspect-ratio: 4 / 4.5 !important;
-    margin: 0 auto !important;
-}
-
-/* Обёртка */
-.swipe-card-wrapper {
-    position: relative !important;
-    display: flex !important;
-    justify-content: center !important;
-    overflow: visible !important;
-}
-
-/* Кнопки */
-.swipe-side-btn {
-    position: absolute !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    width: 40px !important;
-    height: 80px !important;
-    border-radius: 20px !important;
-}
-
-.swipe-side-btn.skip-btn {
-    left: -20px !important;
-    right: auto !important;
-}
-
-.swipe-side-btn.invite-btn {
-    right: -20px !important;
-    left: auto !important;
-}
-
-/* Контент */
-.swipe-card-content {
-    gap: 12px !important;
-    padding: 16px !important;
-}
-
-.swipe-player-row {
-    gap: 12px !important;
-}
-
-.swipe-avatar {
-    width: 55px !important;
-    height: 55px !important;
-}
-
-.swipe-player-nick {
-    font-size: 16px !important;
-}
-
-.swipe-rating-block {
-    padding: 4px 8px !important;
-}
-
-.swipe-rating-value {
-    font-size: 14px !important;
-}
-
-.swipe-stats-row.three-cols {
-    gap: 8px !important;
-}
-
-.swipe-stats-row.three-cols .swipe-stat-value {
-    font-size: 13px !important;
-    padding: 6px 4px !important;
-}
-
-.swipe-link-value {
-    font-size: 11px !important;
-    padding: 8px 10px !important;
-}
-
-.swipe-comment-text {
-    font-size: 11px !important;
-    padding: 10px !important;
-    min-height: 50px !important;
-}
-
-/* Таймер */
-.swipe-timer {
-    top: 10px !important;
-    left: 10px !important;
-    padding: 4px 10px !important;
-    font-size: 12px !important;
-}
-
-/* Адаптация */
-@media (max-width: 600px) {
-    .swipe-card {
-        width: 70vw !important;
-    }
-    .swipe-side-btn {
-        width: 35px !important;
-        height: 70px !important;
-    }
-    .swipe-side-btn.skip-btn {
-        left: -15px !important;
-    }
-    .swipe-side-btn.invite-btn {
-        right: -15px !important;
-    }
-}
-
-@media (max-width: 480px) {
-    .swipe-card {
-        width: 80vw !important;
-    }
-    .swipe-avatar {
-        width: 48px !important;
-        height: 48px !important;
-    }
-    .swipe-player-nick {
-        font-size: 14px !important;
-    }
-    .swipe-side-btn {
-        width: 30px !important;
-        height: 60px !important;
-    }
-    .swipe-side-btn.skip-btn {
-        left: -12px !important;
-    }
-    .swipe-side-btn.invite-btn {
-        right: -12px !important;
-    }
-}
-
-@media (max-width: 380px) {
-    .swipe-card {
-        width: 85vw !important;
-    }
-    .swipe-card-content {
-        padding: 12px !important;
-        gap: 8px !important;
-    }
-    .swipe-stats-row.three-cols .swipe-stat-value {
-        font-size: 11px !important;
-    }
-    .swipe-side-btn {
-        width: 28px !important;
-        height: 55px !important;
-    }
-    .swipe-side-btn.skip-btn {
-        left: -10px !important;
-    }
-    .swipe-side-btn.invite-btn {
-        right: -10px !important;
-    }
 }
