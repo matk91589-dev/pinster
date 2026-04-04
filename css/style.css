@@ -4102,47 +4102,13 @@ button:active { transform: scale(0.96); }
     transition: opacity 0.25s ease, transform 0.25s ease !important;
 }
 
-/* ===== ФИНАЛЬНЫЕ ПРИНУДИТЕЛЬНЫЕ СТИЛИ ДЛЯ КАРТОЧКИ ===== */
+/* ===== ТОЛЬКО РАЗМЕРЫ КАРТОЧКИ ===== */
 .swipe-card {
     width: 80% !important;
     max-width: 360px !important;
     min-width: 280px !important;
-    aspect-ratio: 4 / 5 !important;
+    aspect-ratio: 4 / 4.5 !important;
     margin: 0 auto !important;
-    position: relative !important;
-    overflow: hidden !important;
-}
-
-.swipe-card-content {
-    padding: 16px !important;
-    gap: 12px !important;
-    overflow-y: auto !important;
-    flex: 1 !important;
-    position: relative !important;
-}
-
-/* Важно: показываем только активный режим */
-#swipeModeContent {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-    width: 100% !important;
-}
-
-#waitingModeContent {
-    display: none !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-    width: 100% !important;
-}
-
-/* Когда активен режим ожидания */
-#waitingModeContent[style*="display: block"] {
-    display: flex !important;
-}
-
-#waitingModeContent[style*="display: block"] ~ #swipeModeContent {
-    display: none !important;
 }
 
 @media (max-width: 500px) {
@@ -4154,11 +4120,5 @@ button:active { transform: scale(0.96); }
 @media (max-width: 400px) {
     .swipe-card {
         width: 90% !important;
-    }
-}
-
-@media (max-width: 350px) {
-    .swipe-card {
-        width: 95% !important;
     }
 }
