@@ -4112,3 +4112,23 @@ button:active { transform: scale(0.96); }
     transform: translateY(0) scale(1) !important;
     transition: opacity 0.25s ease, transform 0.25s ease !important;
 }
+
+/* Принудительное выравнивание контента */
+#swipeModeContent,
+#waitingModeContent {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+}
+
+/* Убираем лишние отступы у waiting-mode-content */
+.waiting-mode-content {
+    padding: 0 !important;
+    gap: 16px !important;
+}
+
+/* А если хочешь чтобы отступы были как у свайпа — задай их родителю */
+.swipe-card-content {
+    padding: 20px 18px !important;
+    gap: 16px !important;
+}
