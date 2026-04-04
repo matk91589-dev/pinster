@@ -4134,6 +4134,22 @@ button:active { transform: scale(0.96); }
     }
 }
 
+/* ===== ГАРАНТИЯ ПОКАЗА ЭКРАНОВ ===== */
+.screen {
+    display: none !important;
+    width: 100% !important;
+    flex: 1 !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+}
+
+.screen.active {
+    display: flex !important;
+    opacity: 1 !important;
+    transform: translateY(0) scale(1) !important;
+    transition: opacity 0.25s ease, transform 0.25s ease !important;
+}
+
 /* ===== ПРИНУДИТЕЛЬНЫЕ СТИЛИ ДЛЯ КАРТОЧКИ ===== */
 .swipe-card {
     width: 60vw !important;
@@ -4156,128 +4172,90 @@ button:active { transform: scale(0.96); }
     position: absolute !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
-    width: clamp(30px, 8vw, 45px) !important;
-    height: clamp(60px, 15vh, 90px) !important;
+    width: 40px !important;
+    height: 80px !important;
     border-radius: 20px !important;
 }
 
 .swipe-side-btn.skip-btn {
-    left: clamp(-15px, -3vw, -25px) !important;
+    left: -20px !important;
     right: auto !important;
 }
 
 .swipe-side-btn.invite-btn {
-    right: clamp(-15px, -3vw, -25px) !important;
+    right: -20px !important;
     left: auto !important;
 }
 
-/* Контент — всё через clamp для пропорциональности */
+/* Контент */
 .swipe-card-content {
-    gap: clamp(8px, 2vh, 16px) !important;
-    padding: clamp(12px, 3vh, 20px) clamp(12px, 4vw, 18px) !important;
+    gap: 12px !important;
+    padding: 16px !important;
 }
 
 .swipe-player-row {
-    gap: clamp(8px, 2vw, 16px) !important;
+    gap: 12px !important;
 }
 
 .swipe-avatar {
-    width: clamp(45px, 10vw, 65px) !important;
-    height: clamp(45px, 10vw, 65px) !important;
-}
-
-.swipe-player-id {
-    font-size: clamp(9px, 2.5vw, 11px) !important;
-    margin-bottom: 2px !important;
+    width: 55px !important;
+    height: 55px !important;
 }
 
 .swipe-player-nick {
-    font-size: clamp(14px, 4vw, 18px) !important;
+    font-size: 16px !important;
 }
 
 .swipe-rating-block {
-    padding: clamp(3px, 1vh, 6px) clamp(6px, 2vw, 12px) !important;
-    gap: clamp(3px, 1vw, 6px) !important;
+    padding: 4px 8px !important;
 }
 
 .swipe-rating-value {
-    font-size: clamp(12px, 3.5vw, 16px) !important;
+    font-size: 14px !important;
 }
 
-.swipe-rating-block .heart-icon svg {
-    width: clamp(12px, 3vw, 16px) !important;
-    height: clamp(12px, 3vw, 16px) !important;
-}
-
-/* Три колонки */
 .swipe-stats-row.three-cols {
-    gap: clamp(6px, 2vw, 12px) !important;
-}
-
-.swipe-stats-row.three-cols .swipe-stat-label {
-    font-size: clamp(7px, 2vw, 9px) !important;
-    margin-bottom: 3px !important;
+    gap: 8px !important;
 }
 
 .swipe-stats-row.three-cols .swipe-stat-value {
-    font-size: clamp(11px, 3vw, 15px) !important;
-    padding: clamp(5px, 1.5vh, 8px) clamp(3px, 1vw, 6px) !important;
-    border-radius: clamp(8px, 2vw, 12px) !important;
-}
-
-/* Ссылки */
-.swipe-link-label {
-    font-size: clamp(7px, 2vw, 9px) !important;
-    margin-bottom: 3px !important;
+    font-size: 13px !important;
+    padding: 6px 4px !important;
 }
 
 .swipe-link-value {
-    font-size: clamp(10px, 2.5vw, 13px) !important;
-    padding: clamp(6px, 1.5vh, 10px) clamp(8px, 2vw, 12px) !important;
-    border-radius: clamp(8px, 2vw, 12px) !important;
-}
-
-/* Комментарий */
-.swipe-comment-label {
-    font-size: clamp(7px, 2vw, 9px) !important;
-    margin-bottom: 3px !important;
+    font-size: 11px !important;
+    padding: 8px 10px !important;
 }
 
 .swipe-comment-text {
-    font-size: clamp(10px, 2.5vw, 13px) !important;
-    padding: clamp(8px, 2vh, 12px) !important;
-    border-radius: clamp(8px, 2vw, 12px) !important;
-    min-height: clamp(50px, 10vh, 70px) !important;
-    max-height: clamp(80px, 15vh, 110px) !important;
+    font-size: 11px !important;
+    padding: 10px !important;
+    min-height: 50px !important;
 }
 
 /* Таймер */
 .swipe-timer {
-    top: clamp(8px, 2vh, 12px) !important;
-    left: clamp(8px, 2vw, 12px) !important;
-    padding: clamp(3px, 1vh, 5px) clamp(8px, 2vw, 12px) !important;
-    font-size: clamp(11px, 3vw, 14px) !important;
-    border-radius: 20px !important;
+    top: 10px !important;
+    left: 10px !important;
+    padding: 4px 10px !important;
+    font-size: 12px !important;
 }
 
-/* Лейблы свайпа */
-.swipe-label {
-    top: clamp(20px, 5vh, 28px) !important;
-    font-size: clamp(16px, 4vw, 22px) !important;
-}
-
-.swipe-label-left {
-    left: clamp(10px, 2vw, 20px) !important;
-}
-
-.swipe-label-right {
-    right: clamp(10px, 2vw, 20px) !important;
-}
-
-/* Адаптация для очень маленьких экранов — меняем ширину */
+/* Адаптация */
 @media (max-width: 600px) {
     .swipe-card {
         width: 70vw !important;
+    }
+    .swipe-side-btn {
+        width: 35px !important;
+        height: 70px !important;
+    }
+    .swipe-side-btn.skip-btn {
+        left: -15px !important;
+    }
+    .swipe-side-btn.invite-btn {
+        right: -15px !important;
     }
 }
 
@@ -4285,10 +4263,44 @@ button:active { transform: scale(0.96); }
     .swipe-card {
         width: 80vw !important;
     }
+    .swipe-avatar {
+        width: 48px !important;
+        height: 48px !important;
+    }
+    .swipe-player-nick {
+        font-size: 14px !important;
+    }
+    .swipe-side-btn {
+        width: 30px !important;
+        height: 60px !important;
+    }
+    .swipe-side-btn.skip-btn {
+        left: -12px !important;
+    }
+    .swipe-side-btn.invite-btn {
+        right: -12px !important;
+    }
 }
 
 @media (max-width: 380px) {
     .swipe-card {
         width: 85vw !important;
+    }
+    .swipe-card-content {
+        padding: 12px !important;
+        gap: 8px !important;
+    }
+    .swipe-stats-row.three-cols .swipe-stat-value {
+        font-size: 11px !important;
+    }
+    .swipe-side-btn {
+        width: 28px !important;
+        height: 55px !important;
+    }
+    .swipe-side-btn.skip-btn {
+        left: -10px !important;
+    }
+    .swipe-side-btn.invite-btn {
+        right: -10px !important;
     }
 }
