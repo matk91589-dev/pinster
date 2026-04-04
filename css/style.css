@@ -2232,9 +2232,9 @@ input:checked + .slider:before {
 
 /* Карточка с фиксированным соотношением 4:5 */
 .swipe-card {
-    width: 80%;
-    max-width: 360px;
-    aspect-ratio: 4 / 5;
+    width: 80% !important;
+    max-width: 360px !important;
+    aspect-ratio: 4 / 5 !important;
     background: var(--surface);
     border-radius: 28px;
     border: 1px solid var(--border-color);
