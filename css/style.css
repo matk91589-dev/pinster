@@ -2230,10 +2230,11 @@ input:checked + .slider:before {
     padding: 20px;
 }
 
-/* Карточка */
+/* Карточка с фиксированным соотношением 4:5 */
 .swipe-card {
-    width: 360px;
-    max-width: 85vw;
+    width: 80%;
+    max-width: 360px;
+    aspect-ratio: 4 / 5;
     background: var(--surface);
     border-radius: 28px;
     border: 1px solid var(--border-color);
@@ -2244,7 +2245,6 @@ input:checked + .slider:before {
     flex-direction: column;
     margin: 0 auto;
     overflow: hidden;
-    height: auto;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -2279,12 +2279,13 @@ input:checked + .slider:before {
     background: rgba(255, 94, 94, 0.2);
 }
 
-/* Единый контейнер контента */
+/* Единый контейнер контента — заполняет всю карточку */
 .swipe-card-content {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 20px 18px;
+    gap: clamp(8px, 2vh, 16px);
+    padding: clamp(12px, 3vh, 20px) clamp(12px, 4vw, 18px);
+    flex: 1;
     overflow-y: auto;
     z-index: 10;
     position: relative;
@@ -2300,19 +2301,23 @@ input:checked + .slider:before {
 #swipeModeContent,
 #waitingModeContent {
     width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(8px, 1.5vh, 16px);
 }
 
 /* Верхняя строка */
 .swipe-player-row {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: clamp(10px, 3vw, 16px);
     flex-shrink: 0;
 }
 
 .swipe-avatar {
-    width: 70px;
-    height: 70px;
+    width: clamp(50px, 12vw, 70px);
+    height: clamp(50px, 12vw, 70px);
     flex-shrink: 0;
     border-radius: 50%;
     overflow: hidden;
@@ -2332,7 +2337,7 @@ input:checked + .slider:before {
 }
 
 .swipe-player-id {
-    font-size: 11px;
+    font-size: clamp(9px, 2.5vw, 11px);
     color: var(--accent);
     font-family: monospace;
     font-weight: 600;
@@ -2340,7 +2345,7 @@ input:checked + .slider:before {
 }
 
 .swipe-player-nick {
-    font-size: 18px;
+    font-size: clamp(14px, 4vw, 18px);
     font-weight: 700;
     color: var(--text-primary);
     white-space: nowrap;
@@ -2352,23 +2357,23 @@ input:checked + .slider:before {
 .swipe-rating-block {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     flex-shrink: 0;
     background: var(--surface);
     border: 1px solid var(--border-color);
     border-radius: 30px;
-    padding: 6px 12px;
+    padding: 4px clamp(6px, 2vw, 12px);
 }
 
 .swipe-rating-value {
-    font-size: 16px;
+    font-size: clamp(12px, 3.5vw, 16px);
     font-weight: 700;
     color: var(--text-primary);
 }
 
 .swipe-rating-block .heart-icon svg {
-    width: 16px;
-    height: 16px;
+    width: clamp(12px, 3vw, 16px);
+    height: clamp(12px, 3vw, 16px);
     stroke: var(--accent);
 }
 
@@ -2376,7 +2381,7 @@ input:checked + .slider:before {
 .swipe-stats-row.three-cols {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
+    gap: clamp(6px, 2vw, 12px);
     margin: 0;
     flex-shrink: 0;
 }
@@ -2386,7 +2391,7 @@ input:checked + .slider:before {
 }
 
 .swipe-stats-row.three-cols .swipe-stat-label {
-    font-size: 9px;
+    font-size: clamp(7px, 2vw, 9px);
     color: var(--text-secondary);
     font-weight: 400;
     text-transform: uppercase;
@@ -2399,9 +2404,9 @@ input:checked + .slider:before {
 .swipe-stats-row.three-cols .swipe-stat-value {
     background: var(--surface);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 10px 8px;
-    font-size: 16px;
+    border-radius: clamp(8px, 2vw, 12px);
+    padding: clamp(6px, 1.5vh, 10px) clamp(4px, 1.5vw, 8px);
+    font-size: clamp(11px, 3vw, 16px);
     font-weight: 600;
     color: var(--text-primary);
     text-align: center;
@@ -2418,7 +2423,7 @@ input:checked + .slider:before {
 }
 
 .swipe-link-label {
-    font-size: 9px;
+    font-size: clamp(7px, 2vw, 9px);
     color: var(--text-secondary);
     font-weight: 400;
     text-transform: uppercase;
@@ -2431,22 +2436,26 @@ input:checked + .slider:before {
 .swipe-link-value {
     background: var(--surface);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 10px 12px;
-    font-size: 13px;
+    border-radius: clamp(8px, 2vw, 12px);
+    padding: clamp(6px, 1.5vh, 10px) clamp(8px, 2vw, 12px);
+    font-size: clamp(10px, 2.5vw, 13px);
     font-weight: 500;
     color: var(--text-primary);
     word-break: break-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Комментарий */
 .swipe-comment {
     margin: 0;
-    flex-shrink: 0;
+    flex-shrink: 1;
+    min-height: 0;
 }
 
 .swipe-comment-label {
-    font-size: 9px;
+    font-size: clamp(7px, 2vw, 9px);
     color: var(--text-secondary);
     font-weight: 400;
     text-transform: uppercase;
@@ -2459,26 +2468,28 @@ input:checked + .slider:before {
 .swipe-comment-text {
     background: var(--surface);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 12px 14px;
-    font-size: 13px;
+    border-radius: clamp(8px, 2vw, 12px);
+    padding: clamp(8px, 1.5vh, 12px) clamp(8px, 2vw, 14px);
+    font-size: clamp(10px, 2.5vw, 13px);
     font-weight: 500;
     color: var(--text-primary);
-    min-height: 70px;
+    min-height: clamp(50px, 8vh, 70px);
+    max-height: clamp(80px, 12vh, 120px);
+    overflow-y: auto;
     word-wrap: break-word;
-    line-height: 1.5;
+    line-height: 1.4;
 }
 
 /* Таймер */
 .swipe-timer {
     position: absolute;
-    top: 14px;
-    left: 14px;
+    top: clamp(8px, 2vh, 14px);
+    left: clamp(8px, 2vw, 14px);
     background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(8px);
-    padding: 6px 14px;
+    padding: clamp(4px, 1vh, 6px) clamp(8px, 2vw, 14px);
     border-radius: 30px;
-    font-size: 14px;
+    font-size: clamp(11px, 3vw, 14px);
     font-weight: 600;
     color: #fff;
     z-index: 20;
@@ -2497,8 +2508,8 @@ input:checked + .slider:before {
 /* Лейблы свайпа */
 .swipe-label {
     position: absolute;
-    top: 28px;
-    font-size: 24px;
+    top: clamp(20px, 5vh, 28px);
+    font-size: clamp(18px, 5vw, 24px);
     font-weight: 900;
     letter-spacing: 2px;
     opacity: 0;
@@ -2510,13 +2521,13 @@ input:checked + .slider:before {
 }
 
 .swipe-label-left {
-    left: 20px;
+    left: clamp(12px, 3vw, 20px);
     color: #FF5E5E;
     transform: rotate(-12deg) scale(0.8);
 }
 
 .swipe-label-right {
-    right: 20px;
+    right: clamp(12px, 3vw, 20px);
     color: #5ACE5A;
     transform: rotate(12deg) scale(0.8);
 }
@@ -2642,38 +2653,16 @@ input:checked + .slider:before {
     }
 }
 
-/* Адаптация */
+/* Адаптация для маленьких экранов */
 @media (max-width: 500px) {
     .swipe-card {
-        width: 320px;
-    }
-    .swipe-card-content {
-        padding: 16px 14px;
-        gap: 12px;
-    }
-    .swipe-avatar {
-        width: 60px;
-        height: 60px;
-    }
-    .swipe-player-nick {
-        font-size: 16px;
+        width: 85%;
     }
 }
 
 @media (max-width: 400px) {
     .swipe-card {
-        width: 280px;
-    }
-    .swipe-card-content {
-        padding: 14px 12px;
-        gap: 10px;
-    }
-    .swipe-avatar {
-        width: 52px;
-        height: 52px;
-    }
-    .swipe-player-nick {
-        font-size: 15px;
+        width: 90%;
     }
 }
 
