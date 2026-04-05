@@ -3926,3 +3926,8 @@ button:active { transform: scale(0.96); }
         height: 24px !important;
     }
 }
+
+/* Скрываем старый хедер свайпа */
+ .swipe-header {
+    display: none !important;
+ }
