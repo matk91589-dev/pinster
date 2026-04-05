@@ -4114,3 +4114,169 @@ button:active { transform: scale(0.96); }
     transform: translateY(0) scale(1) !important;
     transition: opacity 0.25s ease, transform 0.25s ease !important;
 }
+
+/* ===== УНИВЕРСАЛЬНАЯ АДАПТАЦИЯ ===== */
+/* Базовые rem-настройки (1rem = 10px для удобства) */
+html {
+    font-size: 62.5%; /* 1rem = 10px */
+}
+
+/* Корректировка для очень маленьких экранов */
+@media (max-width: 380px) {
+    html {
+        font-size: 58%;
+    }
+    
+    .content {
+        padding: 8px 12px !important;
+    }
+    
+    .mode-btn {
+        padding: 2.5vh 4vw !important;
+        font-size: clamp(13px, 4vw, 16px) !important;
+    }
+    
+    .swipe-card {
+        width: 280px !important;
+        height: 315px !important;
+    }
+    
+    .swipe-card-content {
+        padding: 12px !important;
+        gap: 10px !important;
+    }
+    
+    .swipe-avatar {
+        width: 50px !important;
+        height: 50px !important;
+    }
+    
+    .swipe-player-nick {
+        font-size: 14px !important;
+    }
+}
+
+/* Средние экраны (обычные телефоны) */
+@media (min-width: 381px) and (max-width: 480px) {
+    .content {
+        padding: 10px 16px !important;
+    }
+    
+    .swipe-card {
+        width: 320px !important;
+        height: 360px !important;
+    }
+    
+    .mode-btn {
+        padding: 2.8vh 4vw !important;
+    }
+}
+
+/* Большие экраны (Plus/Max модели, планшеты) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .content {
+        padding: 12px 24px !important;
+    }
+    
+    .swipe-card {
+        width: 400px !important;
+        height: 450px !important;
+    }
+    
+    .mode-btn {
+        padding: 3vh 5vw !important;
+        font-size: clamp(16px, 4vw, 20px) !important;
+    }
+    
+    .section-title {
+        font-size: clamp(22px, 6vw, 28px) !important;
+    }
+}
+
+/* Очень широкие экраны (планшеты горизонтально) */
+@media (min-width: 769px) {
+    .phone-frame {
+        max-width: 500px !important;
+        margin: 0 auto !important;
+        border-radius: 32px !important;
+        overflow: hidden !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    }
+    
+    .swipe-card {
+        width: 420px !important;
+        height: 470px !important;
+    }
+}
+
+/* ===== АДАПТИВНЫЕ ТЕКСТЫ (глобально) ===== */
+.section-title {
+    font-size: clamp(18px, 5vw, 26px) !important;
+}
+
+.section-subtitle {
+    font-size: clamp(11px, 3.5vw, 15px) !important;
+}
+
+.mode-btn {
+    font-size: clamp(13px, 4vw, 18px) !important;
+}
+
+.nav-label {
+    font-size: clamp(8px, 2.5vw, 11px) !important;
+}
+
+.nav-icon svg {
+    width: clamp(16px, 5vw, 22px) !important;
+    height: clamp(16px, 5vw, 22px) !important;
+}
+
+/* Отступы между элементами */
+.screen-inner {
+    gap: clamp(8px, 2vh, 16px) !important;
+}
+
+/* Кнопки */
+.primary-btn, .mode-search-btn {
+    width: min(280px, 85%) !important;
+    padding: clamp(10px, 2.5vh, 16px) 0 !important;
+    font-size: clamp(14px, 4vw, 18px) !important;
+}
+
+/* Поля ввода */
+.input-field, .search-input-field, .rank-select, .comment-input {
+    padding: clamp(10px, 1.8vh, 14px) clamp(12px, 3vw, 16px) !important;
+    font-size: clamp(11px, 3.5vw, 14px) !important;
+}
+
+/* Карточки в магазине и профиле */
+.case-item, .friend-item, .inventory-item {
+    padding: clamp(10px, 1.8vh, 14px) clamp(12px, 3vw, 16px) !important;
+}
+
+/* Хедер */
+.header {
+    padding: calc(8px + env(safe-area-inset-top)) 16px 8px 16px !important;
+}
+
+.logo {
+    font-size: clamp(18px, 5vw, 24px) !important;
+}
+
+/* Нижняя навигация */
+.bottom-nav {
+    padding: 8px 16px calc(8px + env(safe-area-inset-bottom)) 16px !important;
+}
+
+/* Отступы в контенте */
+.content {
+    padding: 8px 16px !important;
+    transition: padding 0.2s ease;
+}
+
+/* Специально для экранов настроек и магазина — убираем паддинги по бокам */
+.content.settings-mode,
+.content.shop-mode {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
