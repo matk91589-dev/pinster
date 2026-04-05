@@ -2233,7 +2233,7 @@ input:checked + .slider:before {
 /* Карточка — фиксированные размеры */
 .swipe-card {
     width: 360px !important;
-    height: 405px !important;
+    height: 360px !important;
     background: var(--surface);
     border-radius: 28px;
     border: 1px solid var(--border-color);
@@ -2646,7 +2646,7 @@ input:checked + .slider:before {
 @media (max-width: 500px) {
     .swipe-card {
         width: 320px !important;
-        height: 360px !important;
+        height: 320px !important;
     }
     .swipe-card-content {
         padding: 16px 14px;
@@ -2664,7 +2664,7 @@ input:checked + .slider:before {
 @media (max-width: 400px) {
     .swipe-card {
         width: 280px !important;
-        height: 315px !important;
+        height: 280px !important;
     }
     .swipe-card-content {
         padding: 14px 12px;
