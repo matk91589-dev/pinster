@@ -56,12 +56,56 @@
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
     
-    <!-- ФИНАЛЬНЫЕ ПРАВИЛА ДЛЯ КАРТОЧКИ СВАЙПА С ПОЛНОЙ АДАПТАЦИЕЙ -->
+    <!-- ФИНАЛЬНЫЕ ПРАВИЛА ДЛЯ КАРТОЧКИ СВАЙПА -->
     <style>
         /* Базовые размеры для больших экранов (шире 500px) */
         .swipe-card {
             width: 360px !important;
             height: 360px !important;
+        }
+        
+        /* Растягиваем контент на всю высоту */
+        .swipe-card-content {
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            height: 100% !important;
+            flex: 1 !important;
+        }
+        
+        /* Увеличиваем расстояния между блоками */
+        #swipeModeContent {
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            flex: 1 !important;
+            gap: 16px !important;
+        }
+        
+        /* Отдельные блоки — равномерное распределение */
+        .swipe-player-row {
+            margin-bottom: 4px !important;
+        }
+        
+        .swipe-stats-row.three-cols {
+            margin: 8px 0 !important;
+        }
+        
+        .swipe-steam-container,
+        .swipe-faceit-container {
+            margin: 4px 0 !important;
+        }
+        
+        .swipe-comment {
+            margin-top: 8px !important;
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        
+        .swipe-comment-text {
+            flex: 1 !important;
+            min-height: auto !important;
         }
         
         /* От 451px до 500px */
@@ -79,7 +123,10 @@
             }
             .swipe-card-content {
                 padding: 16px !important;
-                gap: 10px !important;
+                gap: 12px !important;
+            }
+            #swipeModeContent {
+                gap: 14px !important;
             }
         }
         
@@ -101,7 +148,10 @@
             }
             .swipe-card-content {
                 padding: 14px !important;
-                gap: 8px !important;
+                gap: 10px !important;
+            }
+            #swipeModeContent {
+                gap: 12px !important;
             }
             .swipe-stats-row.three-cols .swipe-stat-value {
                 padding: 6px 4px !important;
@@ -114,7 +164,6 @@
             .swipe-comment-text {
                 font-size: 11px !important;
                 padding: 10px !important;
-                min-height: 50px !important;
             }
         }
         
@@ -141,6 +190,9 @@
                 padding: 12px !important;
                 gap: 8px !important;
             }
+            #swipeModeContent {
+                gap: 10px !important;
+            }
             .swipe-stats-row.three-cols .swipe-stat-value {
                 padding: 5px 3px !important;
                 font-size: 12px !important;
@@ -155,7 +207,6 @@
             .swipe-comment-text {
                 font-size: 10px !important;
                 padding: 8px !important;
-                min-height: 45px !important;
             }
             .swipe-timer {
                 font-size: 11px !important;
@@ -188,6 +239,9 @@
                 padding: 10px !important;
                 gap: 6px !important;
             }
+            #swipeModeContent {
+                gap: 8px !important;
+            }
             .swipe-stats-row.three-cols {
                 gap: 6px !important;
             }
@@ -205,7 +259,6 @@
             .swipe-comment-text {
                 font-size: 9px !important;
                 padding: 6px !important;
-                min-height: 40px !important;
             }
             .swipe-timer {
                 font-size: 10px !important;
