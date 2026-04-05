@@ -2234,6 +2234,7 @@ input:checked + .slider:before {
 .swipe-card {
     width: 360px;
     max-width: 85vw;
+    min-height: 480px;
     background: var(--surface);
     border-radius: 28px;
     border: 1px solid var(--border-color);
