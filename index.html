@@ -56,228 +56,213 @@
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
     
-    <!-- ФИНАЛЬНЫЕ ПРАВИЛА ДЛЯ КАРТОЧКИ СВАЙПА -->
+    <!-- TINDER-STYLE СВАЙП-КАРТОЧКИ (перебивает всё) -->
     <style>
-        /* Базовые размеры для больших экранов (шире 500px) */
-        .swipe-card {
-            width: 400px !important;
-            height: 400px !important;
+        /* Контейнер свайпа — на весь экран */
+        .swipe-container {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 16px !important;
+            min-height: 0 !important;
         }
-        
-        /* Растягиваем контент на всю высоту */
+
+        /* Карточка — почти на весь экран */
+        .swipe-card {
+            width: 100% !important;
+            max-width: 450px !important;
+            height: auto !important;
+            min-height: 65vh !important;
+            max-height: 75vh !important;
+            background: var(--surface);
+            border-radius: 28px !important;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            cursor: grab;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Контент карточки — растягиваем */
         .swipe-card-content {
             display: flex !important;
             flex-direction: column !important;
-            justify-content: space-between !important;
-            height: 100% !important;
             flex: 1 !important;
+            padding: 20px !important;
+            gap: 16px !important;
+            overflow-y: auto !important;
         }
-        
-        /* Умеренные расстояния между блоками */
-        #swipeModeContent {
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-between !important;
-            flex: 1 !important;
-            gap: 14px !important;
+
+        /* Аватарка — крупнее */
+        .swipe-avatar {
+            width: 80px !important;
+            height: 80px !important;
+            flex-shrink: 0;
         }
-        
-        /* Отдельные блоки */
-        .swipe-player-row {
-            margin-bottom: 0 !important;
+
+        .swipe-player-nick {
+            font-size: 22px !important;
+            font-weight: 700 !important;
         }
-        
-        .swipe-stats-row.three-cols {
-            margin: 4px 0 !important;
+
+        .swipe-player-id {
+            font-size: 13px !important;
         }
-        
-        .swipe-steam-container,
-        .swipe-faceit-container {
-            margin: 2px 0 !important;
+
+        /* Три колонки — крупнее */
+        .swipe-stats-row.three-cols .swipe-stat-value {
+            padding: 12px 8px !important;
+            font-size: 16px !important;
         }
-        
-        .swipe-comment {
-            margin-top: 4px !important;
-            flex: 1 !important;
-            display: flex !important;
-            flex-direction: column !important;
+
+        .swipe-stats-row.three-cols .swipe-stat-label {
+            font-size: 11px !important;
         }
-        
-        .swipe-comment-text {
-            flex: 1 !important;
-            min-height: auto !important;
-        }
-        
-        /* Ссылки — увеличиваем для удобного копирования */
+
+        /* Ссылки — крупнее для удобного копирования */
         .swipe-link-value {
             font-size: 14px !important;
-            padding: 12px 14px !important;
-            word-break: break-all !important;
+            padding: 14px !important;
+        }
+
+        .swipe-comment-text {
+            font-size: 14px !important;
+            padding: 14px !important;
+            min-height: 80px !important;
+        }
+
+        /* Убираем старые кнопки сбоку */
+        .swipe-side-btn {
+            display: none !important;
+        }
+
+        /* Новые кнопки внизу */
+        .swipe-actions {
+            display: flex !important;
+            justify-content: center !important;
+            gap: 32px !important;
+            padding: 20px 20px 30px !important;
+            background: transparent !important;
+            margin-top: auto !important;
+        }
+
+        .swipe-action-btn {
+            width: 70px !important;
+            height: 70px !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
             cursor: pointer !important;
-            transition: background 0.2s ease !important;
+            transition: all 0.2s ease !important;
+            background: var(--surface) !important;
+            border: 1px solid var(--border-color) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
         }
-        
-        .swipe-link-value:active {
-            background: var(--surface-hover) !important;
+
+        .swipe-action-btn:active {
+            transform: scale(0.92) !important;
         }
-        
-        /* От 451px до 500px */
-        @media (max-width: 500px) and (min-width: 451px) {
+
+        .swipe-action-btn.skip {
+            background: rgba(255, 94, 94, 0.15) !important;
+            border-color: #FF5E5E !important;
+        }
+
+        .swipe-action-btn.skip svg {
+            stroke: #FF5E5E !important;
+        }
+
+        .swipe-action-btn.invite {
+            background: rgba(76, 175, 80, 0.15) !important;
+            border-color: #4CAF50 !important;
+        }
+
+        .swipe-action-btn.invite svg {
+            stroke: #4CAF50 !important;
+        }
+
+        .swipe-action-btn svg {
+            width: 34px !important;
+            height: 34px !important;
+        }
+
+        /* Адаптация под маленькие экраны */
+        @media (max-width: 550px) {
             .swipe-card {
-                width: 370px !important;
-                height: 370px !important;
-            }
-            .swipe-avatar {
-                width: 70px !important;
-                height: 70px !important;
-            }
-            .swipe-player-nick {
-                font-size: 18px !important;
-            }
-            .swipe-card-content {
-                padding: 16px !important;
-            }
-            #swipeModeContent {
-                gap: 12px !important;
-            }
-            .swipe-link-value {
-                font-size: 13px !important;
-                padding: 10px 12px !important;
-            }
-        }
-        
-        /* От 401px до 450px */
-        @media (max-width: 450px) and (min-width: 401px) {
-            .swipe-card {
-                width: 350px !important;
-                height: 350px !important;
+                min-height: 58vh !important;
+                max-height: 68vh !important;
             }
             .swipe-avatar {
                 width: 65px !important;
                 height: 65px !important;
             }
             .swipe-player-nick {
-                font-size: 17px !important;
+                font-size: 18px !important;
             }
-            .swipe-player-id {
-                font-size: 10px !important;
-            }
-            .swipe-card-content {
-                padding: 14px !important;
-            }
-            #swipeModeContent {
-                gap: 11px !important;
-            }
-            .swipe-stats-row.three-cols .swipe-stat-value {
-                padding: 6px 4px !important;
-                font-size: 13px !important;
-            }
-            .swipe-link-value {
-                font-size: 12px !important;
-                padding: 9px 11px !important;
-            }
-            .swipe-comment-text {
-                font-size: 12px !important;
-                padding: 10px !important;
-            }
-        }
-        
-        /* От 351px до 400px */
-        @media (max-width: 400px) and (min-width: 351px) {
-            .swipe-card {
-                width: 320px !important;
-                height: 320px !important;
-            }
-            .swipe-avatar {
+            .swipe-action-btn {
                 width: 60px !important;
                 height: 60px !important;
             }
-            .swipe-player-nick {
-                font-size: 16px !important;
+            .swipe-action-btn svg {
+                width: 30px !important;
+                height: 30px !important;
             }
-            .swipe-player-id {
-                font-size: 9px !important;
-            }
-            .swipe-rating-value {
-                font-size: 14px !important;
-            }
-            .swipe-card-content {
-                padding: 12px !important;
-            }
-            #swipeModeContent {
-                gap: 10px !important;
-            }
-            .swipe-stats-row.three-cols .swipe-stat-value {
-                padding: 5px 3px !important;
-                font-size: 12px !important;
-            }
-            .swipe-link-label {
-                font-size: 8px !important;
-            }
-            .swipe-link-value {
-                font-size: 11px !important;
-                padding: 8px 10px !important;
-            }
-            .swipe-comment-text {
-                font-size: 11px !important;
-                padding: 8px !important;
-            }
-            .swipe-timer {
-                font-size: 11px !important;
-                padding: 4px 10px !important;
-                top: 10px !important;
-                left: 10px !important;
+            .swipe-actions {
+                gap: 24px !important;
+                padding: 16px 20px 25px !important;
             }
         }
-        
-        /* Меньше 350px */
-        @media (max-width: 350px) {
+
+        @media (max-width: 450px) {
             .swipe-card {
-                width: 290px !important;
-                height: 290px !important;
+                min-height: 55vh !important;
             }
             .swipe-avatar {
                 width: 55px !important;
                 height: 55px !important;
             }
             .swipe-player-nick {
+                font-size: 16px !important;
+            }
+            .swipe-action-btn {
+                width: 54px !important;
+                height: 54px !important;
+            }
+            .swipe-action-btn svg {
+                width: 26px !important;
+                height: 26px !important;
+            }
+            .swipe-actions {
+                gap: 20px !important;
+                padding: 12px 16px 20px !important;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .swipe-card {
+                min-height: 52vh !important;
+            }
+            .swipe-avatar {
+                width: 50px !important;
+                height: 50px !important;
+            }
+            .swipe-player-nick {
                 font-size: 15px !important;
             }
-            .swipe-player-id {
-                font-size: 8px !important;
+            .swipe-action-btn {
+                width: 50px !important;
+                height: 50px !important;
             }
-            .swipe-rating-value {
-                font-size: 13px !important;
-            }
-            .swipe-card-content {
-                padding: 11px !important;
-            }
-            #swipeModeContent {
-                gap: 9px !important;
-            }
-            .swipe-stats-row.three-cols {
-                gap: 8px !important;
-            }
-            .swipe-stats-row.three-cols .swipe-stat-value {
-                padding: 5px 3px !important;
-                font-size: 12px !important;
-            }
-            .swipe-link-label {
-                font-size: 8px !important;
-            }
-            .swipe-link-value {
-                font-size: 10px !important;
-                padding: 7px 9px !important;
-            }
-            .swipe-comment-text {
-                font-size: 10px !important;
-                padding: 8px !important;
-            }
-            .swipe-timer {
-                font-size: 10px !important;
-                padding: 3px 8px !important;
-                top: 8px !important;
-                left: 8px !important;
+            .swipe-action-btn svg {
+                width: 24px !important;
+                height: 24px !important;
             }
         }
     </style>
@@ -417,7 +402,7 @@
                 <div class="team-content" id="teamContent"></div>
             </div>
 
-            <!-- ЕДИНАЯ КАРТОЧКА СВАЙПА С ДВУМЯ РЕЖИМАМИ -->
+            <!-- ЕДИНАЯ КАРТОЧКА СВАЙПА С ДВУМЯ РЕЖИМАМИ (TINDER-STYLE) -->
             <div id="swipeScreen" class="screen swipe-screen">
                 <div class="swipe-header">
                     <div class="swipe-title">Поиск тиммейтов</div>
@@ -512,6 +497,21 @@
                             
                         </div>
                     </div>
+                    
+                    <!-- НОВЫЕ КНОПКИ TINDER-STYLE (внизу) -->
+                    <div class="swipe-actions">
+                        <div class="swipe-action-btn skip" onclick="Swipe.onSideButtonClick &amp;&amp; Swipe.onSideButtonClick('skip')">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="swipe-action-btn invite" onclick="Swipe.onSideButtonClick &amp;&amp; Swipe.onSideButtonClick('invite')">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M20 12V20H4V12M12 2V16M12 16L15 13M12 16L9 13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    
                 </div>
                 <div class="swipe-loading"><div class="spinner-small"></div></div>
             </div>
