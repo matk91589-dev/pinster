@@ -3951,3 +3951,20 @@ button:active { transform: scale(0.96); }
     width: 100% !important;
     max-width: 100% !important;
 }
+
+/* Убираем ВСЕ отступы для экрана свайпа */
+.swipe-screen .content {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.swipe-screen .swipe-container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.swipe-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0 !important;  /* как в Tinder — карточка в край */
+}
