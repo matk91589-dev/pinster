@@ -58,6 +58,11 @@
     
     <!-- TINDER-STYLE СВАЙП-КАРТОЧКИ (перебивает всё) -->
     <style>
+        /* Скрываем старый хедер свайпа */
+        .swipe-header {
+            display: none !important;
+        }
+
         /* Контейнер свайпа — на весь экран */
         .swipe-container {
             flex: 1 !important;
@@ -402,23 +407,13 @@
                 <div class="team-content" id="teamContent"></div>
             </div>
 
-            <!-- ЕДИНАЯ КАРТОЧКА СВАЙПА С ДВУМЯ РЕЖИМАМИ (TINDER-STYLE) -->
+            <!-- TINDER-STYLE СВАЙП-КАРТОЧКА -->
             <div id="swipeScreen" class="screen swipe-screen">
-                <div class="swipe-header">
-                    <div class="swipe-title">Поиск тиммейтов</div>
-                    <div class="swipe-subtitle">
-                        <span class="swipe-subtitle-left">← отклонить</span>
-                        <span class="swipe-subtitle-divider">|</span>
-                        <span class="swipe-subtitle-right">принять →</span>
-                    </div>
-                </div>
                 <div id="swipeContainer" class="swipe-container">
                     <div id="swipeCard" class="swipe-card">
                         <div class="swipe-timer" id="swipeTimer">30с</div>
                         
-                        <!-- ЕДИНЫЙ КОНТЕЙНЕР ДЛЯ КОНТЕНТА -->
                         <div class="swipe-card-content">
-                            
                             <!-- РЕЖИМ 1: СВАЙП (информация об игроке) -->
                             <div id="swipeModeContent">
                                 <div class="swipe-player-row">
@@ -494,11 +489,10 @@
                                 </div>
                                 <button class="waiting-chat-button disabled" id="waitingChatButton" disabled>Перейти в чат</button>
                             </div>
-                            
                         </div>
                     </div>
                     
-                    <!-- НОВЫЕ КНОПКИ TINDER-STYLE (внизу) -->
+                    <!-- КНОПКИ TINDER-STYLE -->
                     <div class="swipe-actions">
                         <div class="swipe-action-btn skip" onclick="Swipe.onSideButtonClick &amp;&amp; Swipe.onSideButtonClick('skip')">
                             <svg viewBox="0 0 24 24" fill="none">
@@ -511,7 +505,6 @@
                             </svg>
                         </div>
                     </div>
-                    
                 </div>
                 <div class="swipe-loading"><div class="spinner-small"></div></div>
             </div>
