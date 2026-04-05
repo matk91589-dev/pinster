@@ -1,4 +1,4 @@
-\<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -58,74 +58,80 @@
     
     <!-- TINDER-STYLE СВАЙП-КАРТОЧКИ (ФИНАЛ) -->
     <style>
+        /* Глобальные правки для экрана свайпа */
+        .swipe-screen {
+            overflow: hidden !important;
+        }
+        
         /* Скрываем старый хедер */
         .swipe-header {
             display: none !important;
         }
         
-        /* Убираем отступы у контента для экрана свайпа */
+        /* Убираем все отступы у контента */
         .swipe-screen .content {
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
         }
         
-        /* Контейнер свайпа — на всю ширину, без отступов */
+        /* Убираем рамку и ограничения у phone-frame */
+        .swipe-screen .phone-frame {
+            max-width: 100% !important;
+            border-radius: 0 !important;
+            border: none !important;
+            margin: 0 !important;
+        }
+        
+        /* Контейнер свайпа — на всю высоту */
         .swipe-container {
             flex: 1 !important;
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
-            justify-content: center !important;
+            justify-content: space-between !important;
             padding: 0 !important;
             margin: 0 !important;
             width: 100% !important;
-            max-width: 100% !important;
             min-height: 0 !important;
+            overflow: hidden !important;
         }
         
-        /* Карточка — на всю ширину экрана, без скруглений */
+        /* Карточка — на всю ширину, фиксированная высота */
         .swipe-card {
             width: 100% !important;
             max-width: 100% !important;
             min-width: 100% !important;
-            height: auto !important;
-            min-height: 65vh !important;
-            max-height: 75vh !important;
+            height: calc(100vh - 120px) !important;
+            min-height: calc(100vh - 120px) !important;
             background: var(--surface);
             border-radius: 0 !important;
-            border-left: none !important;
-            border-right: none !important;
-            border-top: none !important;
-            border-bottom: 1px solid var(--border-color) !important;
+            border: none !important;
             cursor: grab;
             position: relative;
             display: flex;
             flex-direction: column;
             margin: 0 !important;
-            overflow: hidden;
+            overflow-y: auto !important;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         
-        /* Обёртка карточки */
-        .swipe-card-wrapper {
-            width: 100% !important;
-            max-width: 100% !important;
-            margin: 0 !important;
+        /* Убираем скролл у карточки, если не нужно */
+        .swipe-card::-webkit-scrollbar {
+            width: 0;
+            background: transparent;
         }
         
-        /* Контент карточки — растягиваем, с отступами по бокам для читаемости */
+        /* Контент карточки — растягиваем */
         .swipe-card-content {
             display: flex !important;
             flex-direction: column !important;
             flex: 1 !important;
             padding: 20px 16px !important;
             gap: 16px !important;
-            overflow-y: auto !important;
+            min-height: 0 !important;
         }
         
-        /* Аватарка — крупнее */
+        /* Аватарка */
         .swipe-avatar {
             width: 80px !important;
             height: 80px !important;
@@ -141,7 +147,7 @@
             font-size: 13px !important;
         }
         
-        /* Три колонки — крупнее */
+        /* Три колонки */
         .swipe-stats-row.three-cols .swipe-stat-value {
             padding: 12px 8px !important;
             font-size: 16px !important;
@@ -151,7 +157,7 @@
             font-size: 11px !important;
         }
         
-        /* Ссылки — крупнее для удобного копирования */
+        /* Ссылки */
         .swipe-link-value {
             font-size: 14px !important;
             padding: 14px !important;
@@ -173,9 +179,9 @@
             display: flex !important;
             justify-content: center !important;
             gap: 32px !important;
-            padding: 20px 20px 30px !important;
+            padding: 16px 20px 30px !important;
             background: transparent !important;
-            margin-top: auto !important;
+            flex-shrink: 0 !important;
         }
         
         .swipe-action-btn {
@@ -222,8 +228,8 @@
         /* Адаптация под маленькие экраны */
         @media (max-width: 550px) {
             .swipe-card {
-                min-height: 58vh !important;
-                max-height: 68vh !important;
+                height: calc(100vh - 110px) !important;
+                min-height: calc(100vh - 110px) !important;
             }
             .swipe-avatar {
                 width: 65px !important;
@@ -242,13 +248,14 @@
             }
             .swipe-actions {
                 gap: 24px !important;
-                padding: 16px 20px 25px !important;
+                padding: 12px 20px 25px !important;
             }
         }
         
         @media (max-width: 450px) {
             .swipe-card {
-                min-height: 55vh !important;
+                height: calc(100vh - 105px) !important;
+                min-height: calc(100vh - 105px) !important;
             }
             .swipe-avatar {
                 width: 55px !important;
@@ -267,13 +274,14 @@
             }
             .swipe-actions {
                 gap: 20px !important;
-                padding: 12px 16px 20px !important;
+                padding: 10px 20px 20px !important;
             }
         }
         
         @media (max-width: 380px) {
             .swipe-card {
-                min-height: 52vh !important;
+                height: calc(100vh - 100px) !important;
+                min-height: calc(100vh - 100px) !important;
             }
             .swipe-avatar {
                 width: 50px !important;
@@ -290,31 +298,6 @@
                 width: 24px !important;
                 height: 24px !important;
             }
-        }
-    </style>
-    
-    <!-- ЖЁСТКИЙ ФИКС ДЛЯ ТЕЛЕФОНОВ -->
-    <style>
-        /* Принудительное растягивание */
-        .phone-frame {
-            max-width: 100% !important;
-            border-radius: 0 !important;
-        }
-        
-        .swipe-screen .phone-frame {
-            border-radius: 0 !important;
-            border: none !important;
-        }
-        
-        .swipe-container {
-            width: 100vw !important;
-            padding: 0 !important;
-        }
-        
-        .swipe-card {
-            width: 100vw !important;
-            min-width: 100vw !important;
-            border-radius: 0 !important;
         }
     </style>
 </head>
