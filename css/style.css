@@ -2278,16 +2278,15 @@ input:checked + .slider:before {
     background: rgba(255, 94, 94, 0.2);
 }
 
-/* Единый контейнер контента */
 .swipe-card-content {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
     padding: 20px 18px;
     flex: 1;
-    overflow-y: auto;
     z-index: 10;
     position: relative;
+    justify-content: space-between; /* распределяет пространство между блоками */
 }
 
 /* Скрываем скролл */
