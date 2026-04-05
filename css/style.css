@@ -2644,8 +2644,8 @@ input:checked + .slider:before {
 /* Адаптация */
 @media (max-width: 500px) {
     .swipe-card {
-        width: 320px !important;
-        height: 320px !important;
+        width: 300px !important;
+        height: 300px !important;
     }
     .swipe-card-content {
         padding: 16px 14px;
@@ -2662,8 +2662,8 @@ input:checked + .slider:before {
 
 @media (max-width: 400px) {
     .swipe-card {
-        width: 280px !important;
-        height: 280px !important;
+        width: 260px !important;
+        height: 260px !important;
     }
     .swipe-card-content {
         padding: 14px 12px;
