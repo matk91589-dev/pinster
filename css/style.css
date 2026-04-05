@@ -3943,3 +3943,25 @@ button:active { transform: scale(0.96); }
         height: 24px !important;
     }
 }
+
+/* ЖЁСТКИЙ ФИКС - ПОСЛЕДНИЙ */
+.swipe-screen,
+.swipe-screen .phone-frame,
+.swipe-screen .content {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+.swipe-container {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    padding: 0 !important;
+}
+
+.swipe-card,
+.swipe-card-wrapper {
+    width: 100vw !important;
+    border-radius: 0 !important;
+}
