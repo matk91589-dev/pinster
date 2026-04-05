@@ -56,22 +56,162 @@
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
     
-    <!-- ФИНАЛЬНЫЕ ПРАВИЛА - ПЕРЕБИВАЮТ ВСЁ -->
+    <!-- ФИНАЛЬНЫЕ ПРАВИЛА ДЛЯ КАРТОЧКИ СВАЙПА С ПОЛНОЙ АДАПТАЦИЕЙ -->
     <style>
+        /* Базовые размеры для больших экранов (шире 500px) */
         .swipe-card {
-            width: 320px !important;
-            height: 320px !important;
+            width: 360px !important;
+            height: 360px !important;
         }
-        @media (max-width: 500px) {
+        
+        /* От 451px до 500px */
+        @media (max-width: 500px) and (min-width: 451px) {
             .swipe-card {
-                width: 280px !important;
-                height: 280px !important;
+                width: 340px !important;
+                height: 340px !important;
+            }
+            .swipe-avatar {
+                width: 65px !important;
+                height: 65px !important;
+            }
+            .swipe-player-nick {
+                font-size: 17px !important;
+            }
+            .swipe-card-content {
+                padding: 16px !important;
+                gap: 10px !important;
             }
         }
-        @media (max-width: 400px) {
+        
+        /* От 401px до 450px */
+        @media (max-width: 450px) and (min-width: 401px) {
             .swipe-card {
-                width: 250px !important;
-                height: 250px !important;
+                width: 320px !important;
+                height: 320px !important;
+            }
+            .swipe-avatar {
+                width: 60px !important;
+                height: 60px !important;
+            }
+            .swipe-player-nick {
+                font-size: 16px !important;
+            }
+            .swipe-player-id {
+                font-size: 10px !important;
+            }
+            .swipe-card-content {
+                padding: 14px !important;
+                gap: 8px !important;
+            }
+            .swipe-stats-row.three-cols .swipe-stat-value {
+                padding: 6px 4px !important;
+                font-size: 13px !important;
+            }
+            .swipe-link-value {
+                font-size: 11px !important;
+                padding: 8px 10px !important;
+            }
+            .swipe-comment-text {
+                font-size: 11px !important;
+                padding: 10px !important;
+                min-height: 50px !important;
+            }
+        }
+        
+        /* От 351px до 400px */
+        @media (max-width: 400px) and (min-width: 351px) {
+            .swipe-card {
+                width: 290px !important;
+                height: 290px !important;
+            }
+            .swipe-avatar {
+                width: 55px !important;
+                height: 55px !important;
+            }
+            .swipe-player-nick {
+                font-size: 15px !important;
+            }
+            .swipe-player-id {
+                font-size: 9px !important;
+            }
+            .swipe-rating-value {
+                font-size: 14px !important;
+            }
+            .swipe-card-content {
+                padding: 12px !important;
+                gap: 8px !important;
+            }
+            .swipe-stats-row.three-cols .swipe-stat-value {
+                padding: 5px 3px !important;
+                font-size: 12px !important;
+            }
+            .swipe-link-label {
+                font-size: 8px !important;
+            }
+            .swipe-link-value {
+                font-size: 10px !important;
+                padding: 6px 8px !important;
+            }
+            .swipe-comment-text {
+                font-size: 10px !important;
+                padding: 8px !important;
+                min-height: 45px !important;
+            }
+            .swipe-timer {
+                font-size: 11px !important;
+                padding: 4px 10px !important;
+                top: 10px !important;
+                left: 10px !important;
+            }
+        }
+        
+        /* Меньше 350px */
+        @media (max-width: 350px) {
+            .swipe-card {
+                width: 260px !important;
+                height: 260px !important;
+            }
+            .swipe-avatar {
+                width: 48px !important;
+                height: 48px !important;
+            }
+            .swipe-player-nick {
+                font-size: 13px !important;
+            }
+            .swipe-player-id {
+                font-size: 8px !important;
+            }
+            .swipe-rating-value {
+                font-size: 12px !important;
+            }
+            .swipe-card-content {
+                padding: 10px !important;
+                gap: 6px !important;
+            }
+            .swipe-stats-row.three-cols {
+                gap: 6px !important;
+            }
+            .swipe-stats-row.three-cols .swipe-stat-value {
+                padding: 4px 2px !important;
+                font-size: 11px !important;
+            }
+            .swipe-link-label {
+                font-size: 7px !important;
+            }
+            .swipe-link-value {
+                font-size: 9px !important;
+                padding: 5px 6px !important;
+            }
+            .swipe-comment-text {
+                font-size: 9px !important;
+                padding: 6px !important;
+                min-height: 40px !important;
+            }
+            .swipe-timer {
+                font-size: 10px !important;
+                padding: 3px 8px !important;
+                top: 8px !important;
+                left: 8px !important;
             }
         }
     </style>
