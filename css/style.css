@@ -2227,13 +2227,13 @@ input:checked + .slider:before {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
 }
 
-/* Базовая карточка — для экранов ШИРЕ 500px */
+/* Базовая карточка (для больших экранов) */
 .swipe-card {
     width: 360px !important;
-    height: 360px !important;  /* 1:1 */
+    height: 360px !important;
     background: var(--surface);
     border-radius: 28px;
     border: 1px solid var(--border-color);
@@ -2247,13 +2247,61 @@ input:checked + .slider:before {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Для экранов УЖЕ 500px и меньше — берём 70% ширины, высота = ширине (1:1) */
-@media (max-width: 500px) {
+/* От 501px до 768px — оставляем 360px (базовый) */
+
+/* От 451px до 500px */
+@media (max-width: 500px) and (min-width: 451px) {
     .swipe-card {
-        width: 70vw !important;
-        height: 70vw !important;  /* высота равна ширине = 1:1 */
-        min-width: 260px !important;
-        max-width: 360px !important;
+        width: 340px !important;
+        height: 340px !important;
+    }
+}
+
+/* От 401px до 450px */
+@media (max-width: 450px) and (min-width: 401px) {
+    .swipe-card {
+        width: 320px !important;
+        height: 320px !important;
+    }
+}
+
+/* От 351px до 400px */
+@media (max-width: 400px) and (min-width: 351px) {
+    .swipe-card {
+        width: 290px !important;
+        height: 290px !important;
+    }
+}
+
+/* От 301px до 350px */
+@media (max-width: 350px) and (min-width: 301px) {
+    .swipe-card {
+        width: 270px !important;
+        height: 270px !important;
+    }
+}
+
+/* Меньше 300px */
+@media (max-width: 300px) {
+    .swipe-card {
+        width: 250px !important;
+        height: 250px !important;
+    }
+}
+
+/* Дополнительно для планшетов — чуть больше */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .swipe-card {
+        width: 420px !important;
+        height: 420px !important;
+    }
+}
+
+/* Для очень широких экранов (десктоп) — фиксируем максимальный размер */
+@media (min-width: 1025px) {
+    .swipe-card {
+        width: 450px !important;
+        height: 450px !important;
     }
 }
 
