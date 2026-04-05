@@ -3719,43 +3719,67 @@ button:active { transform: scale(0.96); }
 
 /* ===== TINDER-STYLE СВАЙП-КАРТОЧКИ ===== */
 
-/* Контейнер свайпа — на весь экран */
+/* Скрываем старый хедер */
+.swipe-header {
+    display: none !important;
+}
+
+/* Убираем отступы у контента для экрана свайпа */
+.swipe-screen .content {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Контейнер свайпа — на всю ширину, без отступов */
 .swipe-container {
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 16px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
     min-height: 0 !important;
 }
 
-/* Карточка — почти на весь экран */
+/* Карточка — на всю ширину экрана, без скруглений */
 .swipe-card {
     width: 100% !important;
-    max-width: 450px !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
     height: auto !important;
     min-height: 65vh !important;
     max-height: 75vh !important;
     background: var(--surface);
-    border-radius: 28px !important;
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
     border: 1px solid var(--border-color);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border-top: none !important;
     cursor: grab;
     position: relative;
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
+    margin: 0 !important;
     overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Контент карточки — растягиваем */
+/* Обёртка карточки */
+.swipe-card-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+}
+
+/* Контент карточки — растягиваем, с отступами по бокам для читаемости */
 .swipe-card-content {
     display: flex !important;
     flex-direction: column !important;
     flex: 1 !important;
-    padding: 20px !important;
+    padding: 20px 16px !important;
     gap: 16px !important;
     overflow-y: auto !important;
 }
@@ -3925,46 +3949,4 @@ button:active { transform: scale(0.96); }
         width: 24px !important;
         height: 24px !important;
     }
-}
-
-/* Скрываем старый хедер свайпа */
- .swipe-header {
-    display: none !important;
- }
-
-/* ФОРСИРОВАННЫЙ TINDER-СТИЛЬ - ПОСЛЕДНИЙ */
-.swipe-container {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 16px !important;
-}
-
-.swipe-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: auto !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-}
-
-.swipe-card-wrapper {
-    width: 100% !important;
-    max-width: 100% !important;
-}
-
-/* Убираем ВСЕ отступы для экрана свайпа */
-.swipe-screen .content {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
-
-.swipe-screen .swipe-container {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
-
-.swipe-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    border-radius: 0 !important;  /* как в Tinder — карточка в край */
 }
