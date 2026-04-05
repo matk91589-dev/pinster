@@ -3931,3 +3931,23 @@ button:active { transform: scale(0.96); }
  .swipe-header {
     display: none !important;
  }
+
+/* ФОРСИРОВАННЫЙ TINDER-СТИЛЬ - ПОСЛЕДНИЙ */
+.swipe-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 16px !important;
+}
+
+.swipe-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: auto !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+.swipe-card-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+}
