@@ -3823,13 +3823,7 @@ button:active { transform: scale(0.96); }
     margin: 4px 0 !important;
 }
 
-/* ===== ПЛАШКИ (КАК ЗАКЛАДКИ) ===== */
-#swipeScreen.active .swipe-two-cols {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 12px !important;
-}
-
+/* ===== ПЛАШКИ — НАДПИСЬ ПРИВЯЗАНА К ПЛАШКЕ (СЛЕВА СВЕРХУ) ===== */
 #swipeScreen.active .swipe-field {
     display: flex !important;
     flex-direction: column !important;
@@ -3842,13 +3836,7 @@ button:active { transform: scale(0.96); }
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
     color: var(--accent) !important;
-    background: var(--surface) !important;
-    display: inline-block !important;
-    width: fit-content !important;
-    padding: 2px 10px !important;
-    border-radius: 20px !important;
-    border: 1px solid var(--border-color) !important;
-    margin-left: 4px !important;
+    padding-left: 4px !important;
 }
 
 #swipeScreen.active .swipe-field-value {
@@ -3862,6 +3850,14 @@ button:active { transform: scale(0.96); }
     word-break: break-all !important;
 }
 
+/* Две колонки в ряд */
+#swipeScreen.active .swipe-two-cols {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+}
+
+/* Комментарий — большая плашка */
 #swipeScreen.active .swipe-comment-value {
     background: var(--input-bg) !important;
     border: 1px solid var(--border-color) !important;
@@ -3874,7 +3870,7 @@ button:active { transform: scale(0.96); }
     min-height: 80px !important;
 }
 
-/* ===== СТИЛЬ (FAN / TRYHARD) — СЕРЫЙ, КАК В НАЧАТЬ ПОИСК ===== */
+/* ===== СТИЛЬ (FAN / TRYHARD) ===== */
 #swipeScreen.active .swipe-style-container {
     display: flex !important;
     flex-direction: column !important;
@@ -3907,27 +3903,17 @@ button:active { transform: scale(0.96); }
     color: var(--text-primary) !important;
 }
 
-/* ===== ТАЙМЕР ===== */
-#swipeScreen.active .swipe-timer {
-    position: absolute !important;
-    top: 14px !important;
-    left: 14px !important;
-    background: rgba(0, 0, 0, 0.65) !important;
-    backdrop-filter: blur(8px) !important;
-    padding: 6px 14px !important;
-    border-radius: 30px !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    color: #fff !important;
-    z-index: 20 !important;
+/* Убираем старые кнопки сбоку */
+#swipeScreen.active .swipe-side-btn {
+    display: none !important;
 }
 
-/* ===== КНОПКИ ВНИЗУ ===== */
+/* Кнопки внизу */
 #swipeScreen.active .swipe-actions {
     display: flex !important;
     justify-content: center !important;
     gap: 32px !important;
-    padding: 16px 20px 25px !important;
+    padding: 16px 20px 30px !important;
     background: transparent !important;
     flex-shrink: 0 !important;
 }
@@ -3940,6 +3926,7 @@ button:active { transform: scale(0.96); }
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer !important;
+    transition: all 0.2s ease !important;
     background: var(--surface) !important;
     border: 1px solid var(--border-color) !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
@@ -3964,8 +3951,27 @@ button:active { transform: scale(0.96); }
     height: 34px !important;
 }
 
-/* ===== АДАПТАЦИЯ ===== */
+/* Таймер */
+#swipeScreen.active .swipe-timer {
+    position: absolute !important;
+    top: 14px !important;
+    left: 14px !important;
+    background: rgba(0, 0, 0, 0.65) !important;
+    backdrop-filter: blur(8px) !important;
+    padding: 6px 14px !important;
+    border-radius: 30px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #fff !important;
+    z-index: 20 !important;
+}
+
+/* Адаптация под маленькие экраны */
 @media (max-width: 550px) {
+    #swipeScreen.active .swipe-card {
+        height: calc(100vh - 110px) !important;
+        min-height: calc(100vh - 110px) !important;
+    }
     #swipeScreen.active .swipe-avatar {
         width: 65px !important;
         height: 65px !important;
@@ -3983,11 +3989,15 @@ button:active { transform: scale(0.96); }
     }
     #swipeScreen.active .swipe-actions {
         gap: 24px !important;
-        padding: 12px 20px 20px !important;
+        padding: 12px 20px 25px !important;
     }
 }
 
 @media (max-width: 450px) {
+    #swipeScreen.active .swipe-card {
+        height: calc(100vh - 105px) !important;
+        min-height: calc(100vh - 105px) !important;
+    }
     #swipeScreen.active .swipe-avatar {
         width: 55px !important;
         height: 55px !important;
@@ -4005,11 +4015,15 @@ button:active { transform: scale(0.96); }
     }
     #swipeScreen.active .swipe-actions {
         gap: 20px !important;
-        padding: 10px 16px 18px !important;
+        padding: 10px 20px 20px !important;
     }
 }
 
 @media (max-width: 380px) {
+    #swipeScreen.active .swipe-card {
+        height: calc(100vh - 100px) !important;
+        min-height: calc(100vh - 100px) !important;
+    }
     #swipeScreen.active .swipe-avatar {
         width: 50px !important;
         height: 50px !important;
