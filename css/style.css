@@ -3710,33 +3710,44 @@ button:active { transform: scale(0.96); }
     padding-right: 0 !important;
 }
 
-/* ===== TINDER-STYLE СВАЙП-КАРТОЧКИ (ФИКС) ===== */
+/* ===== TINDER-STYLE СВАЙП-КАРТОЧКИ ===== */
 
 /* Скрываем старый хедер */
 .swipe-header {
     display: none !important;
 }
 
-/* ТОЛЬКО ДЛЯ ЭКРАНА СВАЙПА — на всю высоту */
-#swipeScreen.swipe-screen {
+/* ТОЛЬКО ДЛЯ АКТИВНОГО ЭКРАНА СВАЙПА */
+#swipeScreen.active {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
     height: 100% !important;
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
+    z-index: 100 !important;
+    background: var(--bg-body) !important;
 }
 
-/* ТОЛЬКО ДЛЯ ЭКРАНА СВАЙПА — убираем отступы у контента */
-#swipeScreen.swipe-screen .content {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    flex: 1 !important;
+/* Убираем отступы у phone-frame когда активен свайп */
+#swipeScreen.active .phone-frame {
+    max-width: 100% !important;
+    border-radius: 0 !important;
+    border: none !important;
+    margin: 0 !important;
     height: 100% !important;
 }
 
-/* Контейнер свайпа — на всю высоту и ширину */
-#swipeScreen .swipe-container {
+/* Убираем отступы у content */
+#swipeScreen.active .content {
+    padding: 0 !important;
+    margin: 0 !important;
+    height: 100% !important;
+}
+
+/* Контейнер свайпа */
+#swipeScreen.active .swipe-container {
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
@@ -3745,44 +3756,35 @@ button:active { transform: scale(0.96); }
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
-    max-width: 100% !important;
     height: 100% !important;
-    min-height: 100% !important;
 }
 
-/* Карточка — на всю ширину, высота = 100% (без ограничений) */
-#swipeScreen .swipe-card {
+/* Карточка */
+#swipeScreen.active .swipe-card {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 100% !important;
-    height: 100% !important;
-    min-height: 100% !important;
-    max-height: 100% !important;
+    height: calc(100% - 100px) !important;
     background: var(--surface);
     border-radius: 0 !important;
-    border-left: none !important;
-    border-right: none !important;
-    border-top: none !important;
-    border-bottom: 1px solid var(--border-color) !important;
+    border: none !important;
     cursor: grab;
     position: relative;
     display: flex;
     flex-direction: column;
     margin: 0 !important;
     overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* Обёртка карточки */
-#swipeScreen .swipe-card-wrapper {
+#swipeScreen.active .swipe-card-wrapper {
     width: 100% !important;
-    max-width: 100% !important;
     margin: 0 !important;
     height: 100% !important;
 }
 
-/* Контент карточки — растягиваем, с отступами по бокам для читаемости */
-#swipeScreen .swipe-card-content {
+/* Контент карточки */
+#swipeScreen.active .swipe-card-content {
     display: flex !important;
     flex-direction: column !important;
     flex: 1 !important;
@@ -3792,60 +3794,60 @@ button:active { transform: scale(0.96); }
     min-height: 0 !important;
 }
 
-/* Аватарка — крупнее */
-#swipeScreen .swipe-avatar {
+/* Аватарка */
+#swipeScreen.active .swipe-avatar {
     width: 80px !important;
     height: 80px !important;
     flex-shrink: 0;
 }
 
-#swipeScreen .swipe-player-nick {
+#swipeScreen.active .swipe-player-nick {
     font-size: 22px !important;
     font-weight: 700 !important;
 }
 
-#swipeScreen .swipe-player-id {
+#swipeScreen.active .swipe-player-id {
     font-size: 13px !important;
 }
 
-/* Три колонки — крупнее */
-#swipeScreen .swipe-stats-row.three-cols .swipe-stat-value {
+/* Три колонки */
+#swipeScreen.active .swipe-stats-row.three-cols .swipe-stat-value {
     padding: 12px 8px !important;
     font-size: 16px !important;
 }
 
-#swipeScreen .swipe-stats-row.three-cols .swipe-stat-label {
+#swipeScreen.active .swipe-stats-row.three-cols .swipe-stat-label {
     font-size: 11px !important;
 }
 
-/* Ссылки — крупнее для удобного копирования */
-#swipeScreen .swipe-link-value {
+/* Ссылки */
+#swipeScreen.active .swipe-link-value {
     font-size: 14px !important;
     padding: 14px !important;
 }
 
-#swipeScreen .swipe-comment-text {
+#swipeScreen.active .swipe-comment-text {
     font-size: 14px !important;
     padding: 14px !important;
     min-height: 80px !important;
 }
 
 /* Убираем старые кнопки сбоку */
-#swipeScreen .swipe-side-btn {
+#swipeScreen.active .swipe-side-btn {
     display: none !important;
 }
 
 /* Новые кнопки внизу */
-#swipeScreen .swipe-actions {
+#swipeScreen.active .swipe-actions {
     display: flex !important;
     justify-content: center !important;
     gap: 32px !important;
-    padding: 20px 20px 30px !important;
+    padding: 16px 20px 25px !important;
     background: transparent !important;
     flex-shrink: 0 !important;
 }
 
-#swipeScreen .swipe-action-btn {
+#swipeScreen.active .swipe-action-btn {
     width: 70px !important;
     height: 70px !important;
     border-radius: 50% !important;
@@ -3859,91 +3861,91 @@ button:active { transform: scale(0.96); }
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 
-#swipeScreen .swipe-action-btn:active {
+#swipeScreen.active .swipe-action-btn:active {
     transform: scale(0.92) !important;
 }
 
-#swipeScreen .swipe-action-btn.skip {
+#swipeScreen.active .swipe-action-btn.skip {
     background: rgba(255, 94, 94, 0.15) !important;
     border-color: #FF5E5E !important;
 }
 
-#swipeScreen .swipe-action-btn.skip svg {
+#swipeScreen.active .swipe-action-btn.skip svg {
     stroke: #FF5E5E !important;
 }
 
-#swipeScreen .swipe-action-btn.invite {
+#swipeScreen.active .swipe-action-btn.invite {
     background: rgba(76, 175, 80, 0.15) !important;
     border-color: #4CAF50 !important;
 }
 
-#swipeScreen .swipe-action-btn.invite svg {
+#swipeScreen.active .swipe-action-btn.invite svg {
     stroke: #4CAF50 !important;
 }
 
-#swipeScreen .swipe-action-btn svg {
+#swipeScreen.active .swipe-action-btn svg {
     width: 34px !important;
     height: 34px !important;
 }
 
 /* Адаптация под маленькие экраны */
 @media (max-width: 550px) {
-    #swipeScreen .swipe-avatar {
+    #swipeScreen.active .swipe-avatar {
         width: 65px !important;
         height: 65px !important;
     }
-    #swipeScreen .swipe-player-nick {
+    #swipeScreen.active .swipe-player-nick {
         font-size: 18px !important;
     }
-    #swipeScreen .swipe-action-btn {
+    #swipeScreen.active .swipe-action-btn {
         width: 60px !important;
         height: 60px !important;
     }
-    #swipeScreen .swipe-action-btn svg {
+    #swipeScreen.active .swipe-action-btn svg {
         width: 30px !important;
         height: 30px !important;
     }
-    #swipeScreen .swipe-actions {
+    #swipeScreen.active .swipe-actions {
         gap: 24px !important;
-        padding: 16px 20px 25px !important;
+        padding: 12px 20px 20px !important;
     }
 }
 
 @media (max-width: 450px) {
-    #swipeScreen .swipe-avatar {
+    #swipeScreen.active .swipe-avatar {
         width: 55px !important;
         height: 55px !important;
     }
-    #swipeScreen .swipe-player-nick {
+    #swipeScreen.active .swipe-player-nick {
         font-size: 16px !important;
     }
-    #swipeScreen .swipe-action-btn {
+    #swipeScreen.active .swipe-action-btn {
         width: 54px !important;
         height: 54px !important;
     }
-    #swipeScreen .swipe-action-btn svg {
+    #swipeScreen.active .swipe-action-btn svg {
         width: 26px !important;
         height: 26px !important;
     }
-    #swipeScreen .swipe-actions {
+    #swipeScreen.active .swipe-actions {
         gap: 20px !important;
-        padding: 12px 16px 20px !important;
+        padding: 10px 16px 18px !important;
     }
 }
 
 @media (max-width: 380px) {
-    #swipeScreen .swipe-avatar {
+    #swipeScreen.active .swipe-avatar {
         width: 50px !important;
         height: 50px !important;
     }
-    #swipeScreen .swipe-player-nick {
+    #swipeScreen.active .swipe-player-nick {
         font-size: 15px !important;
     }
-    #swipeScreen .swipe-action-btn {
+    #swipeScreen.active .swipe-action-btn {
         width: 50px !important;
         height: 50px !important;
     }
-    #swipeScreen .swipe-action-btn svg {
+    #swipeScreen.active .swipe-action-btn svg {
         width: 24px !important;
         height: 24px !important;
     }
