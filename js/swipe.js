@@ -1080,6 +1080,7 @@ const Swipe = {
         if (!this.isWaitingMode) {
             this.resetCardPosition();
             
+            // Базовые данные
             const playerIdEl = document.getElementById('swipePlayerId');
             if (playerIdEl) playerIdEl.textContent = player.player_id || '';
             
@@ -1089,47 +1090,63 @@ const Swipe = {
             const ratingValueEl = document.getElementById('swipeRatingValue');
             if (ratingValueEl) ratingValueEl.textContent = player.trust_rating || '0';
             
+            // Определяем режим
             const modeFromDB = this.mode ? this.mode.toUpperCase() : null;
             
-            const statItems = document.querySelectorAll('.swipe-stats-row.three-cols .swipe-stat-item');
-            if (statItems && statItems.length >= 3) {
-                const rankLabelEl = statItems[0].querySelector('.swipe-stat-label');
-                if (rankLabelEl) {
-                    if (modeFromDB === 'FACEIT') rankLabelEl.textContent = 'ELO FACEIT';
-                    else if (modeFromDB === 'PREMIER') rankLabelEl.textContent = 'CS RATING';
-                    else if (modeFromDB === 'PRIME' || modeFromDB === 'PUBLIC') rankLabelEl.textContent = 'РАНГ';
-                    else rankLabelEl.textContent = '—';
+            // РАНГ/ELO (меняем надпись в зависимости от режима)
+            const rankLabelEl = document.getElementById('swipeRankLabel');
+            const rankValueEl = document.getElementById('swipeRankValue');
+            
+            if (rankLabelEl && rankValueEl) {
+                if (modeFromDB === 'FACEIT') {
+                    rankLabelEl.textContent = 'FACEIT ELO';
+                    rankValueEl.textContent = player.rating ? player.rating : '0';
+                } else if (modeFromDB === 'PREMIER') {
+                    rankLabelEl.textContent = 'CS RATING';
+                    rankValueEl.textContent = player.rating ? player.rating : '0';
+                } else if (modeFromDB === 'PRIME' || modeFromDB === 'PUBLIC') {
+                    rankLabelEl.textContent = 'ЗВАНИЕ';
+                    rankValueEl.textContent = player.rank || '—';
+                } else {
+                    rankLabelEl.textContent = 'РАНГ';
+                    rankValueEl.textContent = '—';
                 }
             }
             
-            const rankEl = document.getElementById('swipeRank');
-            if (rankEl) {
-                if (modeFromDB === 'FACEIT') rankEl.textContent = player.rating ? player.rating : '0';
-                else if (modeFromDB === 'PREMIER') rankEl.textContent = player.rating ? player.rating : '0';
-                else if (modeFromDB === 'PRIME' || modeFromDB === 'PUBLIC') rankEl.textContent = player.rank || '—';
-                else rankEl.textContent = '—';
+            // ВОЗРАСТ
+            const ageEl = document.getElementById('swipeAgeValue');
+            if (ageEl) ageEl.textContent = player.age ? player.age + ' лет' : '—';
+            
+            // ССЫЛКА (Steam или Faceit в зависимости от режима)
+            const linkLabelEl = document.getElementById('swipeLinkLabel');
+            const linkValueEl = document.getElementById('swipeLinkValue');
+            
+            if (linkLabelEl && linkValueEl) {
+                if (modeFromDB === 'FACEIT') {
+                    linkLabelEl.textContent = 'Ссылка Faceit';
+                    linkValueEl.textContent = player.faceit_link || '—';
+                } else {
+                    linkLabelEl.textContent = 'Ссылка Steam';
+                    linkValueEl.textContent = player.steam_link || '—';
+                }
             }
             
-            const ageEl = document.getElementById('swipeAge');
-            if (ageEl) ageEl.textContent = player.age ? player.age + ' лет' : '';
+            // СТИЛЬ (Fan / Tryhard)
+            const styleFanEl = document.getElementById('swipeStyleFan');
+            const styleTryhardEl = document.getElementById('swipeStyleTryhard');
             
-            const styleEl = document.getElementById('swipeStyle');
-            if (styleEl) {
-                styleEl.textContent = player.style === 'fan' ? 'Fan' : 'Tryhard';
-                styleEl.setAttribute('data-style', player.style || 'fan');
+            if (styleFanEl && styleTryhardEl) {
+                const isFan = player.style === 'fan';
+                styleFanEl.classList.toggle('active', isFan);
+                styleTryhardEl.classList.toggle('active', !isFan);
             }
             
-            const steamLinkEl = document.getElementById('swipeSteamLink');
-            if (steamLinkEl) steamLinkEl.textContent = player.steam_link || '';
+            // КОММЕНТАРИЙ
+            const commentEl = document.getElementById('swipeCommentValue');
+            if (commentEl) commentEl.textContent = player.comment || '—';
             
-            const faceitLinkEl = document.getElementById('swipeFaceitLink');
-            if (faceitLinkEl) faceitLinkEl.textContent = player.faceit_link || '';
-            
-            const commentEl = document.getElementById('swipeComment');
-            if (commentEl) commentEl.textContent = player.comment || '';
-            
+            // Аватар
             this.updateAvatar(player);
-            this.updateLinksVisibility();
         }
         
         // Обновляем данные в режиме ожидания
@@ -1164,19 +1181,6 @@ const Swipe = {
             avatarContainer.innerHTML = '<img src="' + player.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:50%;">';
         } else {
             avatarContainer.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" style="display:block; margin:auto;"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
-        }
-    },
-    
-    updateLinksVisibility() {
-        const steamContainer = document.querySelector('.swipe-steam-container');
-        const faceitContainer = document.querySelector('.swipe-faceit-container');
-        
-        if (this.mode === 'FACEIT') {
-            if (steamContainer) steamContainer.style.display = 'none';
-            if (faceitContainer) faceitContainer.style.display = 'block';
-        } else {
-            if (steamContainer) steamContainer.style.display = 'block';
-            if (faceitContainer) faceitContainer.style.display = 'none';
         }
     },
     
