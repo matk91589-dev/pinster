@@ -3725,7 +3725,7 @@ button:active { transform: scale(0.96); }
     background: var(--bg-body) !important;
 }
 
-/* Убираем отступы у phone-frame */
+/* Убираем отступы */
 #swipeScreen.active .phone-frame {
     max-width: 100% !important;
     border-radius: 0 !important;
@@ -3734,14 +3734,13 @@ button:active { transform: scale(0.96); }
     height: 100% !important;
 }
 
-/* Убираем отступы у content */
 #swipeScreen.active .content {
     padding: 0 !important;
     margin: 0 !important;
     height: 100% !important;
 }
 
-/* Контейнер свайпа */
+/* Контейнер */
 #swipeScreen.active .swipe-container {
     width: 100% !important;
     max-width: 100% !important;
@@ -3772,7 +3771,7 @@ button:active { transform: scale(0.96); }
 #swipeScreen.active .swipe-card-content {
     display: flex !important;
     flex-direction: column !important;
-    gap: 24px !important;
+    gap: 20px !important;
     padding: 20px 16px !important;
     flex: 1 !important;
 }
@@ -3810,7 +3809,7 @@ button:active { transform: scale(0.96); }
     color: var(--text-primary) !important;
 }
 
-/* Рейтинг */
+/* Рейтинг (сердечко) */
 #swipeScreen.active .swipe-rating-block {
     display: flex !important;
     align-items: center !important;
@@ -3821,157 +3820,100 @@ button:active { transform: scale(0.96); }
     padding: 6px 12px !important;
 }
 
-/* ===== ПЛАШКИ С НАДПИСЯМИ НАД НИМИ (СТИЛЬ ЗАКЛАДОК) ===== */
-
-/* Общий контейнер для плашки с надписью */
-.stat-with-label,
-.link-with-label,
-.comment-with-label {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 6px !important;
+/* ===== РАЗДЕЛИТЕЛЬНАЯ ПОЛОСКА (как у хедера) ===== */
+#swipeScreen.active .swipe-divider {
+    width: 100% !important;
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent, var(--border-color), transparent) !important;
+    margin: 8px 0 4px 0 !important;
 }
 
-/* Стиль надписи над плашкой (как закладка) */
-.stat-label-top,
-.link-label-top,
-.comment-label-top {
-    font-size: 9px !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-    color: var(--accent) !important;
-    background: var(--surface) !important;
-    display: inline-block !important;
-    width: fit-content !important;
-    padding: 2px 10px !important;
-    border-radius: 20px !important;
-    border: 1px solid var(--border-color) !important;
+/* ===== ПЛАШКИ КАК В НАСТРОЙКАХ (ВВОД ДАННЫХ) ===== */
+
+/* Faceit ELO — как input-field */
+#swipeScreen.active .swipe-elo-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+}
+
+#swipeScreen.active .swipe-elo-label {
+    font-size: 10px !important;
+    color: var(--text-secondary) !important;
+    font-weight: 500 !important;
     margin-left: 4px !important;
 }
 
-/* Стиль самой плашки */
-.stat-value-box,
-.link-value-box,
-.comment-text-box {
-    background: var(--surface) !important;
+#swipeScreen.active .swipe-elo-value {
+    width: 100% !important;
+    background: var(--input-bg) !important;
     border: 1px solid var(--border-color) !important;
-    border-radius: 12px !important;
-    padding: 12px 14px !important;
+    border-radius: 8px !important;
+    padding: 14px 16px !important;
     font-size: 14px !important;
     font-weight: 500 !important;
     color: var(--text-primary) !important;
 }
 
-/* Три колонки — переделываем */
-#swipeScreen.active .swipe-stats-row.three-cols {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr 1fr !important;
-    gap: 12px !important;
-}
-
-#swipeScreen.active .swipe-stats-row.three-cols .swipe-stat-item {
-    background: transparent !important;
-    padding: 0 !important;
-}
-
-#swipeScreen.active .swipe-stats-row.three-cols .swipe-stat-label {
-    font-size: 9px !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-    color: var(--accent) !important;
-    background: var(--surface) !important;
-    display: inline-block !important;
-    width: fit-content !important;
-    padding: 2px 10px !important;
-    border-radius: 20px !important;
-    border: 1px solid var(--border-color) !important;
-    margin-bottom: 6px !important;
-    margin-left: 4px !important;
-}
-
-#swipeScreen.active .swipe-stats-row.three-cols .swipe-stat-value {
-    background: var(--surface) !important;
-    border: 1px solid var(--border-color) !important;
-    border-radius: 12px !important;
-    padding: 12px 8px !important;
-    font-size: 16px !important;
-    font-weight: 600 !important;
-    color: var(--text-primary) !important;
-    text-align: center !important;
-}
-
-/* Steam ссылка */
+/* Steam ссылка — как input-field */
 #swipeScreen.active .swipe-steam-container {
-    background: transparent !important;
-    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
 }
 
 #swipeScreen.active .swipe-link-label {
-    font-size: 9px !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-    color: var(--accent) !important;
-    background: var(--surface) !important;
-    display: inline-block !important;
-    width: fit-content !important;
-    padding: 2px 10px !important;
-    border-radius: 20px !important;
-    border: 1px solid var(--border-color) !important;
-    margin-bottom: 6px !important;
+    font-size: 10px !important;
+    color: var(--text-secondary) !important;
+    font-weight: 500 !important;
     margin-left: 4px !important;
 }
 
 #swipeScreen.active .swipe-link-value {
-    background: var(--surface) !important;
+    width: 100% !important;
+    background: var(--input-bg) !important;
     border: 1px solid var(--border-color) !important;
-    border-radius: 12px !important;
-    padding: 12px 14px !important;
-    font-size: 13px !important;
+    border-radius: 8px !important;
+    padding: 14px 16px !important;
+    font-size: 14px !important;
     font-weight: 500 !important;
     color: var(--text-primary) !important;
     word-break: break-all !important;
 }
 
-/* Faceit ссылка */
+/* Faceit ссылка — как input-field */
 #swipeScreen.active .swipe-faceit-container {
-    background: transparent !important;
-    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
 }
 
-/* Комментарий */
+/* Комментарий — как input-field */
 #swipeScreen.active .swipe-comment {
-    background: transparent !important;
-    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
 }
 
 #swipeScreen.active .swipe-comment-label {
-    font-size: 9px !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-    color: var(--accent) !important;
-    background: var(--surface) !important;
-    display: inline-block !important;
-    width: fit-content !important;
-    padding: 2px 10px !important;
-    border-radius: 20px !important;
-    border: 1px solid var(--border-color) !important;
-    margin-bottom: 6px !important;
+    font-size: 10px !important;
+    color: var(--text-secondary) !important;
+    font-weight: 500 !important;
     margin-left: 4px !important;
 }
 
 #swipeScreen.active .swipe-comment-text {
-    background: var(--surface) !important;
+    width: 100% !important;
+    background: var(--input-bg) !important;
     border: 1px solid var(--border-color) !important;
-    border-radius: 12px !important;
-    padding: 12px 14px !important;
-    font-size: 13px !important;
+    border-radius: 8px !important;
+    padding: 14px 16px !important;
+    font-size: 14px !important;
     font-weight: 500 !important;
     color: var(--text-primary) !important;
     line-height: 1.4 !important;
+    min-height: 80px !important;
+    resize: none !important;
 }
 
 /* Таймер */
@@ -4073,13 +4015,6 @@ button:active { transform: scale(0.96); }
     #swipeScreen.active .swipe-actions {
         gap: 20px !important;
         padding: 10px 16px 18px !important;
-    }
-    #swipeScreen.active .swipe-stats-row.three-cols {
-        gap: 8px !important;
-    }
-    #swipeScreen.active .swipe-stats-row.three-cols .swipe-stat-value {
-        font-size: 14px !important;
-        padding: 8px 4px !important;
     }
 }
 
