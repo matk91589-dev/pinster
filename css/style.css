@@ -3710,348 +3710,350 @@ button:active { transform: scale(0.96); }
     padding-right: 0 !important;
 }
 
-/* ===== TINDER-STYLE СВАЙП-КАРТОЧКИ (ФИНАЛ) ===== */
+/* ===== TINDER-STYLE СВАЙП-КАРТОЧКИ ===== */
 
-/* Базовые стили для экрана свайпа */
+/* Скрываем старый хедер */
+.swipe-header {
+    display: none !important;
+}
+
+/* ТОЛЬКО ДЛЯ АКТИВНОГО ЭКРАНА СВАЙПА */
 #swipeScreen.active {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 100 !important;
     background: var(--bg-body) !important;
 }
 
-#swipeScreen.active .swipe-container {
-    width: 100% !important;
+/* Убираем отступы у phone-frame когда активен свайп */
+#swipeScreen.active .phone-frame {
     max-width: 100% !important;
-    padding: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
     margin: 0 !important;
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
     height: 100% !important;
 }
 
+/* Убираем отступы у content */
+#swipeScreen.active .content {
+    padding: 0 !important;
+    margin: 0 !important;
+    height: 100% !important;
+}
+
+/* Контейнер свайпа */
+#swipeScreen.active .swipe-container {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Карточка */
 #swipeScreen.active .swipe-card {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 100% !important;
-    border-radius: 0 !important;
-    margin: 0 !important;
     height: calc(100% - 100px) !important;
     background: var(--surface);
+    border-radius: 0 !important;
+    border: none !important;
+    cursor: grab;
+    position: relative;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    margin: 0 !important;
+    overflow: hidden;
 }
 
+/* Обёртка карточки */
+#swipeScreen.active .swipe-card-wrapper {
+    width: 100% !important;
+    margin: 0 !important;
+    height: 100% !important;
+}
+
+/* Контент карточки */
 #swipeScreen.active .swipe-card-content {
     display: flex !important;
     flex-direction: column !important;
-    gap: 16px !important;
-    padding: 20px 16px !important;
     flex: 1 !important;
+    padding: 20px 16px !important;
+    gap: 16px !important;
+    overflow-y: auto !important;
+    min-height: 0 !important;
 }
 
-/* Верхняя строка */
-#swipeScreen.active .swipe-player-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
+/* Аватарка */
 #swipeScreen.active .swipe-avatar {
-    width: 80px;
-    height: 80px;
+    width: 80px !important;
+    height: 80px !important;
     flex-shrink: 0;
-    border-radius: 50%;
-    overflow: hidden;
-    background: var(--input-bg);
-    border: 2px solid var(--border-color);
-}
-
-#swipeScreen.active .swipe-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-#swipeScreen.active .swipe-name-block {
-    flex: 1;
-}
-
-#swipeScreen.active .swipe-player-id {
-    font-size: 12px;
-    color: var(--accent);
-    font-family: monospace;
-    font-weight: 600;
-    margin-bottom: 4px;
 }
 
 #swipeScreen.active .swipe-player-nick {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-size: 22px !important;
+    font-weight: 700 !important;
 }
 
-/* Рейтинг */
-#swipeScreen.active .swipe-rating-block {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--surface);
-    border: 1px solid var(--border-color);
-    border-radius: 30px;
-    padding: 6px 12px;
+#swipeScreen.active .swipe-player-id {
+    font-size: 13px !important;
 }
+
+/* ===== ПЛАШКИ КАК В ПРОФИЛЕ (ТОНКИЕ, С НАДПИСЬЮ СВЕРХУ) ===== */
 
 /* Три колонки — плашками */
 #swipeScreen.active .swipe-stats-row.three-cols {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    gap: 12px !important;
 }
 
 #swipeScreen.active .swipe-stats-row.three-cols .swipe-stat-item {
-    background: var(--surface);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 12px 8px;
-    text-align: center;
+    background: var(--surface) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    padding: 12px 8px !important;
+    text-align: center !important;
 }
 
 #swipeScreen.active .swipe-stats-row.three-cols .swipe-stat-label {
-    font-size: 9px;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-    display: block;
+    font-size: 9px !important;
+    color: var(--text-secondary) !important;
+    font-weight: 400 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.3px !important;
+    margin-bottom: 6px !important;
+    display: block !important;
+    opacity: 0.5 !important;
 }
 
 #swipeScreen.active .swipe-stats-row.three-cols .swipe-stat-value {
-    background: transparent;
-    border: none;
-    padding: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-primary);
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+    text-align: center !important;
 }
 
-/* Steam — плашка */
+/* Steam — плашка с надписью сверху */
 #swipeScreen.active .swipe-steam-container {
-    background: var(--surface);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 12px 14px;
+    background: var(--surface) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    padding: 12px 14px !important;
 }
 
 #swipeScreen.active .swipe-link-label {
-    font-size: 9px;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-    display: block;
+    font-size: 9px !important;
+    color: var(--text-secondary) !important;
+    font-weight: 400 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.3px !important;
+    margin-bottom: 6px !important;
+    display: block !important;
+    opacity: 0.5 !important;
 }
 
 #swipeScreen.active .swipe-link-value {
-    background: transparent;
-    border: none;
-    padding: 0;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-primary);
-    word-break: break-all;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: var(--text-primary) !important;
+    word-break: break-all !important;
 }
 
-/* Faceit — плашка */
+/* Faceit — такая же плашка */
 #swipeScreen.active .swipe-faceit-container {
-    background: var(--surface);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 12px 14px;
+    background: var(--surface) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    padding: 12px 14px !important;
 }
 
-/* Комментарий — плашка */
+/* Комментарий — плашка с надписью сверху */
 #swipeScreen.active .swipe-comment {
-    background: var(--surface);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 12px 14px;
+    background: var(--surface) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    padding: 12px 14px !important;
 }
 
 #swipeScreen.active .swipe-comment-label {
-    font-size: 9px;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-    display: block;
+    font-size: 9px !important;
+    color: var(--text-secondary) !important;
+    font-weight: 400 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.3px !important;
+    margin-bottom: 6px !important;
+    display: block !important;
+    opacity: 0.5 !important;
 }
 
 #swipeScreen.active .swipe-comment-text {
-    background: transparent;
-    border: none;
-    padding: 0;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-primary);
-    line-height: 1.4;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: var(--text-primary) !important;
+    line-height: 1.4 !important;
+    min-height: auto !important;
+    word-wrap: break-word !important;
 }
 
-/* Таймер */
-#swipeScreen.active .swipe-timer {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(8px);
-    padding: 6px 14px;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #fff;
-    z-index: 20;
+/* Рейтинг — оставляем как есть */
+#swipeScreen.active .swipe-rating-block {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 30px !important;
+    padding: 6px 12px !important;
 }
 
-/* Кнопки внизу */
+#swipeScreen.active .swipe-rating-value {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+}
+
+/* Убираем старые кнопки сбоку */
+#swipeScreen.active .swipe-side-btn {
+    display: none !important;
+}
+
+/* Новые кнопки внизу */
 #swipeScreen.active .swipe-actions {
-    display: flex;
-    justify-content: center;
-    gap: 32px;
-    padding: 16px 20px 25px;
-    background: transparent;
-    flex-shrink: 0;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 32px !important;
+    padding: 16px 20px 25px !important;
+    background: transparent !important;
+    flex-shrink: 0 !important;
 }
 
 #swipeScreen.active .swipe-action-btn {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    background: var(--surface);
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    width: 70px !important;
+    height: 70px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 
 #swipeScreen.active .swipe-action-btn:active {
-    transform: scale(0.92);
+    transform: scale(0.92) !important;
 }
 
 #swipeScreen.active .swipe-action-btn.skip {
-    background: rgba(255, 94, 94, 0.15);
-    border-color: #FF5E5E;
+    background: rgba(255, 94, 94, 0.15) !important;
+    border-color: #FF5E5E !important;
+}
+
+#swipeScreen.active .swipe-action-btn.skip svg {
+    stroke: #FF5E5E !important;
 }
 
 #swipeScreen.active .swipe-action-btn.invite {
-    background: rgba(76, 175, 80, 0.15);
-    border-color: #4CAF50;
+    background: rgba(76, 175, 80, 0.15) !important;
+    border-color: #4CAF50 !important;
+}
+
+#swipeScreen.active .swipe-action-btn.invite svg {
+    stroke: #4CAF50 !important;
 }
 
 #swipeScreen.active .swipe-action-btn svg {
-    width: 34px;
-    height: 34px;
+    width: 34px !important;
+    height: 34px !important;
 }
 
-/* Лейблы свайпа */
-#swipeScreen.active .swipe-label {
-    position: absolute;
-    top: 28px;
-    font-size: 24px;
-    font-weight: 900;
-    letter-spacing: 2px;
-    opacity: 0;
-    transform: scale(0.8);
-    transition: all 0.2s ease;
-    z-index: 25;
-    pointer-events: none;
-    text-transform: uppercase;
-}
-
-#swipeScreen.active .swipe-label-left {
-    left: 20px;
-    color: #FF5E5E;
-    transform: rotate(-12deg) scale(0.8);
-}
-
-#swipeScreen.active .swipe-label-right {
-    right: 20px;
-    color: #5ACE5A;
-    transform: rotate(12deg) scale(0.8);
-}
-
-#swipeScreen.active .swipe-card.swiping-right .swipe-label-right {
-    opacity: 1;
-    transform: rotate(12deg) scale(1);
-}
-
-#swipeScreen.active .swipe-card.swiping-left .swipe-label-left {
-    opacity: 1;
-    transform: rotate(-12deg) scale(1);
-}
-
-/* Адаптация */
+/* Адаптация под маленькие экраны */
 @media (max-width: 550px) {
     #swipeScreen.active .swipe-avatar {
-        width: 65px;
-        height: 65px;
+        width: 65px !important;
+        height: 65px !important;
     }
     #swipeScreen.active .swipe-player-nick {
-        font-size: 18px;
+        font-size: 18px !important;
     }
     #swipeScreen.active .swipe-action-btn {
-        width: 60px;
-        height: 60px;
+        width: 60px !important;
+        height: 60px !important;
     }
     #swipeScreen.active .swipe-action-btn svg {
-        width: 30px;
-        height: 30px;
+        width: 30px !important;
+        height: 30px !important;
     }
     #swipeScreen.active .swipe-actions {
-        gap: 24px;
-        padding: 12px 20px 20px;
+        gap: 24px !important;
+        padding: 12px 20px 20px !important;
     }
 }
 
 @media (max-width: 450px) {
     #swipeScreen.active .swipe-avatar {
-        width: 55px;
-        height: 55px;
+        width: 55px !important;
+        height: 55px !important;
     }
     #swipeScreen.active .swipe-player-nick {
-        font-size: 16px;
+        font-size: 16px !important;
     }
     #swipeScreen.active .swipe-action-btn {
-        width: 54px;
-        height: 54px;
+        width: 54px !important;
+        height: 54px !important;
     }
     #swipeScreen.active .swipe-action-btn svg {
-        width: 26px;
-        height: 26px;
+        width: 26px !important;
+        height: 26px !important;
     }
     #swipeScreen.active .swipe-actions {
-        gap: 20px;
-        padding: 10px 16px 18px;
+        gap: 20px !important;
+        padding: 10px 16px 18px !important;
     }
     #swipeScreen.active .swipe-stats-row.three-cols {
-        gap: 8px;
+        gap: 8px !important;
     }
     #swipeScreen.active .swipe-stats-row.three-cols .swipe-stat-value {
-        font-size: 14px;
+        font-size: 14px !important;
     }
 }
 
 @media (max-width: 380px) {
     #swipeScreen.active .swipe-avatar {
-        width: 50px;
-        height: 50px;
+        width: 50px !important;
+        height: 50px !important;
     }
     #swipeScreen.active .swipe-player-nick {
-        font-size: 15px;
+        font-size: 15px !important;
     }
     #swipeScreen.active .swipe-action-btn {
-        width: 50px;
-        height: 50px;
+        width: 50px !important;
+        height: 50px !important;
     }
     #swipeScreen.active .swipe-action-btn svg {
-        width: 24px;
-        height: 24px;
+        width: 24px !important;
+        height: 24px !important;
     }
 }
