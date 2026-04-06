@@ -3823,31 +3823,35 @@ button:active { transform: scale(0.96); }
     margin: 4px 0 !important;
 }
 
-/* ===== ПЛАШКИ — НАДПИСЬ ПРИВЯЗАНА К ПЛАШКЕ (СЛЕВА СВЕРХУ) ===== */
+/* ===== ПЛАШКИ — НАДПИСЬ КАК ВКЛАДКА (ВЫХОДИТ ИЗ ПЛАШКИ) ===== */
 #swipeScreen.active .swipe-field {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 6px !important;
+    position: relative !important;
+    margin-top: 12px !important;
 }
 
 #swipeScreen.active .swipe-field-label {
-    font-size: 9px !important;
+    position: absolute !important;
+    top: -12px !important;
+    left: 16px !important;
+    font-size: 10px !important;
     font-weight: 600 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
     color: var(--accent) !important;
-    padding-left: 4px !important;
+    background: var(--surface) !important;
+    padding: 0 8px !important;
+    z-index: 2 !important;
 }
 
 #swipeScreen.active .swipe-field-value {
     background: var(--input-bg) !important;
     border: 1px solid var(--border-color) !important;
     border-radius: 12px !important;
-    padding: 12px 14px !important;
+    padding: 16px 14px 12px 14px !important;
     font-size: 14px !important;
     font-weight: 500 !important;
     color: var(--text-primary) !important;
-    word-break: break-all !important;
+    width: 100% !important;
 }
 
 /* Две колонки в ряд */
@@ -3862,19 +3866,33 @@ button:active { transform: scale(0.96); }
     background: var(--input-bg) !important;
     border: 1px solid var(--border-color) !important;
     border-radius: 12px !important;
-    padding: 14px !important;
+    padding: 16px 14px 12px 14px !important;
     font-size: 14px !important;
     font-weight: 500 !important;
     color: var(--text-primary) !important;
     line-height: 1.4 !important;
     min-height: 80px !important;
+    width: 100% !important;
 }
 
 /* ===== СТИЛЬ (FAN / TRYHARD) ===== */
 #swipeScreen.active .swipe-style-container {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 6px !important;
+    position: relative !important;
+    margin-top: 12px !important;
+}
+
+#swipeScreen.active .swipe-style-label {
+    position: absolute !important;
+    top: -12px !important;
+    left: 16px !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    color: var(--accent) !important;
+    background: var(--surface) !important;
+    padding: 0 8px !important;
+    z-index: 2 !important;
 }
 
 #swipeScreen.active .swipe-style-buttons {
@@ -3883,7 +3901,8 @@ button:active { transform: scale(0.96); }
     background: var(--input-bg) !important;
     border: 1px solid var(--border-color) !important;
     border-radius: 12px !important;
-    padding: 4px !important;
+    padding: 8px !important;
+    width: 100% !important;
 }
 
 #swipeScreen.active .swipe-style-option {
@@ -3966,11 +3985,10 @@ button:active { transform: scale(0.96); }
     z-index: 20 !important;
 }
 
-/* Адаптация под маленькие экраны */
+/* Адаптация */
 @media (max-width: 550px) {
     #swipeScreen.active .swipe-card {
         height: calc(100vh - 110px) !important;
-        min-height: calc(100vh - 110px) !important;
     }
     #swipeScreen.active .swipe-avatar {
         width: 65px !important;
@@ -3996,7 +4014,6 @@ button:active { transform: scale(0.96); }
 @media (max-width: 450px) {
     #swipeScreen.active .swipe-card {
         height: calc(100vh - 105px) !important;
-        min-height: calc(100vh - 105px) !important;
     }
     #swipeScreen.active .swipe-avatar {
         width: 55px !important;
@@ -4022,7 +4039,6 @@ button:active { transform: scale(0.96); }
 @media (max-width: 380px) {
     #swipeScreen.active .swipe-card {
         height: calc(100vh - 100px) !important;
-        min-height: calc(100vh - 100px) !important;
     }
     #swipeScreen.active .swipe-avatar {
         width: 50px !important;
