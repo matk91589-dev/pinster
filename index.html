@@ -96,7 +96,7 @@
             overflow: hidden !important;
         }
         
-        /* Карточка — на всю ширину, фиксированная высота */
+        /* Карточка — на всю ширину */
         .swipe-card {
             width: 100% !important;
             max-width: 100% !important;
@@ -115,58 +115,163 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         
-        /* Убираем скролл у карточки, если не нужно */
+        /* Убираем скролл у карточки */
         .swipe-card::-webkit-scrollbar {
             width: 0;
             background: transparent;
         }
         
-        /* Контент карточки — растягиваем */
+        /* Контент карточки */
         .swipe-card-content {
             display: flex !important;
             flex-direction: column !important;
             flex: 1 !important;
             padding: 20px 16px !important;
-            gap: 16px !important;
+            gap: 20px !important;
             min-height: 0 !important;
         }
         
-        /* Аватарка */
+        /* ===== ВЕРХНЯЯ ЧАСТЬ ===== */
+        .swipe-player-row {
+            display: flex !important;
+            align-items: center !important;
+            gap: 16px !important;
+        }
+        
         .swipe-avatar {
             width: 80px !important;
             height: 80px !important;
-            flex-shrink: 0;
+            flex-shrink: 0 !important;
+            border-radius: 50% !important;
+            overflow: hidden !important;
+            background: var(--input-bg) !important;
+            border: 2px solid var(--border-color) !important;
+        }
+        
+        .swipe-name-block {
+            flex: 1 !important;
+        }
+        
+        .swipe-player-id {
+            font-size: 12px !important;
+            color: var(--accent) !important;
+            margin-bottom: 4px !important;
         }
         
         .swipe-player-nick {
             font-size: 22px !important;
             font-weight: 700 !important;
+            color: var(--text-primary) !important;
         }
         
-        .swipe-player-id {
-            font-size: 13px !important;
+        .swipe-rating-block {
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            background: var(--surface) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 30px !important;
+            padding: 6px 12px !important;
         }
         
-        /* Три колонки */
-        .swipe-stats-row.three-cols .swipe-stat-value {
-            padding: 12px 8px !important;
+        .swipe-rating-value {
             font-size: 16px !important;
+            font-weight: 700 !important;
+            color: var(--text-primary) !important;
         }
         
-        .swipe-stats-row.three-cols .swipe-stat-label {
-            font-size: 11px !important;
+        /* ===== РАЗДЕЛИТЕЛЬ ===== */
+        .swipe-divider {
+            width: 100% !important;
+            height: 1px !important;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent) !important;
+            margin: 4px 0 !important;
         }
         
-        /* Ссылки */
-        .swipe-link-value {
+        /* ===== ПЛАШКИ (КАК ЗАКЛАДКИ) ===== */
+        .swipe-field {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+        }
+        
+        .swipe-field-label {
+            font-size: 9px !important;
+            font-weight: 600 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            color: var(--accent) !important;
+            background: var(--surface) !important;
+            display: inline-block !important;
+            width: fit-content !important;
+            padding: 2px 10px !important;
+            border-radius: 20px !important;
+            border: 1px solid var(--border-color) !important;
+            margin-left: 4px !important;
+        }
+        
+        .swipe-field-value {
+            background: var(--input-bg) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 12px !important;
+            padding: 12px 14px !important;
             font-size: 14px !important;
-            padding: 14px !important;
+            font-weight: 500 !important;
+            color: var(--text-primary) !important;
+            word-break: break-all !important;
         }
         
-        .swipe-comment-text {
-            font-size: 14px !important;
+        /* Две колонки в ряд */
+        .swipe-two-cols {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 12px !important;
+        }
+        
+        /* Комментарий — большая плашка */
+        .swipe-comment-value {
+            background: var(--input-bg) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 12px !important;
             padding: 14px !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            color: var(--text-primary) !important;
+            line-height: 1.4 !important;
             min-height: 80px !important;
+        }
+        
+        /* ===== СТИЛЬ (FAN / TRYHARD) ===== */
+        .swipe-style-container {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+        }
+        
+        .swipe-style-buttons {
+            display: flex !important;
+            gap: 8px !important;
+            background: var(--input-bg) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 12px !important;
+            padding: 4px !important;
+        }
+        
+        .swipe-style-option {
+            flex: 1 !important;
+            text-align: center !important;
+            padding: 10px 12px !important;
+            border-radius: 10px !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            color: var(--text-secondary) !important;
+            cursor: default !important;
+            transition: all 0.2s !important;
+        }
+        
+        .swipe-style-option.active {
+            background: var(--surface) !important;
+            color: var(--text-primary) !important;
         }
         
         /* Убираем старые кнопки сбоку */
@@ -174,7 +279,7 @@
             display: none !important;
         }
         
-        /* Новые кнопки внизу */
+        /* Кнопки внизу */
         .swipe-actions {
             display: flex !important;
             justify-content: center !important;
@@ -223,6 +328,21 @@
         .swipe-action-btn svg {
             width: 34px !important;
             height: 34px !important;
+        }
+        
+        /* Таймер */
+        .swipe-timer {
+            position: absolute !important;
+            top: 14px !important;
+            left: 14px !important;
+            background: rgba(0, 0, 0, 0.65) !important;
+            backdrop-filter: blur(8px) !important;
+            padding: 6px 14px !important;
+            border-radius: 30px !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            color: #fff !important;
+            z-index: 20 !important;
         }
         
         /* Адаптация под маленькие экраны */
@@ -445,6 +565,7 @@
                         <div class="swipe-card-content">
                             <!-- РЕЖИМ 1: СВАЙП (информация об игроке) -->
                             <div id="swipeModeContent">
+                                <!-- Верхняя строка: аватар, ник, рейтинг -->
                                 <div class="swipe-player-row">
                                     <div class="swipe-avatar">
                                         <div class="tg-avatar-svg" style="width:70px;height:70px">
@@ -467,31 +588,41 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="swipe-stats-row three-cols">
-                                    <div class="swipe-stat-item">
-                                        <div class="swipe-stat-label">РАНГ</div>
-                                        <div class="swipe-stat-value" id="swipeRank"></div>
+                                
+                                <!-- Разделительная полоска -->
+                                <div class="swipe-divider"></div>
+                                
+                                <!-- РАНГ/ELO и ВОЗРАСТ (в одной линии) -->
+                                <div class="swipe-two-cols">
+                                    <div class="swipe-field">
+                                        <div class="swipe-field-label" id="swipeRankLabel">РАНГ</div>
+                                        <div class="swipe-field-value" id="swipeRankValue">—</div>
                                     </div>
-                                    <div class="swipe-stat-item">
-                                        <div class="swipe-stat-label">ВОЗРАСТ</div>
-                                        <div class="swipe-stat-value" id="swipeAge"></div>
-                                    </div>
-                                    <div class="swipe-stat-item">
-                                        <div class="swipe-stat-label">СТИЛЬ</div>
-                                        <div class="swipe-stat-value" id="swipeStyle"></div>
+                                    <div class="swipe-field">
+                                        <div class="swipe-field-label">ВОЗРАСТ</div>
+                                        <div class="swipe-field-value" id="swipeAgeValue">—</div>
                                     </div>
                                 </div>
-                                <div class="swipe-steam-container">
-                                    <div class="swipe-link-label">Ссылка Steam</div>
-                                    <div class="swipe-link-value" id="swipeSteamLink"></div>
+                                
+                                <!-- ССЫЛКА (Steam или Faceit в зависимости от режима) -->
+                                <div class="swipe-field">
+                                    <div class="swipe-field-label" id="swipeLinkLabel">Ссылка Steam</div>
+                                    <div class="swipe-field-value" id="swipeLinkValue">—</div>
                                 </div>
-                                <div class="swipe-faceit-container">
-                                    <div class="swipe-link-label">Ссылка Faceit</div>
-                                    <div class="swipe-link-value" id="swipeFaceitLink"></div>
+                                
+                                <!-- СТИЛЬ ИГРЫ (Fan / Tryhard) -->
+                                <div class="swipe-style-container">
+                                    <div class="swipe-field-label">СТИЛЬ ИГРЫ</div>
+                                    <div class="swipe-style-buttons">
+                                        <div class="swipe-style-option" data-style="fan" id="swipeStyleFan">Fan</div>
+                                        <div class="swipe-style-option" data-style="tryhard" id="swipeStyleTryhard">Tryhard</div>
+                                    </div>
                                 </div>
-                                <div class="swipe-comment">
-                                    <div class="swipe-comment-label">Комментарий</div>
-                                    <div class="swipe-comment-text" id="swipeComment"></div>
+                                
+                                <!-- КОММЕНТАРИЙ -->
+                                <div class="swipe-field">
+                                    <div class="swipe-field-label">КОММЕНТАРИЙ</div>
+                                    <div class="swipe-comment-value" id="swipeCommentValue">—</div>
                                 </div>
                             </div>
                             
