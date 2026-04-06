@@ -3710,7 +3710,7 @@ button:active { transform: scale(0.96); }
     padding-right: 0 !important;
 }
 
-/* ===== TINDER-STYLE СВАЙП-КАРТОЧКИ (ФИНАЛ) ===== */
+/* ===== TINDER-STYLE СВАЙП-КАРТОЧКИ (ФИНАЛ С ХЕДЕРОМ) ===== */
 
 /* ТОЛЬКО ДЛЯ АКТИВНОГО ЭКРАНА СВАЙПА */
 #swipeScreen.active {
@@ -3736,9 +3736,21 @@ button:active { transform: scale(0.96); }
 #swipeScreen.active .content {
     padding: 0 !important;
     margin: 0 !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
     height: 100% !important;
 }
 
+/* Хедер и нижняя навигация остаются видимыми */
+#swipeScreen.active .header,
+#swipeScreen.active .bottom-nav {
+    display: flex !important;
+    position: relative !important;
+    z-index: 101 !important;
+}
+
+/* Контейнер свайпа — между хедером и нижней навигацией */
 #swipeScreen.active .swipe-container {
     width: 100% !important;
     max-width: 100% !important;
@@ -3747,14 +3759,14 @@ button:active { transform: scale(0.96); }
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
-    height: 100% !important;
+    min-height: 0 !important;
 }
 
+/* Карточка */
 #swipeScreen.active .swipe-card {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 100% !important;
-    height: calc(100% - 100px) !important;
     background: var(--surface);
     border-radius: 0 !important;
     border: none !important;
@@ -3762,6 +3774,7 @@ button:active { transform: scale(0.96); }
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    flex: 1 !important;
 }
 
 #swipeScreen.active .swipe-card-content {
@@ -3823,7 +3836,7 @@ button:active { transform: scale(0.96); }
     margin: 4px 0 !important;
 }
 
-/* ===== ПЛАШКИ — НАДПИСЬ КАК ВКЛАДКА (ВЫХОДИТ ИЗ ПЛАШКИ) ===== */
+/* ===== ПЛАШКИ — НАДПИСЬ КАК ВКЛАДКА ===== */
 #swipeScreen.active .swipe-field {
     position: relative !important;
     margin-top: 12px !important;
@@ -3861,7 +3874,7 @@ button:active { transform: scale(0.96); }
     gap: 12px !important;
 }
 
-/* Комментарий — большая плашка */
+/* Комментарий */
 #swipeScreen.active .swipe-comment-value {
     background: var(--input-bg) !important;
     border: 1px solid var(--border-color) !important;
@@ -3927,12 +3940,12 @@ button:active { transform: scale(0.96); }
     display: none !important;
 }
 
-/* Кнопки внизу */
+/* Кнопки внизу (над нижней навигацией) */
 #swipeScreen.active .swipe-actions {
     display: flex !important;
     justify-content: center !important;
     gap: 32px !important;
-    padding: 16px 20px 30px !important;
+    padding: 12px 20px 20px !important;
     background: transparent !important;
     flex-shrink: 0 !important;
 }
@@ -3987,9 +4000,6 @@ button:active { transform: scale(0.96); }
 
 /* Адаптация */
 @media (max-width: 550px) {
-    #swipeScreen.active .swipe-card {
-        height: calc(100vh - 110px) !important;
-    }
     #swipeScreen.active .swipe-avatar {
         width: 65px !important;
         height: 65px !important;
@@ -4007,14 +4017,11 @@ button:active { transform: scale(0.96); }
     }
     #swipeScreen.active .swipe-actions {
         gap: 24px !important;
-        padding: 12px 20px 25px !important;
+        padding: 10px 20px 18px !important;
     }
 }
 
 @media (max-width: 450px) {
-    #swipeScreen.active .swipe-card {
-        height: calc(100vh - 105px) !important;
-    }
     #swipeScreen.active .swipe-avatar {
         width: 55px !important;
         height: 55px !important;
@@ -4032,14 +4039,11 @@ button:active { transform: scale(0.96); }
     }
     #swipeScreen.active .swipe-actions {
         gap: 20px !important;
-        padding: 10px 20px 20px !important;
+        padding: 8px 16px 16px !important;
     }
 }
 
 @media (max-width: 380px) {
-    #swipeScreen.active .swipe-card {
-        height: calc(100vh - 100px) !important;
-    }
     #swipeScreen.active .swipe-avatar {
         width: 50px !important;
         height: 50px !important;
