@@ -3710,59 +3710,55 @@ button:active { transform: scale(0.96); }
     padding-right: 0 !important;
 }
 
-/* ===== TINDER-STYLE СВАЙП-КАРТОЧКИ ===== */
+/* ===== TINDER-STYLE СВАЙП-КАРТОЧКИ (ФИНАЛ) ===== */
 
-/* Контейнер */
+/* Базовые стили для экрана свайпа */
+#swipeScreen.active {
+    background: var(--bg-body) !important;
+}
+
 #swipeScreen.active .swipe-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important;
-    width: 100% !important;
     height: 100% !important;
 }
 
-/* Карточка */
 #swipeScreen.active .swipe-card {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 100% !important;
-    background: var(--surface);
     border-radius: 0 !important;
-    border: none !important;
-    border-bottom: 1px solid var(--border-color) !important;
-    box-shadow: none !important;
-    cursor: grab;
-    position: relative;
+    margin: 0 !important;
+    height: calc(100% - 100px) !important;
+    background: var(--surface);
     display: flex;
     flex-direction: column;
-    margin: 0 !important;
-    overflow: hidden;
-    height: calc(100% - 100px) !important;
+    overflow-y: auto;
 }
 
-/* Контент карточки */
 #swipeScreen.active .swipe-card-content {
     display: flex !important;
     flex-direction: column !important;
     gap: 16px !important;
     padding: 20px 16px !important;
     flex: 1 !important;
-    overflow-y: auto !important;
 }
 
 /* Верхняя строка */
 #swipeScreen.active .swipe-player-row {
-    display: flex !important;
-    align-items: center !important;
-    gap: 16px !important;
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
 #swipeScreen.active .swipe-avatar {
-    width: 80px !important;
-    height: 80px !important;
+    width: 80px;
+    height: 80px;
     flex-shrink: 0;
     border-radius: 50%;
     overflow: hidden;
@@ -3771,8 +3767,8 @@ button:active { transform: scale(0.96); }
 }
 
 #swipeScreen.active .swipe-avatar img {
-    width: 100% !important;
-    height: 100% !important;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
 }
 
@@ -3792,9 +3788,6 @@ button:active { transform: scale(0.96); }
     font-size: 22px;
     font-weight: 700;
     color: var(--text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 /* Рейтинг */
@@ -3808,15 +3801,7 @@ button:active { transform: scale(0.96); }
     padding: 6px 12px;
 }
 
-#swipeScreen.active .swipe-rating-value {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-/* ===== ПЛАШКИ КАК В ПРОФИЛЕ (С КОНТЕНТОМ ВНУТРИ) ===== */
-
-/* Три колонки */
+/* Три колонки — плашками */
 #swipeScreen.active .swipe-stats-row.three-cols {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -3834,12 +3819,9 @@ button:active { transform: scale(0.96); }
 #swipeScreen.active .swipe-stats-row.three-cols .swipe-stat-label {
     font-size: 9px;
     color: var(--text-secondary);
-    font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
     margin-bottom: 6px;
     display: block;
-    opacity: 0.5;
 }
 
 #swipeScreen.active .swipe-stats-row.three-cols .swipe-stat-value {
@@ -3849,10 +3831,9 @@ button:active { transform: scale(0.96); }
     font-size: 16px;
     font-weight: 600;
     color: var(--text-primary);
-    text-align: center;
 }
 
-/* Steam — плашка с надписью сверху */
+/* Steam — плашка */
 #swipeScreen.active .swipe-steam-container {
     background: var(--surface);
     border: 1px solid var(--border-color);
@@ -3863,12 +3844,9 @@ button:active { transform: scale(0.96); }
 #swipeScreen.active .swipe-link-label {
     font-size: 9px;
     color: var(--text-secondary);
-    font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
     margin-bottom: 6px;
     display: block;
-    opacity: 0.5;
 }
 
 #swipeScreen.active .swipe-link-value {
@@ -3881,7 +3859,7 @@ button:active { transform: scale(0.96); }
     word-break: break-all;
 }
 
-/* Faceit — такая же плашка */
+/* Faceit — плашка */
 #swipeScreen.active .swipe-faceit-container {
     background: var(--surface);
     border: 1px solid var(--border-color);
@@ -3889,7 +3867,7 @@ button:active { transform: scale(0.96); }
     padding: 12px 14px;
 }
 
-/* Комментарий — плашка с надписью сверху */
+/* Комментарий — плашка */
 #swipeScreen.active .swipe-comment {
     background: var(--surface);
     border: 1px solid var(--border-color);
@@ -3900,12 +3878,9 @@ button:active { transform: scale(0.96); }
 #swipeScreen.active .swipe-comment-label {
     font-size: 9px;
     color: var(--text-secondary);
-    font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
     margin-bottom: 6px;
     display: block;
-    opacity: 0.5;
 }
 
 #swipeScreen.active .swipe-comment-text {
@@ -3916,8 +3891,6 @@ button:active { transform: scale(0.96); }
     font-weight: 500;
     color: var(--text-primary);
     line-height: 1.4;
-    min-height: auto;
-    word-wrap: break-word;
 }
 
 /* Таймер */
@@ -3953,7 +3926,6 @@ button:active { transform: scale(0.96); }
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
     background: var(--surface);
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -3968,17 +3940,9 @@ button:active { transform: scale(0.96); }
     border-color: #FF5E5E;
 }
 
-#swipeScreen.active .swipe-action-btn.skip svg {
-    stroke: #FF5E5E;
-}
-
 #swipeScreen.active .swipe-action-btn.invite {
     background: rgba(76, 175, 80, 0.15);
     border-color: #4CAF50;
-}
-
-#swipeScreen.active .swipe-action-btn.invite svg {
-    stroke: #4CAF50;
 }
 
 #swipeScreen.active .swipe-action-btn svg {
@@ -4072,12 +4036,6 @@ button:active { transform: scale(0.96); }
     #swipeScreen.active .swipe-stats-row.three-cols .swipe-stat-value {
         font-size: 14px;
     }
-    #swipeScreen.active .swipe-timer {
-        top: 10px;
-        left: 10px;
-        padding: 5px 12px;
-        font-size: 13px;
-    }
 }
 
 @media (max-width: 380px) {
@@ -4095,11 +4053,5 @@ button:active { transform: scale(0.96); }
     #swipeScreen.active .swipe-action-btn svg {
         width: 24px;
         height: 24px;
-    }
-    #swipeScreen.active .swipe-timer {
-        top: 8px;
-        left: 8px;
-        padding: 4px 10px;
-        font-size: 12px;
     }
 }
