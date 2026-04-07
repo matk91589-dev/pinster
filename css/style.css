@@ -4204,24 +4204,40 @@ button:active { transform: scale(0.96); }
     padding-right: 0 !important;
 }
 
-/* ===== ФИНАЛЬНЫЙ ФИКС ДЛЯ КАРТОЧКИ СВАЙПА ===== */
+/* ===== УБИРАЕМ ВСЕ ЗАЗОРЫ ПО КРАЯМ ===== */
 
-/* Убираем отступы Telegram */
+/* Убираем отступы у контента на экране свайпа */
 .swipe-screen .content {
     padding: 0 !important;
+    margin: 0 !important;
 }
 
-.swipe-container {
-    padding: 16px !important;
+/* Убираем отступы у контейнера */
+.swipe-screen .swipe-container {
+    padding: 0 !important;
+    margin: 0 !important;
     width: 100% !important;
 }
 
-/* Карточка — центрируем */
+/* Убираем ограничения у phone-frame */
+.swipe-screen .phone-frame {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+}
+
+/* Карточка — на всю ширину, но с сохранением размеров */
 .swipe-card {
     margin: 0 auto !important;
 }
 
-/* Убираем лишние отступы у обёртки */
+/* Кнопки по бокам — делаем видимыми и не обрезаем */
+.swipe-side-btn {
+    z-index: 100 !important;
+}
+
 .swipe-card-wrapper {
-    margin: 0 !important;
+    overflow: visible !important;
 }
