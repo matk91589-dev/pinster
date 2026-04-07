@@ -56,12 +56,12 @@
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
     
-    <!-- ФИНАЛЬНЫЕ ПРАВИЛА ДЛЯ КАРТОЧКИ СВАЙПА -->
+    <!-- ФИНАЛЬНЫЕ ПРАВИЛА ДЛЯ КАРТОЧКИ СВАЙПА (УВЕЛИЧЕННЫЕ) -->
     <style>
         /* Базовые размеры для больших экранов (шире 500px) */
         .swipe-card {
-            width: 400px !important;
-            height: 400px !important;
+            width: 420px !important;
+            height: 420px !important;
         }
         
         /* Растягиваем контент на всю высоту */
@@ -124,8 +124,8 @@
         /* От 451px до 500px */
         @media (max-width: 500px) and (min-width: 451px) {
             .swipe-card {
-                width: 370px !important;
-                height: 370px !important;
+                width: 380px !important;
+                height: 380px !important;
             }
             .swipe-avatar {
                 width: 70px !important;
@@ -149,8 +149,8 @@
         /* От 401px до 450px */
         @media (max-width: 450px) and (min-width: 401px) {
             .swipe-card {
-                width: 350px !important;
-                height: 350px !important;
+                width: 360px !important;
+                height: 360px !important;
             }
             .swipe-avatar {
                 width: 65px !important;
@@ -185,8 +185,8 @@
         /* От 351px до 400px */
         @media (max-width: 400px) and (min-width: 351px) {
             .swipe-card {
-                width: 320px !important;
-                height: 320px !important;
+                width: 330px !important;
+                height: 330px !important;
             }
             .swipe-avatar {
                 width: 60px !important;
@@ -233,8 +233,8 @@
         /* Меньше 350px */
         @media (max-width: 350px) {
             .swipe-card {
-                width: 290px !important;
-                height: 290px !important;
+                width: 300px !important;
+                height: 300px !important;
             }
             .swipe-avatar {
                 width: 55px !important;
@@ -279,6 +279,40 @@
                 top: 8px !important;
                 left: 8px !important;
             }
+        }
+        
+        /* Дополнительно для планшетов — чуть больше */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .swipe-card {
+                width: 480px !important;
+                height: 480px !important;
+            }
+        }
+        
+        /* Для очень широких экранов (десктоп) */
+        @media (min-width: 1025px) {
+            .swipe-card {
+                width: 520px !important;
+                height: 520px !important;
+            }
+        }
+        
+        /* Убираем зазоры по краям */
+        .swipe-screen .content {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        .swipe-container {
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
+        }
+        
+        .swipe-card-wrapper {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
         }
     </style>
 </head>
@@ -417,23 +451,13 @@
                 <div class="team-content" id="teamContent"></div>
             </div>
 
-            <!-- ЕДИНАЯ КАРТОЧКА СВАЙПА С ДВУМЯ РЕЖИМАМИ -->
+            <!-- TINDER-STYLE СВАЙП-КАРТОЧКА (JS сам создаст кнопки) -->
             <div id="swipeScreen" class="screen swipe-screen">
-                <div class="swipe-header">
-                    <div class="swipe-title">Поиск тиммейтов</div>
-                    <div class="swipe-subtitle">
-                        <span class="swipe-subtitle-left">← отклонить</span>
-                        <span class="swipe-subtitle-divider">|</span>
-                        <span class="swipe-subtitle-right">принять →</span>
-                    </div>
-                </div>
                 <div id="swipeContainer" class="swipe-container">
                     <div id="swipeCard" class="swipe-card">
                         <div class="swipe-timer" id="swipeTimer">30с</div>
                         
-                        <!-- ЕДИНЫЙ КОНТЕЙНЕР ДЛЯ КОНТЕНТА -->
                         <div class="swipe-card-content">
-                            
                             <!-- РЕЖИМ 1: СВАЙП (информация об игроке) -->
                             <div id="swipeModeContent">
                                 <div class="swipe-player-row">
@@ -509,7 +533,6 @@
                                 </div>
                                 <button class="waiting-chat-button disabled" id="waitingChatButton" disabled>Перейти в чат</button>
                             </div>
-                            
                         </div>
                     </div>
                 </div>
