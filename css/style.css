@@ -3759,13 +3759,13 @@ button:active { transform: scale(0.96); }
     overflow: hidden !important;
 }
 
-/* КВАДРАТНАЯ КАРТОЧКА — ширина на всю ширину экрана */
+/* КВАДРАТНАЯ КАРТОЧКА — ширина = 100% экрана, высота = ширине */
 #swipeScreen.active .swipe-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 100% !important;
-    height: auto !important;
-    aspect-ratio: 1 / 1 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 100vw !important;
+    height: 100vw !important;
+    max-height: 100vw !important;
     background: var(--surface);
     border-radius: 0 !important;
     border: none !important;
@@ -3781,8 +3781,8 @@ button:active { transform: scale(0.96); }
 
 /* Обёртка карточки */
 #swipeScreen.active .swipe-card-wrapper {
-    width: 100% !important;
-    height: auto !important;
+    width: 100vw !important;
+    height: 100vw !important;
     margin: 0 !important;
     padding: 0 !important;
 }
@@ -3937,7 +3937,7 @@ button:active { transform: scale(0.96); }
     z-index: 20 !important;
 }
 
-/* Адаптация под маленькие экраны */
+/* Адаптация под маленькие экраны — уменьшаем внутренние отступы */
 @media (max-width: 550px) {
     #swipeScreen.active .swipe-avatar {
         width: 60px !important;
