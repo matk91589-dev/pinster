@@ -4205,12 +4205,41 @@ button:active { transform: scale(0.96); }
     padding-right: 0 !important;
 }
 
-/* Убираем отступы Telegram для экрана свайпа */
-.swipe-screen .content {
+/* ===== ПОЛНОЕ УБИРАНИЕ ОТСТУПОВ ДЛЯ ЭКРАНА СВАЙПА ===== */
+
+/* Убираем отступы у body */
+.swipe-screen body {
+    margin: 0 !important;
     padding: 0 !important;
 }
 
+/* Убираем ограничения у phone-frame */
 .swipe-screen .phone-frame {
     max-width: 100% !important;
+    min-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
     border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Убираем отступы у content */
+.swipe-screen .content {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Контейнер свайпа — без отступов */
+.swipe-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+}
+
+/* Карточка — на всю ширину (но сохраняем квадрат) */
+.swipe-card {
+    width: min(100%, calc(100vw - 0px)) !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
 }
