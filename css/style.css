@@ -2532,6 +2532,137 @@ input:checked + .slider:before {
     }
 }
 
+/* ===== КНОПКИ И ОБЁРТКА (ВАЖНО!) ===== */
+
+/* Обёртка карточки */
+.swipe-card-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 0 auto;
+    transition: transform 0.3s ease;
+    will-change: transform;
+    overflow: visible !important;
+}
+
+/* Кнопки по бокам */
+.swipe-side-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(20, 22, 28, 0.95);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 15;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.swipe-side-btn.visible {
+    opacity: 1;
+}
+
+.swipe-side-btn.skip-btn {
+    border-left: 3px solid #FF5E5E;
+    background: linear-gradient(90deg, rgba(255, 94, 94, 0.25), rgba(20, 22, 28, 0.95));
+    border-radius: 24px 0 0 24px;
+}
+
+.swipe-side-btn.invite-btn {
+    border-right: 3px solid #4CAF50;
+    background: linear-gradient(270deg, rgba(76, 175, 80, 0.25), rgba(20, 22, 28, 0.95));
+    border-radius: 0 24px 24px 0;
+}
+
+.swipe-side-btn-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.swipe-side-btn.pulse {
+    animation: sideBtnPull 0.2s ease-out;
+}
+
+@keyframes sideBtnPull {
+    0% { transform: translateY(-50%) scale(1); opacity: 1; }
+    50% { transform: translateY(-50%) scale(0.92); opacity: 0.9; }
+    100% { transform: translateY(-50%) scale(1); opacity: 1; }
+}
+
+/* Эффект при перетаскивании */
+.swipe-card.dragging {
+    transition: none;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+    transform: scale(1.01);
+}
+
+.swipe-card:active {
+    cursor: grabbing;
+}
+
+/* Затемнение при свайпе */
+.swipe-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    transition: background 0.15s ease;
+    pointer-events: none;
+    border-radius: 28px;
+    z-index: 4;
+}
+
+.swipe-card.swiping-right::after {
+    background: rgba(76, 175, 80, 0.2);
+}
+
+.swipe-card.swiping-left::after {
+    background: rgba(255, 94, 94, 0.2);
+}
+
+/* Лейблы свайпа */
+.swipe-label {
+    position: absolute;
+    top: 28px;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.2s ease;
+    z-index: 25;
+    pointer-events: none;
+    text-transform: uppercase;
+}
+
+.swipe-label-left {
+    left: 20px;
+    color: #FF5E5E;
+    transform: rotate(-12deg) scale(0.8);
+}
+
+.swipe-label-right {
+    right: 20px;
+    color: #5ACE5A;
+    transform: rotate(12deg) scale(0.8);
+}
+
+.swipe-card.swiping-right .swipe-label-right {
+    opacity: 1;
+    transform: rotate(12deg) scale(1);
+}
+
+.swipe-card.swiping-left .swipe-label-left {
+    opacity: 1;
+    transform: rotate(-12deg) scale(1);
+}
+
 /* ===== РЕЖИМ ОЖИДАНИЯ - АДАПТИВНЫЙ (ТОЛЬКО ЭТОТ БЛОК!) ===== */
 
 .waiting-mode-content {
