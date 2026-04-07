@@ -1,3 +1,4 @@
+в css что то добавляем или удаляем?
 /* Подключаем шрифт Montserrat */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
@@ -2219,6 +2220,90 @@ input:checked + .slider:before {
     background: rgba(255, 85, 0, 0.1);
 }
 
+/* ===== СВАЙП-КАРТОЧКИ ===== */
+
+/* Контейнер */
+.swipe-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+/* Базовая карточка (для больших экранов) */
+.swipe-card {
+    width: 420px !important;
+    height: 420px !important;
+    background: var(--surface);
+    border-radius: 28px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    cursor: grab;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* От 451px до 500px */
+@media (max-width: 500px) and (min-width: 451px) {
+    .swipe-card {
+        width: 380px !important;
+        height: 380px !important;
+    }
+}
+
+/* От 401px до 450px */
+@media (max-width: 450px) and (min-width: 401px) {
+    .swipe-card {
+        width: 360px !important;
+        height: 360px !important;
+    }
+}
+
+/* От 351px до 400px */
+@media (max-width: 400px) and (min-width: 351px) {
+    .swipe-card {
+        width: 330px !important;
+        height: 330px !important;
+    }
+}
+
+/* От 301px до 350px */
+@media (max-width: 350px) and (min-width: 301px) {
+    .swipe-card {
+        width: 300px !important;
+        height: 300px !important;
+    }
+}
+
+/* Меньше 300px */
+@media (max-width: 300px) {
+    .swipe-card {
+        width: 280px !important;
+        height: 280px !important;
+    }
+}
+
+/* Дополнительно для планшетов — чуть больше */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .swipe-card {
+        width: 480px !important;
+        height: 480px !important;
+    }
+}
+
+/* Для очень широких экранов (десктоп) — фиксируем максимальный размер */
+@media (min-width: 1025px) {
+    .swipe-card {
+        width: 520px !important;
+        height: 520px !important;
+    }
+}
+
 /* Эффект при перетаскивании */
 .swipe-card.dragging {
     transition: none;
@@ -2780,7 +2865,6 @@ input:checked + .slider:before {
 /* Адаптация */
 @media (max-width: 480px) {
     .swipe-card {
-        max-width: 92%;
     }
     .waiting-mode-content {
         padding: 16px 14px;
@@ -4121,80 +4205,24 @@ button:active { transform: scale(0.96); }
     padding-right: 0 !important;
 }
 
-/* ===== ФИНАЛЬНЫЕ СТИЛИ ДЛЯ КАРТОЧКИ СВАЙПА ===== */
+/* ===== ФИНАЛЬНЫЙ ФИКС ДЛЯ КАРТОЧКИ СВАЙПА ===== */
 
-/* Убираем отступы у body для экрана свайпа */
-.swipe-screen body {
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-/* Убираем ограничения у phone-frame */
-.swipe-screen .phone-frame {
-    max-width: 100% !important;
-    min-width: 100% !important;
-    width: 100% !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-/* Убираем отступы у content */
+/* Убираем отступы Telegram */
 .swipe-screen .content {
     padding: 0 !important;
-    margin: 0 !important;
 }
 
-/* Контейнер свайпа — без отступов */
 .swipe-container {
-    padding: 0 !important;
-    margin: 0 !important;
+    padding: 16px !important;
     width: 100% !important;
 }
 
-/* Карточка — увеличенные размеры */
+/* Карточка — центрируем */
 .swipe-card {
-    width: 420px !important;
-    height: 420px !important;
     margin: 0 auto !important;
-    border-radius: 28px !important;
 }
 
-/* Адаптация под размеры экрана */
-@media (max-width: 500px) {
-    .swipe-card {
-        width: 360px !important;
-        height: 360px !important;
-    }
-}
-
-@media (max-width: 400px) {
-    .swipe-card {
-        width: 320px !important;
-        height: 320px !important;
-    }
-}
-
-@media (max-width: 350px) {
-    .swipe-card {
-        width: 280px !important;
-        height: 280px !important;
-    }
-}
-
-/* Для планшетов */
-@media (min-width: 768px) and (max-width: 1024px) {
-    .swipe-card {
-        width: 480px !important;
-        height: 480px !important;
-    }
-}
-
-/* Для десктопа */
-@media (min-width: 1025px) {
-    .swipe-card {
-        width: 520px !important;
-        height: 520px !important;
-    }
+/* Убираем лишние отступы у обёртки */
+.swipe-card-wrapper {
+    margin: 0 !important;
 }
