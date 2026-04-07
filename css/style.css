@@ -4204,40 +4204,45 @@ button:active { transform: scale(0.96); }
     padding-right: 0 !important;
 }
 
-/* ===== УБИРАЕМ ВСЕ ЗАЗОРЫ ПО КРАЯМ ===== */
+/* ===== ЖЁСТКОЕ УБИРАНИЕ ОТСТУПОВ TELEGRAM ===== */
 
-/* Убираем отступы у контента на экране свайпа */
-.swipe-screen .content {
-    padding: 0 !important;
-    margin: 0 !important;
+/* Форсированное растягивание */
+.swipe-screen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: var(--bg-body) !important;
+    overflow: hidden !important;
 }
 
-/* Убираем отступы у контейнера */
+/* Убираем все возможные отступы */
+.swipe-screen .content,
+.swipe-screen .phone-frame,
 .swipe-screen .swipe-container {
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
-}
-
-/* Убираем ограничения у phone-frame */
-.swipe-screen .phone-frame {
     max-width: 100% !important;
-    width: 100% !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    border: none !important;
+    left: 0 !important;
+    right: 0 !important;
 }
 
-/* Карточка — на всю ширину, но с сохранением размеров */
+/* Убираем safe-area-inset */
+.swipe-screen .header {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Карточка — центрируем */
 .swipe-card {
     margin: 0 auto !important;
 }
 
-/* Кнопки по бокам — делаем видимыми и не обрезаем */
-.swipe-side-btn {
-    z-index: 100 !important;
-}
-
+/* Обёртка — не обрезаем */
 .swipe-card-wrapper {
     overflow: visible !important;
 }
