@@ -2337,8 +2337,8 @@ input:checked + .slider:before {
 .swipe-card-content {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 20px 18px;
+    gap: 10px;
+    padding: 16px 18px;
     flex: 1;
     z-index: 10;
     position: relative;
@@ -2455,9 +2455,9 @@ input:checked + .slider:before {
     background: var(--surface);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 10px 8px;
-    font-size: 16px;
-    font-weight: 600;
+    padding: 12px 8px;
+    font-size: 17px;
+    font-weight: 700;
     color: var(--text-primary);
     text-align: center;
     white-space: nowrap;
@@ -2487,8 +2487,8 @@ input:checked + .slider:before {
     background: var(--surface);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 10px 12px;
-    font-size: 13px;
+    padding: 12px 14px;
+    font-size: 14px;
     font-weight: 500;
     color: var(--text-primary);
     word-break: break-all;
@@ -2515,9 +2515,9 @@ input:checked + .slider:before {
     background: var(--surface);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 12px 14px;
-    font-size: 13px;
-    font-weight: 500;
+    padding: 14px 16px;
+    font-size: 14px;
+    font-weight: 600;
     color: var(--text-primary);
     min-height: 70px;
     word-wrap: break-word;
