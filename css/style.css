@@ -1,3 +1,4 @@
+одобряешь?
 /* Подключаем шрифт Montserrat */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
@@ -2217,6 +2218,17 @@ input:checked + .slider:before {
 
 .cancel-search-btn:hover {
     background: rgba(255, 85, 0, 0.1);
+}
+
+/* ===== СВАЙП-КАРТОЧКИ ===== */
+
+/* Контейнер */
+.swipe-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
 }
 
 /* ===== СВАЙП-КАРТОЧКИ ===== */
