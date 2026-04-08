@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ - ОПТИМИЗИРОВАННЫЙ (БЕЗ КЭША ДРУЗЕЙ)
+// ПРОФИЛЬ - ОПТИМИЗИРОВАННЫЙ
 // ============================================
 
 console.log('🔥 PROFILE.JS ЗАГРУЖЕН');
@@ -25,6 +25,7 @@ const Profile = {
     isInitialized: false,
     friendsList: [],
     isFriendsLoaded: false,
+    isLoadingFriends: false,
     
     getTelegramId() {
         const tg = window.Telegram?.WebApp;
@@ -54,12 +55,17 @@ const Profile = {
         }, 2000);
     },
     
-    // Загрузка друзей для профиля (без кэша)
+    // Загрузка друзей для профиля
     async loadFriends() {
         if (!this.telegramId) {
             this.telegramId = this.getTelegramId();
         }
-        if (!this.telegramId || this.isFriendsLoaded) return;
+        if (!this.telegramId || this.isFriendsLoaded || this.isLoadingFriends) return;
+        
+        this.isLoadingFriends = true;
+        
+        // Показываем состояние загрузки
+        this.updateFriendsLoading();
         
         try {
             const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
@@ -76,13 +82,31 @@ const Profile = {
                 this.isFriendsLoaded = true;
                 this.updateFriendsDisplay();
                 console.log('✅ Друзья загружены:', this.friendsList.length);
+            } else {
+                this.friendsList = [];
+                this.isFriendsLoaded = true;
+                this.updateFriendsDisplay();
             }
         } catch (error) {
             console.error('Ошибка загрузки друзей:', error);
             this.friendsList = [];
             this.isFriendsLoaded = true;
             this.updateFriendsDisplay();
+        } finally {
+            this.isLoadingFriends = false;
         }
+    },
+    
+    updateFriendsLoading() {
+        const friendsListEl = document.getElementById('friendsList');
+        if (!friendsListEl) return;
+        
+        const friendsTitle = document.querySelector('.friends-title');
+        if (friendsTitle) {
+            friendsTitle.textContent = 'Ваши друзья:';
+        }
+        
+        friendsListEl.innerHTML = '<div class="empty-friends"><div class="empty-friends-text">загрузка друзей...</div></div>';
     },
     
     updateFriendsDisplay() {
@@ -121,10 +145,11 @@ const Profile = {
         
         if (this.friendsList.length > 5) {
             const remaining = this.friendsList.length - 5;
+            const word = this.getFriendsWord(remaining);
             html += `<div class="friend-row more-friends" onclick="Profile.showAllFriends()">
                         <div class="friend-avatar"><span>+</span></div>
                         <div class="friend-info">
-                            <span class="friend-name">и еще ${remaining} ${this.getFriendsWord(remaining)}</span>
+                            <span class="friend-name">и еще ${remaining} ${word}</span>
                         </div>
                         <span class="friend-arrow">→</span>
                     </div>`;
