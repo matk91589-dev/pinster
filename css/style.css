@@ -4247,7 +4247,7 @@ button:active { transform: scale(0.96); }
     overflow: visible !important;
 }
 
-/* ===== МАГАЗИН С БЛЮРОМ (весь экран, слабый блюр) ===== */
+/* ===== МАГАЗИН С ЛЁГКИМ БЛЮРОМ (весь экран) ===== */
 .shop-blur-wrapper {
     position: fixed;
     top: 0;
@@ -4256,9 +4256,9 @@ button:active { transform: scale(0.96); }
     bottom: 0;
     width: 100%;
     height: 100%;
-    background: rgba(13, 15, 21, 0.85);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    background: transparent;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4274,28 +4274,26 @@ button:active { transform: scale(0.96); }
 }
 
 .coming-soon-text {
-    font-size: clamp(28px, 8vw, 48px);
-    font-weight: 600;
+    font-size: 22px;
+    font-weight: 400;
     color: #FF5500;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     text-align: center;
     background: none;
     -webkit-background-clip: unset;
     background-clip: unset;
     text-shadow: none;
+    opacity: 0.9;
 }
 
-/* Убираем блюр с контента магазина, он теперь не нужен */
-.shop-content-blur {
-    filter: none;
-    pointer-events: none;
-    opacity: 0;
-    visibility: hidden;
-}
-
-/* Отключаем клики по всему магазину, когда активен блюр */
+/* Отключаем клики по всему магазину */
 .shop-screen .shop-tabs,
 .shop-screen .cases-section,
-.shop-screen .buy-btn-simple {
+.shop-screen .buy-btn-simple,
+.shop-screen .case-item {
     pointer-events: none;
+}
+
+.shop-tabs {
+    opacity: 0.5;
 }
