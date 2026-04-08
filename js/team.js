@@ -1,5 +1,5 @@
 // ============================================
-// КОМАНДА - С ПОИСКОМ В ЛИДЕРБОРДЕ
+// КОМАНДА - БЫСТРАЯ ЗАГРУЗКА + СТИЛЬНЫЙ СКРОЛЛ
 // ============================================
 
 const Team = {
@@ -16,6 +16,7 @@ const Team = {
     isLeaderboardLoaded: false,
     isLoadingFriends: false,
     isLoadingLeaderboard: false,
+    dataLoaded: false,
 
     init() {
         console.log('🚀 Team.init()');
@@ -36,15 +37,74 @@ const Team = {
             return;
         }
         
-        // Предзагрузка в фоне (ускорение)
-        setTimeout(() => {
-            if (this.telegramId && !this.isFriendsLoaded && !this.isLoadingFriends) {
-                this.loadFriendsList();
+        // Добавляем стили скроллбара сразу
+        this.injectScrollbarStyles();
+        
+        // Загружаем всё параллельно и сразу
+        this.loadAllData();
+    },
+    
+    injectScrollbarStyles() {
+        if (document.getElementById('team-scroll-styles')) return;
+        
+        const style = document.createElement('style');
+        style.id = 'team-scroll-styles';
+        style.textContent = `
+            .friends-list-container::-webkit-scrollbar,
+            .team-list::-webkit-scrollbar {
+                width: 3px;
             }
-            if (this.telegramId && !this.isLeaderboardLoaded && !this.isLoadingLeaderboard) {
-                this.loadLeaderboard();
+            .friends-list-container::-webkit-scrollbar-track,
+            .team-list::-webkit-scrollbar-track {
+                background: #2A2F3A;
+                border-radius: 10px;
             }
-        }, 300);
+            .friends-list-container::-webkit-scrollbar-thumb,
+            .team-list::-webkit-scrollbar-thumb {
+                background: #FF5500;
+                border-radius: 10px;
+            }
+            .friends-list-container,
+            .team-list {
+                scrollbar-width: thin;
+                scrollbar-color: #FF5500 #2A2F3A;
+            }
+            
+            /* Центрирование пустых состояний */
+            .empty-friends {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 200px;
+                text-align: center;
+                padding: 40px 20px;
+            }
+            .empty-friends-text {
+                color: #8E97A6;
+                font-size: 14px;
+            }
+        `;
+        document.head.appendChild(style);
+    },
+    
+    async loadAllData() {
+        if (this.dataLoaded) return;
+        
+        console.log('🔥 Параллельная загрузка всех данных...');
+        
+        // Загружаем друзей и лидерборд параллельно
+        const promises = [];
+        
+        if (!this.isFriendsLoaded && !this.isLoadingFriends) {
+            promises.push(this.loadFriendsList());
+        }
+        if (!this.isLeaderboardLoaded && !this.isLoadingLeaderboard) {
+            promises.push(this.loadLeaderboard());
+        }
+        
+        await Promise.all(promises);
+        this.dataLoaded = true;
+        console.log('✅ Все данные загружены');
     },
     
     showTeamPage() {
@@ -70,6 +130,7 @@ const Team = {
             this.currentPlayerId = localStorage.getItem('player_id');
         }
         
+        // Показываем мгновенно то, что уже загружено
         if (this.currentTab === 'friends') {
             this.renderFriendsTab();
             if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
@@ -90,6 +151,23 @@ const Team = {
         this.isLoadingFriends = true;
         console.log('👥 Загрузка друзей...');
         
+        // Сначала показываем кэш если есть
+        const cached = localStorage.getItem('team_friends_cache');
+        if (cached && !this.isFriendsLoaded) {
+            try {
+                const cachedData = JSON.parse(cached);
+                if (cachedData && cachedData.length) {
+                    this.friendsList = cachedData;
+                    this.filteredFriends = [...this.friendsList];
+                    this.isFriendsLoaded = true;
+                    if (this.currentTab === 'friends') {
+                        this.renderFriendsTab();
+                    }
+                    console.log('✅ Друзья из кэша:', this.friendsList.length);
+                }
+            } catch(e) {}
+        }
+        
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 3000);
@@ -108,10 +186,11 @@ const Team = {
             const data = await response.json();
             console.log('📦 Ответ друзей:', data);
             
-            if (data.status === 'ok' && data.friends && data.friends.length > 0) {
+            if (data.status === 'ok' && data.friends) {
                 this.friendsList = data.friends;
                 this.filteredFriends = [...this.friendsList];
                 this.isFriendsLoaded = true;
+                localStorage.setItem('team_friends_cache', JSON.stringify(this.friendsList));
                 console.log('✅ Друзья загружены:', this.friendsList.length);
                 
                 if (this.currentTab === 'friends') {
@@ -127,11 +206,13 @@ const Team = {
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки друзей:', error);
-            this.friendsList = [];
-            this.filteredFriends = [];
-            this.isFriendsLoaded = true;
-            if (this.currentTab === 'friends') {
-                this.renderFriendsTab();
+            if (!this.isFriendsLoaded) {
+                this.friendsList = [];
+                this.filteredFriends = [];
+                this.isFriendsLoaded = true;
+                if (this.currentTab === 'friends') {
+                    this.renderFriendsTab();
+                }
             }
         } finally {
             this.isLoadingFriends = false;
@@ -144,6 +225,23 @@ const Team = {
         
         this.isLoadingLeaderboard = true;
         console.log('📥 Загрузка лидерборда...');
+        
+        // Сначала показываем кэш если есть
+        const cached = localStorage.getItem('team_leaderboard_cache');
+        if (cached && !this.isLeaderboardLoaded) {
+            try {
+                const cachedData = JSON.parse(cached);
+                if (cachedData && cachedData.length) {
+                    this.leaderboard = cachedData;
+                    this.filteredLeaderboard = [...this.leaderboard];
+                    this.isLeaderboardLoaded = true;
+                    if (this.currentTab === 'leaderboard') {
+                        this.renderLeaderboardTab();
+                    }
+                    console.log('✅ Лидерборд из кэша:', this.leaderboard.length);
+                }
+            } catch(e) {}
+        }
         
         try {
             const controller = new AbortController();
@@ -163,10 +261,11 @@ const Team = {
             const data = await response.json();
             console.log('📦 Ответ лидерборда:', data);
             
-            if (data.status === 'ok' && data.leaderboard && data.leaderboard.length > 0) {
+            if (data.status === 'ok' && data.leaderboard) {
                 this.leaderboard = data.leaderboard;
                 this.filteredLeaderboard = [...this.leaderboard];
                 this.isLeaderboardLoaded = true;
+                localStorage.setItem('team_leaderboard_cache', JSON.stringify(this.leaderboard));
                 console.log('✅ Лидерборд загружен:', this.leaderboard.length);
                 
                 if (this.currentTab === 'leaderboard') {
@@ -182,11 +281,13 @@ const Team = {
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки лидерборда:', error);
-            this.leaderboard = [];
-            this.filteredLeaderboard = [];
-            this.isLeaderboardLoaded = true;
-            if (this.currentTab === 'leaderboard') {
-                this.renderLeaderboardTab();
+            if (!this.isLeaderboardLoaded) {
+                this.leaderboard = [];
+                this.filteredLeaderboard = [];
+                this.isLeaderboardLoaded = true;
+                if (this.currentTab === 'leaderboard') {
+                    this.renderLeaderboardTab();
+                }
             }
         } finally {
             this.isLoadingLeaderboard = false;
@@ -314,13 +415,13 @@ const Team = {
         } else if (this.leaderboard.length === 0) {
             html += `<div class="empty-friends"><div class="empty-friends-text">пока нет игроков</div></div>`;
         } else {
-            this.filteredLeaderboard.forEach((player, index) => {
+            this.filteredLeaderboard.forEach((player) => {
                 const originalIndex = this.leaderboard.findIndex(p => p.player_id === player.player_id);
                 const place = originalIndex + 1;
                 const isCurrent = player.player_id === this.currentPlayerId;
                 
                 html += `
-                    <div class="friend-row" onclick="Team.showPlayerProfile('${player.player_id}')">
+                    <div class="friend-row ${isCurrent ? 'current-player-row' : ''}" onclick="Team.showPlayerProfile('${player.player_id}')">
                         <div class="friend-avatar">
                             ${player.avatar ? `<img src="${player.avatar}">` : `<span>${player.nick?.[0] || '?'}</span>`}
                         </div>
@@ -381,7 +482,7 @@ const Team = {
             const isCurrent = player.player_id === this.currentPlayerId;
             
             html += `
-                <div class="friend-row" onclick="Team.showPlayerProfile('${player.player_id}')">
+                <div class="friend-row ${isCurrent ? 'current-player-row' : ''}" onclick="Team.showPlayerProfile('${player.player_id}')">
                     <div class="friend-avatar">
                         ${player.avatar ? `<img src="${player.avatar}">` : `<span>${player.nick?.[0] || '?'}</span>`}
                     </div>
@@ -439,22 +540,11 @@ const Team = {
             .leaderboard-arrow {
                 color: #FF5500 !important;
             }
-            
-            /* СТИЛЬНЫЙ ОРАНЖЕВЫЙ СКРОЛЛБАР */
-            .friends-list-container::-webkit-scrollbar {
-                width: 3px;
-            }
-            .friends-list-container::-webkit-scrollbar-track {
-                background: #2A2F3A;
-                border-radius: 10px;
-            }
-            .friends-list-container::-webkit-scrollbar-thumb {
-                background: #FF5500;
-                border-radius: 10px;
-            }
-            .friends-list-container {
-                scrollbar-width: thin;
-                scrollbar-color: #FF5500 #2A2F3A;
+            .current-player-row {
+                background: rgba(255, 85, 0, 0.08);
+                margin: 0 -16px;
+                padding: 0 16px;
+                border-left: 3px solid #FF5500;
             }
         `;
         document.head.appendChild(style);
@@ -475,7 +565,7 @@ const Team = {
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Team.js загружен');
-    setTimeout(() => Team.init(), 50);
+    Team.init();
 });
 
 window.Team = Team;
