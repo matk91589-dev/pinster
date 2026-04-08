@@ -4247,59 +4247,55 @@ button:active { transform: scale(0.96); }
     overflow: visible !important;
 }
 
-/* ===== МАГАЗИН С БЛЮРОМ ===== */
+/* ===== МАГАЗИН С БЛЮРОМ (весь экран, слабый блюр) ===== */
 .shop-blur-wrapper {
-    position: relative;
-    width: 100%;
-    margin-top: 16px;
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-.shop-content-blur {
-    filter: blur(6px);
-    pointer-events: none;
-    user-select: none;
-    opacity: 0.7;
-}
-
-.shop-overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(13, 15, 21, 0.85);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
-    background: rgba(13, 15, 21, 0.3);
-    border-radius: 20px;
+    z-index: 100;
+    margin: 0;
+    border-radius: 0;
+}
+
+.shop-overlay {
+    position: relative;
+    z-index: 101;
+    text-align: center;
 }
 
 .coming-soon-text {
     font-size: clamp(28px, 8vw, 48px);
-    font-weight: 800;
-    background: linear-gradient(135deg, #FF5500 0%, #FF8C42 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow: 0 0 25px rgba(255, 85, 0, 0.4);
+    font-weight: 600;
+    color: #FF5500;
     letter-spacing: 2px;
     text-align: center;
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    text-shadow: none;
 }
 
-.shop-tabs {
+/* Убираем блюр с контента магазина, он теперь не нужен */
+.shop-content-blur {
+    filter: none;
     pointer-events: none;
-    opacity: 0.5;
+    opacity: 0;
+    visibility: hidden;
 }
 
-.buy-btn-simple {
-    pointer-events: none !important;
-}
-
-/* ===== НАСТРОЙКИ — РЕФЕРАЛКА И ИНВЕНТАРЬ УДАЛЕНЫ ===== */
-.settings-row[onclick*="Team.showTeamPage"] {
-    width: 100% !important;
-    display: flex !important;
+/* Отключаем клики по всему магазину, когда активен блюр */
+.shop-screen .shop-tabs,
+.shop-screen .cases-section,
+.shop-screen .buy-btn-simple {
+    pointer-events: none;
 }
