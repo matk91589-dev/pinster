@@ -4247,82 +4247,59 @@ button:active { transform: scale(0.96); }
     overflow: visible !important;
 }
 
-/* ===== МАГАЗИН С БЛЮРОМ И НАДПИСЬЮ "СКОРО..." ===== */
-.shop-blur-container {
+/* ===== МАГАЗИН С БЛЮРОМ ===== */
+.shop-blur-wrapper {
     position: relative;
     width: 100%;
-    min-height: 60vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 24px;
+    margin-top: 16px;
+    border-radius: 20px;
     overflow: hidden;
-    margin-top: 20px;
 }
 
-.shop-blur-bg {
+.shop-content-blur {
+    filter: blur(6px);
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.7;
+}
+
+.shop-overlay {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    background: rgba(26, 29, 36, 0.5);
-    border-radius: 24px;
-    border: 1px solid rgba(255, 85, 0, 0.2);
-}
-
-.shop-coming-soon {
-    position: relative;
-    z-index: 2;
-    padding: 40px 20px;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    background: rgba(13, 15, 21, 0.3);
+    border-radius: 20px;
 }
 
 .coming-soon-text {
-    font-size: clamp(24px, 8vw, 42px);
+    font-size: clamp(28px, 8vw, 48px);
     font-weight: 800;
     background: linear-gradient(135deg, #FF5500 0%, #FF8C42 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    text-shadow: 0 0 20px rgba(255, 85, 0, 0.3);
+    text-shadow: 0 0 25px rgba(255, 85, 0, 0.4);
     letter-spacing: 2px;
+    text-align: center;
 }
 
-/* Контент магазина под блюром — не кликабельный */
-.shop-screen .cases-section {
-    filter: blur(8px);
+.shop-tabs {
     pointer-events: none;
-    user-select: none;
+    opacity: 0.5;
 }
 
-/* Убираем скролл у заблюренного контента */
-.shop-screen .cases-section::-webkit-scrollbar {
-    display: none;
+.buy-btn-simple {
+    pointer-events: none !important;
 }
 
-/* ===== НАСТРОЙКИ — УБИРАЕМ РЕФЕРАЛКУ И ИНВЕНТАРЬ ===== */
-.settings-section .settings-row:first-child {
-    width: 100% !important;
-}
-
-/* Скрываем строки с рефералкой и инвентарем по тексту */
-.settings-row:has(.settings-row-label:contains("реферальная система")),
-.settings-row:has(.settings-row-label:contains("инвентарь")),
-.settings-row[onclick*="shopScreen"] {
-    display: none !important;
-}
-
-/* Растягиваем друзей на всю ширину */
+/* ===== НАСТРОЙКИ — РЕФЕРАЛКА И ИНВЕНТАРЬ УДАЛЕНЫ ===== */
 .settings-row[onclick*="Team.showTeamPage"] {
     width: 100% !important;
     display: flex !important;
-}
-
-/* ===== ФИКС ДЛЯ СТАРЫХ БРАУЗЕРОВ (если :contains не работает) ===== */
-.settings-row.hide-ref,
-.settings-row.hide-inv {
-    display: none !important;
 }
