@@ -1,5 +1,5 @@
 // ============================================
-// КОМАНДА - БЫСТРАЯ ЗАГРУЗКА + СТИЛЬНЫЙ СКРОЛЛ
+// КОМАНДА - С ПОИСКОМ В ЛИДЕРБОРДЕ
 // ============================================
 
 const Team = {
@@ -16,7 +16,6 @@ const Team = {
     isLeaderboardLoaded: false,
     isLoadingFriends: false,
     isLoadingLeaderboard: false,
-    dataLoaded: false,
 
     init() {
         console.log('🚀 Team.init()');
@@ -37,26 +36,27 @@ const Team = {
             return;
         }
         
-        this.injectScrollbarStyles();
-        this.injectLeaderboardStyles();
+        // Добавляем стили скроллбара
+        this.injectScrollStyles();
         
-        // Предзагрузка в фоне
+        // Предзагрузка данных в фоне
         setTimeout(() => {
-            if (!this.isFriendsLoaded && !this.isLoadingFriends) {
+            if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
                 this.loadFriendsList();
             }
-            if (!this.isLeaderboardLoaded && !this.isLoadingLeaderboard) {
+            if (!this.isLeaderboardLoaded && !this.isLoadingLeaderboard && this.telegramId) {
                 this.loadLeaderboard();
             }
         }, 300);
     },
     
-    injectScrollbarStyles() {
+    injectScrollStyles() {
         if (document.getElementById('team-scroll-styles')) return;
         
         const style = document.createElement('style');
         style.id = 'team-scroll-styles';
         style.textContent = `
+            /* Стильный оранжевый скроллбар */
             .friends-list-container::-webkit-scrollbar,
             .team-list::-webkit-scrollbar {
                 width: 3px;
@@ -77,6 +77,7 @@ const Team = {
                 scrollbar-color: #FF5500 #2A2F3A;
             }
             
+            /* Центрирование пустых состояний */
             .empty-friends {
                 display: flex;
                 justify-content: center;
@@ -90,6 +91,7 @@ const Team = {
                 font-size: 14px;
             }
             
+            /* Стили лидерборда */
             .leaderboard-right {
                 display: flex;
                 align-items: center;
@@ -132,10 +134,6 @@ const Team = {
             }
         `;
         document.head.appendChild(style);
-    },
-    
-    injectLeaderboardStyles() {
-        // Уже добавили выше, этот метод оставляем пустым для совместимости
     },
     
     showTeamPage() {
@@ -182,17 +180,11 @@ const Team = {
         console.log('👥 Загрузка друзей...');
         
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
-            
             const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId }),
-                signal: controller.signal
+                body: JSON.stringify({ telegram_id: this.telegramId })
             });
-            
-            clearTimeout(timeoutId);
             
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
@@ -237,17 +229,11 @@ const Team = {
         console.log('📥 Загрузка лидерборда...');
         
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
-            
             const response = await fetch(`${this.BACKEND_URL}/api/users/leaderboard`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId }),
-                signal: controller.signal
+                body: JSON.stringify({ telegram_id: this.telegramId })
             });
-            
-            clearTimeout(timeoutId);
             
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
@@ -508,7 +494,7 @@ const Team = {
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Team.js загружен');
-    Team.init();
+    setTimeout(() => Team.init(), 50);
 });
 
 window.Team = Team;
