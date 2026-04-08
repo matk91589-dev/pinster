@@ -4414,3 +4414,108 @@ button:active { transform: scale(0.96); }
         width: 4px !important;
     }
 }
+
+/* ===== МОДАЛЬНОЕ ОКНО "МАГАЗИН В РАЗРАБОТКЕ" ===== */
+.shop-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+}
+
+.shop-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.shop-modal {
+    background: var(--surface);
+    border-radius: 16px;
+    width: 280px;
+    max-width: 85%;
+    overflow: hidden;
+    transform: scale(0.9);
+    transition: transform 0.2s ease;
+    border: 1px solid var(--border-color);
+}
+
+.shop-modal-overlay.active .shop-modal {
+    transform: scale(1);
+}
+
+.shop-modal-header {
+    padding: 16px 16px 0 16px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.shop-modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 20px;
+    color: var(--text-secondary);
+}
+
+.shop-modal-close:hover {
+    background: rgba(255, 85, 0, 0.2);
+    color: var(--accent);
+}
+
+.shop-modal-icon {
+    text-align: center;
+    font-size: 48px;
+    margin-bottom: 8px;
+}
+
+.shop-modal-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.shop-modal-message {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-secondary);
+    padding: 0 24px 24px 24px;
+    line-height: 1.5;
+}
+
+.shop-modal-button {
+    display: block;
+    width: calc(100% - 32px);
+    margin: 0 16px 20px 16px;
+    padding: 12px;
+    background: var(--accent);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-align: center;
+}
+
+.shop-modal-button:hover {
+    background: var(--accent-soft);
+}
