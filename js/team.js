@@ -37,11 +37,18 @@ const Team = {
             return;
         }
         
-        // Добавляем стили скроллбара сразу
         this.injectScrollbarStyles();
+        this.injectLeaderboardStyles();
         
-        // Загружаем всё параллельно и сразу
-        this.loadAllData();
+        // Предзагрузка в фоне
+        setTimeout(() => {
+            if (!this.isFriendsLoaded && !this.isLoadingFriends) {
+                this.loadFriendsList();
+            }
+            if (!this.isLeaderboardLoaded && !this.isLoadingLeaderboard) {
+                this.loadLeaderboard();
+            }
+        }, 300);
     },
     
     injectScrollbarStyles() {
@@ -70,7 +77,6 @@ const Team = {
                 scrollbar-color: #FF5500 #2A2F3A;
             }
             
-            /* Центрирование пустых состояний */
             .empty-friends {
                 display: flex;
                 justify-content: center;
@@ -83,28 +89,53 @@ const Team = {
                 color: #8E97A6;
                 font-size: 14px;
             }
+            
+            .leaderboard-right {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-left: auto;
+                flex-shrink: 0;
+                min-width: 60px;
+                justify-content: flex-end;
+            }
+            .leaderboard-place {
+                font-size: 13px;
+                font-weight: 500;
+                color: #8E97A6;
+                min-width: 28px;
+                text-align: right;
+            }
+            .leaderboard-current-badge {
+                color: #FF5500;
+                font-size: 12px;
+                font-weight: 500;
+                opacity: 0.9;
+                min-width: 28px;
+                text-align: right;
+            }
+            .friend-arrow {
+                font-size: 18px;
+                color: #8E97A6;
+                font-weight: 300;
+                min-width: 28px;
+                text-align: right;
+            }
+            .leaderboard-arrow {
+                color: #FF5500 !important;
+            }
+            .current-player-row {
+                background: rgba(255, 85, 0, 0.08);
+                margin: 0 -16px;
+                padding: 0 16px;
+                border-left: 3px solid #FF5500;
+            }
         `;
         document.head.appendChild(style);
     },
     
-    async loadAllData() {
-        if (this.dataLoaded) return;
-        
-        console.log('🔥 Параллельная загрузка всех данных...');
-        
-        // Загружаем друзей и лидерборд параллельно
-        const promises = [];
-        
-        if (!this.isFriendsLoaded && !this.isLoadingFriends) {
-            promises.push(this.loadFriendsList());
-        }
-        if (!this.isLeaderboardLoaded && !this.isLoadingLeaderboard) {
-            promises.push(this.loadLeaderboard());
-        }
-        
-        await Promise.all(promises);
-        this.dataLoaded = true;
-        console.log('✅ Все данные загружены');
+    injectLeaderboardStyles() {
+        // Уже добавили выше, этот метод оставляем пустым для совместимости
     },
     
     showTeamPage() {
@@ -130,7 +161,6 @@ const Team = {
             this.currentPlayerId = localStorage.getItem('player_id');
         }
         
-        // Показываем мгновенно то, что уже загружено
         if (this.currentTab === 'friends') {
             this.renderFriendsTab();
             if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
@@ -150,23 +180,6 @@ const Team = {
         
         this.isLoadingFriends = true;
         console.log('👥 Загрузка друзей...');
-        
-        // Сначала показываем кэш если есть
-        const cached = localStorage.getItem('team_friends_cache');
-        if (cached && !this.isFriendsLoaded) {
-            try {
-                const cachedData = JSON.parse(cached);
-                if (cachedData && cachedData.length) {
-                    this.friendsList = cachedData;
-                    this.filteredFriends = [...this.friendsList];
-                    this.isFriendsLoaded = true;
-                    if (this.currentTab === 'friends') {
-                        this.renderFriendsTab();
-                    }
-                    console.log('✅ Друзья из кэша:', this.friendsList.length);
-                }
-            } catch(e) {}
-        }
         
         try {
             const controller = new AbortController();
@@ -190,7 +203,6 @@ const Team = {
                 this.friendsList = data.friends;
                 this.filteredFriends = [...this.friendsList];
                 this.isFriendsLoaded = true;
-                localStorage.setItem('team_friends_cache', JSON.stringify(this.friendsList));
                 console.log('✅ Друзья загружены:', this.friendsList.length);
                 
                 if (this.currentTab === 'friends') {
@@ -206,13 +218,11 @@ const Team = {
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки друзей:', error);
-            if (!this.isFriendsLoaded) {
-                this.friendsList = [];
-                this.filteredFriends = [];
-                this.isFriendsLoaded = true;
-                if (this.currentTab === 'friends') {
-                    this.renderFriendsTab();
-                }
+            this.friendsList = [];
+            this.filteredFriends = [];
+            this.isFriendsLoaded = true;
+            if (this.currentTab === 'friends') {
+                this.renderFriendsTab();
             }
         } finally {
             this.isLoadingFriends = false;
@@ -225,23 +235,6 @@ const Team = {
         
         this.isLoadingLeaderboard = true;
         console.log('📥 Загрузка лидерборда...');
-        
-        // Сначала показываем кэш если есть
-        const cached = localStorage.getItem('team_leaderboard_cache');
-        if (cached && !this.isLeaderboardLoaded) {
-            try {
-                const cachedData = JSON.parse(cached);
-                if (cachedData && cachedData.length) {
-                    this.leaderboard = cachedData;
-                    this.filteredLeaderboard = [...this.leaderboard];
-                    this.isLeaderboardLoaded = true;
-                    if (this.currentTab === 'leaderboard') {
-                        this.renderLeaderboardTab();
-                    }
-                    console.log('✅ Лидерборд из кэша:', this.leaderboard.length);
-                }
-            } catch(e) {}
-        }
         
         try {
             const controller = new AbortController();
@@ -265,7 +258,6 @@ const Team = {
                 this.leaderboard = data.leaderboard;
                 this.filteredLeaderboard = [...this.leaderboard];
                 this.isLeaderboardLoaded = true;
-                localStorage.setItem('team_leaderboard_cache', JSON.stringify(this.leaderboard));
                 console.log('✅ Лидерборд загружен:', this.leaderboard.length);
                 
                 if (this.currentTab === 'leaderboard') {
@@ -281,13 +273,11 @@ const Team = {
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки лидерборда:', error);
-            if (!this.isLeaderboardLoaded) {
-                this.leaderboard = [];
-                this.filteredLeaderboard = [];
-                this.isLeaderboardLoaded = true;
-                if (this.currentTab === 'leaderboard') {
-                    this.renderLeaderboardTab();
-                }
+            this.leaderboard = [];
+            this.filteredLeaderboard = [];
+            this.isLeaderboardLoaded = true;
+            if (this.currentTab === 'leaderboard') {
+                this.renderLeaderboardTab();
             }
         } finally {
             this.isLoadingLeaderboard = false;
@@ -333,10 +323,11 @@ const Team = {
             html += `<div class="empty-friends"><div class="empty-friends-text">у вас пока нет друзей</div></div>`;
         } else {
             this.filteredFriends.forEach(friend => {
+                const firstChar = friend.nick && friend.nick.length > 0 ? friend.nick[0].toUpperCase() : '?';
                 html += `
                 <div class="friend-row" onclick="Team.showFriendProfile('${friend.player_id}')">
                     <div class="friend-avatar">
-                        ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${friend.nick?.[0] || '?'}</span>`}
+                        ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}
                     </div>
                     <div class="friend-info">
                         <span class="friend-id">ID: ${friend.player_id}</span>
@@ -385,9 +376,10 @@ const Team = {
         
         let html = '';
         this.filteredFriends.forEach(friend => {
+            const firstChar = friend.nick && friend.nick.length > 0 ? friend.nick[0].toUpperCase() : '?';
             html += `
             <div class="friend-row" onclick="Team.showFriendProfile('${friend.player_id}')">
-                <div class="friend-avatar">${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${friend.nick?.[0] || '?'}</span>`}</div>
+                <div class="friend-avatar">${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}</div>
                 <div class="friend-info">
                     <span class="friend-id">ID: ${friend.player_id}</span>
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
@@ -419,11 +411,12 @@ const Team = {
                 const originalIndex = this.leaderboard.findIndex(p => p.player_id === player.player_id);
                 const place = originalIndex + 1;
                 const isCurrent = player.player_id === this.currentPlayerId;
+                const firstChar = player.nick && player.nick.length > 0 ? player.nick[0].toUpperCase() : '?';
                 
                 html += `
                     <div class="friend-row ${isCurrent ? 'current-player-row' : ''}" onclick="Team.showPlayerProfile('${player.player_id}')">
                         <div class="friend-avatar">
-                            ${player.avatar ? `<img src="${player.avatar}">` : `<span>${player.nick?.[0] || '?'}</span>`}
+                            ${player.avatar ? `<img src="${player.avatar}">` : `<span>${firstChar}</span>`}
                         </div>
                         <div class="friend-info">
                             <span class="friend-id">ID: ${player.player_id}</span>
@@ -442,7 +435,6 @@ const Team = {
         content.innerHTML = html;
         
         setTimeout(() => this.setupLeaderboardSearch(), 50);
-        this.injectLeaderboardStyles();
     },
     
     setupLeaderboardSearch() {
@@ -480,11 +472,12 @@ const Team = {
             const originalIndex = this.leaderboard.findIndex(p => p.player_id === player.player_id);
             const place = originalIndex + 1;
             const isCurrent = player.player_id === this.currentPlayerId;
+            const firstChar = player.nick && player.nick.length > 0 ? player.nick[0].toUpperCase() : '?';
             
             html += `
                 <div class="friend-row ${isCurrent ? 'current-player-row' : ''}" onclick="Team.showPlayerProfile('${player.player_id}')">
                     <div class="friend-avatar">
-                        ${player.avatar ? `<img src="${player.avatar}">` : `<span>${player.nick?.[0] || '?'}</span>`}
+                        ${player.avatar ? `<img src="${player.avatar}">` : `<span>${firstChar}</span>`}
                     </div>
                     <div class="friend-info">
                         <span class="friend-id">ID: ${player.player_id}</span>
@@ -498,56 +491,6 @@ const Team = {
             `;
         });
         container.innerHTML = html;
-    },
-    
-    injectLeaderboardStyles() {
-        if (document.getElementById('leaderboard-styles')) return;
-        
-        const style = document.createElement('style');
-        style.id = 'leaderboard-styles';
-        style.textContent = `
-            .leaderboard-right {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                margin-left: auto;
-                flex-shrink: 0;
-                min-width: 60px;
-                justify-content: flex-end;
-            }
-            .leaderboard-place {
-                font-size: 13px;
-                font-weight: 500;
-                color: #8E97A6;
-                min-width: 28px;
-                text-align: right;
-            }
-            .leaderboard-current-badge {
-                color: #FF5500;
-                font-size: 12px;
-                font-weight: 500;
-                opacity: 0.9;
-                min-width: 28px;
-                text-align: right;
-            }
-            .friend-arrow {
-                font-size: 18px;
-                color: #8E97A6;
-                font-weight: 300;
-                min-width: 28px;
-                text-align: right;
-            }
-            .leaderboard-arrow {
-                color: #FF5500 !important;
-            }
-            .current-player-row {
-                background: rgba(255, 85, 0, 0.08);
-                margin: 0 -16px;
-                padding: 0 16px;
-                border-left: 3px solid #FF5500;
-            }
-        `;
-        document.head.appendChild(style);
     },
     
     showFriendProfile(playerId) {
