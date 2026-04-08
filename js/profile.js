@@ -73,30 +73,37 @@ const Profile = {
         }
         
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
-            
-            const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
+            // Убираем AbortController, просто используем таймаут через Promise.race
+            const fetchPromise = fetch(`${this.BACKEND_URL}/api/friends/list`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId }),
-                signal: controller.signal
+                body: JSON.stringify({ telegram_id: this.telegramId })
             });
             
-            clearTimeout(timeoutId);
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('Timeout')), 5000);
+            });
             
-            if (response.ok) {
-                const data = await response.json();
-                if (data.status === 'ok' && data.friends) {
-                    this.friendsList = data.friends;
-                    this.isFriendsLoaded = true;
-                    localStorage.setItem('profile_friends_cache', JSON.stringify(this.friendsList));
-                    this.updateFriendsDisplay();
-                    console.log('✅ Друзья загружены:', this.friendsList.length);
-                }
+            const response = await Promise.race([fetchPromise, timeoutPromise]);
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            
+            const data = await response.json();
+            if (data.status === 'ok' && data.friends) {
+                this.friendsList = data.friends;
+                this.isFriendsLoaded = true;
+                localStorage.setItem('profile_friends_cache', JSON.stringify(this.friendsList));
+                this.updateFriendsDisplay();
+                console.log('✅ Друзья загружены:', this.friendsList.length);
             }
         } catch (error) {
             console.error('Ошибка загрузки друзей:', error);
+            // Если кэша нет, показываем пустой список
+            if (!this.isFriendsLoaded) {
+                this.friendsList = [];
+                this.isFriendsLoaded = true;
+                this.updateFriendsDisplay();
+            }
         }
     },
     
@@ -188,17 +195,12 @@ const Profile = {
         }
         
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
-            
+            // Убираем AbortController
             const response = await fetch(`${this.BACKEND_URL}/api/profile/get`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId }),
-                signal: controller.signal
+                body: JSON.stringify({ telegram_id: this.telegramId })
             });
-            
-            clearTimeout(timeoutId);
             
             if (response.ok) {
                 const data = await response.json();
@@ -236,17 +238,11 @@ const Profile = {
         }
         
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 2000);
-            
             const response = await fetch(`${this.BACKEND_URL}/api/profile/avatar`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId }),
-                signal: controller.signal
+                body: JSON.stringify({ telegram_id: this.telegramId })
             });
-            
-            clearTimeout(timeoutId);
             
             if (response.ok) {
                 const data = await response.json();
@@ -395,17 +391,11 @@ const Profile = {
         console.log('📤 Отправка данных:', updateData);
         
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000);
-            
             const response = await fetch(`${this.BACKEND_URL}/api/profile/update`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updateData),
-                signal: controller.signal
+                body: JSON.stringify(updateData)
             });
-            
-            clearTimeout(timeoutId);
             
             const data = await response.json();
             
