@@ -1,8 +1,8 @@
 // ============================================
-// ПРОФИЛЬ - ОПТИМИЗИРОВАННЫЙ С КЭШИРОВАНИЕМ
+// ПРОФИЛЬ - ОПТИМИЗИРОВАННЫЙ
 // ============================================
 
-console.log('🔥🔥🔥 PROFILE.JS ЗАГРУЖЕН 🔥🔥🔥');
+console.log('🔥 PROFILE.JS ЗАГРУЖЕН');
 
 const Profile = {
     editMode: false,
@@ -13,7 +13,6 @@ const Profile = {
     savedFaceitLink: '',
     savedAvatarUrl: null,
     tempName: '-',
-    tempAvatar: '<div class="tg-avatar-svg"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#ffffff"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="#ffffff"/></svg></div>',
     tempAge: '',
     tempSteam: '',
     tempFaceitLink: '',
@@ -24,17 +23,6 @@ const Profile = {
     isLoading: false,
     isProfileLoaded: false,
     isInitialized: false,
-    friendsList: [],
-    isFriendsLoaded: false,
-    
-    generateRandomNick() {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let nick = '';
-        for (let i = 0; i < 6; i++) {
-            nick += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return nick;
-    },
     
     getTelegramId() {
         const tg = window.Telegram?.WebApp;
@@ -49,231 +37,42 @@ const Profile = {
         if (this.toastTimeout) clearTimeout(this.toastTimeout);
         const existingToast = document.querySelector('.profile-toast');
         if (existingToast) existingToast.remove();
+        
         const toast = document.createElement('div');
         toast.className = 'profile-toast';
         toast.textContent = message;
         document.body.appendChild(toast);
-        setTimeout(() => toast.classList.add('show'), 10);
+        
+        // Принудительный рефлоу
+        toast.offsetHeight;
+        toast.classList.add('show');
+        
         this.toastTimeout = setTimeout(() => {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
-        }, 1000);
+        }, 2000);
     },
     
-    showFieldError(container, message) {
-        if (!container) return;
-        this.removeErrorMessage(container);
-        const errorMsg = document.createElement('div');
-        errorMsg.className = 'error-message';
-        errorMsg.textContent = message;
-        container.parentNode.insertBefore(errorMsg, container.nextSibling);
-    },
-    
-    removeErrorMessage(container) {
-        if (!container) return;
-        const nextEl = container.nextElementSibling;
-        if (nextEl && nextEl.classList.contains('error-message')) {
-            nextEl.remove();
-        }
-    },
-    
-    clearAllErrors() {
-        document.querySelectorAll('.error-message').forEach(el => el.remove());
-        document.querySelectorAll('.stat-value.error, .profile-stat-value.error').forEach(el => {
-            el.classList.remove('error');
-        });
-    },
-    
-    loadFromCache() {
-        const cachedNick = localStorage.getItem('profile_nick');
-        const cachedAge = localStorage.getItem('profile_age');
-        const cachedSteam = localStorage.getItem('profile_steam');
-        const cachedFaceit = localStorage.getItem('profile_faceit');
-        const cachedAvatar = localStorage.getItem('profile_avatar');
-        
-        if (cachedNick) {
-            this.savedName = cachedNick;
-            this.tempName = cachedNick;
-            if (cachedAge) this.savedAge = cachedAge;
-            if (cachedSteam) this.savedSteam = cachedSteam;
-            if (cachedFaceit) this.savedFaceitLink = cachedFaceit;
-            if (cachedAvatar) this.savedAvatarUrl = cachedAvatar;
-            
-            this.updateDisplay();
-            console.log('✅ Профиль загружен из кэша');
-            return true;
-        }
-        return false;
-    },
-    
-    // ✅ ЗАГРУЗКА ДРУЗЕЙ
-    async loadFriends() {
-        console.log('🔵🔵🔵 PROFILE.loadFriends() ВЫЗВАН 🔵🔵🔵');
-        
-        if (!this.telegramId) {
-            this.telegramId = this.getTelegramId();
-        }
-        
-        if (!this.telegramId) {
-            console.error('❌ Нет telegram_id для загрузки друзей');
-            return;
-        }
-        
-        console.log('👥 PROFILE: Загрузка друзей...');
-        
-        try {
-            const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId })
-            });
-            
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            
-            const data = await response.json();
-            console.log('📦 PROFILE: Ответ друзей:', data);
-            
-            if (data.status === 'ok' && data.friends && data.friends.length > 0) {
-                this.friendsList = data.friends;
-                this.isFriendsLoaded = true;
-                console.log('✅ PROFILE: Друзья загружены:', this.friendsList.length);
-            } else {
-                this.friendsList = [];
-                this.isFriendsLoaded = true;
-                console.log('❌ PROFILE: Нет друзей');
-            }
-            
-            this.updateFriendsDisplay();
-        } catch (error) {
-            console.error('❌ PROFILE: Ошибка загрузки друзей:', error);
-            this.friendsList = [];
-            this.isFriendsLoaded = true;
-            this.updateFriendsDisplay();
-        }
-    },
-    
-    // ✅ ОБНОВЛЕНИЕ ОТОБРАЖЕНИЯ ДРУЗЕЙ
-    updateFriendsDisplay() {
-        const friendsListEl = document.getElementById('friendsList');
-        if (!friendsListEl) {
-            console.warn('⚠️ friendsList не найден в DOM, повтор через 100ms');
-            setTimeout(() => this.updateFriendsDisplay(), 100);
-            return;
-        }
-        
-        const friendsTitle = document.querySelector('.friends-title');
-        if (friendsTitle) {
-            friendsTitle.textContent = `Ваши друзья: ${this.friendsList.length}`;
-        }
-        
-        if (!this.friendsList.length) {
-            friendsListEl.innerHTML = '<div class="empty-friends"><div class="empty-friends-text">у вас пока нет друзей</div></div>';
-            console.log('📋 PROFILE: Отображение друзей — пусто');
-            return;
-        }
-        
-        let html = '';
-        const showCount = Math.min(this.friendsList.length, 5);
-        
-        for (let i = 0; i < showCount; i++) {
-            const friend = this.friendsList[i];
-            const firstChar = friend.nick && friend.nick.length > 0 ? friend.nick[0].toUpperCase() : '?';
-            html += `
-                <div class="friend-row" onclick="Profile.showFriendProfile('${friend.player_id}')">
-                    <div class="friend-avatar">
-                        ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}
-                    </div>
-                    <div class="friend-info">
-                        <span class="friend-id">ID: ${friend.player_id}</span>
-                        <span class="friend-name">${friend.nick || 'Без имени'}</span>
-                    </div>
-                    <span class="friend-arrow orange-arrow">→</span>
-                </div>
-            `;
-        }
-        
-        if (this.friendsList.length > 5) {
-            const remaining = this.friendsList.length - 5;
-            const word = this.getFriendsWord(remaining);
-            html += `<div class="friend-row more-friends" onclick="Profile.showAllFriends()">
-                        <div class="friend-avatar"><span>+</span></div>
-                        <div class="friend-info">
-                            <span class="friend-name">и еще ${remaining} ${word}</span>
-                        </div>
-                        <span class="friend-arrow orange-arrow">→</span>
-                    </div>`;
-        }
-        
-        friendsListEl.innerHTML = html;
-        
-        // Добавляем стили для оранжевых стрелок
-        this.injectArrowStyles();
-        
-        console.log('✅ PROFILE: Отображение друзей обновлено, показано:', showCount, 'из', this.friendsList.length);
-    },
-    
-    // 🎨 ДОБАВЛЯЕМ СТИЛИ ДЛЯ ОРАНЖЕВЫХ СТРЕЛОК
-    injectArrowStyles() {
-        if (document.getElementById('profile-arrow-styles')) return;
-        
-        const style = document.createElement('style');
-        style.id = 'profile-arrow-styles';
-        style.textContent = `
-            .friend-arrow.orange-arrow {
-                color: #FF5500 !important;
-                font-size: 18px;
-                font-weight: 300;
-                opacity: 0.9;
-            }
-            .more-friends .friend-arrow.orange-arrow {
-                color: #FF5500 !important;
-            }
-        `;
-        document.head.appendChild(style);
-    },
-    
-    getFriendsWord(count) {
-        if (count % 10 === 1 && count % 100 !== 11) return 'друг';
-        if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) return 'друга';
-        return 'друзей';
-    },
-    
-    showFriendProfile(playerId) {
-        if (window.App) App.showAlert(`Профиль друга ${playerId}\n(функция в разработке)`);
-    },
-    
-    showAllFriends() {
-        if (window.Team && Team.showTeamPage) {
-            Team.showTeamPage();
-        } else {
-            if (window.App) App.showScreen('teamScreen', true);
-        }
-    },
-    
-    async loadProfileFromServer(force = false) {
-        if (!force && this.isProfileLoaded) {
-            console.log('✅ Профиль уже загружен');
-            return;
-        }
-        
-        if (this.isLoading) {
-            console.log('⏳ Профиль уже загружается...');
-            return;
-        }
+    async loadProfileFromServer() {
+        if (this.isProfileLoaded || this.isLoading) return;
         
         this.isLoading = true;
         
+        if (!this.telegramId) this.telegramId = this.getTelegramId();
         if (!this.telegramId) {
-            this.telegramId = this.getTelegramId();
-        }
-        
-        if (!this.telegramId) {
-            console.error('❌ Нет telegram_id');
             this.isLoading = false;
             return;
         }
         
-        console.log('🔥 Загрузка профиля с сервера...');
+        // Сначала показываем кэш
+        const cachedNick = localStorage.getItem('profile_nick');
+        if (cachedNick) {
+            this.savedName = cachedNick;
+            this.savedAge = localStorage.getItem('profile_age') || '';
+            this.savedSteam = localStorage.getItem('profile_steam') || '';
+            this.savedFaceitLink = localStorage.getItem('profile_faceit') || '';
+            this.updateDisplay();
+        }
         
         try {
             const controller = new AbortController();
@@ -288,158 +87,27 @@ const Profile = {
             
             clearTimeout(timeoutId);
             
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            
-            const data = await response.json();
-            console.log('📦 Данные профиля с сервера:', data);
-            
-            if (data.status === 'ok') {
-                this.savedName = data.nick || '-';
-                this.savedAge = data.age || '';
-                this.savedSteam = data.steam_link || '';
-                this.savedFaceitLink = data.faceit_link || '';
-                
-                this.tempName = this.savedName;
-                this.tempAge = this.savedAge;
-                this.tempSteam = this.savedSteam;
-                this.tempFaceitLink = this.savedFaceitLink;
-                
-                localStorage.setItem('profile_nick', this.savedName);
-                localStorage.setItem('profile_age', this.savedAge);
-                localStorage.setItem('profile_steam', this.savedSteam);
-                localStorage.setItem('profile_faceit', this.savedFaceitLink);
-                
-                this.updateDisplay();
-                this.isProfileLoaded = true;
-                console.log('✅ Профиль загружен с сервера');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.status === 'ok') {
+                    this.savedName = data.nick || '-';
+                    this.savedAge = data.age || '';
+                    this.savedSteam = data.steam_link || '';
+                    this.savedFaceitLink = data.faceit_link || '';
+                    
+                    localStorage.setItem('profile_nick', this.savedName);
+                    localStorage.setItem('profile_age', this.savedAge);
+                    localStorage.setItem('profile_steam', this.savedSteam);
+                    localStorage.setItem('profile_faceit', this.savedFaceitLink);
+                    
+                    this.updateDisplay();
+                    this.isProfileLoaded = true;
+                }
             }
         } catch (error) {
-            if (error.name === 'AbortError') {
-                console.error('❌ Таймаут загрузки профиля (3 сек)');
-            } else {
-                console.error('❌ Ошибка загрузки профиля:', error);
-            }
+            console.error('Ошибка загрузки профиля:', error);
         } finally {
             this.isLoading = false;
-        }
-    },
-    
-    async loadAvatar() {
-        if (!this.telegramId) this.telegramId = this.getTelegramId();
-        if (!this.telegramId) return;
-        
-        const cachedAvatar = localStorage.getItem('profile_avatar');
-        if (cachedAvatar && !this.savedAvatarUrl) {
-            this.savedAvatarUrl = cachedAvatar;
-            this.tempAvatarUrl = cachedAvatar;
-            this.updateAvatarDisplay();
-            console.log('✅ Аватар из кэша');
-        }
-        
-        console.log('🖼️ Загрузка аватара с сервера...');
-        
-        try {
-            const response = await fetch(`${this.BACKEND_URL}/api/profile/avatar`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId })
-            });
-            
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            
-            const data = await response.json();
-            
-            if (data.status === 'ok' && data.avatar) {
-                this.savedAvatarUrl = data.avatar;
-                this.tempAvatarUrl = data.avatar;
-                localStorage.setItem('profile_avatar', data.avatar);
-                this.updateAvatarDisplay();
-                console.log('✅ Аватар загружен');
-            }
-        } catch (error) {
-            console.error('❌ Ошибка аватара:', error);
-        }
-    },
-    
-    // ✅ ИНИЦИАЛИЗАЦИЯ
-    init() {
-        if (this.isInitialized) return;
-        this.isInitialized = true;
-        
-        console.log('🚀 Profile.init()');
-        
-        this.telegramId = this.getTelegramId();
-        console.log('📱 Profile telegramId:', this.telegramId);
-        
-        this.loadFromCache();
-        
-        // Загружаем всё
-        setTimeout(() => {
-            this.loadProfileFromServer();
-            this.loadAvatar();
-            this.loadFriends();
-        }, 500);
-        
-        this.setupListeners();
-        this.setupClickHandlers();
-        
-        // Устанавливаем прямые обработчики на карточки
-        this.setupCardHandlers();
-    },
-    
-    // ПРЯМЫЕ ОБРАБОТЧИКИ ДЛЯ КАРТОЧЕК
-    setupCardHandlers() {
-        console.log('🔧 Устанавливаем обработчики на карточки...');
-        
-        // Возраст
-        const ageCard = document.getElementById('ageCard');
-        if (ageCard) {
-            ageCard.style.cursor = 'pointer';
-            ageCard.onclick = (e) => {
-                console.log('🖱️ Клик по возрасту, editMode:', this.editMode);
-                if (this.editMode) {
-                    this.editAge();
-                } else {
-                    this.showToast('Для изменений перейдите в режим редактирования');
-                }
-            };
-            console.log('✅ Обработчик возраста установлен');
-        } else {
-            console.warn('⚠️ ageCard не найден в DOM');
-        }
-        
-        // Steam
-        const steamCard = document.getElementById('steamCard');
-        if (steamCard) {
-            steamCard.style.cursor = 'pointer';
-            steamCard.onclick = (e) => {
-                console.log('🖱️ Клик по Steam, editMode:', this.editMode);
-                if (this.editMode) {
-                    this.editSteam();
-                } else {
-                    this.showToast('Для изменений перейдите в режим редактирования');
-                }
-            };
-            console.log('✅ Обработчик Steam установлен');
-        } else {
-            console.warn('⚠️ steamCard не найден в DOM');
-        }
-        
-        // Faceit
-        const faceitCard = document.getElementById('faceitCard');
-        if (faceitCard) {
-            faceitCard.style.cursor = 'pointer';
-            faceitCard.onclick = (e) => {
-                console.log('🖱️ Клик по Faceit, editMode:', this.editMode);
-                if (this.editMode) {
-                    this.editFaceitLink();
-                } else {
-                    this.showToast('Для изменений перейдите в режим редактирования');
-                }
-            };
-            console.log('✅ Обработчик Faceit установлен');
-        } else {
-            console.warn('⚠️ faceitCard не найден в DOM');
         }
     },
     
@@ -463,24 +131,9 @@ const Profile = {
         if (faceitLinkDisplayEl && faceitLinkDisplayEl.value !== this.savedFaceitLink) {
             faceitLinkDisplayEl.value = this.savedFaceitLink || '';
         }
-        
-        this.updateAvatarDisplay();
-        this.clearAllErrors();
-    },
-    
-    updateAvatarDisplay() {
-        const avatarDiv = document.getElementById('profileAvatar');
-        if (avatarDiv) {
-            if (this.savedAvatarUrl) {
-                avatarDiv.innerHTML = `<img src="${this.savedAvatarUrl}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-            } else {
-                avatarDiv.innerHTML = this.savedAvatar;
-            }
-        }
     },
     
     toggleEditMode() {
-        if (window.Settings) Settings.click();
         this.editMode = !this.editMode;
         
         const profileScreen = document.getElementById('profileScreen');
@@ -492,11 +145,9 @@ const Profile = {
         const faceitInput = document.getElementById('faceitLinkDisplay');
         const avatar = document.getElementById('profileAvatar');
         
-        this.clearAllErrors();
-        
         if (this.editMode) {
-            if (profileScreen) profileScreen.classList.add('editable');
-            if (editToggle) editToggle.classList.add('active');
+            profileScreen?.classList.add('editable');
+            editToggle?.classList.add('active');
             if (applyBtn) {
                 applyBtn.classList.add('visible');
                 applyBtn.style.display = 'inline-block';
@@ -506,9 +157,10 @@ const Profile = {
             if (faceitInput) faceitInput.readOnly = false;
             if (profileName) profileName.classList.add('editable');
             if (avatar) avatar.classList.add('editable-avatar');
+            this.showToast('Режим редактирования включен');
         } else {
-            if (profileScreen) profileScreen.classList.remove('editable');
-            if (editToggle) editToggle.classList.remove('active');
+            profileScreen?.classList.remove('editable');
+            editToggle?.classList.remove('active');
             if (applyBtn) {
                 applyBtn.classList.remove('visible');
                 applyBtn.style.display = 'none';
@@ -518,86 +170,7 @@ const Profile = {
             if (faceitInput) faceitInput.readOnly = true;
             if (profileName) profileName.classList.remove('editable');
             if (avatar) avatar.classList.remove('editable-avatar');
-            if (this.tempAvatarUrl !== this.savedAvatarUrl) {
-                this.tempAvatarUrl = this.savedAvatarUrl;
-                this.updateAvatarDisplay();
-            }
         }
-    },
-    
-    validateAge(ageStr) {
-        const ageInput = document.getElementById('ageValue');
-        const container = ageInput?.closest('.stat-value');
-        this.removeErrorMessage(container);
-        
-        if (ageStr === '') {
-            this.tempAge = '';
-            container?.classList.remove('error');
-            return true;
-        }
-        
-        if (ageStr.length > 3) {
-            container?.classList.add('error');
-            this.showFieldError(container, 'возраст от 1 до 100');
-            document.getElementById('ageValue').value = this.tempAge;
-            return false;
-        }
-        
-        const age = parseInt(ageStr);
-        if (isNaN(age) || age < 0 || age > 100) {
-            container?.classList.add('error');
-            this.showFieldError(container, 'возраст от 1 до 100');
-            document.getElementById('ageValue').value = this.tempAge;
-            return false;
-        }
-        
-        this.tempAge = ageStr;
-        container?.classList.remove('error');
-        return true;
-    },
-
-    validateSteamLink(link) {
-        const steamInput = document.getElementById('steamDisplay');
-        const container = steamInput?.closest('.profile-stat-value');
-        this.removeErrorMessage(container);
-        
-        if (link === '') {
-            this.tempSteam = '';
-            container?.classList.remove('error');
-            return true;
-        }
-        
-        if (link.length > 100) {
-            container?.classList.add('error');
-            this.showFieldError(container, 'некорректный ввод');
-            return false;
-        }
-        
-        container?.classList.remove('error');
-        this.tempSteam = link;
-        return true;
-    },
-
-    validateFaceitLink(link) {
-        const faceitInput = document.getElementById('faceitLinkDisplay');
-        const container = faceitInput?.closest('.profile-stat-value');
-        this.removeErrorMessage(container);
-        
-        if (link === '') {
-            this.tempFaceitLink = '';
-            container?.classList.remove('error');
-            return true;
-        }
-        
-        if (link.length > 100) {
-            container?.classList.add('error');
-            this.showFieldError(container, 'некорректный ввод');
-            return false;
-        }
-        
-        container?.classList.remove('error');
-        this.tempFaceitLink = link;
-        return true;
     },
     
     async applyChanges() {
@@ -607,79 +180,62 @@ const Profile = {
             applyBtn.style.opacity = '0.5';
         }
         
-        this.clearAllErrors();
-        
+        if (!this.telegramId) this.telegramId = this.getTelegramId();
         if (!this.telegramId) {
-            this.telegramId = this.getTelegramId();
-            if (!this.telegramId) {
-                if (applyBtn) {
-                    applyBtn.style.pointerEvents = 'auto';
-                    applyBtn.style.opacity = '1';
-                }
-                return;
-            }
-        }
-
-        const ageInput = document.getElementById('ageValue');
-        const steamInput = document.getElementById('steamDisplay');
-        const faceitInput = document.getElementById('faceitLinkDisplay');
-
-        let isValid = true;
-        if (ageInput && !this.validateAge(ageInput.value)) isValid = false;
-        if (steamInput && !this.validateSteamLink(steamInput.value)) isValid = false;
-        if (faceitInput && !this.validateFaceitLink(faceitInput.value)) isValid = false;
-        
-        if (!isValid) {
-            if (window.Settings) Settings.error();
+            this.showToast('Ошибка: нет Telegram ID');
             if (applyBtn) {
                 applyBtn.style.pointerEvents = 'auto';
                 applyBtn.style.opacity = '1';
             }
             return;
         }
-
+        
+        const ageInput = document.getElementById('ageValue');
+        const steamInput = document.getElementById('steamDisplay');
+        const faceitInput = document.getElementById('faceitLinkDisplay');
+        
         const dataToSend = {
             telegram_id: this.telegramId,
-            nick: this.tempName,
-            age: ageInput ? ageInput.value || null : null,
-            steam_link: steamInput ? steamInput.value || null : null,
-            faceit_link: faceitInput ? faceitInput.value || null : null,
-            avatar: this.tempAvatarUrl || null
+            nick: this.savedName,
+            age: ageInput?.value || null,
+            steam_link: steamInput?.value || null,
+            faceit_link: faceitInput?.value || null
         };
-
+        
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            
             const response = await fetch(`${this.BACKEND_URL}/api/profile/update`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dataToSend)
+                body: JSON.stringify(dataToSend),
+                signal: controller.signal
             });
+            
+            clearTimeout(timeoutId);
             
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
             
             if (data.status === 'ok') {
-                this.savedName = this.tempName;
-                this.savedAge = ageInput ? ageInput.value : '';
-                this.savedSteam = steamInput ? steamInput.value : '';
-                this.savedFaceitLink = faceitInput ? faceitInput.value : '';
-                this.savedAvatarUrl = this.tempAvatarUrl;
+                this.savedAge = ageInput?.value || '';
+                this.savedSteam = steamInput?.value || '';
+                this.savedFaceitLink = faceitInput?.value || '';
                 
-                localStorage.setItem('profile_nick', this.savedName);
                 localStorage.setItem('profile_age', this.savedAge);
                 localStorage.setItem('profile_steam', this.savedSteam);
                 localStorage.setItem('profile_faceit', this.savedFaceitLink);
-                if (this.savedAvatarUrl) localStorage.setItem('profile_avatar', this.savedAvatarUrl);
                 
-                this.updateDisplay();
                 this.toggleEditMode();
                 this.showToast('Профиль сохранен');
-                if (window.Settings) Settings.success();
+            } else {
+                throw new Error(data.error || 'Ошибка');
             }
         } catch (error) {
             console.error('❌ Ошибка:', error);
             this.showToast('Ошибка сохранения');
-            if (window.Settings) Settings.error();
         } finally {
             if (applyBtn) {
                 applyBtn.style.pointerEvents = 'auto';
@@ -693,46 +249,53 @@ const Profile = {
             this.showToast('Для изменений перейдите в режим редактирования');
             return;
         }
-        if (window.Settings) Settings.click();
+        
         const profileName = document.getElementById('profileName');
         if (!profileName) return;
         
-        const existingInput = profileName.parentNode.querySelector('.profile-name-input');
-        if (existingInput) {
-            existingInput.focus();
-            return;
-        }
+        const currentName = this.savedName === '-' ? '' : this.savedName;
         
-        const tempInput = document.createElement('input');
-        tempInput.type = 'text';
-        tempInput.className = 'profile-name-input';
-        tempInput.value = this.tempName;
-        tempInput.maxLength = 10;
-        tempInput.style.cssText = `width:100%; background:transparent; border:none; color:#FF5500; font-size:clamp(16px,5vw,20px); font-weight:600; outline:none; padding:4px 0; margin:0;`;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = currentName;
+        input.placeholder = 'Введите никнейм';
+        input.maxLength = 32;
+        input.style.cssText = `
+            background: #1A1D24;
+            border: 1px solid #FF5500;
+            border-radius: 8px;
+            color: #FF5500;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 8px 12px;
+            width: 100%;
+            outline: none;
+            font-family: inherit;
+        `;
         
         profileName.style.display = 'none';
-        profileName.parentNode.insertBefore(tempInput, profileName.nextSibling);
-        setTimeout(() => tempInput.focus(), 50);
+        profileName.parentNode.insertBefore(input, profileName.nextSibling);
+        input.focus();
         
-        const saveHandler = () => {
-            const newName = tempInput.value.trim();
-            if (newName && newName.length >= 3 && newName.length <= 10) {
-                this.tempName = newName;
+        const save = () => {
+            const newName = input.value.trim();
+            if (newName && newName.length >= 2 && newName.length <= 32) {
+                this.savedName = newName;
                 profileName.textContent = newName;
-                this.showToast('Нажмите Применить для сохранения');
-            } else if (newName && (newName.length < 3 || newName.length > 10)) {
-                this.showToast('Никнейм должен быть от 3 до 10 символов');
-                if (window.Settings) Settings.error();
+                localStorage.setItem('profile_nick', newName);
+                this.showToast('Нажмите "Применить" для сохранения');
+            } else if (newName) {
+                this.showToast('Никнейм должен быть 2-32 символа');
             }
-            tempInput.remove();
+            input.remove();
             profileName.style.display = 'inline-block';
         };
         
-        tempInput.addEventListener('blur', saveHandler, { once: true });
-        tempInput.addEventListener('keypress', (e) => {
+        input.addEventListener('blur', save, { once: true });
+        input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                saveHandler();
+                save();
             }
         });
     },
@@ -742,7 +305,6 @@ const Profile = {
             this.showToast('Для изменений перейдите в режим редактирования');
             return;
         }
-        if (window.Settings) Settings.click();
         document.getElementById('ageValue')?.focus();
     },
     
@@ -751,7 +313,6 @@ const Profile = {
             this.showToast('Для изменений перейдите в режим редактирования');
             return;
         }
-        if (window.Settings) Settings.click();
         document.getElementById('steamDisplay')?.focus();
     },
     
@@ -760,40 +321,7 @@ const Profile = {
             this.showToast('Для изменений перейдите в режим редактирования');
             return;
         }
-        if (window.Settings) Settings.click();
         document.getElementById('faceitLinkDisplay')?.focus();
-    },
-    
-    editFaceitAge() {
-        if (!this.editMode) {
-            this.showToast('Для изменений перейдите в режим редактирования');
-            return;
-        }
-        document.getElementById('faceitAgeValue')?.focus();
-    },
-    
-    editPremierAge() {
-        if (!this.editMode) {
-            this.showToast('Для изменений перейдите в режим редактирования');
-            return;
-        }
-        document.getElementById('premierAgeValue')?.focus();
-    },
-    
-    editPrimeAge() {
-        if (!this.editMode) {
-            this.showToast('Для изменений перейдите в режим редактирования');
-            return;
-        }
-        document.getElementById('primeAgeValue')?.focus();
-    },
-    
-    editPublicAge() {
-        if (!this.editMode) {
-            this.showToast('Для изменений перейдите в режим редактирования');
-            return;
-        }
-        document.getElementById('publicAgeValue')?.focus();
     },
     
     setupClickHandlers() {
@@ -801,12 +329,9 @@ const Profile = {
         const avatar = document.getElementById('profileAvatar');
         if (avatar) {
             avatar.style.cursor = 'pointer';
-            avatar.onclick = (e) => {
+            avatar.onclick = () => {
                 if (this.editMode) {
-                    if (window.Avatar && Avatar.select) {
-                        if (window.Settings) Settings.click();
-                        Avatar.select();
-                    }
+                    if (window.Avatar?.select) Avatar.select();
                 } else {
                     this.showToast('Для изменений перейдите в режим редактирования');
                 }
@@ -817,155 +342,68 @@ const Profile = {
         const profileName = document.getElementById('profileName');
         if (profileName) {
             profileName.style.cursor = 'pointer';
-            profileName.onclick = (e) => {
-                if (this.editMode) this.editName();
-                else this.showToast('Для изменений перейдите в режим редактирования');
-            };
+            profileName.onclick = () => this.editName();
+        }
+        
+        // Возраст
+        const ageCard = document.getElementById('ageCard');
+        if (ageCard) {
+            ageCard.style.cursor = 'pointer';
+            ageCard.onclick = () => this.editAge();
+        }
+        
+        // Steam
+        const steamCard = document.getElementById('steamCard');
+        if (steamCard) {
+            steamCard.style.cursor = 'pointer';
+            steamCard.onclick = () => this.editSteam();
+        }
+        
+        // Faceit
+        const faceitCard = document.getElementById('faceitCard');
+        if (faceitCard) {
+            faceitCard.style.cursor = 'pointer';
+            faceitCard.onclick = () => this.editFaceitLink();
         }
         
         // Стрелка друзей
         const friendsArrow = document.querySelector('.friends-arrow');
         if (friendsArrow) {
             friendsArrow.onclick = () => {
-                this.showAllFriends();
+                if (window.Team?.showTeamPage) Team.showTeamPage();
             };
         }
     },
     
-    setupListeners() {
-        const ageInput = document.getElementById('ageValue');
-        if (ageInput) {
-            ageInput.onblur = () => { if (this.editMode) this.validateAge(ageInput.value); };
-            ageInput.onfocus = () => {
-                if (this.editMode) {
-                    const container = ageInput.closest('.stat-value');
-                    this.removeErrorMessage(container);
-                    container?.classList.remove('error');
-                }
-            };
-            ageInput.oninput = () => {
-                if (this.editMode) {
-                    const val = ageInput.value;
-                    const container = ageInput.closest('.stat-value');
-                    if (val === '' || (val.length <= 3 && !isNaN(parseInt(val)) && parseInt(val) >= 0 && parseInt(val) <= 100)) {
-                        this.removeErrorMessage(container);
-                        container?.classList.remove('error');
-                    }
-                }
-            };
+    init() {
+        if (this.isInitialized) return;
+        this.isInitialized = true;
+        
+        console.log('🚀 Profile.init()');
+        this.telegramId = this.getTelegramId();
+        
+        // Загружаем из кэша мгновенно
+        const cachedNick = localStorage.getItem('profile_nick');
+        if (cachedNick) {
+            this.savedName = cachedNick;
+            this.savedAge = localStorage.getItem('profile_age') || '';
+            this.savedSteam = localStorage.getItem('profile_steam') || '';
+            this.savedFaceitLink = localStorage.getItem('profile_faceit') || '';
+            this.updateDisplay();
         }
         
-        const steamInput = document.getElementById('steamDisplay');
-        if (steamInput) {
-            steamInput.onblur = () => { if (this.editMode) this.validateSteamLink(steamInput.value); };
-            steamInput.onfocus = () => {
-                if (this.editMode) {
-                    const container = steamInput.closest('.profile-stat-value');
-                    this.removeErrorMessage(container);
-                    container?.classList.remove('error');
-                }
-            };
-            steamInput.oninput = () => {
-                if (this.editMode) {
-                    const val = steamInput.value;
-                    const container = steamInput.closest('.profile-stat-value');
-                    if (val.length <= 100) {
-                        this.removeErrorMessage(container);
-                        container?.classList.remove('error');
-                    }
-                }
-            };
-        }
+        // Асинхронно подгружаем с сервера
+        setTimeout(() => this.loadProfileFromServer(), 100);
         
-        const faceitInput = document.getElementById('faceitLinkDisplay');
-        if (faceitInput) {
-            faceitInput.onblur = () => { if (this.editMode) this.validateFaceitLink(faceitInput.value); };
-            faceitInput.onfocus = () => {
-                if (this.editMode) {
-                    const container = faceitInput.closest('.profile-stat-value');
-                    this.removeErrorMessage(container);
-                    container?.classList.remove('error');
-                }
-            };
-            faceitInput.oninput = () => {
-                if (this.editMode) {
-                    const val = faceitInput.value;
-                    const container = faceitInput.closest('.profile-stat-value');
-                    if (val.length <= 100) {
-                        this.removeErrorMessage(container);
-                        container?.classList.remove('error');
-                    }
-                }
-            };
-        }
-        
-        const applyBtn = document.getElementById('applyBtn');
-        if (applyBtn) applyBtn.style.display = 'none';
+        this.setupClickHandlers();
     }
 };
 
-// ✅ ИНИЦИАЛИЗАЦИЯ
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Profile: DOM загружен');
+// Инициализация
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => Profile.init());
+} else {
     Profile.init();
-});
+}
 
 window.Profile = Profile;
-
-// 🔥 ФОРСИРОВАННАЯ ЗАГРУЗКА ДРУЗЕЙ
-setTimeout(() => {
-    if (window.Profile && !window.Profile.isFriendsLoaded) {
-        console.log('🔥🔥🔥 ФОРСИРОВАННАЯ ЗАГРУЗКА ДРУЗЕЙ 🔥🔥🔥');
-        window.Profile.loadFriends();
-    }
-}, 1500);
-
-// 🟢 ДОПОЛНИТЕЛЬНЫЕ ОБРАБОТЧИКИ (НА ВСЯКИЙ СЛУЧАЙ)
-setTimeout(() => {
-    console.log('🟢 ДОБАВЛЯЕМ ОБРАБОТЧИКИ ПРЯМО СЕЙЧАС');
-    
-    const ageCard = document.getElementById('ageCard');
-    if (ageCard) {
-        ageCard.style.cursor = 'pointer';
-        ageCard.onclick = () => {
-            if (Profile.editMode) {
-                Profile.editAge();
-            } else {
-                Profile.showToast('Для изменений перейдите в режим редактирования');
-            }
-        };
-        console.log('✅ Дополнительный обработчик возраста добавлен');
-    } else {
-        console.warn('⚠️ ageCard не найден при повторной попытке');
-    }
-    
-    const steamCard = document.getElementById('steamCard');
-    if (steamCard) {
-        steamCard.style.cursor = 'pointer';
-        steamCard.onclick = () => {
-            if (Profile.editMode) {
-                Profile.editSteam();
-            } else {
-                Profile.showToast('Для изменений перейдите в режим редактирования');
-            }
-        };
-        console.log('✅ Дополнительный обработчик Steam добавлен');
-    } else {
-        console.warn('⚠️ steamCard не найден при повторной попытке');
-    }
-    
-    const faceitCard = document.getElementById('faceitCard');
-    if (faceitCard) {
-        faceitCard.style.cursor = 'pointer';
-        faceitCard.onclick = () => {
-            if (Profile.editMode) {
-                Profile.editFaceitLink();
-            } else {
-                Profile.showToast('Для изменений перейдите в режим редактирования');
-            }
-        };
-        console.log('✅ Дополнительный обработчик Faceit добавлен');
-    } else {
-        console.warn('⚠️ faceitCard не найден при повторной попытке');
-    }
-}, 2000);
