@@ -192,55 +192,45 @@
             align-items: center !important;
         }
         
-        /* ===== МАГАЗИН — АККУРАТНЫЙ БЛЮР ===== */
-        .shop-blur-wrapper {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            height: 100%;
-            backdrop-filter: blur(3px);
-            -webkit-backdrop-filter: blur(3px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            margin: 0;
-            border-radius: 0;
-            background: transparent;
-        }
-        
-        .shop-overlay {
-            position: relative;
-            z-index: 101;
+        /* ===== МАГАЗИН — СТИЛЬНАЯ ПЛАШКА ===== */
+        .shop-coming-soon {
+            background: #1A1D24;
+            border: 1px solid #2A2F3A;
+            border-radius: 16px;
+            padding: 48px 24px;
             text-align: center;
+            margin: 60px 20px;
         }
         
-        .coming-soon-text {
-            font-size: 24px;
-            font-weight: 400;
-            color: #FF5500;
-            letter-spacing: 1px;
-            text-align: center;
-            background: none;
-            -webkit-background-clip: unset;
-            background-clip: unset;
-            text-shadow: none;
-            opacity: 0.9;
+        .shop-coming-soon-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #9BA1B0;
+            letter-spacing: 0.3px;
+            line-height: 1.5;
         }
         
-        /* Отключаем клики по всему магазину */
+        /* Скрываем кейсы и табы */
         .shop-screen .shop-tabs,
         .shop-screen .cases-section,
-        .shop-screen .buy-btn-simple,
-        .shop-screen .case-item {
-            pointer-events: none;
+        .shop-screen .inventory-section {
+            display: none;
         }
         
-        .shop-tabs {
-            opacity: 0.5;
+        /* Центрируем заголовок */
+        .shop-screen .title-row {
+            justify-content: center !important;
+            position: relative;
+        }
+        
+        .shop-screen .title-left {
+            margin: 0 auto !important;
+        }
+        
+        .shop-screen .coins-header {
+            position: absolute !important;
+            right: 16px !important;
+            top: 12px !important;
         }
     </style>
 </head>
@@ -358,33 +348,15 @@
                 </div>
             </div>
 
-            <!-- МАГАЗИН С АККУРАТНЫМ БЛЮРОМ -->
+            <!-- МАГАЗИН — СТИЛЬНАЯ ПЛАШКА -->
             <div id="shopScreen" class="screen shop-screen">
                 <div class="title-row">
                     <div class="title-left"><div class="section-title">Магазин</div></div>
                     <div class="coins-header">Pingcoins: <span id="coinsAmount">99999</span></div>
                 </div>
                 
-                <div class="shop-tabs">
-                    <div class="shop-tab active">Кейсы</div>
-                    <div class="shop-tab">Инвентарь</div>
-                </div>
-                
-                <div class="cases-section">
-                    <div class="cases-grid">
-                        <div class="case-item"><div class="case-icon"><img data-src="cases/common_case.webp" alt="common case" loading="lazy"></div><div class="case-info"><div class="case-name">Базовый кейс</div><div class="case-price-row"><span class="price-value">100</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                        <div class="case-item"><div class="case-icon"><img data-src="cases/rare_case.webp" alt="rare case" loading="lazy"></div><div class="case-info"><div class="case-name">Редкий кейс</div><div class="case-price-row"><span class="price-value">250</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                        <div class="case-item"><div class="case-icon"><img data-src="cases/premium_case.webp" alt="premium case" loading="lazy"></div><div class="case-info"><div class="case-name">Легендарный кейс</div><div class="case-price-row"><span class="price-value">500</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                        <div class="case-item"><div class="case-icon"><img data-src="cases/secret_case.webp" alt="secret case" loading="lazy"></div><div class="case-info"><div class="case-name">Секретный кейс</div><div class="case-price-row"><span class="price-value">1000</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                    </div>
-                </div>
-                <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
-                
-                <!-- АККУРАТНЫЙ БЛЮР НА ВЕСЬ ЭКРАН -->
-                <div class="shop-blur-wrapper">
-                    <div class="shop-overlay">
-                        <div class="coming-soon-text">Скоро...</div>
-                    </div>
+                <div class="shop-coming-soon">
+                    <div class="shop-coming-soon-text">Магазин в разработке</div>
                 </div>
             </div>
 
