@@ -56,6 +56,7 @@
     <link rel="stylesheet" href="css/animations.css">
     
     <style>
+        /* Базовые размеры для карточки свайпа */
         .swipe-card {
             width: 420px !important;
             height: 420px !important;
@@ -108,6 +109,10 @@
             word-break: break-all !important;
             cursor: pointer !important;
             transition: background 0.2s ease !important;
+        }
+        
+        .swipe-link-value:active {
+            background: var(--surface-hover) !important;
         }
         
         @media (max-width: 500px) and (min-width: 451px) {
@@ -181,55 +186,67 @@
             width: 100% !important;
         }
         
-        /* ===== МАГАЗИН С БЛЮРОМ ===== */
+        .swipe-card-wrapper {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        
+        /* ===== МАГАЗИН С БЛЮРОМ НА ВЕСЬ ЭКРАН ===== */
         .shop-blur-wrapper {
-            position: relative;
-            width: 100%;
-            margin-top: 16px;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-        
-        .shop-content-blur {
-            filter: blur(6px);
-            pointer-events: none;
-            user-select: none;
-            opacity: 0.7;
-        }
-        
-        .shop-overlay {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 15, 21, 0.85);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 10;
-            background: rgba(13, 15, 21, 0.3);
-            border-radius: 20px;
+            z-index: 100;
+            margin: 0;
+            border-radius: 0;
+        }
+        
+        .shop-overlay {
+            position: relative;
+            z-index: 101;
+            text-align: center;
         }
         
         .coming-soon-text {
             font-size: clamp(28px, 8vw, 48px);
-            font-weight: 800;
-            background: linear-gradient(135deg, #FF5500 0%, #FF8C42 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 25px rgba(255, 85, 0, 0.4);
+            font-weight: 600;
+            color: #FF5500;
             letter-spacing: 2px;
             text-align: center;
+            background: none;
+            -webkit-background-clip: unset;
+            background-clip: unset;
+            text-shadow: none;
+        }
+        
+        /* Убираем блюр с контента магазина */
+        .shop-content-blur {
+            filter: none;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        /* Отключаем клики по всему магазину */
+        .shop-screen .shop-tabs,
+        .shop-screen .cases-section,
+        .shop-screen .buy-btn-simple {
+            pointer-events: none;
         }
         
         .shop-tabs {
-            pointer-events: none;
             opacity: 0.5;
-        }
-        
-        .buy-btn-simple {
-            pointer-events: none !important;
         }
     </style>
 </head>
@@ -299,7 +316,7 @@
                 .catch(e => console.error('Profile preload error:', e));
             }
             
-            // ПРИНУДИТЕЛЬНОЕ УДАЛЕНИЕ СТАРЫХ СТРОК НАСТРОЕК
+            // Принудительное удаление старых строк настроек
             setTimeout(function() {
                 console.log('🧹 Очистка устаревших строк настроек...');
                 const allRows = document.querySelectorAll('.settings-row');
@@ -347,7 +364,7 @@
                 </div>
             </div>
 
-            <!-- МАГАЗИН С БЛЮРОМ -->
+            <!-- МАГАЗИН С БЛЮРОМ НА ВЕСЬ ЭКРАН -->
             <div id="shopScreen" class="screen shop-screen">
                 <div class="title-row">
                     <div class="title-left"><div class="section-title">Магазин</div></div>
@@ -359,18 +376,18 @@
                     <div class="shop-tab">Инвентарь</div>
                 </div>
                 
-                <div class="shop-blur-wrapper">
-                    <div class="shop-content-blur">
-                        <div class="cases-section">
-                            <div class="cases-grid">
-                                <div class="case-item"><div class="case-icon"><img data-src="cases/common_case.webp" alt="common case" loading="lazy"></div><div class="case-info"><div class="case-name">Базовый кейс</div><div class="case-price-row"><span class="price-value">100</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                                <div class="case-item"><div class="case-icon"><img data-src="cases/rare_case.webp" alt="rare case" loading="lazy"></div><div class="case-info"><div class="case-name">Редкий кейс</div><div class="case-price-row"><span class="price-value">250</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                                <div class="case-item"><div class="case-icon"><img data-src="cases/premium_case.webp" alt="premium case" loading="lazy"></div><div class="case-info"><div class="case-name">Легендарный кейс</div><div class="case-price-row"><span class="price-value">500</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                                <div class="case-item"><div class="case-icon"><img data-src="cases/secret_case.webp" alt="secret case" loading="lazy"></div><div class="case-info"><div class="case-name">Секретный кейс</div><div class="case-price-row"><span class="price-value">1000</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                            </div>
-                        </div>
-                        <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
+                <div class="cases-section">
+                    <div class="cases-grid">
+                        <div class="case-item"><div class="case-icon"><img data-src="cases/common_case.webp" alt="common case" loading="lazy"></div><div class="case-info"><div class="case-name">Базовый кейс</div><div class="case-price-row"><span class="price-value">100</span><button class="buy-btn-simple">Купить</button></div></div></div>
+                        <div class="case-item"><div class="case-icon"><img data-src="cases/rare_case.webp" alt="rare case" loading="lazy"></div><div class="case-info"><div class="case-name">Редкий кейс</div><div class="case-price-row"><span class="price-value">250</span><button class="buy-btn-simple">Купить</button></div></div></div>
+                        <div class="case-item"><div class="case-icon"><img data-src="cases/premium_case.webp" alt="premium case" loading="lazy"></div><div class="case-info"><div class="case-name">Легендарный кейс</div><div class="case-price-row"><span class="price-value">500</span><button class="buy-btn-simple">Купить</button></div></div></div>
+                        <div class="case-item"><div class="case-icon"><img data-src="cases/secret_case.webp" alt="secret case" loading="lazy"></div><div class="case-info"><div class="case-name">Секретный кейс</div><div class="case-price-row"><span class="price-value">1000</span><button class="buy-btn-simple">Купить</button></div></div></div>
                     </div>
+                </div>
+                <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
+                
+                <!-- БЛЮР НА ВЕСЬ ЭКРАН -->
+                <div class="shop-blur-wrapper">
                     <div class="shop-overlay">
                         <div class="coming-soon-text">Скоро...</div>
                     </div>
