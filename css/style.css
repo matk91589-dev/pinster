@@ -4344,3 +4344,20 @@ button:active { transform: scale(0.96); }
     scrollbar-width: thin;
     scrollbar-color: #FF5500 #2A2F3A;
 }
+
+/* ===== ЦЕНТРИРОВАНИЕ ЗАГРУЗКИ ===== */
+.empty-friends {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-friends-text {
+    color: #8E97A6;
+    font-size: 14px;
+    text-align: center;
+    width: 100%;
+}
