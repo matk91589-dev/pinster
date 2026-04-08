@@ -192,7 +192,7 @@
             align-items: center !important;
         }
         
-        /* ===== МАГАЗИН С БЛЮРОМ НА ВЕСЬ ЭКРАН ===== */
+        /* ===== МАГАЗИН — АККУРАТНЫЙ БЛЮР ===== */
         .shop-blur-wrapper {
             position: fixed;
             top: 0;
@@ -201,15 +201,15 @@
             bottom: 0;
             width: 100%;
             height: 100%;
-            background: rgba(13, 15, 21, 0.85);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 100;
             margin: 0;
             border-radius: 0;
+            background: transparent;
         }
         
         .shop-overlay {
@@ -219,29 +219,23 @@
         }
         
         .coming-soon-text {
-            font-size: clamp(28px, 8vw, 48px);
-            font-weight: 600;
+            font-size: 24px;
+            font-weight: 400;
             color: #FF5500;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-align: center;
             background: none;
             -webkit-background-clip: unset;
             background-clip: unset;
             text-shadow: none;
-        }
-        
-        /* Убираем блюр с контента магазина */
-        .shop-content-blur {
-            filter: none;
-            pointer-events: none;
-            opacity: 0;
-            visibility: hidden;
+            opacity: 0.9;
         }
         
         /* Отключаем клики по всему магазину */
         .shop-screen .shop-tabs,
         .shop-screen .cases-section,
-        .shop-screen .buy-btn-simple {
+        .shop-screen .buy-btn-simple,
+        .shop-screen .case-item {
             pointer-events: none;
         }
         
@@ -364,7 +358,7 @@
                 </div>
             </div>
 
-            <!-- МАГАЗИН С БЛЮРОМ НА ВЕСЬ ЭКРАН -->
+            <!-- МАГАЗИН С АККУРАТНЫМ БЛЮРОМ -->
             <div id="shopScreen" class="screen shop-screen">
                 <div class="title-row">
                     <div class="title-left"><div class="section-title">Магазин</div></div>
@@ -386,7 +380,7 @@
                 </div>
                 <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
                 
-                <!-- БЛЮР НА ВЕСЬ ЭКРАН -->
+                <!-- АККУРАТНЫЙ БЛЮР НА ВЕСЬ ЭКРАН -->
                 <div class="shop-blur-wrapper">
                     <div class="shop-overlay">
                         <div class="coming-soon-text">Скоро...</div>
