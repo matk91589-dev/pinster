@@ -20,14 +20,12 @@ const Team = {
     init() {
         console.log('🚀 Team.init()');
         
-        // Получаем Telegram ID
         if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
             this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
         } else if (window.Profile && Profile.getTelegramId) {
             this.telegramId = Profile.getTelegramId();
         }
         
-        // Получаем player_id из localStorage
         this.currentPlayerId = localStorage.getItem('player_id');
         
         console.log('Team Telegram ID:', this.telegramId);
@@ -38,10 +36,8 @@ const Team = {
             return;
         }
         
-        // Добавляем стили скроллбара
         this.injectScrollStyles();
         
-        // Предзагрузка данных в фоне (для быстрой загрузки)
         setTimeout(() => {
             if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
                 this.loadFriendsList();
@@ -58,24 +54,24 @@ const Team = {
         const style = document.createElement('style');
         style.id = 'team-scroll-styles';
         style.textContent = `
-            .friends-list-container::-webkit-scrollbar,
-            .team-list::-webkit-scrollbar {
-                width: 3px;
+            #teamScreen .friends-list-container::-webkit-scrollbar,
+            #teamScreen .team-list::-webkit-scrollbar {
+                width: 3px !important;
             }
-            .friends-list-container::-webkit-scrollbar-track,
-            .team-list::-webkit-scrollbar-track {
-                background: #2A2F3A;
-                border-radius: 10px;
+            #teamScreen .friends-list-container::-webkit-scrollbar-track,
+            #teamScreen .team-list::-webkit-scrollbar-track {
+                background: #2A2F3A !important;
+                border-radius: 10px !important;
             }
-            .friends-list-container::-webkit-scrollbar-thumb,
-            .team-list::-webkit-scrollbar-thumb {
-                background: #FF5500;
-                border-radius: 10px;
+            #teamScreen .friends-list-container::-webkit-scrollbar-thumb,
+            #teamScreen .team-list::-webkit-scrollbar-thumb {
+                background: #FF5500 !important;
+                border-radius: 10px !important;
             }
-            .friends-list-container,
-            .team-list {
-                scrollbar-width: thin;
-                scrollbar-color: #FF5500 #2A2F3A;
+            #teamScreen .friends-list-container,
+            #teamScreen .team-list {
+                scrollbar-width: thin !important;
+                scrollbar-color: #FF5500 #2A2F3A !important;
             }
         `;
         document.head.appendChild(style);
@@ -95,9 +91,7 @@ const Team = {
         });
         teamScreen.classList.add('active');
         
-        // Проверяем telegramId
         if (!this.telegramId) {
-            console.log('⚠️ Нет telegram_id, пробуем получить снова');
             if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
                 this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
             } else if (window.Profile && Profile.getTelegramId) {
@@ -106,7 +100,6 @@ const Team = {
             this.currentPlayerId = localStorage.getItem('player_id');
         }
         
-        // Грузим данные только при открытии экрана
         if (this.currentTab === 'friends') {
             this.renderFriendsTab();
             if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
@@ -121,15 +114,8 @@ const Team = {
     },
     
     async loadFriendsList() {
-        if (!this.telegramId) {
-            console.error('❌ Нет telegram_id для загрузки друзей');
-            return;
-        }
-        
-        if (this.isLoadingFriends) {
-            console.log('⏳ Уже загружаем друзей');
-            return;
-        }
+        if (!this.telegramId) return;
+        if (this.isLoadingFriends) return;
         
         this.isLoadingFriends = true;
         console.log('👥 Загрузка друзей...');
@@ -156,7 +142,6 @@ const Team = {
                     this.renderFriendsTab();
                 }
             } else {
-                console.log('❌ Нет друзей или пустой ответ');
                 this.friendsList = [];
                 this.filteredFriends = [];
                 this.isFriendsLoaded = true;
@@ -178,15 +163,8 @@ const Team = {
     },
     
     async loadLeaderboard() {
-        if (!this.telegramId) {
-            console.error('❌ Нет telegram_id для загрузки лидерборда');
-            return;
-        }
-        
-        if (this.isLoadingLeaderboard) {
-            console.log('⏳ Уже загружаем лидерборд');
-            return;
-        }
+        if (!this.telegramId) return;
+        if (this.isLoadingLeaderboard) return;
         
         this.isLoadingLeaderboard = true;
         console.log('📥 Загрузка лидерборда...');
@@ -213,7 +191,6 @@ const Team = {
                     this.renderLeaderboardTab();
                 }
             } else {
-                console.log('❌ Нет данных лидерборда или пустой ответ');
                 this.leaderboard = [];
                 this.filteredLeaderboard = [];
                 this.isLeaderboardLoaded = true;
