@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ - ОПТИМИЗИРОВАННЫЙ С БЫСТРОЙ ЗАГРУЗКОЙ
+// ПРОФИЛЬ - ОПТИМИЗИРОВАННЫЙ (БЕЗ КЭША ДРУЗЕЙ)
 // ============================================
 
 console.log('🔥 PROFILE.JS ЗАГРУЖЕН');
@@ -54,37 +54,19 @@ const Profile = {
         }, 2000);
     },
     
-    // Быстрая загрузка друзей для профиля
+    // Загрузка друзей для профиля (без кэша)
     async loadFriends() {
         if (!this.telegramId) {
             this.telegramId = this.getTelegramId();
         }
         if (!this.telegramId || this.isFriendsLoaded) return;
         
-        // Сначала показываем кэш
-        const cachedFriends = localStorage.getItem('profile_friends_cache');
-        if (cachedFriends) {
-            try {
-                this.friendsList = JSON.parse(cachedFriends);
-                this.isFriendsLoaded = true;
-                this.updateFriendsDisplay();
-                console.log('✅ Друзья из кэша:', this.friendsList.length);
-            } catch(e) {}
-        }
-        
         try {
-            // Убираем AbortController, просто используем таймаут через Promise.race
-            const fetchPromise = fetch(`${this.BACKEND_URL}/api/friends/list`, {
+            const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ telegram_id: this.telegramId })
             });
-            
-            const timeoutPromise = new Promise((_, reject) => {
-                setTimeout(() => reject(new Error('Timeout')), 5000);
-            });
-            
-            const response = await Promise.race([fetchPromise, timeoutPromise]);
             
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
@@ -92,18 +74,14 @@ const Profile = {
             if (data.status === 'ok' && data.friends) {
                 this.friendsList = data.friends;
                 this.isFriendsLoaded = true;
-                localStorage.setItem('profile_friends_cache', JSON.stringify(this.friendsList));
                 this.updateFriendsDisplay();
                 console.log('✅ Друзья загружены:', this.friendsList.length);
             }
         } catch (error) {
             console.error('Ошибка загрузки друзей:', error);
-            // Если кэша нет, показываем пустой список
-            if (!this.isFriendsLoaded) {
-                this.friendsList = [];
-                this.isFriendsLoaded = true;
-                this.updateFriendsDisplay();
-            }
+            this.friendsList = [];
+            this.isFriendsLoaded = true;
+            this.updateFriendsDisplay();
         }
     },
     
@@ -195,7 +173,6 @@ const Profile = {
         }
         
         try {
-            // Убираем AbortController
             const response = await fetch(`${this.BACKEND_URL}/api/profile/get`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
