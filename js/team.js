@@ -20,12 +20,14 @@ const Team = {
     init() {
         console.log('🚀 Team.init()');
         
+        // Получаем Telegram ID
         if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
             this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
         } else if (window.Profile && Profile.getTelegramId) {
             this.telegramId = Profile.getTelegramId();
         }
         
+        // Получаем player_id из localStorage
         this.currentPlayerId = localStorage.getItem('player_id');
         
         console.log('Team Telegram ID:', this.telegramId);
@@ -39,7 +41,7 @@ const Team = {
         // Добавляем стили скроллбара
         this.injectScrollStyles();
         
-        // Предзагрузка данных в фоне
+        // Предзагрузка данных в фоне (для быстрой загрузки)
         setTimeout(() => {
             if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
                 this.loadFriendsList();
@@ -56,7 +58,6 @@ const Team = {
         const style = document.createElement('style');
         style.id = 'team-scroll-styles';
         style.textContent = `
-            /* Стильный оранжевый скроллбар */
             .friends-list-container::-webkit-scrollbar,
             .team-list::-webkit-scrollbar {
                 width: 3px;
@@ -76,62 +77,6 @@ const Team = {
                 scrollbar-width: thin;
                 scrollbar-color: #FF5500 #2A2F3A;
             }
-            
-            /* Центрирование пустых состояний */
-            .empty-friends {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                min-height: 200px;
-                text-align: center;
-                padding: 40px 20px;
-            }
-            .empty-friends-text {
-                color: #8E97A6;
-                font-size: 14px;
-            }
-            
-            /* Стили лидерборда */
-            .leaderboard-right {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                margin-left: auto;
-                flex-shrink: 0;
-                min-width: 60px;
-                justify-content: flex-end;
-            }
-            .leaderboard-place {
-                font-size: 13px;
-                font-weight: 500;
-                color: #8E97A6;
-                min-width: 28px;
-                text-align: right;
-            }
-            .leaderboard-current-badge {
-                color: #FF5500;
-                font-size: 12px;
-                font-weight: 500;
-                opacity: 0.9;
-                min-width: 28px;
-                text-align: right;
-            }
-            .friend-arrow {
-                font-size: 18px;
-                color: #8E97A6;
-                font-weight: 300;
-                min-width: 28px;
-                text-align: right;
-            }
-            .leaderboard-arrow {
-                color: #FF5500 !important;
-            }
-            .current-player-row {
-                background: rgba(255, 85, 0, 0.08);
-                margin: 0 -16px;
-                padding: 0 16px;
-                border-left: 3px solid #FF5500;
-            }
         `;
         document.head.appendChild(style);
     },
@@ -150,7 +95,9 @@ const Team = {
         });
         teamScreen.classList.add('active');
         
+        // Проверяем telegramId
         if (!this.telegramId) {
+            console.log('⚠️ Нет telegram_id, пробуем получить снова');
             if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
                 this.telegramId = Telegram.WebApp.initDataUnsafe.user.id;
             } else if (window.Profile && Profile.getTelegramId) {
@@ -159,6 +106,7 @@ const Team = {
             this.currentPlayerId = localStorage.getItem('player_id');
         }
         
+        // Грузим данные только при открытии экрана
         if (this.currentTab === 'friends') {
             this.renderFriendsTab();
             if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
@@ -173,8 +121,15 @@ const Team = {
     },
     
     async loadFriendsList() {
-        if (!this.telegramId) return;
-        if (this.isLoadingFriends) return;
+        if (!this.telegramId) {
+            console.error('❌ Нет telegram_id для загрузки друзей');
+            return;
+        }
+        
+        if (this.isLoadingFriends) {
+            console.log('⏳ Уже загружаем друзей');
+            return;
+        }
         
         this.isLoadingFriends = true;
         console.log('👥 Загрузка друзей...');
@@ -191,7 +146,7 @@ const Team = {
             const data = await response.json();
             console.log('📦 Ответ друзей:', data);
             
-            if (data.status === 'ok' && data.friends) {
+            if (data.status === 'ok' && data.friends && data.friends.length > 0) {
                 this.friendsList = data.friends;
                 this.filteredFriends = [...this.friendsList];
                 this.isFriendsLoaded = true;
@@ -201,6 +156,7 @@ const Team = {
                     this.renderFriendsTab();
                 }
             } else {
+                console.log('❌ Нет друзей или пустой ответ');
                 this.friendsList = [];
                 this.filteredFriends = [];
                 this.isFriendsLoaded = true;
@@ -222,8 +178,15 @@ const Team = {
     },
     
     async loadLeaderboard() {
-        if (!this.telegramId) return;
-        if (this.isLoadingLeaderboard) return;
+        if (!this.telegramId) {
+            console.error('❌ Нет telegram_id для загрузки лидерборда');
+            return;
+        }
+        
+        if (this.isLoadingLeaderboard) {
+            console.log('⏳ Уже загружаем лидерборд');
+            return;
+        }
         
         this.isLoadingLeaderboard = true;
         console.log('📥 Загрузка лидерборда...');
@@ -240,7 +203,7 @@ const Team = {
             const data = await response.json();
             console.log('📦 Ответ лидерборда:', data);
             
-            if (data.status === 'ok' && data.leaderboard) {
+            if (data.status === 'ok' && data.leaderboard && data.leaderboard.length > 0) {
                 this.leaderboard = data.leaderboard;
                 this.filteredLeaderboard = [...this.leaderboard];
                 this.isLeaderboardLoaded = true;
@@ -250,6 +213,7 @@ const Team = {
                     this.renderLeaderboardTab();
                 }
             } else {
+                console.log('❌ Нет данных лидерборда или пустой ответ');
                 this.leaderboard = [];
                 this.filteredLeaderboard = [];
                 this.isLeaderboardLoaded = true;
@@ -309,11 +273,10 @@ const Team = {
             html += `<div class="empty-friends"><div class="empty-friends-text">у вас пока нет друзей</div></div>`;
         } else {
             this.filteredFriends.forEach(friend => {
-                const firstChar = friend.nick && friend.nick.length > 0 ? friend.nick[0].toUpperCase() : '?';
                 html += `
                 <div class="friend-row" onclick="Team.showFriendProfile('${friend.player_id}')">
                     <div class="friend-avatar">
-                        ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}
+                        ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${friend.nick?.[0] || '?'}</span>`}
                     </div>
                     <div class="friend-info">
                         <span class="friend-id">ID: ${friend.player_id}</span>
@@ -362,10 +325,9 @@ const Team = {
         
         let html = '';
         this.filteredFriends.forEach(friend => {
-            const firstChar = friend.nick && friend.nick.length > 0 ? friend.nick[0].toUpperCase() : '?';
             html += `
             <div class="friend-row" onclick="Team.showFriendProfile('${friend.player_id}')">
-                <div class="friend-avatar">${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}</div>
+                <div class="friend-avatar">${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${friend.nick?.[0] || '?'}</span>`}</div>
                 <div class="friend-info">
                     <span class="friend-id">ID: ${friend.player_id}</span>
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
@@ -393,16 +355,15 @@ const Team = {
         } else if (this.leaderboard.length === 0) {
             html += `<div class="empty-friends"><div class="empty-friends-text">пока нет игроков</div></div>`;
         } else {
-            this.filteredLeaderboard.forEach((player) => {
+            this.filteredLeaderboard.forEach((player, index) => {
                 const originalIndex = this.leaderboard.findIndex(p => p.player_id === player.player_id);
                 const place = originalIndex + 1;
                 const isCurrent = player.player_id === this.currentPlayerId;
-                const firstChar = player.nick && player.nick.length > 0 ? player.nick[0].toUpperCase() : '?';
                 
                 html += `
-                    <div class="friend-row ${isCurrent ? 'current-player-row' : ''}" onclick="Team.showPlayerProfile('${player.player_id}')">
+                    <div class="friend-row" onclick="Team.showPlayerProfile('${player.player_id}')">
                         <div class="friend-avatar">
-                            ${player.avatar ? `<img src="${player.avatar}">` : `<span>${firstChar}</span>`}
+                            ${player.avatar ? `<img src="${player.avatar}">` : `<span>${player.nick?.[0] || '?'}</span>`}
                         </div>
                         <div class="friend-info">
                             <span class="friend-id">ID: ${player.player_id}</span>
@@ -421,6 +382,7 @@ const Team = {
         content.innerHTML = html;
         
         setTimeout(() => this.setupLeaderboardSearch(), 50);
+        this.injectLeaderboardStyles();
     },
     
     setupLeaderboardSearch() {
@@ -458,12 +420,11 @@ const Team = {
             const originalIndex = this.leaderboard.findIndex(p => p.player_id === player.player_id);
             const place = originalIndex + 1;
             const isCurrent = player.player_id === this.currentPlayerId;
-            const firstChar = player.nick && player.nick.length > 0 ? player.nick[0].toUpperCase() : '?';
             
             html += `
-                <div class="friend-row ${isCurrent ? 'current-player-row' : ''}" onclick="Team.showPlayerProfile('${player.player_id}')">
+                <div class="friend-row" onclick="Team.showPlayerProfile('${player.player_id}')">
                     <div class="friend-avatar">
-                        ${player.avatar ? `<img src="${player.avatar}">` : `<span>${firstChar}</span>`}
+                        ${player.avatar ? `<img src="${player.avatar}">` : `<span>${player.nick?.[0] || '?'}</span>`}
                     </div>
                     <div class="friend-info">
                         <span class="friend-id">ID: ${player.player_id}</span>
@@ -477,6 +438,50 @@ const Team = {
             `;
         });
         container.innerHTML = html;
+    },
+    
+    injectLeaderboardStyles() {
+        if (document.getElementById('leaderboard-styles')) return;
+        
+        const style = document.createElement('style');
+        style.id = 'leaderboard-styles';
+        style.textContent = `
+            .leaderboard-right {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-left: auto;
+                flex-shrink: 0;
+                min-width: 60px;
+                justify-content: flex-end;
+            }
+            .leaderboard-place {
+                font-size: 13px;
+                font-weight: 500;
+                color: #8E97A6;
+                min-width: 28px;
+                text-align: right;
+            }
+            .leaderboard-current-badge {
+                color: #FF5500;
+                font-size: 12px;
+                font-weight: 500;
+                opacity: 0.9;
+                min-width: 28px;
+                text-align: right;
+            }
+            .friend-arrow {
+                font-size: 18px;
+                color: #8E97A6;
+                font-weight: 300;
+                min-width: 28px;
+                text-align: right;
+            }
+            .leaderboard-arrow {
+                color: #FF5500 !important;
+            }
+        `;
+        document.head.appendChild(style);
     },
     
     showFriendProfile(playerId) {
