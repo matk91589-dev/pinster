@@ -36,10 +36,7 @@ const Team = {
             return;
         }
         
-        // Добавляем стили скроллбара сразу при инициализации
-        this.injectScrollbarStyles();
-        
-        // Предзагрузка в фоне (ускорение)
+        // Предзагрузка данных в фоне (для быстрой загрузки)
         setTimeout(() => {
             if (this.telegramId && !this.isFriendsLoaded && !this.isLoadingFriends) {
                 this.loadFriendsList();
@@ -48,32 +45,6 @@ const Team = {
                 this.loadLeaderboard();
             }
         }, 300);
-    },
-    
-    injectScrollbarStyles() {
-        if (document.getElementById('team-scroll-styles')) return;
-        
-        const style = document.createElement('style');
-        style.id = 'team-scroll-styles';
-        style.textContent = `
-            /* СТИЛЬНЫЙ ОРАНЖЕВЫЙ СКРОЛЛБАР */
-            .friends-list-container::-webkit-scrollbar {
-                width: 3px;
-            }
-            .friends-list-container::-webkit-scrollbar-track {
-                background: #2A2F3A;
-                border-radius: 10px;
-            }
-            .friends-list-container::-webkit-scrollbar-thumb {
-                background: #FF5500;
-                border-radius: 10px;
-            }
-            .friends-list-container {
-                scrollbar-width: thin;
-                scrollbar-color: #FF5500 #2A2F3A;
-            }
-        `;
-        document.head.appendChild(style);
     },
     
     showTeamPage() {
@@ -120,17 +91,11 @@ const Team = {
         console.log('👥 Загрузка друзей...');
         
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
-            
             const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId }),
-                signal: controller.signal
+                body: JSON.stringify({ telegram_id: this.telegramId })
             });
-            
-            clearTimeout(timeoutId);
             
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
@@ -175,17 +140,11 @@ const Team = {
         console.log('📥 Загрузка лидерборда...');
         
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
-            
             const response = await fetch(`${this.BACKEND_URL}/api/users/leaderboard`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId }),
-                signal: controller.signal
+                body: JSON.stringify({ telegram_id: this.telegramId })
             });
-            
-            clearTimeout(timeoutId);
             
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
