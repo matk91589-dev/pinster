@@ -192,59 +192,104 @@
             align-items: center !important;
         }
         
-        /* ===== МАГАЗИН — ПЛАШКА ПОВЕРХ КЕЙСОВ ===== */
-        .shop-screen {
-            position: relative;
+        /* ===== МОДАЛЬНОЕ ОКНО ПОВЕРХ МАГАЗИНА ===== */
+        .shop-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
         }
         
-        .shop-coming-soon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #1A1D24 0%, #111317 100%);
-            border: 1px solid rgba(255, 85, 0, 0.3);
-            border-radius: 20px;
-            padding: 24px 32px;
+        .shop-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .shop-modal {
+            background: var(--surface);
+            border-radius: 16px;
+            width: 280px;
+            max-width: 85%;
+            overflow: hidden;
+            transform: scale(0.9);
+            transition: transform 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+        
+        .shop-modal-overlay.active .shop-modal {
+            transform: scale(1);
+        }
+        
+        .shop-modal-header {
+            padding: 16px 16px 0 16px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .shop-modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 20px;
+            color: var(--text-secondary);
+        }
+        
+        .shop-modal-close:hover {
+            background: rgba(255, 85, 0, 0.2);
+            color: var(--accent);
+        }
+        
+        .shop-modal-title {
             text-align: center;
-            z-index: 10;
-            min-width: 200px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            padding: 0 24px;
         }
         
-        .shop-coming-soon-text {
+        .shop-modal-message {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 0 24px 24px 24px;
+            line-height: 1.5;
+        }
+        
+        .shop-modal-button {
+            display: block;
+            width: calc(100% - 32px);
+            margin: 0 16px 20px 16px;
+            padding: 12px;
+            background: var(--accent);
+            border: none;
+            border-radius: 12px;
+            color: white;
             font-size: 16px;
-            font-weight: 500;
-            color: #FF5500;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: center;
         }
         
-        /* Кейсы видны, но не кликабельны */
-        .shop-screen .cases-section,
-        .shop-screen .inventory-section,
-        .shop-screen .shop-tabs {
-            pointer-events: none;
-        }
-        
-        .shop-tabs {
-            opacity: 0.5;
-        }
-        
-        /* Центрируем заголовок */
-        .shop-screen .title-row {
-            justify-content: center !important;
-            position: relative;
-        }
-        
-        .shop-screen .title-left {
-            margin: 0 auto !important;
-        }
-        
-        .shop-screen .coins-header {
-            position: absolute !important;
-            right: 16px !important;
-            top: 12px !important;
+        .shop-modal-button:hover {
+            background: var(--accent-soft);
         }
     </style>
 </head>
@@ -362,7 +407,7 @@
                 </div>
             </div>
 
-            <!-- МАГАЗИН — ПЛАШКА ПОВЕРХ КЕЙСОВ -->
+            <!-- МАГАЗИН — С МОДАЛЬНЫМ ОКНОМ ПОВЕРХ -->
             <div id="shopScreen" class="screen shop-screen">
                 <div class="title-row">
                     <div class="title-left"><div class="section-title">Магазин</div></div>
@@ -383,11 +428,6 @@
                     </div>
                 </div>
                 <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
-                
-                <!-- ПЛАШКА ПОВЕРХ КЕЙСОВ -->
-                <div class="shop-coming-soon">
-                    <div class="shop-coming-soon-text">Магазин в разработке</div>
-                </div>
             </div>
 
             <div id="profileScreen" class="screen profile-screen">
@@ -609,12 +649,49 @@
 
         <nav class="bottom-nav">
             <div class="nav-item active" onclick="App.showScreen('mainScreen', true)" id="navMain"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span><span class="nav-label">Главная</span></div>
-            <div class="nav-item" onclick="App.showScreen('shopScreen', true)" id="navShop"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span><span class="nav-label">Магазин</span></div>
+            <div class="nav-item" onclick="Shop.showModal()" id="navShop"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span><span class="nav-label">Магазин</span></div>
             <div class="nav-item" onclick="App.showScreen('profileScreen', true)" id="navProfile"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span><span class="nav-label">Профиль</span></div>
         </nav>
     </div>
 
+    <!-- МОДАЛЬНОЕ ОКНО ПОВЕРХ МАГАЗИНА -->
+    <div id="shopModal" class="shop-modal-overlay">
+        <div class="shop-modal">
+            <div class="shop-modal-header">
+                <div class="shop-modal-close" onclick="Shop.closeModal()">✕</div>
+            </div>
+            <div class="shop-modal-title">Магазин в разработке</div>
+            <div class="shop-modal-message">
+                Мы работаем над кейсами и предметами.<br>
+                Скоро здесь появятся эксклюзивные товары!
+            </div>
+            <button class="shop-modal-button" onclick="Shop.closeModal()">Ок</button>
+        </div>
+    </div>
+
     <script>
+        // ===== МОДАЛЬНОЕ ОКНО ДЛЯ МАГАЗИНА =====
+        window.Shop = window.Shop || {};
+        
+        Shop.showModal = function() {
+            const modal = document.getElementById('shopModal');
+            if (modal) {
+                modal.classList.add('active');
+                if (window.Settings && window.Settings.click) Settings.click();
+            }
+        };
+        
+        Shop.closeModal = function() {
+            const modal = document.getElementById('shopModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+            // Возвращаемся на главный экран
+            if (window.App) {
+                App.showScreen('mainScreen', true);
+            }
+        };
+        
         (function() {
             const version = window.BUILD_VERSION || Date.now();
             
@@ -626,7 +703,6 @@
                 'js/profile.js',
                 'js/avatar.js',
                 'js/friends.js',
-                'js/shop.js',
                 'js/search.js',
                 'js/logo.js',
                 'js/team.js',
@@ -689,23 +765,6 @@
                     setTimeout(() => clearInterval(checkTeam), 5000);
                 }
             });
-            
-            window.loadShopImages = function() {
-                const images = document.querySelectorAll('.case-icon img[data-src]');
-                images.forEach(img => {
-                    if (img.dataset.src && !img.src) {
-                        const observer = new IntersectionObserver((entries) => {
-                            entries.forEach(entry => {
-                                if (entry.isIntersecting) {
-                                    img.src = img.dataset.src + '?v=' + version;
-                                    observer.unobserve(img);
-                                }
-                            });
-                        });
-                        observer.observe(img);
-                    }
-                });
-            };
         })();
     </script>
 </body>
