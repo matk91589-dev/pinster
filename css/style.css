@@ -4325,9 +4325,9 @@ button:active { transform: scale(0.96); }
     transform: translateX(-50%) translateY(0);
 }
 
-/* ===== ФИРМЕННЫЙ ОРАНЖЕВЫЙ СКРОЛЛБАР ДЛЯ ВСЕХ ЭКРАНОВ ===== */
+/* ===== ФИРМЕННЫЙ ОРАНЖЕВЫЙ СКРОЛЛБАР (АДАПТИВНЫЙ) ===== */
 *::-webkit-scrollbar {
-    width: 3px;
+    width: max(2px, min(4px, 3vw));
 }
 
 *::-webkit-scrollbar-track {
@@ -4343,6 +4343,27 @@ button:active { transform: scale(0.96); }
 * {
     scrollbar-width: thin;
     scrollbar-color: #FF5500 #2A2F3A;
+}
+
+/* Для совсем маленьких экранов (до 360px) */
+@media (max-width: 360px) {
+    *::-webkit-scrollbar {
+        width: 2px;
+    }
+}
+
+/* Для больших экранов (от 768px) */
+@media (min-width: 768px) {
+    *::-webkit-scrollbar {
+        width: 3px;
+    }
+}
+
+/* Для планшетов и десктопов (от 1024px) */
+@media (min-width: 1024px) {
+    *::-webkit-scrollbar {
+        width: 4px;
+    }
 }
 
 /* ===== ЦЕНТРИРОВАНИЕ ЗАГРУЗКИ ===== */
