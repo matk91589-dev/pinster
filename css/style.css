@@ -4301,3 +4301,26 @@ button:active { transform: scale(0.96); }
     right: 16px !important;
     top: 12px !important;
 }
+
+/* ===== TOAST УВЕДОМЛЕНИЯ ===== */
+.profile-toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 10000;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.profile-toast.show {
+    transform: translateX(-50%) translateY(0);
+}
