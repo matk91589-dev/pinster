@@ -5,36 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Pingster — Telegram Mini App</title>
     
-    <!-- ЗАПРЕТ КЭШИРОВАНИЯ HTML -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    
     <script>
-        // ПРИНУДИТЕЛЬНАЯ ОЧИСТКА КЭША ПРИ ЗАГРУЗКЕ
-        (function() {
-            // Версия сборки — меняется при каждом обновлении файла
-            const HTML_VERSION = '20260408_003';
-            const storedVersion = localStorage.getItem('pingster_html_version');
-            
-            if (storedVersion !== HTML_VERSION) {
-                console.log('🔄 Новая версия HTML! Очищаем кэш...');
-                // Очищаем все старые ключи
-                const keysToKeep = ['telegram_id', 'player_id', 'nick', 'pingcoins', 'profile_nick', 'profile_age', 'profile_steam', 'profile_faceit', 'pingster_html_version'];
-                const allKeys = Object.keys(localStorage);
-                allKeys.forEach(key => {
-                    if (!keysToKeep.includes(key)) {
-                        localStorage.removeItem(key);
-                        console.log('🗑️ Удалён ключ:', key);
-                    }
-                });
-                localStorage.setItem('pingster_html_version', HTML_VERSION);
-                console.log('✅ Кэш очищен, версия:', HTML_VERSION);
-            }
-            
-            window.BUILD_VERSION = Date.now();
-            console.log('🔄 Версия сборки:', window.BUILD_VERSION);
-        })();
+        window.BUILD_VERSION = Date.now();
+        console.log('🔄 Версия сборки:', window.BUILD_VERSION);
     </script>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -83,7 +56,6 @@
     <link rel="stylesheet" href="css/animations.css">
     
     <style>
-        /* Базовые размеры для карточки свайпа */
         .swipe-card {
             width: 420px !important;
             height: 420px !important;
@@ -136,10 +108,6 @@
             word-break: break-all !important;
             cursor: pointer !important;
             transition: background 0.2s ease !important;
-        }
-        
-        .swipe-link-value:active {
-            background: var(--surface-hover) !important;
         }
         
         @media (max-width: 500px) and (min-width: 451px) {
@@ -213,12 +181,6 @@
             width: 100% !important;
         }
         
-        .swipe-card-wrapper {
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-        }
-        
         /* ===== МАГАЗИН С БЛЮРОМ ===== */
         .shop-blur-wrapper {
             position: relative;
@@ -261,21 +223,13 @@
             text-align: center;
         }
         
-        /* Отключаем клики по табам магазина */
         .shop-tabs {
             pointer-events: none;
             opacity: 0.5;
         }
         
-        /* Убираем ховеры у кнопок магазина */
         .buy-btn-simple {
             pointer-events: none !important;
-        }
-        
-        /* ===== ПРИНУДИТЕЛЬНОЕ УДАЛЕНИЕ СТАРЫХ СТРОК НАСТРОЕК ЧЕРЕЗ CSS ===== */
-        .settings-row:has(.settings-row-label:contains("реферальная")),
-        .settings-row:has(.settings-row-label:contains("инвентарь")) {
-            display: none !important;
         }
     </style>
 </head>
@@ -527,7 +481,7 @@
                 <div class="swipe-loading"><div class="spinner-small"></div></div>
             </div>
 
-            <!-- НАСТРОЙКИ — РЕФЕРАЛКА И ИНВЕНТАРЬ УДАЛЕНЫ -->
+            <!-- НАСТРОЙКИ — ТОЛЬКО ДРУЗЬЯ -->
             <div id="settingsScreen" class="screen settings-screen">
                 <div class="settings-header"><div class="settings-title">Настройки</div></div>
                 <div class="settings-section"><div class="settings-section-title">ОФОРМЛЕНИЕ</div>
@@ -672,7 +626,6 @@
                 return new Promise((resolve) => {
                     const script = document.createElement('script');
                     script.src = src + '?v=' + version;
-                    script.async = true;
                     script.onload = () => {
                         loadedCount++;
                         console.log(`✅ ${src.split('/').pop()} (${loadedCount}/${jsFiles.length})`);
@@ -714,11 +667,9 @@
                 if (target && typeof Team === 'undefined') {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('⏳ Team загружается, подождите...');
                     const checkTeam = setInterval(() => {
                         if (typeof Team !== 'undefined') {
                             clearInterval(checkTeam);
-                            console.log('✅ Team загружен, открываем');
                             Team.showTeamPage();
                         }
                     }, 50);
@@ -734,7 +685,6 @@
                             entries.forEach(entry => {
                                 if (entry.isIntersecting) {
                                     img.src = img.dataset.src + '?v=' + version;
-                                    img.onload = () => img.classList.add('loaded');
                                     observer.unobserve(img);
                                 }
                             });
