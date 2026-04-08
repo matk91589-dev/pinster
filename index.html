@@ -19,7 +19,6 @@
             padding: 0;
         }
         
-        /* ===== ЛОАДЕР-ОВЕРЛЕЙ ===== */
         #app-loader {
             position: fixed;
             top: 0;
@@ -193,66 +192,66 @@
             align-items: center !important;
         }
         
-        /* МАГАЗИН С БЛЮРОМ */
-        .shop-blur-container {
+        /* ===== МАГАЗИН С БЛЮРОМ ===== */
+        .shop-blur-wrapper {
             position: relative;
             width: 100%;
-            min-height: 60vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 24px;
+            margin-top: 16px;
+            border-radius: 20px;
             overflow: hidden;
-            margin-top: 20px;
         }
         
-        .shop-blur-bg {
+        .shop-content-blur {
+            filter: blur(6px);
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.7;
+        }
+        
+        .shop-overlay {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            background: rgba(26, 29, 36, 0.5);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 85, 0, 0.2);
-        }
-        
-        .shop-coming-soon {
-            position: relative;
-            z-index: 2;
-            padding: 40px 20px;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            background: rgba(13, 15, 21, 0.3);
+            border-radius: 20px;
         }
         
         .coming-soon-text {
-            font-size: clamp(24px, 8vw, 42px);
+            font-size: clamp(28px, 8vw, 48px);
             font-weight: 800;
             background: linear-gradient(135deg, #FF5500 0%, #FF8C42 100%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: 0 0 20px rgba(255, 85, 0, 0.3);
+            text-shadow: 0 0 25px rgba(255, 85, 0, 0.4);
             letter-spacing: 2px;
+            text-align: center;
         }
         
-        /* Контент магазина под блюром — не кликабельный */
-        .cases-section {
-            filter: blur(8px);
+        /* Отключаем клики по табам магазина */
+        .shop-tabs {
             pointer-events: none;
-            user-select: none;
+            opacity: 0.5;
         }
         
-        /* НАСТРОЙКИ — только друзья на всю ширину */
-        .settings-section .settings-row:first-child,
-        .settings-row[onclick*="Team.showTeamPage"] {
+        /* Убираем ховеры у кнопок магазина */
+        .buy-btn-simple {
+            pointer-events: none !important;
+        }
+        
+        /* ===== НАСТРОЙКИ — ПОЛНОСТЬЮ УДАЛЯЕМ РЕФЕРАЛКУ И ИНВЕНТАРЬ ===== */
+        .settings-section .settings-row:first-child {
             width: 100% !important;
         }
         
-        /* Скрываем рефералку и инвентарь */
-        .settings-row:has(.settings-row-label:contains("реферальная система")),
-        .settings-row:has(.settings-row-label:contains("инвентарь")) {
+        /* Удаляем строки с рефералкой и инвентарем */
+        .settings-row-hide {
             display: none !important;
         }
     </style>
@@ -351,31 +350,34 @@
                 </div>
             </div>
 
-            <!-- МАГАЗИН С БЛЮРОМ И НАДПИСЬЮ "СКОРО..." -->
+            <!-- МАГАЗИН С БЛЮРОМ -->
             <div id="shopScreen" class="screen shop-screen">
                 <div class="title-row">
                     <div class="title-left"><div class="section-title">Магазин</div></div>
                     <div class="coins-header">Pingcoins: <span id="coinsAmount">99999</span></div>
                 </div>
+                
                 <div class="shop-tabs">
                     <div class="shop-tab active">Кейсы</div>
                     <div class="shop-tab">Инвентарь</div>
                 </div>
-                <div class="shop-blur-container">
-                    <div class="shop-blur-bg"></div>
-                    <div class="shop-coming-soon">
+                
+                <div class="shop-blur-wrapper">
+                    <div class="shop-content-blur">
+                        <div class="cases-section">
+                            <div class="cases-grid">
+                                <div class="case-item"><div class="case-icon"><img data-src="cases/common_case.webp" alt="common case" loading="lazy"></div><div class="case-info"><div class="case-name">Базовый кейс</div><div class="case-price-row"><span class="price-value">100</span><button class="buy-btn-simple">Купить</button></div></div></div>
+                                <div class="case-item"><div class="case-icon"><img data-src="cases/rare_case.webp" alt="rare case" loading="lazy"></div><div class="case-info"><div class="case-name">Редкий кейс</div><div class="case-price-row"><span class="price-value">250</span><button class="buy-btn-simple">Купить</button></div></div></div>
+                                <div class="case-item"><div class="case-icon"><img data-src="cases/premium_case.webp" alt="premium case" loading="lazy"></div><div class="case-info"><div class="case-name">Легендарный кейс</div><div class="case-price-row"><span class="price-value">500</span><button class="buy-btn-simple">Купить</button></div></div></div>
+                                <div class="case-item"><div class="case-icon"><img data-src="cases/secret_case.webp" alt="secret case" loading="lazy"></div><div class="case-info"><div class="case-name">Секретный кейс</div><div class="case-price-row"><span class="price-value">1000</span><button class="buy-btn-simple">Купить</button></div></div></div>
+                            </div>
+                        </div>
+                        <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
+                    </div>
+                    <div class="shop-overlay">
                         <div class="coming-soon-text">Скоро...</div>
                     </div>
-                    <div class="cases-section" style="position: relative; z-index: 1;">
-                        <div class="cases-grid">
-                            <div class="case-item"><div class="case-icon"><img data-src="cases/common_case.webp" alt="common case" loading="lazy"></div><div class="case-info"><div class="case-name">Базовый кейс</div><div class="case-price-row"><span class="price-value">100</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                            <div class="case-item"><div class="case-icon"><img data-src="cases/rare_case.webp" alt="rare case" loading="lazy"></div><div class="case-info"><div class="case-name">Редкий кейс</div><div class="case-price-row"><span class="price-value">250</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                            <div class="case-item"><div class="case-icon"><img data-src="cases/premium_case.webp" alt="premium case" loading="lazy"></div><div class="case-info"><div class="case-name">Легендарный кейс</div><div class="case-price-row"><span class="price-value">500</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                            <div class="case-item"><div class="case-icon"><img data-src="cases/secret_case.webp" alt="secret case" loading="lazy"></div><div class="case-info"><div class="case-name">Секретный кейс</div><div class="case-price-row"><span class="price-value">1000</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                        </div>
-                    </div>
                 </div>
-                <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
             </div>
 
             <div id="profileScreen" class="screen profile-screen">
@@ -482,13 +484,25 @@
                 <div class="swipe-loading"><div class="spinner-small"></div></div>
             </div>
 
-            <!-- НАСТРОЙКИ — ТОЛЬКО ДРУЗЬЯ, БЕЗ РЕФЕРАЛКИ И ИНВЕНТАРЯ -->
+            <!-- НАСТРОЙКИ — РЕФЕРАЛКА И ИНВЕНТАРЬ ПОЛНОСТЬЮ УДАЛЕНЫ -->
             <div id="settingsScreen" class="screen settings-screen">
                 <div class="settings-header"><div class="settings-title">Настройки</div></div>
-                <div class="settings-section"><div class="settings-section-title">ОФОРМЛЕНИЕ</div><div class="settings-row"><span class="settings-row-label">Звук</span><div class="sound-toggle"><span class="sound-option" id="soundOff">выкл</span><span class="sound-separator">/</span><span class="sound-option" id="soundOn">вкл</span></div></div><div class="settings-row"><span class="settings-row-label">тема</span><span class="settings-value">черный</span></div><div class="settings-row"><span class="settings-row-label">язык</span><span class="settings-value">русский</span></div></div>
-                <div class="settings-section"><div class="settings-section-title">ОСНОВНЫЕ</div><div class="settings-row" onclick="Team.showTeamPage()"><span class="settings-row-label">друзья</span><span class="settings-arrow">→</span></div></div>
-                <div class="settings-section"><div class="settings-section-title">СОЦСЕТИ</div><a href="#" class="settings-row-link"><span class="settings-row-label">TikTok</span><span class="settings-arrow">→</span></a><a href="#" class="settings-row-link"><span class="settings-row-label">Telegram канал</span><span class="settings-arrow">→</span></a></div>
-                <div class="settings-section"><div class="settings-section-title">ПОДДЕРЖКА</div><a href="mailto:support@pingster.com" class="settings-row-link"><span class="settings-row-label">Gmail</span><span class="settings-value">support@pingster.com</span></a><div class="settings-row"><span class="settings-row-label">Telegram</span><span class="settings-value">@pingster_support</span></div></div>
+                <div class="settings-section"><div class="settings-section-title">ОФОРМЛЕНИЕ</div>
+                    <div class="settings-row"><span class="settings-row-label">Звук</span><div class="sound-toggle"><span class="sound-option" id="soundOff">выкл</span><span class="sound-separator">/</span><span class="sound-option" id="soundOn">вкл</span></div></div>
+                    <div class="settings-row"><span class="settings-row-label">тема</span><span class="settings-value">черный</span></div>
+                    <div class="settings-row"><span class="settings-row-label">язык</span><span class="settings-value">русский</span></div>
+                </div>
+                <div class="settings-section"><div class="settings-section-title">ОСНОВНЫЕ</div>
+                    <div class="settings-row" onclick="Team.showTeamPage()"><span class="settings-row-label">друзья</span><span class="settings-arrow">→</span></div>
+                </div>
+                <div class="settings-section"><div class="settings-section-title">СОЦСЕТИ</div>
+                    <a href="#" class="settings-row-link"><span class="settings-row-label">TikTok</span><span class="settings-arrow">→</span></a>
+                    <a href="#" class="settings-row-link"><span class="settings-row-label">Telegram канал</span><span class="settings-arrow">→</span></a>
+                </div>
+                <div class="settings-section"><div class="settings-section-title">ПОДДЕРЖКА</div>
+                    <a href="mailto:support@pingster.com" class="settings-row-link"><span class="settings-row-label">Gmail</span><span class="settings-value">support@pingster.com</span></a>
+                    <div class="settings-row"><span class="settings-row-label">Telegram</span><span class="settings-value">@pingster_support</span></div>
+                </div>
             </div>
 
             <div id="faceitScreen" class="screen faceit-screen">
