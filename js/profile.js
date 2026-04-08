@@ -1,5 +1,5 @@
 // ============================================
-// ПРОФИЛЬ - ИСПРАВЛЕННЫЙ
+// ПРОФИЛЬ - ОПТИМИЗИРОВАННЫЙ С БЫСТРОЙ ЗАГРУЗКОЙ
 // ============================================
 
 console.log('🔥 PROFILE.JS ЗАГРУЖЕН');
@@ -23,6 +23,8 @@ const Profile = {
     isLoading: false,
     isProfileLoaded: false,
     isInitialized: false,
+    friendsList: [],
+    isFriendsLoaded: false,
     
     getTelegramId() {
         const tg = window.Telegram?.WebApp;
@@ -50,6 +52,118 @@ const Profile = {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
         }, 2000);
+    },
+    
+    // Быстрая загрузка друзей для профиля
+    async loadFriends() {
+        if (!this.telegramId) {
+            this.telegramId = this.getTelegramId();
+        }
+        if (!this.telegramId || this.isFriendsLoaded) return;
+        
+        // Сначала показываем кэш
+        const cachedFriends = localStorage.getItem('profile_friends_cache');
+        if (cachedFriends) {
+            try {
+                this.friendsList = JSON.parse(cachedFriends);
+                this.isFriendsLoaded = true;
+                this.updateFriendsDisplay();
+                console.log('✅ Друзья из кэша:', this.friendsList.length);
+            } catch(e) {}
+        }
+        
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            
+            const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telegram_id: this.telegramId }),
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.status === 'ok' && data.friends) {
+                    this.friendsList = data.friends;
+                    this.isFriendsLoaded = true;
+                    localStorage.setItem('profile_friends_cache', JSON.stringify(this.friendsList));
+                    this.updateFriendsDisplay();
+                    console.log('✅ Друзья загружены:', this.friendsList.length);
+                }
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки друзей:', error);
+        }
+    },
+    
+    updateFriendsDisplay() {
+        const friendsListEl = document.getElementById('friendsList');
+        if (!friendsListEl) return;
+        
+        const friendsTitle = document.querySelector('.friends-title');
+        if (friendsTitle) {
+            friendsTitle.textContent = `Ваши друзья: ${this.friendsList.length}`;
+        }
+        
+        if (!this.friendsList.length) {
+            friendsListEl.innerHTML = '<div class="empty-friends"><div class="empty-friends-text">у вас пока нет друзей</div></div>';
+            return;
+        }
+        
+        let html = '';
+        const showCount = Math.min(this.friendsList.length, 5);
+        
+        for (let i = 0; i < showCount; i++) {
+            const friend = this.friendsList[i];
+            const firstChar = friend.nick && friend.nick.length > 0 ? friend.nick[0].toUpperCase() : '?';
+            html += `
+                <div class="friend-row" onclick="Profile.showFriendProfile('${friend.player_id}')">
+                    <div class="friend-avatar">
+                        ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}
+                    </div>
+                    <div class="friend-info">
+                        <span class="friend-id">ID: ${friend.player_id}</span>
+                        <span class="friend-name">${friend.nick || 'Без имени'}</span>
+                    </div>
+                    <span class="friend-arrow">→</span>
+                </div>
+            `;
+        }
+        
+        if (this.friendsList.length > 5) {
+            const remaining = this.friendsList.length - 5;
+            html += `<div class="friend-row more-friends" onclick="Profile.showAllFriends()">
+                        <div class="friend-avatar"><span>+</span></div>
+                        <div class="friend-info">
+                            <span class="friend-name">и еще ${remaining} ${this.getFriendsWord(remaining)}</span>
+                        </div>
+                        <span class="friend-arrow">→</span>
+                    </div>`;
+        }
+        
+        friendsListEl.innerHTML = html;
+    },
+    
+    getFriendsWord(count) {
+        if (count % 10 === 1 && count % 100 !== 11) return 'друг';
+        if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) return 'друга';
+        return 'друзей';
+    },
+    
+    showFriendProfile(playerId) {
+        this.showToast(`Профиль друга ID: ${playerId}`);
+    },
+    
+    showAllFriends() {
+        if (window.Team && Team.showTeamPage) {
+            Team.showTeamPage();
+        } else if (window.App) {
+            App.showScreen('teamScreen', true);
+        }
     },
     
     async loadProfileFromServer() {
@@ -114,25 +228,33 @@ const Profile = {
         if (!this.telegramId) this.telegramId = this.getTelegramId();
         if (!this.telegramId) return;
         
+        // Сначала показываем кэш
         const cachedAvatar = localStorage.getItem('profile_avatar');
-        if (cachedAvatar) {
+        if (cachedAvatar && cachedAvatar !== 'null') {
             this.savedAvatarUrl = cachedAvatar;
             this.updateAvatarDisplay();
         }
         
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 2000);
+            
             const response = await fetch(`${this.BACKEND_URL}/api/profile/avatar`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId })
+                body: JSON.stringify({ telegram_id: this.telegramId }),
+                signal: controller.signal
             });
+            
+            clearTimeout(timeoutId);
             
             if (response.ok) {
                 const data = await response.json();
-                if (data.status === 'ok' && data.avatar) {
+                if (data.status === 'ok' && data.avatar && data.avatar !== 'null') {
                     this.savedAvatarUrl = data.avatar;
                     localStorage.setItem('profile_avatar', data.avatar);
                     this.updateAvatarDisplay();
+                    console.log('✅ Аватар загружен');
                 }
             }
         } catch (error) {
@@ -143,7 +265,7 @@ const Profile = {
     updateAvatarDisplay() {
         const avatarDiv = document.getElementById('profileAvatar');
         if (avatarDiv) {
-            if (this.savedAvatarUrl) {
+            if (this.savedAvatarUrl && this.savedAvatarUrl !== 'null') {
                 avatarDiv.innerHTML = `<img src="${this.savedAvatarUrl}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
             } else {
                 avatarDiv.innerHTML = this.savedAvatar;
@@ -236,7 +358,6 @@ const Profile = {
         const steamInput = document.getElementById('steamDisplay');
         const faceitInput = document.getElementById('faceitLinkDisplay');
         
-        // Собираем только те поля, которые изменились
         const updateData = {};
         
         const newNick = this.savedName;
@@ -259,7 +380,6 @@ const Profile = {
             updateData.faceit_link = newFaceit || null;
         }
         
-        // Если ничего не изменилось
         if (Object.keys(updateData).length === 0 && !updateData.nick) {
             this.toggleEditMode();
             this.showToast('Нет изменений');
@@ -270,7 +390,6 @@ const Profile = {
             return;
         }
         
-        // Добавляем telegram_id обязательно
         updateData.telegram_id = this.telegramId;
         
         console.log('📤 Отправка данных:', updateData);
@@ -291,13 +410,11 @@ const Profile = {
             const data = await response.json();
             
             if (response.ok && data.status === 'ok') {
-                // Обновляем сохранённые значения
                 if (updateData.nick) this.savedName = updateData.nick;
                 if (updateData.age !== undefined) this.savedAge = updateData.age || '';
                 if (updateData.steam_link !== undefined) this.savedSteam = updateData.steam_link || '';
                 if (updateData.faceit_link !== undefined) this.savedFaceitLink = updateData.faceit_link || '';
                 
-                // Сохраняем в localStorage
                 localStorage.setItem('profile_nick', this.savedName);
                 localStorage.setItem('profile_age', this.savedAge);
                 localStorage.setItem('profile_steam', this.savedSteam);
@@ -414,7 +531,6 @@ const Profile = {
     },
     
     setupClickHandlers() {
-        // Аватар
         const avatar = document.getElementById('profileAvatar');
         if (avatar) {
             avatar.style.cursor = 'pointer';
@@ -427,20 +543,17 @@ const Profile = {
             };
         }
         
-        // Ник
         const profileName = document.getElementById('profileName');
         if (profileName) {
             profileName.style.cursor = 'pointer';
             profileName.onclick = () => this.editName();
         }
         
-        // Возраст
         const ageCard = document.getElementById('ageCard');
         if (ageCard) {
             ageCard.style.cursor = 'pointer';
             ageCard.onclick = () => this.editAge();
         } else {
-            // Если нет отдельной карточки, вешаем на stat-card
             const ageStatCard = document.querySelector('.stat-card:last-child');
             if (ageStatCard) {
                 ageStatCard.style.cursor = 'pointer';
@@ -448,7 +561,6 @@ const Profile = {
             }
         }
         
-        // Steam
         const steamCard = document.getElementById('steamCard');
         if (steamCard) {
             steamCard.style.cursor = 'pointer';
@@ -461,7 +573,6 @@ const Profile = {
             }
         }
         
-        // Faceit
         const faceitCard = document.getElementById('faceitCard');
         if (faceitCard) {
             faceitCard.style.cursor = 'pointer';
@@ -474,7 +585,6 @@ const Profile = {
             }
         }
         
-        // Стрелка друзей
         const friendsArrow = document.querySelector('.friends-arrow');
         if (friendsArrow) {
             friendsArrow.onclick = () => {
@@ -490,7 +600,6 @@ const Profile = {
         console.log('🚀 Profile.init()');
         this.telegramId = this.getTelegramId();
         
-        // Загружаем из кэша мгновенно
         const cachedNick = localStorage.getItem('profile_nick');
         if (cachedNick) {
             this.savedName = cachedNick;
@@ -500,10 +609,17 @@ const Profile = {
             this.updateDisplay();
         }
         
-        // Асинхронно подгружаем с сервера
+        const cachedAvatar = localStorage.getItem('profile_avatar');
+        if (cachedAvatar && cachedAvatar !== 'null') {
+            this.savedAvatarUrl = cachedAvatar;
+            this.updateAvatarDisplay();
+        }
+        
+        // Загружаем всё параллельно
         setTimeout(() => {
             this.loadProfileFromServer();
             this.loadAvatar();
+            this.loadFriends();
         }, 100);
         
         this.setupClickHandlers();
