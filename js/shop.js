@@ -210,7 +210,7 @@ const Shop = {
                         <div class="case-icon"><img src="${caseItem.imagePath}" alt="${caseItem.name}"></div>
                         <div class="case-info">
                             <div class="case-name">${caseItem.name}</div>
-                            <div class="secret-message">выполняйте задания →</div>
+                            <div class="secret-message">получить сейчас →</div>
                         </div>
                     </div>
                 `;
