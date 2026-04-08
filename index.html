@@ -56,15 +56,13 @@
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
     
-    <!-- ФИНАЛЬНЫЕ ПРАВИЛА ДЛЯ КАРТОЧКИ СВАЙПА (УВЕЛИЧЕННЫЕ) -->
     <style>
-        /* Базовые размеры для больших экранов (шире 500px) */
+        /* Базовые размеры для карточки свайпа */
         .swipe-card {
             width: 420px !important;
             height: 420px !important;
         }
         
-        /* Растягиваем контент на всю высоту */
         .swipe-card-content {
             display: flex !important;
             flex-direction: column !important;
@@ -73,7 +71,6 @@
             flex: 1 !important;
         }
         
-        /* Умеренные расстояния между блоками */
         #swipeModeContent {
             display: flex !important;
             flex-direction: column !important;
@@ -82,7 +79,6 @@
             gap: 14px !important;
         }
         
-        /* Отдельные блоки */
         .swipe-player-row {
             margin-bottom: 0 !important;
         }
@@ -108,7 +104,6 @@
             min-height: auto !important;
         }
         
-        /* Ссылки — увеличиваем для удобного копирования */
         .swipe-link-value {
             font-size: 14px !important;
             padding: 12px 14px !important;
@@ -121,183 +116,66 @@
             background: var(--surface-hover) !important;
         }
         
-        /* От 451px до 500px */
         @media (max-width: 500px) and (min-width: 451px) {
-            .swipe-card {
-                width: 380px !important;
-                height: 380px !important;
-            }
-            .swipe-avatar {
-                width: 70px !important;
-                height: 70px !important;
-            }
-            .swipe-player-nick {
-                font-size: 18px !important;
-            }
-            .swipe-card-content {
-                padding: 16px !important;
-            }
-            #swipeModeContent {
-                gap: 12px !important;
-            }
-            .swipe-link-value {
-                font-size: 13px !important;
-                padding: 10px 12px !important;
-            }
+            .swipe-card { width: 380px !important; height: 380px !important; }
+            .swipe-avatar { width: 70px !important; height: 70px !important; }
+            .swipe-player-nick { font-size: 18px !important; }
+            .swipe-card-content { padding: 16px !important; }
+            #swipeModeContent { gap: 12px !important; }
+            .swipe-link-value { font-size: 13px !important; padding: 10px 12px !important; }
         }
         
-        /* От 401px до 450px */
         @media (max-width: 450px) and (min-width: 401px) {
-            .swipe-card {
-                width: 360px !important;
-                height: 360px !important;
-            }
-            .swipe-avatar {
-                width: 65px !important;
-                height: 65px !important;
-            }
-            .swipe-player-nick {
-                font-size: 17px !important;
-            }
-            .swipe-player-id {
-                font-size: 10px !important;
-            }
-            .swipe-card-content {
-                padding: 14px !important;
-            }
-            #swipeModeContent {
-                gap: 11px !important;
-            }
-            .swipe-stats-row.three-cols .swipe-stat-value {
-                padding: 6px 4px !important;
-                font-size: 13px !important;
-            }
-            .swipe-link-value {
-                font-size: 12px !important;
-                padding: 9px 11px !important;
-            }
-            .swipe-comment-text {
-                font-size: 12px !important;
-                padding: 10px !important;
-            }
+            .swipe-card { width: 360px !important; height: 360px !important; }
+            .swipe-avatar { width: 65px !important; height: 65px !important; }
+            .swipe-player-nick { font-size: 17px !important; }
+            .swipe-player-id { font-size: 10px !important; }
+            .swipe-card-content { padding: 14px !important; }
+            #swipeModeContent { gap: 11px !important; }
+            .swipe-stats-row.three-cols .swipe-stat-value { padding: 6px 4px !important; font-size: 13px !important; }
+            .swipe-link-value { font-size: 12px !important; padding: 9px 11px !important; }
+            .swipe-comment-text { font-size: 12px !important; padding: 10px !important; }
         }
         
-        /* От 351px до 400px */
         @media (max-width: 400px) and (min-width: 351px) {
-            .swipe-card {
-                width: 330px !important;
-                height: 330px !important;
-            }
-            .swipe-avatar {
-                width: 60px !important;
-                height: 60px !important;
-            }
-            .swipe-player-nick {
-                font-size: 16px !important;
-            }
-            .swipe-player-id {
-                font-size: 9px !important;
-            }
-            .swipe-rating-value {
-                font-size: 14px !important;
-            }
-            .swipe-card-content {
-                padding: 12px !important;
-            }
-            #swipeModeContent {
-                gap: 10px !important;
-            }
-            .swipe-stats-row.three-cols .swipe-stat-value {
-                padding: 5px 3px !important;
-                font-size: 12px !important;
-            }
-            .swipe-link-label {
-                font-size: 8px !important;
-            }
-            .swipe-link-value {
-                font-size: 11px !important;
-                padding: 8px 10px !important;
-            }
-            .swipe-comment-text {
-                font-size: 11px !important;
-                padding: 8px !important;
-            }
-            .swipe-timer {
-                font-size: 11px !important;
-                padding: 4px 10px !important;
-                top: 10px !important;
-                left: 10px !important;
-            }
+            .swipe-card { width: 330px !important; height: 330px !important; }
+            .swipe-avatar { width: 60px !important; height: 60px !important; }
+            .swipe-player-nick { font-size: 16px !important; }
+            .swipe-player-id { font-size: 9px !important; }
+            .swipe-rating-value { font-size: 14px !important; }
+            .swipe-card-content { padding: 12px !important; }
+            #swipeModeContent { gap: 10px !important; }
+            .swipe-stats-row.three-cols .swipe-stat-value { padding: 5px 3px !important; font-size: 12px !important; }
+            .swipe-link-label { font-size: 8px !important; }
+            .swipe-link-value { font-size: 11px !important; padding: 8px 10px !important; }
+            .swipe-comment-text { font-size: 11px !important; padding: 8px !important; }
+            .swipe-timer { font-size: 11px !important; padding: 4px 10px !important; top: 10px !important; left: 10px !important; }
         }
         
-        /* Меньше 350px */
         @media (max-width: 350px) {
-            .swipe-card {
-                width: 300px !important;
-                height: 300px !important;
-            }
-            .swipe-avatar {
-                width: 55px !important;
-                height: 55px !important;
-            }
-            .swipe-player-nick {
-                font-size: 15px !important;
-            }
-            .swipe-player-id {
-                font-size: 8px !important;
-            }
-            .swipe-rating-value {
-                font-size: 13px !important;
-            }
-            .swipe-card-content {
-                padding: 11px !important;
-            }
-            #swipeModeContent {
-                gap: 9px !important;
-            }
-            .swipe-stats-row.three-cols {
-                gap: 8px !important;
-            }
-            .swipe-stats-row.three-cols .swipe-stat-value {
-                padding: 5px 3px !important;
-                font-size: 12px !important;
-            }
-            .swipe-link-label {
-                font-size: 8px !important;
-            }
-            .swipe-link-value {
-                font-size: 10px !important;
-                padding: 7px 9px !important;
-            }
-            .swipe-comment-text {
-                font-size: 10px !important;
-                padding: 8px !important;
-            }
-            .swipe-timer {
-                font-size: 10px !important;
-                padding: 3px 8px !important;
-                top: 8px !important;
-                left: 8px !important;
-            }
+            .swipe-card { width: 300px !important; height: 300px !important; }
+            .swipe-avatar { width: 55px !important; height: 55px !important; }
+            .swipe-player-nick { font-size: 15px !important; }
+            .swipe-player-id { font-size: 8px !important; }
+            .swipe-rating-value { font-size: 13px !important; }
+            .swipe-card-content { padding: 11px !important; }
+            #swipeModeContent { gap: 9px !important; }
+            .swipe-stats-row.three-cols { gap: 8px !important; }
+            .swipe-stats-row.three-cols .swipe-stat-value { padding: 5px 3px !important; font-size: 12px !important; }
+            .swipe-link-label { font-size: 8px !important; }
+            .swipe-link-value { font-size: 10px !important; padding: 7px 9px !important; }
+            .swipe-comment-text { font-size: 10px !important; padding: 8px !important; }
+            .swipe-timer { font-size: 10px !important; padding: 3px 8px !important; top: 8px !important; left: 8px !important; }
         }
         
-        /* Дополнительно для планшетов — чуть больше */
         @media (min-width: 768px) and (max-width: 1024px) {
-            .swipe-card {
-                width: 480px !important;
-                height: 480px !important;
-            }
+            .swipe-card { width: 480px !important; height: 480px !important; }
         }
         
-        /* Для очень широких экранов (десктоп) */
         @media (min-width: 1025px) {
-            .swipe-card {
-                width: 520px !important;
-                height: 520px !important;
-            }
+            .swipe-card { width: 520px !important; height: 520px !important; }
         }
         
-        /* Убираем зазоры по краям */
         .swipe-screen .content {
             padding: 0 !important;
             margin: 0 !important;
@@ -314,10 +192,72 @@
             justify-content: center !important;
             align-items: center !important;
         }
+        
+        /* МАГАЗИН С БЛЮРОМ */
+        .shop-blur-container {
+            position: relative;
+            width: 100%;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 24px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        .shop-blur-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background: rgba(26, 29, 36, 0.5);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 85, 0, 0.2);
+        }
+        
+        .shop-coming-soon {
+            position: relative;
+            z-index: 2;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .coming-soon-text {
+            font-size: clamp(24px, 8vw, 42px);
+            font-weight: 800;
+            background: linear-gradient(135deg, #FF5500 0%, #FF8C42 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(255, 85, 0, 0.3);
+            letter-spacing: 2px;
+        }
+        
+        /* Контент магазина под блюром — не кликабельный */
+        .cases-section {
+            filter: blur(8px);
+            pointer-events: none;
+            user-select: none;
+        }
+        
+        /* НАСТРОЙКИ — только друзья на всю ширину */
+        .settings-section .settings-row:first-child,
+        .settings-row[onclick*="Team.showTeamPage"] {
+            width: 100% !important;
+        }
+        
+        /* Скрываем рефералку и инвентарь */
+        .settings-row:has(.settings-row-label:contains("реферальная система")),
+        .settings-row:has(.settings-row-label:contains("инвентарь")) {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
-    <!-- ЛОАДЕР-ОВЕРЛЕЙ -->
     <div id="app-loader">
         <div class="loader-spinner"></div>
     </div>
@@ -411,21 +351,28 @@
                 </div>
             </div>
 
+            <!-- МАГАЗИН С БЛЮРОМ И НАДПИСЬЮ "СКОРО..." -->
             <div id="shopScreen" class="screen shop-screen">
                 <div class="title-row">
                     <div class="title-left"><div class="section-title">Магазин</div></div>
                     <div class="coins-header">Pingcoins: <span id="coinsAmount">99999</span></div>
                 </div>
                 <div class="shop-tabs">
-                    <div class="shop-tab active" onclick="Shop.showTab('cases')">Кейсы</div>
-                    <div class="shop-tab" onclick="Shop.showTab('inventory')" id="inventoryTab">Инвентарь</div>
+                    <div class="shop-tab active">Кейсы</div>
+                    <div class="shop-tab">Инвентарь</div>
                 </div>
-                <div class="cases-section">
-                    <div class="cases-grid">
-                        <div class="case-item"><div class="case-icon"><img data-src="cases/common_case.webp" alt="common case" loading="lazy"></div><div class="case-info"><div class="case-name">Базовый кейс</div><div class="case-price-row"><span class="price-value">100</span><button class="buy-btn-simple" onclick="Shop.buyCase('common_case')">Купить</button></div></div></div>
-                        <div class="case-item"><div class="case-icon"><img data-src="cases/rare_case.webp" alt="rare case" loading="lazy"></div><div class="case-info"><div class="case-name">Редкий кейс</div><div class="case-price-row"><span class="price-value">250</span><button class="buy-btn-simple" onclick="Shop.buyCase('rare_case')">Купить</button></div></div></div>
-                        <div class="case-item"><div class="case-icon"><img data-src="cases/premium_case.webp" alt="premium case" loading="lazy"></div><div class="case-info"><div class="case-name">Легендарный кейс</div><div class="case-price-row"><span class="price-value">500</span><button class="buy-btn-simple" onclick="Shop.buyCase('premium_case')">Купить</button></div></div></div>
-                        <div class="case-item"><div class="case-icon"><img data-src="cases/secret_case.webp" alt="secret case" loading="lazy"></div><div class="case-info"><div class="case-name">Секретный кейс</div><div class="case-price-row"><span class="price-value">1000</span><button class="buy-btn-simple" onclick="Shop.buyCase('secret_case')">Купить</button></div></div></div>
+                <div class="shop-blur-container">
+                    <div class="shop-blur-bg"></div>
+                    <div class="shop-coming-soon">
+                        <div class="coming-soon-text">Скоро...</div>
+                    </div>
+                    <div class="cases-section" style="position: relative; z-index: 1;">
+                        <div class="cases-grid">
+                            <div class="case-item"><div class="case-icon"><img data-src="cases/common_case.webp" alt="common case" loading="lazy"></div><div class="case-info"><div class="case-name">Базовый кейс</div><div class="case-price-row"><span class="price-value">100</span><button class="buy-btn-simple">Купить</button></div></div></div>
+                            <div class="case-item"><div class="case-icon"><img data-src="cases/rare_case.webp" alt="rare case" loading="lazy"></div><div class="case-info"><div class="case-name">Редкий кейс</div><div class="case-price-row"><span class="price-value">250</span><button class="buy-btn-simple">Купить</button></div></div></div>
+                            <div class="case-item"><div class="case-icon"><img data-src="cases/premium_case.webp" alt="premium case" loading="lazy"></div><div class="case-info"><div class="case-name">Легендарный кейс</div><div class="case-price-row"><span class="price-value">500</span><button class="buy-btn-simple">Купить</button></div></div></div>
+                            <div class="case-item"><div class="case-icon"><img data-src="cases/secret_case.webp" alt="secret case" loading="lazy"></div><div class="case-info"><div class="case-name">Секретный кейс</div><div class="case-price-row"><span class="price-value">1000</span><button class="buy-btn-simple">Купить</button></div></div></div>
+                        </div>
                     </div>
                 </div>
                 <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
@@ -451,14 +398,11 @@
                 <div class="team-content" id="teamContent"></div>
             </div>
 
-            <!-- TINDER-STYLE СВАЙП-КАРТОЧКА (JS сам создаст кнопки) -->
             <div id="swipeScreen" class="screen swipe-screen">
                 <div id="swipeContainer" class="swipe-container">
                     <div id="swipeCard" class="swipe-card">
                         <div class="swipe-timer" id="swipeTimer">30с</div>
-                        
                         <div class="swipe-card-content">
-                            <!-- РЕЖИМ 1: СВАЙП (информация об игроке) -->
                             <div id="swipeModeContent">
                                 <div class="swipe-player-row">
                                     <div class="swipe-avatar">
@@ -510,7 +454,6 @@
                                 </div>
                             </div>
                             
-                            <!-- РЕЖИМ 2: ОЖИДАНИЕ (после принятия) -->
                             <div id="waitingModeContent" style="display: none;">
                                 <div class="waiting-avatars">
                                     <div class="waiting-self-avatar">
@@ -539,10 +482,11 @@
                 <div class="swipe-loading"><div class="spinner-small"></div></div>
             </div>
 
+            <!-- НАСТРОЙКИ — ТОЛЬКО ДРУЗЬЯ, БЕЗ РЕФЕРАЛКИ И ИНВЕНТАРЯ -->
             <div id="settingsScreen" class="screen settings-screen">
                 <div class="settings-header"><div class="settings-title">Настройки</div></div>
                 <div class="settings-section"><div class="settings-section-title">ОФОРМЛЕНИЕ</div><div class="settings-row"><span class="settings-row-label">Звук</span><div class="sound-toggle"><span class="sound-option" id="soundOff">выкл</span><span class="sound-separator">/</span><span class="sound-option" id="soundOn">вкл</span></div></div><div class="settings-row"><span class="settings-row-label">тема</span><span class="settings-value">черный</span></div><div class="settings-row"><span class="settings-row-label">язык</span><span class="settings-value">русский</span></div></div>
-                <div class="settings-section"><div class="settings-section-title">ОСНОВНЫЕ</div><div class="settings-row"><span class="settings-row-label">реферальная система</span><span class="settings-arrow">→</span></div><div class="settings-row" onclick="Team.showTeamPage()"><span class="settings-row-label">друзья</span><span class="settings-arrow">→</span></div><div class="settings-row" onclick="App.showScreen('shopScreen', true)"><span class="settings-row-label">инвентарь</span><span class="settings-arrow">→</span></div></div>
+                <div class="settings-section"><div class="settings-section-title">ОСНОВНЫЕ</div><div class="settings-row" onclick="Team.showTeamPage()"><span class="settings-row-label">друзья</span><span class="settings-arrow">→</span></div></div>
                 <div class="settings-section"><div class="settings-section-title">СОЦСЕТИ</div><a href="#" class="settings-row-link"><span class="settings-row-label">TikTok</span><span class="settings-arrow">→</span></a><a href="#" class="settings-row-link"><span class="settings-row-label">Telegram канал</span><span class="settings-arrow">→</span></a></div>
                 <div class="settings-section"><div class="settings-section-title">ПОДДЕРЖКА</div><a href="mailto:support@pingster.com" class="settings-row-link"><span class="settings-row-label">Gmail</span><span class="settings-value">support@pingster.com</span></a><div class="settings-row"><span class="settings-row-label">Telegram</span><span class="settings-value">@pingster_support</span></div></div>
             </div>
@@ -646,7 +590,6 @@
         </nav>
     </div>
 
-    <!-- ЗАГРУЗКА JS С УДАЛЕНИЕМ ЛОАДЕРА -->
     <script>
         (function() {
             const version = window.BUILD_VERSION || Date.now();
@@ -687,11 +630,9 @@
                 });
             }
             
-            // Грузим все скрипты
             Promise.all(jsFiles.map(file => loadScript(file))).then(() => {
                 console.log('🎉 Все скрипты загружены');
                 
-                // Удаляем лоадер после полной загрузки
                 const loader = document.getElementById('app-loader');
                 if (loader) {
                     loader.style.opacity = '0';
@@ -700,7 +641,6 @@
                     }, 300);
                 }
                 
-                // Фоновая загрузка профиля
                 setTimeout(() => {
                     if (window.Profile && !window.Profile.isProfileLoaded) {
                         if (!window.Profile.telegramId) {
@@ -712,7 +652,6 @@
                 }, 200);
             });
             
-            // Защита от кликов до загрузки Team
             document.addEventListener('click', function(e) {
                 const target = e.target.closest('.friends-arrow, [onclick*="Team.showTeamPage"]');
                 if (target && typeof Team === 'undefined') {
@@ -730,7 +669,6 @@
                 }
             });
             
-            // Ленивая загрузка картинок кейсов
             window.loadShopImages = function() {
                 const images = document.querySelectorAll('.case-icon img[data-src]');
                 images.forEach(img => {
