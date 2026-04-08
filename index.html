@@ -5,9 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Pingster — Telegram Mini App</title>
     
+    <!-- ЗАПРЕТ КЭШИРОВАНИЯ HTML -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <script>
-        window.BUILD_VERSION = Date.now();
-        console.log('🔄 Версия сборки:', window.BUILD_VERSION);
+        // ПРИНУДИТЕЛЬНАЯ ОЧИСТКА КЭША ПРИ ЗАГРУЗКЕ
+        (function() {
+            // Версия сборки — меняется при каждом обновлении файла
+            const HTML_VERSION = '20260408_003';
+            const storedVersion = localStorage.getItem('pingster_html_version');
+            
+            if (storedVersion !== HTML_VERSION) {
+                console.log('🔄 Новая версия HTML! Очищаем кэш...');
+                // Очищаем все старые ключи
+                const keysToKeep = ['telegram_id', 'player_id', 'nick', 'pingcoins', 'profile_nick', 'profile_age', 'profile_steam', 'profile_faceit', 'pingster_html_version'];
+                const allKeys = Object.keys(localStorage);
+                allKeys.forEach(key => {
+                    if (!keysToKeep.includes(key)) {
+                        localStorage.removeItem(key);
+                        console.log('🗑️ Удалён ключ:', key);
+                    }
+                });
+                localStorage.setItem('pingster_html_version', HTML_VERSION);
+                console.log('✅ Кэш очищен, версия:', HTML_VERSION);
+            }
+            
+            window.BUILD_VERSION = Date.now();
+            console.log('🔄 Версия сборки:', window.BUILD_VERSION);
+        })();
     </script>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -139,7 +166,7 @@
         @media (max-width: 400px) and (min-width: 351px) {
             .swipe-card { width: 330px !important; height: 330px !important; }
             .swipe-avatar { width: 60px !important; height: 60px !important; }
-            .swipe-player-nick { font-size: 16px !important; }
+            .swipe-player-nick { font-size: 17px !important; }
             .swipe-player-id { font-size: 9px !important; }
             .swipe-rating-value { font-size: 14px !important; }
             .swipe-card-content { padding: 12px !important; }
@@ -245,13 +272,9 @@
             pointer-events: none !important;
         }
         
-        /* ===== НАСТРОЙКИ — ПОЛНОСТЬЮ УДАЛЯЕМ РЕФЕРАЛКУ И ИНВЕНТАРЬ ===== */
-        .settings-section .settings-row:first-child {
-            width: 100% !important;
-        }
-        
-        /* Удаляем строки с рефералкой и инвентарем */
-        .settings-row-hide {
+        /* ===== ПРИНУДИТЕЛЬНОЕ УДАЛЕНИЕ СТАРЫХ СТРОК НАСТРОЕК ЧЕРЕЗ CSS ===== */
+        .settings-row:has(.settings-row-label:contains("реферальная")),
+        .settings-row:has(.settings-row-label:contains("инвентарь")) {
             display: none !important;
         }
     </style>
@@ -321,6 +344,26 @@
                 })
                 .catch(e => console.error('Profile preload error:', e));
             }
+            
+            // ПРИНУДИТЕЛЬНОЕ УДАЛЕНИЕ СТАРЫХ СТРОК НАСТРОЕК
+            setTimeout(function() {
+                console.log('🧹 Очистка устаревших строк настроек...');
+                const allRows = document.querySelectorAll('.settings-row');
+                let deleted = 0;
+                allRows.forEach(row => {
+                    const label = row.querySelector('.settings-row-label');
+                    if (label) {
+                        const text = (label.innerText || '').toLowerCase();
+                        if (text.includes('реферальн') || text.includes('инвентарь')) {
+                            row.remove();
+                            deleted++;
+                            console.log('🗑️ Удалена:', text);
+                        }
+                    }
+                });
+                if (deleted > 0) console.log('✅ Удалено строк:', deleted);
+                else console.log('✅ Устаревших строк не найдено');
+            }, 200);
         })();
     </script>
     
@@ -484,7 +527,7 @@
                 <div class="swipe-loading"><div class="spinner-small"></div></div>
             </div>
 
-            <!-- НАСТРОЙКИ — РЕФЕРАЛКА И ИНВЕНТАРЬ ПОЛНОСТЬЮ УДАЛЕНЫ -->
+            <!-- НАСТРОЙКИ — РЕФЕРАЛКА И ИНВЕНТАРЬ УДАЛЕНЫ -->
             <div id="settingsScreen" class="screen settings-screen">
                 <div class="settings-header"><div class="settings-title">Настройки</div></div>
                 <div class="settings-section"><div class="settings-section-title">ОФОРМЛЕНИЕ</div>
