@@ -36,42 +36,41 @@ const Team = {
             return;
         }
         
-        this.injectScrollStyles();
+        // Добавляем стили скроллбара сразу при инициализации
+        this.injectScrollbarStyles();
         
+        // Предзагрузка в фоне (ускорение)
         setTimeout(() => {
-            if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
+            if (this.telegramId && !this.isFriendsLoaded && !this.isLoadingFriends) {
                 this.loadFriendsList();
             }
-            if (!this.isLeaderboardLoaded && !this.isLoadingLeaderboard && this.telegramId) {
+            if (this.telegramId && !this.isLeaderboardLoaded && !this.isLoadingLeaderboard) {
                 this.loadLeaderboard();
             }
         }, 300);
     },
     
-    injectScrollStyles() {
+    injectScrollbarStyles() {
         if (document.getElementById('team-scroll-styles')) return;
         
         const style = document.createElement('style');
         style.id = 'team-scroll-styles';
         style.textContent = `
-            #teamScreen .friends-list-container::-webkit-scrollbar,
-            #teamScreen .team-list::-webkit-scrollbar {
-                width: 3px !important;
+            /* СТИЛЬНЫЙ ОРАНЖЕВЫЙ СКРОЛЛБАР */
+            .friends-list-container::-webkit-scrollbar {
+                width: 3px;
             }
-            #teamScreen .friends-list-container::-webkit-scrollbar-track,
-            #teamScreen .team-list::-webkit-scrollbar-track {
-                background: #2A2F3A !important;
-                border-radius: 10px !important;
+            .friends-list-container::-webkit-scrollbar-track {
+                background: #2A2F3A;
+                border-radius: 10px;
             }
-            #teamScreen .friends-list-container::-webkit-scrollbar-thumb,
-            #teamScreen .team-list::-webkit-scrollbar-thumb {
-                background: #FF5500 !important;
-                border-radius: 10px !important;
+            .friends-list-container::-webkit-scrollbar-thumb {
+                background: #FF5500;
+                border-radius: 10px;
             }
-            #teamScreen .friends-list-container,
-            #teamScreen .team-list {
-                scrollbar-width: thin !important;
-                scrollbar-color: #FF5500 #2A2F3A !important;
+            .friends-list-container {
+                scrollbar-width: thin;
+                scrollbar-color: #FF5500 #2A2F3A;
             }
         `;
         document.head.appendChild(style);
@@ -121,11 +120,17 @@ const Team = {
         console.log('👥 Загрузка друзей...');
         
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            
             const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId })
+                body: JSON.stringify({ telegram_id: this.telegramId }),
+                signal: controller.signal
             });
+            
+            clearTimeout(timeoutId);
             
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
@@ -170,11 +175,17 @@ const Team = {
         console.log('📥 Загрузка лидерборда...');
         
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            
             const response = await fetch(`${this.BACKEND_URL}/api/users/leaderboard`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId })
+                body: JSON.stringify({ telegram_id: this.telegramId }),
+                signal: controller.signal
             });
+            
+            clearTimeout(timeoutId);
             
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
