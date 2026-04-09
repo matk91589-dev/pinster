@@ -191,94 +191,95 @@
             justify-content: center !important;
             align-items: center !important;
         }
-        
-        /* ===== ПРОФЕССИОНАЛЬНОЕ МОДАЛЬНОЕ ОКНО ===== */
-        .shop-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.25s ease;
-        }
-        
-        .shop-modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .shop-modal {
-            background: var(--surface);
-            border-radius: 24px;
-            width: 260px;
-            max-width: 80%;
-            overflow: hidden;
-            transform: scale(0.92);
-            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid rgba(255, 85, 0, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        }
-        
-        .shop-modal-overlay.active .shop-modal {
-            transform: scale(1);
-        }
-        
-        .shop-modal-header {
-            padding: 20px 20px 0 20px;
-            display: flex;
-            justify-content: flex-end;
-        }
-        
-        .shop-modal-close {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 18px;
-            color: var(--text-secondary);
-        }
-        
-        .shop-modal-close:hover {
-            background: rgba(255, 85, 0, 0.2);
-            color: var(--accent);
-            transform: scale(1.05);
-        }
-        
-        .shop-modal-content {
-            padding: 0 24px 32px 24px;
-            text-align: center;
-        }
-        
-        .shop-modal-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        /* Кейсы видимы и кликабельны, пока не появится модалка */
-        .shop-screen .cases-section {
-            pointer-events: auto;
-        }
     </style>
 </head>
 <body>
     <div id="app-loader">
         <div class="loader-spinner"></div>
     </div>
+    
+    <script>
+        (function() {
+            const version = Date.now();
+            document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+                if (link.href && !link.href.includes('telegram')) {
+                    link.href = link.href.split('?')[0] + '?v=' + version;
+                }
+            });
+            
+            let telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+            if (telegramId) {
+                localStorage.setItem('telegram_id', telegramId);
+                
+                const cachedNick = localStorage.getItem('profile_nick');
+                if (cachedNick) {
+                    setTimeout(() => {
+                        const nameEl = document.getElementById('profileName');
+                        if (nameEl && nameEl.textContent === '-') {
+                            nameEl.textContent = cachedNick;
+                        }
+                        const ageEl = document.getElementById('ageValue');
+                        if (ageEl && !ageEl.value) {
+                            ageEl.value = localStorage.getItem('profile_age') || '';
+                        }
+                        const steamEl = document.getElementById('steamDisplay');
+                        if (steamEl && !steamEl.value) {
+                            steamEl.value = localStorage.getItem('profile_steam') || '';
+                        }
+                        const faceitEl = document.getElementById('faceitLinkDisplay');
+                        if (faceitEl && !faceitEl.value) {
+                            faceitEl.value = localStorage.getItem('profile_faceit') || '';
+                        }
+                    }, 50);
+                }
+                
+                fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/profile/get', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegram_id: telegramId })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        if (data.nick) localStorage.setItem('profile_nick', data.nick);
+                        if (data.age) localStorage.setItem('profile_age', data.age);
+                        if (data.steam_link) localStorage.setItem('profile_steam', data.steam_link);
+                        if (data.faceit_link) localStorage.setItem('profile_faceit', data.faceit_link);
+                        
+                        const nameEl = document.getElementById('profileName');
+                        if (nameEl) nameEl.textContent = data.nick || '-';
+                        const ageEl = document.getElementById('ageValue');
+                        if (ageEl) ageEl.value = data.age || '';
+                        const steamEl = document.getElementById('steamDisplay');
+                        if (steamEl) steamEl.value = data.steam_link || '';
+                        const faceitEl = document.getElementById('faceitLinkDisplay');
+                        if (faceitEl) faceitEl.value = data.faceit_link || '';
+                    }
+                })
+                .catch(e => console.error('Profile preload error:', e));
+            }
+            
+            // Принудительное удаление старых строк настроек
+            setTimeout(function() {
+                console.log('🧹 Очистка устаревших строк настроек...');
+                const allRows = document.querySelectorAll('.settings-row');
+                let deleted = 0;
+                allRows.forEach(row => {
+                    const label = row.querySelector('.settings-row-label');
+                    if (label) {
+                        const text = (label.innerText || '').toLowerCase();
+                        if (text.includes('реферальн') || text.includes('инвентарь')) {
+                            row.remove();
+                            deleted++;
+                            console.log('🗑️ Удалена:', text);
+                        }
+                    }
+                });
+                if (deleted > 0) console.log('✅ Удалено строк:', deleted);
+                else console.log('✅ Устаревших строк не найдено');
+            }, 200);
+        })();
+    </script>
     
     <div class="phone-frame">
         
@@ -304,29 +305,6 @@
                     <button class="mode-btn prime" onclick="App.showScreen('primeScreen', false)">PRIME</button>
                     <button class="mode-btn public" onclick="App.showScreen('publicScreen', false)">PUBLIC</button>
                 </div>
-            </div>
-
-            <!-- МАГАЗИН -->
-            <div id="shopScreen" class="screen shop-screen">
-                <div class="title-row">
-                    <div class="title-left"><div class="section-title">Магазин</div></div>
-                    <div class="coins-header">Pingcoins: <span id="coinsAmount">99999</span></div>
-                </div>
-                
-                <div class="shop-tabs">
-                    <div class="shop-tab active">Кейсы</div>
-                    <div class="shop-tab">Инвентарь</div>
-                </div>
-                
-                <div class="cases-section">
-                    <div class="cases-grid">
-                        <div class="case-item"><div class="case-icon"><img data-src="cases/common_case.webp" alt="common case" loading="lazy"></div><div class="case-info"><div class="case-name">Базовый кейс</div><div class="case-price-row"><span class="price-value">100</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                        <div class="case-item"><div class="case-icon"><img data-src="cases/rare_case.webp" alt="rare case" loading="lazy"></div><div class="case-info"><div class="case-name">Редкий кейс</div><div class="case-price-row"><span class="price-value">250</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                        <div class="case-item"><div class="case-icon"><img data-src="cases/premium_case.webp" alt="premium case" loading="lazy"></div><div class="case-info"><div class="case-name">Легендарный кейс</div><div class="case-price-row"><span class="price-value">500</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                        <div class="case-item"><div class="case-icon"><img data-src="cases/secret_case.webp" alt="secret case" loading="lazy"></div><div class="case-info"><div class="case-name">Секретный кейс</div><div class="case-price-row"><span class="price-value">1000</span><button class="buy-btn-simple">Купить</button></div></div></div>
-                    </div>
-                </div>
-                <div class="inventory-section hidden"><div class="inventory-grid"></div></div>
             </div>
 
             <div id="profileScreen" class="screen profile-screen">
@@ -547,79 +525,18 @@
         </main>
 
         <nav class="bottom-nav">
-            <div class="nav-item active" onclick="App.showScreen('mainScreen', true)" id="navMain"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span><span class="nav-label">Главная</span></div>
-            <div class="nav-item" onclick="Shop.showModal()" id="navShop"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg></span><span class="nav-label">Магазин</span></div>
-            <div class="nav-item" onclick="App.showScreen('profileScreen', true)" id="navProfile"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span><span class="nav-label">Профиль</span></div>
+            <div class="nav-item active" onclick="App.showScreen('mainScreen', true)" id="navMain">
+                <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
+                <span class="nav-label">Главная</span>
+            </div>
+            <div class="nav-item" onclick="App.showScreen('profileScreen', true)" id="navProfile">
+                <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
+                <span class="nav-label">Профиль</span>
+            </div>
         </nav>
     </div>
 
-    <!-- ПРОФЕССИОНАЛЬНОЕ МОДАЛЬНОЕ ОКНО -->
-    <div id="shopModal" class="shop-modal-overlay">
-        <div class="shop-modal">
-            <div class="shop-modal-header">
-                <div class="shop-modal-close" onclick="Shop.closeModal()">✕</div>
-            </div>
-            <div class="shop-modal-content">
-                <div class="shop-modal-title">Магазин в разработке</div>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // ===== МОДАЛЬНОЕ ОКНО ДЛЯ МАГАЗИНА =====
-        window.Shop = window.Shop || {};
-        
-        let modalShown = false;
-        
-        Shop.showModal = function() {
-            // Открываем экран магазина
-            if (window.App && typeof App.showScreen === 'function') {
-                App.showScreen('shopScreen', true);
-            } else {
-                const checkApp = setInterval(() => {
-                    if (window.App && typeof App.showScreen === 'function') {
-                        clearInterval(checkApp);
-                        App.showScreen('shopScreen', true);
-                    }
-                }, 50);
-                setTimeout(() => clearInterval(checkApp), 3000);
-            }
-            
-            modalShown = false;
-            
-            setTimeout(() => {
-                if (!modalShown) {
-                    const modal = document.getElementById('shopModal');
-                    if (modal) {
-                        modal.classList.add('active');
-                        modalShown = true;
-                        if (window.Settings && window.Settings.click) Settings.click();
-                    }
-                }
-            }, 500);
-        };
-        
-        Shop.closeModal = function() {
-            const modal = document.getElementById('shopModal');
-            if (modal) {
-                modal.classList.remove('active');
-            }
-            modalShown = false;
-        };
-        
-        // Перехватываем навигацию для закрытия модалки
-        if (window.App) {
-            const originalShowScreen = window.App.showScreen;
-            window.App.showScreen = function(screenId, updateNav) {
-                const modal = document.getElementById('shopModal');
-                if (modal && modal.classList.contains('active')) {
-                    modal.classList.remove('active');
-                    modalShown = false;
-                }
-                originalShowScreen.call(window.App, screenId, updateNav);
-            };
-        }
-        
         (function() {
             const version = window.BUILD_VERSION || Date.now();
             
@@ -631,6 +548,7 @@
                 'js/profile.js',
                 'js/avatar.js',
                 'js/friends.js',
+                'js/shop.js',
                 'js/search.js',
                 'js/logo.js',
                 'js/team.js',
@@ -693,6 +611,24 @@
                     setTimeout(() => clearInterval(checkTeam), 5000);
                 }
             });
+            
+            window.loadShopImages = function() {
+                const images = document.querySelectorAll('.case-icon img[data-src]');
+                images.forEach(img => {
+                    if (img.dataset.src && !img.src) {
+                        const observer = new IntersectionObserver((entries) => {
+                            entries.forEach(entry => {
+                                if (entry.isIntersecting) {
+                                    img.src = img.dataset.src + '?v=' + version;
+                                    img.onload = () => img.classList.add('loaded');
+                                    observer.unobserve(img);
+                                }
+                            });
+                        });
+                        observer.observe(img);
+                    }
+                });
+            };
         })();
     </script>
 </body>
