@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ (фикс экрана ожидания)
+// СВАЙП-КАРТОЧКИ - ПОЛНОСТЬЮ РАБОЧАЯ ВЕРСИЯ
 // ============================================
 
 const Swipe = {
@@ -59,14 +59,14 @@ const Swipe = {
         this.loading = document.getElementById('swipeLoading');
         this.labelLeft = document.getElementById('swipeLabelLeft');
         this.labelRight = document.getElementById('swipeLabelRight');
-        
-        this.createCardWrapper();
+        this.timerElement = document.getElementById('swipeTimer');
         
         if (!this.card) {
             console.error('❌ Swipe card not found!');
             return;
         }
         
+        this.createCardWrapper();
         this.blockScroll();
         this.showHintOnce();
         
@@ -78,7 +78,6 @@ const Swipe = {
         }
         
         this.initResizeObserver();
-        
         this.showSwipeMode();
         
         console.log('✅ Swipe.init() завершён');
@@ -104,6 +103,7 @@ const Swipe = {
         const originalCard = document.getElementById('swipeCard');
         if (!originalCard) return;
         
+        // Удаляем старый wrapper если есть
         const oldWrapper = document.querySelector('.swipe-card-wrapper');
         if (oldWrapper) {
             const parent = oldWrapper.parentNode;
@@ -114,6 +114,7 @@ const Swipe = {
             }
         }
         
+        // Создаём новый wrapper
         const wrapper = document.createElement('div');
         wrapper.className = 'swipe-card-wrapper';
         wrapper.style.position = 'relative';
@@ -132,13 +133,16 @@ const Swipe = {
     createSideButtonsInWrapper() {
         if (!this.cardWrapper) return;
         
+        // Удаляем старые кнопки
         const oldBtns = this.cardWrapper.querySelectorAll('.swipe-side-btn');
         oldBtns.forEach(btn => btn.remove());
         
+        // Создаём левую кнопку (скип)
         const leftWrapper = document.createElement('div');
         leftWrapper.className = 'swipe-side-btn skip-btn';
         leftWrapper.innerHTML = '<div class="swipe-side-btn-inner"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#FF5E5E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
         
+        // Создаём правую кнопку (инвайт)
         const rightWrapper = document.createElement('div');
         rightWrapper.className = 'swipe-side-btn invite-btn';
         rightWrapper.innerHTML = '<div class="swipe-side-btn-inner"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18L15 12L9 6" stroke="#4CAF50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
@@ -149,6 +153,7 @@ const Swipe = {
         this.skipBtn = leftWrapper;
         this.inviteBtn = rightWrapper;
         
+        // Добавляем обработчики кликов
         this.skipBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             this.onSideButtonClick('skip');
@@ -159,15 +164,23 @@ const Swipe = {
             this.onSideButtonClick('invite');
         });
         
+        // Показываем кнопки после создания
         setTimeout(() => {
-            if (this.skipBtn) this.skipBtn.classList.add('visible');
-            if (this.inviteBtn) this.inviteBtn.classList.add('visible');
+            if (this.skipBtn) {
+                this.skipBtn.classList.add('visible');
+                this.skipBtn.style.display = 'flex';
+            }
+            if (this.inviteBtn) {
+                this.inviteBtn.classList.add('visible');
+                this.inviteBtn.style.display = 'flex';
+            }
             this.updateButtonsPosition();
         }, 50);
     },
     
     updateButtonsPosition() {
         if (!this.skipBtn || !this.inviteBtn || !this.card) return;
+        if (this.isWaitingMode) return; // Не обновляем позицию в режиме ожидания
         
         const cardRect = this.card.getBoundingClientRect();
         const cardHeight = cardRect.height;
@@ -240,11 +253,6 @@ const Swipe = {
         });
     },
     
-    pulseButton(btn) {
-        btn.classList.add('pulse');
-        setTimeout(() => btn.classList.remove('pulse'), 200);
-    },
-    
     onSideButtonClick(action) {
         if (this.isWaitingMode) return;
         
@@ -308,52 +316,77 @@ const Swipe = {
     },
     
     showSwipeMode() {
+        console.log('📱 showSwipeMode() called');
+        
         const swipeContent = document.getElementById('swipeModeContent');
         const waitingContent = document.getElementById('waitingModeContent');
         
         if (swipeContent) swipeContent.style.display = 'block';
         if (waitingContent) waitingContent.style.display = 'none';
         
-        // ПОФИКСЕНО: Показываем контейнер со свайп-карточкой
+        // Принудительно показываем карточку и все элементы
         if (this.cardWrapper) {
             this.cardWrapper.style.display = 'inline-block';
             this.cardWrapper.style.visibility = 'visible';
             this.cardWrapper.style.opacity = '1';
+            this.cardWrapper.style.pointerEvents = 'auto';
+            console.log('✅ cardWrapper shown');
         }
         
         if (this.card) {
             this.card.style.display = 'block';
             this.card.style.visibility = 'visible';
+            this.card.style.opacity = '1';
         }
         
         if (this.skipBtn) {
             this.skipBtn.style.display = 'flex';
             this.skipBtn.style.visibility = 'visible';
+            this.skipBtn.style.pointerEvents = 'auto';
         }
         if (this.inviteBtn) {
             this.inviteBtn.style.display = 'flex';
             this.inviteBtn.style.visibility = 'visible';
+            this.inviteBtn.style.pointerEvents = 'auto';
+        }
+        
+        if (this.hint) {
+            this.hint.style.display = '';
+            this.hint.style.visibility = '';
+        }
+        
+        if (this.timerElement) {
+            this.timerElement.style.display = 'flex';
         }
         
         this.isWaitingMode = false;
         
-        const timerElement = document.getElementById('swipeTimer');
-        if (timerElement) timerElement.style.display = 'flex';
+        // Сбрасываем трансформацию
+        if (this.cardWrapper) {
+            this.cardWrapper.style.transition = '';
+            this.cardWrapper.style.transform = 'translateX(0) rotate(0deg) scale(1)';
+        }
+        
+        // Обновляем позицию кнопок
+        setTimeout(() => this.updateButtonsPosition(), 100);
     },
     
     showWaitingMode() {
+        console.log('⏳ showWaitingMode() called');
+        
         const swipeContent = document.getElementById('swipeModeContent');
         const waitingContent = document.getElementById('waitingModeContent');
         
         if (swipeContent) swipeContent.style.display = 'none';
         if (waitingContent) waitingContent.style.display = 'block';
         
-        // ПОФИКСЕНО: ПОЛНОСТЬЮ СКРЫВАЕМ свайп-карточку и все её элементы
+        // Полностью скрываем всё, что связано со свайпом
         if (this.cardWrapper) {
             this.cardWrapper.style.display = 'none';
             this.cardWrapper.style.visibility = 'hidden';
             this.cardWrapper.style.opacity = '0';
             this.cardWrapper.style.pointerEvents = 'none';
+            console.log('✅ cardWrapper hidden');
         }
         
         if (this.card) {
@@ -372,25 +405,16 @@ const Swipe = {
             this.inviteBtn.style.pointerEvents = 'none';
         }
         
-        // Дополнительно скрываем hint и таймер
         if (this.hint) {
             this.hint.style.display = 'none';
             this.hint.style.visibility = 'hidden';
         }
         
-        const timerElement = document.getElementById('swipeTimer');
-        if (timerElement) {
-            timerElement.style.display = 'none';
+        if (this.timerElement) {
+            this.timerElement.style.display = 'none';
         }
         
         this.isWaitingMode = true;
-        
-        if (this.cardWrapper) {
-            this.cardWrapper.style.transition = '';
-            this.cardWrapper.style.transform = 'translateX(0) rotate(0deg) scale(1)';
-        }
-        
-        if (this.card) this.card.style.opacity = '1';
     },
     
     startSwipeHint() {
@@ -426,6 +450,8 @@ const Swipe = {
     },
     
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
+        console.log('🎮 startWithOpponent()', opponent, matchId);
+        
         if (!this.isInitialized) {
             this.init(opponent.mode || 'FACEIT');
         }
@@ -447,10 +473,12 @@ const Swipe = {
             this.card = document.getElementById('swipeCard');
             
             if (!this.card) {
+                console.log('⏳ Ждём появления карточки...');
                 setTimeout(checkCard, 50);
                 return;
             }
             
+            console.log('✅ Карточка найдена, запускаем');
             this._executeStartWithOpponent();
         };
         
@@ -493,7 +521,7 @@ const Swipe = {
         if (this.loading) this.loading.classList.remove('active');
         
         this.resetCardPosition();
-        this.showSwipeMode();
+        this.showSwipeMode(); // Важно: сначала показываем режим свайпа
         this.showPlayer(opponent);
         this.startCardTimer();
         this.blockScroll();
@@ -521,15 +549,17 @@ const Swipe = {
             this.cardTimerInterval = null;
         }
         
-        const timerElement = document.getElementById('swipeTimer');
-        if (!timerElement) return;
+        if (!this.timerElement) {
+            this.timerElement = document.getElementById('swipeTimer');
+            if (!this.timerElement) return;
+        }
         
         const updateTimer = () => {
             const timeLeft = this.getTimeLeft();
-            timerElement.innerHTML = timeLeft + 'с';
+            this.timerElement.innerHTML = timeLeft + 'с';
             
             if (timeLeft <= 0) {
-                timerElement.classList.add('warning');
+                this.timerElement.classList.add('warning');
                 clearInterval(this.cardTimerInterval);
                 this.cardTimerInterval = null;
                 this.exitSwipeMode('таймер истек');
@@ -537,9 +567,9 @@ const Swipe = {
             }
             
             if (timeLeft < 10) {
-                timerElement.classList.add('warning');
+                this.timerElement.classList.add('warning');
             } else {
-                timerElement.classList.remove('warning');
+                this.timerElement.classList.remove('warning');
             }
         };
         
@@ -717,6 +747,8 @@ const Swipe = {
     },
     
     acceptPlayer() {
+        console.log('✅ acceptPlayer() called');
+        
         if (window.Settings && window.Settings.success) window.Settings.success();
         
         if (this.cardTimerInterval) {
@@ -747,6 +779,7 @@ const Swipe = {
             this.startMatchStatusPolling(this.currentMatchId);
         })
         .catch(error => {
+            console.error('Accept error:', error);
             setTimeout(() => {
                 this.exitSwipeMode('acceptError');
             }, 1000);
@@ -845,6 +878,8 @@ const Swipe = {
     },
     
     rejectPlayer() {
+        console.log('❌ rejectPlayer() called');
+        
         if (window.Settings && window.Settings.error) window.Settings.error();
         
         if (this.cardTimerInterval) {
@@ -971,39 +1006,46 @@ const Swipe = {
     },
     
     showPlayer(player) {
+        console.log('👤 showPlayer()', player);
         this.currentPlayer = player;
         
-        if (!this.isWaitingMode) {
-            this.resetCardPosition();
-            
-            document.getElementById('swipePlayerId').textContent = player.player_id || '';
-            document.getElementById('swipePlayerNick').textContent = player.nick || '';
-            document.getElementById('swipeRatingValue').textContent = player.trust_rating || '0';
-            
-            const modeFromDB = this.mode ? this.mode.toUpperCase() : null;
-            
-            const rankEl = document.getElementById('swipeRank');
-            if (rankEl) {
-                if (modeFromDB === 'FACEIT') rankEl.textContent = player.rating || '0';
-                else if (modeFromDB === 'PREMIER') rankEl.textContent = player.rating || '0';
-                else rankEl.textContent = player.rank || '—';
-            }
-            
-            document.getElementById('swipeAge').textContent = player.age ? player.age + ' лет' : '';
-            
-            const styleEl = document.getElementById('swipeStyle');
-            if (styleEl) {
-                styleEl.textContent = player.style === 'fan' ? 'Fan' : 'Tryhard';
-            }
-            
-            document.getElementById('swipeSteamLink').textContent = player.steam_link || '';
-            document.getElementById('swipeFaceitLink').textContent = player.faceit_link || '';
-            document.getElementById('swipeComment').textContent = player.comment || '';
-            
-            this.updateAvatar(player);
-            this.updateLinksVisibility();
+        // Обновляем данные на карточке
+        const playerIdEl = document.getElementById('swipePlayerId');
+        const playerNickEl = document.getElementById('swipePlayerNick');
+        const ratingEl = document.getElementById('swipeRatingValue');
+        const rankEl = document.getElementById('swipeRank');
+        const ageEl = document.getElementById('swipeAge');
+        const styleEl = document.getElementById('swipeStyle');
+        const steamLinkEl = document.getElementById('swipeSteamLink');
+        const faceitLinkEl = document.getElementById('swipeFaceitLink');
+        const commentEl = document.getElementById('swipeComment');
+        
+        if (playerIdEl) playerIdEl.textContent = player.player_id || '';
+        if (playerNickEl) playerNickEl.textContent = player.nick || '';
+        if (ratingEl) ratingEl.textContent = player.trust_rating || '0';
+        
+        const modeFromDB = this.mode ? this.mode.toUpperCase() : null;
+        
+        if (rankEl) {
+            if (modeFromDB === 'FACEIT') rankEl.textContent = player.rating || '0';
+            else if (modeFromDB === 'PREMIER') rankEl.textContent = player.rating || '0';
+            else rankEl.textContent = player.rank || '—';
         }
         
+        if (ageEl) ageEl.textContent = player.age ? player.age + ' лет' : '';
+        
+        if (styleEl) {
+            styleEl.textContent = player.style === 'fan' ? 'Fan' : 'Tryhard';
+        }
+        
+        if (steamLinkEl) steamLinkEl.textContent = player.steam_link || '';
+        if (faceitLinkEl) faceitLinkEl.textContent = player.faceit_link || '';
+        if (commentEl) commentEl.textContent = player.comment || '';
+        
+        this.updateAvatar(player);
+        this.updateLinksVisibility();
+        
+        // Обновляем ник в режиме ожидания
         const waitingNick = document.getElementById('waitingTeammateNick');
         if (waitingNick) waitingNick.textContent = player.nick || 'Игрок';
         
@@ -1150,6 +1192,7 @@ const Swipe = {
     }
 };
 
+// Инициализация при загрузке DOM
 document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Swipe: DOM загружен');
     window.Swipe = Swipe;
@@ -1169,6 +1212,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Если экран уже активен при загрузке
 if (document.getElementById('swipeScreen') && document.getElementById('swipeScreen').classList.contains('active')) {
     setTimeout(function() {
         if (!Swipe.isInitialized) {
