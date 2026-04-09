@@ -199,7 +199,7 @@ const Team = {
         let html = `
             <div class="friends-search">
                 <input type="search" id="friendsSearchInput" class="friends-search-input" 
-                       placeholder="поиск: введите id или ник друга" autocomplete="off">
+                       placeholder="поиск: введите id или ник тиммейта" autocomplete="off">
             </div>
             <div class="friends-list-container" id="friendsTabList">
         `;
@@ -422,7 +422,7 @@ const Team = {
     },
     
     showFriendProfile(playerId) {
-        if (window.App) App.showAlert(`Профиль друга ${playerId}\n(функция в разработке)`);
+        if (window.App) App.showAlert(`Профиль тиммейта ${playerId}\n(функция в разработке)`);
     },
     
     showPlayerProfile(playerId) {
