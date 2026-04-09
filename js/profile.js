@@ -81,14 +81,14 @@ const Profile = {
                 this.friendsList = data.friends;
                 this.isFriendsLoaded = true;
                 this.updateFriendsDisplay();
-                console.log('✅ Друзья загружены:', this.friendsList.length);
+                console.log('✅ Тиммейты загружены:', this.friendsList.length);
             } else {
                 this.friendsList = [];
                 this.isFriendsLoaded = true;
                 this.updateFriendsDisplay();
             }
         } catch (error) {
-            console.error('Ошибка загрузки друзей:', error);
+            console.error('Ошибка загрузки тиммейтов:', error);
             this.friendsList = [];
             this.isFriendsLoaded = true;
             this.updateFriendsDisplay();
@@ -103,10 +103,10 @@ const Profile = {
         
         const friendsTitle = document.querySelector('.friends-title');
         if (friendsTitle) {
-            friendsTitle.textContent = 'Ваши друзья:';
+            friendsTitle.textContent = 'Ваши тиммейты:';
         }
         
-        friendsListEl.innerHTML = '<div class="empty-friends"><div class="empty-friends-text">загрузка друзей...</div></div>';
+        friendsListEl.innerHTML = '<div class="empty-friends"><div class="empty-friends-text">загрузка тиммейтов...</div></div>';
     },
     
     updateFriendsDisplay() {
@@ -115,7 +115,7 @@ const Profile = {
         
         const friendsTitle = document.querySelector('.friends-title');
         if (friendsTitle) {
-            friendsTitle.textContent = `Ваши друзья: ${this.friendsList.length}`;
+            friendsTitle.textContent = `Ваши тиммейты: ${this.friendsList.length}`;
         }
         
         if (!this.friendsList.length) {
@@ -159,13 +159,13 @@ const Profile = {
     },
     
     getFriendsWord(count) {
-        if (count % 10 === 1 && count % 100 !== 11) return 'друг';
-        if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) return 'друга';
-        return 'друзей';
+        if (count % 10 === 1 && count % 100 !== 11) return 'тиммейт';
+        if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) return 'тиммейта';
+        return 'тиммейтов';
     },
     
     showFriendProfile(playerId) {
-        this.showToast(`Профиль друга ID: ${playerId}`);
+        this.showToast(`Профиль тиммейта ID: ${playerId}`);
     },
     
     showAllFriends() {
