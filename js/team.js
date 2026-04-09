@@ -50,6 +50,16 @@ const Team = {
     showTeamPage() {
         console.log('showTeamPage called');
         
+        // 🔥 ВСЕГДА СБРАСЫВАЕМ НА ВКЛАДКУ "ДРУЗЬЯ"
+        this.currentTab = 'friends';
+        
+        // Обновляем активную вкладку в UI
+        document.querySelectorAll('.team-tab').forEach(t => {
+            t.classList.remove('active');
+        });
+        const friendsTab = document.querySelector('.team-tab:first-child');
+        if (friendsTab) friendsTab.classList.add('active');
+        
         // Используем App.showScreen для правильного обновления навигации
         if (window.App && App.showScreen) {
             App.showScreen('teamScreen', true);
@@ -73,16 +83,10 @@ const Team = {
             this.currentPlayerId = localStorage.getItem('player_id');
         }
         
-        if (this.currentTab === 'friends') {
-            this.renderFriendsTab();
-            if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
-                this.loadFriendsList();
-            }
-        } else {
-            this.renderLeaderboardTab();
-            if (!this.isLeaderboardLoaded && !this.isLoadingLeaderboard && this.telegramId) {
-                this.loadLeaderboard();
-            }
+        // Всегда показываем друзей
+        this.renderFriendsTab();
+        if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
+            this.loadFriendsList();
         }
     },
     
@@ -110,26 +114,19 @@ const Team = {
                 this.filteredFriends = [...this.friendsList];
                 this.isFriendsLoaded = true;
                 console.log('✅ Друзья загружены:', this.friendsList.length);
-                
-                if (this.currentTab === 'friends') {
-                    this.renderFriendsTab();
-                }
+                this.renderFriendsTab();
             } else {
                 this.friendsList = [];
                 this.filteredFriends = [];
                 this.isFriendsLoaded = true;
-                if (this.currentTab === 'friends') {
-                    this.renderFriendsTab();
-                }
+                this.renderFriendsTab();
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки друзей:', error);
             this.friendsList = [];
             this.filteredFriends = [];
             this.isFriendsLoaded = true;
-            if (this.currentTab === 'friends') {
-                this.renderFriendsTab();
-            }
+            this.renderFriendsTab();
         } finally {
             this.isLoadingFriends = false;
         }
@@ -159,26 +156,16 @@ const Team = {
                 this.filteredLeaderboard = [...this.leaderboard];
                 this.isLeaderboardLoaded = true;
                 console.log('✅ Лидерборд загружен:', this.leaderboard.length);
-                
-                if (this.currentTab === 'leaderboard') {
-                    this.renderLeaderboardTab();
-                }
             } else {
                 this.leaderboard = [];
                 this.filteredLeaderboard = [];
                 this.isLeaderboardLoaded = true;
-                if (this.currentTab === 'leaderboard') {
-                    this.renderLeaderboardTab();
-                }
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки лидерборда:', error);
             this.leaderboard = [];
             this.filteredLeaderboard = [];
             this.isLeaderboardLoaded = true;
-            if (this.currentTab === 'leaderboard') {
-                this.renderLeaderboardTab();
-            }
         } finally {
             this.isLoadingLeaderboard = false;
         }
