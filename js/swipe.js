@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ РАБОЧАЯ ВЕРСИЯ
+// СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ РАБОЧАЯ ВЕРСИЯ С ФИКСОМ ЭКРАНА ОЖИДАНИЯ
 // ============================================
 
 const Swipe = {
@@ -93,7 +93,7 @@ const Swipe = {
     forceShowSwipeMode() {
         console.log('🔧 forceShowSwipeMode()');
         
-        // Принудительно показываем контент свайпа
+        // Показываем контент свайпа, скрываем ожидание
         const swipeContent = document.getElementById('swipeModeContent');
         const waitingContent = document.getElementById('waitingModeContent');
         
@@ -106,7 +106,7 @@ const Swipe = {
             waitingContent.style.visibility = 'hidden';
         }
         
-        // Показываем карточку
+        // ПОКАЗЫВАЕМ КАРТОЧКУ (НЕ СКРЫВАЕМ!)
         if (this.card) {
             this.card.style.display = 'block';
             this.card.style.visibility = 'visible';
@@ -392,6 +392,7 @@ const Swipe = {
         const swipeContent = document.getElementById('swipeModeContent');
         const waitingContent = document.getElementById('waitingModeContent');
         
+        // Переключаем контент внутри карточки
         if (swipeContent) {
             swipeContent.style.display = 'none';
             swipeContent.style.visibility = 'hidden';
@@ -401,14 +402,14 @@ const Swipe = {
             waitingContent.style.visibility = 'visible';
         }
         
-        // Скрываем карточку и кнопки
-        if (this.cardWrapper) {
-            this.cardWrapper.style.display = 'none';
-            this.cardWrapper.style.visibility = 'hidden';
-            this.cardWrapper.style.opacity = '0';
-            this.cardWrapper.style.pointerEvents = 'none';
+        // НЕ СКРЫВАЕМ КАРТОЧКУ! Просто меняем её содержимое
+        if (this.card) {
+            this.card.style.display = 'block';
+            this.card.style.visibility = 'visible';
+            this.card.style.opacity = '1';
         }
         
+        // Скрываем только кнопки свайпа
         if (this.skipBtn) {
             this.skipBtn.style.display = 'none';
             this.skipBtn.style.visibility = 'hidden';
@@ -420,11 +421,35 @@ const Swipe = {
             this.inviteBtn.style.pointerEvents = 'none';
         }
         
+        // Скрываем таймер свайпа
         if (this.timerElement) {
             this.timerElement.style.display = 'none';
         }
         
         this.isWaitingMode = true;
+        
+        // Запускаем таймер ожидания
+        this.startWaitingTimer();
+    },
+    
+    startWaitingTimer() {
+        let timeLeft = 30;
+        const waitingTimerEl = document.getElementById('waitingTimer');
+        
+        if (!waitingTimerEl) return;
+        
+        if (this.connectionTimer) clearInterval(this.connectionTimer);
+        
+        this.connectionTimer = setInterval(() => {
+            timeLeft--;
+            if (waitingTimerEl) waitingTimerEl.textContent = timeLeft + 'с';
+            
+            if (timeLeft <= 0) {
+                clearInterval(this.connectionTimer);
+                this.connectionTimer = null;
+                this.connectionTimeout();
+            }
+        }, 1000);
     },
     
     startSwipeHint() {
@@ -1058,6 +1083,14 @@ const Swipe = {
         // Обновляем ник в режиме ожидания
         const waitingNick = document.getElementById('waitingTeammateNick');
         if (waitingNick) waitingNick.textContent = player.nick || 'Игрок';
+        
+        // Обновляем аватар в режиме ожидания
+        const waitingAvatar = document.querySelector('.waiting-teammate-avatar .tg-avatar-svg');
+        if (waitingAvatar) {
+            if (player.avatar && player.avatar !== 'null' && player.avatar !== '') {
+                waitingAvatar.innerHTML = '<img src="' + player.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:50%;">';
+            }
+        }
         
         setTimeout(() => this.adjustCardSize(), 50);
     },
