@@ -49,6 +49,11 @@
         .loader-spinner.hidden {
             display: none;
         }
+        
+        /* Активная иконка настроек */
+        .icon-settings.active svg {
+            stroke: #FF5500 !important;
+        }
     </style>
     
     <link rel="stylesheet" href="css/style.css">
@@ -310,7 +315,16 @@
             <div id="profileScreen" class="screen profile-screen">
                 <div class="title-row"><div class="title-left"><div class="section-title">Ваш профиль</div><div class="edit-controls"><div id="editToggle" class="edit-title-icon" onclick="Profile.toggleEditMode()"><svg viewBox="0 0 24 24"><path d="M12 20h9" stroke="white" stroke-width="2"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="white" stroke-width="2"/></svg></div><div id="applyBtn" class="apply-btn" onclick="Profile.applyChanges()">Применить</div></div></div></div>
                 <div class="profile-header"><div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()"><div class="tg-avatar-svg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#ffffff" stroke-width="2" fill="none"/></svg></div></div><div class="profile-info"><div class="profile-name-label">ваш никнейм</div><div class="profile-name-row"><span id="profileName" class="profile-name" onclick="Profile.editName()">-</span></div></div></div>
-                <div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input id="ratingValue" placeholder="0" value="0" readonly disabled><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card"><div class="stat-label">Возраст</div><div class="stat-value"><input id="ageValue" placeholder="0-100" maxlength="3" readonly></div></div></div>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Репутация</div>
+                        <div class="stat-value"><input id="ratingValue" placeholder="0" value="0" readonly disabled><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value"><input id="ageValue" placeholder="0-100" maxlength="3" readonly></div>
+                    </div>
+                </div>
                 <div class="profile-stats"><div class="profile-stat-card"><div class="profile-stat-label">Ссылка Steam</div><input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" readonly></div><div class="profile-stat-card"><div class="profile-stat-label">Ссылка Faceit</div><input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit" readonly></div></div>
                 <div class="friends-section"><div class="friends-header"><span class="friends-title">Ваши друзья: 0</span><div class="friends-actions"><div class="friends-arrow" onclick="Team.showTeamPage()"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div></div><div class="friends-list" id="friendsList"></div></div>
             </div>
@@ -436,7 +450,13 @@
                 <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title faceit">FACEIT</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
                 <div class="input-label">Faceit ELO</div><input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000">
-                <div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card" onclick="Profile.editFaceitAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="faceitAgeValue" placeholder="21" value="21"></div></div></div>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Репутация</div>
+                        <div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div>
+                    </div>
+                    <div class="stat-card" onclick="Profile.editFaceitAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="faceitAgeValue" placeholder="21" value="21"></div></div>
+                </div>
                 <div class="input-label">Ссылка Faceit</div><input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit">
                 <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
                 <div class="comment-section"><textarea class="comment-input" id="faceitComment" placeholder="Комментарий"></textarea></div>
@@ -447,7 +467,13 @@
                 <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title premier">PREMIER</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
                 <div class="input-label">CS Rating</div><input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-35000">
-                <div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card" onclick="Profile.editPremierAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="premierAgeValue" placeholder="21" value="21"></div></div></div>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Репутация</div>
+                        <div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div>
+                    </div>
+                    <div class="stat-card" onclick="Profile.editPremierAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="premierAgeValue" placeholder="21" value="21"></div></div>
+                </div>
                 <div class="input-label">Ссылка Steam</div><input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam">
                 <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
                 <div class="comment-section"><textarea class="comment-input" id="premierComment" placeholder="Комментарий"></textarea></div>
@@ -478,7 +504,13 @@
                     <option>Supreme Master First Class</option>
                     <option>Global Elite</option>
                 </select>
-                <div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card" onclick="Profile.editPrimeAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="primeAgeValue" placeholder="21" value="21"></div></div></div>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Репутация</div>
+                        <div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div>
+                    </div>
+                    <div class="stat-card" onclick="Profile.editPrimeAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="primeAgeValue" placeholder="21" value="21"></div></div>
+                </div>
                 <div class="input-label">Ссылка Steam</div><input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam">
                 <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
                 <div class="comment-section"><textarea class="comment-input" id="primeComment" placeholder="Комментарий"></textarea></div>
@@ -509,7 +541,13 @@
                     <option>Supreme Master First Class</option>
                     <option>Global Elite</option>
                 </select>
-                <div class="stats-row"><div class="stat-card"><div class="stat-label">Рейтинг</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div><div class="stat-card" onclick="Profile.editPublicAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="publicAgeValue" placeholder="21" value="21"></div></div></div>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Репутация</div>
+                        <div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div>
+                    </div>
+                    <div class="stat-card" onclick="Profile.editPublicAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="publicAgeValue" placeholder="21" value="21"></div></div>
+                </div>
                 <div class="input-label">Ссылка Steam</div><input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam">
                 <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
                 <div class="comment-section"><textarea class="comment-input" id="publicComment" placeholder="Комментарий"></textarea></div>
@@ -537,6 +575,28 @@
     </div>
 
     <script>
+        // Функция для обновления активного состояния иконки настроек
+        function updateSettingsIcon() {
+            const settingsIcon = document.getElementById('settingsIcon');
+            const currentScreen = document.querySelector('.screen.active')?.id;
+            if (settingsIcon) {
+                if (currentScreen === 'settingsScreen') {
+                    settingsIcon.classList.add('active');
+                } else {
+                    settingsIcon.classList.remove('active');
+                }
+            }
+        }
+        
+        // Перехватываем showScreen для обновления иконки
+        const originalShowScreen = window.App?.showScreen;
+        if (window.App) {
+            window.App.showScreen = function(screenId, updateNav) {
+                originalShowScreen.call(window.App, screenId, updateNav);
+                setTimeout(updateSettingsIcon, 50);
+            };
+        }
+        
         (function() {
             const version = window.BUILD_VERSION || Date.now();
             
@@ -594,6 +654,7 @@
                         window.Profile.loadProfileFromServer();
                         window.Profile.loadAvatar();
                     }
+                    updateSettingsIcon();
                 }, 200);
             });
             
