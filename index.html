@@ -282,89 +282,6 @@
         <div class="loader-spinner"></div>
     </div>
     
-    <script>
-        (function() {
-            const version = Date.now();
-            document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-                if (link.href && !link.href.includes('telegram')) {
-                    link.href = link.href.split('?')[0] + '?v=' + version;
-                }
-            });
-            
-            let telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-            if (telegramId) {
-                localStorage.setItem('telegram_id', telegramId);
-                
-                const cachedNick = localStorage.getItem('profile_nick');
-                if (cachedNick) {
-                    setTimeout(() => {
-                        const nameEl = document.getElementById('profileName');
-                        if (nameEl && nameEl.textContent === '-') {
-                            nameEl.textContent = cachedNick;
-                        }
-                        const ageEl = document.getElementById('ageValue');
-                        if (ageEl && !ageEl.value) {
-                            ageEl.value = localStorage.getItem('profile_age') || '';
-                        }
-                        const steamEl = document.getElementById('steamDisplay');
-                        if (steamEl && !steamEl.value) {
-                            steamEl.value = localStorage.getItem('profile_steam') || '';
-                        }
-                        const faceitEl = document.getElementById('faceitLinkDisplay');
-                        if (faceitEl && !faceitEl.value) {
-                            faceitEl.value = localStorage.getItem('profile_faceit') || '';
-                        }
-                    }, 50);
-                }
-                
-                fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/profile/get', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ telegram_id: telegramId })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'ok') {
-                        if (data.nick) localStorage.setItem('profile_nick', data.nick);
-                        if (data.age) localStorage.setItem('profile_age', data.age);
-                        if (data.steam_link) localStorage.setItem('profile_steam', data.steam_link);
-                        if (data.faceit_link) localStorage.setItem('profile_faceit', data.faceit_link);
-                        
-                        const nameEl = document.getElementById('profileName');
-                        if (nameEl) nameEl.textContent = data.nick || '-';
-                        const ageEl = document.getElementById('ageValue');
-                        if (ageEl) ageEl.value = data.age || '';
-                        const steamEl = document.getElementById('steamDisplay');
-                        if (steamEl) steamEl.value = data.steam_link || '';
-                        const faceitEl = document.getElementById('faceitLinkDisplay');
-                        if (faceitEl) faceitEl.value = data.faceit_link || '';
-                    }
-                })
-                .catch(e => console.error('Profile preload error:', e));
-            }
-            
-            // Принудительное удаление старых строк настроек
-            setTimeout(function() {
-                console.log('🧹 Очистка устаревших строк настроек...');
-                const allRows = document.querySelectorAll('.settings-row');
-                let deleted = 0;
-                allRows.forEach(row => {
-                    const label = row.querySelector('.settings-row-label');
-                    if (label) {
-                        const text = (label.innerText || '').toLowerCase();
-                        if (text.includes('реферальн') || text.includes('инвентарь')) {
-                            row.remove();
-                            deleted++;
-                            console.log('🗑️ Удалена:', text);
-                        }
-                    }
-                });
-                if (deleted > 0) console.log('✅ Удалено строк:', deleted);
-                else console.log('✅ Устаревших строк не найдено');
-            }, 200);
-        })();
-    </script>
-    
     <div class="phone-frame">
         
         <header class="header">
@@ -655,17 +572,25 @@
         // ===== МОДАЛЬНОЕ ОКНО ДЛЯ МАГАЗИНА =====
         window.Shop = window.Shop || {};
         
-        // Флаг, чтобы не показывать модалку повторно при переключении
         let modalShown = false;
         
         Shop.showModal = function() {
             // Открываем экран магазина
-            if (window.App) {
+            if (window.App && typeof App.showScreen === 'function') {
                 App.showScreen('shopScreen', true);
+            } else {
+                // Если App ещё не инициализирован, ждём
+                const checkApp = setInterval(() => {
+                    if (window.App && typeof App.showScreen === 'function') {
+                        clearInterval(checkApp);
+                        App.showScreen('shopScreen', true);
+                    }
+                }, 50);
+                setTimeout(() => clearInterval(checkApp), 3000);
             }
-            // Сбрасываем флаг при новом открытии
+            
             modalShown = false;
-            // Через 0.5 секунд показываем модальное окно
+            
             setTimeout(() => {
                 if (!modalShown) {
                     const modal = document.getElementById('shopModal');
@@ -686,17 +611,18 @@
             modalShown = false;
         };
         
-        // Перехватываем навигацию, чтобы закрывать модалку при переходе
-        const originalShowScreen = window.App.showScreen;
-        window.App.showScreen = function(screenId, updateNav) {
-            // Закрываем модалку если она открыта
-            const modal = document.getElementById('shopModal');
-            if (modal && modal.classList.contains('active')) {
-                modal.classList.remove('active');
-                modalShown = false;
-            }
-            originalShowScreen.call(window.App, screenId, updateNav);
-        };
+        // Перехватываем навигацию для закрытия модалки
+        if (window.App) {
+            const originalShowScreen = window.App.showScreen;
+            window.App.showScreen = function(screenId, updateNav) {
+                const modal = document.getElementById('shopModal');
+                if (modal && modal.classList.contains('active')) {
+                    modal.classList.remove('active');
+                    modalShown = false;
+                }
+                originalShowScreen.call(window.App, screenId, updateNav);
+            };
+        }
         
         (function() {
             const version = window.BUILD_VERSION || Date.now();
