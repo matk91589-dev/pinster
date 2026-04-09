@@ -4784,3 +4784,276 @@ button:active { transform: scale(0.96); }
         height: 48px !important;
     }
 }
+
+/* ===== РЕЖИМ ОЖИДАНИЯ - ПОЛНЫЙ ФИКС ===== */
+
+/* Контейнер ожидания внутри карточки */
+#waitingModeContent {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 18px;
+    height: 100%;
+    min-height: 300px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Когда активен */
+#waitingModeContent.active-waiting {
+    display: flex !important;
+}
+
+/* Аватарки */
+.waiting-avatars {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(16px, 5vw, 24px);
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.waiting-self-avatar,
+.waiting-teammate-avatar {
+    width: clamp(65px, 18vw, 80px);
+    height: clamp(65px, 18vw, 80px);
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--input-bg);
+    border: 2px solid var(--border-color);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.waiting-self-avatar .tg-avatar-svg,
+.waiting-teammate-avatar .tg-avatar-svg {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.waiting-self-avatar .tg-avatar-svg svg,
+.waiting-teammate-avatar .tg-avatar-svg svg {
+    width: 60%;
+    height: 60%;
+}
+
+.waiting-teammate-avatar {
+    filter: grayscale(0.5);
+    opacity: 0.8;
+}
+
+.waiting-teammate-avatar.connected {
+    filter: grayscale(0);
+    opacity: 1;
+    border-color: var(--accent);
+    transform: scale(1.05);
+}
+
+/* Линия соединения */
+.waiting-line {
+    width: clamp(40px, 10vw, 50px);
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.waiting-line-pulse {
+    position: absolute;
+    width: 25px;
+    height: 100%;
+    background: var(--accent);
+    animation: waitingLinePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes waitingLinePulse {
+    0% { left: -25px; opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { left: 100%; opacity: 1; }
+}
+
+.waiting-line.connected {
+    background: var(--accent);
+}
+
+.waiting-line.connected .waiting-line-pulse {
+    display: none;
+}
+
+/* Информация о тиммейте */
+.waiting-teammate-info {
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.waiting-teammate-nick {
+    font-size: clamp(18px, 5vw, 20px);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Статус */
+.waiting-status {
+    font-size: clamp(13px, 3.5vw, 14px);
+    text-align: center;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.waiting-status.active {
+    color: var(--accent);
+}
+
+/* Таймер ожидания */
+.waiting-timer-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 0;
+    padding: 6px 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 40px;
+    width: fit-content;
+    align-self: center;
+    flex-shrink: 0;
+}
+
+.waiting-timer-label {
+    font-size: clamp(12px, 3vw, 13px);
+    color: var(--text-secondary);
+}
+
+.waiting-timer {
+    font-size: clamp(14px, 4vw, 16px);
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(255, 85, 0, 0.2);
+    padding: 3px 12px;
+    border-radius: 30px;
+    font-family: monospace;
+}
+
+.waiting-timer.warning {
+    color: #FF3B30;
+    animation: timerWarning 1s infinite;
+}
+
+@keyframes timerWarning {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* Кнопка чата */
+.waiting-chat-button {
+    width: 100%;
+    max-width: 200px;
+    padding: 12px 20px;
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin-top: 8px;
+    border: none;
+    flex-shrink: 0;
+}
+
+.waiting-chat-button.disabled {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+.waiting-chat-button.active {
+    background: var(--accent);
+    color: white;
+    pointer-events: auto;
+    box-shadow: 0 4px 15px rgba(255, 85, 0, 0.3);
+}
+
+.waiting-chat-button.active:hover {
+    background: var(--accent-soft);
+    transform: scale(1.02);
+}
+
+/* ===== ФИКС КАРТОЧКИ ДЛЯ РЕЖИМА ОЖИДАНИЯ ===== */
+.swipe-card-content {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    position: relative !important;
+}
+
+/* Чтобы контент занимал всю высоту */
+#swipeModeContent,
+#waitingModeContent {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+#swipeModeContent {
+    justify-content: space-between !important;
+}
+
+#waitingModeContent {
+    justify-content: center !important;
+}
+
+/* Адаптация для маленьких экранов */
+@media (max-width: 480px) {
+    #waitingModeContent {
+        padding: 16px 14px;
+        gap: 12px;
+    }
+    
+    .waiting-self-avatar,
+    .waiting-teammate-avatar {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .waiting-line {
+        width: 35px;
+    }
+}
+
+@media (max-width: 380px) {
+    #waitingModeContent {
+        padding: 12px;
+        gap: 10px;
+    }
+    
+    .waiting-self-avatar,
+    .waiting-teammate-avatar {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .waiting-line {
+        width: 30px;
+    }
+    
+    .waiting-chat-button {
+        padding: 10px 16px;
+        font-size: 13px;
+        max-width: 160px;
+    }
+}
