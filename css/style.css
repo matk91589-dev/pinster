@@ -4644,134 +4644,125 @@ button:active { transform: scale(0.96); }
 /* ===== УВЕЛИЧЕНИЕ ТЕКСТА НА МАЛЕНЬКИХ ЭКРАНАХ ===== */
 @media (max-width: 500px) {
     .swipe-card {
-        width: 95%;
-        min-height: auto;
+        width: 95% !important;
+        height: auto !important;
+        min-height: 420px;
     }
     
     .swipe-card-content {
-        padding: 14px;
-        gap: 8px;
+        padding: 16px !important;
+        gap: 12px !important;
     }
     
-    /* Ссылки — делаем крупнее */
+    /* Плашка ссылки — увеличиваем */
     .swipe-link-value {
         font-size: 14px !important;
-        padding: 8px 10px !important;
+        padding: 14px 14px !important;
     }
     
-    /* Комментарий — уменьшаем высоту */
-    .swipe-comment-text {
-        font-size: 13px !important;
-        padding: 8px 10px !important;
-        min-height: 40px !important;
-        max-height: 60px !important;
-        overflow-y: auto;
+    /* ID игрока — увеличиваем */
+    .swipe-player-id {
+        font-size: 11px !important;
     }
     
-    /* Статистика */
-    .swipe-stat-value {
-        font-size: 13px;
-        padding: 6px 4px;
-    }
-    
-    /* Ник */
+    /* Ник игрока */
     .swipe-player-nick {
-        font-size: 17px;
+        font-size: 18px !important;
     }
     
     /* Рейтинг */
     .swipe-rating-value {
-        font-size: 15px;
+        font-size: 16px !important;
+    }
+    
+    /* Статистика */
+    .swipe-stat-value {
+        font-size: 14px !important;
+        padding: 8px 6px !important;
     }
     
     /* Таймер */
     .swipe-timer {
-        font-size: 12px;
-        padding: 4px 10px;
+        font-size: 13px !important;
+        padding: 6px 12px !important;
     }
     
     /* Аватар */
     .swipe-avatar {
-        width: 55px;
-        height: 55px;
+        width: 60px !important;
+        height: 60px !important;
     }
     
     /* Рейтинг блок */
     .swipe-rating-block {
-        padding: 4px 10px;
+        padding: 6px 12px !important;
     }
 }
 
 @media (max-width: 380px) {
+    .swipe-card {
+        min-height: 380px;
+    }
+    
     .swipe-card-content {
-        padding: 12px;
-        gap: 6px;
+        padding: 14px !important;
+        gap: 10px !important;
     }
     
     .swipe-link-value {
         font-size: 13px !important;
-        padding: 6px 8px !important;
-    }
-    
-    .swipe-comment-text {
-        font-size: 12px !important;
-        padding: 6px 8px !important;
-        min-height: 35px !important;
-        max-height: 50px !important;
-    }
-    
-    .swipe-stat-value {
-        font-size: 12px;
-        padding: 5px 3px;
-    }
-    
-    .swipe-player-nick {
-        font-size: 16px;
+        padding: 12px 12px !important;
     }
     
     .swipe-player-id {
-        font-size: 9px;
+        font-size: 10px !important;
     }
     
-    .swipe-rating-value {
-        font-size: 14px;
+    .swipe-player-nick {
+        font-size: 17px !important;
+    }
+    
+    .swipe-stat-value {
+        font-size: 13px !important;
+        padding: 6px 4px !important;
     }
     
     .swipe-avatar {
-        width: 48px;
-        height: 48px;
+        width: 55px !important;
+        height: 55px !important;
     }
 }
 
 @media (max-width: 320px) {
+    .swipe-card {
+        min-height: 340px;
+    }
+    
     .swipe-card-content {
-        padding: 10px;
-        gap: 5px;
+        padding: 12px !important;
+        gap: 8px !important;
     }
     
     .swipe-link-value {
         font-size: 12px !important;
-        padding: 5px 6px !important;
+        padding: 10px 10px !important;
     }
     
-    .swipe-comment-text {
-        font-size: 11px !important;
-        padding: 5px 6px !important;
-        min-height: 30px !important;
-        max-height: 45px !important;
-    }
-    
-    .swipe-stat-value {
-        font-size: 11px;
-        padding: 4px 2px;
+    .swipe-player-id {
+        font-size: 9px !important;
     }
     
     .swipe-player-nick {
-        font-size: 15px;
+        font-size: 16px !important;
+    }
+    
+    .swipe-stat-value {
+        font-size: 12px !important;
+        padding: 5px 3px !important;
     }
     
     .swipe-avatar {
-        width: 42px;
-        height: 42px;
+        width: 48px !important;
+        height: 48px !important;
     }
 }
