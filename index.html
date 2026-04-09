@@ -192,22 +192,23 @@
             align-items: center !important;
         }
         
-        /* ===== МОДАЛЬНОЕ ОКНО ПОВЕРХ МАГАЗИНА ===== */
+        /* ===== ПРОФЕССИОНАЛЬНОЕ МОДАЛЬНОЕ ОКНО ===== */
         .shop-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(2px);
-            z-index: 200;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
         }
         
         .shop-modal-overlay.active {
@@ -217,13 +218,14 @@
         
         .shop-modal {
             background: var(--surface);
-            border-radius: 16px;
-            width: 260px;
+            border-radius: 24px;
+            width: 280px;
             max-width: 80%;
             overflow: hidden;
-            transform: scale(0.9);
-            transition: transform 0.2s ease;
-            border: 2px solid #FF5500;
+            transform: scale(0.92);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255, 85, 0, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 0.5px rgba(255, 85, 0, 0.2);
         }
         
         .shop-modal-overlay.active .shop-modal {
@@ -231,7 +233,7 @@
         }
         
         .shop-modal-header {
-            padding: 16px 16px 0 16px;
+            padding: 20px 20px 0 20px;
             display: flex;
             justify-content: flex-end;
         }
@@ -240,27 +242,38 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: background 0.2s;
-            font-size: 20px;
+            transition: all 0.2s ease;
+            font-size: 18px;
             color: var(--text-secondary);
         }
         
         .shop-modal-close:hover {
             background: rgba(255, 85, 0, 0.2);
             color: var(--accent);
+            transform: scale(1.05);
+        }
+        
+        .shop-modal-content {
+            padding: 0 24px 28px 24px;
+            text-align: center;
         }
         
         .shop-modal-title {
-            text-align: center;
             font-size: 18px;
             font-weight: 600;
             color: var(--text-primary);
-            padding: 0 24px 24px 24px;
+            margin-bottom: 8px;
+        }
+        
+        .shop-modal-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -378,7 +391,7 @@
                 </div>
             </div>
 
-            <!-- МАГАЗИН — С МОДАЛЬНЫМ ОКНОМ ПОВЕРХ -->
+            <!-- МАГАЗИН -->
             <div id="shopScreen" class="screen shop-screen">
                 <div class="title-row">
                     <div class="title-left"><div class="section-title">Магазин</div></div>
@@ -625,13 +638,16 @@
         </nav>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ПОВЕРХ МАГАЗИНА -->
+    <!-- ПРОФЕССИОНАЛЬНОЕ МОДАЛЬНОЕ ОКНО -->
     <div id="shopModal" class="shop-modal-overlay">
         <div class="shop-modal">
             <div class="shop-modal-header">
                 <div class="shop-modal-close" onclick="Shop.closeModal()">✕</div>
             </div>
-            <div class="shop-modal-title">Магазин в разработке</div>
+            <div class="shop-modal-content">
+                <div class="shop-modal-title">Магазин в разработке</div>
+                <div class="shop-modal-subtitle">Скоро здесь появятся эксклюзивные товары</div>
+            </div>
         </div>
     </div>
 
@@ -639,17 +655,25 @@
         // ===== МОДАЛЬНОЕ ОКНО ДЛЯ МАГАЗИНА =====
         window.Shop = window.Shop || {};
         
+        // Флаг, чтобы не показывать модалку повторно при переключении
+        let modalShown = false;
+        
         Shop.showModal = function() {
-            // Сначала открываем экран магазина
+            // Открываем экран магазина
             if (window.App) {
                 App.showScreen('shopScreen', true);
             }
+            // Сбрасываем флаг при новом открытии
+            modalShown = false;
             // Через 0.5 секунд показываем модальное окно
             setTimeout(() => {
-                const modal = document.getElementById('shopModal');
-                if (modal) {
-                    modal.classList.add('active');
-                    if (window.Settings && window.Settings.click) Settings.click();
+                if (!modalShown) {
+                    const modal = document.getElementById('shopModal');
+                    if (modal) {
+                        modal.classList.add('active');
+                        modalShown = true;
+                        if (window.Settings && window.Settings.click) Settings.click();
+                    }
                 }
             }, 500);
         };
@@ -659,10 +683,19 @@
             if (modal) {
                 modal.classList.remove('active');
             }
-            // Возвращаемся на главный экран
-            if (window.App) {
-                App.showScreen('mainScreen', true);
+            modalShown = false;
+        };
+        
+        // Перехватываем навигацию, чтобы закрывать модалку при переходе
+        const originalShowScreen = window.App.showScreen;
+        window.App.showScreen = function(screenId, updateNav) {
+            // Закрываем модалку если она открыта
+            const modal = document.getElementById('shopModal');
+            if (modal && modal.classList.contains('active')) {
+                modal.classList.remove('active');
+                modalShown = false;
             }
+            originalShowScreen.call(window.App, screenId, updateNav);
         };
         
         (function() {
