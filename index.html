@@ -331,7 +331,7 @@
                     </div>
                 </div>
                 <div class="profile-stats"><div class="profile-stat-card"><div class="profile-stat-label">Ссылка Steam</div><input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" readonly></div><div class="profile-stat-card"><div class="profile-stat-label">Ссылка Faceit</div><input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit" readonly></div></div>
-                <div class="friends-section"><div class="friends-header"><span class="friends-title">Ваши друзья: 0</span><div class="friends-actions"><div class="friends-arrow" onclick="Team.showTeamPage()"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div></div><div class="friends-list" id="friendsList"></div></div>
+                <div class="friends-section"><div class="friends-header"><span class="friends-title">Ваши тиммейты: 0</span><div class="friends-actions"><div class="friends-arrow" onclick="Team.showTeamPage()"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div></div><div class="friends-list" id="friendsList"></div></div>
             </div>
 
             <div id="teamScreen" class="screen team-screen">
@@ -340,7 +340,7 @@
                     <div style="flex: 1;"></div>
                 </div>
                 <div class="team-tabs">
-                    <div class="team-tab active" onclick="Team.switchTab('friends', this)">ВАШИ ДРУЗЬЯ</div>
+                    <div class="team-tab active" onclick="Team.switchTab('friends', this)">ВАШИ ТИММЕЙТЫ</div>
                     <div class="team-tab" onclick="Team.switchTab('leaderboard', this)">ЛИДЕРБОРД</div>
                 </div>
                 <div class="team-content" id="teamContent"></div>
@@ -430,7 +430,7 @@
                 <div class="swipe-loading"><div class="spinner-small"></div></div>
             </div>
 
-            <!-- НАСТРОЙКИ — ТОЛЬКО ДРУЗЬЯ -->
+            <!-- НАСТРОЙКИ -->
             <div id="settingsScreen" class="screen settings-screen">
                 <div class="settings-header"><div class="settings-title">Настройки</div></div>
                 <div class="settings-section"><div class="settings-section-title">ОФОРМЛЕНИЕ</div>
@@ -439,7 +439,7 @@
                     <div class="settings-row"><span class="settings-row-label">язык</span><span class="settings-value">русский</span></div>
                 </div>
                 <div class="settings-section"><div class="settings-section-title">ОСНОВНЫЕ</div>
-                    <div class="settings-row" onclick="Team.showTeamPage()"><span class="settings-row-label">друзья</span><span class="settings-arrow">→</span></div>
+                    <div class="settings-row" onclick="Team.showTeamPage()"><span class="settings-row-label">тиммейты</span><span class="settings-arrow">→</span></div>
                 </div>
                 <div class="settings-section"><div class="settings-section-title">СОЦСЕТИ</div>
                     <a href="#" class="settings-row-link"><span class="settings-row-label">TikTok</span><span class="settings-arrow">→</span></a>
