@@ -17,13 +17,18 @@
         });
     }
 
-    // ✅ Функция для обновления username на сервере
+    // ✅ Функция для обновления username на сервере (только при реальных изменениях)
+    let lastUsername = '';
     function updateUsername() {
         const tg = window.Telegram?.WebApp;
         const telegram_id = tg?.initDataUnsafe?.user?.id;
         const username = tg?.initDataUnsafe?.user?.username || '';
         
-        if (telegram_id) {
+        // Не отправляем запрос если username не изменился
+        if (username === lastUsername) return;
+        lastUsername = username;
+        
+        if (telegram_id && username) {
             fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/user/update-username', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -56,7 +61,6 @@
                 navMain.classList.add('active');
             }
             
-            // Сбрасываем подсветку иконки настроек
             const settingsIcon = document.getElementById('settingsIcon');
             if (settingsIcon) settingsIcon.classList.remove('active');
             
@@ -70,31 +74,31 @@
         document.addEventListener('DOMContentLoaded', () => {
             console.log('🚀 DOM загружен, запускаем Pingster...');
             showMainScreen();
-            updateUsername(); // Обновляем username при загрузке
-            initUser();
+            setTimeout(() => {
+                updateUsername();
+                initUser();
+            }, 100);
             initModules();
         });
     } else {
         console.log('🚀 DOM уже загружен, запускаем Pingster...');
         showMainScreen();
-        updateUsername(); // Обновляем username при загрузке
-        initUser();
+        setTimeout(() => {
+            updateUsername();
+            initUser();
+        }, 100);
         initModules();
     }
     
     function initModules() {
         setTimeout(() => {
             try {
-                if (typeof Shop !== 'undefined') {
-                    if (Shop.setupListeners) Shop.setupListeners();
-                    else if (Shop.init) Shop.init();
-                }
                 if (typeof Search !== 'undefined') Search.init();
                 console.log('✅ Модули инициализированы');
             } catch (e) {
                 console.error('Ошибка инициализации модулей:', e);
             }
-        }, 500);
+        }, 300);
     }
     
     function initUser() {
@@ -121,12 +125,6 @@
                 }
             })
             .catch(error => console.error('Error initializing user:', error));
-            
-            setTimeout(() => {
-                if (typeof Search !== 'undefined' && Search.checkMatchStatus) {
-                    Search.checkMatchStatus();
-                }
-            }, 2000);
         } else {
             console.warn('Нет Telegram ID');
         }
@@ -158,14 +156,10 @@ Object.assign(window.App, {
         
         console.log('📱 Переход на экран:', screenId);
         
-        // МГНОВЕННО переключаем экран без задержек
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         screen.classList.add('active');
         this.currentScreen = screenId;
         
-        // ===== ОБНОВЛЯЕМ ВСЮ НАВИГАЦИЮ =====
-        
-        // 1. Нижняя навигация (Главная, Профиль)
         if (updateNav) {
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
@@ -176,10 +170,8 @@ Object.assign(window.App, {
             } else if (screenId === 'profileScreen') {
                 document.getElementById('navProfile')?.classList.add('active');
             }
-            // shopScreen скрыт, поэтому не обрабатываем
         }
         
-        // 2. Иконка настроек (шестерёнка) — подсвечивается только на экране настроек
         const settingsIcon = document.getElementById('settingsIcon');
         if (settingsIcon) {
             if (screenId === 'settingsScreen') {
@@ -189,27 +181,9 @@ Object.assign(window.App, {
             }
         }
         
-        // Вибрация
         this.hapticFeedback('light');
         
-        // Обновляем username при открытии профиля
-        if (screenId === 'profileScreen') {
-            const tg = window.Telegram?.WebApp;
-            const telegram_id = tg?.initDataUnsafe?.user?.id;
-            const username = tg?.initDataUnsafe?.user?.username || '';
-            if (telegram_id) {
-                fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/user/update-username', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        telegram_id: telegram_id,
-                        username: username
-                    })
-                }).catch(e => console.error('Ошибка обновления username:', e));
-            }
-        }
-        
-        // Фоновая загрузка данных
+        // Фоновая загрузка с задержкой, чтобы не лагать
         if (screenId === 'profileScreen' && typeof Profile !== 'undefined') {
             setTimeout(() => {
                 if (!Profile.isProfileLoaded && !Profile.isLoading) {
@@ -218,7 +192,7 @@ Object.assign(window.App, {
                 } else if (Profile.updateDisplay) {
                     Profile.updateDisplay();
                 }
-            }, 100);
+            }, 200);
         }
         
         if (screenId === 'settingsScreen' && typeof Settings !== 'undefined') {
@@ -240,7 +214,7 @@ Object.assign(window.App, {
 window.App = window.App;
 
 // ============================================
-// УДАЛЕНИЕ ЛОАДЕРА ПОСЛЕ ЗАГРУЗКИ ВСЕХ СКРИПТОВ
+// УДАЛЕНИЕ ЛОАДЕРА
 // ============================================
 
 window.addEventListener('load', function() {
@@ -252,6 +226,6 @@ window.addEventListener('load', function() {
                 loader.remove();
             }, 300);
         }
-        console.log('✅ Лоадер удален после полной загрузки');
+        console.log('✅ Лоадер удален');
     }, 100);
 });
