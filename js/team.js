@@ -36,14 +36,9 @@ const Team = {
             return;
         }
         
-        setTimeout(() => {
-            if (this.telegramId && !this.isFriendsLoaded && !this.isLoadingFriends) {
-                this.loadFriendsList();
-            }
-            if (this.telegramId && !this.isLeaderboardLoaded && !this.isLoadingLeaderboard) {
-                this.loadLeaderboard();
-            }
-        }, 300);
+        // 🔥 ЗАГРУЖАЕМ ОБА СПИСКА СРАЗУ
+        this.loadFriendsList();
+        this.loadLeaderboard();
     },
     
     showTeamPage() {
@@ -78,6 +73,7 @@ const Team = {
             this.currentPlayerId = localStorage.getItem('player_id');
         }
         
+        // Всегда показываем друзей
         this.renderFriendsTab();
         if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
             this.loadFriendsList();
@@ -150,16 +146,19 @@ const Team = {
                 this.filteredLeaderboard = [...this.leaderboard];
                 this.isLeaderboardLoaded = true;
                 console.log('✅ Лидерборд загружен:', this.leaderboard.length);
+                this.renderLeaderboardTab(); // 🔥 СРАЗУ ОТРИСОВЫВАЕМ
             } else {
                 this.leaderboard = [];
                 this.filteredLeaderboard = [];
                 this.isLeaderboardLoaded = true;
+                this.renderLeaderboardTab();
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки лидерборда:', error);
             this.leaderboard = [];
             this.filteredLeaderboard = [];
             this.isLeaderboardLoaded = true;
+            this.renderLeaderboardTab();
         } finally {
             this.isLoadingLeaderboard = false;
         }
@@ -254,9 +253,9 @@ const Team = {
         const menu = document.createElement('div');
         menu.className = 'friend-actions-menu';
         menu.innerHTML = `
-            <div class="friend-actions-popup" style="top: ${top}px; left: ${rect.right - 180}px;">
-                <div class="friend-action-item write-btn">📩 Написать в Telegram</div>
-                <div class="friend-action-item delete-btn">🗑️ Удалить из тиммейтов</div>
+            <div class="friend-actions-popup" style="top: ${top}px; left: ${rect.right - 170}px;">
+                <div class="friend-action-item write-btn">Написать в Telegram</div>
+                <div class="friend-action-item delete-btn">Удалить из тиммейтов</div>
             </div>
         `;
         
@@ -270,7 +269,7 @@ const Team = {
         };
         setTimeout(() => document.addEventListener('click', closeMenu), 10);
         
-        // 🔥 КНОПКА "НАПИСАТЬ" — через username 🔥
+        // 🔥 НАПИСАТЬ — белый текст 🔥
         menu.querySelector('.write-btn').onclick = () => {
             menu.remove();
             
@@ -288,6 +287,7 @@ const Team = {
             }
         };
         
+        // 🔥 УДАЛИТЬ — оранжевый/красный текст 🔥
         menu.querySelector('.delete-btn').onclick = () => {
             menu.remove();
             this.confirmDeleteFriend(playerId, nick);
