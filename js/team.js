@@ -36,7 +36,6 @@ const Team = {
             return;
         }
         
-        // Предзагрузка данных в фоне
         setTimeout(() => {
             if (this.telegramId && !this.isFriendsLoaded && !this.isLoadingFriends) {
                 this.loadFriendsList();
@@ -50,7 +49,6 @@ const Team = {
     showTeamPage() {
         console.log('showTeamPage called');
         
-        // Всегда сбрасываем на вкладку "ДРУЗЬЯ"
         this.currentTab = 'friends';
         
         document.querySelectorAll('.team-tab').forEach(t => {
@@ -80,7 +78,6 @@ const Team = {
             this.currentPlayerId = localStorage.getItem('player_id');
         }
         
-        // Всегда показываем друзей
         this.renderFriendsTab();
         if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
             this.loadFriendsList();
@@ -225,7 +222,6 @@ const Team = {
         html += '</div>';
         content.innerHTML = html;
         
-        // Навешиваем обработчики
         document.querySelectorAll('#friendsTabList .friend-arrow-menu').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
@@ -274,10 +270,18 @@ const Team = {
         };
         setTimeout(() => document.addEventListener('click', closeMenu), 10);
         
+        // 🔥 ИСПРАВЛЕННАЯ КНОПКА "НАПИСАТЬ" 🔥
         menu.querySelector('.write-btn').onclick = () => {
             menu.remove();
             if (username) {
-                window.open(`https://t.me/${username}`, '_blank');
+                // Используем правильный метод Telegram WebApp
+                if (window.Telegram?.WebApp?.openTelegramLink) {
+                    window.Telegram.WebApp.openTelegramLink(`https://t.me/${username}`);
+                } else if (window.Telegram?.WebApp?.openLink) {
+                    window.Telegram.WebApp.openLink(`https://t.me/${username}`);
+                } else {
+                    window.open(`https://t.me/${username}`, '_blank');
+                }
             } else {
                 if (window.App) App.showAlert('У пользователя нет username в Telegram');
             }
