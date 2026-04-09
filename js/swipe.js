@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - РАБОЧАЯ ВЕРСИЯ
+// СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
 // ============================================
 
 const Swipe = {
@@ -315,8 +315,15 @@ const Swipe = {
         if (swipeContent) swipeContent.style.display = 'block';
         if (waitingContent) waitingContent.style.display = 'none';
         
-        if (this.skipBtn) this.skipBtn.style.display = 'flex';
-        if (this.inviteBtn) this.inviteBtn.style.display = 'flex';
+        // ПОФИКСЕНО: Показываем кнопки свайпа только в режиме свайпа
+        if (this.skipBtn) {
+            this.skipBtn.style.display = 'flex';
+            this.skipBtn.style.visibility = 'visible';
+        }
+        if (this.inviteBtn) {
+            this.inviteBtn.style.display = 'flex';
+            this.inviteBtn.style.visibility = 'visible';
+        }
         
         this.isWaitingMode = false;
         
@@ -331,8 +338,17 @@ const Swipe = {
         if (swipeContent) swipeContent.style.display = 'none';
         if (waitingContent) waitingContent.style.display = 'block';
         
-        if (this.skipBtn) this.skipBtn.style.display = 'none';
-        if (this.inviteBtn) this.inviteBtn.style.display = 'none';
+        // ПОФИКСЕНО: Скрываем кнопки свайпа в режиме ожидания полностью
+        if (this.skipBtn) {
+            this.skipBtn.style.display = 'none';
+            this.skipBtn.style.visibility = 'hidden';
+            this.skipBtn.style.pointerEvents = 'none';
+        }
+        if (this.inviteBtn) {
+            this.inviteBtn.style.display = 'none';
+            this.inviteBtn.style.visibility = 'hidden';
+            this.inviteBtn.style.pointerEvents = 'none';
+        }
         
         this.isWaitingMode = true;
         
