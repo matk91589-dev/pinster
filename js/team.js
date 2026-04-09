@@ -206,7 +206,7 @@ const Team = {
             this.filteredFriends.forEach(friend => {
                 const firstChar = friend.nick && friend.nick.length > 0 ? friend.nick[0].toUpperCase() : '?';
                 html += `
-                <div class="friend-row" data-player-id="${friend.player_id}" data-username="${friend.username || ''}" data-nick="${friend.nick || 'Без имени'}">
+                <div class="friend-row" data-player-id="${friend.player_id}" data-telegram-id="${friend.telegram_id || ''}" data-username="${friend.username || ''}" data-nick="${friend.nick || 'Без имени'}">
                     <div class="friend-avatar">
                         ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}
                     </div>
@@ -227,16 +227,17 @@ const Team = {
                 e.stopPropagation();
                 const row = btn.closest('.friend-row');
                 const playerId = row.dataset.playerId;
+                const telegramId = row.dataset.telegramId;
                 const username = row.dataset.username;
                 const nick = row.dataset.nick;
-                this.showFriendActions(playerId, username, nick, btn);
+                this.showFriendActions(playerId, telegramId, username, nick, btn);
             };
         });
         
         setTimeout(() => this.setupFriendsSearch(), 50);
     },
     
-    showFriendActions(playerId, username, nick, btn) {
+    showFriendActions(playerId, telegramId, username, nick, btn) {
         const oldMenu = document.querySelector('.friend-actions-menu');
         if (oldMenu) oldMenu.remove();
         
@@ -270,20 +271,31 @@ const Team = {
         };
         setTimeout(() => document.addEventListener('click', closeMenu), 10);
         
-        // 🔥 ИСПРАВЛЕННАЯ КНОПКА "НАПИСАТЬ" 🔥
+        // 🔥 КНОПКА "НАПИСАТЬ" — через telegram_id (надежнее) 🔥
         menu.querySelector('.write-btn').onclick = () => {
             menu.remove();
-            if (username) {
-                // Используем правильный метод Telegram WebApp
+            
+            // Приоритет: telegram_id (не меняется) > username (может измениться)
+            if (telegramId && telegramId !== 'null' && telegramId !== '') {
+                const url = `tg://user?id=${telegramId}`;
                 if (window.Telegram?.WebApp?.openTelegramLink) {
-                    window.Telegram.WebApp.openTelegramLink(`https://t.me/${username}`);
+                    window.Telegram.WebApp.openTelegramLink(url);
                 } else if (window.Telegram?.WebApp?.openLink) {
-                    window.Telegram.WebApp.openLink(`https://t.me/${username}`);
+                    window.Telegram.WebApp.openLink(url);
                 } else {
-                    window.open(`https://t.me/${username}`, '_blank');
+                    window.open(url, '_blank');
+                }
+            } else if (username && username !== 'null' && username !== '') {
+                const url = `https://t.me/${username}`;
+                if (window.Telegram?.WebApp?.openTelegramLink) {
+                    window.Telegram.WebApp.openTelegramLink(url);
+                } else if (window.Telegram?.WebApp?.openLink) {
+                    window.Telegram.WebApp.openLink(url);
+                } else {
+                    window.open(url, '_blank');
                 }
             } else {
-                if (window.App) App.showAlert('У пользователя нет username в Telegram');
+                if (window.App) App.showAlert('Не удалось открыть чат: у пользователя нет Telegram ID');
             }
         };
         
@@ -377,7 +389,7 @@ const Team = {
         this.filteredFriends.forEach(friend => {
             const firstChar = friend.nick && friend.nick.length > 0 ? friend.nick[0].toUpperCase() : '?';
             html += `
-            <div class="friend-row" data-player-id="${friend.player_id}" data-username="${friend.username || ''}" data-nick="${friend.nick || 'Без имени'}">
+            <div class="friend-row" data-player-id="${friend.player_id}" data-telegram-id="${friend.telegram_id || ''}" data-username="${friend.username || ''}" data-nick="${friend.nick || 'Без имени'}">
                 <div class="friend-avatar">${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}</div>
                 <div class="friend-info">
                     <span class="friend-id">ID: ${friend.player_id}</span>
@@ -393,9 +405,10 @@ const Team = {
                 e.stopPropagation();
                 const row = btn.closest('.friend-row');
                 const playerId = row.dataset.playerId;
+                const telegramId = row.dataset.telegramId;
                 const username = row.dataset.username;
                 const nick = row.dataset.nick;
-                this.showFriendActions(playerId, username, nick, btn);
+                this.showFriendActions(playerId, telegramId, username, nick, btn);
             };
         });
     },
