@@ -256,7 +256,7 @@ const Team = {
         if (!container) return;
         
         if (!this.filteredFriends.length) {
-            container.innerHTML = `<div class="empty-friends"><div class="empty-friends-text">друзья не найдены</div></div>`;
+            container.innerHTML = `<div class="empty-friends"><div class="empty-friends-text">тиммейты не найдены</div></div>`;
             return;
         }
         
