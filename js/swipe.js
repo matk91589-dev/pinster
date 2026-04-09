@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ПОЛНОСТЬЮ РАБОЧАЯ ВЕРСИЯ
+// СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ РАБОЧАЯ ВЕРСИЯ
 // ============================================
 
 const Swipe = {
@@ -66,6 +66,11 @@ const Swipe = {
             return;
         }
         
+        // Принудительно показываем карточку при инициализации
+        this.card.style.display = 'block';
+        this.card.style.visibility = 'visible';
+        this.card.style.opacity = '1';
+        
         this.createCardWrapper();
         this.blockScroll();
         this.showHintOnce();
@@ -78,9 +83,70 @@ const Swipe = {
         }
         
         this.initResizeObserver();
-        this.showSwipeMode();
+        
+        // Показываем режим свайпа
+        this.forceShowSwipeMode();
         
         console.log('✅ Swipe.init() завершён');
+    },
+    
+    forceShowSwipeMode() {
+        console.log('🔧 forceShowSwipeMode()');
+        
+        // Принудительно показываем контент свайпа
+        const swipeContent = document.getElementById('swipeModeContent');
+        const waitingContent = document.getElementById('waitingModeContent');
+        
+        if (swipeContent) {
+            swipeContent.style.display = 'block';
+            swipeContent.style.visibility = 'visible';
+        }
+        if (waitingContent) {
+            waitingContent.style.display = 'none';
+            waitingContent.style.visibility = 'hidden';
+        }
+        
+        // Показываем карточку
+        if (this.card) {
+            this.card.style.display = 'block';
+            this.card.style.visibility = 'visible';
+            this.card.style.opacity = '1';
+        }
+        
+        // Показываем wrapper
+        if (this.cardWrapper) {
+            this.cardWrapper.style.display = 'inline-block';
+            this.cardWrapper.style.visibility = 'visible';
+            this.cardWrapper.style.opacity = '1';
+            this.cardWrapper.style.pointerEvents = 'auto';
+        }
+        
+        // Показываем кнопки
+        if (this.skipBtn) {
+            this.skipBtn.style.display = 'flex';
+            this.skipBtn.style.visibility = 'visible';
+            this.skipBtn.style.pointerEvents = 'auto';
+        }
+        if (this.inviteBtn) {
+            this.inviteBtn.style.display = 'flex';
+            this.inviteBtn.style.visibility = 'visible';
+            this.inviteBtn.style.pointerEvents = 'auto';
+        }
+        
+        // Показываем таймер
+        if (this.timerElement) {
+            this.timerElement.style.display = 'flex';
+        }
+        
+        this.isWaitingMode = false;
+        
+        // Сбрасываем трансформацию
+        if (this.cardWrapper) {
+            this.cardWrapper.style.transition = '';
+            this.cardWrapper.style.transform = 'translateX(0) rotate(0deg) scale(1)';
+        }
+        
+        setTimeout(() => this.updateButtonsPosition(), 100);
     },
     
     initResizeObserver() {
@@ -180,7 +246,7 @@ const Swipe = {
     
     updateButtonsPosition() {
         if (!this.skipBtn || !this.inviteBtn || !this.card) return;
-        if (this.isWaitingMode) return; // Не обновляем позицию в режиме ожидания
+        if (this.isWaitingMode) return;
         
         const cardRect = this.card.getBoundingClientRect();
         const cardHeight = cardRect.height;
@@ -317,58 +383,7 @@ const Swipe = {
     
     showSwipeMode() {
         console.log('📱 showSwipeMode() called');
-        
-        const swipeContent = document.getElementById('swipeModeContent');
-        const waitingContent = document.getElementById('waitingModeContent');
-        
-        if (swipeContent) swipeContent.style.display = 'block';
-        if (waitingContent) waitingContent.style.display = 'none';
-        
-        // Принудительно показываем карточку и все элементы
-        if (this.cardWrapper) {
-            this.cardWrapper.style.display = 'inline-block';
-            this.cardWrapper.style.visibility = 'visible';
-            this.cardWrapper.style.opacity = '1';
-            this.cardWrapper.style.pointerEvents = 'auto';
-            console.log('✅ cardWrapper shown');
-        }
-        
-        if (this.card) {
-            this.card.style.display = 'block';
-            this.card.style.visibility = 'visible';
-            this.card.style.opacity = '1';
-        }
-        
-        if (this.skipBtn) {
-            this.skipBtn.style.display = 'flex';
-            this.skipBtn.style.visibility = 'visible';
-            this.skipBtn.style.pointerEvents = 'auto';
-        }
-        if (this.inviteBtn) {
-            this.inviteBtn.style.display = 'flex';
-            this.inviteBtn.style.visibility = 'visible';
-            this.inviteBtn.style.pointerEvents = 'auto';
-        }
-        
-        if (this.hint) {
-            this.hint.style.display = '';
-            this.hint.style.visibility = '';
-        }
-        
-        if (this.timerElement) {
-            this.timerElement.style.display = 'flex';
-        }
-        
-        this.isWaitingMode = false;
-        
-        // Сбрасываем трансформацию
-        if (this.cardWrapper) {
-            this.cardWrapper.style.transition = '';
-            this.cardWrapper.style.transform = 'translateX(0) rotate(0deg) scale(1)';
-        }
-        
-        // Обновляем позицию кнопок
-        setTimeout(() => this.updateButtonsPosition(), 100);
+        this.forceShowSwipeMode();
     },
     
     showWaitingMode() {
@@ -377,21 +392,21 @@ const Swipe = {
         const swipeContent = document.getElementById('swipeModeContent');
         const waitingContent = document.getElementById('waitingModeContent');
         
-        if (swipeContent) swipeContent.style.display = 'none';
-        if (waitingContent) waitingContent.style.display = 'block';
+        if (swipeContent) {
+            swipeContent.style.display = 'none';
+            swipeContent.style.visibility = 'hidden';
+        }
+        if (waitingContent) {
+            waitingContent.style.display = 'block';
+            waitingContent.style.visibility = 'visible';
+        }
         
-        // Полностью скрываем всё, что связано со свайпом
+        // Скрываем карточку и кнопки
         if (this.cardWrapper) {
             this.cardWrapper.style.display = 'none';
             this.cardWrapper.style.visibility = 'hidden';
             this.cardWrapper.style.opacity = '0';
             this.cardWrapper.style.pointerEvents = 'none';
-            console.log('✅ cardWrapper hidden');
-        }
-        
-        if (this.card) {
-            this.card.style.display = 'none';
-            this.card.style.visibility = 'hidden';
         }
         
         if (this.skipBtn) {
@@ -403,11 +418,6 @@ const Swipe = {
             this.inviteBtn.style.display = 'none';
             this.inviteBtn.style.visibility = 'hidden';
             this.inviteBtn.style.pointerEvents = 'none';
-        }
-        
-        if (this.hint) {
-            this.hint.style.display = 'none';
-            this.hint.style.visibility = 'hidden';
         }
         
         if (this.timerElement) {
@@ -451,6 +461,9 @@ const Swipe = {
     
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
         console.log('🎮 startWithOpponent()', opponent, matchId);
+        
+        // Сбрасываем режим ожидания
+        this.isWaitingMode = false;
         
         if (!this.isInitialized) {
             this.init(opponent.mode || 'FACEIT');
@@ -521,7 +534,7 @@ const Swipe = {
         if (this.loading) this.loading.classList.remove('active');
         
         this.resetCardPosition();
-        this.showSwipeMode(); // Важно: сначала показываем режим свайпа
+        this.forceShowSwipeMode(); // Принудительно показываем режим свайпа
         this.showPlayer(opponent);
         this.startCardTimer();
         this.blockScroll();
@@ -529,9 +542,6 @@ const Swipe = {
         
         setTimeout(() => this.startSwipeHint(), 300);
         setTimeout(() => this.adjustCardSize(), 50);
-        
-        if (this.skipBtn) this.skipBtn.classList.add('visible');
-        if (this.inviteBtn) this.inviteBtn.classList.add('visible');
         
         setTimeout(() => this.updateButtonsPosition(), 100);
     },
@@ -1100,7 +1110,7 @@ const Swipe = {
         
         if (this.card) {
             if (this.loading) this.loading.classList.add('active');
-            this.showSwipeMode();
+            this.forceShowSwipeMode();
         } else {
             this.init(mode);
         }
