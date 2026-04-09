@@ -4645,77 +4645,79 @@ button:active { transform: scale(0.96); }
 @media (max-width: 500px) {
     .swipe-card {
         width: 95%;
-        min-height: 420px;
+        min-height: auto;
     }
     
     .swipe-card-content {
-        padding: 16px;
+        padding: 14px;
         gap: 8px;
     }
     
+    /* Ссылки — делаем крупнее */
     .swipe-link-value {
-        font-size: 14px;
-        padding: 10px 12px;
+        font-size: 14px !important;
+        padding: 8px 10px !important;
     }
     
+    /* Комментарий — уменьшаем высоту */
     .swipe-comment-text {
-        font-size: 13px;
-        padding: 10px 12px;
-        min-height: 55px;
+        font-size: 13px !important;
+        padding: 8px 10px !important;
+        min-height: 40px !important;
+        max-height: 60px !important;
+        overflow-y: auto;
     }
     
+    /* Статистика */
     .swipe-stat-value {
         font-size: 13px;
         padding: 6px 4px;
     }
     
+    /* Ник */
     .swipe-player-nick {
         font-size: 17px;
     }
     
+    /* Рейтинг */
     .swipe-rating-value {
         font-size: 15px;
     }
     
+    /* Таймер */
     .swipe-timer {
         font-size: 12px;
-        padding: 5px 10px;
+        padding: 4px 10px;
     }
     
-    /* Уменьшаем отступы в плашках */
-    .swipe-player-row {
-        gap: 10px;
-    }
-    
+    /* Аватар */
     .swipe-avatar {
         width: 55px;
         height: 55px;
     }
     
+    /* Рейтинг блок */
     .swipe-rating-block {
-        padding: 4px 8px;
+        padding: 4px 10px;
     }
 }
 
 @media (max-width: 380px) {
-    .swipe-card {
-        min-height: 360px;
-    }
-    
     .swipe-card-content {
         padding: 12px;
         gap: 6px;
     }
     
     .swipe-link-value {
-        font-size: 13px;
-        padding: 8px 10px;
+        font-size: 13px !important;
+        padding: 6px 8px !important;
     }
     
     .swipe-comment-text {
-        font-size: 12px;
-        padding: 8px 10px;
-        min-height: 45px;
+        font-size: 12px !important;
+        padding: 6px 8px !important;
+        min-height: 35px !important;
+        max-height: 50px !important;
     }
     
     .swipe-stat-value {
@@ -4742,24 +4744,21 @@ button:active { transform: scale(0.96); }
 }
 
 @media (max-width: 320px) {
-    .swipe-card {
-        min-height: 330px;
-    }
-    
     .swipe-card-content {
         padding: 10px;
         gap: 5px;
     }
     
     .swipe-link-value {
-        font-size: 12px;
-        padding: 7px 8px;
+        font-size: 12px !important;
+        padding: 5px 6px !important;
     }
     
     .swipe-comment-text {
-        font-size: 11px;
-        padding: 7px 8px;
-        min-height: 40px;
+        font-size: 11px !important;
+        padding: 5px 6px !important;
+        min-height: 30px !important;
+        max-height: 45px !important;
     }
     
     .swipe-stat-value {
