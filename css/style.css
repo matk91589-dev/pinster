@@ -4519,3 +4519,7 @@ button:active { transform: scale(0.96); }
 .shop-modal-button:hover {
     background: var(--accent-soft);
 }
+
+.icon-settings.active svg {
+    stroke: #FF5500 !important;
+}
