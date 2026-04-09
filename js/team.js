@@ -50,7 +50,7 @@ const Team = {
     showTeamPage() {
         console.log('showTeamPage called');
         
-        // 🔥 ВСЕГДА СБРАСЫВАЕМ НА ВКЛАДКУ "ДРУЗЬЯ"
+        // ВСЕГДА СБРАСЫВАЕМ НА ВКЛАДКУ "тиммейт"
         this.currentTab = 'friends';
         
         // Обновляем активную вкладку в UI
@@ -83,7 +83,7 @@ const Team = {
             this.currentPlayerId = localStorage.getItem('player_id');
         }
         
-        // Всегда показываем друзей
+        // Всегда показываем тиммейтов
         this.renderFriendsTab();
         if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
             this.loadFriendsList();
@@ -95,7 +95,7 @@ const Team = {
         if (this.isLoadingFriends) return;
         
         this.isLoadingFriends = true;
-        console.log('👥 Загрузка друзей...');
+        console.log('👥 Загрузка тиммейтов...');
         
         try {
             const response = await fetch(`${this.BACKEND_URL}/api/friends/list`, {
@@ -107,13 +107,13 @@ const Team = {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
-            console.log('📦 Ответ друзей:', data);
+            console.log('📦 Ответ тиммейтов:', data);
             
             if (data.status === 'ok' && data.friends && data.friends.length > 0) {
                 this.friendsList = data.friends;
                 this.filteredFriends = [...this.friendsList];
                 this.isFriendsLoaded = true;
-                console.log('✅ Друзья загружены:', this.friendsList.length);
+                console.log('✅ Тиммейты загружены:', this.friendsList.length);
                 this.renderFriendsTab();
             } else {
                 this.friendsList = [];
@@ -122,7 +122,7 @@ const Team = {
                 this.renderFriendsTab();
             }
         } catch (error) {
-            console.error('❌ Ошибка загрузки друзей:', error);
+            console.error('❌ Ошибка загрузки тиммейтов:', error);
             this.friendsList = [];
             this.filteredFriends = [];
             this.isFriendsLoaded = true;
@@ -205,9 +205,9 @@ const Team = {
         `;
         
         if (!this.isFriendsLoaded && this.friendsList.length === 0) {
-            html += `<div class="empty-friends"><div class="empty-friends-text">загрузка друзей...</div></div>`;
+            html += `<div class="empty-friends"><div class="empty-friends-text">загрузка тиммейтов...</div></div>`;
         } else if (this.friendsList.length === 0) {
-            html += `<div class="empty-friends"><div class="empty-friends-text">у вас пока нет друзей</div></div>`;
+            html += `<div class="empty-friends"><div class="empty-friends-text">у вас пока нет тиммейтов</div></div>`;
         } else {
             this.filteredFriends.forEach(friend => {
                 html += `
