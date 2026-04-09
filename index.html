@@ -54,6 +54,11 @@
         .icon-settings.active svg {
             stroke: #FF5500 !important;
         }
+        
+        /* Иконка настроек при ховере */
+        .icon-settings:hover svg {
+            stroke: #FF5500 !important;
+        }
     </style>
     
     <link rel="stylesheet" href="css/style.css">
@@ -292,7 +297,7 @@
             <div class="logo" onclick="Logo.handleClick()">
                 <span class="ping">Ping</span><span class="ster">ster</span>
             </div>
-            <div id="settingsIcon" class="icon-settings" onclick="App.showScreen('settingsScreen', true)">
+            <div id="settingsIcon" class="icon-settings" onclick="App.openSettings()">
                 <svg viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="3"/>
                     <path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/>
@@ -588,11 +593,19 @@
             }
         }
         
+        // Добавляем метод openSettings в App
+        if (!window.App) window.App = {};
+        
+        window.App.openSettings = function() {
+            window.App.showScreen('settingsScreen', true);
+            setTimeout(updateSettingsIcon, 50);
+        };
+        
         // Перехватываем showScreen для обновления иконки
-        const originalShowScreen = window.App?.showScreen;
-        if (window.App) {
+        if (window.App && !window.App._originalShowScreen) {
+            window.App._originalShowScreen = window.App.showScreen;
             window.App.showScreen = function(screenId, updateNav) {
-                originalShowScreen.call(window.App, screenId, updateNav);
+                window.App._originalShowScreen.call(window.App, screenId, updateNav);
                 setTimeout(updateSettingsIcon, 50);
             };
         }
