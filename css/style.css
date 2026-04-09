@@ -4523,3 +4523,167 @@ button:active { transform: scale(0.96); }
 .icon-settings.active svg {
     stroke: #FF5500 !important;
 }
+
+/* ===== МЕНЮ ДЕЙСТВИЙ С ТИММЕЙТОМ ===== */
+.friend-arrow-menu {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 20px;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.friend-arrow-menu:hover {
+    background: rgba(255, 85, 0, 0.15);
+    color: #FF5500;
+}
+
+.friend-actions-menu {
+    position: relative;
+    z-index: 1000;
+}
+
+.friend-actions-popup {
+    position: fixed;
+    background: var(--surface);
+    border-radius: 14px;
+    width: 220px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--border-color);
+    animation: menuFadeIn 0.15s ease;
+}
+
+@keyframes menuFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.friend-action-item {
+    padding: 12px 16px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+    color: var(--text-primary);
+}
+
+.friend-action-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.friend-action-item.delete-btn {
+    color: #FF3B30;
+    border-top: 1px solid var(--border-color);
+}
+
+/* ===== ДИАЛОГ ПОДТВЕРЖДЕНИЯ ===== */
+.friend-delete-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.friend-delete-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.friend-delete-popup {
+    position: relative;
+    background: var(--surface);
+    border-radius: 16px;
+    width: 280px;
+    padding: 20px;
+    text-align: center;
+    animation: dialogFadeIn 0.2s ease;
+}
+
+@keyframes dialogFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.friend-delete-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.friend-delete-message {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.friend-delete-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.friend-delete-cancel,
+.friend-delete-confirm {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.friend-delete-cancel {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.friend-delete-confirm {
+    background: #FF3B30;
+    color: white;
+}
+
+.friend-delete-cancel:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.friend-delete-confirm:hover {
+    background: #E3352A;
+}
+
+.friend-arrow {
+    font-size: 18px;
+    color: #8E97A6;
+    font-weight: 300;
+    min-width: 28px;
+    text-align: right;
+}
