@@ -4645,19 +4645,20 @@ button:active { transform: scale(0.96); }
 @media (max-width: 500px) {
     .swipe-card {
         width: 95% !important;
-        height: auto !important;
-        min-height: 420px;
+        height: 420px !important;
+        min-height: auto !important;
     }
     
     .swipe-card-content {
         padding: 16px !important;
         gap: 12px !important;
+        height: 100% !important;
     }
     
     /* Плашка ссылки — увеличиваем */
     .swipe-link-value {
         font-size: 14px !important;
-        padding: 14px 14px !important;
+        padding: 12px 14px !important;
     }
     
     /* ID игрока — увеличиваем */
@@ -4681,6 +4682,13 @@ button:active { transform: scale(0.96); }
         padding: 8px 6px !important;
     }
     
+    /* Комментарий — фиксируем высоту, добавляем скролл */
+    .swipe-comment-text {
+        max-height: 70px !important;
+        overflow-y: auto !important;
+        font-size: 13px !important;
+    }
+    
     /* Таймер */
     .swipe-timer {
         font-size: 13px !important;
@@ -4701,7 +4709,7 @@ button:active { transform: scale(0.96); }
 
 @media (max-width: 380px) {
     .swipe-card {
-        min-height: 380px;
+        height: 380px !important;
     }
     
     .swipe-card-content {
@@ -4711,7 +4719,7 @@ button:active { transform: scale(0.96); }
     
     .swipe-link-value {
         font-size: 13px !important;
-        padding: 12px 12px !important;
+        padding: 10px 12px !important;
     }
     
     .swipe-player-id {
@@ -4727,6 +4735,11 @@ button:active { transform: scale(0.96); }
         padding: 6px 4px !important;
     }
     
+    .swipe-comment-text {
+        max-height: 60px !important;
+        font-size: 12px !important;
+    }
+    
     .swipe-avatar {
         width: 55px !important;
         height: 55px !important;
@@ -4735,7 +4748,7 @@ button:active { transform: scale(0.96); }
 
 @media (max-width: 320px) {
     .swipe-card {
-        min-height: 340px;
+        height: 350px !important;
     }
     
     .swipe-card-content {
@@ -4745,7 +4758,7 @@ button:active { transform: scale(0.96); }
     
     .swipe-link-value {
         font-size: 12px !important;
-        padding: 10px 10px !important;
+        padding: 8px 10px !important;
     }
     
     .swipe-player-id {
@@ -4759,6 +4772,11 @@ button:active { transform: scale(0.96); }
     .swipe-stat-value {
         font-size: 12px !important;
         padding: 5px 3px !important;
+    }
+    
+    .swipe-comment-text {
+        max-height: 50px !important;
+        font-size: 11px !important;
     }
     
     .swipe-avatar {
