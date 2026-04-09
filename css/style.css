@@ -4641,185 +4641,25 @@ button:active { transform: scale(0.96); }
     color: #FF5500 !important;
 }
 
-/* ===== АДАПТАЦИЯ СВАЙП-КАРТОЧКИ ПОД МАЛЕНЬКИЕ ЭКРАНЫ ===== */
+/* ===== ПРОСТАЯ АДАПТАЦИЯ СВАЙП-КАРТОЧКИ ===== */
 
-/* Для экранов до 450px */
+/* Увеличиваем ссылки и текст на маленьких экранах */
 @media (max-width: 450px) {
-    .swipe-card {
-        width: 95% !important;
-        height: auto !important;
-        min-height: 420px;
-        max-width: 380px;
+    .swipe-link-value {
+        font-size: 14px !important;
+        padding: 12px 14px !important;
     }
     
-    .swipe-card-content {
-        padding: 16px !important;
-        gap: 10px !important;
+    .swipe-comment-text {
+        font-size: 14px !important;
+        padding: 12px 14px !important;
     }
     
-    .swipe-player-row {
-        gap: 12px !important;
-    }
-    
-    .swipe-avatar {
-        width: 55px !important;
-        height: 55px !important;
-    }
-    
-    .swipe-player-nick {
-        font-size: 16px !important;
-    }
-    
-    .swipe-player-id {
-        font-size: 9px !important;
-    }
-    
-    .swipe-rating-block {
-        padding: 4px 10px !important;
-    }
-    
-    .swipe-rating-value {
+    .swipe-stat-value {
         font-size: 14px !important;
     }
     
-    .swipe-stats-row.three-cols {
-        gap: 8px !important;
-    }
-    
-    .swipe-stats-row.three-cols .swipe-stat-value {
-        font-size: 13px !important;
-        padding: 8px 4px !important;
-    }
-    
-    .swipe-link-value {
-        font-size: 11px !important;
-        padding: 8px 10px !important;
-    }
-    
-    .swipe-comment-text {
-        font-size: 11px !important;
-        padding: 8px !important;
-        min-height: 50px !important;
-    }
-    
-    .swipe-timer {
-        font-size: 11px !important;
-        padding: 4px 10px !important;
-        top: 8px !important;
-        left: 8px !important;
-    }
-}
-
-/* Для экранов до 380px (самые маленькие) */
-@media (max-width: 380px) {
-    .swipe-card {
-        min-height: 380px;
-    }
-    
-    .swipe-card-content {
-        padding: 12px !important;
-        gap: 8px !important;
-    }
-    
-    .swipe-player-row {
-        gap: 8px !important;
-    }
-    
-    .swipe-avatar {
-        width: 45px !important;
-        height: 45px !important;
-    }
-    
     .swipe-player-nick {
-        font-size: 14px !important;
-    }
-    
-    .swipe-player-id {
-        font-size: 8px !important;
-    }
-    
-    .swipe-rating-block {
-        padding: 3px 8px !important;
-    }
-    
-    .swipe-rating-value {
-        font-size: 12px !important;
-    }
-    
-    .swipe-stats-row.three-cols {
-        gap: 6px !important;
-    }
-    
-    .swipe-stats-row.three-cols .swipe-stat-value {
-        font-size: 11px !important;
-        padding: 6px 2px !important;
-    }
-    
-    .swipe-stats-row.three-cols .swipe-stat-label {
-        font-size: 8px !important;
-    }
-    
-    .swipe-link-label {
-        font-size: 8px !important;
-    }
-    
-    .swipe-link-value {
-        font-size: 10px !important;
-        padding: 6px 8px !important;
-    }
-    
-    .swipe-comment-text {
-        font-size: 10px !important;
-        padding: 6px !important;
-        min-height: 45px !important;
-    }
-    
-    .swipe-timer {
-        font-size: 10px !important;
-        padding: 3px 8px !important;
-    }
-}
-
-/* Для экранов до 320px */
-@media (max-width: 320px) {
-    .swipe-card {
-        min-height: 340px;
-    }
-    
-    .swipe-player-nick {
-        font-size: 13px !important;
-    }
-    
-    .swipe-stats-row.three-cols .swipe-stat-value {
-        font-size: 10px !important;
-        padding: 5px 2px !important;
-    }
-    
-    .swipe-link-value {
-        font-size: 9px !important;
-        padding: 5px 6px !important;
-    }
-    
-    .swipe-comment-text {
-        font-size: 9px !important;
-        padding: 5px !important;
-    }
-}
-
-/* Улучшаем читаемость на маленьких экранах */
-@media (max-width: 450px) {
-    .swipe-stat-value,
-    .swipe-link-value,
-    .swipe-comment-text {
-        word-break: break-word !important;
-    }
-    
-    .swipe-name-block {
-        min-width: 0;
-        flex: 1;
-    }
-    
-    .swipe-rating-block {
-        flex-shrink: 0;
+        font-size: 17px !important;
     }
 }
