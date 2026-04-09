@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// СВАЙП-КАРТОЧКИ - ИСПРАВЛЕННАЯ ВЕРСИЯ (фикс экрана ожидания)
 // ============================================
 
 const Swipe = {
@@ -204,7 +204,6 @@ const Swipe = {
             }
         }
         
-        // Адаптация под маленькие экраны
         if (screenWidth < 400) {
             btnWidth = Math.min(btnWidth, 44);
             btnHeight = Math.min(btnHeight, 100);
@@ -315,7 +314,18 @@ const Swipe = {
         if (swipeContent) swipeContent.style.display = 'block';
         if (waitingContent) waitingContent.style.display = 'none';
         
-        // ПОФИКСЕНО: Показываем кнопки свайпа только в режиме свайпа
+        // ПОФИКСЕНО: Показываем контейнер со свайп-карточкой
+        if (this.cardWrapper) {
+            this.cardWrapper.style.display = 'inline-block';
+            this.cardWrapper.style.visibility = 'visible';
+            this.cardWrapper.style.opacity = '1';
+        }
+        
+        if (this.card) {
+            this.card.style.display = 'block';
+            this.card.style.visibility = 'visible';
+        }
+        
         if (this.skipBtn) {
             this.skipBtn.style.display = 'flex';
             this.skipBtn.style.visibility = 'visible';
@@ -338,7 +348,19 @@ const Swipe = {
         if (swipeContent) swipeContent.style.display = 'none';
         if (waitingContent) waitingContent.style.display = 'block';
         
-        // ПОФИКСЕНО: Скрываем кнопки свайпа в режиме ожидания полностью
+        // ПОФИКСЕНО: ПОЛНОСТЬЮ СКРЫВАЕМ свайп-карточку и все её элементы
+        if (this.cardWrapper) {
+            this.cardWrapper.style.display = 'none';
+            this.cardWrapper.style.visibility = 'hidden';
+            this.cardWrapper.style.opacity = '0';
+            this.cardWrapper.style.pointerEvents = 'none';
+        }
+        
+        if (this.card) {
+            this.card.style.display = 'none';
+            this.card.style.visibility = 'hidden';
+        }
+        
         if (this.skipBtn) {
             this.skipBtn.style.display = 'none';
             this.skipBtn.style.visibility = 'hidden';
@@ -348,6 +370,17 @@ const Swipe = {
             this.inviteBtn.style.display = 'none';
             this.inviteBtn.style.visibility = 'hidden';
             this.inviteBtn.style.pointerEvents = 'none';
+        }
+        
+        // Дополнительно скрываем hint и таймер
+        if (this.hint) {
+            this.hint.style.display = 'none';
+            this.hint.style.visibility = 'hidden';
+        }
+        
+        const timerElement = document.getElementById('swipeTimer');
+        if (timerElement) {
+            timerElement.style.display = 'none';
         }
         
         this.isWaitingMode = true;
