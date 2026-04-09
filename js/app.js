@@ -53,14 +53,12 @@
             showMainScreen();
             initUser();
             initModules();
-            // НЕ УДАЛЯЕМ ЛОАДЕР ЗДЕСЬ - ждем загрузки скриптов
         });
     } else {
         console.log('🚀 DOM уже загружен, запускаем Pingster...');
         showMainScreen();
         initUser();
         initModules();
-        // НЕ УДАЛЯЕМ ЛОАДЕР ЗДЕСЬ - ждем загрузки скриптов
     }
     
     function initModules() {
@@ -156,6 +154,16 @@ Object.assign(window.App, {
                 document.getElementById('navShop')?.classList.add('active');
             } else if (screenId === 'profileScreen') {
                 document.getElementById('navProfile')?.classList.add('active');
+            }
+        }
+        
+        // ===== ПОДСВЕТКА ИКОНКИ НАСТРОЕК (ШЕСТЕРЁНКИ) =====
+        const settingsIcon = document.getElementById('settingsIcon');
+        if (settingsIcon) {
+            if (screenId === 'settingsScreen') {
+                settingsIcon.classList.add('active');
+            } else {
+                settingsIcon.classList.remove('active');
             }
         }
         
