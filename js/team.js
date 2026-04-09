@@ -50,16 +50,19 @@ const Team = {
     showTeamPage() {
         console.log('showTeamPage called');
         
-        const teamScreen = document.getElementById('teamScreen');
-        if (!teamScreen) {
-            console.error('❌ teamScreen не найден');
-            return;
+        // Используем App.showScreen для правильного обновления навигации
+        if (window.App && App.showScreen) {
+            App.showScreen('teamScreen', true);
+        } else {
+            // fallback если App ещё не готов
+            const teamScreen = document.getElementById('teamScreen');
+            if (teamScreen) {
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+                teamScreen.classList.add('active');
+            }
         }
-        
-        document.querySelectorAll('.screen').forEach(screen => {
-            screen.classList.remove('active');
-        });
-        teamScreen.classList.add('active');
         
         if (!this.telegramId) {
             if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
