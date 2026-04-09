@@ -219,13 +219,13 @@
         .shop-modal {
             background: var(--surface);
             border-radius: 24px;
-            width: 280px;
+            width: 260px;
             max-width: 80%;
             overflow: hidden;
             transform: scale(0.92);
             transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             border: 1px solid rgba(255, 85, 0, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 0.5px rgba(255, 85, 0, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
         
         .shop-modal-overlay.active .shop-modal {
@@ -259,7 +259,7 @@
         }
         
         .shop-modal-content {
-            padding: 0 24px 28px 24px;
+            padding: 0 24px 32px 24px;
             text-align: center;
         }
         
@@ -267,13 +267,11 @@
             font-size: 18px;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 8px;
         }
         
-        .shop-modal-subtitle {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.5;
+        /* Кейсы видимы и кликабельны, пока не появится модалка */
+        .shop-screen .cases-section {
+            pointer-events: auto;
         }
     </style>
 </head>
@@ -563,7 +561,6 @@
             </div>
             <div class="shop-modal-content">
                 <div class="shop-modal-title">Магазин в разработке</div>
-                <div class="shop-modal-subtitle">Скоро здесь появятся эксклюзивные товары</div>
             </div>
         </div>
     </div>
@@ -579,7 +576,6 @@
             if (window.App && typeof App.showScreen === 'function') {
                 App.showScreen('shopScreen', true);
             } else {
-                // Если App ещё не инициализирован, ждём
                 const checkApp = setInterval(() => {
                     if (window.App && typeof App.showScreen === 'function') {
                         clearInterval(checkApp);
