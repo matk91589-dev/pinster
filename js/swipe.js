@@ -432,6 +432,35 @@ const Swipe = {
         
         // Запускаем таймер ожидания
         this.startWaitingTimer();
+        
+        // Загружаем свою аватарку
+        this.loadSelfAvatar();
+    },
+    
+    loadSelfAvatar() {
+        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        if (!telegram_id) return;
+        
+        const selfAvatarContainer = document.querySelector('.waiting-self-avatar .tg-avatar-svg');
+        if (!selfAvatarContainer) return;
+        
+        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/profile/avatar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegram_id: telegram_id })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'ok' && data.avatar && data.avatar !== 'null' && data.avatar !== '') {
+                selfAvatarContainer.innerHTML = '<img src="' + data.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">';
+            } else {
+                selfAvatarContainer.innerHTML = '<svg width="60%" height="60%" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки аватара:', error);
+            selfAvatarContainer.innerHTML = '<svg width="60%" height="60%" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+        });
     },
     
     startWaitingTimer() {
@@ -452,6 +481,14 @@ const Swipe = {
                 this.connectionTimeout();
             }
         }, 1000);
+    },
+    
+    stopWaitingTimer() {
+        if (this.connectionTimer) {
+            clearInterval(this.connectionTimer);
+            this.connectionTimer = null;
+            console.log('⏹️ Таймер ожидания остановлен');
+        }
     },
     
     startSwipeHint() {
@@ -878,16 +915,20 @@ const Swipe = {
         const teammateAvatar = document.querySelector('.waiting-teammate-avatar');
         
         if (status === 'both_accepted') {
+            // ОСТАНАВЛИВАЕМ ТАЙМЕР
+            this.stopWaitingTimer();
+            
             if (teammateAvatar) teammateAvatar.classList.add('connected');
             if (line) line.classList.add('connected');
             if (statusEl) {
-                statusEl.innerHTML = 'матч создан';
+                statusEl.innerHTML = 'Матч создан!';
                 statusEl.classList.add('active');
+                statusEl.style.color = '#4CAF50';
             }
             if (window.Settings && window.Settings.success) window.Settings.success();
         } else if (status === 'rejected') {
             if (statusEl) {
-                statusEl.innerHTML = 'тиммейт отклонил';
+                statusEl.innerHTML = 'Тиммейт отклонил';
                 statusEl.style.color = '#FF3B30';
             }
             if (window.Settings && window.Settings.error) window.Settings.error();
@@ -1092,7 +1133,7 @@ const Swipe = {
             if (player.avatar && player.avatar !== 'null' && player.avatar !== '') {
                 waitingAvatar.innerHTML = '<img src="' + player.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:50%;">';
             } else {
-                waitingAvatar.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+                waitingAvatar.innerHTML = '<svg width="60%" height="60%" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
             }
         }
         
