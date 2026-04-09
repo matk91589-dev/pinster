@@ -17,6 +17,31 @@
         });
     }
 
+    // ✅ Функция для обновления username на сервере
+    function updateUsername() {
+        const tg = window.Telegram?.WebApp;
+        const telegram_id = tg?.initDataUnsafe?.user?.id;
+        const username = tg?.initDataUnsafe?.user?.username || '';
+        
+        if (telegram_id) {
+            fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/user/update-username', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    telegram_id: telegram_id,
+                    username: username
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    console.log('✅ Username обновлён:', data.username);
+                }
+            })
+            .catch(e => console.error('Ошибка обновления username:', e));
+        }
+    }
+
     // ✅ Функция для показа главного экрана
     function showMainScreen() {
         const mainScreen = document.getElementById('mainScreen');
@@ -45,12 +70,14 @@
         document.addEventListener('DOMContentLoaded', () => {
             console.log('🚀 DOM загружен, запускаем Pingster...');
             showMainScreen();
+            updateUsername(); // Обновляем username при загрузке
             initUser();
             initModules();
         });
     } else {
         console.log('🚀 DOM уже загружен, запускаем Pingster...');
         showMainScreen();
+        updateUsername(); // Обновляем username при загрузке
         initUser();
         initModules();
     }
@@ -164,6 +191,23 @@ Object.assign(window.App, {
         
         // Вибрация
         this.hapticFeedback('light');
+        
+        // Обновляем username при открытии профиля
+        if (screenId === 'profileScreen') {
+            const tg = window.Telegram?.WebApp;
+            const telegram_id = tg?.initDataUnsafe?.user?.id;
+            const username = tg?.initDataUnsafe?.user?.username || '';
+            if (telegram_id) {
+                fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/user/update-username', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        telegram_id: telegram_id,
+                        username: username
+                    })
+                }).catch(e => console.error('Ошибка обновления username:', e));
+            }
+        }
         
         // Фоновая загрузка данных
         if (screenId === 'profileScreen' && typeof Profile !== 'undefined') {
