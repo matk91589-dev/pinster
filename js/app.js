@@ -30,20 +30,14 @@
                 document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
                 navMain.classList.add('active');
             }
+            
+            // Сбрасываем подсветку иконки настроек
+            const settingsIcon = document.getElementById('settingsIcon');
+            if (settingsIcon) settingsIcon.classList.remove('active');
+            
             return true;
         }
         return false;
-    }
-
-    // ✅ Удаление лоадера (будет вызвано после загрузки всех скриптов)
-    function removeLoader() {
-        const loader = document.getElementById('app-loader');
-        if (loader) {
-            loader.style.opacity = '0';
-            setTimeout(() => {
-                loader.remove();
-            }, 300);
-        }
     }
 
     // ✅ Инициализация
@@ -142,7 +136,9 @@ Object.assign(window.App, {
         screen.classList.add('active');
         this.currentScreen = screenId;
         
-        // Обновляем навигацию
+        // ===== ОБНОВЛЯЕМ ВСЮ НАВИГАЦИЮ =====
+        
+        // 1. Нижняя навигация (Главная, Профиль)
         if (updateNav) {
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
@@ -150,14 +146,13 @@ Object.assign(window.App, {
             
             if (screenId === 'mainScreen') {
                 document.getElementById('navMain')?.classList.add('active');
-            } else if (screenId === 'shopScreen') {
-                document.getElementById('navShop')?.classList.add('active');
             } else if (screenId === 'profileScreen') {
                 document.getElementById('navProfile')?.classList.add('active');
             }
+            // shopScreen скрыт, поэтому не обрабатываем
         }
         
-        // ===== ПОДСВЕТКА ИКОНКИ НАСТРОЕК (ШЕСТЕРЁНКИ) =====
+        // 2. Иконка настроек (шестерёнка) — подсвечивается только на экране настроек
         const settingsIcon = document.getElementById('settingsIcon');
         if (settingsIcon) {
             if (screenId === 'settingsScreen') {
@@ -170,7 +165,7 @@ Object.assign(window.App, {
         // Вибрация
         this.hapticFeedback('light');
         
-        // Фоновая загрузка данных БЕЗ перекрытия экрана
+        // Фоновая загрузка данных
         if (screenId === 'profileScreen' && typeof Profile !== 'undefined') {
             setTimeout(() => {
                 if (!Profile.isProfileLoaded && !Profile.isLoading) {
@@ -178,20 +173,6 @@ Object.assign(window.App, {
                     Profile.loadAvatar();
                 } else if (Profile.updateDisplay) {
                     Profile.updateDisplay();
-                }
-            }, 100);
-        }
-        
-        if (screenId === 'shopScreen' && typeof Shop !== 'undefined') {
-            setTimeout(() => {
-                if (!Shop._initialized && Shop.init) {
-                    Shop.init();
-                }
-                if (typeof Shop.renderShop === 'function') {
-                    Shop.renderShop();
-                }
-                if (typeof window.loadShopImages === 'function') {
-                    window.loadShopImages();
                 }
             }, 100);
         }
@@ -218,9 +199,7 @@ window.App = window.App;
 // УДАЛЕНИЕ ЛОАДЕРА ПОСЛЕ ЗАГРУЗКИ ВСЕХ СКРИПТОВ
 // ============================================
 
-// Ждем полной загрузки страницы (все скрипты, стили, DOM)
 window.addEventListener('load', function() {
-    // Небольшая задержка для гарантии, что все анимации и рендер завершены
     setTimeout(function() {
         const loader = document.getElementById('app-loader');
         if (loader) {
