@@ -45,211 +45,6 @@ const Team = {
                 this.loadLeaderboard();
             }
         }, 300);
-        
-        // Добавляем стили
-        this.injectStyles();
-    },
-    
-    injectStyles() {
-        if (document.getElementById('team-friend-styles')) return;
-        
-        const style = document.createElement('style');
-        style.id = 'team-friend-styles';
-        style.textContent = `
-            /* ===== ТРОЕТОЧИЕ/СТРЕЛОЧКА ===== */
-            .friend-more {
-                width: 36px;
-                height: 36px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                border-radius: 50%;
-                font-size: 20px;
-                color: var(--text-secondary);
-                transition: all 0.2s;
-                flex-shrink: 0;
-            }
-            
-            .friend-more:hover {
-                background: rgba(255, 85, 0, 0.15);
-                color: #FF5500;
-            }
-            
-            /* ===== МЕНЮ ДЕЙСТВИЙ (как в Telegram) ===== */
-            .friend-actions-menu {
-                position: relative;
-                z-index: 1000;
-            }
-            
-            .friend-actions-popup {
-                position: fixed;
-                background: var(--surface);
-                border-radius: 14px;
-                width: 220px;
-                overflow: hidden;
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
-                border: 1px solid var(--border-color);
-                animation: menuFadeIn 0.15s ease;
-            }
-            
-            @keyframes menuFadeIn {
-                from {
-                    opacity: 0;
-                    transform: scale(0.95);
-                }
-                to {
-                    opacity: 1;
-                    transform: scale(1);
-                }
-            }
-            
-            .friend-action-item {
-                padding: 12px 16px;
-                font-size: 15px;
-                cursor: pointer;
-                transition: background 0.2s;
-                color: var(--text-primary);
-            }
-            
-            .friend-action-item:hover {
-                background: rgba(255, 255, 255, 0.05);
-            }
-            
-            .friend-action-item.delete-btn {
-                color: #FF3B30;
-                border-top: 1px solid var(--border-color);
-            }
-            
-            /* ===== ДИАЛОГ ПОДТВЕРЖДЕНИЯ (как в Telegram) ===== */
-            .friend-delete-dialog {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                z-index: 2000;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .friend-delete-overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0, 0, 0, 0.5);
-            }
-            
-            .friend-delete-popup {
-                position: relative;
-                background: var(--surface);
-                border-radius: 16px;
-                width: 280px;
-                padding: 20px;
-                text-align: center;
-                animation: dialogFadeIn 0.2s ease;
-            }
-            
-            @keyframes dialogFadeIn {
-                from {
-                    opacity: 0;
-                    transform: scale(0.95);
-                }
-                to {
-                    opacity: 1;
-                    transform: scale(1);
-                }
-            }
-            
-            .friend-delete-title {
-                font-size: 17px;
-                font-weight: 600;
-                color: var(--text-primary);
-                margin-bottom: 8px;
-            }
-            
-            .friend-delete-message {
-                font-size: 14px;
-                color: var(--text-secondary);
-                margin-bottom: 20px;
-                line-height: 1.4;
-            }
-            
-            .friend-delete-buttons {
-                display: flex;
-                gap: 12px;
-            }
-            
-            .friend-delete-cancel,
-            .friend-delete-confirm {
-                flex: 1;
-                padding: 10px;
-                border-radius: 10px;
-                font-size: 15px;
-                font-weight: 500;
-                cursor: pointer;
-                border: none;
-                transition: all 0.2s;
-            }
-            
-            .friend-delete-cancel {
-                background: rgba(255, 255, 255, 0.1);
-                color: var(--text-primary);
-            }
-            
-            .friend-delete-confirm {
-                background: #FF3B30;
-                color: white;
-            }
-            
-            .friend-delete-cancel:hover {
-                background: rgba(255, 255, 255, 0.15);
-            }
-            
-            .friend-delete-confirm:hover {
-                background: #E3352A;
-            }
-            
-            /* Стили для лидерборда */
-            .leaderboard-right {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                margin-left: auto;
-                flex-shrink: 0;
-                min-width: 60px;
-                justify-content: flex-end;
-            }
-            .leaderboard-place {
-                font-size: 13px;
-                font-weight: 500;
-                color: #8E97A6;
-                min-width: 28px;
-                text-align: right;
-            }
-            .leaderboard-current-badge {
-                color: #FF5500;
-                font-size: 12px;
-                font-weight: 500;
-                opacity: 0.9;
-                min-width: 28px;
-                text-align: right;
-            }
-            .friend-arrow {
-                font-size: 18px;
-                color: #8E97A6;
-                font-weight: 300;
-                min-width: 28px;
-                text-align: right;
-            }
-            .leaderboard-arrow {
-                color: #FF5500 !important;
-            }
-        `;
-        document.head.appendChild(style);
     },
     
     showTeamPage() {
@@ -422,7 +217,7 @@ const Team = {
                         <span class="friend-id">ID: ${friend.player_id}</span>
                         <span class="friend-name">${friend.nick || 'Без имени'}</span>
                     </div>
-                    <div class="friend-more" data-action="menu">⋯</div>
+                    <div class="friend-arrow-menu">→</div>
                 </div>`;
             });
         }
@@ -431,7 +226,7 @@ const Team = {
         content.innerHTML = html;
         
         // Навешиваем обработчики
-        document.querySelectorAll('#friendsTabList .friend-more').forEach(btn => {
+        document.querySelectorAll('#friendsTabList .friend-arrow-menu').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
                 const row = btn.closest('.friend-row');
@@ -463,7 +258,7 @@ const Team = {
         const menu = document.createElement('div');
         menu.className = 'friend-actions-menu';
         menu.innerHTML = `
-            <div class="friend-actions-popup" style="top: ${top}px; left: ${rect.right - 200}px;">
+            <div class="friend-actions-popup" style="top: ${top}px; left: ${rect.right - 180}px;">
                 <div class="friend-action-item write-btn">📩 Написать в Telegram</div>
                 <div class="friend-action-item delete-btn">🗑️ Удалить из тиммейтов</div>
             </div>
@@ -584,12 +379,12 @@ const Team = {
                     <span class="friend-id">ID: ${friend.player_id}</span>
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
                 </div>
-                <div class="friend-more" data-action="menu">⋯</div>
+                <div class="friend-arrow-menu">→</div>
             </div>`;
         });
         container.innerHTML = html;
         
-        document.querySelectorAll('#friendsTabList .friend-more').forEach(btn => {
+        document.querySelectorAll('#friendsTabList .friend-arrow-menu').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
                 const row = btn.closest('.friend-row');
