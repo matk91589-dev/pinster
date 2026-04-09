@@ -4992,7 +4992,7 @@ button:active { transform: scale(0.96); }
     transform: scale(1.02);
 }
 
-/* ===== ЖЕСТКИЙ ФИКС ЭКРАНА ОЖИДАНИЯ ===== */
+/* ===== ЭКРАН ОЖИДАНИЯ - ПОЛНАЯ АДАПТАЦИЯ ===== */
 #waitingModeContent {
     position: absolute !important;
     top: 0 !important;
@@ -5009,44 +5009,161 @@ button:active { transform: scale(0.96); }
     z-index: 50 !important;
 }
 
-.swipe-card {
+/* Аватарки - адаптивный размер */
+.waiting-self-avatar,
+.waiting-teammate-avatar {
+    width: min(80px, 25vw, 100px) !important;
+    height: min(80px, 25vw, 100px) !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    background: var(--input-bg) !important;
+    border: 2px solid var(--border-color) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.waiting-self-avatar .tg-avatar-svg,
+.waiting-teammate-avatar .tg-avatar-svg {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.waiting-self-avatar img,
+.waiting-teammate-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* Линия соединения */
+.waiting-line {
+    width: min(60px, 15vw) !important;
+    height: 3px !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 3px !important;
     position: relative !important;
     overflow: hidden !important;
 }
 
-.swipe-card-content {
-    position: relative !important;
-    min-height: 100% !important;
-}
-
-#swipeModeContent {
-    position: relative !important;
-    z-index: 10 !important;
-}
-
-.waiting-avatars {
-    margin-bottom: 20px !important;
-}
-
+/* Ник тиммейта */
 .waiting-teammate-nick {
-    font-size: 18px !important;
+    font-size: clamp(16px, 5vw, 22px) !important;
     font-weight: 700 !important;
     color: var(--text-primary) !important;
     text-align: center !important;
-    margin: 10px 0 !important;
+    margin: 15px 0 5px 0 !important;
 }
 
+/* Статус */
 .waiting-status {
-    font-size: 14px !important;
+    font-size: clamp(13px, 4vw, 16px) !important;
     color: var(--accent) !important;
     text-align: center !important;
     margin: 10px 0 !important;
+    font-weight: 500 !important;
 }
 
+/* Контейнер таймера */
 .waiting-timer-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
     margin: 15px 0 !important;
+    padding: 8px 20px !important;
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-radius: 40px !important;
 }
 
+.waiting-timer-label {
+    font-size: clamp(12px, 3.5vw, 14px) !important;
+    color: var(--text-secondary) !important;
+}
+
+.waiting-timer {
+    font-size: clamp(14px, 4vw, 18px) !important;
+    font-weight: 700 !important;
+    color: var(--accent) !important;
+    background: rgba(255, 85, 0, 0.2) !important;
+    padding: 4px 16px !important;
+    border-radius: 30px !important;
+    font-family: monospace !important;
+}
+
+/* Кнопка чата - крупнее */
 .waiting-chat-button {
+    width: min(280px, 80%) !important;
+    padding: 16px 32px !important;
+    border-radius: 50px !important;
+    font-size: clamp(16px, 4.5vw, 18px) !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    transition: all 0.25s ease !important;
     margin-top: 20px !important;
+    border: none !important;
+}
+
+.waiting-chat-button.disabled {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-secondary) !important;
+    pointer-events: none !important;
+}
+
+.waiting-chat-button.active {
+    background: var(--accent) !important;
+    color: white !important;
+    pointer-events: auto !important;
+    box-shadow: 0 4px 20px rgba(255, 85, 0, 0.4) !important;
+}
+
+.waiting-chat-button.active:hover {
+    background: var(--accent-soft) !important;
+    transform: scale(1.02) !important;
+}
+
+/* Адаптация для маленьких экранов */
+@media (max-width: 480px) {
+    #waitingModeContent {
+        padding: 16px !important;
+    }
+    
+    .waiting-self-avatar,
+    .waiting-teammate-avatar {
+        width: min(65px, 20vw) !important;
+        height: min(65px, 20vw) !important;
+    }
+    
+    .waiting-line {
+        width: min(40px, 12vw) !important;
+    }
+    
+    .waiting-chat-button {
+        padding: 14px 24px !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .waiting-self-avatar,
+    .waiting-teammate-avatar {
+        width: min(55px, 18vw) !important;
+        height: min(55px, 18vw) !important;
+    }
+}
+
+/* Своя аватарка */
+.waiting-self-avatar .tg-avatar-svg {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.waiting-self-avatar svg {
+    width: 60% !important;
+    height: 60% !important;
 }
