@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ РАБОЧАЯ ВЕРСИЯ С ФИКСОМ ЭКРАНА ОЖИДАНИЯ
+// СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ РАБОЧАЯ ВЕРСИЯ
 // ============================================
 
 const Swipe = {
@@ -98,15 +98,16 @@ const Swipe = {
         const waitingContent = document.getElementById('waitingModeContent');
         
         if (swipeContent) {
-            swipeContent.style.display = 'block';
+            swipeContent.style.display = 'flex';
             swipeContent.style.visibility = 'visible';
         }
         if (waitingContent) {
             waitingContent.style.display = 'none';
             waitingContent.style.visibility = 'hidden';
+            waitingContent.classList.remove('active-waiting');
         }
         
-        // ПОКАЗЫВАЕМ КАРТОЧКУ (НЕ СКРЫВАЕМ!)
+        // ПОКАЗЫВАЕМ КАРТОЧКУ
         if (this.card) {
             this.card.style.display = 'block';
             this.card.style.visibility = 'visible';
@@ -398,18 +399,19 @@ const Swipe = {
             swipeContent.style.visibility = 'hidden';
         }
         if (waitingContent) {
-            waitingContent.style.display = 'block';
+            waitingContent.style.display = 'flex';
             waitingContent.style.visibility = 'visible';
+            waitingContent.classList.add('active-waiting');
         }
         
-        // НЕ СКРЫВАЕМ КАРТОЧКУ! Просто меняем её содержимое
+        // Карточка остаётся видимой
         if (this.card) {
             this.card.style.display = 'block';
             this.card.style.visibility = 'visible';
             this.card.style.opacity = '1';
         }
         
-        // Скрываем только кнопки свайпа
+        // Скрываем кнопки свайпа
         if (this.skipBtn) {
             this.skipBtn.style.display = 'none';
             this.skipBtn.style.visibility = 'hidden';
@@ -559,7 +561,7 @@ const Swipe = {
         if (this.loading) this.loading.classList.remove('active');
         
         this.resetCardPosition();
-        this.forceShowSwipeMode(); // Принудительно показываем режим свайпа
+        this.forceShowSwipeMode();
         this.showPlayer(opponent);
         this.startCardTimer();
         this.blockScroll();
@@ -1089,6 +1091,8 @@ const Swipe = {
         if (waitingAvatar) {
             if (player.avatar && player.avatar !== 'null' && player.avatar !== '') {
                 waitingAvatar.innerHTML = '<img src="' + player.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:50%;">';
+            } else {
+                waitingAvatar.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
             }
         }
         
