@@ -120,10 +120,6 @@ const Swipe = {
         
         const wrapper = document.createElement('div');
         wrapper.className = 'swipe-card-wrapper';
-        wrapper.style.position = 'relative';
-        wrapper.style.display = 'inline-block';
-        wrapper.style.margin = '0 auto';
-        wrapper.style.overflow = 'visible';
         
         const parent = originalCard.parentNode;
         parent.insertBefore(wrapper, originalCard);
@@ -146,11 +142,11 @@ const Swipe = {
         
         const leftWrapper = document.createElement('div');
         leftWrapper.className = 'swipe-side-btn skip-btn';
-        leftWrapper.innerHTML = '<div class="swipe-side-btn-inner"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#FF5E5E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+        leftWrapper.innerHTML = '<div class="swipe-side-btn-inner"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#FF5E5E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
         
         const rightWrapper = document.createElement('div');
         rightWrapper.className = 'swipe-side-btn invite-btn';
-        rightWrapper.innerHTML = '<div class="swipe-side-btn-inner"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 18L15 12L9 6" stroke="#4CAF50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+        rightWrapper.innerHTML = '<div class="swipe-side-btn-inner"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18L15 12L9 6" stroke="#4CAF50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
         
         this.cardWrapper.appendChild(leftWrapper);
         this.cardWrapper.appendChild(rightWrapper);
@@ -195,74 +191,21 @@ const Swipe = {
         
         const screenWidth = window.innerWidth;
         
-        let btnWidth = Math.min(Math.max(cardWidth * 0.1, 38), 56);
-        let btnHeight = Math.min(Math.max(cardHeight * 0.55, 85), 140);
+        // Используем CSS классы для адаптации, не переопределяем inline стили
+        this.skipBtn.style.left = 'auto';
+        this.inviteBtn.style.right = 'auto';
         
-        const MIN_VISIBLE_OFFSET = 14;
-        let desiredOffset = Math.min(btnWidth * 0.65, 32);
-        
-        const availableLeft = cardLeft;
-        const availableRight = screenWidth - cardRight;
-        
-        let leftOffset = desiredOffset;
-        if (availableLeft < desiredOffset) {
-            leftOffset = Math.max(availableLeft - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
-            if (leftOffset < MIN_VISIBLE_OFFSET) {
-                btnWidth = Math.min(btnWidth, availableLeft - 5);
-                leftOffset = Math.max(btnWidth * 0.4, MIN_VISIBLE_OFFSET);
-            }
-        }
-        
-        let rightOffset = desiredOffset;
-        if (availableRight < desiredOffset) {
-            rightOffset = Math.max(availableRight - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
-            if (rightOffset < MIN_VISIBLE_OFFSET) {
-                btnWidth = Math.min(btnWidth, availableRight - 5);
-                rightOffset = Math.max(btnWidth * 0.4, MIN_VISIBLE_OFFSET);
-            }
-        }
+        // Просто позиционируем кнопки
+        let leftOffset = Math.max(12, Math.min(28, cardWidth * 0.08));
+        let rightOffset = Math.max(12, Math.min(28, cardWidth * 0.08));
         
         if (screenWidth < 400) {
-            btnWidth = Math.min(btnWidth, 44);
-            btnHeight = Math.min(btnHeight, 100);
-            leftOffset = Math.max(leftOffset, 12);
-            rightOffset = Math.max(rightOffset, 12);
+            leftOffset = 10;
+            rightOffset = 10;
         }
         
-        if (screenWidth < 340) {
-            btnWidth = Math.min(btnWidth, 38);
-            btnHeight = Math.min(btnHeight, 90);
-            leftOffset = Math.max(leftOffset, 10);
-            rightOffset = Math.max(rightOffset, 10);
-        }
-        
-        if (screenWidth < 300) {
-            btnWidth = Math.min(btnWidth, 34);
-            btnHeight = Math.min(btnHeight, 80);
-            leftOffset = Math.max(leftOffset, 8);
-            rightOffset = Math.max(rightOffset, 8);
-        }
-        
-        this.skipBtn.style.width = btnWidth + 'px';
-        this.skipBtn.style.height = btnHeight + 'px';
-        this.skipBtn.style.minHeight = btnHeight + 'px';
-        this.skipBtn.style.top = '50%';
-        this.skipBtn.style.transform = 'translateY(-50%)';
         this.skipBtn.style.left = '-' + leftOffset + 'px';
-        
-        this.inviteBtn.style.width = btnWidth + 'px';
-        this.inviteBtn.style.height = btnHeight + 'px';
-        this.inviteBtn.style.minHeight = btnHeight + 'px';
-        this.inviteBtn.style.top = '50%';
-        this.inviteBtn.style.transform = 'translateY(-50%)';
         this.inviteBtn.style.right = '-' + rightOffset + 'px';
-        
-        const iconSize = Math.min(btnWidth * 0.55, 22);
-        const allSvgs = document.querySelectorAll('.swipe-side-btn svg');
-        allSvgs.forEach(svg => {
-            svg.style.width = iconSize + 'px';
-            svg.style.height = iconSize + 'px';
-        });
     },
     
     pulseButton(btn) {
@@ -325,10 +268,6 @@ const Swipe = {
     
     adjustCardSize() {
         if (!this.card || this.isWaitingMode) return;
-        if (this.cardWrapper) {
-            this.cardWrapper.style.marginLeft = 'auto';
-            this.cardWrapper.style.marginRight = 'auto';
-        }
         this.updateButtonsPosition();
     },
     
@@ -367,9 +306,6 @@ const Swipe = {
         if (this.inviteBtn) this.inviteBtn.style.display = 'none';
         
         this.isWaitingMode = true;
-        
-        const swipeTimer = document.getElementById('swipeTimer');
-        if (swipeTimer) swipeTimer.style.display = 'none';
         
         // Восстанавливаем позицию карточки
         if (this.cardWrapper) {
