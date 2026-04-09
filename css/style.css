@@ -4415,116 +4415,7 @@ button:active { transform: scale(0.96); }
     }
 }
 
-/* ===== МОДАЛЬНОЕ ОКНО "МАГАЗИН В РАЗРАБОТКЕ" ===== */
-.shop-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 200;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.2s ease;
-}
-
-.shop-modal-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-.shop-modal {
-    background: var(--surface);
-    border-radius: 16px;
-    width: 280px;
-    max-width: 85%;
-    overflow: hidden;
-    transform: scale(0.9);
-    transition: transform 0.2s ease;
-    border: 1px solid var(--border-color);
-}
-
-.shop-modal-overlay.active .shop-modal {
-    transform: scale(1);
-}
-
-.shop-modal-header {
-    padding: 16px 16px 0 16px;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.shop-modal-close {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background 0.2s;
-    font-size: 20px;
-    color: var(--text-secondary);
-}
-
-.shop-modal-close:hover {
-    background: rgba(255, 85, 0, 0.2);
-    color: var(--accent);
-}
-
-.shop-modal-icon {
-    text-align: center;
-    font-size: 48px;
-    margin-bottom: 8px;
-}
-
-.shop-modal-title {
-    text-align: center;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 8px;
-}
-
-.shop-modal-message {
-    text-align: center;
-    font-size: 14px;
-    color: var(--text-secondary);
-    padding: 0 24px 24px 24px;
-    line-height: 1.5;
-}
-
-.shop-modal-button {
-    display: block;
-    width: calc(100% - 32px);
-    margin: 0 16px 20px 16px;
-    padding: 12px;
-    background: var(--accent);
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-    text-align: center;
-}
-
-.shop-modal-button:hover {
-    background: var(--accent-soft);
-}
-
-.icon-settings.active svg {
-    stroke: #FF5500 !important;
-}
-
-/* ===== МЕНЮ ДЕЙСТВИЙ С ТИММЕЙТОМ ===== */
+/* ===== МЕНЮ ДЕЙСТВИЙ С ТИММЕЙТОМ (СТИЛЬ PINGSTER) ===== */
 .friend-arrow-menu {
     width: 36px;
     height: 36px;
@@ -4533,15 +4424,16 @@ button:active { transform: scale(0.96); }
     justify-content: center;
     cursor: pointer;
     border-radius: 50%;
-    font-size: 20px;
+    font-size: 18px;
     color: var(--text-secondary);
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     flex-shrink: 0;
 }
 
 .friend-arrow-menu:hover {
-    background: rgba(255, 85, 0, 0.15);
+    background: rgba(255, 85, 0, 0.12);
     color: #FF5500;
+    transform: scale(1.05);
 }
 
 .friend-actions-menu {
@@ -4552,43 +4444,61 @@ button:active { transform: scale(0.96); }
 .friend-actions-popup {
     position: fixed;
     background: var(--surface);
-    border-radius: 14px;
-    width: 220px;
+    border-radius: 16px;
+    width: 200px;
     overflow: hidden;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
-    border: 1px solid var(--border-color);
-    animation: menuFadeIn 0.15s ease;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 85, 0, 0.25);
+    animation: menuFadeIn 0.15s cubic-bezier(0.2, 0.9, 0.4, 1.1);
 }
 
 @keyframes menuFadeIn {
     from {
         opacity: 0;
-        transform: scale(0.95);
+        transform: scale(0.92) translateY(-4px);
     }
     to {
         opacity: 1;
-        transform: scale(1);
+        transform: scale(1) translateY(0);
     }
 }
 
 .friend-action-item {
-    padding: 12px 16px;
+    padding: 14px 18px;
     font-size: 15px;
+    font-weight: 500;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
     color: var(--text-primary);
+    letter-spacing: 0.2px;
+}
+
+.friend-action-item:first-child {
+    border-bottom: 1px solid var(--border-color);
 }
 
 .friend-action-item:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 85, 0, 0.08);
+}
+
+.friend-action-item.write-btn {
+    color: var(--text-primary);
+}
+
+.friend-action-item.write-btn:hover {
+    color: #FF5500;
 }
 
 .friend-action-item.delete-btn {
     color: #FF3B30;
-    border-top: 1px solid var(--border-color);
 }
 
-/* ===== ДИАЛОГ ПОДТВЕРЖДЕНИЯ ===== */
+.friend-action-item.delete-btn:hover {
+    background: rgba(255, 59, 48, 0.1);
+    color: #FF3B30;
+}
+
+/* ===== ДИАЛОГ ПОДТВЕРЖДЕНИЯ (СТИЛЬ PINGSTER) ===== */
 .friend-delete-dialog {
     position: fixed;
     top: 0;
@@ -4607,23 +4517,27 @@ button:active { transform: scale(0.96); }
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 
 .friend-delete-popup {
     position: relative;
     background: var(--surface);
-    border-radius: 16px;
+    border-radius: 20px;
     width: 280px;
-    padding: 20px;
+    padding: 24px 20px 20px 20px;
     text-align: center;
-    animation: dialogFadeIn 0.2s ease;
+    animation: dialogFadeIn 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    border: 1px solid rgba(255, 85, 0, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 @keyframes dialogFadeIn {
     from {
         opacity: 0;
-        transform: scale(0.95);
+        transform: scale(0.94);
     }
     to {
         opacity: 1;
@@ -4641,8 +4555,8 @@ button:active { transform: scale(0.96); }
 .friend-delete-message {
     font-size: 14px;
     color: var(--text-secondary);
-    margin-bottom: 20px;
-    line-height: 1.4;
+    margin-bottom: 24px;
+    line-height: 1.45;
 }
 
 .friend-delete-buttons {
@@ -4653,31 +4567,39 @@ button:active { transform: scale(0.96); }
 .friend-delete-cancel,
 .friend-delete-confirm {
     flex: 1;
-    padding: 10px;
-    border-radius: 10px;
+    padding: 12px;
+    border-radius: 12px;
     font-size: 15px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     border: none;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 }
 
 .friend-delete-cancel {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
+}
+
+.friend-delete-cancel:hover {
     background: rgba(255, 255, 255, 0.1);
     color: var(--text-primary);
 }
 
 .friend-delete-confirm {
-    background: #FF3B30;
+    background: linear-gradient(135deg, #FF5500 0%, #FF3B00 100%);
     color: white;
-}
-
-.friend-delete-cancel:hover {
-    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 2px 8px rgba(255, 85, 0, 0.3);
 }
 
 .friend-delete-confirm:hover {
-    background: #E3352A;
+    background: linear-gradient(135deg, #FF661A 0%, #FF4A1A 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 85, 0, 0.4);
+}
+
+.friend-delete-confirm:active {
+    transform: translateY(0);
 }
 
 .friend-arrow {
@@ -4686,4 +4608,35 @@ button:active { transform: scale(0.96); }
     font-weight: 300;
     min-width: 28px;
     text-align: right;
+}
+
+.leaderboard-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    flex-shrink: 0;
+    min-width: 60px;
+    justify-content: flex-end;
+}
+
+.leaderboard-place {
+    font-size: 13px;
+    font-weight: 500;
+    color: #8E97A6;
+    min-width: 28px;
+    text-align: right;
+}
+
+.leaderboard-current-badge {
+    color: #FF5500;
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.9;
+    min-width: 28px;
+    text-align: right;
+}
+
+.leaderboard-arrow {
+    color: #FF5500 !important;
 }
