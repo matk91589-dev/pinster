@@ -1,8 +1,8 @@
 // ============================================
-// ПРОФИЛЬ - v2.9 ULTRA FIX (КОПИРОВАНИЕ БЕЗ СООБЩЕНИЙ)
+// ПРОФИЛЬ - v3.0 NUCLEAR FIX (КОПИРОВАНИЕ РАБОТАЕТ)
 // ============================================
 
-console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v2.9 ULTRA FIX)');
+console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v3.0 NUCLEAR FIX)');
 
 // Константы валидации
 const VALIDATION = {
@@ -56,7 +56,6 @@ const Profile = {
     isFriendsLoaded: false,
     isLoadingFriends: false,
     screenObserver: null,
-    isCopyAction: false, // Флаг для блокировки сообщений при копировании
     
     validationErrors: {
         nick: false,
@@ -127,11 +126,6 @@ const Profile = {
     },
     
     showToast(message, isError = false) {
-        // Блокируем показ сообщения если это действие копирования
-        if (this.isCopyAction) {
-            return;
-        }
-        
         if (this.toastTimeout) clearTimeout(this.toastTimeout);
         const existingToast = document.querySelector('.profile-toast');
         if (existingToast) existingToast.remove();
@@ -232,25 +226,19 @@ const Profile = {
     
     copyToClipboard(text, btnElement) {
         if (!text || text === '' || text === 'Не указана') {
-            this.isCopyAction = true;
             this.showToast('Нет данных для копирования');
-            setTimeout(() => this.isCopyAction = false, 100);
             return;
         }
         
         navigator.clipboard.writeText(text).then(() => {
-            this.isCopyAction = true;
-            this.showToast('Скопировано в буфер обмена');
+            this.showToast('✅ Скопировано!');
             if (btnElement) {
                 btnElement.classList.add('copied');
                 setTimeout(() => btnElement.classList.remove('copied'), 1500);
             }
-            setTimeout(() => this.isCopyAction = false, 100);
         }).catch(err => {
             console.error('Ошибка копирования:', err);
-            this.isCopyAction = true;
-            this.showToast('Ошибка копирования');
-            setTimeout(() => this.isCopyAction = false, 100);
+            this.showToast('❌ Ошибка копирования');
         });
     },
     
@@ -258,53 +246,51 @@ const Profile = {
         // Steam
         const steamInput = document.getElementById('steamDisplay');
         if (steamInput) {
-            const parent = steamInput.parentNode;
-            let wrapper = parent.querySelector('.link-with-copy');
-            if (!wrapper) {
-                wrapper = document.createElement('div');
-                wrapper.className = 'link-with-copy';
-                steamInput.parentNode.insertBefore(wrapper, steamInput);
-                wrapper.appendChild(steamInput);
-                
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'copy-btn';
-                copyBtn.setAttribute('data-copy-btn', 'true');
-                copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
-                
-                copyBtn.addEventListener('click', (e) => {
-                    e.stopImmediatePropagation();
-                    e.preventDefault();
-                    this.copyToClipboard(steamInput.value || this.savedSteam, copyBtn);
-                }, true);
-                
-                wrapper.appendChild(copyBtn);
-            }
+            const wrapper = document.createElement('div');
+            wrapper.className = 'link-with-copy';
+            steamInput.parentNode.insertBefore(wrapper, steamInput);
+            wrapper.appendChild(steamInput);
+            
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
+            
+            // Удаляем старый обработчик если есть
+            copyBtn.onclick = null;
+            
+            // ВАЖНО: Используем onmousedown вместо onclick для перехвата ДО всплытия
+            copyBtn.onmousedown = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.copyToClipboard(steamInput.value || this.savedSteam, copyBtn);
+                return false;
+            };
+            
+            wrapper.appendChild(copyBtn);
         }
         
         // FaceIT
         const faceitInput = document.getElementById('faceitLinkDisplay');
         if (faceitInput) {
-            const parent = faceitInput.parentNode;
-            let wrapper = parent.querySelector('.link-with-copy');
-            if (!wrapper) {
-                wrapper = document.createElement('div');
-                wrapper.className = 'link-with-copy';
-                faceitInput.parentNode.insertBefore(wrapper, faceitInput);
-                wrapper.appendChild(faceitInput);
-                
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'copy-btn';
-                copyBtn.setAttribute('data-copy-btn', 'true');
-                copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
-                
-                copyBtn.addEventListener('click', (e) => {
-                    e.stopImmediatePropagation();
-                    e.preventDefault();
-                    this.copyToClipboard(faceitInput.value || this.savedFaceitLink, copyBtn);
-                }, true);
-                
-                wrapper.appendChild(copyBtn);
-            }
+            const wrapper = document.createElement('div');
+            wrapper.className = 'link-with-copy';
+            faceitInput.parentNode.insertBefore(wrapper, faceitInput);
+            wrapper.appendChild(faceitInput);
+            
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
+            
+            copyBtn.onclick = null;
+            
+            copyBtn.onmousedown = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.copyToClipboard(faceitInput.value || this.savedFaceitLink, copyBtn);
+                return false;
+            };
+            
+            wrapper.appendChild(copyBtn);
         }
     },
     
@@ -850,19 +836,10 @@ const Profile = {
     },
     
     setupClickHandlers() {
-        // Глобальный перехватчик кликов для блокировки сообщений при копировании
-        document.addEventListener('click', (e) => {
-            const copyBtn = e.target.closest('[data-copy-btn]');
-            if (copyBtn) {
-                this.isCopyAction = true;
-                setTimeout(() => this.isCopyAction = false, 200);
-            }
-        }, true);
-        
         const avatar = document.getElementById('profileAvatar');
         if (avatar) {
             avatar.style.cursor = 'pointer';
-            avatar.onclick = (e) => {
+            avatar.onclick = () => {
                 if (this.editMode) {
                     if (window.Avatar?.select) Avatar.select();
                 } else {
@@ -910,30 +887,42 @@ const Profile = {
         if (steamInput) {
             steamInput.addEventListener('input', () => this.validateOnInput());
             steamInput.maxLength = VALIDATION.STEAM.maxLength;
+            // Обработчик клика по инпуту
+            steamInput.onclick = (e) => {
+                if (!this.editMode) {
+                    this.showToast('Для изменений\nперейдите в режим редактирования', true);
+                }
+            };
         }
         
         const faceitInput = document.getElementById('faceitLinkDisplay');
         if (faceitInput) {
             faceitInput.addEventListener('input', () => this.validateOnInput());
             faceitInput.maxLength = VALIDATION.FACEIT.maxLength;
+            faceitInput.onclick = (e) => {
+                if (!this.editMode) {
+                    this.showToast('Для изменений\nперейдите в режим редактирования', true);
+                }
+            };
         }
         
+        // УБИРАЕМ onclick с карточек вообще!
         const ageCard = document.querySelector('.stat-card:last-child');
         if (ageCard) {
             ageCard.style.cursor = 'pointer';
-            ageCard.onclick = () => this.editAge();
+            ageCard.onclick = null; // Убираем!
         }
         
         const steamCard = document.querySelector('.profile-stat-card:first-child');
         if (steamCard) {
             steamCard.style.cursor = 'pointer';
-            steamCard.onclick = () => this.editSteam();
+            steamCard.onclick = null; // Убираем!
         }
         
         const faceitCard = document.querySelector('.profile-stat-card:last-child');
         if (faceitCard) {
             faceitCard.style.cursor = 'pointer';
-            faceitCard.onclick = () => this.editFaceitLink();
+            faceitCard.onclick = null; // Убираем!
         }
         
         const friendsArrow = document.querySelector('.friends-arrow');
@@ -993,7 +982,7 @@ const Profile = {
         if (this.isInitialized) return;
         this.isInitialized = true;
         
-        console.log('🚀 Profile.init() v2.9 ULTRA FIX');
+        console.log('🚀 Profile.init() v3.0 NUCLEAR FIX');
         this.telegramId = this.getTelegramId();
         
         this.tempName = this.savedName;
