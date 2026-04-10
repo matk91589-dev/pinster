@@ -55,6 +55,78 @@ const Profile = {
         }, 2000);
     },
     
+    // Функция копирования в буфер обмена
+    copyToClipboard(text, btnElement) {
+        if (!text || text === '' || text === 'Не указана') {
+            this.showToast('Нет данных для копирования');
+            return;
+        }
+        
+        navigator.clipboard.writeText(text).then(() => {
+            this.showToast('Ссылка скопирована!');
+            if (btnElement) {
+                btnElement.classList.add('copied');
+                setTimeout(() => btnElement.classList.remove('copied'), 1500);
+            }
+        }).catch(err => {
+            console.error('Ошибка копирования:', err);
+            this.showToast('Ошибка копирования');
+        });
+    },
+    
+    // Обновление отображения ссылок с кнопками копирования
+    updateLinksWithCopy() {
+        const steamContainer = document.getElementById('steamDisplay')?.parentElement;
+        const faceitContainer = document.getElementById('faceitLinkDisplay')?.parentElement;
+        
+        // Steam ссылка
+        if (steamContainer && this.savedSteam && this.savedSteam !== '') {
+            // Проверяем, есть ли уже кнопка копирования
+            if (!steamContainer.querySelector('.copy-btn')) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'link-with-copy';
+                wrapper.style.cssText = 'display: flex; align-items: center; gap: 8px; width: 100%;';
+                
+                const input = document.getElementById('steamDisplay');
+                input.style.flex = '1';
+                input.parentNode.insertBefore(wrapper, input);
+                wrapper.appendChild(input);
+                
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-btn';
+                copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" fill="none"/></svg>';
+                copyBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    this.copyToClipboard(this.savedSteam, copyBtn);
+                };
+                wrapper.appendChild(copyBtn);
+            }
+        }
+        
+        // Faceit ссылка
+        if (faceitContainer && this.savedFaceitLink && this.savedFaceitLink !== '') {
+            if (!faceitContainer.querySelector('.copy-btn')) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'link-with-copy';
+                wrapper.style.cssText = 'display: flex; align-items: center; gap: 8px; width: 100%;';
+                
+                const input = document.getElementById('faceitLinkDisplay');
+                input.style.flex = '1';
+                input.parentNode.insertBefore(wrapper, input);
+                wrapper.appendChild(input);
+                
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-btn';
+                copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" fill="none"/></svg>';
+                copyBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    this.copyToClipboard(this.savedFaceitLink, copyBtn);
+                };
+                wrapper.appendChild(copyBtn);
+            }
+        }
+    },
+    
     // Загрузка друзей для профиля
     async loadFriends() {
         if (!this.telegramId) {
@@ -195,6 +267,7 @@ const Profile = {
             this.savedSteam = localStorage.getItem('profile_steam') || '';
             this.savedFaceitLink = localStorage.getItem('profile_faceit') || '';
             this.updateDisplay();
+            this.updateLinksWithCopy();
         }
         
         try {
@@ -218,6 +291,7 @@ const Profile = {
                     localStorage.setItem('profile_faceit', this.savedFaceitLink);
                     
                     this.updateDisplay();
+                    this.updateLinksWithCopy();
                     this.isProfileLoaded = true;
                 }
             }
@@ -413,6 +487,7 @@ const Profile = {
                 localStorage.setItem('profile_faceit', this.savedFaceitLink);
                 
                 this.updateDisplay();
+                this.updateLinksWithCopy();
                 this.toggleEditMode();
                 this.showToast('Профиль сохранен');
             } else {
@@ -599,6 +674,7 @@ const Profile = {
             this.savedSteam = localStorage.getItem('profile_steam') || '';
             this.savedFaceitLink = localStorage.getItem('profile_faceit') || '';
             this.updateDisplay();
+            this.updateLinksWithCopy();
         }
         
         const cachedAvatar = localStorage.getItem('profile_avatar');
