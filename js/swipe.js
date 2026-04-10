@@ -87,6 +87,49 @@ const Swipe = {
         console.log('✅ Swipe.init() завершён');
     },
     
+    // Функция копирования в буфер обмена
+    copyToClipboard(text, btnElement) {
+        if (!text || text === 'Не указана' || text === '') {
+            if (window.Settings && window.Settings.error) window.Settings.error();
+            return;
+        }
+        
+        navigator.clipboard.writeText(text).then(() => {
+            if (window.Settings && window.Settings.success) window.Settings.success();
+            
+            if (btnElement) {
+                btnElement.classList.add('copied');
+                setTimeout(() => btnElement.classList.remove('copied'), 1500);
+            }
+        }).catch(err => {
+            console.error('Ошибка копирования:', err);
+            if (window.Settings && window.Settings.error) window.Settings.error();
+        });
+    },
+    
+    // Создание элемента с кнопкой копирования
+    createLinkWithCopy(text) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'link-with-copy';
+        
+        const valueSpan = document.createElement('div');
+        valueSpan.className = 'swipe-link-value';
+        valueSpan.textContent = text;
+        
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" fill="none"/></svg>';
+        copyBtn.onclick = (e) => {
+            e.stopPropagation();
+            this.copyToClipboard(text, copyBtn);
+        };
+        
+        wrapper.appendChild(valueSpan);
+        wrapper.appendChild(copyBtn);
+        
+        return wrapper;
+    },
+    
     forceShowSwipeMode() {
         console.log('🔧 forceShowSwipeMode()');
         
@@ -383,11 +426,9 @@ const Swipe = {
             return;
         }
         
-        // Скрываем контент свайпа
         swipeContent.style.display = 'none';
         swipeContent.style.visibility = 'hidden';
         
-        // Показываем контент ожидания через класс
         waitingContent.classList.add('active');
         waitingContent.style.visibility = 'visible';
         
@@ -398,7 +439,6 @@ const Swipe = {
             this.card.style.opacity = '1';
         }
         
-        // Скрываем кнопки свайпа
         if (this.skipBtn) {
             this.skipBtn.style.display = 'none';
             this.skipBtn.style.visibility = 'hidden';
@@ -410,23 +450,14 @@ const Swipe = {
             this.inviteBtn.style.pointerEvents = 'none';
         }
         
-        // Скрываем таймер свайпа
         if (this.timerElement) {
             this.timerElement.style.display = 'none';
         }
         
         this.isWaitingMode = true;
         
-        // Обновляем ник тиммейта
-        const waitingNick = document.getElementById('waitingTeammateNick');
-        if (waitingNick && this.currentPlayer) {
-            waitingNick.textContent = this.currentPlayer.nick || 'Игрок';
-        }
-        
-        // Запускаем таймер ожидания
         this.startWaitingTimer();
         
-        // Загружаем аватарки
         setTimeout(() => {
             this.loadSelfAvatar();
             this.loadTeammateAvatar();
@@ -1153,8 +1184,28 @@ const Swipe = {
             styleEl.textContent = player.style === 'fan' ? 'Fan' : 'Tryhard';
         }
         
-        if (steamLinkEl) steamLinkEl.textContent = player.steam_link || '';
-        if (faceitLinkEl) faceitLinkEl.textContent = player.faceit_link || '';
+        // Steam ссылка с кнопкой копирования
+        const steamValue = player.steam_link || 'Не указана';
+        if (steamLinkEl && steamValue !== 'Не указана' && steamValue !== '') {
+            const wrapper = this.createLinkWithCopy(steamValue);
+            const parent = steamLinkEl.parentNode;
+            steamLinkEl.remove();
+            parent.appendChild(wrapper);
+        } else if (steamLinkEl) {
+            steamLinkEl.textContent = steamValue;
+        }
+        
+        // Faceit ссылка с кнопкой копирования
+        const faceitValue = player.faceit_link || 'Не указана';
+        if (faceitLinkEl && faceitValue !== 'Не указана' && faceitValue !== '') {
+            const wrapper = this.createLinkWithCopy(faceitValue);
+            const parent = faceitLinkEl.parentNode;
+            faceitLinkEl.remove();
+            parent.appendChild(wrapper);
+        } else if (faceitLinkEl) {
+            faceitLinkEl.textContent = faceitValue;
+        }
+        
         if (commentEl) commentEl.textContent = player.comment || '';
         
         this.updateAvatar(player);
