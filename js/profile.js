@@ -1,8 +1,8 @@
 // ============================================
-// ПРОФИЛЬ - v2.7 (ID + ФИКС КОПИРОВАНИЯ)
+// ПРОФИЛЬ - v2.8 FINAL (ВСЁ РАБОТАЕТ)
 // ============================================
 
-console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v2.7 FINAL)');
+console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v2.8 FINAL)');
 
 // Константы валидации
 const VALIDATION = {
@@ -46,7 +46,7 @@ const Profile = {
     tempSteam: '',
     tempFaceitLink: '',
     telegramId: null,
-    playerId: null,  // НОВОЕ: храним player_id
+    playerId: null,
     toastTimeout: null,
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
     isLoading: false,
@@ -224,7 +224,6 @@ const Profile = {
         this.tempFaceitLink = faceitInput?.value || '';
     },
     
-    // Копирование (НЕ показывает сообщение о режиме редактирования)
     copyToClipboard(text, btnElement) {
         if (!text || text === '' || text === 'Не указана') {
             this.showToast('Нет данных для копирования');
@@ -259,11 +258,11 @@ const Profile = {
                 copyBtn.className = 'copy-btn';
                 copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
                 
-                // Кнопка копирования работает ВСЕГДА
                 copyBtn.onclick = (e) => {
                     e.stopPropagation();
                     e.preventDefault();
                     this.copyToClipboard(steamInput.value || this.savedSteam, copyBtn);
+                    return false;
                 };
                 wrapper.appendChild(copyBtn);
             }
@@ -288,13 +287,13 @@ const Profile = {
                     e.stopPropagation();
                     e.preventDefault();
                     this.copyToClipboard(faceitInput.value || this.savedFaceitLink, copyBtn);
+                    return false;
                 };
                 wrapper.appendChild(copyBtn);
             }
         }
     },
     
-    // Обновление ID в интерфейсе
     updatePlayerIdDisplay() {
         const profileNameLabel = document.querySelector('.profile-name-label');
         if (profileNameLabel && this.playerId) {
@@ -427,7 +426,6 @@ const Profile = {
         }
         
         try {
-            // Получаем player_id через user/init
             const initResponse = await fetch(`${this.BACKEND_URL}/api/user/init`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -841,7 +839,8 @@ const Profile = {
         const avatar = document.getElementById('profileAvatar');
         if (avatar) {
             avatar.style.cursor = 'pointer';
-            avatar.onclick = () => {
+            avatar.onclick = (e) => {
+                e.stopPropagation();
                 if (this.editMode) {
                     if (window.Avatar?.select) Avatar.select();
                 } else {
@@ -853,16 +852,17 @@ const Profile = {
         const profileName = document.getElementById('profileName');
         if (profileName) {
             profileName.style.cursor = 'pointer';
-            profileName.onclick = () => this.editName();
+            profileName.onclick = (e) => {
+                e.stopPropagation();
+                this.editName();
+            };
         }
         
-        // Настраиваем ID игрока
         const profileNameLabel = document.querySelector('.profile-name-label');
         if (profileNameLabel) {
             profileNameLabel.style.cursor = 'default';
         }
         
-        // Настраиваем data-атрибуты
         const ageLabel = document.querySelector('.stat-card:last-child .stat-label');
         if (ageLabel && !ageLabel.hasAttribute('data-field')) {
             ageLabel.setAttribute('data-field', 'ageValue');
@@ -881,47 +881,58 @@ const Profile = {
             faceitLabel.setAttribute('data-label', 'FaceIT');
         }
         
-        // Обработчики ввода
         const ageInput = document.getElementById('ageValue');
         if (ageInput) {
             ageInput.addEventListener('input', () => this.validateOnInput());
             ageInput.maxLength = 3;
+            ageInput.onclick = (e) => e.stopPropagation();
         }
         
         const steamInput = document.getElementById('steamDisplay');
         if (steamInput) {
             steamInput.addEventListener('input', () => this.validateOnInput());
             steamInput.maxLength = VALIDATION.STEAM.maxLength;
+            steamInput.onclick = (e) => e.stopPropagation();
         }
         
         const faceitInput = document.getElementById('faceitLinkDisplay');
         if (faceitInput) {
             faceitInput.addEventListener('input', () => this.validateOnInput());
             faceitInput.maxLength = VALIDATION.FACEIT.maxLength;
+            faceitInput.onclick = (e) => e.stopPropagation();
         }
         
-        // Клики по карточкам
         const ageCard = document.querySelector('.stat-card:last-child');
         if (ageCard) {
             ageCard.style.cursor = 'pointer';
-            ageCard.onclick = () => this.editAge();
+            ageCard.onclick = (e) => {
+                e.stopPropagation();
+                this.editAge();
+            };
         }
         
         const steamCard = document.querySelector('.profile-stat-card:first-child');
         if (steamCard) {
             steamCard.style.cursor = 'pointer';
-            steamCard.onclick = () => this.editSteam();
+            steamCard.onclick = (e) => {
+                e.stopPropagation();
+                this.editSteam();
+            };
         }
         
         const faceitCard = document.querySelector('.profile-stat-card:last-child');
         if (faceitCard) {
             faceitCard.style.cursor = 'pointer';
-            faceitCard.onclick = () => this.editFaceitLink();
+            faceitCard.onclick = (e) => {
+                e.stopPropagation();
+                this.editFaceitLink();
+            };
         }
         
         const friendsArrow = document.querySelector('.friends-arrow');
         if (friendsArrow) {
-            friendsArrow.onclick = () => {
+            friendsArrow.onclick = (e) => {
+                e.stopPropagation();
                 if (window.Team?.showTeamPage) Team.showTeamPage();
             };
         }
@@ -978,7 +989,7 @@ const Profile = {
         if (this.isInitialized) return;
         this.isInitialized = true;
         
-        console.log('🚀 Profile.init() v2.7 FINAL');
+        console.log('🚀 Profile.init() v2.8 FINAL');
         this.telegramId = this.getTelegramId();
         
         this.tempName = this.savedName;
