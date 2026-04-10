@@ -5050,31 +5050,47 @@ button:active { transform: scale(0.96); }
     }
 }
 
-/* Кнопка копирования */
+/* Кнопка копирования внутри плашки */
+.link-with-copy {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.link-with-copy .swipe-link-value,
+.link-with-copy .profile-stat-value,
+.link-with-copy .input-field {
+    width: 100%;
+    padding-right: 40px !important;
+}
+
 .copy-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
     background: transparent;
     border: none;
     cursor: pointer;
-    padding: 8px;
-    display: inline-flex;
+    padding: 6px;
+    display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 6px;
     transition: all 0.2s ease;
-    border-radius: 8px;
-    flex-shrink: 0;
+    z-index: 5;
 }
 
 .copy-btn svg {
     width: 18px;
     height: 18px;
-    stroke: var(--text-secondary);
-    stroke-width: 2;
-    fill: none;
+    stroke: #9BA1B0;
     transition: stroke 0.2s ease;
 }
 
 .copy-btn:hover {
-    background: rgba(255, 85, 0, 0.1);
+    background: rgba(255, 85, 0, 0.15);
 }
 
 .copy-btn:hover svg {
@@ -5083,17 +5099,4 @@ button:active { transform: scale(0.96); }
 
 .copy-btn.copied svg {
     stroke: #4CAF50;
-}
-
-/* Контейнер для ссылки с кнопкой */
-.link-with-copy {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-}
-
-.link-with-copy .swipe-link-value {
-    flex: 1;
-    margin: 0;
 }
