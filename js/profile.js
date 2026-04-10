@@ -1,8 +1,8 @@
 // ============================================
-// ПРОФИЛЬ - ФИНАЛЬНАЯ ВЕРСИЯ v2.3
+// ПРОФИЛЬ - ФИНАЛЬНАЯ ВЕРСИЯ v2.4 (СБРОС РЕЖИМА)
 // ============================================
 
-console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v2.3 FINAL)');
+console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v2.4 FINAL)');
 
 // Константы валидации
 const VALIDATION = {
@@ -55,6 +55,7 @@ const Profile = {
     isFriendsLoaded: false,
     isLoadingFriends: false,
     nickHintElement: null,
+    screenObserver: null,
     
     validationErrors: {
         nick: false,
@@ -146,20 +147,21 @@ const Profile = {
         }, isError ? 2500 : 2000);
     },
     
-    // Показать/скрыть подсказку для ника
+    // Показать/скрыть подсказку для ника (ТОЛЬКО в режиме редактирования)
     toggleNickHint(show) {
         const profileNameRow = document.querySelector('.profile-name-row');
         if (!profileNameRow) return;
         
-        if (show) {
+        if (show && this.editMode) {
             if (!this.nickHintElement) {
                 this.nickHintElement = document.createElement('div');
                 this.nickHintElement.style.cssText = `
-                    font-size: 9px;
+                    font-size: 10px;
                     color: #8E97A6;
-                    margin-top: 2px;
+                    margin-top: 4px;
                     font-weight: 400;
-                    letter-spacing: 0.2px;
+                    letter-spacing: 0.3px;
+                    width: 100%;
                 `;
                 this.nickHintElement.textContent = `*${VALIDATION.NICK.hint}`;
                 profileNameRow.appendChild(this.nickHintElement);
@@ -514,6 +516,8 @@ const Profile = {
     forceExitEditMode() {
         if (!this.editMode) return;
         
+        console.log('🔄 Сброс режима редактирования');
+        
         this.editMode = false;
         
         const profileScreen = document.getElementById('profileScreen');
@@ -577,9 +581,6 @@ const Profile = {
             this.updateFieldError('steamDisplay', false);
             this.updateFieldError('faceitLinkDisplay', false);
             
-            // Показываем подсказку для ника
-            this.toggleNickHint(true);
-            
             profileScreen?.classList.add('editable');
             editToggle?.classList.add('active');
             if (applyBtn) {
@@ -602,6 +603,9 @@ const Profile = {
             }
             if (profileName) profileName.classList.add('editable');
             if (avatar) avatar.classList.add('editable-avatar');
+            
+            // Показываем подсказку для ника
+            this.toggleNickHint(true);
             
             this.updateDisplay();
             this.showToast('Режим редактирования');
@@ -897,19 +901,47 @@ const Profile = {
         }
     },
     
-    // Вызывается при уходе с экрана профиля
-    onScreenLeave() {
-        if (this.editMode) {
-            this.forceExitEditMode();
-            console.log('🔄 Режим редактирования сброшен при уходе с экрана');
+    // Наблюдатель за экраном профиля
+    setupScreenObserver() {
+        const profileScreen = document.getElementById('profileScreen');
+        if (!profileScreen) {
+            console.warn('⚠️ profileScreen не найден');
+            return;
         }
+        
+        // Отключаем старый наблюдатель
+        if (this.screenObserver) {
+            this.screenObserver.disconnect();
+        }
+        
+        // Создаём новый
+        this.screenObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    const isActive = profileScreen.classList.contains('active');
+                    
+                    if (!isActive && this.editMode) {
+                        console.log('👁️ Экран профиля скрыт, сбрасываем режим редактирования');
+                        this.forceExitEditMode();
+                    }
+                }
+            });
+        });
+        
+        // Наблюдаем за изменением класса active
+        this.screenObserver.observe(profileScreen, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+        
+        console.log('👁️ Наблюдатель за экраном профиля активирован');
     },
     
     init() {
         if (this.isInitialized) return;
         this.isInitialized = true;
         
-        console.log('🚀 Profile.init() v2.3 FINAL');
+        console.log('🚀 Profile.init() v2.4 FINAL');
         this.telegramId = this.getTelegramId();
         
         this.tempName = this.savedName;
@@ -926,16 +958,8 @@ const Profile = {
         this.setupClickHandlers();
         this.updateLinksWithCopy();
         
-        // Подписываемся на смену экранов (если есть App)
-        if (window.App) {
-            const originalShowScreen = App.showScreen;
-            App.showScreen = (screenId, skipHistory) => {
-                if (screenId !== 'profileScreen' || screenId !== 'profile-screen') {
-                    Profile.onScreenLeave();
-                }
-                originalShowScreen.call(App, screenId, skipHistory);
-            };
-        }
+        // Запускаем наблюдатель за экраном
+        setTimeout(() => this.setupScreenObserver(), 200);
     }
 };
 
