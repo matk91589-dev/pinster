@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v2.2 FINAL (ДИНАМИЧЕСКАЯ ВАЛИДАЦИЯ)
+// ПОИСК - v2.3 FINAL (МГНОВЕННАЯ ЗАГРУЗКА ИЗ LOCALSTORAGE)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v2.2 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v2.3 FINAL)');
 
 // Константы валидации
 const SEARCH_VALIDATION = {
@@ -25,7 +25,6 @@ const Search = {
     isSearching: false,
     processedMatchIds: new Set(),
     
-    // Ошибки валидации
     validationErrors: {
         age: false,
         rating: false,
@@ -73,10 +72,17 @@ const Search = {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
     },
     
-    // ========== ПОЛУЧЕНИЕ ДАННЫХ ИЗ ПРОФИЛЯ ==========
+    // ========== ПОЛУЧЕНИЕ ДАННЫХ ИЗ ПРОФИЛЯ (МГНОВЕННО) ==========
     getProfileData() {
-        // Из Profile объекта
-        if (window.Profile) {
+        // Сначала localStorage — там данные после первого входа в профиль
+        const age = localStorage.getItem('profile_age') || '';
+        const steam = localStorage.getItem('profile_steam') || '';
+        const faceit = localStorage.getItem('profile_faceit') || '';
+        
+        console.log('📦 Данные из localStorage:', { age, steam, faceit });
+        
+        // Если в localStorage пусто, пробуем Profile (на случай если Profile уже загружен)
+        if (!age && window.Profile && window.Profile.savedAge) {
             return {
                 age: window.Profile.savedAge || '',
                 steam: window.Profile.savedSteam || '',
@@ -84,12 +90,7 @@ const Search = {
             };
         }
         
-        // Fallback на localStorage
-        return {
-            age: localStorage.getItem('profile_age') || '',
-            steam: localStorage.getItem('profile_steam') || '',
-            faceit: localStorage.getItem('profile_faceit') || ''
-        };
+        return { age, steam, faceit };
     },
     
     // ========== ВАЛИДАЦИЯ ==========
@@ -142,7 +143,7 @@ const Search = {
             ageInput.addEventListener('input', ageInput._handler);
         }
         
-        // Рейтинг
+        // Рейтинг/ранг
         if (mode === 'FACEIT') {
             const ratingInput = document.getElementById('faceitELOInput');
             if (ratingInput) {
@@ -220,7 +221,7 @@ const Search = {
         
         // МГНОВЕННОЕ автозаполнение из профиля
         const profileData = this.getProfileData();
-        console.log('📋 Автозаполнение из профиля:', profileData);
+        console.log('📋 Автозаполнение:', profileData);
         
         // Заполняем поля
         if (mode === 'FACEIT') {
@@ -229,7 +230,6 @@ const Search = {
             if (ageInput && profileData.age) ageInput.value = profileData.age;
             if (faceitInput && profileData.faceit) faceitInput.value = profileData.faceit;
             
-            // Проверяем начальную валидацию
             if (ageInput) this.updateFieldError(ageInput, this.validateAge(ageInput.value));
             const ratingInput = document.getElementById('faceitELOInput');
             if (ratingInput) this.updateFieldError(ratingInput, this.validateRating(ratingInput.value, 'FACEIT'));
@@ -262,7 +262,7 @@ const Search = {
             if (rankSelect) this.updateFieldError(rankSelect, this.validateRank(rankSelect.value));
         }
         
-        // Проверяем валидность перед поиском
+        // Проверяем валидность
         if (!this.isFormValid(mode)) {
             if (window.Settings) Settings.error();
             if (typeof Profile !== 'undefined' && Profile.showToast) {
@@ -279,13 +279,11 @@ const Search = {
         this.processedMatchIds.clear();
         this.currentMode = mode;
         
-        // Собираем данные и запускаем поиск
         const data = this.collectSearchData(mode);
         this.doStartSearch(mode, data);
     },
     
     isFormValid(mode) {
-        // Возраст
         let ageInput;
         if (mode === 'FACEIT') ageInput = document.getElementById('faceitAgeValue');
         else if (mode === 'PREMIER') ageInput = document.getElementById('premierAgeValue');
@@ -294,7 +292,6 @@ const Search = {
         
         if (ageInput && !this.validateAge(ageInput.value)) return false;
         
-        // Рейтинг/ранг
         if (mode === 'FACEIT') {
             const ratingInput = document.getElementById('faceitELOInput');
             if (ratingInput && !this.validateRating(ratingInput.value, 'FACEIT')) return false;
@@ -375,7 +372,6 @@ const Search = {
             return;
         }
         
-        // Показываем экран поиска
         const allScreens = document.querySelectorAll('.screen');
         allScreens.forEach(screen => screen.classList.remove('active'));
         
@@ -388,7 +384,6 @@ const Search = {
         this.resetTimer();
         this.startTimer();
         
-        // Формируем payload
         const payload = {
             telegram_id: telegram_id,
             mode: mode.toLowerCase(),
@@ -400,7 +395,7 @@ const Search = {
             comment: data.comment || ''
         };
         
-        console.log('📤 Отправляем запрос:', payload);
+        console.log('📤 Отправляем:', payload);
         
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/start', {
             method: 'POST',
@@ -583,7 +578,6 @@ const Search = {
     }
 };
 
-// Инициализация
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Search: DOM загружен');
     window.Search = Search;
