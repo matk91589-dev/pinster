@@ -66,7 +66,6 @@ const Swipe = {
             return;
         }
         
-        // Принудительно показываем карточку при инициализации
         this.card.style.display = 'block';
         this.card.style.visibility = 'visible';
         this.card.style.opacity = '1';
@@ -83,8 +82,6 @@ const Swipe = {
         }
         
         this.initResizeObserver();
-        
-        // Показываем режим свайпа
         this.forceShowSwipeMode();
         
         console.log('✅ Swipe.init() завершён');
@@ -93,7 +90,6 @@ const Swipe = {
     forceShowSwipeMode() {
         console.log('🔧 forceShowSwipeMode()');
         
-        // Показываем контент свайпа, скрываем ожидание
         const swipeContent = document.getElementById('swipeModeContent');
         const waitingContent = document.getElementById('waitingModeContent');
         
@@ -106,7 +102,6 @@ const Swipe = {
             waitingContent.style.visibility = 'hidden';
         }
         
-        // ПОКАЗЫВАЕМ КАРТОЧКУ
         if (this.card) {
             this.card.style.display = 'block';
             this.card.style.visibility = 'visible';
@@ -114,7 +109,6 @@ const Swipe = {
             this.card.style.position = 'relative';
         }
         
-        // Показываем wrapper
         if (this.cardWrapper) {
             this.cardWrapper.style.display = 'inline-block';
             this.cardWrapper.style.visibility = 'visible';
@@ -122,7 +116,6 @@ const Swipe = {
             this.cardWrapper.style.pointerEvents = 'auto';
         }
         
-        // Показываем кнопки
         if (this.skipBtn) {
             this.skipBtn.style.display = 'flex';
             this.skipBtn.style.visibility = 'visible';
@@ -134,14 +127,12 @@ const Swipe = {
             this.inviteBtn.style.pointerEvents = 'auto';
         }
         
-        // Показываем таймер
         if (this.timerElement) {
             this.timerElement.style.display = 'flex';
         }
         
         this.isWaitingMode = false;
         
-        // Сбрасываем трансформацию
         if (this.cardWrapper) {
             this.cardWrapper.style.transition = '';
             this.cardWrapper.style.transform = 'translateX(0) rotate(0deg) scale(1)';
@@ -170,7 +161,6 @@ const Swipe = {
         const originalCard = document.getElementById('swipeCard');
         if (!originalCard) return;
         
-        // Удаляем старый wrapper если есть
         const oldWrapper = document.querySelector('.swipe-card-wrapper');
         if (oldWrapper) {
             const parent = oldWrapper.parentNode;
@@ -181,7 +171,6 @@ const Swipe = {
             }
         }
         
-        // Создаём новый wrapper
         const wrapper = document.createElement('div');
         wrapper.className = 'swipe-card-wrapper';
         wrapper.style.position = 'relative';
@@ -200,16 +189,13 @@ const Swipe = {
     createSideButtonsInWrapper() {
         if (!this.cardWrapper) return;
         
-        // Удаляем старые кнопки
         const oldBtns = this.cardWrapper.querySelectorAll('.swipe-side-btn');
         oldBtns.forEach(btn => btn.remove());
         
-        // Создаём левую кнопку (скип)
         const leftWrapper = document.createElement('div');
         leftWrapper.className = 'swipe-side-btn skip-btn';
         leftWrapper.innerHTML = '<div class="swipe-side-btn-inner"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#FF5E5E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
         
-        // Создаём правую кнопку (инвайт)
         const rightWrapper = document.createElement('div');
         rightWrapper.className = 'swipe-side-btn invite-btn';
         rightWrapper.innerHTML = '<div class="swipe-side-btn-inner"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18L15 12L9 6" stroke="#4CAF50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
@@ -220,7 +206,6 @@ const Swipe = {
         this.skipBtn = leftWrapper;
         this.inviteBtn = rightWrapper;
         
-        // Добавляем обработчики кликов
         this.skipBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             this.onSideButtonClick('skip');
@@ -231,7 +216,6 @@ const Swipe = {
             this.onSideButtonClick('invite');
         });
         
-        // Показываем кнопки после создания
         setTimeout(() => {
             if (this.skipBtn) {
                 this.skipBtn.classList.add('visible');
@@ -402,20 +386,10 @@ const Swipe = {
         swipeContent.style.display = 'none';
         swipeContent.style.visibility = 'hidden';
         
-        // Показываем контент ожидания
+        // Показываем контент ожидания (CSS уже содержит все стили)
         waitingContent.style.display = 'flex';
         waitingContent.style.visibility = 'visible';
-        waitingContent.style.position = 'absolute';
-        waitingContent.style.top = '0';
-        waitingContent.style.left = '0';
-        waitingContent.style.right = '0';
-        waitingContent.style.bottom = '0';
-        waitingContent.style.backgroundColor = 'var(--surface, #1A1D24)';
-        waitingContent.style.borderRadius = '28px';
-        waitingContent.style.flexDirection = 'column';
-        waitingContent.style.zIndex = '100';
         
-        // Карточка должна быть видимой
         if (this.card) {
             this.card.style.position = 'relative';
             this.card.style.display = 'block';
@@ -442,12 +416,6 @@ const Swipe = {
         
         this.isWaitingMode = true;
         
-        // Убеждаемся что таймер ожидания виден
-        const waitingTimer = document.getElementById('waitingTimer');
-        if (waitingTimer) {
-            waitingTimer.style.display = 'block';
-        }
-        
         // Обновляем ник тиммейта
         const waitingNick = document.getElementById('waitingTeammateNick');
         if (waitingNick && this.currentPlayer) {
@@ -463,28 +431,15 @@ const Swipe = {
             this.loadTeammateAvatar();
         }, 50);
         
-        // Принудительно обновляем статус
-        const statusEl = document.getElementById('waitingStatus');
-        if (statusEl) {
-            statusEl.textContent = 'Ожидание тиммейта...';
-            statusEl.style.color = '#9BA1B0';
-        }
-        
         console.log('✅ Режим ожидания активирован');
     },
     
     loadSelfAvatar() {
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        if (!telegram_id) {
-            console.log('❌ Нет telegram_id для загрузки аватара');
-            return;
-        }
+        if (!telegram_id) return;
         
         const selfAvatarContainer = document.querySelector('.waiting-self-avatar .tg-avatar-svg');
-        if (!selfAvatarContainer) {
-            console.log('❌ Контейнер .waiting-self-avatar .tg-avatar-svg не найден');
-            return;
-        }
+        if (!selfAvatarContainer) return;
         
         console.log('🖼️ Загружаем свой аватар...');
         
@@ -495,42 +450,35 @@ const Swipe = {
         })
         .then(res => res.json())
         .then(data => {
-            console.log('📸 Ответ аватара:', data);
             if (data.status === 'ok' && data.avatar && data.avatar !== 'null' && data.avatar !== '') {
-                selfAvatarContainer.innerHTML = '<img src="' + data.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">';
+                selfAvatarContainer.innerHTML = '<img src="' + data.avatar + '" alt="avatar">';
                 console.log('✅ Свой аватар загружен');
             } else {
-                selfAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none" style="width:60%; height:60%;"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
-                console.log('⚠️ Аватар не найден, показываем заглушку');
+                selfAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
             }
         })
         .catch(error => {
             console.error('❌ Ошибка загрузки аватара:', error);
-            selfAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none" style="width:60%; height:60%;"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+            selfAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
         });
     },
     
     loadTeammateAvatar() {
         const teammateAvatarContainer = document.querySelector('.waiting-teammate-avatar .tg-avatar-svg');
-        if (!teammateAvatarContainer) {
-            console.log('❌ Контейнер .waiting-teammate-avatar .tg-avatar-svg не найден');
-            return;
-        }
+        if (!teammateAvatarContainer) return;
         
         if (!this.currentPlayer) {
-            console.log('❌ Нет currentPlayer для загрузки аватара тиммейта');
-            teammateAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none" style="width:60%; height:60%;"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+            teammateAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
             return;
         }
         
         console.log('🖼️ Загружаем аватар тиммейта:', this.currentPlayer.nick);
         
         if (this.currentPlayer.avatar && this.currentPlayer.avatar !== 'null' && this.currentPlayer.avatar !== '') {
-            teammateAvatarContainer.innerHTML = '<img src="' + this.currentPlayer.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">';
+            teammateAvatarContainer.innerHTML = '<img src="' + this.currentPlayer.avatar + '" alt="avatar">';
             console.log('✅ Аватар тиммейта загружен');
         } else {
-            teammateAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none" style="width:60%; height:60%;"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
-            console.log('⚠️ Аватар тиммейта не найден, показываем заглушку');
+            teammateAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
         }
     },
     
@@ -610,7 +558,6 @@ const Swipe = {
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
         console.log('🎮 startWithOpponent()', opponent, matchId);
         
-        // Сбрасываем режим ожидания
         this.isWaitingMode = false;
         
         if (!this.isInitialized) {
@@ -690,7 +637,6 @@ const Swipe = {
         
         setTimeout(() => this.startSwipeHint(), 300);
         setTimeout(() => this.adjustCardSize(), 50);
-        
         setTimeout(() => this.updateButtonsPosition(), 100);
     },
     
@@ -999,7 +945,6 @@ const Swipe = {
         const teammateAvatar = document.querySelector('.waiting-teammate-avatar');
         
         if (status === 'both_accepted') {
-            // ОСТАНАВЛИВАЕМ ТАЙМЕР
             this.stopWaitingTimer();
             
             if (teammateAvatar) teammateAvatar.classList.add('connected');
@@ -1007,10 +952,8 @@ const Swipe = {
             if (statusEl) {
                 statusEl.innerHTML = 'Матч создан!';
                 statusEl.classList.add('active');
-                statusEl.style.color = '#4CAF50';
             }
             
-            // Активируем кнопку чата если есть ссылка
             const chatButton = document.getElementById('waitingChatButton');
             if (chatButton && this.chatLink) {
                 chatButton.classList.remove('disabled');
@@ -1181,7 +1124,6 @@ const Swipe = {
         console.log('👤 showPlayer()', player);
         this.currentPlayer = player;
         
-        // Обновляем данные на карточке
         const playerIdEl = document.getElementById('swipePlayerId');
         const playerNickEl = document.getElementById('swipePlayerNick');
         const ratingEl = document.getElementById('swipeRatingValue');
@@ -1380,7 +1322,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Если экран уже активен при загрузке
 if (document.getElementById('swipeScreen') && document.getElementById('swipeScreen').classList.contains('active')) {
     setTimeout(function() {
         if (!Swipe.isInitialized) {
