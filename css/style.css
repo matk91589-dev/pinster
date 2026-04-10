@@ -5077,26 +5077,35 @@ button:active { transform: scale(0.96); }
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
-    transition: all 0.2s ease;
+    transition: transform 0.1s ease;
     z-index: 5;
 }
 
 .copy-btn svg {
     width: 18px;
     height: 18px;
-    stroke: #9BA1B0;
+    stroke: #ffffff;
+    stroke-width: 1.8;
     transition: stroke 0.2s ease;
 }
 
 .copy-btn:hover {
-    background: rgba(255, 85, 0, 0.15);
+    transform: translateY(-50%) scale(0.92);
 }
 
 .copy-btn:hover svg {
     stroke: #FF5500;
 }
 
+.copy-btn:active {
+    transform: translateY(-50%) scale(0.88);
+}
+
 .copy-btn.copied svg {
     stroke: #4CAF50;
+}
+
+/* Убираем квадратную обводку при фокусе */
+.copy-btn:focus {
+    outline: none;
 }
