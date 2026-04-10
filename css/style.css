@@ -5049,3 +5049,51 @@ button:active { transform: scale(0.96); }
         padding: 10px 0 !important;
     }
 }
+
+/* Кнопка копирования */
+.copy-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.copy-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--text-secondary);
+    stroke-width: 2;
+    fill: none;
+    transition: stroke 0.2s ease;
+}
+
+.copy-btn:hover {
+    background: rgba(255, 85, 0, 0.1);
+}
+
+.copy-btn:hover svg {
+    stroke: #FF5500;
+}
+
+.copy-btn.copied svg {
+    stroke: #4CAF50;
+}
+
+/* Контейнер для ссылки с кнопкой */
+.link-with-copy {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.link-with-copy .swipe-link-value {
+    flex: 1;
+    margin: 0;
+}
