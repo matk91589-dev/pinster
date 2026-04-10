@@ -4992,19 +4992,26 @@ button:active { transform: scale(0.96); }
     transform: scale(1.02);
 }
 
-/* ===== ЭКРАН ОЖИДАНИЯ - НОВЫЙ ДИЗАЙН ===== */
+/* ===== ЭКРАН ОЖИДАНИЯ ===== */
 #waitingModeContent {
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
     bottom: 0 !important;
-    display: flex !important;
     flex-direction: column !important;
-    background: var(--surface) !important;
+    background: var(--surface, #1A1D24) !important;
     border-radius: 28px !important;
-    padding: 20px 20px 30px 20px !important;
     z-index: 50 !important;
+}
+
+/* По умолчанию скрыт, но JS может переопределить */
+#waitingModeContent:not(.active) {
+    display: none !important;
+}
+
+#waitingModeContent.active {
+    display: flex !important;
 }
 
 /* Таймер как в свайпе */
