@@ -1,8 +1,8 @@
 // ============================================
-// ПРОФИЛЬ - v3.0 NUCLEAR FIX (КОПИРОВАНИЕ РАБОТАЕТ)
+// ПРОФИЛЬ - v3.1 FINAL (КОПИРОВАНИЕ РАБОТАЕТ)
 // ============================================
 
-console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v3.0 NUCLEAR FIX)');
+console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v3.1 FINAL)');
 
 // Константы валидации
 const VALIDATION = {
@@ -231,14 +231,14 @@ const Profile = {
         }
         
         navigator.clipboard.writeText(text).then(() => {
-            this.showToast('✅ Скопировано!');
+            this.showToast('Скопировано в буфер обмена');
             if (btnElement) {
                 btnElement.classList.add('copied');
                 setTimeout(() => btnElement.classList.remove('copied'), 1500);
             }
         }).catch(err => {
             console.error('Ошибка копирования:', err);
-            this.showToast('❌ Ошибка копирования');
+            this.showToast('Ошибка копирования');
         });
     },
     
@@ -246,6 +246,10 @@ const Profile = {
         // Steam
         const steamInput = document.getElementById('steamDisplay');
         if (steamInput) {
+            // Удаляем старую обёртку если есть
+            const oldWrapper = steamInput.parentNode.querySelector('.link-with-copy');
+            if (oldWrapper) oldWrapper.remove();
+            
             const wrapper = document.createElement('div');
             wrapper.className = 'link-with-copy';
             steamInput.parentNode.insertBefore(wrapper, steamInput);
@@ -253,18 +257,14 @@ const Profile = {
             
             const copyBtn = document.createElement('button');
             copyBtn.className = 'copy-btn';
+            copyBtn.setAttribute('type', 'button');
             copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
             
-            // Удаляем старый обработчик если есть
-            copyBtn.onclick = null;
-            
-            // ВАЖНО: Используем onmousedown вместо onclick для перехвата ДО всплытия
-            copyBtn.onmousedown = (e) => {
+            copyBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 this.copyToClipboard(steamInput.value || this.savedSteam, copyBtn);
-                return false;
-            };
+            });
             
             wrapper.appendChild(copyBtn);
         }
@@ -272,6 +272,9 @@ const Profile = {
         // FaceIT
         const faceitInput = document.getElementById('faceitLinkDisplay');
         if (faceitInput) {
+            const oldWrapper = faceitInput.parentNode.querySelector('.link-with-copy');
+            if (oldWrapper) oldWrapper.remove();
+            
             const wrapper = document.createElement('div');
             wrapper.className = 'link-with-copy';
             faceitInput.parentNode.insertBefore(wrapper, faceitInput);
@@ -279,16 +282,14 @@ const Profile = {
             
             const copyBtn = document.createElement('button');
             copyBtn.className = 'copy-btn';
+            copyBtn.setAttribute('type', 'button');
             copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
             
-            copyBtn.onclick = null;
-            
-            copyBtn.onmousedown = (e) => {
+            copyBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 this.copyToClipboard(faceitInput.value || this.savedFaceitLink, copyBtn);
-                return false;
-            };
+            });
             
             wrapper.appendChild(copyBtn);
         }
@@ -881,16 +882,23 @@ const Profile = {
         if (ageInput) {
             ageInput.addEventListener('input', () => this.validateOnInput());
             ageInput.maxLength = 3;
+            ageInput.onclick = () => {
+                if (!this.editMode) {
+                    this.showToast('Для изменений\nперейдите в режим редактирования', true);
+                }
+            };
         }
         
         const steamInput = document.getElementById('steamDisplay');
         if (steamInput) {
             steamInput.addEventListener('input', () => this.validateOnInput());
             steamInput.maxLength = VALIDATION.STEAM.maxLength;
-            // Обработчик клика по инпуту
             steamInput.onclick = (e) => {
-                if (!this.editMode) {
-                    this.showToast('Для изменений\nперейдите в режим редактирования', true);
+                // Проверяем, что клик был НЕ по кнопке копирования
+                if (!e.target.closest('.copy-btn')) {
+                    if (!this.editMode) {
+                        this.showToast('Для изменений\nперейдите в режим редактирования', true);
+                    }
                 }
             };
         }
@@ -900,29 +908,12 @@ const Profile = {
             faceitInput.addEventListener('input', () => this.validateOnInput());
             faceitInput.maxLength = VALIDATION.FACEIT.maxLength;
             faceitInput.onclick = (e) => {
-                if (!this.editMode) {
-                    this.showToast('Для изменений\nперейдите в режим редактирования', true);
+                if (!e.target.closest('.copy-btn')) {
+                    if (!this.editMode) {
+                        this.showToast('Для изменений\nперейдите в режим редактирования', true);
+                    }
                 }
             };
-        }
-        
-        // УБИРАЕМ onclick с карточек вообще!
-        const ageCard = document.querySelector('.stat-card:last-child');
-        if (ageCard) {
-            ageCard.style.cursor = 'pointer';
-            ageCard.onclick = null; // Убираем!
-        }
-        
-        const steamCard = document.querySelector('.profile-stat-card:first-child');
-        if (steamCard) {
-            steamCard.style.cursor = 'pointer';
-            steamCard.onclick = null; // Убираем!
-        }
-        
-        const faceitCard = document.querySelector('.profile-stat-card:last-child');
-        if (faceitCard) {
-            faceitCard.style.cursor = 'pointer';
-            faceitCard.onclick = null; // Убираем!
         }
         
         const friendsArrow = document.querySelector('.friends-arrow');
@@ -982,7 +973,7 @@ const Profile = {
         if (this.isInitialized) return;
         this.isInitialized = true;
         
-        console.log('🚀 Profile.init() v3.0 NUCLEAR FIX');
+        console.log('🚀 Profile.init() v3.1 FINAL');
         this.telegramId = this.getTelegramId();
         
         this.tempName = this.savedName;
