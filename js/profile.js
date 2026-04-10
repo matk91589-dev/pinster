@@ -74,23 +74,20 @@ const Profile = {
         });
     },
     
-    // Обновление отображения ссылок с кнопками копирования
+    // Обновление отображения ссылок с кнопками копирования внутри плашки
     updateLinksWithCopy() {
-        const steamContainer = document.getElementById('steamDisplay')?.parentElement;
-        const faceitContainer = document.getElementById('faceitLinkDisplay')?.parentElement;
-        
         // Steam ссылка
-        if (steamContainer && this.savedSteam && this.savedSteam !== '') {
-            // Проверяем, есть ли уже кнопка копирования
-            if (!steamContainer.querySelector('.copy-btn')) {
-                const wrapper = document.createElement('div');
+        const steamInput = document.getElementById('steamDisplay');
+        if (steamInput && this.savedSteam && this.savedSteam !== '') {
+            const parent = steamInput.parentNode;
+            
+            // Проверяем, есть ли уже обертка
+            let wrapper = parent.querySelector('.link-with-copy');
+            if (!wrapper && parent !== steamInput) {
+                wrapper = document.createElement('div');
                 wrapper.className = 'link-with-copy';
-                wrapper.style.cssText = 'display: flex; align-items: center; gap: 8px; width: 100%;';
-                
-                const input = document.getElementById('steamDisplay');
-                input.style.flex = '1';
-                input.parentNode.insertBefore(wrapper, input);
-                wrapper.appendChild(input);
+                steamInput.parentNode.insertBefore(wrapper, steamInput);
+                wrapper.appendChild(steamInput);
                 
                 const copyBtn = document.createElement('button');
                 copyBtn.className = 'copy-btn';
@@ -104,16 +101,16 @@ const Profile = {
         }
         
         // Faceit ссылка
-        if (faceitContainer && this.savedFaceitLink && this.savedFaceitLink !== '') {
-            if (!faceitContainer.querySelector('.copy-btn')) {
-                const wrapper = document.createElement('div');
+        const faceitInput = document.getElementById('faceitLinkDisplay');
+        if (faceitInput && this.savedFaceitLink && this.savedFaceitLink !== '') {
+            const parent = faceitInput.parentNode;
+            
+            let wrapper = parent.querySelector('.link-with-copy');
+            if (!wrapper && parent !== faceitInput) {
+                wrapper = document.createElement('div');
                 wrapper.className = 'link-with-copy';
-                wrapper.style.cssText = 'display: flex; align-items: center; gap: 8px; width: 100%;';
-                
-                const input = document.getElementById('faceitLinkDisplay');
-                input.style.flex = '1';
-                input.parentNode.insertBefore(wrapper, input);
-                wrapper.appendChild(input);
+                faceitInput.parentNode.insertBefore(wrapper, faceitInput);
+                wrapper.appendChild(faceitInput);
                 
                 const copyBtn = document.createElement('button');
                 copyBtn.className = 'copy-btn';
@@ -136,7 +133,6 @@ const Profile = {
         
         this.isLoadingFriends = true;
         
-        // Показываем состояние загрузки
         this.updateFriendsLoading();
         
         try {
@@ -259,7 +255,6 @@ const Profile = {
             return;
         }
         
-        // Сначала показываем кэш
         const cachedNick = localStorage.getItem('profile_nick');
         if (cachedNick) {
             this.savedName = cachedNick;
@@ -267,7 +262,6 @@ const Profile = {
             this.savedSteam = localStorage.getItem('profile_steam') || '';
             this.savedFaceitLink = localStorage.getItem('profile_faceit') || '';
             this.updateDisplay();
-            this.updateLinksWithCopy();
         }
         
         try {
@@ -291,7 +285,6 @@ const Profile = {
                     localStorage.setItem('profile_faceit', this.savedFaceitLink);
                     
                     this.updateDisplay();
-                    this.updateLinksWithCopy();
                     this.isProfileLoaded = true;
                 }
             }
@@ -306,7 +299,6 @@ const Profile = {
         if (!this.telegramId) this.telegramId = this.getTelegramId();
         if (!this.telegramId) return;
         
-        // Сначала показываем кэш
         const cachedAvatar = localStorage.getItem('profile_avatar');
         if (cachedAvatar && cachedAvatar !== 'null') {
             this.savedAvatarUrl = cachedAvatar;
@@ -359,11 +351,14 @@ const Profile = {
         const steamDisplayEl = document.getElementById('steamDisplay');
         if (steamDisplayEl && steamDisplayEl.value !== this.savedSteam) {
             steamDisplayEl.value = this.savedSteam || '';
+            // Обновляем кнопку копирования после изменения значения
+            setTimeout(() => this.updateLinksWithCopy(), 50);
         }
         
         const faceitLinkDisplayEl = document.getElementById('faceitLinkDisplay');
         if (faceitLinkDisplayEl && faceitLinkDisplayEl.value !== this.savedFaceitLink) {
             faceitLinkDisplayEl.value = this.savedFaceitLink || '';
+            setTimeout(() => this.updateLinksWithCopy(), 50);
         }
         
         this.updateAvatarDisplay();
@@ -487,7 +482,6 @@ const Profile = {
                 localStorage.setItem('profile_faceit', this.savedFaceitLink);
                 
                 this.updateDisplay();
-                this.updateLinksWithCopy();
                 this.toggleEditMode();
                 this.showToast('Профиль сохранен');
             } else {
@@ -674,7 +668,6 @@ const Profile = {
             this.savedSteam = localStorage.getItem('profile_steam') || '';
             this.savedFaceitLink = localStorage.getItem('profile_faceit') || '';
             this.updateDisplay();
-            this.updateLinksWithCopy();
         }
         
         const cachedAvatar = localStorage.getItem('profile_avatar');
@@ -683,7 +676,6 @@ const Profile = {
             this.updateAvatarDisplay();
         }
         
-        // Загружаем всё параллельно
         setTimeout(() => {
             this.loadProfileFromServer();
             this.loadAvatar();
