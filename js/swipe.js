@@ -393,22 +393,30 @@ const Swipe = {
         const swipeContent = document.getElementById('swipeModeContent');
         const waitingContent = document.getElementById('waitingModeContent');
         
-        // Переключаем контент внутри карточки
-        if (swipeContent) {
-            swipeContent.style.display = 'none';
-            swipeContent.style.visibility = 'hidden';
+        if (!swipeContent || !waitingContent) {
+            console.error('❌ Контент не найден');
+            return;
         }
-        if (waitingContent) {
-            waitingContent.style.display = 'flex';
-            waitingContent.style.visibility = 'visible';
-            waitingContent.classList.add('active-waiting');
-        }
+        
+        // Полностью скрываем контент свайпа
+        swipeContent.style.display = 'none';
+        
+        // Показываем контент ожидания
+        waitingContent.style.display = 'flex';
+        waitingContent.style.position = 'absolute';
+        waitingContent.style.top = '0';
+        waitingContent.style.left = '0';
+        waitingContent.style.right = '0';
+        waitingContent.style.bottom = '0';
+        waitingContent.style.backgroundColor = 'var(--surface)';
+        waitingContent.style.borderRadius = '28px';
+        waitingContent.style.flexDirection = 'column';
+        waitingContent.style.zIndex = '100';
         
         // Карточка остаётся видимой
         if (this.card) {
+            this.card.style.position = 'relative';
             this.card.style.display = 'block';
-            this.card.style.visibility = 'visible';
-            this.card.style.opacity = '1';
         }
         
         // Скрываем кнопки свайпа
@@ -433,8 +441,9 @@ const Swipe = {
         // Запускаем таймер ожидания
         this.startWaitingTimer();
         
-        // Загружаем свою аватарку
+        // Загружаем аватарки
         this.loadSelfAvatar();
+        this.loadTeammateAvatar();
     },
     
     loadSelfAvatar() {
@@ -452,15 +461,26 @@ const Swipe = {
         .then(res => res.json())
         .then(data => {
             if (data.status === 'ok' && data.avatar && data.avatar !== 'null' && data.avatar !== '') {
-                selfAvatarContainer.innerHTML = '<img src="' + data.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">';
+                selfAvatarContainer.innerHTML = '<img src="' + data.avatar + '" alt="avatar">';
             } else {
-                selfAvatarContainer.innerHTML = '<svg width="60%" height="60%" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+                selfAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
             }
         })
         .catch(error => {
             console.error('Ошибка загрузки аватара:', error);
-            selfAvatarContainer.innerHTML = '<svg width="60%" height="60%" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+            selfAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
         });
+    },
+    
+    loadTeammateAvatar() {
+        const teammateAvatarContainer = document.querySelector('.waiting-teammate-avatar .tg-avatar-svg');
+        if (!teammateAvatarContainer || !this.currentPlayer) return;
+        
+        if (this.currentPlayer.avatar && this.currentPlayer.avatar !== 'null' && this.currentPlayer.avatar !== '') {
+            teammateAvatarContainer.innerHTML = '<img src="' + this.currentPlayer.avatar + '" alt="avatar">';
+        } else {
+            teammateAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+        }
     },
     
     startWaitingTimer() {
@@ -471,13 +491,21 @@ const Swipe = {
         
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         
+        waitingTimerEl.textContent = timeLeft + 'с';
+        waitingTimerEl.classList.remove('warning');
+        
         this.connectionTimer = setInterval(() => {
             timeLeft--;
-            if (waitingTimerEl) waitingTimerEl.textContent = timeLeft + 'с';
+            waitingTimerEl.textContent = timeLeft + 'с';
+            
+            if (timeLeft <= 10 && timeLeft > 0) {
+                waitingTimerEl.classList.add('warning');
+            }
             
             if (timeLeft <= 0) {
                 clearInterval(this.connectionTimer);
                 this.connectionTimer = null;
+                waitingTimerEl.textContent = '0с';
                 this.connectionTimeout();
             }
         }, 1000);
@@ -488,6 +516,11 @@ const Swipe = {
             clearInterval(this.connectionTimer);
             this.connectionTimer = null;
             console.log('⏹️ Таймер ожидания остановлен');
+            
+            const waitingTimerEl = document.getElementById('waitingTimer');
+            if (waitingTimerEl) {
+                waitingTimerEl.classList.remove('warning');
+            }
         }
     },
     
@@ -923,10 +956,19 @@ const Swipe = {
             if (statusEl) {
                 statusEl.innerHTML = 'Матч создан!';
                 statusEl.classList.add('active');
-                statusEl.style.color = '#4CAF50';
             }
+            
+            // Активируем кнопку чата если есть ссылка
+            const chatButton = document.getElementById('waitingChatButton');
+            if (chatButton && this.chatLink) {
+                chatButton.classList.remove('disabled');
+                chatButton.classList.add('active');
+                chatButton.disabled = false;
+            }
+            
             if (window.Settings && window.Settings.success) window.Settings.success();
         } else if (status === 'rejected') {
+            this.stopWaitingTimer();
             if (statusEl) {
                 statusEl.innerHTML = 'Тиммейт отклонил';
                 statusEl.style.color = '#FF3B30';
@@ -1126,16 +1168,6 @@ const Swipe = {
         // Обновляем ник в режиме ожидания
         const waitingNick = document.getElementById('waitingTeammateNick');
         if (waitingNick) waitingNick.textContent = player.nick || 'Игрок';
-        
-        // Обновляем аватар в режиме ожидания
-        const waitingAvatar = document.querySelector('.waiting-teammate-avatar .tg-avatar-svg');
-        if (waitingAvatar) {
-            if (player.avatar && player.avatar !== 'null' && player.avatar !== '') {
-                waitingAvatar.innerHTML = '<img src="' + player.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:50%;">';
-            } else {
-                waitingAvatar.innerHTML = '<svg width="60%" height="60%" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
-            }
-        }
         
         setTimeout(() => this.adjustCardSize(), 50);
     },
