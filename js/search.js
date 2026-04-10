@@ -19,7 +19,7 @@ const Search = {
         this.ensureMatchAccepted();
         this.hookIntoScreenChange();
     },
-    
+
     hookIntoScreenChange() {
         const waitForApp = setInterval(() => {
             if (window.App && window.App.showScreen) {
