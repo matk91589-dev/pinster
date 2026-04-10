@@ -5050,62 +5050,73 @@ button:active { transform: scale(0.96); }
     }
 }
 
-/* Кнопка копирования внутри плашки */
+/* Кнопка копирования - ЖЕСТКИЙ ФИКС */
 .link-with-copy {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
 }
 
 .link-with-copy .swipe-link-value,
 .link-with-copy .profile-stat-value,
 .link-with-copy .input-field {
-    width: 100%;
+    width: 100% !important;
     padding-right: 40px !important;
 }
 
 .copy-btn {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.1s ease;
-    z-index: 5;
+    position: absolute !important;
+    right: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 28px !important;
+    height: 28px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: transform 0.12s ease !important;
+    z-index: 5 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
 }
 
 .copy-btn svg {
-    width: 18px;
-    height: 18px;
-    stroke: #ffffff;
-    stroke-width: 1.8;
-    transition: stroke 0.2s ease;
+    width: 18px !important;
+    height: 18px !important;
+    stroke: #ffffff !important;
+    stroke-width: 1.8 !important;
+    fill: none !important;
+    transition: stroke 0.15s ease !important;
+    display: block !important;
 }
 
 .copy-btn:hover {
-    transform: translateY(-50%) scale(0.92);
+    transform: translateY(-50%) scale(0.92) !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 .copy-btn:hover svg {
-    stroke: #FF5500;
+    stroke: #FF5500 !important;
 }
 
 .copy-btn:active {
-    transform: translateY(-50%) scale(0.88);
+    transform: translateY(-50%) scale(0.85) !important;
 }
 
 .copy-btn.copied svg {
-    stroke: #4CAF50;
+    stroke: #4CAF50 !important;
 }
 
-/* Убираем квадратную обводку при фокусе */
 .copy-btn:focus {
-    outline: none;
+    outline: none !important;
+    box-shadow: none !important;
 }
