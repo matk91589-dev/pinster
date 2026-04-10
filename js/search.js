@@ -1,15 +1,8 @@
 // ============================================
-// ПОИСК - v5.1 FINAL (ВСЁ РАБОТАЕТ)
+// ПОИСК - v4.1 FINAL (ЗАПОЛНЕНИЕ + ДИНАМИКА + ССЫЛКИ)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.1 FINAL)');
-
-const SEARCH_VALIDATION = {
-    FACEIT: { min: 0, max: 5000, maxLen: 4 },
-    PREMIER: { min: 0, max: 40000, maxLen: 5 },
-    AGE: { min: 0, max: 100, maxLen: 3 },
-    COMMENT_MAX: 40
-};
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.1 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -24,34 +17,45 @@ const Search = {
         console.log('🚀 Search.init()');
         this.resetTimer();
         this.ensureMatchAccepted();
-        this.overrideShowScreen();
+        this.hookIntoScreenChange();
     },
     
-    overrideShowScreen() {
-        const originalShow = window.App.showScreen;
-        const self = this;
-        
-        window.App.showScreen = function(screenId, updateNav) {
-            console.log(`📱 showScreen: ${screenId}`);
-            originalShow.call(window.App, screenId, updateNav);
-            
-            // Заполняем и настраиваем валидацию
-            if (screenId === 'faceitScreen') {
-                self.fillFaceitScreen();
-                self.setupFaceitValidation();
-            } else if (screenId === 'premierScreen') {
-                self.fillPremierScreen();
-                self.setupPremierValidation();
-            } else if (screenId === 'primeScreen') {
-                self.fillPrimeScreen();
-                self.setupPrimeValidation();
-            } else if (screenId === 'publicScreen') {
-                self.fillPublicScreen();
-                self.setupPublicValidation();
+    hookIntoScreenChange() {
+        const waitForApp = setInterval(() => {
+            if (window.App && window.App.showScreen) {
+                clearInterval(waitForApp);
+                
+                const originalShow = window.App.showScreen;
+                const self = this;
+                
+                window.App.showScreen = function(screenId, updateNav) {
+                    console.log(`📱 showScreen: ${screenId}`);
+                    originalShow.call(window.App, screenId, updateNav);
+                    
+                    setTimeout(() => {
+                        if (screenId === 'faceitScreen') {
+                            console.log('🎯 Заполняем FACEIT');
+                            self.fillFaceitScreen();
+                            self.setupFaceitValidation();
+                        } else if (screenId === 'premierScreen') {
+                            console.log('🎯 Заполняем PREMIER');
+                            self.fillPremierScreen();
+                            self.setupPremierValidation();
+                        } else if (screenId === 'primeScreen') {
+                            console.log('🎯 Заполняем PRIME');
+                            self.fillPrimeScreen();
+                            self.setupPrimeValidation();
+                        } else if (screenId === 'publicScreen') {
+                            console.log('🎯 Заполняем PUBLIC');
+                            self.fillPublicScreen();
+                            self.setupPublicValidation();
+                        }
+                    }, 50);
+                };
+                
+                console.log('✅ showScreen перехвачен');
             }
-        };
-        
-        console.log('✅ showScreen перехвачен');
+        }, 50);
     },
     
     ensureMatchAccepted() {
@@ -79,63 +83,6 @@ const Search = {
         };
     },
     
-    // ========== ЗАПОЛНЕНИЕ ПОЛЕЙ ==========
-    fillFaceitScreen() {
-        const p = this.getProfileData();
-        console.log('🎯 FACEIT заполнение:', p);
-        
-        const ageInput = document.getElementById('faceitAgeValue');
-        const faceitInput = document.getElementById('faceitLinkInput');
-        const ratingInput = document.getElementById('faceitELOInput');
-        const commentInput = document.getElementById('faceitComment');
-        
-        if (ageInput) ageInput.value = p.age || '';
-        if (faceitInput) faceitInput.value = p.faceit || '';
-        if (ratingInput) ratingInput.setAttribute('maxlength', SEARCH_VALIDATION.FACEIT.maxLen);
-        if (commentInput) commentInput.setAttribute('maxlength', SEARCH_VALIDATION.COMMENT_MAX);
-    },
-    
-    fillPremierScreen() {
-        const p = this.getProfileData();
-        console.log('🎯 PREMIER заполнение:', p);
-        
-        const ageInput = document.getElementById('premierAgeValue');
-        const steamInput = document.getElementById('premierSteamInput');
-        const ratingInput = document.getElementById('premierRatingInput');
-        const commentInput = document.getElementById('premierComment');
-        
-        if (ageInput) ageInput.value = p.age || '';
-        if (steamInput) steamInput.value = p.steam || '';
-        if (ratingInput) ratingInput.setAttribute('maxlength', SEARCH_VALIDATION.PREMIER.maxLen);
-        if (commentInput) commentInput.setAttribute('maxlength', SEARCH_VALIDATION.COMMENT_MAX);
-    },
-    
-    fillPrimeScreen() {
-        const p = this.getProfileData();
-        console.log('🎯 PRIME заполнение:', p);
-        
-        const ageInput = document.getElementById('primeAgeValue');
-        const steamInput = document.getElementById('primeSteamInput');
-        const commentInput = document.getElementById('primeComment');
-        
-        if (ageInput) ageInput.value = p.age || '';
-        if (steamInput) steamInput.value = p.steam || '';
-        if (commentInput) commentInput.setAttribute('maxlength', SEARCH_VALIDATION.COMMENT_MAX);
-    },
-    
-    fillPublicScreen() {
-        const p = this.getProfileData();
-        console.log('🎯 PUBLIC заполнение:', p);
-        
-        const ageInput = document.getElementById('publicAgeValue');
-        const steamInput = document.getElementById('publicSteamInput');
-        const commentInput = document.getElementById('publicComment');
-        
-        if (ageInput) ageInput.value = p.age || '';
-        if (steamInput) steamInput.value = p.steam || '';
-        if (commentInput) commentInput.setAttribute('maxlength', SEARCH_VALIDATION.COMMENT_MAX);
-    },
-    
     // ========== ВАЛИДАЦИЯ ССЫЛОК ==========
     validateSteamLink(link) {
         if (!link || link.trim() === '') return true;
@@ -152,7 +99,7 @@ const Search = {
         return pattern.test(link.trim());
     },
     
-    // ========== СТИЛИ ОШИБОК ==========
+    // ========== ПОДСВЕТКА ОШИБОК ==========
     showError(input, isError) {
         if (!input) return;
         if (isError) {
@@ -169,9 +116,10 @@ const Search = {
         const ageInput = document.getElementById('faceitAgeValue');
         const ratingInput = document.getElementById('faceitELOInput');
         const faceitInput = document.getElementById('faceitLinkInput');
+        const commentInput = document.getElementById('faceitComment');
         
         if (ageInput) {
-            ageInput.setAttribute('maxlength', SEARCH_VALIDATION.AGE.maxLen);
+            ageInput.setAttribute('maxlength', '3');
             ageInput.oninput = () => {
                 const val = ageInput.value;
                 const num = parseInt(val);
@@ -181,6 +129,7 @@ const Search = {
         }
         
         if (ratingInput) {
+            ratingInput.setAttribute('maxlength', '4');
             ratingInput.oninput = () => {
                 const val = ratingInput.value;
                 const num = parseInt(val);
@@ -203,15 +152,20 @@ const Search = {
             };
             faceitInput.oninput = () => this.showError(faceitInput, false);
         }
+        
+        if (commentInput) {
+            commentInput.setAttribute('maxlength', '40');
+        }
     },
     
     setupPremierValidation() {
         const ageInput = document.getElementById('premierAgeValue');
         const ratingInput = document.getElementById('premierRatingInput');
         const steamInput = document.getElementById('premierSteamInput');
+        const commentInput = document.getElementById('premierComment');
         
         if (ageInput) {
-            ageInput.setAttribute('maxlength', SEARCH_VALIDATION.AGE.maxLen);
+            ageInput.setAttribute('maxlength', '3');
             ageInput.oninput = () => {
                 const val = ageInput.value;
                 const num = parseInt(val);
@@ -221,6 +175,7 @@ const Search = {
         }
         
         if (ratingInput) {
+            ratingInput.setAttribute('maxlength', '5');
             ratingInput.oninput = () => {
                 const val = ratingInput.value;
                 const num = parseInt(val);
@@ -243,15 +198,20 @@ const Search = {
             };
             steamInput.oninput = () => this.showError(steamInput, false);
         }
+        
+        if (commentInput) {
+            commentInput.setAttribute('maxlength', '40');
+        }
     },
     
     setupPrimeValidation() {
         const ageInput = document.getElementById('primeAgeValue');
         const rankSelect = document.getElementById('primeRankSelect');
         const steamInput = document.getElementById('primeSteamInput');
+        const commentInput = document.getElementById('primeComment');
         
         if (ageInput) {
-            ageInput.setAttribute('maxlength', SEARCH_VALIDATION.AGE.maxLen);
+            ageInput.setAttribute('maxlength', '3');
             ageInput.oninput = () => {
                 const val = ageInput.value;
                 const num = parseInt(val);
@@ -280,6 +240,10 @@ const Search = {
                 }
             };
             steamInput.oninput = () => this.showError(steamInput, false);
+        }
+        
+        if (commentInput) {
+            commentInput.setAttribute('maxlength', '40');
         }
     },
     
@@ -287,9 +251,10 @@ const Search = {
         const ageInput = document.getElementById('publicAgeValue');
         const rankSelect = document.getElementById('publicRankSelect');
         const steamInput = document.getElementById('publicSteamInput');
+        const commentInput = document.getElementById('publicComment');
         
         if (ageInput) {
-            ageInput.setAttribute('maxlength', SEARCH_VALIDATION.AGE.maxLen);
+            ageInput.setAttribute('maxlength', '3');
             ageInput.oninput = () => {
                 const val = ageInput.value;
                 const num = parseInt(val);
@@ -319,6 +284,54 @@ const Search = {
             };
             steamInput.oninput = () => this.showError(steamInput, false);
         }
+        
+        if (commentInput) {
+            commentInput.setAttribute('maxlength', '40');
+        }
+    },
+    
+    fillFaceitScreen() {
+        const p = this.getProfileData();
+        const ageInput = document.getElementById('faceitAgeValue');
+        const faceitInput = document.getElementById('faceitLinkInput');
+        
+        if (ageInput && p.age) ageInput.value = p.age;
+        if (faceitInput && p.faceit) faceitInput.value = p.faceit;
+        
+        console.log('✅ FACEIT заполнен:', { age: p.age, faceit: p.faceit });
+    },
+    
+    fillPremierScreen() {
+        const p = this.getProfileData();
+        const ageInput = document.getElementById('premierAgeValue');
+        const steamInput = document.getElementById('premierSteamInput');
+        
+        if (ageInput && p.age) ageInput.value = p.age;
+        if (steamInput && p.steam) steamInput.value = p.steam;
+        
+        console.log('✅ PREMIER заполнен:', { age: p.age, steam: p.steam });
+    },
+    
+    fillPrimeScreen() {
+        const p = this.getProfileData();
+        const ageInput = document.getElementById('primeAgeValue');
+        const steamInput = document.getElementById('primeSteamInput');
+        
+        if (ageInput && p.age) ageInput.value = p.age;
+        if (steamInput && p.steam) steamInput.value = p.steam;
+        
+        console.log('✅ PRIME заполнен:', { age: p.age, steam: p.steam });
+    },
+    
+    fillPublicScreen() {
+        const p = this.getProfileData();
+        const ageInput = document.getElementById('publicAgeValue');
+        const steamInput = document.getElementById('publicSteamInput');
+        
+        if (ageInput && p.age) ageInput.value = p.age;
+        if (steamInput && p.steam) steamInput.value = p.steam;
+        
+        console.log('✅ PUBLIC заполнен:', { age: p.age, steam: p.steam });
     },
     
     setStyle(style, element) {
@@ -341,8 +354,8 @@ const Search = {
             const rating = document.getElementById('faceitELOInput')?.value || '';
             const faceitLink = document.getElementById('faceitLinkInput')?.value || '';
             
-            if (!age) { isValid = false; errorMsg = 'Укажите возраст'; }
-            else if (!rating) { isValid = false; errorMsg = 'Укажите Faceit ELO'; }
+            if (!age || age === '') { isValid = false; errorMsg = 'Укажите возраст'; }
+            else if (!rating || rating === '') { isValid = false; errorMsg = 'Укажите Faceit ELO'; }
             else if (faceitLink && !this.validateFaceitLink(faceitLink)) { isValid = false; errorMsg = 'Ссылка Faceit не ликвидна'; }
             else {
                 const ageNum = parseInt(age);
@@ -356,8 +369,8 @@ const Search = {
             const rating = document.getElementById('premierRatingInput')?.value || '';
             const steamLink = document.getElementById('premierSteamInput')?.value || '';
             
-            if (!age) { isValid = false; errorMsg = 'Укажите возраст'; }
-            else if (!rating) { isValid = false; errorMsg = 'Укажите CS Rating'; }
+            if (!age || age === '') { isValid = false; errorMsg = 'Укажите возраст'; }
+            else if (!rating || rating === '') { isValid = false; errorMsg = 'Укажите CS Rating'; }
             else if (steamLink && !this.validateSteamLink(steamLink)) { isValid = false; errorMsg = 'Ссылка Steam не ликвидна'; }
             else {
                 const ageNum = parseInt(age);
@@ -371,8 +384,8 @@ const Search = {
             const rank = document.getElementById('primeRankSelect')?.value || '';
             const steamLink = document.getElementById('primeSteamInput')?.value || '';
             
-            if (!age) { isValid = false; errorMsg = 'Укажите возраст'; }
-            else if (!rank || rank === 'Выберите ранг') { isValid = false; errorMsg = 'Выберите ранг'; }
+            if (!age || age === '') { isValid = false; errorMsg = 'Укажите возраст'; }
+            else if (!rank || rank === '' || rank === 'Выберите ранг') { isValid = false; errorMsg = 'Выберите ранг'; }
             else if (steamLink && !this.validateSteamLink(steamLink)) { isValid = false; errorMsg = 'Ссылка Steam не ликвидна'; }
             else {
                 const ageNum = parseInt(age);
@@ -384,8 +397,8 @@ const Search = {
             const rank = document.getElementById('publicRankSelect')?.value || '';
             const steamLink = document.getElementById('publicSteamInput')?.value || '';
             
-            if (!age) { isValid = false; errorMsg = 'Укажите возраст'; }
-            else if (!rank || rank === 'Выберите ранг') { isValid = false; errorMsg = 'Выберите ранг'; }
+            if (!age || age === '') { isValid = false; errorMsg = 'Укажите возраст'; }
+            else if (!rank || rank === '' || rank === 'Выберите ранг') { isValid = false; errorMsg = 'Выберите ранг'; }
             else if (steamLink && !this.validateSteamLink(steamLink)) { isValid = false; errorMsg = 'Ссылка Steam не ликвидна'; }
             else {
                 const ageNum = parseInt(age);
