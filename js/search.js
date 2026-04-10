@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v2.4 FINAL (АВТОЗАПОЛНЕНИЕ ПРИ ОТКРЫТИИ ЭКРАНА)
+// ПОИСК - v2.5 FINAL (ПРЯМОЕ ЗАПОЛНЕНИЕ)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v2.4 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v2.5 FINAL)');
 
 // Константы валидации
 const SEARCH_VALIDATION = {
@@ -35,7 +35,6 @@ const Search = {
         this.resetTimer();
         console.log('Search.init()');
         this.ensureMatchAccepted();
-        this.interceptScreenOpens();
         setTimeout(() => this.startPolling(), 1000);
         
         if (window.Telegram?.WebApp) {
@@ -44,37 +43,39 @@ const Search = {
                 this.checkMatchStatus();
             });
         }
+        
+        // Переопределяем функцию перехода на экраны
+        this.overrideShowScreen();
     },
     
-    // ========== ПЕРЕХВАТ ОТКРЫТИЯ ЭКРАНОВ ==========
-    interceptScreenOpens() {
-        if (!window.App) return;
+    // ========== ПЕРЕОПРЕДЕЛЯЕМ SHOWSCREEN ==========
+    overrideShowScreen() {
+        if (!window.App) {
+            setTimeout(() => this.overrideShowScreen(), 100);
+            return;
+        }
         
-        const originalShowScreen = window.App.showScreen;
+        const originalShow = window.App.showScreen;
         const self = this;
         
         window.App.showScreen = function(screenId, updateNav) {
-            originalShowScreen.call(window.App, screenId, updateNav);
+            originalShow.call(window.App, screenId, updateNav);
             
-            // Заполняем поля при открытии экранов режимов
+            // Заполняем поля при открытии экранов
             setTimeout(() => {
                 if (screenId === 'faceitScreen') {
-                    self.fillFaceitFields();
-                    self.setupLiveValidation('FACEIT');
+                    self.fillFaceitScreen();
                 } else if (screenId === 'premierScreen') {
-                    self.fillPremierFields();
-                    self.setupLiveValidation('PREMIER');
+                    self.fillPremierScreen();
                 } else if (screenId === 'primeScreen') {
-                    self.fillPrimeFields();
-                    self.setupLiveValidation('PRIME');
+                    self.fillPrimeScreen();
                 } else if (screenId === 'publicScreen') {
-                    self.fillPublicFields();
-                    self.setupLiveValidation('PUBLIC');
+                    self.fillPublicScreen();
                 }
             }, 50);
         };
         
-        console.log('✅ Перехват открытия экранов настроен');
+        console.log('✅ ShowScreen переопределён');
     },
     
     ensureMatchAccepted() {
@@ -83,18 +84,10 @@ const Search = {
                 chatLink: null,
                 teammateInfo: null,
                 show(teammateInfo, chatLink) {
-                    console.log('MatchAccepted.show', teammateInfo, chatLink);
                     if (window.Telegram?.WebApp?.openTelegramLink && chatLink) {
                         window.Telegram.WebApp.openTelegramLink(chatLink);
                     }
                     App.showScreen('mainScreen', true);
-                },
-                goToChat() {
-                    if (this.chatLink) window.location.href = this.chatLink;
-                },
-                clear() {
-                    this.chatLink = null;
-                    this.teammateInfo = null;
                 }
             };
         }
@@ -106,117 +99,98 @@ const Search = {
     
     // ========== ПОЛУЧЕНИЕ ДАННЫХ ИЗ ПРОФИЛЯ ==========
     getProfileData() {
+        // Берём напрямую из localStorage
         const age = localStorage.getItem('profile_age') || '';
         const steam = localStorage.getItem('profile_steam') || '';
         const faceit = localStorage.getItem('profile_faceit') || '';
         
-        console.log('📦 Данные из localStorage:', { age, steam, faceit });
-        
-        if (!age && window.Profile && window.Profile.savedAge) {
-            return {
-                age: window.Profile.savedAge || '',
-                steam: window.Profile.savedSteam || '',
-                faceit: window.Profile.savedFaceitLink || ''
-            };
-        }
+        console.log('📦 localStorage данные:', { age, steam, faceit });
         
         return { age, steam, faceit };
     },
     
-    // ========== ЗАПОЛНЕНИЕ ПОЛЕЙ ==========
-    fillFaceitFields() {
-        const profileData = this.getProfileData();
-        console.log('📋 Заполнение FACEIT:', profileData);
+    // ========== ЗАПОЛНЕНИЕ ЭКРАНОВ ==========
+    fillFaceitScreen() {
+        const profile = this.getProfileData();
+        console.log('📋 FACEIT заполнение:', profile);
         
         const ageInput = document.getElementById('faceitAgeValue');
         const faceitInput = document.getElementById('faceitLinkInput');
         
-        if (ageInput && profileData.age) {
-            ageInput.value = profileData.age;
+        if (ageInput) {
+            ageInput.value = profile.age || '';
             this.updateFieldError(ageInput, this.validateAge(ageInput.value));
         }
-        if (faceitInput && profileData.faceit) {
-            faceitInput.value = profileData.faceit;
+        if (faceitInput) {
+            faceitInput.value = profile.faceit || '';
         }
         
-        const ratingInput = document.getElementById('faceitELOInput');
-        if (ratingInput) {
-            this.updateFieldError(ratingInput, this.validateRating(ratingInput.value, 'FACEIT'));
-        }
+        this.setupLiveValidation('FACEIT');
     },
     
-    fillPremierFields() {
-        const profileData = this.getProfileData();
-        console.log('📋 Заполнение PREMIER:', profileData);
+    fillPremierScreen() {
+        const profile = this.getProfileData();
+        console.log('📋 PREMIER заполнение:', profile);
         
         const ageInput = document.getElementById('premierAgeValue');
         const steamInput = document.getElementById('premierSteamInput');
         
-        if (ageInput && profileData.age) {
-            ageInput.value = profileData.age;
+        if (ageInput) {
+            ageInput.value = profile.age || '';
             this.updateFieldError(ageInput, this.validateAge(ageInput.value));
         }
-        if (steamInput && profileData.steam) {
-            steamInput.value = profileData.steam;
+        if (steamInput) {
+            steamInput.value = profile.steam || '';
         }
         
-        const ratingInput = document.getElementById('premierRatingInput');
-        if (ratingInput) {
-            this.updateFieldError(ratingInput, this.validateRating(ratingInput.value, 'PREMIER'));
-        }
+        this.setupLiveValidation('PREMIER');
     },
     
-    fillPrimeFields() {
-        const profileData = this.getProfileData();
-        console.log('📋 Заполнение PRIME:', profileData);
+    fillPrimeScreen() {
+        const profile = this.getProfileData();
+        console.log('📋 PRIME заполнение:', profile);
         
         const ageInput = document.getElementById('primeAgeValue');
         const steamInput = document.getElementById('primeSteamInput');
         
-        if (ageInput && profileData.age) {
-            ageInput.value = profileData.age;
+        if (ageInput) {
+            ageInput.value = profile.age || '';
             this.updateFieldError(ageInput, this.validateAge(ageInput.value));
         }
-        if (steamInput && profileData.steam) {
-            steamInput.value = profileData.steam;
+        if (steamInput) {
+            steamInput.value = profile.steam || '';
         }
         
-        const rankSelect = document.getElementById('primeRankSelect');
-        if (rankSelect) {
-            this.updateFieldError(rankSelect, this.validateRank(rankSelect.value));
-        }
+        this.setupLiveValidation('PRIME');
     },
     
-    fillPublicFields() {
-        const profileData = this.getProfileData();
-        console.log('📋 Заполнение PUBLIC:', profileData);
+    fillPublicScreen() {
+        const profile = this.getProfileData();
+        console.log('📋 PUBLIC заполнение:', profile);
         
         const ageInput = document.getElementById('publicAgeValue');
         const steamInput = document.getElementById('publicSteamInput');
         
-        if (ageInput && profileData.age) {
-            ageInput.value = profileData.age;
+        if (ageInput) {
+            ageInput.value = profile.age || '';
             this.updateFieldError(ageInput, this.validateAge(ageInput.value));
         }
-        if (steamInput && profileData.steam) {
-            steamInput.value = profileData.steam;
+        if (steamInput) {
+            steamInput.value = profile.steam || '';
         }
         
-        const rankSelect = document.getElementById('publicRankSelect');
-        if (rankSelect) {
-            this.updateFieldError(rankSelect, this.validateRank(rankSelect.value));
-        }
+        this.setupLiveValidation('PUBLIC');
     },
     
     // ========== ВАЛИДАЦИЯ ==========
     validateAge(age) {
-        if (!age || age === '') return false;
+        if (!age || age === '') return true; // Пустое поле не красим красным сразу
         const ageNum = parseInt(age, 10);
         return !isNaN(ageNum) && ageNum >= SEARCH_VALIDATION.AGE.min && ageNum <= SEARCH_VALIDATION.AGE.max;
     },
     
     validateRating(rating, mode) {
-        if (!rating || rating === '') return false;
+        if (!rating || rating === '') return true;
         const ratingNum = parseInt(rating, 10);
         const limits = mode === 'FACEIT' ? SEARCH_VALIDATION.FACEIT : SEARCH_VALIDATION.PREMIER;
         return !isNaN(ratingNum) && ratingNum >= limits.min && ratingNum <= limits.max;
@@ -226,7 +200,6 @@ const Search = {
         return rank && rank !== '' && rank !== 'Выберите ранг';
     },
     
-    // ========== ДИНАМИЧЕСКАЯ ПОДСВЕТКА ОШИБОК ==========
     updateFieldError(input, isValid) {
         if (!input) return;
         
@@ -239,7 +212,6 @@ const Search = {
         }
     },
     
-    // ========== ЖИВАЯ ВАЛИДАЦИЯ ПРИ ВВОДЕ ==========
     setupLiveValidation(mode) {
         // Возраст
         let ageInput;
@@ -249,59 +221,44 @@ const Search = {
         else if (mode === 'PUBLIC') ageInput = document.getElementById('publicAgeValue');
         
         if (ageInput) {
-            ageInput.removeEventListener('input', ageInput._handler);
-            ageInput._handler = () => {
+            ageInput.oninput = () => {
                 const isValid = this.validateAge(ageInput.value);
-                this.validationErrors.age = !isValid;
                 this.updateFieldError(ageInput, isValid);
             };
-            ageInput.addEventListener('input', ageInput._handler);
         }
         
         // Рейтинг/ранг
         if (mode === 'FACEIT') {
             const ratingInput = document.getElementById('faceitELOInput');
             if (ratingInput) {
-                ratingInput.removeEventListener('input', ratingInput._handler);
-                ratingInput._handler = () => {
+                ratingInput.oninput = () => {
                     const isValid = this.validateRating(ratingInput.value, 'FACEIT');
-                    this.validationErrors.rating = !isValid;
                     this.updateFieldError(ratingInput, isValid);
                 };
-                ratingInput.addEventListener('input', ratingInput._handler);
             }
         } else if (mode === 'PREMIER') {
             const ratingInput = document.getElementById('premierRatingInput');
             if (ratingInput) {
-                ratingInput.removeEventListener('input', ratingInput._handler);
-                ratingInput._handler = () => {
+                ratingInput.oninput = () => {
                     const isValid = this.validateRating(ratingInput.value, 'PREMIER');
-                    this.validationErrors.rating = !isValid;
                     this.updateFieldError(ratingInput, isValid);
                 };
-                ratingInput.addEventListener('input', ratingInput._handler);
             }
         } else if (mode === 'PRIME') {
             const rankSelect = document.getElementById('primeRankSelect');
             if (rankSelect) {
-                rankSelect.removeEventListener('change', rankSelect._handler);
-                rankSelect._handler = () => {
+                rankSelect.onchange = () => {
                     const isValid = this.validateRank(rankSelect.value);
-                    this.validationErrors.rank = !isValid;
                     this.updateFieldError(rankSelect, isValid);
                 };
-                rankSelect.addEventListener('change', rankSelect._handler);
             }
         } else if (mode === 'PUBLIC') {
             const rankSelect = document.getElementById('publicRankSelect');
             if (rankSelect) {
-                rankSelect.removeEventListener('change', rankSelect._handler);
-                rankSelect._handler = () => {
+                rankSelect.onchange = () => {
                     const isValid = this.validateRank(rankSelect.value);
-                    this.validationErrors.rank = !isValid;
                     this.updateFieldError(rankSelect, isValid);
                 };
-                rankSelect.addEventListener('change', rankSelect._handler);
             }
         }
     },
@@ -315,25 +272,15 @@ const Search = {
         localStorage.setItem('selected_style', style);
         
         if (window.Settings) Settings.click();
-        if (window.Telegram?.WebApp?.HapticFeedback) {
-            Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        }
     },
     
-    // ========== ГЛАВНЫЙ МЕТОД ЗАПУСКА ==========
+    // ========== ЗАПУСК ПОИСКА ==========
     start(mode, value) {
-        console.log('🔍 Search.start called:', mode);
+        console.log('🔍 Search.start:', mode);
         if (window.Settings) Settings.click();
-        
-        if (this.blockUntil && Date.now() < this.blockUntil) {
-            const waitSeconds = Math.ceil((this.blockUntil - Date.now()) / 1000);
-            App.showAlert(`Подождите ${waitSeconds} секунд`);
-            return;
-        }
         
         // Проверяем валидность
         if (!this.isFormValid(mode)) {
-            if (window.Settings) Settings.error();
             if (typeof Profile !== 'undefined' && Profile.showToast) {
                 Profile.showToast('Исправьте ошибки в полях', true);
             } else {
@@ -359,20 +306,25 @@ const Search = {
         else if (mode === 'PRIME') ageInput = document.getElementById('primeAgeValue');
         else if (mode === 'PUBLIC') ageInput = document.getElementById('publicAgeValue');
         
+        // Возраст обязателен
         if (ageInput && !this.validateAge(ageInput.value)) return false;
+        if (ageInput && ageInput.value.trim() === '') return false;
         
+        // Рейтинг/ранг обязателен
         if (mode === 'FACEIT') {
             const ratingInput = document.getElementById('faceitELOInput');
-            if (ratingInput && !this.validateRating(ratingInput.value, 'FACEIT')) return false;
+            if (!ratingInput || ratingInput.value.trim() === '') return false;
+            if (!this.validateRating(ratingInput.value, 'FACEIT')) return false;
         } else if (mode === 'PREMIER') {
             const ratingInput = document.getElementById('premierRatingInput');
-            if (ratingInput && !this.validateRating(ratingInput.value, 'PREMIER')) return false;
+            if (!ratingInput || ratingInput.value.trim() === '') return false;
+            if (!this.validateRating(ratingInput.value, 'PREMIER')) return false;
         } else if (mode === 'PRIME') {
             const rankSelect = document.getElementById('primeRankSelect');
-            if (rankSelect && !this.validateRank(rankSelect.value)) return false;
+            if (!rankSelect || !this.validateRank(rankSelect.value)) return false;
         } else if (mode === 'PUBLIC') {
             const rankSelect = document.getElementById('publicRankSelect');
-            if (rankSelect && !this.validateRank(rankSelect.value)) return false;
+            if (!rankSelect || !this.validateRank(rankSelect.value)) return false;
         }
         
         return true;
@@ -392,32 +344,25 @@ const Search = {
         const activeStyle = document.querySelector('.style-option.active');
         if (activeStyle) {
             data.style = activeStyle.classList.contains('fan') ? 'fan' : 'tryhard';
-        } else {
-            const savedStyle = localStorage.getItem('selected_style');
-            if (savedStyle) data.style = savedStyle;
         }
         
         if (mode === 'FACEIT') {
-            const ratingInput = document.getElementById('faceitELOInput');
-            data.rating = parseInt(ratingInput?.value) || 0;
+            data.rating = parseInt(document.getElementById('faceitELOInput')?.value) || 0;
             data.age = parseInt(document.getElementById('faceitAgeValue')?.value) || 0;
             data.faceit_link = document.getElementById('faceitLinkInput')?.value || '';
             data.comment = document.getElementById('faceitComment')?.value || '';
         } else if (mode === 'PREMIER') {
-            const ratingInput = document.getElementById('premierRatingInput');
-            data.rating = parseInt(ratingInput?.value) || 0;
+            data.rating = parseInt(document.getElementById('premierRatingInput')?.value) || 0;
             data.age = parseInt(document.getElementById('premierAgeValue')?.value) || 0;
             data.steam_link = document.getElementById('premierSteamInput')?.value || '';
             data.comment = document.getElementById('premierComment')?.value || '';
         } else if (mode === 'PRIME') {
-            const rankSelect = document.getElementById('primeRankSelect');
-            data.rank = rankSelect?.value || '';
+            data.rank = document.getElementById('primeRankSelect')?.value || '';
             data.age = parseInt(document.getElementById('primeAgeValue')?.value) || 0;
             data.steam_link = document.getElementById('primeSteamInput')?.value || '';
             data.comment = document.getElementById('primeComment')?.value || '';
         } else if (mode === 'PUBLIC') {
-            const rankSelect = document.getElementById('publicRankSelect');
-            data.rank = rankSelect?.value || '';
+            data.rank = document.getElementById('publicRankSelect')?.value || '';
             data.age = parseInt(document.getElementById('publicAgeValue')?.value) || 0;
             data.steam_link = document.getElementById('publicSteamInput')?.value || '';
             data.comment = document.getElementById('publicComment')?.value || '';
@@ -427,25 +372,13 @@ const Search = {
     },
     
     doStartSearch(mode, data) {
-        console.log('🚀 Запуск поиска:', mode, data);
-        
-        this.currentMode = mode;
-        this.waitingForPartner = false;
-        this.myResponse = null;
-        this.isSearching = true;
-        this.currentMatchId = null;
-        
         const telegram_id = this.getTelegramId();
         if (!telegram_id) {
             App.showAlert('Ошибка авторизации');
             return;
         }
         
-        const allScreens = document.querySelectorAll('.screen');
-        allScreens.forEach(screen => screen.classList.remove('active'));
-        
-        const searchScreen = document.getElementById('searchScreen');
-        if (searchScreen) searchScreen.classList.add('active');
+        App.showScreen('searchScreen', true);
         
         const modeTitle = document.getElementById('searchModeTitle');
         if (modeTitle) modeTitle.textContent = mode;
@@ -464,30 +397,24 @@ const Search = {
             comment: data.comment || ''
         };
         
-        console.log('📤 Отправляем:', payload);
-        
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/start', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         })
-        .then(async response => {
-            if (!response.ok) throw new Error(`Server error: ${response.status}`);
-            return response.json();
-        })
+        .then(res => res.json())
         .then(data => {
             if (data.status === 'searching') {
                 this.startPolling();
             } else if (data.status === 'match_found') {
                 this.showSwipeScreen(data);
-            } else if (data.status === 'error') {
+            } else {
                 App.showAlert(data.message || 'Ошибка поиска');
                 App.showScreen('mainScreen', true);
             }
         })
-        .catch(error => {
-            console.error('❌ Error:', error);
-            App.showAlert('Ошибка соединения с сервером');
+        .catch(() => {
+            App.showAlert('Ошибка соединения');
             App.showScreen('mainScreen', true);
         });
     },
@@ -498,7 +425,7 @@ const Search = {
     },
     
     checkMatchStatus() {
-        if (!this.isSearching && !this.waitingForPartner) return;
+        if (!this.isSearching) return;
         
         const telegram_id = this.getTelegramId();
         if (!telegram_id) return;
@@ -506,85 +433,28 @@ const Search = {
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/check', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ telegram_id: telegram_id })
+            body: JSON.stringify({ telegram_id })
         })
-        .then(res => res.ok ? res.json() : null)
+        .then(res => res.json())
         .then(data => {
-            if (!data) return;
-            
             if (data.match_found && !this.processedMatchIds.has(data.match_id)) {
                 this.processedMatchIds.add(data.match_id);
-                
-                if (this.waitingForPartner) {
-                    this.updateWaitingStatus(data);
-                } else {
-                    this.stopPolling();
-                    localStorage.setItem('opponentData', JSON.stringify(data.opponent));
-                    localStorage.setItem('matchExpiresAt', data.expires_at);
-                    localStorage.setItem('currentMatchId', data.match_id);
-                    this.showSwipeScreen(data);
-                }
+                this.stopPolling();
+                this.showSwipeScreen(data);
             }
         })
-        .catch(error => console.error('Error checking match:', error));
+        .catch(e => console.error('Poll error:', e));
     },
     
     showSwipeScreen(data) {
-        if (window.Settings) Settings.match();
-        
-        if (data.opponent) {
-            data.opponent.mode = this.currentMode;
-        } else {
-            data.opponent = { mode: this.currentMode };
-        }
-        
         this.currentMatchId = data.match_id;
-        this.myResponse = null;
         this.isSearching = false;
-        this.waitingForPartner = false;
-    
-        const allScreens = document.querySelectorAll('.screen');
-        allScreens.forEach(screen => screen.classList.remove('active'));
         
-        const swipeScreen = document.getElementById('swipeScreen');
-        if (swipeScreen) {
-            swipeScreen.classList.add('active');
+        if (typeof Swipe !== 'undefined') {
+            Swipe.startWithOpponent(data.opponent, data.match_id, data.expires_at);
         } else {
             App.showScreen('mainScreen', true);
-            return;
         }
-        
-        setTimeout(() => {
-            if (typeof Swipe !== 'undefined' && Swipe.startWithOpponent) {
-                Swipe.startWithOpponent(data.opponent, this.currentMatchId, data.expires_at, data.server_time);
-            } else {
-                App.showScreen('mainScreen', true);
-            }
-        }, 100);
-    },
-    
-    updateWaitingStatus(data) {
-        if (data.opponent_response === 'reject') {
-            this.handlePartnerReject();
-        } else if (data.opponent_response === 'accept' && this.myResponse === 'accept') {
-            this.handleBothAccepted();
-        }
-    },
-    
-    handlePartnerReject() {
-        if (window.Settings) Settings.error();
-        if (this.matchTimerInterval) clearInterval(this.matchTimerInterval);
-        this.waitingForPartner = false;
-        this.isSearching = true;
-        this.currentMatchId = null;
-        App.showAlert('Собеседник отклонил приглашение');
-        App.showScreen('mainScreen', true);
-    },
-    
-    handleBothAccepted() {
-        if (window.Settings) Settings.success();
-        if (this.matchTimerInterval) clearInterval(this.matchTimerInterval);
-        this.stopPolling();
     },
     
     stopPolling() {
@@ -623,34 +493,25 @@ const Search = {
     },
     
     cancel() {
-        console.log('Отмена поиска');
-        if (window.Settings) Settings.error();
         this.resetTimer();
         this.stopPolling();
-        this.waitingForPartner = false;
-        this.myResponse = null;
         this.isSearching = false;
-        this.currentMatchId = null;
-        this.processedMatchIds.clear();
         
         const telegram_id = this.getTelegramId();
+        if (telegram_id) {
+            fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telegram_id })
+            });
+        }
         
-        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ telegram_id: telegram_id })
-        })
-        .catch(error => console.error('Error stopping search:', error))
-        .finally(() => {
-            App.showScreen('mainScreen', true);
-        });
+        App.showScreen('mainScreen', true);
     }
 };
 
+// Запуск
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Search: DOM загружен');
     window.Search = Search;
     Search.init();
 });
-
-console.log('✅ SEARCH.JS ЗАГРУЖЕН');
