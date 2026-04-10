@@ -104,7 +104,6 @@ const Swipe = {
         if (waitingContent) {
             waitingContent.style.display = 'none';
             waitingContent.style.visibility = 'hidden';
-            waitingContent.classList.remove('active-waiting');
         }
         
         // ПОКАЗЫВАЕМ КАРТОЧКУ
@@ -112,6 +111,7 @@ const Swipe = {
             this.card.style.display = 'block';
             this.card.style.visibility = 'visible';
             this.card.style.opacity = '1';
+            this.card.style.position = 'relative';
         }
         
         // Показываем wrapper
@@ -398,25 +398,29 @@ const Swipe = {
             return;
         }
         
-        // Полностью скрываем контент свайпа
+        // Скрываем контент свайпа
         swipeContent.style.display = 'none';
+        swipeContent.style.visibility = 'hidden';
         
         // Показываем контент ожидания
         waitingContent.style.display = 'flex';
+        waitingContent.style.visibility = 'visible';
         waitingContent.style.position = 'absolute';
         waitingContent.style.top = '0';
         waitingContent.style.left = '0';
         waitingContent.style.right = '0';
         waitingContent.style.bottom = '0';
-        waitingContent.style.backgroundColor = 'var(--surface)';
+        waitingContent.style.backgroundColor = 'var(--surface, #1A1D24)';
         waitingContent.style.borderRadius = '28px';
         waitingContent.style.flexDirection = 'column';
         waitingContent.style.zIndex = '100';
         
-        // Карточка остаётся видимой
+        // Карточка должна быть видимой и иметь относительное позиционирование
         if (this.card) {
             this.card.style.position = 'relative';
             this.card.style.display = 'block';
+            this.card.style.visibility = 'visible';
+            this.card.style.opacity = '1';
         }
         
         // Скрываем кнопки свайпа
@@ -438,12 +442,27 @@ const Swipe = {
         
         this.isWaitingMode = true;
         
+        // Убеждаемся что таймер ожидания виден
+        const waitingTimer = document.getElementById('waitingTimer');
+        if (waitingTimer) {
+            waitingTimer.style.display = 'block';
+        }
+        
         // Запускаем таймер ожидания
         this.startWaitingTimer();
         
         // Загружаем аватарки
         this.loadSelfAvatar();
         this.loadTeammateAvatar();
+        
+        // Принудительно обновляем статус
+        const statusEl = document.getElementById('waitingStatus');
+        if (statusEl) {
+            statusEl.textContent = 'Ожидание тиммейта...';
+            statusEl.style.color = '#9BA1B0';
+        }
+        
+        console.log('✅ Режим ожидания активирован');
     },
     
     loadSelfAvatar() {
@@ -461,7 +480,7 @@ const Swipe = {
         .then(res => res.json())
         .then(data => {
             if (data.status === 'ok' && data.avatar && data.avatar !== 'null' && data.avatar !== '') {
-                selfAvatarContainer.innerHTML = '<img src="' + data.avatar + '" alt="avatar">';
+                selfAvatarContainer.innerHTML = '<img src="' + data.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">';
             } else {
                 selfAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
             }
@@ -477,7 +496,7 @@ const Swipe = {
         if (!teammateAvatarContainer || !this.currentPlayer) return;
         
         if (this.currentPlayer.avatar && this.currentPlayer.avatar !== 'null' && this.currentPlayer.avatar !== '') {
-            teammateAvatarContainer.innerHTML = '<img src="' + this.currentPlayer.avatar + '" alt="avatar">';
+            teammateAvatarContainer.innerHTML = '<img src="' + this.currentPlayer.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">';
         } else {
             teammateAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
         }
@@ -956,6 +975,7 @@ const Swipe = {
             if (statusEl) {
                 statusEl.innerHTML = 'Матч создан!';
                 statusEl.classList.add('active');
+                statusEl.style.color = '#4CAF50';
             }
             
             // Активируем кнопку чата если есть ссылка
