@@ -1,10 +1,9 @@
 // ============================================
-// ПОИСК - v2.6 DEBUG (С ЛОГАМИ)
+// ПОИСК - v2.7 FINAL (ПРЯМОЙ ВЫЗОВ)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v2.6 DEBUG)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v2.7 FINAL)');
 
-// Константы валидации
 const SEARCH_VALIDATION = {
     FACEIT: { min: 0, max: 5000 },
     PREMIER: { min: 0, max: 40000 },
@@ -17,11 +16,6 @@ const Search = {
     currentMode: '',
     pollingInterval: null,
     currentMatchId: null,
-    matchTimerInterval: null,
-    blockUntil: null,
-    waitingForPartner: false,
-    matchEndTime: null,
-    myResponse: null,
     isSearching: false,
     processedMatchIds: new Set(),
     
@@ -29,58 +23,20 @@ const Search = {
         console.log('🚀 Search.init()');
         this.resetTimer();
         this.ensureMatchAccepted();
-        this.overrideShowScreen();
         
-        console.log('📦 localStorage содержимое:');
-        console.log('  profile_age:', localStorage.getItem('profile_age'));
-        console.log('  profile_steam:', localStorage.getItem('profile_steam'));
-        console.log('  profile_faceit:', localStorage.getItem('profile_faceit'));
-        
-        setTimeout(() => this.startPolling(), 1000);
-    },
-    
-    overrideShowScreen() {
-        console.log('🔄 overrideShowScreen()');
-        
-        if (!window.App) {
-            console.error('❌ window.App не найден!');
-            return;
-        }
-        
-        const originalShow = window.App.showScreen;
-        const self = this;
-        
-        window.App.showScreen = function(screenId, updateNav) {
-            console.log(`📱 showScreen вызван: ${screenId}`);
-            originalShow.call(window.App, screenId, updateNav);
-            
-            setTimeout(() => {
-                console.log(`⏰ Таймер сработал для: ${screenId}`);
-                
-                if (screenId === 'faceitScreen') {
-                    console.log('👉 Заполняем FACEIT');
-                    self.fillFaceitScreen();
-                } else if (screenId === 'premierScreen') {
-                    console.log('👉 Заполняем PREMIER');
-                    self.fillPremierScreen();
-                } else if (screenId === 'primeScreen') {
-                    console.log('👉 Заполняем PRIME');
-                    self.fillPrimeScreen();
-                } else if (screenId === 'publicScreen') {
-                    console.log('👉 Заполняем PUBLIC');
-                    self.fillPublicScreen();
-                }
-            }, 100);
-        };
-        
-        console.log('✅ ShowScreen переопределён');
+        // ПРЯМО ПРИ СТАРТЕ ЗАПОЛНЯЕМ ВСЕ ЭКРАНЫ
+        setTimeout(() => {
+            console.log('📋 Принудительное заполнение всех экранов');
+            this.fillFaceitScreen();
+            this.fillPremierScreen();
+            this.fillPrimeScreen();
+            this.fillPublicScreen();
+        }, 500);
     },
     
     ensureMatchAccepted() {
         if (!window.MatchAccepted) {
             window.MatchAccepted = {
-                chatLink: null,
-                teammateInfo: null,
                 show(teammateInfo, chatLink) {
                     if (window.Telegram?.WebApp?.openTelegramLink && chatLink) {
                         window.Telegram.WebApp.openTelegramLink(chatLink);
@@ -99,180 +55,148 @@ const Search = {
         const age = localStorage.getItem('profile_age') || '';
         const steam = localStorage.getItem('profile_steam') || '';
         const faceit = localStorage.getItem('profile_faceit') || '';
-        
-        console.log('📦 getProfileData():', { age, steam, faceit });
-        
+        console.log('📦 getProfileData:', { age, steam, faceit });
         return { age, steam, faceit };
     },
     
     fillFaceitScreen() {
-        console.log('🎯 fillFaceitScreen()');
+        const profile = this.getProfileData();
+        console.log('🎯 FACEIT заполнение:', profile);
         
         const ageInput = document.getElementById('faceitAgeValue');
         const faceitInput = document.getElementById('faceitLinkInput');
         
-        console.log('  ageInput найден:', !!ageInput);
-        console.log('  faceitInput найден:', !!faceitInput);
-        
-        const profile = this.getProfileData();
-        
-        if (ageInput) {
-            console.log('  До установки ageInput.value:', ageInput.value);
-            ageInput.value = profile.age || '';
-            console.log('  После установки ageInput.value:', ageInput.value);
+        if (ageInput && profile.age) {
+            ageInput.value = profile.age;
+            console.log('✅ faceitAgeValue =', profile.age);
+        }
+        if (faceitInput && profile.faceit) {
+            faceitInput.value = profile.faceit;
+            console.log('✅ faceitLinkInput =', profile.faceit);
         }
         
-        if (faceitInput) {
-            console.log('  До установки faceitInput.value:', faceitInput.value);
-            faceitInput.value = profile.faceit || '';
-            console.log('  После установки faceitInput.value:', faceitInput.value);
-        }
-        
-        this.setupLiveValidation('FACEIT');
+        this.setupValidation('FACEIT');
     },
     
     fillPremierScreen() {
-        console.log('🎯 fillPremierScreen()');
+        const profile = this.getProfileData();
+        console.log('🎯 PREMIER заполнение:', profile);
         
         const ageInput = document.getElementById('premierAgeValue');
         const steamInput = document.getElementById('premierSteamInput');
         
-        console.log('  ageInput найден:', !!ageInput);
-        console.log('  steamInput найден:', !!steamInput);
-        
-        const profile = this.getProfileData();
-        
-        if (ageInput) {
-            console.log('  До: ageInput.value =', ageInput.value);
-            ageInput.value = profile.age || '';
-            console.log('  После: ageInput.value =', ageInput.value);
+        if (ageInput && profile.age) {
+            ageInput.value = profile.age;
+            console.log('✅ premierAgeValue =', profile.age);
+        }
+        if (steamInput && profile.steam) {
+            steamInput.value = profile.steam;
+            console.log('✅ premierSteamInput =', profile.steam);
         }
         
-        if (steamInput) {
-            console.log('  До: steamInput.value =', steamInput.value);
-            steamInput.value = profile.steam || '';
-            console.log('  После: steamInput.value =', steamInput.value);
-        }
-        
-        this.setupLiveValidation('PREMIER');
+        this.setupValidation('PREMIER');
     },
     
     fillPrimeScreen() {
-        console.log('🎯 fillPrimeScreen()');
+        const profile = this.getProfileData();
+        console.log('🎯 PRIME заполнение:', profile);
         
         const ageInput = document.getElementById('primeAgeValue');
         const steamInput = document.getElementById('primeSteamInput');
         
-        console.log('  ageInput найден:', !!ageInput);
-        console.log('  steamInput найден:', !!steamInput);
-        
-        const profile = this.getProfileData();
-        
-        if (ageInput) {
-            ageInput.value = profile.age || '';
-            console.log('  ageInput.value =', ageInput.value);
+        if (ageInput && profile.age) {
+            ageInput.value = profile.age;
+            console.log('✅ primeAgeValue =', profile.age);
+        }
+        if (steamInput && profile.steam) {
+            steamInput.value = profile.steam;
+            console.log('✅ primeSteamInput =', profile.steam);
         }
         
-        if (steamInput) {
-            steamInput.value = profile.steam || '';
-            console.log('  steamInput.value =', steamInput.value);
-        }
-        
-        this.setupLiveValidation('PRIME');
+        this.setupValidation('PRIME');
     },
     
     fillPublicScreen() {
-        console.log('🎯 fillPublicScreen()');
+        const profile = this.getProfileData();
+        console.log('🎯 PUBLIC заполнение:', profile);
         
         const ageInput = document.getElementById('publicAgeValue');
         const steamInput = document.getElementById('publicSteamInput');
         
-        console.log('  ageInput найден:', !!ageInput);
-        console.log('  steamInput найден:', !!steamInput);
-        
-        const profile = this.getProfileData();
-        
-        if (ageInput) {
-            ageInput.value = profile.age || '';
-            console.log('  ageInput.value =', ageInput.value);
+        if (ageInput && profile.age) {
+            ageInput.value = profile.age;
+            console.log('✅ publicAgeValue =', profile.age);
+        }
+        if (steamInput && profile.steam) {
+            steamInput.value = profile.steam;
+            console.log('✅ publicSteamInput =', profile.steam);
         }
         
-        if (steamInput) {
-            steamInput.value = profile.steam || '';
-            console.log('  steamInput.value =', steamInput.value);
-        }
-        
-        this.setupLiveValidation('PUBLIC');
+        this.setupValidation('PUBLIC');
     },
     
     validateAge(age) {
         if (!age || age === '') return true;
         const ageNum = parseInt(age, 10);
-        return !isNaN(ageNum) && ageNum >= SEARCH_VALIDATION.AGE.min && ageNum <= SEARCH_VALIDATION.AGE.max;
+        return !isNaN(ageNum) && ageNum >= 0 && ageNum <= 100;
     },
     
     validateRating(rating, mode) {
         if (!rating || rating === '') return true;
         const ratingNum = parseInt(rating, 10);
-        const limits = mode === 'FACEIT' ? SEARCH_VALIDATION.FACEIT : SEARCH_VALIDATION.PREMIER;
-        return !isNaN(ratingNum) && ratingNum >= limits.min && ratingNum <= limits.max;
+        const max = mode === 'FACEIT' ? 5000 : 40000;
+        return !isNaN(ratingNum) && ratingNum >= 0 && ratingNum <= max;
     },
     
     validateRank(rank) {
         return rank && rank !== '' && rank !== 'Выберите ранг';
     },
     
-    updateFieldError(input, isValid) {
-        if (!input) return;
+    setupValidation(mode) {
+        let ageInput, ratingInput, rankSelect;
         
-        if (!isValid && input.value.trim() !== '') {
-            input.style.color = '#FF3B30';
-            input.style.borderColor = '#FF3B30';
-        } else {
-            input.style.color = '';
-            input.style.borderColor = '';
+        if (mode === 'FACEIT') {
+            ageInput = document.getElementById('faceitAgeValue');
+            ratingInput = document.getElementById('faceitELOInput');
+        } else if (mode === 'PREMIER') {
+            ageInput = document.getElementById('premierAgeValue');
+            ratingInput = document.getElementById('premierRatingInput');
+        } else if (mode === 'PRIME') {
+            ageInput = document.getElementById('primeAgeValue');
+            rankSelect = document.getElementById('primeRankSelect');
+        } else if (mode === 'PUBLIC') {
+            ageInput = document.getElementById('publicAgeValue');
+            rankSelect = document.getElementById('publicRankSelect');
         }
-    },
-    
-    setupLiveValidation(mode) {
-        console.log(`🔧 setupLiveValidation: ${mode}`);
-        
-        let ageInput;
-        if (mode === 'FACEIT') ageInput = document.getElementById('faceitAgeValue');
-        else if (mode === 'PREMIER') ageInput = document.getElementById('premierAgeValue');
-        else if (mode === 'PRIME') ageInput = document.getElementById('primeAgeValue');
-        else if (mode === 'PUBLIC') ageInput = document.getElementById('publicAgeValue');
         
         if (ageInput) {
             ageInput.oninput = () => {
-                const isValid = this.validateAge(ageInput.value);
-                this.updateFieldError(ageInput, isValid);
+                const valid = this.validateAge(ageInput.value);
+                ageInput.style.color = (!valid && ageInput.value) ? '#FF3B30' : '';
+                ageInput.style.borderColor = (!valid && ageInput.value) ? '#FF3B30' : '';
             };
         }
         
-        if (mode === 'FACEIT') {
-            const ratingInput = document.getElementById('faceitELOInput');
-            if (ratingInput) {
-                ratingInput.oninput = () => {
-                    const isValid = this.validateRating(ratingInput.value, 'FACEIT');
-                    this.updateFieldError(ratingInput, isValid);
-                };
-            }
-        } else if (mode === 'PREMIER') {
-            const ratingInput = document.getElementById('premierRatingInput');
-            if (ratingInput) {
-                ratingInput.oninput = () => {
-                    const isValid = this.validateRating(ratingInput.value, 'PREMIER');
-                    this.updateFieldError(ratingInput, isValid);
-                };
-            }
+        if (ratingInput) {
+            ratingInput.oninput = () => {
+                const valid = this.validateRating(ratingInput.value, mode);
+                ratingInput.style.color = (!valid && ratingInput.value) ? '#FF3B30' : '';
+                ratingInput.style.borderColor = (!valid && ratingInput.value) ? '#FF3B30' : '';
+            };
+        }
+        
+        if (rankSelect) {
+            rankSelect.onchange = () => {
+                const valid = this.validateRank(rankSelect.value);
+                rankSelect.style.color = !valid ? '#FF3B30' : '';
+                rankSelect.style.borderColor = !valid ? '#FF3B30' : '';
+            };
         }
     },
     
     setStyle(style, element) {
         const parent = element.parentElement;
-        const options = parent.querySelectorAll('.style-option');
-        options.forEach(opt => opt.classList.remove('active'));
+        parent.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
         element.classList.add('active');
         localStorage.setItem('selected_style', style);
         if (window.Settings) Settings.click();
@@ -282,7 +206,32 @@ const Search = {
         console.log(`🔍 Search.start: ${mode}`);
         if (window.Settings) Settings.click();
         
-        if (!this.isFormValid(mode)) {
+        // Проверяем форму
+        let isValid = true;
+        
+        if (mode === 'FACEIT') {
+            const age = document.getElementById('faceitAgeValue')?.value;
+            const rating = document.getElementById('faceitELOInput')?.value;
+            if (!age || !this.validateAge(age)) isValid = false;
+            if (!rating || !this.validateRating(rating, 'FACEIT')) isValid = false;
+        } else if (mode === 'PREMIER') {
+            const age = document.getElementById('premierAgeValue')?.value;
+            const rating = document.getElementById('premierRatingInput')?.value;
+            if (!age || !this.validateAge(age)) isValid = false;
+            if (!rating || !this.validateRating(rating, 'PREMIER')) isValid = false;
+        } else if (mode === 'PRIME') {
+            const age = document.getElementById('primeAgeValue')?.value;
+            const rank = document.getElementById('primeRankSelect')?.value;
+            if (!age || !this.validateAge(age)) isValid = false;
+            if (!rank || !this.validateRank(rank)) isValid = false;
+        } else if (mode === 'PUBLIC') {
+            const age = document.getElementById('publicAgeValue')?.value;
+            const rank = document.getElementById('publicRankSelect')?.value;
+            if (!age || !this.validateAge(age)) isValid = false;
+            if (!rank || !this.validateRank(rank)) isValid = false;
+        }
+        
+        if (!isValid) {
             console.log('❌ Форма невалидна');
             if (typeof Profile !== 'undefined' && Profile.showToast) {
                 Profile.showToast('Исправьте ошибки в полях', true);
@@ -292,60 +241,19 @@ const Search = {
             return;
         }
         
-        console.log('✅ Форма валидна, запускаем поиск');
-        
-        this.waitingForPartner = false;
-        this.isSearching = true;
+        console.log('✅ Запуск поиска');
         this.currentMode = mode;
+        this.isSearching = true;
         
-        const data = this.collectSearchData(mode);
-        this.doStartSearch(mode, data);
+        const data = this.collectData(mode);
+        this.doSearch(mode, data);
     },
     
-    isFormValid(mode) {
-        let ageInput;
-        if (mode === 'FACEIT') ageInput = document.getElementById('faceitAgeValue');
-        else if (mode === 'PREMIER') ageInput = document.getElementById('premierAgeValue');
-        else if (mode === 'PRIME') ageInput = document.getElementById('primeAgeValue');
-        else if (mode === 'PUBLIC') ageInput = document.getElementById('publicAgeValue');
-        
-        if (ageInput && !this.validateAge(ageInput.value)) return false;
-        if (ageInput && ageInput.value.trim() === '') return false;
-        
-        if (mode === 'FACEIT') {
-            const ratingInput = document.getElementById('faceitELOInput');
-            if (!ratingInput || ratingInput.value.trim() === '') return false;
-            if (!this.validateRating(ratingInput.value, 'FACEIT')) return false;
-        } else if (mode === 'PREMIER') {
-            const ratingInput = document.getElementById('premierRatingInput');
-            if (!ratingInput || ratingInput.value.trim() === '') return false;
-            if (!this.validateRating(ratingInput.value, 'PREMIER')) return false;
-        } else if (mode === 'PRIME') {
-            const rankSelect = document.getElementById('primeRankSelect');
-            if (!rankSelect || !this.validateRank(rankSelect.value)) return false;
-        } else if (mode === 'PUBLIC') {
-            const rankSelect = document.getElementById('publicRankSelect');
-            if (!rankSelect || !this.validateRank(rankSelect.value)) return false;
-        }
-        
-        return true;
-    },
-    
-    collectSearchData(mode) {
-        const data = {
-            style: 'fan',
-            age: 0,
-            steam_link: '',
-            faceit_link: '',
-            rating: 0,
-            rank: '',
-            comment: ''
-        };
+    collectData(mode) {
+        const data = { style: 'fan', age: 0, steam_link: '', faceit_link: '', rating: 0, rank: '', comment: '' };
         
         const activeStyle = document.querySelector('.style-option.active');
-        if (activeStyle) {
-            data.style = activeStyle.classList.contains('fan') ? 'fan' : 'tryhard';
-        }
+        if (activeStyle) data.style = activeStyle.classList.contains('fan') ? 'fan' : 'tryhard';
         
         if (mode === 'FACEIT') {
             data.rating = parseInt(document.getElementById('faceitELOInput')?.value) || 0;
@@ -372,85 +280,62 @@ const Search = {
         return data;
     },
     
-    doStartSearch(mode, data) {
+    doSearch(mode, data) {
         const telegram_id = this.getTelegramId();
-        if (!telegram_id) {
-            App.showAlert('Ошибка авторизации');
-            return;
-        }
+        if (!telegram_id) return App.showAlert('Ошибка авторизации');
         
         App.showScreen('searchScreen', true);
-        
-        const modeTitle = document.getElementById('searchModeTitle');
-        if (modeTitle) modeTitle.textContent = mode;
+        document.getElementById('searchModeTitle').textContent = mode;
         
         this.resetTimer();
         this.startTimer();
         
-        const payload = {
-            telegram_id: telegram_id,
-            mode: mode.toLowerCase(),
-            rating_value: String(data.rating || data.rank),
-            style: data.style,
-            age: data.age,
-            steam_link: data.steam_link || null,
-            faceit_link: data.faceit_link || null,
-            comment: data.comment || ''
-        };
-        
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/start', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({
+                telegram_id,
+                mode: mode.toLowerCase(),
+                rating_value: String(data.rating || data.rank),
+                style: data.style,
+                age: data.age,
+                steam_link: data.steam_link || null,
+                faceit_link: data.faceit_link || null,
+                comment: data.comment || ''
+            })
         })
         .then(res => res.json())
-        .then(data => {
-            if (data.status === 'searching') {
-                this.startPolling();
-            } else if (data.status === 'match_found') {
-                this.showSwipeScreen(data);
-            } else {
-                App.showAlert(data.message || 'Ошибка поиска');
-                App.showScreen('mainScreen', true);
-            }
+        .then(res => {
+            if (res.status === 'searching') this.startPolling();
+            else if (res.status === 'match_found') this.showSwipe(res);
+            else App.showAlert(res.message || 'Ошибка');
         })
-        .catch(() => {
-            App.showAlert('Ошибка соединения');
-            App.showScreen('mainScreen', true);
-        });
+        .catch(() => App.showAlert('Ошибка соединения'));
     },
     
     startPolling() {
-        if (this.pollingInterval) return;
-        this.pollingInterval = setInterval(() => this.checkMatchStatus(), 2000);
+        this.pollingInterval = setInterval(() => {
+            if (!this.isSearching) return;
+            
+            fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/check', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telegram_id: this.getTelegramId() })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.match_found && !this.processedMatchIds.has(data.match_id)) {
+                    this.processedMatchIds.add(data.match_id);
+                    clearInterval(this.pollingInterval);
+                    this.showSwipe(data);
+                }
+            })
+            .catch(e => console.error('Poll error:', e));
+        }, 2000);
     },
     
-    checkMatchStatus() {
-        if (!this.isSearching) return;
-        
-        const telegram_id = this.getTelegramId();
-        if (!telegram_id) return;
-        
-        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/check', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ telegram_id })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.match_found && !this.processedMatchIds.has(data.match_id)) {
-                this.processedMatchIds.add(data.match_id);
-                this.stopPolling();
-                this.showSwipeScreen(data);
-            }
-        })
-        .catch(e => console.error('Poll error:', e));
-    },
-    
-    showSwipeScreen(data) {
-        this.currentMatchId = data.match_id;
+    showSwipe(data) {
         this.isSearching = false;
-        
         if (typeof Swipe !== 'undefined') {
             Swipe.startWithOpponent(data.opponent, data.match_id, data.expires_at);
         } else {
@@ -458,62 +343,40 @@ const Search = {
         }
     },
     
-    stopPolling() {
-        if (this.pollingInterval) {
-            clearInterval(this.pollingInterval);
-            this.pollingInterval = null;
-        }
-    },
-    
     startTimer() {
         this.seconds = 0;
-        this.updateDisplay();
-        if (this.timerInterval) clearInterval(this.timerInterval);
         this.timerInterval = setInterval(() => {
             this.seconds++;
-            this.updateDisplay();
+            const m = Math.floor(this.seconds / 60).toString().padStart(2, '0');
+            const s = (this.seconds % 60).toString().padStart(2, '0');
+            const timer = document.getElementById('searchTimer');
+            if (timer) timer.textContent = `${m}:${s}`;
         }, 1000);
     },
     
-    updateDisplay() {
-        const minutes = Math.floor(this.seconds / 60);
-        const seconds = this.seconds % 60;
-        const timer = document.getElementById('searchTimer');
-        if (timer) {
-            timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-    },
-    
     resetTimer() {
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-            this.timerInterval = null;
-        }
+        if (this.timerInterval) clearInterval(this.timerInterval);
         this.seconds = 0;
-        this.updateDisplay();
+        const timer = document.getElementById('searchTimer');
+        if (timer) timer.textContent = '00:00';
     },
     
     cancel() {
         this.resetTimer();
-        this.stopPolling();
+        if (this.pollingInterval) clearInterval(this.pollingInterval);
         this.isSearching = false;
         
-        const telegram_id = this.getTelegramId();
-        if (telegram_id) {
-            fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id })
-            });
-        }
+        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegram_id: this.getTelegramId() })
+        });
         
         App.showScreen('mainScreen', true);
     }
 };
 
-// Запуск
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('📄 DOM загружен, инициализируем Search');
     window.Search = Search;
     Search.init();
 });
