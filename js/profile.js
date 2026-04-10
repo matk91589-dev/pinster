@@ -1,8 +1,8 @@
 // ============================================
-// ПРОФИЛЬ - ИСПРАВЛЕННЫЙ ТОГГЛ v2.5
+// ПРОФИЛЬ - ФИНАЛ v2.6 (ФИКС ТОСТОВ)
 // ============================================
 
-console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v2.5 FIXED)');
+console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v2.6 FINAL)');
 
 // Константы валидации
 const VALIDATION = {
@@ -131,17 +131,42 @@ const Profile = {
         
         const toast = document.createElement('div');
         toast.className = 'profile-toast';
-        if (isError) {
-            toast.style.background = 'rgba(255, 59, 48, 0.95)';
-        }
+        
+        // Адаптивный стиль для узких экранов
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: ${isError ? 'rgba(255, 59, 48, 0.95)' : 'rgba(0, 0, 0, 0.85)'};
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 10000;
+            transition: transform 0.3s ease;
+            white-space: normal;
+            word-break: break-word;
+            text-align: center;
+            max-width: calc(100vw - 40px);
+            width: auto;
+            min-width: 200px;
+            line-height: 1.4;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        `;
+        
         toast.textContent = message;
         document.body.appendChild(toast);
         
+        // Форсируем reflow для анимации
         toast.offsetHeight;
-        toast.classList.add('show');
+        toast.style.transform = 'translateX(-50%) translateY(0)';
         
         this.toastTimeout = setTimeout(() => {
-            toast.classList.remove('show');
+            toast.style.transform = 'translateX(-50%) translateY(-100px)';
             setTimeout(() => toast.remove(), 300);
         }, isError ? 2500 : 2000);
     },
@@ -206,7 +231,7 @@ const Profile = {
         this.tempFaceitLink = faceitInput?.value || '';
     },
     
-    // Функция копирования
+    // Функция копирования (работает БЕЗ привязки к editMode)
     copyToClipboard(text, btnElement) {
         if (!text || text === '' || text === 'Не указана') {
             this.showToast('Нет данных для копирования');
@@ -240,8 +265,11 @@ const Profile = {
                 const copyBtn = document.createElement('button');
                 copyBtn.className = 'copy-btn';
                 copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
+                
+                // Кнопка копирования работает ВСЕГДА, без проверки editMode
                 copyBtn.onclick = (e) => {
                     e.stopPropagation();
+                    e.preventDefault();
                     this.copyToClipboard(steamInput.value || this.savedSteam, copyBtn);
                 };
                 wrapper.appendChild(copyBtn);
@@ -262,8 +290,11 @@ const Profile = {
                 const copyBtn = document.createElement('button');
                 copyBtn.className = 'copy-btn';
                 copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
+                
+                // Кнопка копирования работает ВСЕГДА
                 copyBtn.onclick = (e) => {
                     e.stopPropagation();
+                    e.preventDefault();
                     this.copyToClipboard(faceitInput.value || this.savedFaceitLink, copyBtn);
                 };
                 wrapper.appendChild(copyBtn);
@@ -696,7 +727,7 @@ const Profile = {
     
     editName() {
         if (!this.editMode) {
-            this.showToast('Для изменений перейдите в режим редактирования', true);
+            this.showToast('Для изменений\nперейдите в режим редактирования', true);
             return;
         }
         
@@ -761,7 +792,7 @@ const Profile = {
     
     editAge() {
         if (!this.editMode) {
-            this.showToast('Для изменений перейдите в режим редактирования', true);
+            this.showToast('Для изменений\nперейдите в режим редактирования', true);
             return;
         }
         const ageInput = document.getElementById('ageValue');
@@ -773,7 +804,7 @@ const Profile = {
     
     editSteam() {
         if (!this.editMode) {
-            this.showToast('Для изменений перейдите в режим редактирования', true);
+            this.showToast('Для изменений\nперейдите в режим редактирования', true);
             return;
         }
         const steamInput = document.getElementById('steamDisplay');
@@ -785,7 +816,7 @@ const Profile = {
     
     editFaceitLink() {
         if (!this.editMode) {
-            this.showToast('Для изменений перейдите в режим редактирования', true);
+            this.showToast('Для изменений\nперейдите в режим редактирования', true);
             return;
         }
         const faceitInput = document.getElementById('faceitLinkDisplay');
@@ -803,7 +834,7 @@ const Profile = {
                 if (this.editMode) {
                     if (window.Avatar?.select) Avatar.select();
                 } else {
-                    this.showToast('Для изменений перейдите в режим редактирования', true);
+                    this.showToast('Для изменений\nперейдите в режим редактирования', true);
                 }
             };
         }
@@ -933,7 +964,7 @@ const Profile = {
         if (this.isInitialized) return;
         this.isInitialized = true;
         
-        console.log('🚀 Profile.init() v2.5 FIXED');
+        console.log('🚀 Profile.init() v2.6 FINAL');
         this.telegramId = this.getTelegramId();
         
         this.tempName = this.savedName;
