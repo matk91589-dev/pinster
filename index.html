@@ -58,7 +58,6 @@
             stroke: #FF5500 !important;
         }
         
-        /* Кнопка копирования внутри плашки */
         .link-with-copy {
             position: relative;
             display: flex;
@@ -108,377 +107,23 @@
         .copy-btn.copied svg {
             stroke: #4CAF50;
         }
+        
+        .input-label span {
+            color: #FF5500;
+            font-weight: 400;
+            margin-left: 4px;
+        }
+        
+        .stat-label span {
+            color: #FF5500;
+            font-weight: 400;
+            margin-left: 4px;
+        }
     </style>
     
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/shop-cases.css">
     <link rel="stylesheet" href="css/animations.css">
-    
-    <style>
-        .swipe-card {
-            width: 420px !important;
-            height: 420px !important;
-            position: relative !important;
-        }
-        
-        .swipe-card-content {
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-between !important;
-            height: 100% !important;
-            flex: 1 !important;
-            position: relative !important;
-        }
-        
-        #swipeModeContent {
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-between !important;
-            flex: 1 !important;
-            gap: 14px !important;
-        }
-        
-        .swipe-player-row {
-            margin-bottom: 0 !important;
-        }
-        
-        .swipe-stats-row.three-cols {
-            margin: 4px 0 !important;
-        }
-        
-        .swipe-steam-container,
-        .swipe-faceit-container {
-            margin: 2px 0 !important;
-        }
-        
-        .swipe-comment {
-            margin-top: 4px !important;
-            flex: 1 !important;
-            display: flex !important;
-            flex-direction: column !important;
-        }
-        
-        .swipe-comment-text {
-            flex: 1 !important;
-            min-height: auto !important;
-        }
-        
-        .swipe-link-value {
-            font-size: 14px !important;
-            padding: 12px 14px !important;
-            word-break: break-all !important;
-            cursor: pointer !important;
-            transition: background 0.2s ease !important;
-        }
-        
-        .swipe-link-value:active {
-            background: var(--surface-hover) !important;
-        }
-        
-        @media (max-width: 500px) and (min-width: 451px) {
-            .swipe-card { width: 380px !important; height: 380px !important; }
-            .swipe-avatar { width: 70px !important; height: 70px !important; }
-            .swipe-player-nick { font-size: 18px !important; }
-            .swipe-card-content { padding: 16px !important; }
-            #swipeModeContent { gap: 12px !important; }
-            .swipe-link-value { font-size: 13px !important; padding: 10px 12px !important; }
-        }
-        
-        @media (max-width: 450px) and (min-width: 401px) {
-            .swipe-card { width: 360px !important; height: 360px !important; }
-            .swipe-avatar { width: 65px !important; height: 65px !important; }
-            .swipe-player-nick { font-size: 17px !important; }
-            .swipe-player-id { font-size: 10px !important; }
-            .swipe-card-content { padding: 14px !important; }
-            #swipeModeContent { gap: 11px !important; }
-            .swipe-stats-row.three-cols .swipe-stat-value { padding: 6px 4px !important; font-size: 13px !important; }
-            .swipe-link-value { font-size: 12px !important; padding: 9px 11px !important; }
-            .swipe-comment-text { font-size: 12px !important; padding: 10px !important; }
-        }
-        
-        @media (max-width: 400px) and (min-width: 351px) {
-            .swipe-card { width: 330px !important; height: 330px !important; }
-            .swipe-avatar { width: 60px !important; height: 60px !important; }
-            .swipe-player-nick { font-size: 17px !important; }
-            .swipe-player-id { font-size: 9px !important; }
-            .swipe-rating-value { font-size: 14px !important; }
-            .swipe-card-content { padding: 12px !important; }
-            #swipeModeContent { gap: 10px !important; }
-            .swipe-stats-row.three-cols .swipe-stat-value { padding: 5px 3px !important; font-size: 12px !important; }
-            .swipe-link-label { font-size: 8px !important; }
-            .swipe-link-value { font-size: 11px !important; padding: 8px 10px !important; }
-            .swipe-comment-text { font-size: 11px !important; padding: 8px !important; }
-            .swipe-timer { font-size: 11px !important; padding: 4px 10px !important; top: 10px !important; left: 10px !important; }
-        }
-        
-        @media (max-width: 350px) {
-            .swipe-card { width: 300px !important; height: 300px !important; }
-            .swipe-avatar { width: 55px !important; height: 55px !important; }
-            .swipe-player-nick { font-size: 15px !important; }
-            .swipe-player-id { font-size: 8px !important; }
-            .swipe-rating-value { font-size: 13px !important; }
-            .swipe-card-content { padding: 11px !important; }
-            #swipeModeContent { gap: 9px !important; }
-            .swipe-stats-row.three-cols { gap: 8px !important; }
-            .swipe-stats-row.three-cols .swipe-stat-value { padding: 5px 3px !important; font-size: 12px !important; }
-            .swipe-link-label { font-size: 8px !important; }
-            .swipe-link-value { font-size: 10px !important; padding: 7px 9px !important; }
-            .swipe-comment-text { font-size: 10px !important; padding: 8px !important; }
-            .swipe-timer { font-size: 10px !important; padding: 3px 8px !important; top: 8px !important; left: 8px !important; }
-        }
-        
-        @media (min-width: 768px) and (max-width: 1024px) {
-            .swipe-card { width: 480px !important; height: 480px !important; }
-        }
-        
-        @media (min-width: 1025px) {
-            .swipe-card { width: 520px !important; height: 520px !important; }
-        }
-        
-        .swipe-screen .content {
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-        
-        .swipe-container {
-            padding: 0 !important;
-            margin: 0 !important;
-            width: 100% !important;
-        }
-        
-        .swipe-card-wrapper {
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-        }
-        
-        /* ===== ЭКРАН ОЖИДАНИЯ ===== */
-        #waitingModeContent {
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            flex-direction: column !important;
-            background: #1A1D24 !important;
-            border-radius: 28px !important;
-            z-index: 999 !important;
-            display: none !important;
-        }
-
-        #waitingModeContent.active {
-            display: flex !important;
-        }
-
-        .waiting-header {
-            position: absolute !important;
-            top: 16px !important;
-            left: 16px !important;
-            right: 16px !important;
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            z-index: 20 !important;
-        }
-
-        .waiting-timer {
-            background: rgba(0, 0, 0, 0.65) !important;
-            backdrop-filter: blur(8px) !important;
-            padding: 6px 14px !important;
-            border-radius: 30px !important;
-            font-size: 14px !important;
-            font-weight: 600 !important;
-            color: #fff !important;
-            font-family: monospace !important;
-        }
-
-        .waiting-timer.warning {
-            color: #FF6B4A !important;
-            animation: timerPulse 0.8s infinite !important;
-        }
-        
-        @keyframes timerPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-
-        .waiting-close {
-            font-size: 26px !important;
-            font-weight: 400 !important;
-            color: #9BA1B0 !important;
-            cursor: pointer !important;
-            transition: color 0.2s ease !important;
-            background: transparent !important;
-            width: auto !important;
-            height: auto !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }
-
-        .waiting-close:hover {
-            color: #FF5500 !important;
-        }
-
-        .waiting-avatars-container {
-            flex: 1 !important;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: center !important;
-            align-items: center !important;
-            gap: 24px !important;
-        }
-
-        .waiting-avatars {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 40px !important;
-        }
-
-        .waiting-self-avatar,
-        .waiting-teammate-avatar {
-            width: 85px !important;
-            height: 85px !important;
-            border-radius: 50% !important;
-            overflow: hidden !important;
-            background: #2A2F3A !important;
-            border: 0 !important;
-            outline: 0 !important;
-            box-shadow: none !important;
-        }
-
-        .waiting-self-avatar img,
-        .waiting-teammate-avatar img {
-            width: 100% !important;
-            height: 100% !important;
-            object-fit: cover !important;
-        }
-
-        .waiting-teammate-avatar {
-            opacity: 0.5 !important;
-        }
-
-        .waiting-teammate-avatar.connected {
-            opacity: 1 !important;
-        }
-
-        .waiting-line {
-            width: 50px !important;
-            height: 2px !important;
-            background: rgba(255, 255, 255, 0.2) !important;
-            border-radius: 2px !important;
-            position: relative !important;
-            overflow: hidden !important;
-        }
-
-        .waiting-line-pulse {
-            position: absolute !important;
-            width: 20px !important;
-            height: 100% !important;
-            background: #FF5500 !important;
-            animation: waitingLineMove 1.5s ease-in-out infinite !important;
-        }
-
-        @keyframes waitingLineMove {
-            0% { left: -20px; }
-            100% { left: 100%; }
-        }
-
-        .waiting-line.connected {
-            background: #FF5500 !important;
-        }
-
-        .waiting-line.connected .waiting-line-pulse {
-            display: none !important;
-        }
-
-        .waiting-status {
-            font-size: 18px !important;
-            font-weight: 600 !important;
-            text-align: center !important;
-            color: #9BA1B0 !important;
-        }
-
-        .waiting-status.active {
-            color: #FF5500 !important;
-        }
-
-        .waiting-chat-button {
-            margin: 20px auto 40px auto !important;
-            width: 240px !important;
-            max-width: 80% !important;
-            padding: 16px 0 !important;
-            border-radius: 60px !important;
-            font-size: 16px !important;
-            font-weight: 800 !important;
-            text-align: center !important;
-            cursor: pointer !important;
-            border: none !important;
-            flex-shrink: 0 !important;
-        }
-
-        .waiting-chat-button.disabled {
-            background: rgba(255, 255, 255, 0.1) !important;
-            color: #9BA1B0 !important;
-            pointer-events: none !important;
-        }
-
-        .waiting-chat-button.active {
-            background: #FF5500 !important;
-            color: white !important;
-            pointer-events: auto !important;
-        }
-
-        .swipe-card,
-        .swipe-card-wrapper,
-        #swipeCard {
-            border: none !important;
-            outline: none !important;
-            box-shadow: none !important;
-        }
-        
-        @media (max-width: 480px) {
-            .waiting-self-avatar,
-            .waiting-teammate-avatar {
-                width: 70px !important;
-                height: 70px !important;
-            }
-            .waiting-avatars {
-                gap: 30px !important;
-            }
-            .waiting-line {
-                width: 40px !important;
-            }
-            .waiting-timer {
-                padding: 4px 12px !important;
-                font-size: 12px !important;
-            }
-            .waiting-close {
-                font-size: 24px !important;
-            }
-            .waiting-status {
-                font-size: 16px !important;
-            }
-            .waiting-chat-button {
-                width: 200px !important;
-                padding: 14px 0 !important;
-                font-size: 15px !important;
-            }
-        }
-        
-        @media (max-width: 380px) {
-            .waiting-self-avatar,
-            .waiting-teammate-avatar {
-                width: 60px !important;
-                height: 60px !important;
-            }
-            .waiting-chat-button {
-                width: 180px !important;
-                padding: 12px 0 !important;
-            }
-        }
-    </style>
 </head>
 <body>
     <div id="app-loader">
@@ -617,6 +262,7 @@
         </header>
 
         <main class="content">
+            <!-- ГЛАВНЫЙ ЭКРАН -->
             <div id="mainScreen" class="screen main-screen active">
                 <div class="section-title">Выбор режима</div>
                 <div class="section-subtitle">Подберите подходящий</div>
@@ -628,6 +274,7 @@
                 </div>
             </div>
 
+            <!-- ПРОФИЛЬ -->
             <div id="profileScreen" class="screen profile-screen">
                 <div class="title-row"><div class="title-left"><div class="section-title">Ваш профиль</div><div class="edit-controls"><div id="editToggle" class="edit-title-icon" onclick="Profile.toggleEditMode()"><svg viewBox="0 0 24 24"><path d="M12 20h9" stroke="white" stroke-width="2"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="white" stroke-width="2"/></svg></div><div id="applyBtn" class="apply-btn" onclick="Profile.applyChanges()">Применить</div></div></div></div>
                 <div class="profile-header"><div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()"><div class="tg-avatar-svg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#ffffff" stroke-width="2" fill="none"/></svg></div></div><div class="profile-info"><div class="profile-name-label">ваш никнейм</div><div class="profile-name-row"><span id="profileName" class="profile-name" onclick="Profile.editName()">-</span></div></div></div>
@@ -670,6 +317,7 @@
                 <div class="friends-section"><div class="friends-header"><span class="friends-title">Ваши тиммейты: 0</span><div class="friends-actions"><div class="friends-arrow" onclick="Team.showTeamPage()"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div></div><div class="friends-list" id="friendsList"></div></div>
             </div>
 
+            <!-- КОМАНДА -->
             <div id="teamScreen" class="screen team-screen">
                 <div class="team-header" style="display: flex; align-items: center; justify-content: flex-start; position: relative; padding: 12px 16px;">
                     <div class="team-back" onclick="Team.goBack()" style="cursor: pointer; font-size: 24px; color: #FF5500;">←</div>
@@ -682,6 +330,7 @@
                 <div class="team-content" id="teamContent"></div>
             </div>
 
+            <!-- СВАЙП -->
             <div id="swipeScreen" class="screen swipe-screen">
                 <div id="swipeContainer" class="swipe-container">
                     <div id="swipeCard" class="swipe-card">
@@ -743,23 +392,14 @@
                                     <div class="waiting-timer" id="waitingTimer">30с</div>
                                     <div class="waiting-close" onclick="Swipe.exitSwipeMode('close_click')">✕</div>
                                 </div>
-                                
                                 <div class="waiting-avatars-container">
                                     <div class="waiting-avatars">
-                                        <div class="waiting-self-avatar">
-                                            <div class="tg-avatar-svg"></div>
-                                        </div>
-                                        <div class="waiting-line">
-                                            <div class="waiting-line-pulse"></div>
-                                        </div>
-                                        <div class="waiting-teammate-avatar">
-                                            <div class="tg-avatar-svg"></div>
-                                        </div>
+                                        <div class="waiting-self-avatar"><div class="tg-avatar-svg"></div></div>
+                                        <div class="waiting-line"><div class="waiting-line-pulse"></div></div>
+                                        <div class="waiting-teammate-avatar"><div class="tg-avatar-svg"></div></div>
                                     </div>
-                                    
                                     <div class="waiting-status" id="waitingStatus">Ожидание тиммейта...</div>
                                 </div>
-                                
                                 <button class="waiting-chat-button disabled" id="waitingChatButton" disabled>Перейти в чат</button>
                             </div>
                         </div>
@@ -768,6 +408,7 @@
                 <div class="swipe-loading"><div class="spinner-small"></div></div>
             </div>
 
+            <!-- НАСТРОЙКИ -->
             <div id="settingsScreen" class="screen settings-screen">
                 <div class="settings-header"><div class="settings-title">Настройки</div></div>
                 <div class="settings-section"><div class="settings-section-title">ОФОРМЛЕНИЕ</div>
@@ -788,16 +429,21 @@
                 </div>
             </div>
 
+            <!-- FACEIT -->
             <div id="faceitScreen" class="screen faceit-screen">
                 <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title faceit">FACEIT</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">Faceit ELO</div><input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000">
+                <div class="input-label">Faceit ELO <span>*обязательно</span></div>
+                <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000">
                 <div class="stats-row">
                     <div class="stat-card">
                         <div class="stat-label">Репутация</div>
                         <div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div>
                     </div>
-                    <div class="stat-card" onclick="Profile.editFaceitAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="faceitAgeValue" placeholder="21" value="21"></div></div>
+                    <div class="stat-card">
+                        <div class="stat-label">Возраст <span>*обязательно</span></div>
+                        <div class="stat-value"><input type="text" id="faceitAgeValue" placeholder="0-100" maxlength="3"></div>
+                    </div>
                 </div>
                 <div class="input-label">Ссылка Faceit</div>
                 <div class="link-with-copy">
@@ -814,16 +460,21 @@
                 <button class="mode-search-btn" onclick="Search.start('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
             </div>
 
+            <!-- PREMIER -->
             <div id="premierScreen" class="screen premier-screen">
                 <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title premier">PREMIER</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">CS Rating</div><input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-40000">
+                <div class="input-label">CS Rating <span>*обязательно</span></div>
+                <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-40000">
                 <div class="stats-row">
                     <div class="stat-card">
                         <div class="stat-label">Репутация</div>
                         <div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div>
                     </div>
-                    <div class="stat-card" onclick="Profile.editPremierAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="premierAgeValue" placeholder="21" value="21"></div></div>
+                    <div class="stat-card">
+                        <div class="stat-label">Возраст <span>*обязательно</span></div>
+                        <div class="stat-value"><input type="text" id="premierAgeValue" placeholder="0-100" maxlength="3"></div>
+                    </div>
                 </div>
                 <div class="input-label">Ссылка Steam</div>
                 <div class="link-with-copy">
@@ -840,12 +491,13 @@
                 <button class="mode-search-btn" onclick="Search.start('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
             </div>
 
+            <!-- PRIME -->
             <div id="primeScreen" class="screen prime-screen">
                 <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title prime">PRIME</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">Звание</div>
+                <div class="input-label">Звание <span>*обязательно</span></div>
                 <select class="rank-select" id="primeRankSelect">
-                    <option selected>Выберите ранг</option>
+                    <option value="">Выберите ранг</option>
                     <option>Silver 1</option>
                     <option>Silver 2</option>
                     <option>Silver 3</option>
@@ -869,7 +521,10 @@
                         <div class="stat-label">Репутация</div>
                         <div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div>
                     </div>
-                    <div class="stat-card" onclick="Profile.editPrimeAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="primeAgeValue" placeholder="21" value="21"></div></div>
+                    <div class="stat-card">
+                        <div class="stat-label">Возраст <span>*обязательно</span></div>
+                        <div class="stat-value"><input type="text" id="primeAgeValue" placeholder="0-100" maxlength="3"></div>
+                    </div>
                 </div>
                 <div class="input-label">Ссылка Steam</div>
                 <div class="link-with-copy">
@@ -886,12 +541,13 @@
                 <button class="mode-search-btn" onclick="Search.start('PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
             </div>
 
+            <!-- PUBLIC -->
             <div id="publicScreen" class="screen public-screen">
                 <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title public">PUBLIC</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
-                <div class="input-label">Звание</div>
+                <div class="input-label">Звание <span>*обязательно</span></div>
                 <select class="rank-select" id="publicRankSelect">
-                    <option selected>Выберите ранг</option>
+                    <option value="">Выберите ранг</option>
                     <option>Silver 1</option>
                     <option>Silver 2</option>
                     <option>Silver 3</option>
@@ -915,7 +571,10 @@
                         <div class="stat-label">Репутация</div>
                         <div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div>
                     </div>
-                    <div class="stat-card" onclick="Profile.editPublicAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="publicAgeValue" placeholder="21" value="21"></div></div>
+                    <div class="stat-card">
+                        <div class="stat-label">Возраст <span>*обязательно</span></div>
+                        <div class="stat-value"><input type="text" id="publicAgeValue" placeholder="0-100" maxlength="3"></div>
+                    </div>
                 </div>
                 <div class="input-label">Ссылка Steam</div>
                 <div class="link-with-copy">
@@ -932,6 +591,7 @@
                 <button class="mode-search-btn" onclick="Search.start('PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
             </div>
 
+            <!-- ПОИСК -->
             <div id="searchScreen" class="screen search-screen">
                 <div class="search-header"><div class="search-title" id="searchModeTitle">FACEIT</div><div class="search-timer" id="searchTimer">00:00</div></div>
                 <div class="search-status" id="searchStatus">Поиск тиммейта начат</div>
@@ -1024,9 +684,7 @@
                 const loader = document.getElementById('app-loader');
                 if (loader) {
                     loader.style.opacity = '0';
-                    setTimeout(() => {
-                        loader.remove();
-                    }, 300);
+                    setTimeout(() => loader.remove(), 300);
                 }
                 
                 setTimeout(() => {
@@ -1040,39 +698,6 @@
                     updateSettingsIcon();
                 }, 200);
             });
-            
-            document.addEventListener('click', function(e) {
-                const target = e.target.closest('.friends-arrow, [onclick*="Team.showTeamPage"]');
-                if (target && typeof Team === 'undefined') {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const checkTeam = setInterval(() => {
-                        if (typeof Team !== 'undefined') {
-                            clearInterval(checkTeam);
-                            Team.showTeamPage();
-                        }
-                    }, 50);
-                    setTimeout(() => clearInterval(checkTeam), 5000);
-                }
-            });
-            
-            window.loadShopImages = function() {
-                const images = document.querySelectorAll('.case-icon img[data-src]');
-                images.forEach(img => {
-                    if (img.dataset.src && !img.src) {
-                        const observer = new IntersectionObserver((entries) => {
-                            entries.forEach(entry => {
-                                if (entry.isIntersecting) {
-                                    img.src = img.dataset.src + '?v=' + version;
-                                    img.onload = () => img.classList.add('loaded');
-                                    observer.unobserve(img);
-                                }
-                            });
-                        });
-                        observer.observe(img);
-                    }
-                });
-            };
         })();
     </script>
 </body>
