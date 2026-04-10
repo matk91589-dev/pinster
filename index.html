@@ -50,14 +50,63 @@
             display: none;
         }
         
-        /* Активная иконка настроек */
         .icon-settings.active svg {
             stroke: #FF5500 !important;
         }
         
-        /* Иконка настроек при ховере */
         .icon-settings:hover svg {
             stroke: #FF5500 !important;
+        }
+        
+        /* Кнопка копирования внутри плашки */
+        .link-with-copy {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .link-with-copy .swipe-link-value,
+        .link-with-copy .profile-stat-value,
+        .link-with-copy .input-field {
+            width: 100%;
+            padding-right: 40px !important;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            z-index: 5;
+        }
+        
+        .copy-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: #9BA1B0;
+            transition: stroke 0.2s ease;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(255, 85, 0, 0.15);
+        }
+        
+        .copy-btn:hover svg {
+            stroke: #FF5500;
+        }
+        
+        .copy-btn.copied svg {
+            stroke: #4CAF50;
         }
     </style>
     
@@ -66,7 +115,6 @@
     <link rel="stylesheet" href="css/animations.css">
     
     <style>
-        /* Базовые размеры для карточки свайпа */
         .swipe-card {
             width: 420px !important;
             height: 420px !important;
@@ -125,50 +173,6 @@
         
         .swipe-link-value:active {
             background: var(--surface-hover) !important;
-        }
-        
-        /* Кнопка копирования */
-        .link-with-copy {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-        }
-        
-        .link-with-copy .swipe-link-value,
-        .link-with-copy .profile-stat-value {
-            flex: 1;
-            margin: 0;
-        }
-        
-        .copy-btn {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-        
-        .copy-btn svg {
-            stroke: #9BA1B0;
-            transition: stroke 0.2s ease;
-        }
-        
-        .copy-btn:hover {
-            background: rgba(255, 85, 0, 0.1);
-        }
-        
-        .copy-btn:hover svg {
-            stroke: #FF5500;
-        }
-        
-        .copy-btn.copied svg {
-            stroke: #4CAF50;
         }
         
         @media (max-width: 500px) and (min-width: 451px) {
@@ -248,7 +252,7 @@
             align-items: center !important;
         }
         
-        /* ===== ЭКРАН ОЖИДАНИЯ - ФИНАЛ ===== */
+        /* ===== ЭКРАН ОЖИДАНИЯ ===== */
         #waitingModeContent {
             position: absolute !important;
             top: 0 !important;
@@ -278,12 +282,13 @@
         }
 
         .waiting-timer {
-            background: rgba(0, 0, 0, 0.7) !important;
-            padding: 8px 18px !important;
+            background: rgba(0, 0, 0, 0.65) !important;
+            backdrop-filter: blur(8px) !important;
+            padding: 6px 14px !important;
             border-radius: 30px !important;
-            font-size: 15px !important;
+            font-size: 14px !important;
             font-weight: 600 !important;
-            color: white !important;
+            color: #fff !important;
             font-family: monospace !important;
         }
 
@@ -446,8 +451,8 @@
                 width: 40px !important;
             }
             .waiting-timer {
-                padding: 6px 14px !important;
-                font-size: 13px !important;
+                padding: 4px 12px !important;
+                font-size: 12px !important;
             }
             .waiting-close {
                 font-size: 24px !important;
@@ -481,6 +486,41 @@
     </div>
     
     <script>
+        window.copyToClipboard = function(text, btnElement) {
+            if (!text || text === '' || text === 'Не указана') {
+                if (window.Settings && window.Settings.error) window.Settings.error();
+                return;
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                if (window.Settings && window.Settings.success) window.Settings.success();
+                if (btnElement) {
+                    btnElement.classList.add('copied');
+                    setTimeout(() => btnElement.classList.remove('copied'), 1500);
+                }
+            }).catch(err => {
+                console.error('Ошибка копирования:', err);
+                if (window.Settings && window.Settings.error) window.Settings.error();
+            });
+        };
+        
+        window.copyFieldValue = function(fieldId, btnElement) {
+            const input = document.getElementById(fieldId);
+            if (!input || !input.value) {
+                if (window.Settings && window.Settings.error) window.Settings.error();
+                return;
+            }
+            
+            navigator.clipboard.writeText(input.value).then(() => {
+                if (window.Settings && window.Settings.success) window.Settings.success();
+                btnElement.classList.add('copied');
+                setTimeout(() => btnElement.classList.remove('copied'), 1500);
+            }).catch(err => {
+                console.error('Ошибка копирования:', err);
+                if (window.Settings && window.Settings.error) window.Settings.error();
+            });
+        };
+        
         (function() {
             const version = Date.now();
             document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
@@ -541,7 +581,6 @@
                 .catch(e => console.error('Profile preload error:', e));
             }
             
-            // Принудительное удаление старых строк настроек
             setTimeout(function() {
                 console.log('🧹 Очистка устаревших строк настроек...');
                 const allRows = document.querySelectorAll('.settings-row');
@@ -605,11 +644,27 @@
                 <div class="profile-stats">
                     <div class="profile-stat-card">
                         <div class="profile-stat-label">Ссылка Steam</div>
-                        <input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" readonly>
+                        <div class="link-with-copy">
+                            <input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" readonly>
+                            <button class="copy-btn" onclick="copyToClipboard(document.getElementById('steamDisplay').value, this)">
+                                <svg viewBox="0 0 24 24" width="18" height="18">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" fill="none"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     <div class="profile-stat-card">
                         <div class="profile-stat-label">Ссылка Faceit</div>
-                        <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit" readonly>
+                        <div class="link-with-copy">
+                            <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit" readonly>
+                            <button class="copy-btn" onclick="copyToClipboard(document.getElementById('faceitLinkDisplay').value, this)">
+                                <svg viewBox="0 0 24 24" width="18" height="18">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" fill="none"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="friends-section"><div class="friends-header"><span class="friends-title">Ваши тиммейты: 0</span><div class="friends-actions"><div class="friends-arrow" onclick="Team.showTeamPage()"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div></div><div class="friends-list" id="friendsList"></div></div>
@@ -713,7 +768,6 @@
                 <div class="swipe-loading"><div class="spinner-small"></div></div>
             </div>
 
-            <!-- НАСТРОЙКИ -->
             <div id="settingsScreen" class="screen settings-screen">
                 <div class="settings-header"><div class="settings-title">Настройки</div></div>
                 <div class="settings-section"><div class="settings-section-title">ОФОРМЛЕНИЕ</div>
@@ -745,7 +799,16 @@
                     </div>
                     <div class="stat-card" onclick="Profile.editFaceitAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="faceitAgeValue" placeholder="21" value="21"></div></div>
                 </div>
-                <div class="input-label">Ссылка Faceit</div><input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit">
+                <div class="input-label">Ссылка Faceit</div>
+                <div class="link-with-copy">
+                    <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit">
+                    <button class="copy-btn" onclick="copyFieldValue('faceitLinkInput', this)">
+                        <svg viewBox="0 0 24 24" width="18" height="18">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" fill="none"/>
+                        </svg>
+                    </button>
+                </div>
                 <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
                 <div class="comment-section"><textarea class="comment-input" id="faceitComment" placeholder="Комментарий"></textarea></div>
                 <button class="mode-search-btn" onclick="Search.start('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
@@ -762,7 +825,16 @@
                     </div>
                     <div class="stat-card" onclick="Profile.editPremierAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="premierAgeValue" placeholder="21" value="21"></div></div>
                 </div>
-                <div class="input-label">Ссылка Steam</div><input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam">
+                <div class="input-label">Ссылка Steam</div>
+                <div class="link-with-copy">
+                    <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam">
+                    <button class="copy-btn" onclick="copyFieldValue('premierSteamInput', this)">
+                        <svg viewBox="0 0 24 24" width="18" height="18">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" fill="none"/>
+                        </svg>
+                    </button>
+                </div>
                 <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
                 <div class="comment-section"><textarea class="comment-input" id="premierComment" placeholder="Комментарий"></textarea></div>
                 <button class="mode-search-btn" onclick="Search.start('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
@@ -799,7 +871,16 @@
                     </div>
                     <div class="stat-card" onclick="Profile.editPrimeAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="primeAgeValue" placeholder="21" value="21"></div></div>
                 </div>
-                <div class="input-label">Ссылка Steam</div><input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam">
+                <div class="input-label">Ссылка Steam</div>
+                <div class="link-with-copy">
+                    <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam">
+                    <button class="copy-btn" onclick="copyFieldValue('primeSteamInput', this)">
+                        <svg viewBox="0 0 24 24" width="18" height="18">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" fill="none"/>
+                        </svg>
+                    </button>
+                </div>
                 <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
                 <div class="comment-section"><textarea class="comment-input" id="primeComment" placeholder="Комментарий"></textarea></div>
                 <button class="mode-search-btn" onclick="Search.start('PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
@@ -836,7 +917,16 @@
                     </div>
                     <div class="stat-card" onclick="Profile.editPublicAge()"><div class="stat-label">Возраст</div><div class="stat-value"><input type="text" id="publicAgeValue" placeholder="21" value="21"></div></div>
                 </div>
-                <div class="input-label">Ссылка Steam</div><input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam">
+                <div class="input-label">Ссылка Steam</div>
+                <div class="link-with-copy">
+                    <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam">
+                    <button class="copy-btn" onclick="copyFieldValue('publicSteamInput', this)">
+                        <svg viewBox="0 0 24 24" width="18" height="18">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" fill="none"/>
+                        </svg>
+                    </button>
+                </div>
                 <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
                 <div class="comment-section"><textarea class="comment-input" id="publicComment" placeholder="Комментарий"></textarea></div>
                 <button class="mode-search-btn" onclick="Search.start('PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
@@ -863,7 +953,6 @@
     </div>
 
     <script>
-        // Функция для обновления активного состояния иконки настроек
         function updateSettingsIcon() {
             const settingsIcon = document.getElementById('settingsIcon');
             const currentScreen = document.querySelector('.screen.active')?.id;
@@ -876,7 +965,6 @@
             }
         }
         
-        // Добавляем метод openSettings в App
         if (!window.App) window.App = {};
         
         window.App.openSettings = function() {
@@ -884,7 +972,6 @@
             setTimeout(updateSettingsIcon, 50);
         };
         
-        // Перехватываем showScreen для обновления иконки
         if (window.App && !window.App._originalShowScreen) {
             window.App._originalShowScreen = window.App.showScreen;
             window.App.showScreen = function(screenId, updateNav) {
