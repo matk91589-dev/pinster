@@ -98,6 +98,7 @@ const Swipe = {
             swipeContent.style.visibility = 'visible';
         }
         if (waitingContent) {
+            waitingContent.classList.remove('active');
             waitingContent.style.display = 'none';
             waitingContent.style.visibility = 'hidden';
         }
@@ -386,8 +387,8 @@ const Swipe = {
         swipeContent.style.display = 'none';
         swipeContent.style.visibility = 'hidden';
         
-        // Показываем контент ожидания (CSS уже содержит все стили)
-        waitingContent.style.display = 'flex';
+        // Показываем контент ожидания через класс
+        waitingContent.classList.add('active');
         waitingContent.style.visibility = 'visible';
         
         if (this.card) {
