@@ -1,8 +1,8 @@
 // ============================================
-// ПРОФИЛЬ - v2.8 FINAL (ВСЁ РАБОТАЕТ)
+// ПРОФИЛЬ - v2.9 ULTRA FIX (КОПИРОВАНИЕ БЕЗ СООБЩЕНИЙ)
 // ============================================
 
-console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v2.8 FINAL)');
+console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v2.9 ULTRA FIX)');
 
 // Константы валидации
 const VALIDATION = {
@@ -56,6 +56,7 @@ const Profile = {
     isFriendsLoaded: false,
     isLoadingFriends: false,
     screenObserver: null,
+    isCopyAction: false, // Флаг для блокировки сообщений при копировании
     
     validationErrors: {
         nick: false,
@@ -126,6 +127,11 @@ const Profile = {
     },
     
     showToast(message, isError = false) {
+        // Блокируем показ сообщения если это действие копирования
+        if (this.isCopyAction) {
+            return;
+        }
+        
         if (this.toastTimeout) clearTimeout(this.toastTimeout);
         const existingToast = document.querySelector('.profile-toast');
         if (existingToast) existingToast.remove();
@@ -226,19 +232,25 @@ const Profile = {
     
     copyToClipboard(text, btnElement) {
         if (!text || text === '' || text === 'Не указана') {
+            this.isCopyAction = true;
             this.showToast('Нет данных для копирования');
+            setTimeout(() => this.isCopyAction = false, 100);
             return;
         }
         
         navigator.clipboard.writeText(text).then(() => {
+            this.isCopyAction = true;
             this.showToast('Скопировано в буфер обмена');
             if (btnElement) {
                 btnElement.classList.add('copied');
                 setTimeout(() => btnElement.classList.remove('copied'), 1500);
             }
+            setTimeout(() => this.isCopyAction = false, 100);
         }).catch(err => {
             console.error('Ошибка копирования:', err);
+            this.isCopyAction = true;
             this.showToast('Ошибка копирования');
+            setTimeout(() => this.isCopyAction = false, 100);
         });
     },
     
@@ -256,14 +268,15 @@ const Profile = {
                 
                 const copyBtn = document.createElement('button');
                 copyBtn.className = 'copy-btn';
+                copyBtn.setAttribute('data-copy-btn', 'true');
                 copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
                 
-                copyBtn.onclick = (e) => {
-                    e.stopPropagation();
+                copyBtn.addEventListener('click', (e) => {
+                    e.stopImmediatePropagation();
                     e.preventDefault();
                     this.copyToClipboard(steamInput.value || this.savedSteam, copyBtn);
-                    return false;
-                };
+                }, true);
+                
                 wrapper.appendChild(copyBtn);
             }
         }
@@ -281,14 +294,15 @@ const Profile = {
                 
                 const copyBtn = document.createElement('button');
                 copyBtn.className = 'copy-btn';
+                copyBtn.setAttribute('data-copy-btn', 'true');
                 copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
                 
-                copyBtn.onclick = (e) => {
-                    e.stopPropagation();
+                copyBtn.addEventListener('click', (e) => {
+                    e.stopImmediatePropagation();
                     e.preventDefault();
                     this.copyToClipboard(faceitInput.value || this.savedFaceitLink, copyBtn);
-                    return false;
-                };
+                }, true);
+                
                 wrapper.appendChild(copyBtn);
             }
         }
@@ -836,11 +850,19 @@ const Profile = {
     },
     
     setupClickHandlers() {
+        // Глобальный перехватчик кликов для блокировки сообщений при копировании
+        document.addEventListener('click', (e) => {
+            const copyBtn = e.target.closest('[data-copy-btn]');
+            if (copyBtn) {
+                this.isCopyAction = true;
+                setTimeout(() => this.isCopyAction = false, 200);
+            }
+        }, true);
+        
         const avatar = document.getElementById('profileAvatar');
         if (avatar) {
             avatar.style.cursor = 'pointer';
             avatar.onclick = (e) => {
-                e.stopPropagation();
                 if (this.editMode) {
                     if (window.Avatar?.select) Avatar.select();
                 } else {
@@ -852,10 +874,7 @@ const Profile = {
         const profileName = document.getElementById('profileName');
         if (profileName) {
             profileName.style.cursor = 'pointer';
-            profileName.onclick = (e) => {
-                e.stopPropagation();
-                this.editName();
-            };
+            profileName.onclick = () => this.editName();
         }
         
         const profileNameLabel = document.querySelector('.profile-name-label');
@@ -885,54 +904,41 @@ const Profile = {
         if (ageInput) {
             ageInput.addEventListener('input', () => this.validateOnInput());
             ageInput.maxLength = 3;
-            ageInput.onclick = (e) => e.stopPropagation();
         }
         
         const steamInput = document.getElementById('steamDisplay');
         if (steamInput) {
             steamInput.addEventListener('input', () => this.validateOnInput());
             steamInput.maxLength = VALIDATION.STEAM.maxLength;
-            steamInput.onclick = (e) => e.stopPropagation();
         }
         
         const faceitInput = document.getElementById('faceitLinkDisplay');
         if (faceitInput) {
             faceitInput.addEventListener('input', () => this.validateOnInput());
             faceitInput.maxLength = VALIDATION.FACEIT.maxLength;
-            faceitInput.onclick = (e) => e.stopPropagation();
         }
         
         const ageCard = document.querySelector('.stat-card:last-child');
         if (ageCard) {
             ageCard.style.cursor = 'pointer';
-            ageCard.onclick = (e) => {
-                e.stopPropagation();
-                this.editAge();
-            };
+            ageCard.onclick = () => this.editAge();
         }
         
         const steamCard = document.querySelector('.profile-stat-card:first-child');
         if (steamCard) {
             steamCard.style.cursor = 'pointer';
-            steamCard.onclick = (e) => {
-                e.stopPropagation();
-                this.editSteam();
-            };
+            steamCard.onclick = () => this.editSteam();
         }
         
         const faceitCard = document.querySelector('.profile-stat-card:last-child');
         if (faceitCard) {
             faceitCard.style.cursor = 'pointer';
-            faceitCard.onclick = (e) => {
-                e.stopPropagation();
-                this.editFaceitLink();
-            };
+            faceitCard.onclick = () => this.editFaceitLink();
         }
         
         const friendsArrow = document.querySelector('.friends-arrow');
         if (friendsArrow) {
-            friendsArrow.onclick = (e) => {
-                e.stopPropagation();
+            friendsArrow.onclick = () => {
                 if (window.Team?.showTeamPage) Team.showTeamPage();
             };
         }
@@ -941,7 +947,6 @@ const Profile = {
         if (editToggle) {
             editToggle.onclick = (e) => {
                 e.preventDefault();
-                e.stopPropagation();
                 this.toggleEditMode();
             };
         }
@@ -950,7 +955,6 @@ const Profile = {
         if (applyBtn) {
             applyBtn.onclick = (e) => {
                 e.preventDefault();
-                e.stopPropagation();
                 this.applyChanges();
             };
         }
@@ -989,7 +993,7 @@ const Profile = {
         if (this.isInitialized) return;
         this.isInitialized = true;
         
-        console.log('🚀 Profile.init() v2.8 FINAL');
+        console.log('🚀 Profile.init() v2.9 ULTRA FIX');
         this.telegramId = this.getTelegramId();
         
         this.tempName = this.savedName;
