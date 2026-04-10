@@ -4785,7 +4785,7 @@ button:active { transform: scale(0.96); }
     }
 }
 
-/* ===== ЭКРАН ОЖИДАНИЯ ===== */
+/* ===== ЭКРАН ОЖИДАНИЯ - ФИНАЛ ===== */
 #waitingModeContent {
     position: absolute !important;
     top: 0 !important;
@@ -4803,7 +4803,6 @@ button:active { transform: scale(0.96); }
     display: flex !important;
 }
 
-/* Таймер и крестик */
 .waiting-header {
     position: absolute !important;
     top: 16px !important;
@@ -4822,11 +4821,6 @@ button:active { transform: scale(0.96); }
     font-size: 20px !important;
     font-weight: 700 !important;
     color: white !important;
-    font-family: monospace !important;
-}
-
-.waiting-timer.warning {
-    color: #FF6B4A !important;
 }
 
 .waiting-close {
@@ -4842,14 +4836,13 @@ button:active { transform: scale(0.96); }
     color: white !important;
 }
 
-/* Контейнер аватарок */
 .waiting-avatars-container {
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
-    gap: 24px !important;
+    gap: 20px !important;
 }
 
 .waiting-avatars {
@@ -4859,7 +4852,7 @@ button:active { transform: scale(0.96); }
     gap: 50px !important;
 }
 
-/* Аватарки - БЕЗ ОБВОДКИ, НЕ ОБРЕЗАЮТСЯ */
+/* АВАТАРКИ - БЕЗ ОБВОДОК, НЕ ОБРЕЗАЮТСЯ */
 .waiting-self-avatar,
 .waiting-teammate-avatar {
     width: 100px !important;
@@ -4867,15 +4860,18 @@ button:active { transform: scale(0.96); }
     border-radius: 50% !important;
     overflow: hidden !important;
     background: #2A2F3A !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
     border: 0 !important;
     outline: 0 !important;
     box-shadow: none !important;
 }
 
-/* Аватарка тиммейта изначально затемнена */
+.waiting-self-avatar img,
+.waiting-teammate-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
 .waiting-teammate-avatar {
     opacity: 0.5 !important;
 }
@@ -4884,24 +4880,6 @@ button:active { transform: scale(0.96); }
     opacity: 1 !important;
 }
 
-/* Картинка внутри аватарки - полностью заполняет */
-.waiting-self-avatar img,
-.waiting-teammate-avatar img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    display: block !important;
-}
-
-/* SVG заглушка */
-.waiting-self-avatar svg,
-.waiting-teammate-avatar svg {
-    width: 60% !important;
-    height: 60% !important;
-    display: block !important;
-}
-
-/* Линия */
 .waiting-line {
     width: 60px !important;
     height: 3px !important;
@@ -4932,7 +4910,6 @@ button:active { transform: scale(0.96); }
     display: none !important;
 }
 
-/* Статус */
 .waiting-status {
     font-size: 20px !important;
     font-weight: 600 !important;
@@ -4944,11 +4921,10 @@ button:active { transform: scale(0.96); }
     color: #FF5500 !important;
 }
 
-/* Кнопка чата - БОЛЬШАЯ */
 .waiting-chat-button {
     margin: 20px auto 40px auto !important;
     width: calc(100% - 60px) !important;
-    max-width: 340px !important;
+    max-width: 320px !important;
     padding: 20px 0 !important;
     border-radius: 60px !important;
     font-size: 18px !important;
@@ -4956,7 +4932,6 @@ button:active { transform: scale(0.96); }
     text-align: center !important;
     cursor: pointer !important;
     border: none !important;
-    flex-shrink: 0 !important;
 }
 
 .waiting-chat-button.disabled {
@@ -4971,48 +4946,10 @@ button:active { transform: scale(0.96); }
     pointer-events: auto !important;
 }
 
-/* Убираем обводки у карточек */
 .swipe-card,
 .swipe-card-wrapper,
 #swipeCard {
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
-}
-
-/* Адаптация */
-@media (max-width: 480px) {
-    .waiting-self-avatar,
-    .waiting-teammate-avatar {
-        width: 75px !important;
-        height: 75px !important;
-    }
-    
-    .waiting-avatars {
-        gap: 30px !important;
-    }
-    
-    .waiting-line {
-        width: 40px !important;
-    }
-    
-    .waiting-timer {
-        padding: 8px 16px !important;
-        font-size: 16px !important;
-    }
-    
-    .waiting-close {
-        width: 36px !important;
-        height: 36px !important;
-        font-size: 20px !important;
-    }
-    
-    .waiting-status {
-        font-size: 16px !important;
-    }
-    
-    .waiting-chat-button {
-        padding: 16px 0 !important;
-        font-size: 16px !important;
-    }
 }
