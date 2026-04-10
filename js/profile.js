@@ -1,8 +1,8 @@
 // ============================================
-// ПРОФИЛЬ - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// ПРОФИЛЬ - ДИНАМИЧЕСКАЯ ВАЛИДАЦИЯ v2.2
 // ============================================
 
-console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v2.1)');
+console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v2.2)');
 
 // Константы валидации
 const VALIDATION = {
@@ -40,7 +40,6 @@ const Profile = {
     savedSteam: '',
     savedFaceitLink: '',
     savedAvatarUrl: null,
-    // Временные значения (сохраняются при выходе из профиля)
     tempName: '-',
     tempAge: '',
     tempSteam: '',
@@ -55,7 +54,6 @@ const Profile = {
     isFriendsLoaded: false,
     isLoadingFriends: false,
     
-    // Ошибки валидации для каждого поля
     validationErrors: {
         nick: false,
         age: false,
@@ -66,10 +64,10 @@ const Profile = {
     // ========== ВАЛИДАЦИЯ ==========
     validateNick(nick) {
         if (!nick || nick.length < VALIDATION.NICK.min || nick.length > VALIDATION.NICK.max) {
-            return { valid: false, error: VALIDATION.NICK.error };
+            return { valid: false };
         }
         if (!VALIDATION.NICK.pattern.test(nick)) {
-            return { valid: false, error: VALIDATION.NICK.error };
+            return { valid: false };
         }
         return { valid: true };
     },
@@ -80,7 +78,7 @@ const Profile = {
         }
         const ageNum = parseInt(age, 10);
         if (isNaN(ageNum) || ageNum < VALIDATION.AGE.min || ageNum > VALIDATION.AGE.max) {
-            return { valid: false, error: VALIDATION.AGE.error };
+            return { valid: false };
         }
         return { valid: true, value: ageNum };
     },
@@ -91,17 +89,13 @@ const Profile = {
         }
         
         if (link.length > VALIDATION.STEAM.maxLength) {
-            return { valid: false, error: VALIDATION.STEAM.error };
+            return { valid: false };
         }
         
         const trimmedLink = link.trim().replace(/\/$/, '');
         const isValid = VALIDATION.STEAM.patterns.some(pattern => pattern.test(trimmedLink));
         
-        if (!isValid) {
-            return { valid: false, error: VALIDATION.STEAM.error };
-        }
-        
-        return { valid: true, value: trimmedLink };
+        return { valid: isValid, value: isValid ? trimmedLink : null };
     },
     
     validateFaceitLink(link) {
@@ -110,15 +104,13 @@ const Profile = {
         }
         
         if (link.length > VALIDATION.FACEIT.maxLength) {
-            return { valid: false, error: VALIDATION.FACEIT.error };
+            return { valid: false };
         }
         
         const trimmedLink = link.trim().replace(/\/$/, '');
-        if (!VALIDATION.FACEIT.pattern.test(trimmedLink)) {
-            return { valid: false, error: VALIDATION.FACEIT.error };
-        }
+        const isValid = VALIDATION.FACEIT.pattern.test(trimmedLink);
         
-        return { valid: true, value: trimmedLink };
+        return { valid: isValid, value: isValid ? trimmedLink : null };
     },
     
     getTelegramId() {
@@ -138,7 +130,7 @@ const Profile = {
         const toast = document.createElement('div');
         toast.className = 'profile-toast';
         if (isError) {
-            toast.style.background = 'rgba(255, 59, 48, 0.9)';
+            toast.style.background = 'rgba(255, 59, 48, 0.95)';
         }
         toast.textContent = message;
         document.body.appendChild(toast);
@@ -149,19 +141,20 @@ const Profile = {
         this.toastTimeout = setTimeout(() => {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
-        }, isError ? 3000 : 2000);
+        }, isError ? 2500 : 2000);
     },
     
-    // Обновление отображения ошибки для поля
-    updateFieldError(fieldId, hasError, errorText = 'неверный ввод') {
+    // Динамическое обновление ошибки поля
+    updateFieldError(fieldId, hasError) {
         const label = document.querySelector(`[data-field="${fieldId}"]`);
         const input = document.getElementById(fieldId);
         
         if (label) {
+            const baseText = label.getAttribute('data-label');
             if (hasError) {
-                label.innerHTML = `${label.getAttribute('data-label')} <span style="color: #FF3B30;">*${errorText}</span>`;
+                label.innerHTML = `${baseText} <span style="color: #FF3B30; font-weight: 400;">*${VALIDATION[fieldId === 'ageValue' ? 'AGE' : (fieldId === 'steamDisplay' ? 'STEAM' : 'FACEIT')].error}</span>`;
             } else {
-                label.textContent = label.getAttribute('data-label');
+                label.textContent = baseText;
             }
         }
         
@@ -176,7 +169,42 @@ const Profile = {
         }
     },
     
-    // Функция копирования в буфер обмена (работает всегда)
+    // Валидация при вводе (динамическая)
+    validateOnInput() {
+        if (!this.editMode) return;
+        
+        const ageInput = document.getElementById('ageValue');
+        const steamInput = document.getElementById('steamDisplay');
+        const faceitInput = document.getElementById('faceitLinkDisplay');
+        
+        // Возраст
+        if (ageInput) {
+            const ageValid = this.validateAge(ageInput.value);
+            this.validationErrors.age = !ageValid.valid;
+            this.updateFieldError('ageValue', !ageValid.valid);
+        }
+        
+        // Steam
+        if (steamInput) {
+            const steamValid = this.validateSteamLink(steamInput.value);
+            this.validationErrors.steam = !steamValid.valid && steamInput.value.trim() !== '';
+            this.updateFieldError('steamDisplay', this.validationErrors.steam);
+        }
+        
+        // FaceIT
+        if (faceitInput) {
+            const faceitValid = this.validateFaceitLink(faceitInput.value);
+            this.validationErrors.faceit = !faceitValid.valid && faceitInput.value.trim() !== '';
+            this.updateFieldError('faceitLinkDisplay', this.validationErrors.faceit);
+        }
+        
+        // Сохраняем временные значения
+        this.tempAge = ageInput?.value || '';
+        this.tempSteam = steamInput?.value || '';
+        this.tempFaceitLink = faceitInput?.value || '';
+    },
+    
+    // Функция копирования
     copyToClipboard(text, btnElement) {
         if (!text || text === '' || text === 'Не указана') {
             this.showToast('Нет данных для копирования');
@@ -195,13 +223,11 @@ const Profile = {
         });
     },
     
-    // Обновление отображения ссылок с кнопками копирования
     updateLinksWithCopy() {
-        // Steam ссылка
+        // Steam
         const steamInput = document.getElementById('steamDisplay');
         if (steamInput) {
             const parent = steamInput.parentNode;
-            
             let wrapper = parent.querySelector('.link-with-copy');
             if (!wrapper) {
                 wrapper = document.createElement('div');
@@ -220,11 +246,10 @@ const Profile = {
             }
         }
         
-        // Faceit ссылка
+        // FaceIT
         const faceitInput = document.getElementById('faceitLinkDisplay');
         if (faceitInput) {
             const parent = faceitInput.parentNode;
-            
             let wrapper = parent.querySelector('.link-with-copy');
             if (!wrapper) {
                 wrapper = document.createElement('div');
@@ -244,11 +269,8 @@ const Profile = {
         }
     },
     
-    // Загрузка друзей
     async loadFriends() {
-        if (!this.telegramId) {
-            this.telegramId = this.getTelegramId();
-        }
+        if (!this.telegramId) this.telegramId = this.getTelegramId();
         if (!this.telegramId || this.isFriendsLoaded || this.isLoadingFriends) return;
         
         this.isLoadingFriends = true;
@@ -288,10 +310,7 @@ const Profile = {
         if (!friendsListEl) return;
         
         const friendsTitle = document.querySelector('.friends-title');
-        if (friendsTitle) {
-            friendsTitle.textContent = 'Ваши тиммейты:';
-        }
-        
+        if (friendsTitle) friendsTitle.textContent = 'Ваши тиммейты:';
         friendsListEl.innerHTML = '<div class="empty-friends"><div class="empty-friends-text">загрузка...</div></div>';
     },
     
@@ -300,9 +319,7 @@ const Profile = {
         if (!friendsListEl) return;
         
         const friendsTitle = document.querySelector('.friends-title');
-        if (friendsTitle) {
-            friendsTitle.textContent = `Ваши тиммейты: ${this.friendsList.length}`;
-        }
+        if (friendsTitle) friendsTitle.textContent = `Ваши тиммейты: ${this.friendsList.length}`;
         
         if (!this.friendsList.length) {
             friendsListEl.innerHTML = '<div class="empty-friends"><div class="empty-friends-text">у вас пока нет тиммейтов</div></div>';
@@ -314,7 +331,7 @@ const Profile = {
         
         for (let i = 0; i < showCount; i++) {
             const friend = this.friendsList[i];
-            const firstChar = friend.nick && friend.nick.length > 0 ? friend.nick[0].toUpperCase() : '?';
+            const firstChar = friend.nick?.[0]?.toUpperCase() || '?';
             html += `
                 <div class="friend-row" onclick="Profile.showFriendProfile('${friend.player_id}')">
                     <div class="friend-avatar">
@@ -355,16 +372,12 @@ const Profile = {
     },
     
     showAllFriends() {
-        if (window.Team && Team.showTeamPage) {
-            Team.showTeamPage();
-        } else if (window.App) {
-            App.showScreen('teamScreen', true);
-        }
+        if (window.Team?.showTeamPage) Team.showTeamPage();
+        else if (window.App) App.showScreen('teamScreen', true);
     },
     
     async loadProfileFromServer() {
         if (this.isProfileLoaded || this.isLoading) return;
-        
         this.isLoading = true;
         
         if (!this.telegramId) this.telegramId = this.getTelegramId();
@@ -388,7 +401,6 @@ const Profile = {
                     this.savedSteam = data.steam_link || '';
                     this.savedFaceitLink = data.faceit_link || '';
                     
-                    // Инициализируем временные значения
                     this.tempName = this.savedName;
                     this.tempAge = this.savedAge;
                     this.tempSteam = this.savedSteam;
@@ -461,9 +473,9 @@ const Profile = {
             steamDisplayEl.value = this.editMode ? this.tempSteam : this.savedSteam;
         }
         
-        const faceitLinkDisplayEl = document.getElementById('faceitLinkDisplay');
-        if (faceitLinkDisplayEl) {
-            faceitLinkDisplayEl.value = this.editMode ? this.tempFaceitLink : this.savedFaceitLink;
+        const faceitDisplayEl = document.getElementById('faceitLinkDisplay');
+        if (faceitDisplayEl) {
+            faceitDisplayEl.value = this.editMode ? this.tempFaceitLink : this.savedFaceitLink;
         }
         
         this.updateAvatarDisplay();
@@ -483,13 +495,11 @@ const Profile = {
         const avatar = document.getElementById('profileAvatar');
         
         if (this.editMode) {
-            // Сохраняем текущие значения во временные
             this.tempName = this.savedName;
             this.tempAge = this.savedAge;
             this.tempSteam = this.savedSteam;
             this.tempFaceitLink = this.savedFaceitLink;
             
-            // Сбрасываем ошибки
             this.validationErrors = { nick: false, age: false, steam: false, faceit: false };
             this.updateFieldError('ageValue', false);
             this.updateFieldError('steamDisplay', false);
@@ -521,11 +531,14 @@ const Profile = {
             this.updateDisplay();
             this.showToast('Режим редактирования');
         } else {
-            // Выход без сохранения - сбрасываем временные значения
             this.tempName = this.savedName;
             this.tempAge = this.savedAge;
             this.tempSteam = this.savedSteam;
             this.tempFaceitLink = this.savedFaceitLink;
+            
+            this.updateFieldError('ageValue', false);
+            this.updateFieldError('steamDisplay', false);
+            this.updateFieldError('faceitLinkDisplay', false);
             
             profileScreen?.classList.remove('editable');
             editToggle?.classList.remove('active');
@@ -545,18 +558,21 @@ const Profile = {
     
     async applyChanges() {
         const applyBtn = document.getElementById('applyBtn');
-        if (applyBtn) {
-            applyBtn.style.pointerEvents = 'none';
-            applyBtn.style.opacity = '0.5';
-        }
         
         if (!this.telegramId) this.telegramId = this.getTelegramId();
         if (!this.telegramId) {
             this.showToast('Ошибка: нет Telegram ID', true);
-            if (applyBtn) {
-                applyBtn.style.pointerEvents = 'auto';
-                applyBtn.style.opacity = '1';
-            }
+            return;
+        }
+        
+        // Проверяем ошибки валидации
+        const hasErrors = this.validationErrors.nick || 
+                         this.validationErrors.age || 
+                         this.validationErrors.steam || 
+                         this.validationErrors.faceit;
+        
+        if (hasErrors) {
+            this.showToast('Исправьте ошибки в полях', true);
             return;
         }
         
@@ -564,91 +580,50 @@ const Profile = {
         const steamInput = document.getElementById('steamDisplay');
         const faceitInput = document.getElementById('faceitLinkDisplay');
         
-        // Получаем актуальные значения из полей
-        const newNick = this.tempName;
+        const updateData = { telegram_id: this.telegramId };
+        
+        // Ник
+        if (this.tempName !== this.savedName && this.tempName !== '-') {
+            updateData.nick = this.tempName;
+        }
+        
+        // Возраст
         const newAge = ageInput?.value || '';
-        const newSteam = steamInput?.value || '';
-        const newFaceit = faceitInput?.value || '';
-        
-        const updateData = {};
-        let hasErrors = false;
-        
-        // Валидация ника
-        if (newNick && newNick !== '-') {
-            const nickValidation = this.validateNick(newNick);
-            this.validationErrors.nick = !nickValidation.valid;
-            if (!nickValidation.valid) {
-                this.showToast(`Ник: ${nickValidation.error}`, true);
-                hasErrors = true;
-            } else {
-                updateData.nick = newNick;
-            }
-        }
-        
-        // Валидация возраста
         if (newAge !== this.savedAge) {
-            const ageValidation = this.validateAge(newAge);
-            this.validationErrors.age = !ageValidation.valid;
-            this.updateFieldError('ageValue', !ageValidation.valid);
-            
-            if (!ageValidation.valid) {
-                hasErrors = true;
-            } else {
-                updateData.age = ageValidation.value || null;
+            const ageValid = this.validateAge(newAge);
+            if (ageValid.valid) {
+                updateData.age = ageValid.value || null;
             }
-        } else {
-            this.updateFieldError('ageValue', false);
         }
         
-        // Валидация Steam
+        // Steam
+        const newSteam = steamInput?.value || '';
         if (newSteam !== this.savedSteam) {
-            const steamValidation = this.validateSteamLink(newSteam);
-            this.validationErrors.steam = !steamValidation.valid;
-            this.updateFieldError('steamDisplay', !steamValidation.valid);
-            
-            if (!steamValidation.valid) {
-                hasErrors = true;
-            } else {
-                updateData.steam_link = steamValidation.value || null;
+            const steamValid = this.validateSteamLink(newSteam);
+            if (steamValid.valid) {
+                updateData.steam_link = steamValid.value || null;
             }
-        } else {
-            this.updateFieldError('steamDisplay', false);
         }
         
-        // Валидация FaceIT
+        // FaceIT
+        const newFaceit = faceitInput?.value || '';
         if (newFaceit !== this.savedFaceitLink) {
-            const faceitValidation = this.validateFaceitLink(newFaceit);
-            this.validationErrors.faceit = !faceitValidation.valid;
-            this.updateFieldError('faceitLinkDisplay', !faceitValidation.valid);
-            
-            if (!faceitValidation.valid) {
-                hasErrors = true;
-            } else {
-                updateData.faceit_link = faceitValidation.value || null;
+            const faceitValid = this.validateFaceitLink(newFaceit);
+            if (faceitValid.valid) {
+                updateData.faceit_link = faceitValid.value || null;
             }
-        } else {
-            this.updateFieldError('faceitLinkDisplay', false);
         }
         
-        if (hasErrors) {
-            if (applyBtn) {
-                applyBtn.style.pointerEvents = 'auto';
-                applyBtn.style.opacity = '1';
-            }
-            return;
-        }
-        
-        if (Object.keys(updateData).length === 0) {
+        if (Object.keys(updateData).length === 1) {
             this.toggleEditMode();
             this.showToast('Нет изменений');
-            if (applyBtn) {
-                applyBtn.style.pointerEvents = 'auto';
-                applyBtn.style.opacity = '1';
-            }
             return;
         }
         
-        updateData.telegram_id = this.telegramId;
+        if (applyBtn) {
+            applyBtn.style.pointerEvents = 'none';
+            applyBtn.style.opacity = '0.5';
+        }
         
         try {
             const response = await fetch(`${this.BACKEND_URL}/api/profile/update`, {
@@ -660,7 +635,6 @@ const Profile = {
             const data = await response.json();
             
             if (response.ok && data.status === 'ok') {
-                // Сохраняем изменения
                 if (updateData.nick) this.savedName = updateData.nick;
                 if (updateData.age !== undefined) this.savedAge = updateData.age || '';
                 if (updateData.steam_link !== undefined) this.savedSteam = updateData.steam_link || '';
@@ -698,23 +672,25 @@ const Profile = {
         
         const currentName = this.tempName === '-' ? '' : this.tempName;
         
+        // Компактный инпут
         const input = document.createElement('input');
         input.type = 'text';
         input.value = currentName;
-        input.placeholder = '2-10 символов';
+        input.placeholder = '2-10 лат.';
         input.maxLength = VALIDATION.NICK.max;
         input.style.cssText = `
             background: #1A1D24;
             border: 1px solid #FF5500;
             border-radius: 6px;
             color: #FF5500;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
-            padding: 6px 10px;
-            width: 140px;
+            padding: 4px 8px;
+            width: 130px;
             outline: none;
             font-family: inherit;
             display: inline-block;
+            margin-left: 4px;
         `;
         
         const parent = profileName.parentNode;
@@ -726,13 +702,13 @@ const Profile = {
             const newName = input.value.trim();
             const validation = this.validateNick(newName);
             
+            this.validationErrors.nick = !validation.valid;
+            
             if (validation.valid) {
                 this.tempName = newName;
                 profileName.textContent = newName;
-                this.validationErrors.nick = false;
             } else {
-                this.showToast(`Ник: ${validation.error}`, true);
-                this.validationErrors.nick = true;
+                this.showToast(`Ник: 2-10 латинских букв, цифр или _`, true);
             }
             
             input.remove();
@@ -784,19 +760,6 @@ const Profile = {
         }
     },
     
-    // Сохранение временных изменений при вводе
-    handleInputChange() {
-        if (!this.editMode) return;
-        
-        const ageInput = document.getElementById('ageValue');
-        const steamInput = document.getElementById('steamDisplay');
-        const faceitInput = document.getElementById('faceitLinkDisplay');
-        
-        this.tempAge = ageInput?.value || '';
-        this.tempSteam = steamInput?.value || '';
-        this.tempFaceitLink = faceitInput?.value || '';
-    },
-    
     setupClickHandlers() {
         const avatar = document.getElementById('profileAvatar');
         if (avatar) {
@@ -816,63 +779,58 @@ const Profile = {
             profileName.onclick = () => this.editName();
         }
         
-        // Добавляем data-атрибуты для лейблов
-        const ageLabel = document.querySelector('[data-field="ageValue"]');
-        if (!ageLabel) {
-            const label = document.querySelector('.stat-card:last-child .stat-label');
-            if (label) {
-                label.setAttribute('data-field', 'ageValue');
-                label.setAttribute('data-label', 'ВОЗРАСТ');
-            }
+        // Настраиваем data-атрибуты
+        const ageLabel = document.querySelector('.stat-card:last-child .stat-label');
+        if (ageLabel && !ageLabel.hasAttribute('data-field')) {
+            ageLabel.setAttribute('data-field', 'ageValue');
+            ageLabel.setAttribute('data-label', 'ВОЗРАСТ');
         }
         
-        const steamLabel = document.querySelector('[data-field="steamDisplay"]');
-        if (!steamLabel) {
-            const label = document.querySelector('.profile-stat-card:first-child .profile-stat-label');
-            if (label) {
-                label.setAttribute('data-field', 'steamDisplay');
-                label.setAttribute('data-label', 'Steam');
-            }
+        const steamLabel = document.querySelector('.profile-stat-card:first-child .profile-stat-label');
+        if (steamLabel && !steamLabel.hasAttribute('data-field')) {
+            steamLabel.setAttribute('data-field', 'steamDisplay');
+            steamLabel.setAttribute('data-label', 'Steam');
         }
         
-        const faceitLabel = document.querySelector('[data-field="faceitLinkDisplay"]');
-        if (!faceitLabel) {
-            const label = document.querySelector('.profile-stat-card:last-child .profile-stat-label');
-            if (label) {
-                label.setAttribute('data-field', 'faceitLinkDisplay');
-                label.setAttribute('data-label', 'FaceIT');
-            }
+        const faceitLabel = document.querySelector('.profile-stat-card:last-child .profile-stat-label');
+        if (faceitLabel && !faceitLabel.hasAttribute('data-field')) {
+            faceitLabel.setAttribute('data-field', 'faceitLinkDisplay');
+            faceitLabel.setAttribute('data-label', 'FaceIT');
         }
         
-        // Обработчики ввода
+        // Обработчики ввода (динамическая валидация)
         const ageInput = document.getElementById('ageValue');
         if (ageInput) {
-            ageInput.addEventListener('input', () => this.handleInputChange());
+            ageInput.addEventListener('input', () => this.validateOnInput());
+            ageInput.maxLength = 3;
         }
         
         const steamInput = document.getElementById('steamDisplay');
         if (steamInput) {
-            steamInput.addEventListener('input', () => this.handleInputChange());
+            steamInput.addEventListener('input', () => this.validateOnInput());
+            steamInput.maxLength = VALIDATION.STEAM.maxLength;
         }
         
         const faceitInput = document.getElementById('faceitLinkDisplay');
         if (faceitInput) {
-            faceitInput.addEventListener('input', () => this.handleInputChange());
+            faceitInput.addEventListener('input', () => this.validateOnInput());
+            faceitInput.maxLength = VALIDATION.FACEIT.maxLength;
         }
         
-        const ageCard = document.getElementById('ageCard') || document.querySelector('.stat-card:last-child');
+        // Клики по карточкам
+        const ageCard = document.querySelector('.stat-card:last-child');
         if (ageCard) {
             ageCard.style.cursor = 'pointer';
             ageCard.onclick = () => this.editAge();
         }
         
-        const steamCard = document.getElementById('steamCard') || document.querySelector('.profile-stat-card:first-child');
+        const steamCard = document.querySelector('.profile-stat-card:first-child');
         if (steamCard) {
             steamCard.style.cursor = 'pointer';
             steamCard.onclick = () => this.editSteam();
         }
         
-        const faceitCard = document.getElementById('faceitCard') || document.querySelector('.profile-stat-card:last-child');
+        const faceitCard = document.querySelector('.profile-stat-card:last-child');
         if (faceitCard) {
             faceitCard.style.cursor = 'pointer';
             faceitCard.onclick = () => this.editFaceitLink();
@@ -884,21 +842,15 @@ const Profile = {
                 if (window.Team?.showTeamPage) Team.showTeamPage();
             };
         }
-        
-        // Устанавливаем maxLength
-        if (ageInput) ageInput.maxLength = 3;
-        if (steamInput) steamInput.maxLength = VALIDATION.STEAM.maxLength;
-        if (faceitInput) faceitInput.maxLength = VALIDATION.FACEIT.maxLength;
     },
     
     init() {
         if (this.isInitialized) return;
         this.isInitialized = true;
         
-        console.log('🚀 Profile.init() v2.1');
+        console.log('🚀 Profile.init() v2.2 - Динамическая валидация');
         this.telegramId = this.getTelegramId();
         
-        // Инициализация временных значений
         this.tempName = this.savedName;
         this.tempAge = this.savedAge;
         this.tempSteam = this.savedSteam;
