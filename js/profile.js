@@ -1,8 +1,8 @@
 // ============================================
-// ПРОФИЛЬ - v3.1 FINAL (КОПИРОВАНИЕ РАБОТАЕТ)
+// ПРОФИЛЬ - v3.3 FINAL (ГАЛОЧКА ПРИ КОПИРОВАНИИ)
 // ============================================
 
-console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v3.1 FINAL)');
+console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v3.3 FINAL)');
 
 // Константы валидации
 const VALIDATION = {
@@ -224,21 +224,26 @@ const Profile = {
         this.tempFaceitLink = faceitInput?.value || '';
     },
     
+    // ========== КОПИРОВАНИЕ С ГАЛОЧКОЙ ==========
     copyToClipboard(text, btnElement) {
         if (!text || text === '' || text === 'Не указана') {
-            this.showToast('Нет данных для копирования');
             return;
         }
         
         navigator.clipboard.writeText(text).then(() => {
-            this.showToast('Скопировано в буфер обмена');
             if (btnElement) {
+                const originalHTML = btnElement.innerHTML;
+                
+                btnElement.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><polyline points="20 6 9 17 4 12" stroke="#4CAF50" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
                 btnElement.classList.add('copied');
-                setTimeout(() => btnElement.classList.remove('copied'), 1500);
+                
+                setTimeout(() => {
+                    btnElement.innerHTML = originalHTML;
+                    btnElement.classList.remove('copied');
+                }, 1000);
             }
         }).catch(err => {
             console.error('Ошибка копирования:', err);
-            this.showToast('Ошибка копирования');
         });
     },
     
@@ -246,7 +251,6 @@ const Profile = {
         // Steam
         const steamInput = document.getElementById('steamDisplay');
         if (steamInput) {
-            // Удаляем старую обёртку если есть
             const oldWrapper = steamInput.parentNode.querySelector('.link-with-copy');
             if (oldWrapper) oldWrapper.remove();
             
@@ -894,7 +898,6 @@ const Profile = {
             steamInput.addEventListener('input', () => this.validateOnInput());
             steamInput.maxLength = VALIDATION.STEAM.maxLength;
             steamInput.onclick = (e) => {
-                // Проверяем, что клик был НЕ по кнопке копирования
                 if (!e.target.closest('.copy-btn')) {
                     if (!this.editMode) {
                         this.showToast('Для изменений\nперейдите в режим редактирования', true);
@@ -973,7 +976,7 @@ const Profile = {
         if (this.isInitialized) return;
         this.isInitialized = true;
         
-        console.log('🚀 Profile.init() v3.1 FINAL');
+        console.log('🚀 Profile.init() v3.3 FINAL');
         this.telegramId = this.getTelegramId();
         
         this.tempName = this.savedName;
