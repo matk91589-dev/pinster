@@ -70,6 +70,7 @@
         .swipe-card {
             width: 420px !important;
             height: 420px !important;
+            position: relative !important;
         }
         
         .swipe-card-content {
@@ -78,6 +79,7 @@
             justify-content: space-between !important;
             height: 100% !important;
             flex: 1 !important;
+            position: relative !important;
         }
         
         #swipeModeContent {
@@ -86,6 +88,200 @@
             justify-content: space-between !important;
             flex: 1 !important;
             gap: 14px !important;
+        }
+        
+        /* ===== ЭКРАН ОЖИДАНИЯ ===== */
+        #waitingModeContent {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            display: none !important;
+            flex-direction: column !important;
+            background: var(--surface, #1A1D24) !important;
+            border-radius: 28px !important;
+            z-index: 50 !important;
+        }
+        
+        .waiting-timer {
+            position: absolute !important;
+            top: 14px !important;
+            left: 14px !important;
+            background: rgba(0, 0, 0, 0.65) !important;
+            backdrop-filter: blur(8px) !important;
+            padding: 6px 14px !important;
+            border-radius: 30px !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            color: #fff !important;
+            font-family: monospace !important;
+            z-index: 10 !important;
+        }
+        
+        .waiting-timer.warning {
+            color: #FF6B4A !important;
+            animation: waitingTimerPulse 0.8s infinite !important;
+        }
+        
+        @keyframes waitingTimerPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        .waiting-avatars-container {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+            gap: 20px !important;
+        }
+        
+        .waiting-avatars {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: min(40px, 10vw) !important;
+        }
+        
+        .waiting-self-avatar,
+        .waiting-teammate-avatar {
+            width: min(80px, 20vw, 100px) !important;
+            height: min(80px, 20vw, 100px) !important;
+            border-radius: 50% !important;
+            overflow: hidden !important;
+            background: #1A1D24 !important;
+            border: 2px solid #2A2F3A !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .waiting-self-avatar img,
+        .waiting-teammate-avatar img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+        }
+        
+        .waiting-self-avatar svg,
+        .waiting-teammate-avatar svg {
+            width: 60% !important;
+            height: 60% !important;
+        }
+        
+        .waiting-line {
+            width: min(50px, 12vw) !important;
+            height: 2px !important;
+            background: rgba(255, 255, 255, 0.2) !important;
+            border-radius: 2px !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+        
+        .waiting-line-pulse {
+            position: absolute !important;
+            width: 20px !important;
+            height: 100% !important;
+            background: #FF5500 !important;
+            animation: waitingLineMove 1.5s ease-in-out infinite !important;
+        }
+        
+        @keyframes waitingLineMove {
+            0% { left: -20px; opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { left: 100%; opacity: 1; }
+        }
+        
+        .waiting-line.connected {
+            background: #FF5500 !important;
+        }
+        
+        .waiting-line.connected .waiting-line-pulse {
+            display: none !important;
+        }
+        
+        .waiting-teammate-avatar.connected {
+            border-color: #FF5500 !important;
+            transform: scale(1.05) !important;
+        }
+        
+        .waiting-status {
+            font-size: clamp(14px, 4vw, 16px) !important;
+            font-weight: 500 !important;
+            text-align: center !important;
+            color: #9BA1B0 !important;
+        }
+        
+        .waiting-status.active {
+            color: #4CAF50 !important;
+        }
+        
+        .waiting-chat-button {
+            margin: 20px auto !important;
+            width: calc(100% - 40px) !important;
+            max-width: 280px !important;
+            padding: 14px 24px !important;
+            border-radius: 50px !important;
+            font-size: clamp(15px, 4vw, 16px) !important;
+            font-weight: 700 !important;
+            text-align: center !important;
+            cursor: pointer !important;
+            transition: all 0.25s ease !important;
+            border: none !important;
+            flex-shrink: 0 !important;
+        }
+        
+        .waiting-chat-button.disabled {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border: 1px solid #2A2F3A !important;
+            color: #9BA1B0 !important;
+            pointer-events: none !important;
+        }
+        
+        .waiting-chat-button.active {
+            background: #FF5500 !important;
+            color: white !important;
+            pointer-events: auto !important;
+            box-shadow: 0 4px 20px rgba(255, 85, 0, 0.4) !important;
+        }
+        
+        .waiting-chat-button.active:active {
+            transform: scale(0.97) !important;
+        }
+        
+        @media (max-width: 480px) {
+            .waiting-self-avatar,
+            .waiting-teammate-avatar {
+                width: min(65px, 18vw) !important;
+                height: min(65px, 18vw) !important;
+            }
+            
+            .waiting-line {
+                width: min(40px, 10vw) !important;
+            }
+            
+            .waiting-timer {
+                top: 10px !important;
+                left: 10px !important;
+                padding: 4px 10px !important;
+                font-size: 12px !important;
+            }
+            
+            .waiting-chat-button {
+                padding: 12px 20px !important;
+                margin-bottom: 20px !important;
+            }
+        }
+        
+        @media (max-width: 380px) {
+            .waiting-self-avatar,
+            .waiting-teammate-avatar {
+                width: min(55px, 16vw) !important;
+                height: min(55px, 16vw) !important;
+            }
         }
         
         .swipe-player-row {
@@ -403,25 +599,24 @@
                             </div>
                             
                             <div id="waitingModeContent" style="display: none;">
-                                <div class="waiting-avatars">
-                                    <div class="waiting-self-avatar">
-                                        <div class="tg-avatar-svg"></div>
+                                <div class="waiting-timer" id="waitingTimer">30с</div>
+                                
+                                <div class="waiting-avatars-container">
+                                    <div class="waiting-avatars">
+                                        <div class="waiting-self-avatar">
+                                            <div class="tg-avatar-svg"></div>
+                                        </div>
+                                        <div class="waiting-line">
+                                            <div class="waiting-line-pulse"></div>
+                                        </div>
+                                        <div class="waiting-teammate-avatar">
+                                            <div class="tg-avatar-svg"></div>
+                                        </div>
                                     </div>
-                                    <div class="waiting-line">
-                                        <div class="waiting-line-pulse"></div>
-                                    </div>
-                                    <div class="waiting-teammate-avatar">
-                                        <div class="tg-avatar-svg"></div>
-                                    </div>
+                                    
+                                    <div class="waiting-status" id="waitingStatus">Ожидание тиммейта...</div>
                                 </div>
-                                <div class="waiting-teammate-info">
-                                    <div class="waiting-teammate-nick" id="waitingTeammateNick"></div>
-                                </div>
-                                <div class="waiting-status" id="waitingStatus">Ожидание тиммейта</div>
-                                <div class="waiting-timer-container">
-                                    <span class="waiting-timer-label">Время ожидания:</span>
-                                    <span class="waiting-timer" id="waitingTimer">30с</span>
-                                </div>
+                                
                                 <button class="waiting-chat-button disabled" id="waitingChatButton" disabled>Перейти в чат</button>
                             </div>
                         </div>
