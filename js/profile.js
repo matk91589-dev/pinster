@@ -1,8 +1,8 @@
 // ============================================
-// ПРОФИЛЬ - ФИНАЛЬНАЯ ВЕРСИЯ v2.4 (СБРОС РЕЖИМА)
+// ПРОФИЛЬ - ИСПРАВЛЕННЫЙ ТОГГЛ v2.5
 // ============================================
 
-console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v2.4 FINAL)');
+console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v2.5 FIXED)');
 
 // Константы валидации
 const VALIDATION = {
@@ -54,7 +54,6 @@ const Profile = {
     friendsList: [],
     isFriendsLoaded: false,
     isLoadingFriends: false,
-    nickHintElement: null,
     screenObserver: null,
     
     validationErrors: {
@@ -145,33 +144,6 @@ const Profile = {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
         }, isError ? 2500 : 2000);
-    },
-    
-    // Показать/скрыть подсказку для ника (ТОЛЬКО в режиме редактирования)
-    toggleNickHint(show) {
-        const profileNameRow = document.querySelector('.profile-name-row');
-        if (!profileNameRow) return;
-        
-        if (show && this.editMode) {
-            if (!this.nickHintElement) {
-                this.nickHintElement = document.createElement('div');
-                this.nickHintElement.style.cssText = `
-                    font-size: 10px;
-                    color: #8E97A6;
-                    margin-top: 4px;
-                    font-weight: 400;
-                    letter-spacing: 0.3px;
-                    width: 100%;
-                `;
-                this.nickHintElement.textContent = `*${VALIDATION.NICK.hint}`;
-                profileNameRow.appendChild(this.nickHintElement);
-            }
-            this.nickHintElement.style.display = 'block';
-        } else {
-            if (this.nickHintElement) {
-                this.nickHintElement.style.display = 'none';
-            }
-        }
     },
     
     // Динамическое обновление ошибки поля
@@ -535,10 +507,8 @@ const Profile = {
         this.tempSteam = this.savedSteam;
         this.tempFaceitLink = this.savedFaceitLink;
         
-        // Скрываем подсказку ника
-        this.toggleNickHint(false);
-        
         // Сбрасываем ошибки
+        this.validationErrors = { nick: false, age: false, steam: false, faceit: false };
         this.updateFieldError('ageValue', false);
         this.updateFieldError('steamDisplay', false);
         this.updateFieldError('faceitLinkDisplay', false);
@@ -558,8 +528,11 @@ const Profile = {
         this.updateDisplay();
     },
     
-    toggleEditMode() {
-        this.editMode = !this.editMode;
+    // Включение режима редактирования
+    enterEditMode() {
+        if (this.editMode) return;
+        
+        this.editMode = true;
         
         const profileScreen = document.getElementById('profileScreen');
         const editToggle = document.getElementById('editToggle');
@@ -570,47 +543,49 @@ const Profile = {
         const faceitInput = document.getElementById('faceitLinkDisplay');
         const avatar = document.getElementById('profileAvatar');
         
+        this.tempName = this.savedName;
+        this.tempAge = this.savedAge;
+        this.tempSteam = this.savedSteam;
+        this.tempFaceitLink = this.savedFaceitLink;
+        
+        this.validationErrors = { nick: false, age: false, steam: false, faceit: false };
+        this.updateFieldError('ageValue', false);
+        this.updateFieldError('steamDisplay', false);
+        this.updateFieldError('faceitLinkDisplay', false);
+        
+        profileScreen?.classList.add('editable');
+        editToggle?.classList.add('active');
+        if (applyBtn) {
+            applyBtn.classList.add('visible');
+            applyBtn.style.display = 'inline-block';
+            applyBtn.style.pointerEvents = 'auto';
+            applyBtn.style.opacity = '1';
+        }
+        if (ageInput) {
+            ageInput.readOnly = false;
+            ageInput.maxLength = 3;
+        }
+        if (steamInput) {
+            steamInput.readOnly = false;
+            steamInput.maxLength = VALIDATION.STEAM.maxLength;
+        }
+        if (faceitInput) {
+            faceitInput.readOnly = false;
+            faceitInput.maxLength = VALIDATION.FACEIT.maxLength;
+        }
+        if (profileName) profileName.classList.add('editable');
+        if (avatar) avatar.classList.add('editable-avatar');
+        
+        this.updateDisplay();
+        this.showToast('Режим редактирования');
+    },
+    
+    // Тоггл режима редактирования (для карандаша)
+    toggleEditMode() {
         if (this.editMode) {
-            this.tempName = this.savedName;
-            this.tempAge = this.savedAge;
-            this.tempSteam = this.savedSteam;
-            this.tempFaceitLink = this.savedFaceitLink;
-            
-            this.validationErrors = { nick: false, age: false, steam: false, faceit: false };
-            this.updateFieldError('ageValue', false);
-            this.updateFieldError('steamDisplay', false);
-            this.updateFieldError('faceitLinkDisplay', false);
-            
-            profileScreen?.classList.add('editable');
-            editToggle?.classList.add('active');
-            if (applyBtn) {
-                applyBtn.classList.add('visible');
-                applyBtn.style.display = 'inline-block';
-                applyBtn.style.pointerEvents = 'auto';
-                applyBtn.style.opacity = '1';
-            }
-            if (ageInput) {
-                ageInput.readOnly = false;
-                ageInput.maxLength = 3;
-            }
-            if (steamInput) {
-                steamInput.readOnly = false;
-                steamInput.maxLength = VALIDATION.STEAM.maxLength;
-            }
-            if (faceitInput) {
-                faceitInput.readOnly = false;
-                faceitInput.maxLength = VALIDATION.FACEIT.maxLength;
-            }
-            if (profileName) profileName.classList.add('editable');
-            if (avatar) avatar.classList.add('editable-avatar');
-            
-            // Показываем подсказку для ника
-            this.toggleNickHint(true);
-            
-            this.updateDisplay();
-            this.showToast('Режим редактирования');
-        } else {
             this.forceExitEditMode();
+        } else {
+            this.enterEditMode();
         }
     },
     
@@ -673,7 +648,7 @@ const Profile = {
         }
         
         if (Object.keys(updateData).length === 1) {
-            this.toggleEditMode();
+            this.forceExitEditMode();
             this.showToast('Нет изменений');
             return;
         }
@@ -703,7 +678,7 @@ const Profile = {
                 localStorage.setItem('profile_steam', this.savedSteam);
                 localStorage.setItem('profile_faceit', this.savedFaceitLink);
                 
-                this.toggleEditMode();
+                this.forceExitEditMode();
                 this.showToast('Профиль сохранен');
             } else {
                 this.showToast(data.error || 'Ошибка сохранения', true);
@@ -724,6 +699,9 @@ const Profile = {
             this.showToast('Для изменений перейдите в режим редактирования', true);
             return;
         }
+        
+        // Показываем подсказку ТОСТОМ
+        this.showToast(VALIDATION.NICK.hint);
         
         const profileName = document.getElementById('profileName');
         if (!profileName) return;
@@ -899,22 +877,37 @@ const Profile = {
                 if (window.Team?.showTeamPage) Team.showTeamPage();
             };
         }
+        
+        // Карандаш (editToggle)
+        const editToggle = document.getElementById('editToggle');
+        if (editToggle) {
+            editToggle.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.toggleEditMode();
+            };
+        }
+        
+        // Кнопка Применить
+        const applyBtn = document.getElementById('applyBtn');
+        if (applyBtn) {
+            applyBtn.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.applyChanges();
+            };
+        }
     },
     
     // Наблюдатель за экраном профиля
     setupScreenObserver() {
         const profileScreen = document.getElementById('profileScreen');
-        if (!profileScreen) {
-            console.warn('⚠️ profileScreen не найден');
-            return;
-        }
+        if (!profileScreen) return;
         
-        // Отключаем старый наблюдатель
         if (this.screenObserver) {
             this.screenObserver.disconnect();
         }
         
-        // Создаём новый
         this.screenObserver = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
@@ -928,20 +921,19 @@ const Profile = {
             });
         });
         
-        // Наблюдаем за изменением класса active
         this.screenObserver.observe(profileScreen, {
             attributes: true,
             attributeFilter: ['class']
         });
         
-        console.log('👁️ Наблюдатель за экраном профиля активирован');
+        console.log('👁️ Наблюдатель за экраном активирован');
     },
     
     init() {
         if (this.isInitialized) return;
         this.isInitialized = true;
         
-        console.log('🚀 Profile.init() v2.4 FINAL');
+        console.log('🚀 Profile.init() v2.5 FIXED');
         this.telegramId = this.getTelegramId();
         
         this.tempName = this.savedName;
@@ -958,7 +950,6 @@ const Profile = {
         this.setupClickHandlers();
         this.updateLinksWithCopy();
         
-        // Запускаем наблюдатель за экраном
         setTimeout(() => this.setupScreenObserver(), 200);
     }
 };
