@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v2.3 FINAL (МГНОВЕННАЯ ЗАГРУЗКА ИЗ LOCALSTORAGE)
+// ПОИСК - v2.4 FINAL (АВТОЗАПОЛНЕНИЕ ПРИ ОТКРЫТИИ ЭКРАНА)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v2.3 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v2.4 FINAL)');
 
 // Константы валидации
 const SEARCH_VALIDATION = {
@@ -35,6 +35,7 @@ const Search = {
         this.resetTimer();
         console.log('Search.init()');
         this.ensureMatchAccepted();
+        this.interceptScreenOpens();
         setTimeout(() => this.startPolling(), 1000);
         
         if (window.Telegram?.WebApp) {
@@ -43,6 +44,37 @@ const Search = {
                 this.checkMatchStatus();
             });
         }
+    },
+    
+    // ========== ПЕРЕХВАТ ОТКРЫТИЯ ЭКРАНОВ ==========
+    interceptScreenOpens() {
+        if (!window.App) return;
+        
+        const originalShowScreen = window.App.showScreen;
+        const self = this;
+        
+        window.App.showScreen = function(screenId, updateNav) {
+            originalShowScreen.call(window.App, screenId, updateNav);
+            
+            // Заполняем поля при открытии экранов режимов
+            setTimeout(() => {
+                if (screenId === 'faceitScreen') {
+                    self.fillFaceitFields();
+                    self.setupLiveValidation('FACEIT');
+                } else if (screenId === 'premierScreen') {
+                    self.fillPremierFields();
+                    self.setupLiveValidation('PREMIER');
+                } else if (screenId === 'primeScreen') {
+                    self.fillPrimeFields();
+                    self.setupLiveValidation('PRIME');
+                } else if (screenId === 'publicScreen') {
+                    self.fillPublicFields();
+                    self.setupLiveValidation('PUBLIC');
+                }
+            }, 50);
+        };
+        
+        console.log('✅ Перехват открытия экранов настроен');
     },
     
     ensureMatchAccepted() {
@@ -72,16 +104,14 @@ const Search = {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
     },
     
-    // ========== ПОЛУЧЕНИЕ ДАННЫХ ИЗ ПРОФИЛЯ (МГНОВЕННО) ==========
+    // ========== ПОЛУЧЕНИЕ ДАННЫХ ИЗ ПРОФИЛЯ ==========
     getProfileData() {
-        // Сначала localStorage — там данные после первого входа в профиль
         const age = localStorage.getItem('profile_age') || '';
         const steam = localStorage.getItem('profile_steam') || '';
         const faceit = localStorage.getItem('profile_faceit') || '';
         
         console.log('📦 Данные из localStorage:', { age, steam, faceit });
         
-        // Если в localStorage пусто, пробуем Profile (на случай если Profile уже загружен)
         if (!age && window.Profile && window.Profile.savedAge) {
             return {
                 age: window.Profile.savedAge || '',
@@ -91,6 +121,91 @@ const Search = {
         }
         
         return { age, steam, faceit };
+    },
+    
+    // ========== ЗАПОЛНЕНИЕ ПОЛЕЙ ==========
+    fillFaceitFields() {
+        const profileData = this.getProfileData();
+        console.log('📋 Заполнение FACEIT:', profileData);
+        
+        const ageInput = document.getElementById('faceitAgeValue');
+        const faceitInput = document.getElementById('faceitLinkInput');
+        
+        if (ageInput && profileData.age) {
+            ageInput.value = profileData.age;
+            this.updateFieldError(ageInput, this.validateAge(ageInput.value));
+        }
+        if (faceitInput && profileData.faceit) {
+            faceitInput.value = profileData.faceit;
+        }
+        
+        const ratingInput = document.getElementById('faceitELOInput');
+        if (ratingInput) {
+            this.updateFieldError(ratingInput, this.validateRating(ratingInput.value, 'FACEIT'));
+        }
+    },
+    
+    fillPremierFields() {
+        const profileData = this.getProfileData();
+        console.log('📋 Заполнение PREMIER:', profileData);
+        
+        const ageInput = document.getElementById('premierAgeValue');
+        const steamInput = document.getElementById('premierSteamInput');
+        
+        if (ageInput && profileData.age) {
+            ageInput.value = profileData.age;
+            this.updateFieldError(ageInput, this.validateAge(ageInput.value));
+        }
+        if (steamInput && profileData.steam) {
+            steamInput.value = profileData.steam;
+        }
+        
+        const ratingInput = document.getElementById('premierRatingInput');
+        if (ratingInput) {
+            this.updateFieldError(ratingInput, this.validateRating(ratingInput.value, 'PREMIER'));
+        }
+    },
+    
+    fillPrimeFields() {
+        const profileData = this.getProfileData();
+        console.log('📋 Заполнение PRIME:', profileData);
+        
+        const ageInput = document.getElementById('primeAgeValue');
+        const steamInput = document.getElementById('primeSteamInput');
+        
+        if (ageInput && profileData.age) {
+            ageInput.value = profileData.age;
+            this.updateFieldError(ageInput, this.validateAge(ageInput.value));
+        }
+        if (steamInput && profileData.steam) {
+            steamInput.value = profileData.steam;
+        }
+        
+        const rankSelect = document.getElementById('primeRankSelect');
+        if (rankSelect) {
+            this.updateFieldError(rankSelect, this.validateRank(rankSelect.value));
+        }
+    },
+    
+    fillPublicFields() {
+        const profileData = this.getProfileData();
+        console.log('📋 Заполнение PUBLIC:', profileData);
+        
+        const ageInput = document.getElementById('publicAgeValue');
+        const steamInput = document.getElementById('publicSteamInput');
+        
+        if (ageInput && profileData.age) {
+            ageInput.value = profileData.age;
+            this.updateFieldError(ageInput, this.validateAge(ageInput.value));
+        }
+        if (steamInput && profileData.steam) {
+            steamInput.value = profileData.steam;
+        }
+        
+        const rankSelect = document.getElementById('publicRankSelect');
+        if (rankSelect) {
+            this.updateFieldError(rankSelect, this.validateRank(rankSelect.value));
+        }
     },
     
     // ========== ВАЛИДАЦИЯ ==========
@@ -214,52 +329,6 @@ const Search = {
             const waitSeconds = Math.ceil((this.blockUntil - Date.now()) / 1000);
             App.showAlert(`Подождите ${waitSeconds} секунд`);
             return;
-        }
-        
-        // Настраиваем живую валидацию
-        this.setupLiveValidation(mode);
-        
-        // МГНОВЕННОЕ автозаполнение из профиля
-        const profileData = this.getProfileData();
-        console.log('📋 Автозаполнение:', profileData);
-        
-        // Заполняем поля
-        if (mode === 'FACEIT') {
-            const ageInput = document.getElementById('faceitAgeValue');
-            const faceitInput = document.getElementById('faceitLinkInput');
-            if (ageInput && profileData.age) ageInput.value = profileData.age;
-            if (faceitInput && profileData.faceit) faceitInput.value = profileData.faceit;
-            
-            if (ageInput) this.updateFieldError(ageInput, this.validateAge(ageInput.value));
-            const ratingInput = document.getElementById('faceitELOInput');
-            if (ratingInput) this.updateFieldError(ratingInput, this.validateRating(ratingInput.value, 'FACEIT'));
-        } else if (mode === 'PREMIER') {
-            const ageInput = document.getElementById('premierAgeValue');
-            const steamInput = document.getElementById('premierSteamInput');
-            if (ageInput && profileData.age) ageInput.value = profileData.age;
-            if (steamInput && profileData.steam) steamInput.value = profileData.steam;
-            
-            if (ageInput) this.updateFieldError(ageInput, this.validateAge(ageInput.value));
-            const ratingInput = document.getElementById('premierRatingInput');
-            if (ratingInput) this.updateFieldError(ratingInput, this.validateRating(ratingInput.value, 'PREMIER'));
-        } else if (mode === 'PRIME') {
-            const ageInput = document.getElementById('primeAgeValue');
-            const steamInput = document.getElementById('primeSteamInput');
-            if (ageInput && profileData.age) ageInput.value = profileData.age;
-            if (steamInput && profileData.steam) steamInput.value = profileData.steam;
-            
-            if (ageInput) this.updateFieldError(ageInput, this.validateAge(ageInput.value));
-            const rankSelect = document.getElementById('primeRankSelect');
-            if (rankSelect) this.updateFieldError(rankSelect, this.validateRank(rankSelect.value));
-        } else if (mode === 'PUBLIC') {
-            const ageInput = document.getElementById('publicAgeValue');
-            const steamInput = document.getElementById('publicSteamInput');
-            if (ageInput && profileData.age) ageInput.value = profileData.age;
-            if (steamInput && profileData.steam) steamInput.value = profileData.steam;
-            
-            if (ageInput) this.updateFieldError(ageInput, this.validateAge(ageInput.value));
-            const rankSelect = document.getElementById('publicRankSelect');
-            if (rankSelect) this.updateFieldError(rankSelect, this.validateRank(rankSelect.value));
         }
         
         // Проверяем валидность
@@ -581,6 +650,7 @@ const Search = {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Search: DOM загружен');
     window.Search = Search;
+    Search.init();
 });
 
 console.log('✅ SEARCH.JS ЗАГРУЖЕН');
