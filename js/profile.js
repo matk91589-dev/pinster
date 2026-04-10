@@ -1,8 +1,8 @@
 // ============================================
-// ПРОФИЛЬ - ФИНАЛ v2.6 (ФИКС ТОСТОВ)
+// ПРОФИЛЬ - v2.7 (ID + ФИКС КОПИРОВАНИЯ)
 // ============================================
 
-console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v2.6 FINAL)');
+console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v2.7 FINAL)');
 
 // Константы валидации
 const VALIDATION = {
@@ -46,6 +46,7 @@ const Profile = {
     tempSteam: '',
     tempFaceitLink: '',
     telegramId: null,
+    playerId: null,  // НОВОЕ: храним player_id
     toastTimeout: null,
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
     isLoading: false,
@@ -132,7 +133,6 @@ const Profile = {
         const toast = document.createElement('div');
         toast.className = 'profile-toast';
         
-        // Адаптивный стиль для узких экранов
         toast.style.cssText = `
             position: fixed;
             top: 20px;
@@ -161,7 +161,6 @@ const Profile = {
         toast.textContent = message;
         document.body.appendChild(toast);
         
-        // Форсируем reflow для анимации
         toast.offsetHeight;
         toast.style.transform = 'translateX(-50%) translateY(0)';
         
@@ -171,7 +170,6 @@ const Profile = {
         }, isError ? 2500 : 2000);
     },
     
-    // Динамическое обновление ошибки поля
     updateFieldError(fieldId, hasError) {
         const label = document.querySelector(`[data-field="${fieldId}"]`);
         const input = document.getElementById(fieldId);
@@ -196,7 +194,6 @@ const Profile = {
         }
     },
     
-    // Валидация при вводе (динамическая)
     validateOnInput() {
         if (!this.editMode) return;
         
@@ -204,34 +201,30 @@ const Profile = {
         const steamInput = document.getElementById('steamDisplay');
         const faceitInput = document.getElementById('faceitLinkDisplay');
         
-        // Возраст
         if (ageInput) {
             const ageValid = this.validateAge(ageInput.value);
             this.validationErrors.age = !ageValid.valid;
             this.updateFieldError('ageValue', !ageValid.valid);
         }
         
-        // Steam
         if (steamInput) {
             const steamValid = this.validateSteamLink(steamInput.value);
             this.validationErrors.steam = !steamValid.valid && steamInput.value.trim() !== '';
             this.updateFieldError('steamDisplay', this.validationErrors.steam);
         }
         
-        // FaceIT
         if (faceitInput) {
             const faceitValid = this.validateFaceitLink(faceitInput.value);
             this.validationErrors.faceit = !faceitValid.valid && faceitInput.value.trim() !== '';
             this.updateFieldError('faceitLinkDisplay', this.validationErrors.faceit);
         }
         
-        // Сохраняем временные значения
         this.tempAge = ageInput?.value || '';
         this.tempSteam = steamInput?.value || '';
         this.tempFaceitLink = faceitInput?.value || '';
     },
     
-    // Функция копирования (работает БЕЗ привязки к editMode)
+    // Копирование (НЕ показывает сообщение о режиме редактирования)
     copyToClipboard(text, btnElement) {
         if (!text || text === '' || text === 'Не указана') {
             this.showToast('Нет данных для копирования');
@@ -266,7 +259,7 @@ const Profile = {
                 copyBtn.className = 'copy-btn';
                 copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
                 
-                // Кнопка копирования работает ВСЕГДА, без проверки editMode
+                // Кнопка копирования работает ВСЕГДА
                 copyBtn.onclick = (e) => {
                     e.stopPropagation();
                     e.preventDefault();
@@ -291,7 +284,6 @@ const Profile = {
                 copyBtn.className = 'copy-btn';
                 copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
                 
-                // Кнопка копирования работает ВСЕГДА
                 copyBtn.onclick = (e) => {
                     e.stopPropagation();
                     e.preventDefault();
@@ -299,6 +291,21 @@ const Profile = {
                 };
                 wrapper.appendChild(copyBtn);
             }
+        }
+    },
+    
+    // Обновление ID в интерфейсе
+    updatePlayerIdDisplay() {
+        const profileNameLabel = document.querySelector('.profile-name-label');
+        if (profileNameLabel && this.playerId) {
+            profileNameLabel.textContent = `ID: ${this.playerId}`;
+            profileNameLabel.style.cssText = `
+                font-size: 11px;
+                color: #FF5500;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                margin-bottom: 2px;
+            `;
         }
     },
     
@@ -420,6 +427,21 @@ const Profile = {
         }
         
         try {
+            // Получаем player_id через user/init
+            const initResponse = await fetch(`${this.BACKEND_URL}/api/user/init`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telegram_id: this.telegramId })
+            });
+            
+            if (initResponse.ok) {
+                const initData = await initResponse.json();
+                if (initData.status === 'ok') {
+                    this.playerId = initData.player_id;
+                    this.updatePlayerIdDisplay();
+                }
+            }
+            
             const response = await fetch(`${this.BACKEND_URL}/api/profile/get`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -515,7 +537,6 @@ const Profile = {
         setTimeout(() => this.updateLinksWithCopy(), 50);
     },
     
-    // Принудительный выход из режима редактирования
     forceExitEditMode() {
         if (!this.editMode) return;
         
@@ -532,13 +553,11 @@ const Profile = {
         const faceitInput = document.getElementById('faceitLinkDisplay');
         const avatar = document.getElementById('profileAvatar');
         
-        // Сбрасываем временные значения к сохранённым
         this.tempName = this.savedName;
         this.tempAge = this.savedAge;
         this.tempSteam = this.savedSteam;
         this.tempFaceitLink = this.savedFaceitLink;
         
-        // Сбрасываем ошибки
         this.validationErrors = { nick: false, age: false, steam: false, faceit: false };
         this.updateFieldError('ageValue', false);
         this.updateFieldError('steamDisplay', false);
@@ -559,7 +578,6 @@ const Profile = {
         this.updateDisplay();
     },
     
-    // Включение режима редактирования
     enterEditMode() {
         if (this.editMode) return;
         
@@ -611,7 +629,6 @@ const Profile = {
         this.showToast('Режим редактирования');
     },
     
-    // Тоггл режима редактирования (для карандаша)
     toggleEditMode() {
         if (this.editMode) {
             this.forceExitEditMode();
@@ -629,7 +646,6 @@ const Profile = {
             return;
         }
         
-        // Проверяем ошибки валидации
         const hasErrors = this.validationErrors.nick || 
                          this.validationErrors.age || 
                          this.validationErrors.steam || 
@@ -646,12 +662,10 @@ const Profile = {
         
         const updateData = { telegram_id: this.telegramId };
         
-        // Ник
         if (this.tempName !== this.savedName && this.tempName !== '-') {
             updateData.nick = this.tempName;
         }
         
-        // Возраст
         const newAge = ageInput?.value || '';
         if (newAge !== this.savedAge) {
             const ageValid = this.validateAge(newAge);
@@ -660,7 +674,6 @@ const Profile = {
             }
         }
         
-        // Steam
         const newSteam = steamInput?.value || '';
         if (newSteam !== this.savedSteam) {
             const steamValid = this.validateSteamLink(newSteam);
@@ -669,7 +682,6 @@ const Profile = {
             }
         }
         
-        // FaceIT
         const newFaceit = faceitInput?.value || '';
         if (newFaceit !== this.savedFaceitLink) {
             const faceitValid = this.validateFaceitLink(newFaceit);
@@ -731,7 +743,6 @@ const Profile = {
             return;
         }
         
-        // Показываем подсказку ТОСТОМ
         this.showToast(VALIDATION.NICK.hint);
         
         const profileName = document.getElementById('profileName');
@@ -845,6 +856,12 @@ const Profile = {
             profileName.onclick = () => this.editName();
         }
         
+        // Настраиваем ID игрока
+        const profileNameLabel = document.querySelector('.profile-name-label');
+        if (profileNameLabel) {
+            profileNameLabel.style.cursor = 'default';
+        }
+        
         // Настраиваем data-атрибуты
         const ageLabel = document.querySelector('.stat-card:last-child .stat-label');
         if (ageLabel && !ageLabel.hasAttribute('data-field')) {
@@ -909,7 +926,6 @@ const Profile = {
             };
         }
         
-        // Карандаш (editToggle)
         const editToggle = document.getElementById('editToggle');
         if (editToggle) {
             editToggle.onclick = (e) => {
@@ -919,7 +935,6 @@ const Profile = {
             };
         }
         
-        // Кнопка Применить
         const applyBtn = document.getElementById('applyBtn');
         if (applyBtn) {
             applyBtn.onclick = (e) => {
@@ -930,7 +945,6 @@ const Profile = {
         }
     },
     
-    // Наблюдатель за экраном профиля
     setupScreenObserver() {
         const profileScreen = document.getElementById('profileScreen');
         if (!profileScreen) return;
@@ -964,7 +978,7 @@ const Profile = {
         if (this.isInitialized) return;
         this.isInitialized = true;
         
-        console.log('🚀 Profile.init() v2.6 FINAL');
+        console.log('🚀 Profile.init() v2.7 FINAL');
         this.telegramId = this.getTelegramId();
         
         this.tempName = this.savedName;
