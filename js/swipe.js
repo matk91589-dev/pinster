@@ -415,7 +415,7 @@ const Swipe = {
         waitingContent.style.flexDirection = 'column';
         waitingContent.style.zIndex = '100';
         
-        // Карточка должна быть видимой и иметь относительное позиционирование
+        // Карточка должна быть видимой
         if (this.card) {
             this.card.style.position = 'relative';
             this.card.style.display = 'block';
@@ -448,12 +448,20 @@ const Swipe = {
             waitingTimer.style.display = 'block';
         }
         
+        // Обновляем ник тиммейта
+        const waitingNick = document.getElementById('waitingTeammateNick');
+        if (waitingNick && this.currentPlayer) {
+            waitingNick.textContent = this.currentPlayer.nick || 'Игрок';
+        }
+        
         // Запускаем таймер ожидания
         this.startWaitingTimer();
         
         // Загружаем аватарки
-        this.loadSelfAvatar();
-        this.loadTeammateAvatar();
+        setTimeout(() => {
+            this.loadSelfAvatar();
+            this.loadTeammateAvatar();
+        }, 50);
         
         // Принудительно обновляем статус
         const statusEl = document.getElementById('waitingStatus');
@@ -467,10 +475,18 @@ const Swipe = {
     
     loadSelfAvatar() {
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        if (!telegram_id) return;
+        if (!telegram_id) {
+            console.log('❌ Нет telegram_id для загрузки аватара');
+            return;
+        }
         
         const selfAvatarContainer = document.querySelector('.waiting-self-avatar .tg-avatar-svg');
-        if (!selfAvatarContainer) return;
+        if (!selfAvatarContainer) {
+            console.log('❌ Контейнер .waiting-self-avatar .tg-avatar-svg не найден');
+            return;
+        }
+        
+        console.log('🖼️ Загружаем свой аватар...');
         
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/profile/avatar', {
             method: 'POST',
@@ -479,26 +495,42 @@ const Swipe = {
         })
         .then(res => res.json())
         .then(data => {
+            console.log('📸 Ответ аватара:', data);
             if (data.status === 'ok' && data.avatar && data.avatar !== 'null' && data.avatar !== '') {
                 selfAvatarContainer.innerHTML = '<img src="' + data.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">';
+                console.log('✅ Свой аватар загружен');
             } else {
-                selfAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+                selfAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none" style="width:60%; height:60%;"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+                console.log('⚠️ Аватар не найден, показываем заглушку');
             }
         })
         .catch(error => {
-            console.error('Ошибка загрузки аватара:', error);
-            selfAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+            console.error('❌ Ошибка загрузки аватара:', error);
+            selfAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none" style="width:60%; height:60%;"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
         });
     },
     
     loadTeammateAvatar() {
         const teammateAvatarContainer = document.querySelector('.waiting-teammate-avatar .tg-avatar-svg');
-        if (!teammateAvatarContainer || !this.currentPlayer) return;
+        if (!teammateAvatarContainer) {
+            console.log('❌ Контейнер .waiting-teammate-avatar .tg-avatar-svg не найден');
+            return;
+        }
+        
+        if (!this.currentPlayer) {
+            console.log('❌ Нет currentPlayer для загрузки аватара тиммейта');
+            teammateAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none" style="width:60%; height:60%;"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+            return;
+        }
+        
+        console.log('🖼️ Загружаем аватар тиммейта:', this.currentPlayer.nick);
         
         if (this.currentPlayer.avatar && this.currentPlayer.avatar !== 'null' && this.currentPlayer.avatar !== '') {
             teammateAvatarContainer.innerHTML = '<img src="' + this.currentPlayer.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">';
+            console.log('✅ Аватар тиммейта загружен');
         } else {
-            teammateAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+            teammateAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none" style="width:60%; height:60%;"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+            console.log('⚠️ Аватар тиммейта не найден, показываем заглушку');
         }
     },
     
@@ -1184,10 +1216,6 @@ const Swipe = {
         
         this.updateAvatar(player);
         this.updateLinksVisibility();
-        
-        // Обновляем ник в режиме ожидания
-        const waitingNick = document.getElementById('waitingTeammateNick');
-        if (waitingNick) waitingNick.textContent = player.nick || 'Игрок';
         
         setTimeout(() => this.adjustCardSize(), 50);
     },
