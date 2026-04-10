@@ -5120,3 +5120,12 @@ button:active { transform: scale(0.96); }
     outline: none !important;
     box-shadow: none !important;
 }
+
+.input-label span,
+.stat-label span {
+    color: #FF3B30 !important;
+    font-weight: 600 !important;
+    font-size: 11px !important;
+    margin-left: 4px !important;
+    text-transform: lowercase !important;
+}
