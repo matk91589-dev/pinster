@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v4.1 FINAL (ЗАПОЛНЕНИЕ + ДИНАМИКА + ССЫЛКИ)
+// ПОИСК - v4.2 FINAL (ЛИМИТЫ + СЧЁТЧИК КОММЕНТАРИЯ)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.1 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.2 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -111,6 +111,47 @@ const Search = {
         }
     },
     
+    // ========== СЧЁТЧИК КОММЕНТАРИЯ ==========
+    setupCommentCounter(commentInput) {
+        if (!commentInput) return;
+        
+        // Устанавливаем maxlength
+        commentInput.setAttribute('maxlength', '100');
+        
+        // Находим или создаём счётчик
+        const parent = commentInput.parentElement;
+        let counter = parent.querySelector('.comment-counter');
+        
+        if (!counter) {
+            counter = document.createElement('div');
+            counter.className = 'comment-counter';
+            counter.style.cssText = `
+                position: absolute;
+                bottom: 8px;
+                right: 12px;
+                font-size: 11px;
+                color: #8E97A6;
+                font-weight: 400;
+                pointer-events: none;
+            `;
+            parent.style.position = 'relative';
+            parent.appendChild(counter);
+        }
+        
+        // Функция обновления счётчика
+        const updateCounter = () => {
+            const len = commentInput.value.length;
+            counter.textContent = `${len}/100`;
+            counter.style.color = len >= 100 ? '#FF3B30' : '#8E97A6';
+        };
+        
+        // Начальное значение
+        updateCounter();
+        
+        // Обновление при вводе
+        commentInput.addEventListener('input', updateCounter);
+    },
+    
     // ========== НАСТРОЙКА ВАЛИДАЦИИ ==========
     setupFaceitValidation() {
         const ageInput = document.getElementById('faceitAgeValue');
@@ -129,7 +170,7 @@ const Search = {
         }
         
         if (ratingInput) {
-            ratingInput.setAttribute('maxlength', '4');
+            ratingInput.setAttribute('maxlength', '4'); // МАКСИМУМ 4 ЦИФРЫ
             ratingInput.oninput = () => {
                 const val = ratingInput.value;
                 const num = parseInt(val);
@@ -154,7 +195,7 @@ const Search = {
         }
         
         if (commentInput) {
-            commentInput.setAttribute('maxlength', '40');
+            this.setupCommentCounter(commentInput);
         }
     },
     
@@ -175,7 +216,7 @@ const Search = {
         }
         
         if (ratingInput) {
-            ratingInput.setAttribute('maxlength', '5');
+            ratingInput.setAttribute('maxlength', '5'); // МАКСИМУМ 5 ЦИФР
             ratingInput.oninput = () => {
                 const val = ratingInput.value;
                 const num = parseInt(val);
@@ -200,7 +241,7 @@ const Search = {
         }
         
         if (commentInput) {
-            commentInput.setAttribute('maxlength', '40');
+            this.setupCommentCounter(commentInput);
         }
     },
     
@@ -243,7 +284,7 @@ const Search = {
         }
         
         if (commentInput) {
-            commentInput.setAttribute('maxlength', '40');
+            this.setupCommentCounter(commentInput);
         }
     },
     
@@ -286,7 +327,7 @@ const Search = {
         }
         
         if (commentInput) {
-            commentInput.setAttribute('maxlength', '40');
+            this.setupCommentCounter(commentInput);
         }
     },
     
