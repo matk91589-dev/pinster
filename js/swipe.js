@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ РАБОЧАЯ ВЕРСИЯ
+// СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ ВЕРСИЯ С ФИКСАМИ
 // ============================================
 
 const Swipe = {
@@ -87,7 +87,6 @@ const Swipe = {
         console.log('✅ Swipe.init() завершён');
     },
     
-    // Функция копирования в буфер обмена
     copyToClipboard(text, btnElement) {
         if (!text || text === 'Не указана' || text === '') {
             if (window.Settings && window.Settings.error) window.Settings.error();
@@ -107,7 +106,6 @@ const Swipe = {
         });
     },
     
-    // Создание элемента с кнопкой копирования
     createLinkWithCopy(text) {
         const wrapper = document.createElement('div');
         wrapper.className = 'link-with-copy';
@@ -136,7 +134,7 @@ const Swipe = {
         const swipeScreen = document.getElementById('swipeScreen');
         if (swipeScreen) {
             swipeScreen.classList.add('active');
-            swipeScreen.style.display = 'flex'; // на всякий случай
+            swipeScreen.style.display = 'flex';
         }
         
         const swipeContent = document.getElementById('swipeModeContent');
@@ -649,20 +647,9 @@ const Swipe = {
         this.chatLink = null;
         this.inviteLink = null;
         
-        if (expiresAt) {
-            if (typeof expiresAt === 'string') {
-                this.matchExpiresAt = new Date(expiresAt).getTime();
-            } else {
-                this.matchExpiresAt = expiresAt;
-            }
-        }
-        
-        const timeLeft = this.getTimeLeft();
-        
-        if (timeLeft <= 0) {
-            this.exitSwipeMode('timeout_accept');
-            return;
-        }
+        // 🔥 ПРИНУДИТЕЛЬНО СТАВИМ 30 СЕКУНД
+        this.matchExpiresAt = Date.now() + 30000;
+        console.log('⏰ Принудительно ставим 30 секунд');
         
         if (this.loading) this.loading.classList.remove('active');
         
@@ -705,12 +692,10 @@ const Swipe = {
                 clearInterval(this.cardTimerInterval);
                 this.cardTimerInterval = null;
             
-                // 🔥 Время истекло — показываем тост
                 if (typeof Profile !== 'undefined' && Profile.showToast) {
                     Profile.showToast('Время истекло', true);
                 }
             
-                // Отправляем reject на сервер
                 if (this.currentMatchId) {
                     const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
                     fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
@@ -724,7 +709,6 @@ const Swipe = {
                     }).catch(e => console.error('Ошибка reject по таймеру:', e));
                 }
             
-                // Выходим из свайпа
                 this.exitSwipeMode('таймер истек');
                 return;
             }
@@ -1051,6 +1035,7 @@ const Swipe = {
         }
     },
     
+    // 🔥 ФИКС: При отклонении возвращаемся в ПОИСК, а не на главную
     rejectPlayer() {
         console.log('❌ rejectPlayer() called');
         
@@ -1067,6 +1052,7 @@ const Swipe = {
         }
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        const savedMode = this.mode;
         
         if (this.currentMatchId) {
             fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
@@ -1080,8 +1066,23 @@ const Swipe = {
             }).catch(error => console.error('Error rejecting:', error));
         }
         
+        this.unblockScroll();
+        this.isWaitingMode = false;
+        this.currentMatchId = null;
+        this.currentPlayer = null;
+        this.matchExpiresAt = null;
+        
+        if (this.connectionTimer) clearInterval(this.connectionTimer);
+        
+        // 🔥 Возвращаемся на ЭКРАН ПОИСКА и запускаем поиск
+        if (window.App) {
+            App.showScreen('searchScreen', true);
+        }
+        
         setTimeout(() => {
-            this.exitSwipeMode('rejectPlayer');
+            if (typeof Search !== 'undefined' && savedMode) {
+                Search.start(savedMode);
+            }
         }, 300);
     },
     
@@ -1211,7 +1212,6 @@ const Swipe = {
             styleEl.textContent = player.style === 'fan' ? 'Fan' : 'Tryhard';
         }
         
-        // Steam ссылка с кнопкой копирования
         const steamValue = player.steam_link || 'Не указана';
         if (steamLinkEl && steamValue !== 'Не указана' && steamValue !== '') {
             const wrapper = this.createLinkWithCopy(steamValue);
@@ -1222,7 +1222,6 @@ const Swipe = {
             steamLinkEl.textContent = steamValue;
         }
         
-        // Faceit ссылка с кнопкой копирования
         const faceitValue = player.faceit_link || 'Не указана';
         if (faceitLinkEl && faceitValue !== 'Не указана' && faceitValue !== '') {
             const wrapper = this.createLinkWithCopy(faceitValue);
@@ -1345,6 +1344,7 @@ const Swipe = {
         setTimeout(() => this.exitSwipeMode('connectionTimeout'), 2000);
     },
     
+    // 🔥 ФИКС: Окно с вопросом при отклонении тиммейтом
     handleRejection() {
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         if (this.matchPolling) clearInterval(this.matchPolling);
@@ -1357,7 +1357,39 @@ const Swipe = {
         
         if (window.Settings && window.Settings.error) window.Settings.error();
         
-        setTimeout(() => this.exitSwipeMode('handleRejection'), 2000);
+        const savedMode = this.mode;
+        
+        if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
+            window.Telegram.WebApp.showPopup({
+                title: 'Тиммейт отклонил',
+                message: 'Хотите вернуться в поиск?',
+                buttons: [
+                    { id: 'cancel', type: 'cancel', text: 'Нет' },
+                    { id: 'ok', type: 'default', text: 'Да' }
+                ]
+            }, (buttonId) => {
+                if (buttonId === 'ok') {
+                    this.exitSwipeMode('handleRejection');
+                    setTimeout(() => {
+                        if (typeof Search !== 'undefined' && savedMode) {
+                            Search.start(savedMode);
+                        }
+                    }, 300);
+                } else {
+                    this.exitSwipeMode('handleRejection');
+                }
+            });
+        } else {
+            const wantSearch = confirm('Тиммейт отклонил. Хотите вернуться в поиск?');
+            this.exitSwipeMode('handleRejection');
+            if (wantSearch) {
+                setTimeout(() => {
+                    if (typeof Search !== 'undefined' && savedMode) {
+                        Search.start(savedMode);
+                    }
+                }, 300);
+            }
+        }
     },
     
     exitSwipeMode(reason) {
