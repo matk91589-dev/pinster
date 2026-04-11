@@ -132,6 +132,12 @@ const Swipe = {
     
     forceShowSwipeMode() {
         console.log('🔧 forceShowSwipeMode()');
+
+        const swipeScreen = document.getElementById('swipeScreen');
+        if (swipeScreen) {
+            swipeScreen.classList.add('active');
+            swipeScreen.style.display = 'flex'; // на всякий случай
+        }
         
         const swipeContent = document.getElementById('swipeModeContent');
         const waitingContent = document.getElementById('waitingModeContent');
