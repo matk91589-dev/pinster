@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v4.4 FINAL (СКРЫВАЕМ ЭКРАН ПОИСКА)
+// ПОИСК - v4.5 FINAL (НОРМАЛЬНОЕ ОТОБРАЖЕНИЕ СВАЙПА)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.4 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.5 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -545,7 +545,7 @@ const Search = {
         }, 2000);
     },
     
-    // 🔥 ПОЛНОСТЬЮ ПЕРЕПИСАННЫЙ МЕТОД
+    // 🔥 ФИНАЛЬНАЯ ВЕРСИЯ: используем App.showScreen для правильного отображения
     showSwipe(data) {
         console.log('🎯 showSwipe: найден мэтч!');
         this.isSearching = false;
@@ -562,16 +562,14 @@ const Search = {
             this.timerInterval = null;
         }
         
-        // Скрываем ВСЕ экраны
-        document.querySelectorAll('.screen').forEach(s => {
-            s.classList.remove('active');
-        });
-        
-        // Показываем экран свайпа
-        const swipeScreen = document.getElementById('swipeScreen');
-        if (swipeScreen) {
-            swipeScreen.classList.add('active');
-            swipeScreen.style.display = 'flex';
+        // 🔥 Используем App.showScreen для правильного переключения экранов
+        if (window.App && window.App.showScreen) {
+            window.App.showScreen('swipeScreen', false);
+        } else {
+            // Fallback если App не доступен
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const swipeScreen = document.getElementById('swipeScreen');
+            if (swipeScreen) swipeScreen.classList.add('active');
         }
         
         // Запускаем Swipe
