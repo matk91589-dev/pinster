@@ -1,7 +1,5 @@
 // ============================================
 // СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ РАБОЧАЯ ВЕРСИЯ
-// Задача 1: Таймер истёк → тост + главный экран
-// Задача 2: Отклонил → обратно в поиск
 // ============================================
 
 const Swipe = {
@@ -701,7 +699,7 @@ const Swipe = {
                 clearInterval(this.cardTimerInterval);
                 this.cardTimerInterval = null;
             
-                // 🔥 Задача 1: Время истекло — показываем тост
+                // 🔥 Время истекло — показываем тост
                 if (typeof Profile !== 'undefined' && Profile.showToast) {
                     Profile.showToast('Время истекло', true);
                 }
@@ -720,7 +718,7 @@ const Swipe = {
                     }).catch(e => console.error('Ошибка reject по таймеру:', e));
                 }
             
-                // Выходим из свайпа на главный экран
+                // Выходим из свайпа
                 this.exitSwipeMode('таймер истек');
                 return;
             }
@@ -1047,7 +1045,6 @@ const Swipe = {
         }
     },
     
-    // 🔥 Задача 2: Отклонил → обратно в поиск
     rejectPlayer() {
         console.log('❌ rejectPlayer() called');
         
@@ -1064,7 +1061,6 @@ const Swipe = {
         }
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        const savedMode = this.mode; // Сохраняем режим
         
         if (this.currentMatchId) {
             fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
@@ -1078,29 +1074,8 @@ const Swipe = {
             }).catch(error => console.error('Error rejecting:', error));
         }
         
-        // Сбрасываем состояние свайпа
-        this.unblockScroll();
-        this.isWaitingMode = false;
-        this.currentMatchId = null;
-        this.currentPlayer = null;
-        this.matchExpiresAt = null;
-        this.gameCreated = false;
-        this.gameCreating = false;
-        this.chatLink = null;
-        this.inviteLink = null;
-        
-        if (this.connectionTimer) clearInterval(this.connectionTimer);
-        
-        // 🔥 Возвращаемся в поиск (на экран выбора режима)
-        if (window.App) {
-            App.showScreen('mainScreen', true);
-        }
-        
-        // 🔥 Запускаем поиск заново с сохранённым режимом
         setTimeout(() => {
-            if (typeof Search !== 'undefined' && savedMode) {
-                Search.start(savedMode);
-            }
+            this.exitSwipeMode('rejectPlayer');
         }, 300);
     },
     
