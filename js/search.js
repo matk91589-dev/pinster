@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v4.2 FINAL (ЛИМИТЫ + СЧЁТЧИК КОММЕНТАРИЯ)
+// ПОИСК - v4.3 FINAL (ИСПРАВЛЕН КОНФЛИКТ С SWIPE)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.2 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.3 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -115,10 +115,8 @@ const Search = {
     setupCommentCounter(commentInput) {
         if (!commentInput) return;
         
-        // Устанавливаем maxlength
         commentInput.setAttribute('maxlength', '100');
         
-        // Находим или создаём счётчик
         const parent = commentInput.parentElement;
         let counter = parent.querySelector('.comment-counter');
         
@@ -138,17 +136,13 @@ const Search = {
             parent.appendChild(counter);
         }
         
-        // Функция обновления счётчика
         const updateCounter = () => {
             const len = commentInput.value.length;
             counter.textContent = `${len}/100`;
             counter.style.color = len >= 100 ? '#FF3B30' : '#8E97A6';
         };
         
-        // Начальное значение
         updateCounter();
-        
-        // Обновление при вводе
         commentInput.addEventListener('input', updateCounter);
     },
     
@@ -170,7 +164,7 @@ const Search = {
         }
         
         if (ratingInput) {
-            ratingInput.setAttribute('maxlength', '4'); // МАКСИМУМ 4 ЦИФРЫ
+            ratingInput.setAttribute('maxlength', '4');
             ratingInput.oninput = () => {
                 const val = ratingInput.value;
                 const num = parseInt(val);
@@ -216,7 +210,7 @@ const Search = {
         }
         
         if (ratingInput) {
-            ratingInput.setAttribute('maxlength', '5'); // МАКСИМУМ 5 ЦИФР
+            ratingInput.setAttribute('maxlength', '5');
             ratingInput.oninput = () => {
                 const val = ratingInput.value;
                 const num = parseInt(val);
@@ -551,10 +545,12 @@ const Search = {
         }, 2000);
     },
     
+    // 🔥 ИСПРАВЛЕНО: передаём 4 параметра в Swipe.startWithOpponent
     showSwipe(data) {
         this.isSearching = false;
         if (typeof Swipe !== 'undefined') {
-            Swipe.startWithOpponent(data.opponent, data.match_id, data.expires_at);
+            // Передаём 4 параметра: opponent, matchId, expiresAt, serverTime (null)
+            Swipe.startWithOpponent(data.opponent, data.match_id, data.expires_at, null);
         } else {
             App.showScreen('mainScreen', true);
         }
