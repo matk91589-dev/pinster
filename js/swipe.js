@@ -684,30 +684,55 @@ const Swipe = {
             clearInterval(this.cardTimerInterval);
             this.cardTimerInterval = null;
         }
-        
+    
         if (!this.timerElement) {
             this.timerElement = document.getElementById('swipeTimer');
             if (!this.timerElement) return;
         }
-        
+    
         const updateTimer = () => {
             const timeLeft = this.getTimeLeft();
             this.timerElement.innerHTML = timeLeft + 'с';
-            
+        
             if (timeLeft <= 0) {
                 this.timerElement.classList.add('warning');
                 clearInterval(this.cardTimerInterval);
                 this.cardTimerInterval = null;
+            
+                // 🔥 Время истекло — показываем тост
+                if (typeof Profile !== 'undefined' && Profile.showToast) {
+                    Profile.showToast('Время истекло', true);
+                }
+            
+                // Отправляем reject на сервер
+                if (this.currentMatchId) {
+                    const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+                    fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            telegram_id: telegram_id,
+                            match_id: this.currentMatchId,
+                            response: 'reject'
+                        })
+                    }).catch(e => console.error('Ошибка reject по таймеру:', e));
+                }
+            
+                // Выходим из свайпа
                 this.exitSwipeMode('таймер истек');
                 return;
             }
-            
+        
             if (timeLeft < 10) {
                 this.timerElement.classList.add('warning');
             } else {
                 this.timerElement.classList.remove('warning');
             }
         };
+    
+        updateTimer();
+        this.cardTimerInterval = setInterval(updateTimer, 1000);
+    },
         
         updateTimer();
         this.cardTimerInterval = setInterval(updateTimer, 1000);
