@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v4.3 FINAL (ИСПРАВЛЕН КОНФЛИКТ С SWIPE)
+// ПОИСК - v4.4 FINAL (СКРЫВАЕМ ЭКРАН ПОИСКА)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.3 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.4 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -545,13 +545,40 @@ const Search = {
         }, 2000);
     },
     
-    // 🔥 ИСПРАВЛЕНО: передаём 4 параметра в Swipe.startWithOpponent
+    // 🔥 ПОЛНОСТЬЮ ПЕРЕПИСАННЫЙ МЕТОД
     showSwipe(data) {
+        console.log('🎯 showSwipe: найден мэтч!');
         this.isSearching = false;
+        
+        // Останавливаем polling
+        if (this.pollingInterval) {
+            clearInterval(this.pollingInterval);
+            this.pollingInterval = null;
+        }
+        
+        // Останавливаем таймер поиска
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
+        
+        // Скрываем ВСЕ экраны
+        document.querySelectorAll('.screen').forEach(s => {
+            s.classList.remove('active');
+        });
+        
+        // Показываем экран свайпа
+        const swipeScreen = document.getElementById('swipeScreen');
+        if (swipeScreen) {
+            swipeScreen.classList.add('active');
+            swipeScreen.style.display = 'flex';
+        }
+        
+        // Запускаем Swipe
         if (typeof Swipe !== 'undefined') {
-            // Передаём 4 параметра: opponent, matchId, expiresAt, serverTime (null)
             Swipe.startWithOpponent(data.opponent, data.match_id, data.expires_at, null);
         } else {
+            console.error('❌ Swipe не загружен');
             App.showScreen('mainScreen', true);
         }
     },
