@@ -2,8 +2,6 @@
 // СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ РАБОЧАЯ ВЕРСИЯ
 // ============================================
 
-console.log('swipe.js 1.0')
-
 const Swipe = {
     // Элементы DOM
     card: null,
@@ -631,34 +629,44 @@ const Swipe = {
         const opponent = this._pendingOpponent;
         const matchId = this._pendingMatchId;
         const expiresAt = this._pendingExpiresAt;
-    
+        
         this._pendingOpponent = null;
         this._pendingMatchId = null;
         this._pendingExpiresAt = null;
-    
+        
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
         this.mode = opponent.mode || this.mode;
-    
+        
         this.gameCreated = false;
         this.gameCreating = false;
         this.chatLink = null;
         this.inviteLink = null;
-    
-        // 🔥 ПРИНУДИТЕЛЬНО СТАВИМ 30 СЕКУНД (временный фикс)
-        this.matchExpiresAt = Date.now() + 30000;
-        console.log('⏰ Принудительно ставим 30 секунд');
-    
-        // Остальной код...
+        
+        if (expiresAt) {
+            if (typeof expiresAt === 'string') {
+                this.matchExpiresAt = new Date(expiresAt).getTime();
+            } else {
+                this.matchExpiresAt = expiresAt;
+            }
+        }
+        
+        const timeLeft = this.getTimeLeft();
+        
+        if (timeLeft <= 0) {
+            this.exitSwipeMode('timeout_accept');
+            return;
+        }
+        
         if (this.loading) this.loading.classList.remove('active');
-    
+        
         this.resetCardPosition();
         this.forceShowSwipeMode();
         this.showPlayer(opponent);
         this.startCardTimer();
         this.blockScroll();
         this.showHintOnce();
-    
+        
         setTimeout(() => this.startSwipeHint(), 300);
         setTimeout(() => this.adjustCardSize(), 50);
         setTimeout(() => this.updateButtonsPosition(), 100);
