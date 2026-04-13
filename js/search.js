@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v4.6 FINAL (ВСЕ 4 РЕЖИМА РАБОТАЮТ)
+// ПОИСК - v4.7 FINAL (ДАННЫЕ ИЗ PROFILE РАБОТАЮТ)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.6 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.7 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -50,7 +50,7 @@ const Search = {
                             self.fillPublicScreen();
                             self.setupPublicValidation();
                         }
-                    }, 50);
+                    }, 100); // Увеличил задержку до 100мс
                 };
                 
                 console.log('✅ showScreen перехвачен');
@@ -75,7 +75,20 @@ const Search = {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
     },
     
+    // 🔥 ИСПРАВЛЕНО: берём данные из Profile, а не из localStorage
     getProfileData() {
+        // Сначала пробуем взять из глобального Profile (он уже загружен с сервера)
+        if (window.Profile) {
+            console.log('📦 Берём данные из window.Profile');
+            return {
+                age: window.Profile.savedAge || '',
+                steam: window.Profile.savedSteam || '',
+                faceit: window.Profile.savedFaceitLink || ''
+            };
+        }
+        
+        // Fallback на localStorage
+        console.log('📦 Берём данные из localStorage');
         return {
             age: localStorage.getItem('profile_age') || '',
             steam: localStorage.getItem('profile_steam') || '',
@@ -325,48 +338,58 @@ const Search = {
         }
     },
     
+    // 🔥 ИСПРАВЛЕНО: принудительно берём данные из Profile перед заполнением
     fillFaceitScreen() {
-        const p = this.getProfileData();
-        const ageInput = document.getElementById('faceitAgeValue');
-        const faceitInput = document.getElementById('faceitLinkInput');
-        
-        if (ageInput && p.age) ageInput.value = p.age;
-        if (faceitInput && p.faceit) faceitInput.value = p.faceit;
-        
-        console.log('✅ FACEIT заполнен:', { age: p.age, faceit: p.faceit });
+        // Ждём немного, чтобы Profile точно загрузился
+        setTimeout(() => {
+            const p = this.getProfileData();
+            const ageInput = document.getElementById('faceitAgeValue');
+            const faceitInput = document.getElementById('faceitLinkInput');
+            
+            if (ageInput && p.age) ageInput.value = p.age;
+            if (faceitInput && p.faceit) faceitInput.value = p.faceit;
+            
+            console.log('✅ FACEIT заполнен:', { age: p.age, faceit: p.faceit });
+        }, 50);
     },
     
     fillPremierScreen() {
-        const p = this.getProfileData();
-        const ageInput = document.getElementById('premierAgeValue');
-        const steamInput = document.getElementById('premierSteamInput');
-        
-        if (ageInput && p.age) ageInput.value = p.age;
-        if (steamInput && p.steam) steamInput.value = p.steam;
-        
-        console.log('✅ PREMIER заполнен:', { age: p.age, steam: p.steam });
+        setTimeout(() => {
+            const p = this.getProfileData();
+            const ageInput = document.getElementById('premierAgeValue');
+            const steamInput = document.getElementById('premierSteamInput');
+            
+            if (ageInput && p.age) ageInput.value = p.age;
+            if (steamInput && p.steam) steamInput.value = p.steam;
+            
+            console.log('✅ PREMIER заполнен:', { age: p.age, steam: p.steam });
+        }, 50);
     },
     
     fillPrimeScreen() {
-        const p = this.getProfileData();
-        const ageInput = document.getElementById('primeAgeValue');
-        const steamInput = document.getElementById('primeSteamInput');
-        
-        if (ageInput && p.age) ageInput.value = p.age;
-        if (steamInput && p.steam) steamInput.value = p.steam;
-        
-        console.log('✅ PRIME заполнен:', { age: p.age, steam: p.steam });
+        setTimeout(() => {
+            const p = this.getProfileData();
+            const ageInput = document.getElementById('primeAgeValue');
+            const steamInput = document.getElementById('primeSteamInput');
+            
+            if (ageInput && p.age) ageInput.value = p.age;
+            if (steamInput && p.steam) steamInput.value = p.steam;
+            
+            console.log('✅ PRIME заполнен:', { age: p.age, steam: p.steam });
+        }, 50);
     },
     
     fillPublicScreen() {
-        const p = this.getProfileData();
-        const ageInput = document.getElementById('publicAgeValue');
-        const steamInput = document.getElementById('publicSteamInput');
-        
-        if (ageInput && p.age) ageInput.value = p.age;
-        if (steamInput && p.steam) steamInput.value = p.steam;
-        
-        console.log('✅ PUBLIC заполнен:', { age: p.age, steam: p.steam });
+        setTimeout(() => {
+            const p = this.getProfileData();
+            const ageInput = document.getElementById('publicAgeValue');
+            const steamInput = document.getElementById('publicSteamInput');
+            
+            if (ageInput && p.age) ageInput.value = p.age;
+            if (steamInput && p.steam) steamInput.value = p.steam;
+            
+            console.log('✅ PUBLIC заполнен:', { age: p.age, steam: p.steam });
+        }, 50);
     },
     
     setStyle(style, element) {
@@ -381,6 +404,19 @@ const Search = {
         console.log(`🔍 Search.start: ${mode}`);
         if (window.Settings) Settings.click();
         
+        // 🔥 Принудительно заполняем поля перед валидацией
+        if (mode === 'FACEIT') this.fillFaceitScreen();
+        else if (mode === 'PREMIER') this.fillPremierScreen();
+        else if (mode === 'PRIME') this.fillPrimeScreen();
+        else if (mode === 'PUBLIC') this.fillPublicScreen();
+        
+        // Даём время на заполнение
+        setTimeout(() => {
+            this.doStartValidation(mode);
+        }, 100);
+    },
+    
+    doStartValidation(mode) {
         let isValid = true;
         let errorMsg = '';
         
@@ -388,6 +424,8 @@ const Search = {
             const age = document.getElementById('faceitAgeValue')?.value || '';
             const rating = document.getElementById('faceitELOInput')?.value || '';
             const faceitLink = document.getElementById('faceitLinkInput')?.value || '';
+            
+            console.log('🔍 Проверка FACEIT:', { age, rating });
             
             if (!age || age === '') { isValid = false; errorMsg = 'Укажите возраст'; }
             else if (!rating || rating === '') { isValid = false; errorMsg = 'Укажите Faceit ELO'; }
@@ -404,6 +442,8 @@ const Search = {
             const rating = document.getElementById('premierRatingInput')?.value || '';
             const steamLink = document.getElementById('premierSteamInput')?.value || '';
             
+            console.log('🔍 Проверка PREMIER:', { age, rating });
+            
             if (!age || age === '') { isValid = false; errorMsg = 'Укажите возраст'; }
             else if (!rating || rating === '') { isValid = false; errorMsg = 'Укажите CS Rating'; }
             else if (steamLink && !this.validateSteamLink(steamLink)) { isValid = false; errorMsg = 'Ссылка Steam не ликвидна'; }
@@ -419,6 +459,8 @@ const Search = {
             const rank = document.getElementById('primeRankSelect')?.value || '';
             const steamLink = document.getElementById('primeSteamInput')?.value || '';
             
+            console.log('🔍 Проверка PRIME:', { age, rank });
+            
             if (!age || age === '') { isValid = false; errorMsg = 'Укажите возраст'; }
             else if (!rank || rank === '' || rank === 'Выберите ранг') { isValid = false; errorMsg = 'Выберите ранг'; }
             else if (steamLink && !this.validateSteamLink(steamLink)) { isValid = false; errorMsg = 'Ссылка Steam не ликвидна'; }
@@ -431,6 +473,8 @@ const Search = {
             const age = document.getElementById('publicAgeValue')?.value || '';
             const rank = document.getElementById('publicRankSelect')?.value || '';
             const steamLink = document.getElementById('publicSteamInput')?.value || '';
+            
+            console.log('🔍 Проверка PUBLIC:', { age, rank });
             
             if (!age || age === '') { isValid = false; errorMsg = 'Укажите возраст'; }
             else if (!rank || rank === '' || rank === 'Выберите ранг') { isValid = false; errorMsg = 'Выберите ранг'; }
@@ -501,18 +545,19 @@ const Search = {
         this.resetTimer();
         this.startTimer();
         
-        // 🔥 ПРАВИЛЬНОЕ ПРЕОБРАЗОВАНИЕ РЕЖИМОВ ДЛЯ БЭКЕНДА
         let backendMode = mode.toLowerCase();
         if (backendMode === 'prime' || backendMode === 'public') {
             backendMode = 'competitive';
         }
+        
+        console.log('📤 Отправляем поиск:', { mode: backendMode, age: data.age, rating: data.rating });
         
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/start', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 telegram_id,
-                mode: backendMode,  // 🔥 ИСПОЛЬЗУЕМ ПРЕОБРАЗОВАННЫЙ РЕЖИМ
+                mode: backendMode,
                 rating_value: String(data.rating || data.rank),
                 style: data.style,
                 age: data.age,
@@ -551,34 +596,28 @@ const Search = {
         }, 2000);
     },
     
-    // 🔥 ФИНАЛЬНАЯ ВЕРСИЯ: используем App.showScreen для правильного отображения
     showSwipe(data) {
         console.log('🎯 showSwipe: найден мэтч!');
         this.isSearching = false;
         
-        // Останавливаем polling
         if (this.pollingInterval) {
             clearInterval(this.pollingInterval);
             this.pollingInterval = null;
         }
         
-        // Останавливаем таймер поиска
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
             this.timerInterval = null;
         }
         
-        // 🔥 Используем App.showScreen для правильного переключения экранов
         if (window.App && window.App.showScreen) {
             window.App.showScreen('swipeScreen', false);
         } else {
-            // Fallback если App не доступен
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             const swipeScreen = document.getElementById('swipeScreen');
             if (swipeScreen) swipeScreen.classList.add('active');
         }
         
-        // Запускаем Swipe
         if (typeof Swipe !== 'undefined') {
             Swipe.startWithOpponent(data.opponent, data.match_id, data.expires_at, null);
         } else {
