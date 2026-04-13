@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v4.8 FINAL (ЖДЁМ PROFILE + РАБОТАЕТ ВЕЗДЕ)
+// ПОИСК - v5.0 FINAL (РЕПУТАЦИЯ НА ВСЕХ ЭКРАНАХ)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.8 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.0 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -81,7 +81,8 @@ const Search = {
             return {
                 age: window.Profile.savedAge || '',
                 steam: window.Profile.savedSteam || '',
-                faceit: window.Profile.savedFaceitLink || ''
+                faceit: window.Profile.savedFaceitLink || '',
+                rating: window.Profile.savedRating || 0
             };
         }
         
@@ -89,8 +90,45 @@ const Search = {
         return {
             age: localStorage.getItem('profile_age') || '',
             steam: localStorage.getItem('profile_steam') || '',
-            faceit: localStorage.getItem('profile_faceit') || ''
+            faceit: localStorage.getItem('profile_faceit') || '',
+            rating: parseInt(localStorage.getItem('profile_rating')) || 0
         };
+    },
+    
+    // 🔥 НОВЫЙ МЕТОД: обновление репутации на экранах поиска
+    updateRatingDisplayInSearch(screenId) {
+        const p = this.getProfileData();
+        const rating = p.rating || 0;
+        
+        // Ищем блок репутации на текущем экране
+        let ratingInput = null;
+        
+        if (screenId === 'faceitScreen') {
+            ratingInput = document.querySelector('#faceitScreen .stat-card:first-child .stat-value input');
+        } else if (screenId === 'premierScreen') {
+            ratingInput = document.querySelector('#premierScreen .stat-card:first-child .stat-value input');
+        } else if (screenId === 'primeScreen') {
+            ratingInput = document.querySelector('#primeScreen .stat-card:first-child .stat-value input');
+        } else if (screenId === 'publicScreen') {
+            ratingInput = document.querySelector('#publicScreen .stat-card:first-child .stat-value input');
+        }
+        
+        if (ratingInput) {
+            ratingInput.value = (rating > 0 ? '+' : '') + rating;
+            
+            // 🔥 ЦВЕТ КАК В ПРОФИЛЕ
+            if (rating > 0) {
+                ratingInput.style.color = '#4CAF50'; // Зелёный
+            } else if (rating < 0) {
+                ratingInput.style.color = '#FF3B30'; // Красный
+            } else {
+                ratingInput.style.color = '#FFFFFF'; // Белый
+            }
+            
+            console.log(`✅ Репутация на ${screenId}: ${ratingInput.value}`);
+        } else {
+            console.warn(`⚠️ Не найден input репутации на ${screenId}`);
+        }
     },
     
     // ========== ВАЛИДАЦИЯ ССЫЛОК ==========
@@ -333,7 +371,7 @@ const Search = {
         }
     },
     
-    // 🔥 ЖДЁМ PROFILE ПЕРЕД ЗАПОЛНЕНИЕМ
+    // 🔥 ОБНОВЛЕНО: добавил обновление репутации
     fillFaceitScreen() {
         const waitForProfile = setInterval(() => {
             if (window.Profile && window.Profile.savedAge !== undefined) {
@@ -342,11 +380,16 @@ const Search = {
                 const p = this.getProfileData();
                 const ageInput = document.getElementById('faceitAgeValue');
                 const faceitInput = document.getElementById('faceitLinkInput');
+                const ratingInput = document.getElementById('faceitELOInput');
                 
                 if (ageInput && p.age) ageInput.value = p.age;
                 if (faceitInput && p.faceit) faceitInput.value = p.faceit;
+                if (ratingInput && p.rating) ratingInput.value = p.rating;
                 
-                console.log('✅ FACEIT заполнен:', { age: p.age, faceit: p.faceit });
+                // 🔥 Обновляем репутацию на экране
+                this.updateRatingDisplayInSearch('faceitScreen');
+                
+                console.log('✅ FACEIT заполнен:', { age: p.age, faceit: p.faceit, rating: p.rating });
             }
         }, 50);
     },
@@ -359,11 +402,16 @@ const Search = {
                 const p = this.getProfileData();
                 const ageInput = document.getElementById('premierAgeValue');
                 const steamInput = document.getElementById('premierSteamInput');
+                const ratingInput = document.getElementById('premierRatingInput');
                 
                 if (ageInput && p.age) ageInput.value = p.age;
                 if (steamInput && p.steam) steamInput.value = p.steam;
+                if (ratingInput && p.rating) ratingInput.value = p.rating;
                 
-                console.log('✅ PREMIER заполнен:', { age: p.age, steam: p.steam });
+                // 🔥 Обновляем репутацию на экране
+                this.updateRatingDisplayInSearch('premierScreen');
+                
+                console.log('✅ PREMIER заполнен:', { age: p.age, steam: p.steam, rating: p.rating });
             }
         }, 50);
     },
@@ -379,6 +427,9 @@ const Search = {
                 
                 if (ageInput && p.age) ageInput.value = p.age;
                 if (steamInput && p.steam) steamInput.value = p.steam;
+                
+                // 🔥 Обновляем репутацию на экране
+                this.updateRatingDisplayInSearch('primeScreen');
                 
                 console.log('✅ PRIME заполнен:', { age: p.age, steam: p.steam });
             }
@@ -396,6 +447,9 @@ const Search = {
                 
                 if (ageInput && p.age) ageInput.value = p.age;
                 if (steamInput && p.steam) steamInput.value = p.steam;
+                
+                // 🔥 Обновляем репутацию на экране
+                this.updateRatingDisplayInSearch('publicScreen');
                 
                 console.log('✅ PUBLIC заполнен:', { age: p.age, steam: p.steam });
             }
