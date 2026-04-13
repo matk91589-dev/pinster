@@ -1,8 +1,8 @@
 // ============================================
-// ПРОФИЛЬ - v3.3 FINAL (ГАЛОЧКА ПРИ КОПИРОВАНИИ)
+// ПРОФИЛЬ - v3.4 FINAL (С РЕЙТИНГОМ)
 // ============================================
 
-console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v3.3 FINAL)');
+console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v3.4 FINAL)');
 
 // Константы валидации
 const VALIDATION = {
@@ -41,6 +41,7 @@ const Profile = {
     savedSteam: '',
     savedFaceitLink: '',
     savedAvatarUrl: null,
+    savedRating: 0,  // 👈 ДОБАВЛЕНО: сохранённый рейтинг
     tempName: '-',
     tempAge: '',
     tempSteam: '',
@@ -62,6 +63,24 @@ const Profile = {
         age: false,
         steam: false,
         faceit: false
+    },
+    
+    // ========== ОТОБРАЖЕНИЕ РЕЙТИНГА С ЦВЕТОМ ==========
+    updateRatingDisplay() {
+        const ratingInput = document.getElementById('ratingValue');
+        if (ratingInput) {
+            const rating = this.savedRating || 0;
+            ratingInput.value = (rating > 0 ? '+' : '') + rating;
+            
+            // 🔥 ЦВЕТ В ЗАВИСИМОСТИ ОТ ЗНАЧЕНИЯ
+            if (rating > 0) {
+                ratingInput.style.color = '#4CAF50'; // Зелёный
+            } else if (rating < 0) {
+                ratingInput.style.color = '#FF3B30'; // Красный
+            } else {
+                ratingInput.style.color = ''; // Белый (по умолчанию)
+            }
+        }
     },
     
     // ========== ВАЛИДАЦИЯ ==========
@@ -473,6 +492,20 @@ const Profile = {
                     this.isProfileLoaded = true;
                 }
             }
+
+            // 👇 ДОБАВЛЕНО: загружаем рейтинг
+            const ratingResponse = await fetch(`${this.BACKEND_URL}/api/user/rating`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telegram_id: this.telegramId })
+            });
+            
+            const ratingData = await ratingResponse.json();
+            if (ratingData.status === 'ok') {
+                this.savedRating = ratingData.rating;
+                this.updateRatingDisplay();
+            }
+            
         } catch (error) {
             console.error('Ошибка загрузки профиля:', error);
         } finally {
@@ -537,6 +570,7 @@ const Profile = {
         }
         
         this.updateAvatarDisplay();
+        this.updateRatingDisplay(); // 👈 ДОБАВЛЕНО: обновляем отображение рейтинга
         setTimeout(() => this.updateLinksWithCopy(), 50);
     },
     
@@ -976,7 +1010,7 @@ const Profile = {
         if (this.isInitialized) return;
         this.isInitialized = true;
         
-        console.log('🚀 Profile.init() v3.3 FINAL');
+        console.log('🚀 Profile.init() v3.4 FINAL');
         this.telegramId = this.getTelegramId();
         
         this.tempName = this.savedName;
