@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v4.7 FINAL (ДАННЫЕ ИЗ PROFILE РАБОТАЮТ)
+// ПОИСК - v4.8 FINAL (ЖДЁМ PROFILE + РАБОТАЕТ ВЕЗДЕ)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.7 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.8 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -50,7 +50,7 @@ const Search = {
                             self.fillPublicScreen();
                             self.setupPublicValidation();
                         }
-                    }, 100); // Увеличил задержку до 100мс
+                    }, 100);
                 };
                 
                 console.log('✅ showScreen перехвачен');
@@ -75,9 +75,7 @@ const Search = {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
     },
     
-    // 🔥 ИСПРАВЛЕНО: берём данные из Profile, а не из localStorage
     getProfileData() {
-        // Сначала пробуем взять из глобального Profile (он уже загружен с сервера)
         if (window.Profile) {
             console.log('📦 Берём данные из window.Profile');
             return {
@@ -87,7 +85,6 @@ const Search = {
             };
         }
         
-        // Fallback на localStorage
         console.log('📦 Берём данные из localStorage');
         return {
             age: localStorage.getItem('profile_age') || '',
@@ -112,7 +109,6 @@ const Search = {
         return pattern.test(link.trim());
     },
     
-    // ========== ПОДСВЕТКА ОШИБОК ==========
     showError(input, isError) {
         if (!input) return;
         if (isError) {
@@ -124,7 +120,6 @@ const Search = {
         }
     },
     
-    // ========== СЧЁТЧИК КОММЕНТАРИЯ ==========
     setupCommentCounter(commentInput) {
         if (!commentInput) return;
         
@@ -338,57 +333,72 @@ const Search = {
         }
     },
     
-    // 🔥 ИСПРАВЛЕНО: принудительно берём данные из Profile перед заполнением
+    // 🔥 ЖДЁМ PROFILE ПЕРЕД ЗАПОЛНЕНИЕМ
     fillFaceitScreen() {
-        // Ждём немного, чтобы Profile точно загрузился
-        setTimeout(() => {
-            const p = this.getProfileData();
-            const ageInput = document.getElementById('faceitAgeValue');
-            const faceitInput = document.getElementById('faceitLinkInput');
-            
-            if (ageInput && p.age) ageInput.value = p.age;
-            if (faceitInput && p.faceit) faceitInput.value = p.faceit;
-            
-            console.log('✅ FACEIT заполнен:', { age: p.age, faceit: p.faceit });
+        const waitForProfile = setInterval(() => {
+            if (window.Profile && window.Profile.savedAge !== undefined) {
+                clearInterval(waitForProfile);
+                
+                const p = this.getProfileData();
+                const ageInput = document.getElementById('faceitAgeValue');
+                const faceitInput = document.getElementById('faceitLinkInput');
+                
+                if (ageInput && p.age) ageInput.value = p.age;
+                if (faceitInput && p.faceit) faceitInput.value = p.faceit;
+                
+                console.log('✅ FACEIT заполнен:', { age: p.age, faceit: p.faceit });
+            }
         }, 50);
     },
     
     fillPremierScreen() {
-        setTimeout(() => {
-            const p = this.getProfileData();
-            const ageInput = document.getElementById('premierAgeValue');
-            const steamInput = document.getElementById('premierSteamInput');
-            
-            if (ageInput && p.age) ageInput.value = p.age;
-            if (steamInput && p.steam) steamInput.value = p.steam;
-            
-            console.log('✅ PREMIER заполнен:', { age: p.age, steam: p.steam });
+        const waitForProfile = setInterval(() => {
+            if (window.Profile && window.Profile.savedAge !== undefined) {
+                clearInterval(waitForProfile);
+                
+                const p = this.getProfileData();
+                const ageInput = document.getElementById('premierAgeValue');
+                const steamInput = document.getElementById('premierSteamInput');
+                
+                if (ageInput && p.age) ageInput.value = p.age;
+                if (steamInput && p.steam) steamInput.value = p.steam;
+                
+                console.log('✅ PREMIER заполнен:', { age: p.age, steam: p.steam });
+            }
         }, 50);
     },
     
     fillPrimeScreen() {
-        setTimeout(() => {
-            const p = this.getProfileData();
-            const ageInput = document.getElementById('primeAgeValue');
-            const steamInput = document.getElementById('primeSteamInput');
-            
-            if (ageInput && p.age) ageInput.value = p.age;
-            if (steamInput && p.steam) steamInput.value = p.steam;
-            
-            console.log('✅ PRIME заполнен:', { age: p.age, steam: p.steam });
+        const waitForProfile = setInterval(() => {
+            if (window.Profile && window.Profile.savedAge !== undefined) {
+                clearInterval(waitForProfile);
+                
+                const p = this.getProfileData();
+                const ageInput = document.getElementById('primeAgeValue');
+                const steamInput = document.getElementById('primeSteamInput');
+                
+                if (ageInput && p.age) ageInput.value = p.age;
+                if (steamInput && p.steam) steamInput.value = p.steam;
+                
+                console.log('✅ PRIME заполнен:', { age: p.age, steam: p.steam });
+            }
         }, 50);
     },
     
     fillPublicScreen() {
-        setTimeout(() => {
-            const p = this.getProfileData();
-            const ageInput = document.getElementById('publicAgeValue');
-            const steamInput = document.getElementById('publicSteamInput');
-            
-            if (ageInput && p.age) ageInput.value = p.age;
-            if (steamInput && p.steam) steamInput.value = p.steam;
-            
-            console.log('✅ PUBLIC заполнен:', { age: p.age, steam: p.steam });
+        const waitForProfile = setInterval(() => {
+            if (window.Profile && window.Profile.savedAge !== undefined) {
+                clearInterval(waitForProfile);
+                
+                const p = this.getProfileData();
+                const ageInput = document.getElementById('publicAgeValue');
+                const steamInput = document.getElementById('publicSteamInput');
+                
+                if (ageInput && p.age) ageInput.value = p.age;
+                if (steamInput && p.steam) steamInput.value = p.steam;
+                
+                console.log('✅ PUBLIC заполнен:', { age: p.age, steam: p.steam });
+            }
         }, 50);
     },
     
@@ -404,16 +414,14 @@ const Search = {
         console.log(`🔍 Search.start: ${mode}`);
         if (window.Settings) Settings.click();
         
-        // 🔥 Принудительно заполняем поля перед валидацией
         if (mode === 'FACEIT') this.fillFaceitScreen();
         else if (mode === 'PREMIER') this.fillPremierScreen();
         else if (mode === 'PRIME') this.fillPrimeScreen();
         else if (mode === 'PUBLIC') this.fillPublicScreen();
         
-        // Даём время на заполнение
         setTimeout(() => {
             this.doStartValidation(mode);
-        }, 100);
+        }, 150);
     },
     
     doStartValidation(mode) {
@@ -659,7 +667,6 @@ const Search = {
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    window.Search = Search;
-    Search.init();
-});
+// 🔥 СРАЗУ ЗАПИСЫВАЕМ В WINDOW И ИНИЦИАЛИЗИРУЕМ
+window.Search = Search;
+Search.init();
