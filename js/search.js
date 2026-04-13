@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v4.5 FINAL (НОРМАЛЬНОЕ ОТОБРАЖЕНИЕ СВАЙПА)
+// ПОИСК - v4.6 FINAL (ВСЕ 4 РЕЖИМА РАБОТАЮТ)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.5 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v4.6 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -501,12 +501,18 @@ const Search = {
         this.resetTimer();
         this.startTimer();
         
+        // 🔥 ПРАВИЛЬНОЕ ПРЕОБРАЗОВАНИЕ РЕЖИМОВ ДЛЯ БЭКЕНДА
+        let backendMode = mode.toLowerCase();
+        if (backendMode === 'prime' || backendMode === 'public') {
+            backendMode = 'competitive';
+        }
+        
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/start', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 telegram_id,
-                mode: mode.toLowerCase(),
+                mode: backendMode,  // 🔥 ИСПОЛЬЗУЕМ ПРЕОБРАЗОВАННЫЙ РЕЖИМ
                 rating_value: String(data.rating || data.rank),
                 style: data.style,
                 age: data.age,
