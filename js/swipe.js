@@ -1196,7 +1196,18 @@ const Swipe = {
         
         if (playerIdEl) playerIdEl.textContent = player.player_id || '';
         if (playerNickEl) playerNickEl.textContent = player.nick || '';
-        if (ratingEl) ratingEl.textContent = player.trust_rating || '0';
+        if (ratingEl) {
+            const trust = player.trust_rating || 0;
+            ratingEl.textContent = (trust > 0 ? '+' : '') + trust;
+    
+            if (trust > 0) {
+                ratingEl.style.color = '#4CAF50';  // Зелёный
+            } else if (trust < 0) {
+                ratingEl.style.color = '#FF3B30';  // Красный
+            } else {
+                ratingEl.style.color = '';  // Белый
+            }
+        }
         
         const modeFromDB = this.mode ? this.mode.toUpperCase() : null;
         
