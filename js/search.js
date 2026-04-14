@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v5.7 FINAL (ПЕРЕДАЧА РЕЖИМА В СВАЙП)
+// ПОИСК - v5.8 FINAL (СТИЛЬ ПО УМОЛЧАНИЮ FAN)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.7 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.8 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -21,9 +21,10 @@ const Search = {
     
         if (!localStorage.getItem('selected_style')) {
             localStorage.setItem('selected_style', 'fan');
+            console.log('🎨 Установлен стиль по умолчанию: fan');
         }
     
-        // 🔥 ВОССТАНАВЛИВАЕМ СТИЛЬ НА ВСЕХ ЭКРАНАХ
+        // Восстанавливаем стиль на всех экранах
         const savedStyle = localStorage.getItem('selected_style');
         const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
         if (styleBtn) {
@@ -75,17 +76,19 @@ const Search = {
                         }
                         
                         // Восстанавливаем стиль при открытии экрана
-                        let savedStyle = localStorage.getItem('selected_style');
-                        if (!savedStyle) {
-                            savedStyle = 'fan';
-                            localStorage.setItem('selected_style', 'fan');
-                        }
-                        const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
-                        if (styleBtn) {
-                            document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
-                            styleBtn.classList.add('active');
-                            console.log('🎨 Восстановлен активный стиль:', savedStyle);
-                        }
+                        setTimeout(() => {
+                            let savedStyle = localStorage.getItem('selected_style');
+                            if (!savedStyle) {
+                                savedStyle = 'fan';
+                                localStorage.setItem('selected_style', 'fan');
+                            }
+                            const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
+                            if (styleBtn) {
+                                document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+                                styleBtn.classList.add('active');
+                                console.log('🎨 Восстановлен активный стиль для', screenId, ':', savedStyle);
+                            }
+                        }, 100);
                     }, 100);
                 };
                 
@@ -406,6 +409,16 @@ const Search = {
         
         this.updateRatingDisplayInSearch('faceitScreen');
         console.log('✅ FACEIT заполнен мгновенно:', { age: p.age, faceit: p.faceit });
+        
+        setTimeout(() => {
+            const savedStyle = localStorage.getItem('selected_style') || 'fan';
+            const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
+            if (styleBtn) {
+                document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+                styleBtn.classList.add('active');
+                console.log('🎨 Принудительно установлен стиль на FACEIT:', savedStyle);
+            }
+        }, 50);
     },
     
     fillPremierScreen() {
@@ -418,6 +431,16 @@ const Search = {
         
         this.updateRatingDisplayInSearch('premierScreen');
         console.log('✅ PREMIER заполнен мгновенно:', { age: p.age, steam: p.steam });
+        
+        setTimeout(() => {
+            const savedStyle = localStorage.getItem('selected_style') || 'fan';
+            const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
+            if (styleBtn) {
+                document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+                styleBtn.classList.add('active');
+                console.log('🎨 Принудительно установлен стиль на PREMIER:', savedStyle);
+            }
+        }, 50);
     },
     
     fillPrimeScreen() {
@@ -430,27 +453,55 @@ const Search = {
         
         this.updateRatingDisplayInSearch('primeScreen');
         console.log('✅ PRIME заполнен мгновенно:', { age: p.age, steam: p.steam });
-    },
-    
-    fillPremierScreen() {
-        const p = this.getProfileData();
-        const ageInput = document.getElementById('premierAgeValue');
-        const steamInput = document.getElementById('premierSteamInput');
-    
-        if (ageInput && p.age) ageInput.value = p.age;
-        if (steamInput && p.steam) steamInput.value = p.steam;
-    
-        this.updateRatingDisplayInSearch('premierScreen');
-    
-        // 🔥 ПРИНУДИТЕЛЬНО ВОССТАНАВЛИВАЕМ СТИЛЬ
+        
         setTimeout(() => {
             const savedStyle = localStorage.getItem('selected_style') || 'fan';
             const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
             if (styleBtn) {
                 document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
                 styleBtn.classList.add('active');
-                console.log('🎨 Принудительно установлен стиль на PREMIER:', savedStyle);
+                console.log('🎨 Принудительно установлен стиль на PRIME:', savedStyle);
             }
+        }, 50);
+    },
+    
+    fillPublicScreen() {
+        const p = this.getProfileData();
+        const ageInput = document.getElementById('publicAgeValue');
+        const steamInput = document.getElementById('publicSteamInput');
+        
+        if (ageInput && p.age) ageInput.value = p.age;
+        if (steamInput && p.steam) steamInput.value = p.steam;
+        
+        this.updateRatingDisplayInSearch('publicScreen');
+        console.log('✅ PUBLIC заполнен мгновенно:', { age: p.age, steam: p.steam });
+        
+        setTimeout(() => {
+            const savedStyle = localStorage.getItem('selected_style') || 'fan';
+            const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
+            if (styleBtn) {
+                document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+                styleBtn.classList.add('active');
+                console.log('🎨 Принудительно установлен стиль на PUBLIC:', savedStyle);
+            }
+        }, 50);
+    },
+    
+    setStyle(style, element) {
+        console.log('🎨 setStyle:', style);
+        localStorage.setItem('selected_style', style);
+        const parent = element.parentElement;
+        parent.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+        element.classList.add('active');
+        if (window.Settings) Settings.click();
+    },
+    
+    start(mode, value) {
+        console.log(`🔍 Search.start: ${mode}`);
+        if (window.Settings) Settings.click();
+        
+        setTimeout(() => {
+            this.doStartValidation(mode);
         }, 50);
     },
     
@@ -667,7 +718,7 @@ const Search = {
             this.timerInterval = null;
         }
         
-        // 🔥 ПЕРЕДАЕМ РЕЖИМ В OPPONENT ДЛЯ СВАЙПА
+        // Передаем режим в opponent для свайпа
         if (data.opponent && !data.opponent.mode) {
             data.opponent.mode = this.currentMode;
             console.log('🔥 Добавили режим в opponent:', this.currentMode);
