@@ -1,5 +1,5 @@
 // ============================================
-// ПОИСК - v5.3 FINAL (ФИКС СТИЛЯ И ССЫЛОК)
+// ПОИСК - v5.3 FINAL (ФИКС СТИЛЯ)
 // ============================================
 
 console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.3 FINAL)');
@@ -18,12 +18,6 @@ const Search = {
         this.resetTimer();
         this.ensureMatchAccepted();
         this.hookIntoScreenChange();
-        
-        // Восстанавливаем сохраненный стиль при загрузке
-        const savedStyle = localStorage.getItem('selected_style');
-        if (savedStyle) {
-            console.log('🎨 Восстановлен стиль из localStorage:', savedStyle);
-        }
     },
 
     hookIntoScreenChange() {
@@ -55,16 +49,6 @@ const Search = {
                             console.log('🎯 Заполняем PUBLIC');
                             self.fillPublicScreen();
                             self.setupPublicValidation();
-                        }
-                        
-                        // Восстанавливаем стиль при открытии экрана
-                        const savedStyle = localStorage.getItem('selected_style');
-                        if (savedStyle) {
-                            const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
-                            if (styleBtn) {
-                                document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
-                                styleBtn.classList.add('active');
-                            }
                         }
                     }, 100);
                 };
@@ -446,9 +430,6 @@ const Search = {
     
     setStyle(style, element) {
         console.log('🎨 setStyle:', style);
-        // Сохраняем в localStorage
-        localStorage.setItem('selected_style', style);
-        // Визуально меняем
         const parent = element.parentElement;
         parent.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
         element.classList.add('active');
@@ -541,31 +522,20 @@ const Search = {
         
         const data = this.collectData(mode);
         
-        console.log('📦 COLLECT DATA РЕЗУЛЬТАТ:', {
-            mode: mode,
-            steam_link: data.steam_link,
-            faceit_link: data.faceit_link,
-            style: data.style
-        });
-        
         this.doSearch(mode, data);
     },
     
     collectData(mode) {
         const data = { style: 'fan', age: 0, steam_link: '', faceit_link: '', rating: 0, rank: '', comment: '' };
         
-        // 🔥 СТИЛЬ: сначала из localStorage, потом из DOM
-        const savedStyle = localStorage.getItem('selected_style');
-        if (savedStyle && (savedStyle === 'fan' || savedStyle === 'tryhard')) {
-            data.style = savedStyle;
-            console.log('🎨 Стиль из localStorage:', data.style);
+        // Определяем стиль
+        const activeStyle = document.querySelector('.style-option.active');
+        if (activeStyle && activeStyle.classList.contains('tryhard')) {
+            data.style = 'tryhard';
         } else {
-            const activeStyle = document.querySelector('.style-option.active');
-            if (activeStyle) {
-                data.style = activeStyle.classList.contains('tryhard') ? 'tryhard' : 'fan';
-            }
-            console.log('🎨 Стиль из DOM:', data.style);
+            data.style = 'fan';
         }
+        console.log('🎨 Выбранный стиль:', data.style);
         
         if (mode === 'FACEIT') {
             data.rating = parseInt(document.getElementById('faceitELOInput')?.value) || 0;
@@ -589,18 +559,14 @@ const Search = {
             data.comment = document.getElementById('publicComment')?.value || '';
         }
         
-        // 🔥 АВТОПОДСТАНОВКА ИЗ ПРОФИЛЯ
+        // Автоподстановка из профиля
         const p = this.getProfileData();
         if (!data.steam_link && p.steam) {
             data.steam_link = p.steam;
-            console.log('📦 Автоподстановка Steam из профиля:', data.steam_link);
         }
         if (!data.faceit_link && p.faceit) {
             data.faceit_link = p.faceit;
-            console.log('📦 Автоподстановка Faceit из профиля:', data.faceit_link);
         }
-        
-        console.log('📦 ИТОГОВЫЕ ДАННЫЕ:', { steam: data.steam_link, faceit: data.faceit_link, style: data.style });
         
         return data;
     },
@@ -620,15 +586,14 @@ const Search = {
             backendMode = 'competitive';
         }
         
-        // 🔥 ПРАВИЛЬНАЯ ОТПРАВКА ССЫЛОК В ЗАВИСИМОСТИ ОТ РЕЖИМА
         const requestBody = {
             telegram_id: telegram_id,
             mode: backendMode,
             rating_value: String(data.rating || data.rank),
             style: data.style,
             age: data.age,
-            steam_link: (mode === 'PREMIER' || mode === 'PRIME' || mode === 'PUBLIC') ? (data.steam_link || null) : null,
-            faceit_link: (mode === 'FACEIT') ? (data.faceit_link || null) : null,
+            steam_link: data.steam_link || null,
+            faceit_link: data.faceit_link || null,
             comment: data.comment || ''
         };
         
