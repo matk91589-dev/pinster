@@ -19,27 +19,28 @@ const Search = {
         this.ensureMatchAccepted();
         this.hookIntoScreenChange();
     
-        // Устанавливаем стиль по умолчанию fan
         if (!localStorage.getItem('selected_style')) {
             localStorage.setItem('selected_style', 'fan');
-            console.log('🎨 Установлен стиль по умолчанию: fan');
         }
     
+        // 🔥 ВОССТАНАВЛИВАЕМ СТИЛЬ НА ВСЕХ ЭКРАНАХ
         const savedStyle = localStorage.getItem('selected_style');
-        console.log('🎨 Текущий стиль из localStorage:', savedStyle);
+        const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
+        if (styleBtn) {
+            document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+            styleBtn.classList.add('active');
+            console.log('🎨 Восстановлен стиль:', savedStyle);
+        }
     
-        // 🔥 ПРИНУДИТЕЛЬНО УСТАНАВЛИВАЕМ АКТИВНЫЙ СТИЛЬ ПРИ ЗАГРУЗКЕ
-        setTimeout(() => {
-            const styleToActivate = savedStyle || 'fan';
-            const styleBtn = document.querySelector(`.style-option.${styleToActivate}`);
-            if (styleBtn) {
+        // Наблюдатель за появлением новых экранов
+        const observer = new MutationObserver(() => {
+            const styleBtnAgain = document.querySelector(`.style-option.${localStorage.getItem('selected_style') || 'fan'}`);
+            if (styleBtnAgain && !styleBtnAgain.classList.contains('active')) {
                 document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
-                styleBtn.classList.add('active');
-                console.log('🔥 Принудительно установлен активный стиль:', styleToActivate);
-            } else {
-                console.warn('⚠️ Кнопка стиля не найдена:', `.style-option.${styleToActivate}`);
+                styleBtnAgain.classList.add('active');
             }
-        }, 100);
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
     },
 
     hookIntoScreenChange() {
