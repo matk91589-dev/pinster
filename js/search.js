@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v5.6 FINAL (БЫСТРАЯ ПОДСТАНОВКА)
+// ПОИСК - v5.7 FINAL (ПЕРЕДАЧА РЕЖИМА В СВАЙП)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.6 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.7 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -22,7 +22,7 @@ const Search = {
         // Устанавливаем стиль по умолчанию fan
         if (!localStorage.getItem('selected_style')) {
             localStorage.setItem('selected_style', 'fan');
-            console.log('🎨 Установлен стиль по умолчанию: fan');
+            console.log('🎨 Установлен стиль по ум default: fan');
         }
         
         const savedStyle = localStorage.getItem('selected_style');
@@ -387,7 +387,6 @@ const Search = {
         const ageInput = document.getElementById('faceitAgeValue');
         const faceitInput = document.getElementById('faceitLinkInput');
         
-        // Мгновенная подстановка из localStorage
         if (ageInput && p.age) ageInput.value = p.age;
         if (faceitInput && p.faceit) faceitInput.value = p.faceit;
         
@@ -400,7 +399,6 @@ const Search = {
         const ageInput = document.getElementById('premierAgeValue');
         const steamInput = document.getElementById('premierSteamInput');
         
-        // Мгновенная подстановка из localStorage
         if (ageInput && p.age) ageInput.value = p.age;
         if (steamInput && p.steam) steamInput.value = p.steam;
         
@@ -570,9 +568,11 @@ const Search = {
         
         if (!data.steam_link && steamFromStorage && steamFromStorage !== '') {
             data.steam_link = steamFromStorage;
+            console.log('🔥 Подставлен Steam из localStorage:', steamFromStorage);
         }
         if (!data.faceit_link && faceitFromStorage && faceitFromStorage !== '') {
             data.faceit_link = faceitFromStorage;
+            console.log('🔥 Подставлен Faceit из localStorage:', faceitFromStorage);
         }
         
         console.log('📦 ИТОГОВЫЕ ДАННЫЕ:', { steam: data.steam_link, faceit: data.faceit_link, style: data.style });
@@ -659,6 +659,12 @@ const Search = {
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
             this.timerInterval = null;
+        }
+        
+        // 🔥 ПЕРЕДАЕМ РЕЖИМ В OPPONENT ДЛЯ СВАЙПА
+        if (data.opponent && !data.opponent.mode) {
+            data.opponent.mode = this.currentMode;
+            console.log('🔥 Добавили режим в opponent:', this.currentMode);
         }
         
         if (window.App && window.App.showScreen) {
