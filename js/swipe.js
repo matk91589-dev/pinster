@@ -1181,6 +1181,9 @@ const Swipe = {
     },
     
     showPlayer(player) {
+        console.log('👤 showPlayer() ПОЛНЫЙ ОБЪЕКТ:', JSON.parse(JSON.stringify(player)));
+        console.log('🔍 steam_link:', player.steam_link);
+        console.log('🔍 faceit_link:', player.faceit_link);
         console.log('👤 showPlayer()', player);
         this.currentPlayer = player;
         
