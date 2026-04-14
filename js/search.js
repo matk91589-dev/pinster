@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v5.3 FINAL (ФИКС СТИЛЯ)
+// ПОИСК - v5.4 FINAL (ПРИНУДИТЕЛЬНАЯ ПОДСТАНОВКА)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.3 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.4 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -369,8 +369,13 @@ const Search = {
                 const ageInput = document.getElementById('faceitAgeValue');
                 const faceitInput = document.getElementById('faceitLinkInput');
                 
-                if (ageInput && p.age && !ageInput.value) ageInput.value = p.age;
-                if (faceitInput && p.faceit && !faceitInput.value) faceitInput.value = p.faceit;
+                // Возраст
+                if (ageInput && p.age) ageInput.value = p.age;
+                // Ссылка - принудительно
+                if (faceitInput && p.faceit) {
+                    faceitInput.value = p.faceit;
+                    console.log('🔥 Faceit ссылка принудительно:', p.faceit);
+                }
                 
                 this.updateRatingDisplayInSearch('faceitScreen');
             }
@@ -386,8 +391,13 @@ const Search = {
                 const ageInput = document.getElementById('premierAgeValue');
                 const steamInput = document.getElementById('premierSteamInput');
                 
-                if (ageInput && p.age && !ageInput.value) ageInput.value = p.age;
-                if (steamInput && p.steam && !steamInput.value) steamInput.value = p.steam;
+                // Возраст
+                if (ageInput && p.age) ageInput.value = p.age;
+                // Ссылка - принудительно как возраст
+                if (steamInput && p.steam) {
+                    steamInput.value = p.steam;
+                    console.log('🔥 Steam ссылка принудительно:', p.steam);
+                }
                 
                 this.updateRatingDisplayInSearch('premierScreen');
             }
@@ -403,8 +413,11 @@ const Search = {
                 const ageInput = document.getElementById('primeAgeValue');
                 const steamInput = document.getElementById('primeSteamInput');
                 
-                if (ageInput && p.age && !ageInput.value) ageInput.value = p.age;
-                if (steamInput && p.steam && !steamInput.value) steamInput.value = p.steam;
+                if (ageInput && p.age) ageInput.value = p.age;
+                if (steamInput && p.steam) {
+                    steamInput.value = p.steam;
+                    console.log('🔥 Steam ссылка принудительно:', p.steam);
+                }
                 
                 this.updateRatingDisplayInSearch('primeScreen');
             }
@@ -420,8 +433,11 @@ const Search = {
                 const ageInput = document.getElementById('publicAgeValue');
                 const steamInput = document.getElementById('publicSteamInput');
                 
-                if (ageInput && p.age && !ageInput.value) ageInput.value = p.age;
-                if (steamInput && p.steam && !steamInput.value) steamInput.value = p.steam;
+                if (ageInput && p.age) ageInput.value = p.age;
+                if (steamInput && p.steam) {
+                    steamInput.value = p.steam;
+                    console.log('🔥 Steam ссылка принудительно:', p.steam);
+                }
                 
                 this.updateRatingDisplayInSearch('publicScreen');
             }
@@ -528,9 +544,11 @@ const Search = {
     collectData(mode) {
         const data = { style: 'fan', age: 0, steam_link: '', faceit_link: '', rating: 0, rank: '', comment: '' };
         
-        // Определяем стиль
-        const activeStyle = document.querySelector('.style-option.active');
-        if (activeStyle && activeStyle.classList.contains('tryhard')) {
+        // 🔥 ПРЯМОЕ ОПРЕДЕЛЕНИЕ СТИЛЯ - проверяем обе кнопки
+        const tryhardBtn = document.querySelector('.style-option.tryhard');
+        const fanBtn = document.querySelector('.style-option.fan');
+        
+        if (tryhardBtn && tryhardBtn.classList.contains('active')) {
             data.style = 'tryhard';
         } else {
             data.style = 'fan';
@@ -542,30 +560,25 @@ const Search = {
             data.age = parseInt(document.getElementById('faceitAgeValue')?.value) || 0;
             data.faceit_link = document.getElementById('faceitLinkInput')?.value || '';
             data.comment = document.getElementById('faceitComment')?.value || '';
+            console.log('📝 FACEIT faceit_link:', data.faceit_link);
         } else if (mode === 'PREMIER') {
             data.rating = parseInt(document.getElementById('premierRatingInput')?.value) || 0;
             data.age = parseInt(document.getElementById('premierAgeValue')?.value) || 0;
             data.steam_link = document.getElementById('premierSteamInput')?.value || '';
             data.comment = document.getElementById('premierComment')?.value || '';
+            console.log('📝 PREMIER steam_link:', data.steam_link);
         } else if (mode === 'PRIME') {
             data.rank = document.getElementById('primeRankSelect')?.value || '';
             data.age = parseInt(document.getElementById('primeAgeValue')?.value) || 0;
             data.steam_link = document.getElementById('primeSteamInput')?.value || '';
             data.comment = document.getElementById('primeComment')?.value || '';
+            console.log('📝 PRIME steam_link:', data.steam_link);
         } else if (mode === 'PUBLIC') {
             data.rank = document.getElementById('publicRankSelect')?.value || '';
             data.age = parseInt(document.getElementById('publicAgeValue')?.value) || 0;
             data.steam_link = document.getElementById('publicSteamInput')?.value || '';
             data.comment = document.getElementById('publicComment')?.value || '';
-        }
-        
-        // Автоподстановка из профиля
-        const p = this.getProfileData();
-        if (!data.steam_link && p.steam) {
-            data.steam_link = p.steam;
-        }
-        if (!data.faceit_link && p.faceit) {
-            data.faceit_link = p.faceit;
+            console.log('📝 PUBLIC steam_link:', data.steam_link);
         }
         
         return data;
