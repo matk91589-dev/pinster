@@ -432,33 +432,25 @@ const Search = {
         console.log('✅ PRIME заполнен мгновенно:', { age: p.age, steam: p.steam });
     },
     
-    fillPublicScreen() {
+    fillPremierScreen() {
         const p = this.getProfileData();
-        const ageInput = document.getElementById('publicAgeValue');
-        const steamInput = document.getElementById('publicSteamInput');
-        
+        const ageInput = document.getElementById('premierAgeValue');
+        const steamInput = document.getElementById('premierSteamInput');
+    
         if (ageInput && p.age) ageInput.value = p.age;
         if (steamInput && p.steam) steamInput.value = p.steam;
-        
-        this.updateRatingDisplayInSearch('publicScreen');
-        console.log('✅ PUBLIC заполнен мгновенно:', { age: p.age, steam: p.steam });
-    },
     
-    setStyle(style, element) {
-        console.log('🎨 setStyle:', style);
-        localStorage.setItem('selected_style', style);
-        const parent = element.parentElement;
-        parent.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
-        element.classList.add('active');
-        if (window.Settings) Settings.click();
-    },
+        this.updateRatingDisplayInSearch('premierScreen');
     
-    start(mode, value) {
-        console.log(`🔍 Search.start: ${mode}`);
-        if (window.Settings) Settings.click();
-        
+        // 🔥 ПРИНУДИТЕЛЬНО ВОССТАНАВЛИВАЕМ СТИЛЬ
         setTimeout(() => {
-            this.doStartValidation(mode);
+            const savedStyle = localStorage.getItem('selected_style') || 'fan';
+            const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
+            if (styleBtn) {
+                document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+                styleBtn.classList.add('active');
+                console.log('🎨 Принудительно установлен стиль на PREMIER:', savedStyle);
+            }
         }, 50);
     },
     
