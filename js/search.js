@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v5.5 FINAL (ПРИНУДИТЕЛЬНАЯ ПОДСТАНОВКА ИЗ localStorage)
+// ПОИСК - v5.6 FINAL (БЫСТРАЯ ПОДСТАНОВКА)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.5 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.6 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -19,11 +19,14 @@ const Search = {
         this.ensureMatchAccepted();
         this.hookIntoScreenChange();
         
-        // Восстанавливаем стиль при загрузке
-        const savedStyle = localStorage.getItem('selected_style');
-        if (savedStyle) {
-            console.log('🎨 Восстановлен стиль из localStorage:', savedStyle);
+        // Устанавливаем стиль по умолчанию fan
+        if (!localStorage.getItem('selected_style')) {
+            localStorage.setItem('selected_style', 'fan');
+            console.log('🎨 Установлен стиль по умолчанию: fan');
         }
+        
+        const savedStyle = localStorage.getItem('selected_style');
+        console.log('🎨 Текущий стиль из localStorage:', savedStyle);
     },
 
     hookIntoScreenChange() {
@@ -58,14 +61,16 @@ const Search = {
                         }
                         
                         // Восстанавливаем стиль при открытии экрана
-                        const savedStyle = localStorage.getItem('selected_style');
-                        if (savedStyle) {
-                            const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
-                            if (styleBtn) {
-                                document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
-                                styleBtn.classList.add('active');
-                                console.log('🎨 Восстановлен активный стиль:', savedStyle);
-                            }
+                        let savedStyle = localStorage.getItem('selected_style');
+                        if (!savedStyle) {
+                            savedStyle = 'fan';
+                            localStorage.setItem('selected_style', 'fan');
+                        }
+                        const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
+                        if (styleBtn) {
+                            document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+                            styleBtn.classList.add('active');
+                            console.log('🎨 Восстановлен активный стиль:', savedStyle);
                         }
                     }, 100);
                 };
@@ -378,88 +383,57 @@ const Search = {
     },
     
     fillFaceitScreen() {
-        const waitForProfile = setInterval(() => {
-            if (window.Profile && window.Profile.savedAge !== undefined) {
-                clearInterval(waitForProfile);
-                
-                const p = this.getProfileData();
-                const ageInput = document.getElementById('faceitAgeValue');
-                const faceitInput = document.getElementById('faceitLinkInput');
-                
-                if (ageInput && p.age) ageInput.value = p.age;
-                if (faceitInput && p.faceit) {
-                    faceitInput.value = p.faceit;
-                    console.log('🔥 Faceit ссылка принудительно:', p.faceit);
-                }
-                
-                this.updateRatingDisplayInSearch('faceitScreen');
-            }
-        }, 50);
+        const p = this.getProfileData();
+        const ageInput = document.getElementById('faceitAgeValue');
+        const faceitInput = document.getElementById('faceitLinkInput');
+        
+        // Мгновенная подстановка из localStorage
+        if (ageInput && p.age) ageInput.value = p.age;
+        if (faceitInput && p.faceit) faceitInput.value = p.faceit;
+        
+        this.updateRatingDisplayInSearch('faceitScreen');
+        console.log('✅ FACEIT заполнен мгновенно:', { age: p.age, faceit: p.faceit });
     },
     
     fillPremierScreen() {
-        const waitForProfile = setInterval(() => {
-            if (window.Profile && window.Profile.savedAge !== undefined) {
-                clearInterval(waitForProfile);
-                
-                const p = this.getProfileData();
-                const ageInput = document.getElementById('premierAgeValue');
-                const steamInput = document.getElementById('premierSteamInput');
-                
-                if (ageInput && p.age) ageInput.value = p.age;
-                if (steamInput && p.steam) {
-                    steamInput.value = p.steam;
-                    console.log('🔥 Steam ссылка принудительно:', p.steam);
-                }
-                
-                this.updateRatingDisplayInSearch('premierScreen');
-            }
-        }, 50);
+        const p = this.getProfileData();
+        const ageInput = document.getElementById('premierAgeValue');
+        const steamInput = document.getElementById('premierSteamInput');
+        
+        // Мгновенная подстановка из localStorage
+        if (ageInput && p.age) ageInput.value = p.age;
+        if (steamInput && p.steam) steamInput.value = p.steam;
+        
+        this.updateRatingDisplayInSearch('premierScreen');
+        console.log('✅ PREMIER заполнен мгновенно:', { age: p.age, steam: p.steam });
     },
     
     fillPrimeScreen() {
-        const waitForProfile = setInterval(() => {
-            if (window.Profile && window.Profile.savedAge !== undefined) {
-                clearInterval(waitForProfile);
-                
-                const p = this.getProfileData();
-                const ageInput = document.getElementById('primeAgeValue');
-                const steamInput = document.getElementById('primeSteamInput');
-                
-                if (ageInput && p.age) ageInput.value = p.age;
-                if (steamInput && p.steam) {
-                    steamInput.value = p.steam;
-                    console.log('🔥 Steam ссылка принудительно:', p.steam);
-                }
-                
-                this.updateRatingDisplayInSearch('primeScreen');
-            }
-        }, 50);
+        const p = this.getProfileData();
+        const ageInput = document.getElementById('primeAgeValue');
+        const steamInput = document.getElementById('primeSteamInput');
+        
+        if (ageInput && p.age) ageInput.value = p.age;
+        if (steamInput && p.steam) steamInput.value = p.steam;
+        
+        this.updateRatingDisplayInSearch('primeScreen');
+        console.log('✅ PRIME заполнен мгновенно:', { age: p.age, steam: p.steam });
     },
     
     fillPublicScreen() {
-        const waitForProfile = setInterval(() => {
-            if (window.Profile && window.Profile.savedAge !== undefined) {
-                clearInterval(waitForProfile);
-                
-                const p = this.getProfileData();
-                const ageInput = document.getElementById('publicAgeValue');
-                const steamInput = document.getElementById('publicSteamInput');
-                
-                if (ageInput && p.age) ageInput.value = p.age;
-                if (steamInput && p.steam) {
-                    steamInput.value = p.steam;
-                    console.log('🔥 Steam ссылка принудительно:', p.steam);
-                }
-                
-                this.updateRatingDisplayInSearch('publicScreen');
-            }
-        }, 50);
+        const p = this.getProfileData();
+        const ageInput = document.getElementById('publicAgeValue');
+        const steamInput = document.getElementById('publicSteamInput');
+        
+        if (ageInput && p.age) ageInput.value = p.age;
+        if (steamInput && p.steam) steamInput.value = p.steam;
+        
+        this.updateRatingDisplayInSearch('publicScreen');
+        console.log('✅ PUBLIC заполнен мгновенно:', { age: p.age, steam: p.steam });
     },
     
     setStyle(style, element) {
         console.log('🎨 setStyle:', style);
-        // Сохраняем в localStorage
         localStorage.setItem('selected_style', style);
         const parent = element.parentElement;
         parent.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
@@ -473,7 +447,7 @@ const Search = {
         
         setTimeout(() => {
             this.doStartValidation(mode);
-        }, 150);
+        }, 50);
     },
     
     doStartValidation(mode) {
@@ -559,20 +533,14 @@ const Search = {
     collectData(mode) {
         const data = { style: 'fan', age: 0, steam_link: '', faceit_link: '', rating: 0, rank: '', comment: '' };
         
-        // 🔥 СТИЛЬ - сначала из localStorage, потом из DOM
+        // Стиль из localStorage
         const savedStyle = localStorage.getItem('selected_style');
         if (savedStyle === 'tryhard') {
             data.style = 'tryhard';
-            console.log('🎨 Стиль из localStorage:', data.style);
         } else {
-            const tryhardBtn = document.querySelector('.style-option.tryhard');
-            if (tryhardBtn && tryhardBtn.classList.contains('active')) {
-                data.style = 'tryhard';
-            } else {
-                data.style = 'fan';
-            }
-            console.log('🎨 Стиль из DOM:', data.style);
+            data.style = 'fan';
         }
+        console.log('🎨 Стиль для отправки:', data.style);
         
         if (mode === 'FACEIT') {
             data.rating = parseInt(document.getElementById('faceitELOInput')?.value) || 0;
@@ -596,17 +564,15 @@ const Search = {
             data.comment = document.getElementById('publicComment')?.value || '';
         }
         
-        // 🔥 ПРИНУДИТЕЛЬНАЯ ПОДСТАНОВКА ИЗ localStorage
+        // Принудительная подстановка из localStorage если поля пустые
         const steamFromStorage = localStorage.getItem('profile_steam');
         const faceitFromStorage = localStorage.getItem('profile_faceit');
         
         if (!data.steam_link && steamFromStorage && steamFromStorage !== '') {
             data.steam_link = steamFromStorage;
-            console.log('🔥 ПРИНУДИТЕЛЬНО из localStorage Steam:', steamFromStorage);
         }
         if (!data.faceit_link && faceitFromStorage && faceitFromStorage !== '') {
             data.faceit_link = faceitFromStorage;
-            console.log('🔥 ПРИНУДИТЕЛЬНО из localStorage Faceit:', faceitFromStorage);
         }
         
         console.log('📦 ИТОГОВЫЕ ДАННЫЕ:', { steam: data.steam_link, faceit: data.faceit_link, style: data.style });
@@ -655,7 +621,7 @@ const Search = {
             else App.showAlert(res.message || 'Ошибка');
         })
         .catch(err => {
-            console.error('❌ Ошибка соединения:', err);
+            console.error('❌ Ошибка:', err);
             App.showAlert('Ошибка соединения');
         });
     },
