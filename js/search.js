@@ -380,11 +380,9 @@ const Search = {
                 const p = this.getProfileData();
                 const ageInput = document.getElementById('faceitAgeValue');
                 const faceitInput = document.getElementById('faceitLinkInput');
-                const ratingInput = document.getElementById('faceitELOInput');
                 
                 if (ageInput && p.age) ageInput.value = p.age;
                 if (faceitInput && p.faceit) faceitInput.value = p.faceit;
-                if (ratingInput && p.rating) ratingInput.value = p.rating;
                 
                 // 🔥 Обновляем репутацию на экране
                 this.updateRatingDisplayInSearch('faceitScreen');
@@ -402,11 +400,9 @@ const Search = {
                 const p = this.getProfileData();
                 const ageInput = document.getElementById('premierAgeValue');
                 const steamInput = document.getElementById('premierSteamInput');
-                const ratingInput = document.getElementById('premierRatingInput');
                 
                 if (ageInput && p.age) ageInput.value = p.age;
                 if (steamInput && p.steam) steamInput.value = p.steam;
-                if (ratingInput && p.rating) ratingInput.value = p.rating;
                 
                 // 🔥 Обновляем репутацию на экране
                 this.updateRatingDisplayInSearch('premierScreen');
