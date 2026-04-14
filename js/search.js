@@ -18,15 +18,28 @@ const Search = {
         this.resetTimer();
         this.ensureMatchAccepted();
         this.hookIntoScreenChange();
-        
+    
         // Устанавливаем стиль по умолчанию fan
         if (!localStorage.getItem('selected_style')) {
             localStorage.setItem('selected_style', 'fan');
-            console.log('🎨 Установлен стиль по ум default: fan');
+            console.log('🎨 Установлен стиль по умолчанию: fan');
         }
-        
+    
         const savedStyle = localStorage.getItem('selected_style');
         console.log('🎨 Текущий стиль из localStorage:', savedStyle);
+    
+        // 🔥 ПРИНУДИТЕЛЬНО УСТАНАВЛИВАЕМ АКТИВНЫЙ СТИЛЬ ПРИ ЗАГРУЗКЕ
+        setTimeout(() => {
+            const styleToActivate = savedStyle || 'fan';
+            const styleBtn = document.querySelector(`.style-option.${styleToActivate}`);
+            if (styleBtn) {
+                document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+                styleBtn.classList.add('active');
+                console.log('🔥 Принудительно установлен активный стиль:', styleToActivate);
+            } else {
+                console.warn('⚠️ Кнопка стиля не найдена:', `.style-option.${styleToActivate}`);
+            }
+        }, 100);
     },
 
     hookIntoScreenChange() {
