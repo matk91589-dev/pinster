@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v5.1 FINAL (ИСПРАВЛЕНА ОТПРАВКА ССЫЛОК)
+// ПОИСК - v5.2 FINAL (АВТОПОДСТАНОВКА ИЗ ПРОФИЛЯ)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.1 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.2 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -373,7 +373,6 @@ const Search = {
                 const ageInput = document.getElementById('faceitAgeValue');
                 const faceitInput = document.getElementById('faceitLinkInput');
                 
-                // Заполняем только возраст и ссылку из профиля, НЕ затираем то что ввел пользователь
                 if (ageInput && p.age && !ageInput.value) ageInput.value = p.age;
                 if (faceitInput && p.faceit && !faceitInput.value) faceitInput.value = p.faceit;
                 
@@ -393,7 +392,6 @@ const Search = {
                 const ageInput = document.getElementById('premierAgeValue');
                 const steamInput = document.getElementById('premierSteamInput');
                 
-                // Заполняем только возраст и ссылку из профиля, НЕ затираем то что ввел пользователь
                 if (ageInput && p.age && !ageInput.value) ageInput.value = p.age;
                 if (steamInput && p.steam && !steamInput.value) steamInput.value = p.steam;
                 
@@ -443,10 +441,12 @@ const Search = {
     },
     
     setStyle(style, element) {
+        console.log('🎨 setStyle вызван с style:', style);
         const parent = element.parentElement;
         parent.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
         element.classList.add('active');
         localStorage.setItem('selected_style', style);
+        console.log('🎨 Теперь активный класс у:', document.querySelector('.style-option.active')?.classList);
         if (window.Settings) Settings.click();
     },
     
@@ -545,7 +545,6 @@ const Search = {
         
         const data = this.collectData(mode);
         
-        // 🔥 ПОДРОБНЫЙ ЛОГ ПЕРЕД ОТПРАВКОЙ
         console.log('📦 COLLECT DATA РЕЗУЛЬТАТ:', {
             mode: mode,
             steam_link: data.steam_link,
@@ -564,7 +563,11 @@ const Search = {
         const data = { style: 'fan', age: 0, steam_link: '', faceit_link: '', rating: 0, rank: '', comment: '' };
         
         const activeStyle = document.querySelector('.style-option.active');
-        if (activeStyle) data.style = activeStyle.classList.contains('fan') ? 'fan' : 'tryhard';
+        console.log('🎨 Активный стиль в DOM:', activeStyle?.classList);
+        if (activeStyle) {
+            data.style = activeStyle.classList.contains('tryhard') ? 'tryhard' : 'fan';
+        }
+        console.log('🎨 Выбранный стиль:', data.style);
         
         if (mode === 'FACEIT') {
             data.rating = parseInt(document.getElementById('faceitELOInput')?.value) || 0;
@@ -591,6 +594,27 @@ const Search = {
             data.comment = document.getElementById('publicComment')?.value || '';
             console.log('📝 PUBLIC сбор:', { steam_link: data.steam_link, rank: data.rank });
         }
+        
+        // 🔥 АВТОПОДСТАНОВКА ИЗ ПРОФИЛЯ ЕСЛИ ПОЛЕ ПУСТОЕ
+        const p = this.getProfileData();
+        if (!data.steam_link && p.steam) {
+            data.steam_link = p.steam;
+            console.log('📦 Автоподстановка Steam из профиля:', data.steam_link);
+            // Заполняем поле ввода
+            let steamInput = null;
+            if (mode === 'PREMIER') steamInput = document.getElementById('premierSteamInput');
+            else if (mode === 'PRIME') steamInput = document.getElementById('primeSteamInput');
+            else if (mode === 'PUBLIC') steamInput = document.getElementById('publicSteamInput');
+            if (steamInput && !steamInput.value) steamInput.value = p.steam;
+        }
+        if (!data.faceit_link && p.faceit) {
+            data.faceit_link = p.faceit;
+            console.log('📦 Автоподстановка Faceit из профиля:', data.faceit_link);
+            const faceitInput = document.getElementById('faceitLinkInput');
+            if (faceitInput && !faceitInput.value) faceitInput.value = p.faceit;
+        }
+        
+        console.log('📦 ИТОГОВЫЕ ДАННЫЕ ДЛЯ ОТПРАВКИ:', { steam: data.steam_link, faceit: data.faceit_link, style: data.style });
         
         return data;
     },
