@@ -596,8 +596,12 @@ const Swipe = {
         
         this.isWaitingMode = false;
         
+        // 🔥 ПЕРЕДАЕМ РЕЖИМ ИЗ OPPONENT
+        const modeFromOpponent = opponent.mode || 'PREMIER';
+        console.log('🔥 Режим из opponent:', modeFromOpponent);
+        
         if (!this.isInitialized) {
-            this.init(opponent.mode || 'FACEIT');
+            this.init(modeFromOpponent);
         }
         
         if (this.currentMatchId === matchId) return;
@@ -1035,7 +1039,6 @@ const Swipe = {
         }
     },
     
-    // 🔥 ФИКС: При отклонении возвращаемся в ПОИСК, а не на главную
     rejectPlayer() {
         console.log('❌ rejectPlayer() called');
         
@@ -1074,7 +1077,6 @@ const Swipe = {
         
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         
-        // 🔥 Возвращаемся на ЭКРАН ПОИСКА и запускаем поиск
         if (window.App) {
             App.showScreen('searchScreen', true);
         }
@@ -1204,11 +1206,11 @@ const Swipe = {
             ratingEl.textContent = (trust > 0 ? '+' : '') + trust;
     
             if (trust > 0) {
-                ratingEl.style.color = '#4CAF50';  // Зелёный
+                ratingEl.style.color = '#4CAF50';
             } else if (trust < 0) {
-                ratingEl.style.color = '#FF3B30';  // Красный
+                ratingEl.style.color = '#FF3B30';
             } else {
-                ratingEl.style.color = '';  // Белый
+                ratingEl.style.color = '';
             }
         }
         
@@ -1271,12 +1273,16 @@ const Swipe = {
         const steamContainer = document.querySelector('.swipe-steam-container');
         const faceitContainer = document.querySelector('.swipe-faceit-container');
         
+        console.log('🔍 updateLinksVisibility - режим:', this.mode);
+        
         if (this.mode === 'FACEIT') {
             if (steamContainer) steamContainer.style.display = 'none';
             if (faceitContainer) faceitContainer.style.display = 'block';
+            console.log('🔍 Показываем Faceit блок');
         } else {
             if (steamContainer) steamContainer.style.display = 'block';
             if (faceitContainer) faceitContainer.style.display = 'none';
+            console.log('🔍 Показываем Steam блок');
         }
     },
     
@@ -1358,7 +1364,6 @@ const Swipe = {
         setTimeout(() => this.exitSwipeMode('connectionTimeout'), 2000);
     },
     
-    // 🔥 ФИКС: Окно с вопросом при отклонении тиммейтом
     handleRejection() {
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         if (this.matchPolling) clearInterval(this.matchPolling);
