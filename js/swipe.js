@@ -971,8 +971,10 @@ const Swipe = {
                 if (data.status === 'rejected') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
-                    console.log('🔥 Вызов handleRejection()');
-                    this.handleRejection();
+                    console.log('🔥 Тиммейт отклонил! Вызов handleRejection()');
+                    if (this.isWaitingMode) {
+                        this.handleRejection();
+                    }
                 }
                 
                 if (data.status === 'expired') {
@@ -1078,7 +1080,7 @@ const Swipe = {
         
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         
-        // 🔥 ТОТ, КТО ОТКЛОНИЛ - СРАЗУ В ПОИСК БЕЗ ВОПРОСА
+        // ТОТ, КТО ОТКЛОНИЛ - СРАЗУ В ПОИСК БЕЗ ВОПРОСА
         if (window.App) {
             App.showScreen('searchScreen', true);
         }
@@ -1369,8 +1371,18 @@ const Swipe = {
     handleRejection() {
         console.log('🔥 handleRejection() вызван');
         
-        if (this.connectionTimer) clearInterval(this.connectionTimer);
-        if (this.matchPolling) clearInterval(this.matchPolling);
+        if (this.connectionTimer) {
+            clearInterval(this.connectionTimer);
+            this.connectionTimer = null;
+        }
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
+        if (this.cardTimerInterval) {
+            clearInterval(this.cardTimerInterval);
+            this.cardTimerInterval = null;
+        }
         
         const statusEl = document.getElementById('waitingStatus');
         if (statusEl) {
@@ -1382,13 +1394,9 @@ const Swipe = {
         
         const savedMode = this.mode;
         
-        if (this.cardTimerInterval) {
-            clearInterval(this.cardTimerInterval);
-            this.cardTimerInterval = null;
-        }
-        
-        // 🔥 ПОКАЗЫВАЕМ ИНТЕРАКТИВНОЕ ОКНО
+        // Показываем интерактивное окно
         const showQuestion = () => {
+            console.log('🔥 Показываем окно вопроса');
             if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
                 window.Telegram.WebApp.showPopup({
                     title: 'Тиммейт отклонил',
@@ -1423,7 +1431,7 @@ const Swipe = {
             }
         };
         
-        setTimeout(showQuestion, 100);
+        setTimeout(showQuestion, 200);
     },
     
     exitSwipeMode(reason) {
