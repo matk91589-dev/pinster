@@ -1,8 +1,8 @@
 // ============================================
-// ПРОФИЛЬ - v3.4 FINAL (С РЕЙТИНГОМ)
+// ПРОФИЛЬ - v3.5 FINAL (ФИКС ПРОПАДАНИЯ + МЕНЮ)
 // ============================================
 
-console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v3.4 FINAL)');
+console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v3.5 FINAL)');
 
 // Константы валидации
 const VALIDATION = {
@@ -41,7 +41,7 @@ const Profile = {
     savedSteam: '',
     savedFaceitLink: '',
     savedAvatarUrl: null,
-    savedRating: 0,  // 👈 ДОБАВЛЕНО: сохранённый рейтинг
+    savedRating: 0,
     tempName: '-',
     tempAge: '',
     tempSteam: '',
@@ -65,25 +65,22 @@ const Profile = {
         faceit: false
     },
     
-    // ========== ОТОБРАЖЕНИЕ РЕЙТИНГА С ЦВЕТОМ ==========
     updateRatingDisplay() {
         const ratingInput = document.getElementById('ratingValue');
         if (ratingInput) {
             const rating = this.savedRating || 0;
             ratingInput.value = (rating > 0 ? '+' : '') + rating;
             
-            // 🔥 ЦВЕТ В ЗАВИСИМОСТИ ОТ ЗНАЧЕНИЯ
             if (rating > 0) {
-                ratingInput.style.color = '#4CAF50'; // Зелёный
+                ratingInput.style.color = '#4CAF50';
             } else if (rating < 0) {
-                ratingInput.style.color = '#FF3B30'; // Красный
+                ratingInput.style.color = '#FF3B30';
             } else {
-                ratingInput.style.color = ''; // Белый (по умолчанию)
+                ratingInput.style.color = '';
             }
         }
     },
     
-    // ========== ВАЛИДАЦИЯ ==========
     validateNick(nick) {
         if (!nick || nick.length < VALIDATION.NICK.min || nick.length > VALIDATION.NICK.max) {
             return { valid: false };
@@ -109,14 +106,11 @@ const Profile = {
         if (!link || link.trim() === '') {
             return { valid: true };
         }
-        
         if (link.length > VALIDATION.STEAM.maxLength) {
             return { valid: false };
         }
-        
         const trimmedLink = link.trim().replace(/\/$/, '');
         const isValid = VALIDATION.STEAM.patterns.some(pattern => pattern.test(trimmedLink));
-        
         return { valid: isValid, value: isValid ? trimmedLink : null };
     },
     
@@ -124,14 +118,11 @@ const Profile = {
         if (!link || link.trim() === '') {
             return { valid: true };
         }
-        
         if (link.length > VALIDATION.FACEIT.maxLength) {
             return { valid: false };
         }
-        
         const trimmedLink = link.trim().replace(/\/$/, '');
         const isValid = VALIDATION.FACEIT.pattern.test(trimmedLink);
-        
         return { valid: isValid, value: isValid ? trimmedLink : null };
     },
     
@@ -151,7 +142,6 @@ const Profile = {
         
         const toast = document.createElement('div');
         toast.className = 'profile-toast';
-        
         toast.style.cssText = `
             position: fixed;
             top: 20px;
@@ -176,13 +166,10 @@ const Profile = {
             pointer-events: none;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         `;
-        
         toast.textContent = message;
         document.body.appendChild(toast);
-        
         toast.offsetHeight;
         toast.style.transform = 'translateX(-50%) translateY(0)';
-        
         this.toastTimeout = setTimeout(() => {
             toast.style.transform = 'translateX(-50%) translateY(-100px)';
             setTimeout(() => toast.remove(), 300);
@@ -243,77 +230,59 @@ const Profile = {
         this.tempFaceitLink = faceitInput?.value || '';
     },
     
-    // ========== КОПИРОВАНИЕ С ГАЛОЧКОЙ ==========
     copyToClipboard(text, btnElement) {
-        if (!text || text === '' || text === 'Не указана') {
-            return;
-        }
-        
+        if (!text || text === '' || text === 'Не указана') return;
         navigator.clipboard.writeText(text).then(() => {
             if (btnElement) {
                 const originalHTML = btnElement.innerHTML;
-                
                 btnElement.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><polyline points="20 6 9 17 4 12" stroke="#4CAF50" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
                 btnElement.classList.add('copied');
-                
                 setTimeout(() => {
                     btnElement.innerHTML = originalHTML;
                     btnElement.classList.remove('copied');
                 }, 1000);
             }
-        }).catch(err => {
-            console.error('Ошибка копирования:', err);
-        });
+        }).catch(err => console.error('Ошибка копирования:', err));
     },
     
     updateLinksWithCopy() {
-        // Steam
         const steamInput = document.getElementById('steamDisplay');
         if (steamInput) {
             const oldWrapper = steamInput.parentNode.querySelector('.link-with-copy');
             if (oldWrapper) oldWrapper.remove();
-            
             const wrapper = document.createElement('div');
             wrapper.className = 'link-with-copy';
             steamInput.parentNode.insertBefore(wrapper, steamInput);
             wrapper.appendChild(steamInput);
-            
             const copyBtn = document.createElement('button');
             copyBtn.className = 'copy-btn';
             copyBtn.setAttribute('type', 'button');
             copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
-            
             copyBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 this.copyToClipboard(steamInput.value || this.savedSteam, copyBtn);
             });
-            
             wrapper.appendChild(copyBtn);
         }
         
-        // FaceIT
         const faceitInput = document.getElementById('faceitLinkDisplay');
         if (faceitInput) {
             const oldWrapper = faceitInput.parentNode.querySelector('.link-with-copy');
             if (oldWrapper) oldWrapper.remove();
-            
             const wrapper = document.createElement('div');
             wrapper.className = 'link-with-copy';
             faceitInput.parentNode.insertBefore(wrapper, faceitInput);
             wrapper.appendChild(faceitInput);
-            
             const copyBtn = document.createElement('button');
             copyBtn.className = 'copy-btn';
             copyBtn.setAttribute('type', 'button');
             copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
-            
             copyBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 this.copyToClipboard(faceitInput.value || this.savedFaceitLink, copyBtn);
             });
-            
             wrapper.appendChild(copyBtn);
         }
     },
@@ -329,6 +298,111 @@ const Profile = {
                 letter-spacing: 0.5px;
                 margin-bottom: 2px;
             `;
+        }
+    },
+    
+    // 🔥 МЕНЮ ДЕЙСТВИЙ ДЛЯ ДРУЗЕЙ (как в team.js)
+    showFriendActions(playerId, username, nick, btnElement) {
+        const oldMenu = document.querySelector('.friend-actions-menu');
+        if (oldMenu) oldMenu.remove();
+        
+        const rect = btnElement.getBoundingClientRect();
+        const menuHeight = 100;
+        const spaceBelow = window.innerHeight - rect.bottom;
+        
+        let top;
+        if (spaceBelow < menuHeight) {
+            top = rect.top - menuHeight - 5;
+        } else {
+            top = rect.bottom + 5;
+        }
+        
+        const menu = document.createElement('div');
+        menu.className = 'friend-actions-menu';
+        menu.innerHTML = `
+            <div class="friend-actions-popup" style="top: ${top}px; left: ${rect.right - 170}px;">
+                <div class="friend-action-item write-btn">Написать в Telegram</div>
+                <div class="friend-action-item delete-btn">Удалить из тиммейтов</div>
+            </div>
+        `;
+        
+        document.body.appendChild(menu);
+        
+        const closeMenu = (e) => {
+            if (!menu.contains(e.target)) {
+                menu.remove();
+                document.removeEventListener('click', closeMenu);
+            }
+        };
+        setTimeout(() => document.addEventListener('click', closeMenu), 10);
+        
+        menu.querySelector('.write-btn').onclick = () => {
+            menu.remove();
+            if (username && username !== 'null' && username !== '') {
+                const url = `https://t.me/${username}`;
+                if (window.Telegram?.WebApp?.openLink) {
+                    window.Telegram.WebApp.openLink(url);
+                } else if (window.Telegram?.WebApp?.openTelegramLink) {
+                    window.Telegram.WebApp.openTelegramLink(url);
+                } else {
+                    window.open(url, '_blank');
+                }
+            } else {
+                this.showToast('У пользователя нет username в Telegram', true);
+            }
+        };
+        
+        menu.querySelector('.delete-btn').onclick = () => {
+            menu.remove();
+            this.confirmDeleteFriend(playerId, nick);
+        };
+    },
+    
+    confirmDeleteFriend(playerId, nick) {
+        const dialog = document.createElement('div');
+        dialog.className = 'friend-delete-dialog';
+        dialog.innerHTML = `
+            <div class="friend-delete-overlay"></div>
+            <div class="friend-delete-popup">
+                <div class="friend-delete-title">Удалить тиммейта?</div>
+                <div class="friend-delete-message">Вы уверены, что хотите удалить ${nick || 'этого игрока'} из списка тиммейтов?</div>
+                <div class="friend-delete-buttons">
+                    <button class="friend-delete-cancel">Отмена</button>
+                    <button class="friend-delete-confirm">Удалить</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(dialog);
+        
+        dialog.querySelector('.friend-delete-overlay').onclick = () => dialog.remove();
+        dialog.querySelector('.friend-delete-cancel').onclick = () => dialog.remove();
+        dialog.querySelector('.friend-delete-confirm').onclick = async () => {
+            dialog.remove();
+            await this.removeFriend(playerId, nick);
+        };
+    },
+    
+    async removeFriend(friendId, nick) {
+        if (!this.telegramId) return;
+        
+        try {
+            const response = await fetch(`${this.BACKEND_URL}/api/friends/remove`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    telegram_id: this.telegramId,
+                    friend_player_id: friendId
+                })
+            });
+            const data = await response.json();
+            if (data.status === 'ok') {
+                this.friendsList = this.friendsList.filter(f => f.player_id !== friendId);
+                this.updateFriendsDisplay();
+                this.showToast('Тиммейт удалён');
+            }
+        } catch(e) {
+            console.error('Ошибка удаления:', e);
+            this.showToast('Ошибка при удалении', true);
         }
     },
     
@@ -396,7 +470,7 @@ const Profile = {
             const friend = this.friendsList[i];
             const firstChar = friend.nick?.[0]?.toUpperCase() || '?';
             html += `
-                <div class="friend-row" onclick="Profile.showFriendProfile('${friend.player_id}')">
+                <div class="friend-row" data-player-id="${friend.player_id}" data-username="${friend.username || ''}" data-nick="${friend.nick || 'Без имени'}">
                     <div class="friend-avatar">
                         ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}
                     </div>
@@ -404,7 +478,7 @@ const Profile = {
                         <span class="friend-id">ID: ${friend.player_id}</span>
                         <span class="friend-name">${friend.nick || 'Без имени'}</span>
                     </div>
-                    <span class="friend-arrow">→</span>
+                    <div class="friend-arrow-menu">→</div>
                 </div>
             `;
         }
@@ -422,6 +496,18 @@ const Profile = {
         }
         
         friendsListEl.innerHTML = html;
+        
+        // Добавляем обработчики для стрелочек
+        document.querySelectorAll('#friendsList .friend-arrow-menu').forEach(btn => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                const row = btn.closest('.friend-row');
+                const playerId = row.dataset.playerId;
+                const username = row.dataset.username;
+                const nick = row.dataset.nick;
+                this.showFriendActions(playerId, username, nick, btn);
+            };
+        });
     },
     
     getFriendsWord(count) {
@@ -493,7 +579,6 @@ const Profile = {
                 }
             }
 
-            // 👇 ДОБАВЛЕНО: загружаем рейтинг
             const ratingResponse = await fetch(`${this.BACKEND_URL}/api/user/rating`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -570,7 +655,7 @@ const Profile = {
         }
         
         this.updateAvatarDisplay();
-        this.updateRatingDisplay(); // 👈 ДОБАВЛЕНО: обновляем отображение рейтинга
+        this.updateRatingDisplay();
         setTimeout(() => this.updateLinksWithCopy(), 50);
     },
     
@@ -578,7 +663,6 @@ const Profile = {
         if (!this.editMode) return;
         
         console.log('🔄 Сброс режима редактирования');
-        
         this.editMode = false;
         
         const profileScreen = document.getElementById('profileScreen');
@@ -683,10 +767,7 @@ const Profile = {
             return;
         }
         
-        const hasErrors = this.validationErrors.nick || 
-                         this.validationErrors.age || 
-                         this.validationErrors.steam || 
-                         this.validationErrors.faceit;
+        const hasErrors = this.validationErrors.nick || this.validationErrors.age || this.validationErrors.steam || this.validationErrors.faceit;
         
         if (hasErrors) {
             this.showToast('Исправьте ошибки в полях', true);
@@ -815,7 +896,6 @@ const Profile = {
         const save = () => {
             const newName = input.value.trim();
             const validation = this.validateNick(newName);
-            
             this.validationErrors.nick = !validation.valid;
             
             if (validation.valid) {
@@ -824,7 +904,6 @@ const Profile = {
             } else {
                 this.showToast(`Ник: ${VALIDATION.NICK.hint}`, true);
             }
-            
             input.remove();
             profileName.style.display = 'inline-block';
         };
@@ -989,7 +1068,6 @@ const Profile = {
             mutations.forEach((mutation) => {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     const isActive = profileScreen.classList.contains('active');
-                    
                     if (!isActive && this.editMode) {
                         console.log('👁️ Экран профиля скрыт, сбрасываем режим редактирования');
                         this.forceExitEditMode();
@@ -1010,7 +1088,7 @@ const Profile = {
         if (this.isInitialized) return;
         this.isInitialized = true;
         
-        console.log('🚀 Profile.init() v3.4 FINAL');
+        console.log('🚀 Profile.init() v3.5 FINAL');
         this.telegramId = this.getTelegramId();
         
         this.tempName = this.savedName;
@@ -1018,11 +1096,10 @@ const Profile = {
         this.tempSteam = this.savedSteam;
         this.tempFaceitLink = this.savedFaceitLink;
         
-        setTimeout(() => {
-            this.loadProfileFromServer();
-            this.loadAvatar();
-            this.loadFriends();
-        }, 100);
+        // 🔥 ФИКС ПРОПАДАНИЯ - загружаем сразу, без задержки
+        this.loadProfileFromServer();
+        this.loadAvatar();
+        this.loadFriends();
         
         this.setupClickHandlers();
         this.updateLinksWithCopy();
