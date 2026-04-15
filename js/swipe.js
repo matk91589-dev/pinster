@@ -60,7 +60,7 @@ const Swipe = {
         toast.className = 'profile-toast';
         toast.style.cssText = `
             position: fixed;
-            top: 20px;
+            top: 60px;
             left: 50%;
             transform: translateX(-50%) translateY(-100px);
             background: rgba(0, 0, 0, 0.85);
@@ -1478,8 +1478,8 @@ const Swipe = {
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         if (this.matchPolling) clearInterval(this.matchPolling);
         
-        if (window.App) App.showScreen('mainScreen', true);
-        else window.location.href = '/';
+        // Не переходим на главный, остаёмся на текущем экране
+        // if (window.App) App.showScreen('mainScreen', true);
     }
 };
 
