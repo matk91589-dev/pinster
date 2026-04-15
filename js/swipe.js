@@ -972,9 +972,8 @@ const Swipe = {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
                     console.log('🔥 Тиммейт отклонил! Вызов handleRejection()');
-                    if (this.isWaitingMode) {
-                        this.handleRejection();
-                    }
+                    // Убираем проверку isWaitingMode
+                    this.handleRejection();
                 }
                 
                 if (data.status === 'expired') {
@@ -1371,6 +1370,7 @@ const Swipe = {
     handleRejection() {
         console.log('🔥 handleRejection() вызван');
         
+        // Останавливаем все таймеры
         if (this.connectionTimer) {
             clearInterval(this.connectionTimer);
             this.connectionTimer = null;
@@ -1394,7 +1394,16 @@ const Swipe = {
         
         const savedMode = this.mode;
         
-        // Показываем интерактивное окно
+        // Выходим из режима ожидания и показываем окно
+        this.isWaitingMode = false;
+        
+        // Скрываем экран ожидания
+        const swipeContent = document.getElementById('swipeModeContent');
+        const waitingContent = document.getElementById('waitingModeContent');
+        if (swipeContent) swipeContent.style.display = 'flex';
+        if (waitingContent) waitingContent.classList.remove('active');
+        
+        // Показываем окно с вопросом
         const showQuestion = () => {
             console.log('🔥 Показываем окно вопроса');
             if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
@@ -1431,7 +1440,7 @@ const Swipe = {
             }
         };
         
-        setTimeout(showQuestion, 200);
+        setTimeout(showQuestion, 300);
     },
     
     exitSwipeMode(reason) {
