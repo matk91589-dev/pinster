@@ -123,6 +123,37 @@
             margin-left: 4px !important;
             text-transform: lowercase !important;
         }
+
+        /* ===== СТРЕЛКА НАЗАД ===== */
+        .back-arrow-global {
+            position: absolute;
+            top: 12px;
+            left: 16px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .back-arrow-global:hover {
+            background: rgba(255, 85, 0, 0.2);
+            transform: scale(1.05);
+        }
+
+        .back-arrow-global svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .screen {
+            position: relative;
+        }
     </style>
     
     <link rel="stylesheet" href="css/style.css">
@@ -646,6 +677,11 @@
 
             <!-- ПРОФИЛЬ -->
             <div id="profileScreen" class="screen profile-screen">
+                <div class="back-arrow-global" onclick="App.goBack()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M15 18L9 12L15 6" stroke="#FF5500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
                 <div class="title-row"><div class="title-left"><div class="section-title">Ваш профиль</div><div class="edit-controls"><div id="editToggle" class="edit-title-icon" onclick="Profile.toggleEditMode()"><svg viewBox="0 0 24 24"><path d="M12 20h9" stroke="white" stroke-width="2"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="white" stroke-width="2"/></svg></div><div id="applyBtn" class="apply-btn" onclick="Profile.applyChanges()">Применить</div></div></div></div>
                 <div class="profile-header"><div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()"><div class="tg-avatar-svg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#ffffff" stroke-width="2" fill="none"/></svg></div></div><div class="profile-info"><div class="profile-name-label">ваш никнейм</div><div class="profile-name-row"><span id="profileName" class="profile-name" onclick="Profile.editName()">-</span></div></div></div>
                 <div class="stats-row">
@@ -689,8 +725,12 @@
 
             <!-- КОМАНДА -->
             <div id="teamScreen" class="screen team-screen">
+                <div class="back-arrow-global" onclick="App.goBack()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M15 18L9 12L15 6" stroke="#FF5500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
                 <div class="team-header" style="display: flex; align-items: center; justify-content: flex-start; position: relative; padding: 12px 16px;">
-                    <div class="team-back" onclick="Team.goBack()" style="cursor: pointer; font-size: 24px; color: #FF5500;">←</div>
                     <div style="flex: 1;"></div>
                 </div>
                 <div class="team-tabs">
@@ -702,6 +742,11 @@
 
             <!-- СВАЙП -->
             <div id="swipeScreen" class="screen swipe-screen">
+                <div class="back-arrow-global" onclick="App.goBack()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M15 18L9 12L15 6" stroke="#FF5500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
                 <div id="swipeContainer" class="swipe-container">
                     <div id="swipeCard" class="swipe-card">
                         <div class="swipe-timer" id="swipeTimer">30с</div>
@@ -780,6 +825,11 @@
 
             <!-- НАСТРОЙКИ -->
             <div id="settingsScreen" class="screen settings-screen">
+                <div class="back-arrow-global" onclick="App.goBack()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M15 18L9 12L15 6" stroke="#FF5500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
                 <div class="settings-header"><div class="settings-title">Настройки</div></div>
                 <div class="settings-section"><div class="settings-section-title">ОФОРМЛЕНИЕ</div>
                     <div class="settings-row"><span class="settings-row-label">звук</span><div class="sound-toggle"><span class="sound-option" id="soundOff">выкл</span><span class="sound-separator">/</span><span class="sound-option" id="soundOn">вкл</span></div></div>
@@ -801,7 +851,12 @@
 
             <!-- FACEIT -->
             <div id="faceitScreen" class="screen faceit-screen">
-                <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title faceit">FACEIT</div></div>
+                <div class="back-arrow-global" onclick="App.goBack()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M15 18L9 12L15 6" stroke="#FF5500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="mode-header"><div class="mode-title faceit">FACEIT</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
                 <div class="input-label">Faceit ELO <span>*обязательно</span></div>
                 <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000">
@@ -832,7 +887,12 @@
 
             <!-- PREMIER -->
             <div id="premierScreen" class="screen premier-screen">
-                <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title premier">PREMIER</div></div>
+                <div class="back-arrow-global" onclick="App.goBack()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M15 18L9 12L15 6" stroke="#FF5500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="mode-header"><div class="mode-title premier">PREMIER</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
                 <div class="input-label">CS Rating <span>*обязательно</span></div>
                 <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-40000">
@@ -863,7 +923,12 @@
 
             <!-- PRIME -->
             <div id="primeScreen" class="screen prime-screen">
-                <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title prime">PRIME</div></div>
+                <div class="back-arrow-global" onclick="App.goBack()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M15 18L9 12L15 6" stroke="#FF5500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="mode-header"><div class="mode-title prime">PRIME</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
                 <div class="input-label">Звание <span>*обязательно</span></div>
                 <select class="rank-select" id="primeRankSelect">
@@ -913,7 +978,12 @@
 
             <!-- PUBLIC -->
             <div id="publicScreen" class="screen public-screen">
-                <div class="mode-header"><button class="back-btn" onclick="App.showScreen('mainScreen', true)">←</button><div class="mode-title public">PUBLIC</div></div>
+                <div class="back-arrow-global" onclick="App.goBack()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M15 18L9 12L15 6" stroke="#FF5500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="mode-header"><div class="mode-title public">PUBLIC</div></div>
                 <div class="mode-subtitle">введите ваши актуальные данные</div>
                 <div class="input-label">Звание <span>*обязательно</span></div>
                 <select class="rank-select" id="publicRankSelect">
@@ -963,6 +1033,11 @@
 
             <!-- ПОИСК -->
             <div id="searchScreen" class="screen search-screen">
+                <div class="back-arrow-global" onclick="App.goBack()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M15 18L9 12L15 6" stroke="#FF5500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
                 <div class="search-header"><div class="search-title" id="searchModeTitle">FACEIT</div><div class="search-timer" id="searchTimer">00:00</div></div>
                 <div class="search-status" id="searchStatus">Поиск тиммейта начат</div>
                 <div class="spinner"></div>
