@@ -4415,27 +4415,7 @@ button:active { transform: scale(0.96); }
     }
 }
 
-/* ===== МЕНЮ ДЕЙСТВИЙ С ТИММЕЙТОМ (СТИЛЬ PINGSTER) ===== */
-.friend-arrow-menu {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border-radius: 50%;
-    font-size: 18px;
-    color: var(--text-secondary);
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-}
-
-.friend-arrow-menu:hover {
-    background: rgba(255, 85, 0, 0.12);
-    color: #FF5500;
-    transform: scale(1.05);
-}
-
+/* ===== МЕНЮ ДЕЙСТВИЙ С ТИММЕЙТОМ - МИНИМАЛИСТИЧНЫЙ СТИЛЬ ===== */
 .friend-actions-menu {
     position: relative;
     z-index: 1000;
@@ -4443,59 +4423,66 @@ button:active { transform: scale(0.96); }
 
 .friend-actions-popup {
     position: fixed;
-    background: var(--surface);
-    border-radius: 16px;
-    width: 200px;
+    background: #1A1D24;  /* Как в профиле при ошибке */
+    border-radius: 0px;    /* Чёткие углы 90 градусов */
+    width: 180px;
     overflow: hidden;
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
-    border: 1px solid rgba(255, 85, 0, 0.25);
-    animation: menuFadeIn 0.15s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    border: 1px solid #2A2F3A;
+    animation: menuFadeIn 0.12s ease;
+}
+
+.friend-action-item {
+    padding: 10px 16px;
+    font-size: 13px;       /* Мелкий текст */
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: #F5F5F5;
+    letter-spacing: 0.2px;
+    white-space: nowrap;   /* В одну строку */
+    text-align: left;
+}
+
+.friend-action-item:first-child {
+    border-bottom: 1px solid #2A2F3A;
+}
+
+/* Наведение - оранжевый фон */
+.friend-action-item:hover {
+    background: rgba(255, 85, 0, 0.85);
+    color: white;
+}
+
+/* Кнопка удаления - обычная, без красного */
+.friend-action-item.delete-btn {
+    color: #F5F5F5;
+}
+
+.friend-action-item.delete-btn:hover {
+    background: rgba(255, 85, 0, 0.85);
+    color: white;
+}
+
+/* Кнопка "Написать" - обычная */
+.friend-action-item.write-btn {
+    color: #F5F5F5;
+}
+
+.friend-action-item.write-btn:hover {
+    background: rgba(255, 85, 0, 0.85);
+    color: white;
 }
 
 @keyframes menuFadeIn {
     from {
         opacity: 0;
-        transform: scale(0.92) translateY(-4px);
+        transform: scale(0.96);
     }
     to {
         opacity: 1;
-        transform: scale(1) translateY(0);
+        transform: scale(1);
     }
-}
-
-.friend-action-item {
-    padding: 14px 18px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    color: var(--text-primary);
-    letter-spacing: 0.2px;
-}
-
-.friend-action-item:first-child {
-    border-bottom: 1px solid var(--border-color);
-}
-
-.friend-action-item:hover {
-    background: rgba(255, 85, 0, 0.08);
-}
-
-.friend-action-item.write-btn {
-    color: var(--text-primary);
-}
-
-.friend-action-item.write-btn:hover {
-    color: #FF5500;
-}
-
-.friend-action-item.delete-btn {
-    color: #FF3B30;
-}
-
-.friend-action-item.delete-btn:hover {
-    background: rgba(255, 59, 48, 0.1);
-    color: #FF3B30;
 }
 
 /* ===== ДИАЛОГ ПОДТВЕРЖДЕНИЯ (СТИЛЬ PINGSTER) ===== */
