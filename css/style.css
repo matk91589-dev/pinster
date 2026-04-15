@@ -4426,7 +4426,7 @@ button:active { transform: scale(0.96); }
     background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(10px);
     border-radius: 0px;
-    width: 180px;
+    width: 210px;  /* Увеличил до 210px */
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     border: none;
@@ -4442,7 +4442,10 @@ button:active { transform: scale(0.96); }
     color: white;
     letter-spacing: 0.2px;
     white-space: nowrap;
-    text-align: center;  /* 👈 ТЕКСТ ПО ЦЕНТРУ */
+    text-align: center;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .friend-action-item:first-child {
