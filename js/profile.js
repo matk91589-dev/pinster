@@ -301,33 +301,41 @@ const Profile = {
         }
     },
     
-    // 🔥 МЕНЮ ДЕЙСТВИЙ ДЛЯ ДРУЗЕЙ (как в team.js)
     showFriendActions(playerId, username, nick, btnElement) {
         const oldMenu = document.querySelector('.friend-actions-menu');
         if (oldMenu) oldMenu.remove();
-        
+    
         const rect = btnElement.getBoundingClientRect();
-        const menuHeight = 100;
+        const menuWidth = 210;
+        const menuHeight = 85;
         const spaceBelow = window.innerHeight - rect.bottom;
-        
+        const spaceRight = window.innerWidth - rect.right;
+    
         let top;
         if (spaceBelow < menuHeight) {
             top = rect.top - menuHeight - 5;
         } else {
             top = rect.bottom + 5;
         }
-        
+    
+        let left;
+        if (spaceRight < menuWidth) {
+            left = window.innerWidth - menuWidth - 10;
+        } else {
+            left = rect.right - menuWidth + 10;
+        }
+    
         const menu = document.createElement('div');
         menu.className = 'friend-actions-menu';
         menu.innerHTML = `
-            <div class="friend-actions-popup" style="top: ${top}px; left: ${rect.right - 170}px;">
+            <div class="friend-actions-popup" style="top: ${top}px; left: ${left}px;">
                 <div class="friend-action-item write-btn">Написать в Telegram</div>
                 <div class="friend-action-item delete-btn">Удалить из тиммейтов</div>
             </div>
         `;
-        
+    
         document.body.appendChild(menu);
-        
+    
         const closeMenu = (e) => {
             if (!menu.contains(e.target)) {
                 menu.remove();
@@ -335,7 +343,7 @@ const Profile = {
             }
         };
         setTimeout(() => document.addEventListener('click', closeMenu), 10);
-        
+    
         menu.querySelector('.write-btn').onclick = () => {
             menu.remove();
             if (username && username !== 'null' && username !== '') {
@@ -351,7 +359,7 @@ const Profile = {
                 this.showToast('У пользователя нет username в Telegram', true);
             }
         };
-        
+    
         menu.querySelector('.delete-btn').onclick = () => {
             menu.remove();
             this.confirmDeleteFriend(playerId, nick);
@@ -497,7 +505,6 @@ const Profile = {
         
         friendsListEl.innerHTML = html;
         
-        // Добавляем обработчики для стрелочек
         document.querySelectorAll('#friendsList .friend-arrow-menu').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
@@ -1096,7 +1103,6 @@ const Profile = {
         this.tempSteam = this.savedSteam;
         this.tempFaceitLink = this.savedFaceitLink;
         
-        // 🔥 ФИКС ПРОПАДАНИЯ - загружаем сразу, без задержки
         this.loadProfileFromServer();
         this.loadAvatar();
         this.loadFriends();
@@ -1108,7 +1114,6 @@ const Profile = {
     }
 };
 
-// Инициализация
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => Profile.init());
 } else {
