@@ -1367,46 +1367,49 @@ const Swipe = {
         setTimeout(() => this.exitSwipeMode('connectionTimeout'), 2000);
     },
     
-    handleRejection() {
-        console.log('🔥 handleRejection() вызван');
+  handleRejection() {
+    console.log('🔥 handleRejection() вызван');
+    
+    // Останавливаем все таймеры
+    if (this.connectionTimer) {
+        clearInterval(this.connectionTimer);
+        this.connectionTimer = null;
+    }
+    if (this.matchPolling) {
+        clearInterval(this.matchPolling);
+        this.matchPolling = null;
+    }
+    if (this.cardTimerInterval) {
+        clearInterval(this.cardTimerInterval);
+        this.cardTimerInterval = null;
+    }
+    
+    const statusEl = document.getElementById('waitingStatus');
+    if (statusEl) {
+        statusEl.innerHTML = 'Тиммейт отклонил';
+        statusEl.style.color = '#FF3B30';
+    }
+    
+    if (window.Settings && window.Settings.error) window.Settings.error();
+    
+    const savedMode = this.mode;
+    
+    // Выходим из режима ожидания
+    this.isWaitingMode = false;
+    
+    // Скрываем экран ожидания
+    const swipeContent = document.getElementById('swipeModeContent');
+    const waitingContent = document.getElementById('waitingModeContent');
+    if (swipeContent) swipeContent.style.display = 'flex';
+    if (waitingContent) waitingContent.classList.remove('active');
+    
+    // Показываем окно с вопросом
+    const showQuestion = () => {
+        console.log('🔥 Показываем окно вопроса');
         
-        // Останавливаем все таймеры
-        if (this.connectionTimer) {
-            clearInterval(this.connectionTimer);
-            this.connectionTimer = null;
-        }
-        if (this.matchPolling) {
-            clearInterval(this.matchPolling);
-            this.matchPolling = null;
-        }
-        if (this.cardTimerInterval) {
-            clearInterval(this.cardTimerInterval);
-            this.cardTimerInterval = null;
-        }
-        
-        const statusEl = document.getElementById('waitingStatus');
-        if (statusEl) {
-            statusEl.innerHTML = 'Тиммейт отклонил';
-            statusEl.style.color = '#FF3B30';
-        }
-        
-        if (window.Settings && window.Settings.error) window.Settings.error();
-        
-        const savedMode = this.mode;
-        
-        // Выходим из режима ожидания и показываем окно
-        this.isWaitingMode = false;
-        
-        // Скрываем экран ожидания
-        const swipeContent = document.getElementById('swipeModeContent');
-        const waitingContent = document.getElementById('waitingModeContent');
-        if (swipeContent) swipeContent.style.display = 'flex';
-        if (waitingContent) waitingContent.classList.remove('active');
-        
-        // Показываем окно с вопросом
-        const showQuestion = () => {
-            console.log('🔥 Показываем окно вопроса');
-            if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
+        // Пробуем через Telegram WebApp
+        if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp && window.Telegram.WebApp.showPopup) {
+            try {
                 window.Telegram.WebApp.showPopup({
                     title: 'Тиммейт отклонил',
                     message: 'Вернуться в поиск?',
@@ -1427,7 +1430,9 @@ const Swipe = {
                         this.exitSwipeMode('handleRejection');
                     }
                 });
-            } else {
+            } catch(e) {
+                console.error('Ошибка showPopup:', e);
+                // Fallback на confirm
                 const wantSearch = confirm('Тиммейт отклонил. Вернуться в поиск?');
                 this.exitSwipeMode('handleRejection');
                 if (wantSearch) {
@@ -1438,55 +1443,19 @@ const Swipe = {
                     }, 300);
                 }
             }
-        };
-        
-        setTimeout(showQuestion, 300);
-    },
-    
-    exitSwipeMode(reason) {
-        console.log('🔄 Выход из свайпа. Причина:', reason);
-        this.unblockScroll();
-        this.isWaitingMode = false;
-        this.currentMatchId = null;
-        this.currentPlayer = null;
-        this.matchExpiresAt = null;
-        this.gameCreated = false;
-        this.gameCreating = false;
-        this.chatLink = null;
-        this.inviteLink = null;
-        
-        if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
-        if (this.connectionTimer) clearInterval(this.connectionTimer);
-        if (this.matchPolling) clearInterval(this.matchPolling);
-        
-        if (window.App) App.showScreen('mainScreen', true);
-        else window.location.href = '/';
-    }
-};
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('✅ Swipe: DOM загружен');
-    window.Swipe = Swipe;
-    
-    var swipeScreen = document.getElementById('swipeScreen');
-    if (swipeScreen) {
-        var observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    if (swipeScreen.classList.contains('active') && !Swipe.isInitialized) {
-                        Swipe.init(Swipe.mode || 'FACEIT');
+        } else {
+            // Fallback на confirm
+            const wantSearch = confirm('Тиммейт отклонил. Вернуться в поиск?');
+            this.exitSwipeMode('handleRejection');
+            if (wantSearch) {
+                setTimeout(() => {
+                    if (typeof Search !== 'undefined' && savedMode) {
+                        Search.start(savedMode);
                     }
-                }
-            });
-        });
-        observer.observe(swipeScreen, { attributes: true });
-    }
-});
-
-if (document.getElementById('swipeScreen') && document.getElementById('swipeScreen').classList.contains('active')) {
-    setTimeout(function() {
-        if (!Swipe.isInitialized) {
-            Swipe.init(Swipe.mode || 'FACEIT');
+                }, 300);
+            }
         }
-    }, 100);
-}
+    };
+    
+    setTimeout(showQuestion, 300);
+},
