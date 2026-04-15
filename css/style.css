@@ -5179,3 +5179,32 @@ button:active { transform: scale(0.96); }
     width: 20px;
     height: 20px;
 }
+
+/* Стрелка только на экране свайпа */
+.back-arrow-swipe {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    transition: transform 0.12s ease;
+}
+
+.back-arrow-swipe:active {
+    transform: scale(0.85);
+}
+
+.back-arrow-swipe svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Тост чуть ниже хедера */
+.profile-toast {
+    top: 60px !important;
+}
