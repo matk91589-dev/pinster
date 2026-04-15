@@ -17,14 +17,13 @@
         });
     }
 
-    // ✅ Функция для обновления username на сервере (только при реальных изменениях)
+    // Функция для обновления username на сервере (только при реальных изменениях)
     let lastUsername = '';
     function updateUsername() {
         const tg = window.Telegram?.WebApp;
         const telegram_id = tg?.initDataUnsafe?.user?.id;
         const username = tg?.initDataUnsafe?.user?.username || '';
         
-        // Не отправляем запрос если username не изменился
         if (username === lastUsername) return;
         lastUsername = username;
         
@@ -47,7 +46,7 @@
         }
     }
 
-    // ✅ Функция для показа главного экрана
+    // Функция для показа главного экрана
     function showMainScreen() {
         const mainScreen = document.getElementById('mainScreen');
         if (mainScreen) {
@@ -69,7 +68,7 @@
         return false;
     }
 
-    // ✅ Инициализация
+    // Инициализация
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
             console.log('🚀 DOM загружен, запускаем Pingster...');
@@ -147,6 +146,29 @@ Object.assign(window.App, {
         }
     },
     
+    // 🔥 МЕТОД ДЛЯ СТРЕЛКИ НАЗАД
+    goBack: function() {
+        const tg = window.Telegram?.WebApp;
+        if (tg && tg.showPopup) {
+            tg.showPopup({
+                title: 'Выйти?',
+                message: 'Вернуться на главный экран?',
+                buttons: [
+                    { id: 'cancel', type: 'cancel', text: 'Нет' },
+                    { id: 'ok', type: 'default', text: 'Да' }
+                ]
+            }, (buttonId) => {
+                if (buttonId === 'ok') {
+                    this.showScreen('mainScreen', true);
+                }
+            });
+        } else {
+            if (confirm('Вернуться на главный экран?')) {
+                this.showScreen('mainScreen', true);
+            }
+        }
+    },
+    
     showScreen: function(screenId, updateNav = true) {
         const screen = document.getElementById(screenId);
         if (!screen) {
@@ -183,7 +205,6 @@ Object.assign(window.App, {
         
         this.hapticFeedback('light');
         
-        // Фоновая загрузка с задержкой, чтобы не лагать
         if (screenId === 'profileScreen' && typeof Profile !== 'undefined') {
             setTimeout(() => {
                 if (!Profile.isProfileLoaded && !Profile.isLoading) {
