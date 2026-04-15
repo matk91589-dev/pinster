@@ -4415,7 +4415,7 @@ button:active { transform: scale(0.96); }
     }
 }
 
-/* ===== МЕНЮ ДЕЙСТВИЙ С ТИММЕЙТОМ - МИНИМАЛИСТИЧНЫЙ СТИЛЬ ===== */
+/* ===== МЕНЮ ДЕЙСТВИЙ С ТИММЕЙТОМ - СТИЛЬ КАК В PROFILE.TOAST ===== */
 .friend-actions-menu {
     position: relative;
     z-index: 1000;
@@ -4423,54 +4423,52 @@ button:active { transform: scale(0.96); }
 
 .friend-actions-popup {
     position: fixed;
-    background: #1A1D24;  /* Как в профиле при ошибке */
-    border-radius: 0px;    /* Чёткие углы 90 градусов */
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 0px;
     width: 180px;
     overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-    border: 1px solid #2A2F3A;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: none;
     animation: menuFadeIn 0.12s ease;
 }
 
 .friend-action-item {
     padding: 10px 16px;
-    font-size: 13px;       /* Мелкий текст */
+    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.15s ease;
-    color: #F5F5F5;
+    color: white;
     letter-spacing: 0.2px;
-    white-space: nowrap;   /* В одну строку */
-    text-align: left;
+    white-space: nowrap;
+    text-align: center;  /* 👈 ТЕКСТ ПО ЦЕНТРУ */
 }
 
 .friend-action-item:first-child {
-    border-bottom: 1px solid #2A2F3A;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Наведение - оранжевый фон */
 .friend-action-item:hover {
-    background: rgba(255, 85, 0, 0.85);
+    background: #FF5500;
     color: white;
 }
 
-/* Кнопка удаления - обычная, без красного */
 .friend-action-item.delete-btn {
-    color: #F5F5F5;
+    color: white;
 }
 
 .friend-action-item.delete-btn:hover {
-    background: rgba(255, 85, 0, 0.85);
+    background: #FF5500;
     color: white;
 }
 
-/* Кнопка "Написать" - обычная */
 .friend-action-item.write-btn {
-    color: #F5F5F5;
+    color: white;
 }
 
 .friend-action-item.write-btn:hover {
-    background: rgba(255, 85, 0, 0.85);
+    background: #FF5500;
     color: white;
 }
 
