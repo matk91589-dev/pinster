@@ -596,7 +596,6 @@ const Swipe = {
         
         this.isWaitingMode = false;
         
-        // 🔥 ПЕРЕДАЕМ РЕЖИМ ИЗ OPPONENT
         const modeFromOpponent = opponent.mode || 'PREMIER';
         console.log('🔥 Режим из opponent:', modeFromOpponent);
         
@@ -651,7 +650,6 @@ const Swipe = {
         this.chatLink = null;
         this.inviteLink = null;
         
-        // 🔥 ПРИНУДИТЕЛЬНО СТАВИМ 30 СЕКУНД
         this.matchExpiresAt = Date.now() + 30000;
         console.log('⏰ Принудительно ставим 30 секунд');
         
@@ -1077,15 +1075,38 @@ const Swipe = {
         
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         
-        if (window.App) {
-            App.showScreen('searchScreen', true);
-        }
-        
-        setTimeout(() => {
-            if (typeof Search !== 'undefined' && savedMode) {
-                Search.start(savedMode);
+        // 🔥 ИНТЕРАКТИВНОЕ ОКНО ПРИ ОТКЛОНЕНИИ
+        if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
+            window.Telegram.WebApp.showPopup({
+                title: 'Отклонить тиммейта?',
+                message: 'Возвращаем вас в поиск?',
+                buttons: [
+                    { id: 'cancel', type: 'cancel', text: 'Нет' },
+                    { id: 'ok', type: 'default', text: 'Да' }
+                ]
+            }, (buttonId) => {
+                if (buttonId === 'ok') {
+                    this.exitSwipeMode('rejectPlayer');
+                    setTimeout(() => {
+                        if (typeof Search !== 'undefined' && savedMode) {
+                            Search.start(savedMode);
+                        }
+                    }, 300);
+                } else {
+                    this.exitSwipeMode('rejectPlayer');
+                }
+            });
+        } else {
+            const wantSearch = confirm('Отклонить тиммейта? Вернуться в поиск?');
+            this.exitSwipeMode('rejectPlayer');
+            if (wantSearch) {
+                setTimeout(() => {
+                    if (typeof Search !== 'undefined' && savedMode) {
+                        Search.start(savedMode);
+                    }
+                }, 300);
             }
-        }, 300);
+        }
     },
     
     createGame() {
@@ -1381,7 +1402,7 @@ const Swipe = {
         if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
             window.Telegram.WebApp.showPopup({
                 title: 'Тиммейт отклонил',
-                message: 'Хотите вернуться в поиск?',
+                message: 'Возвращаем вас в поиск?',
                 buttons: [
                     { id: 'cancel', type: 'cancel', text: 'Нет' },
                     { id: 'ok', type: 'default', text: 'Да' }
@@ -1432,7 +1453,6 @@ const Swipe = {
     }
 };
 
-// Инициализация при загрузке DOM
 document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Swipe: DOM загружен');
     window.Swipe = Swipe;
