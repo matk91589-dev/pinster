@@ -958,6 +958,8 @@ const Swipe = {
                 const res = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/status/' + matchId);
                 const data = await res.json();
                 
+                console.log('📡 Статус матча:', data);
+                
                 if (data.status === 'both_accepted') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
@@ -969,6 +971,7 @@ const Swipe = {
                 if (data.status === 'rejected') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
+                    console.log('🔥 Вызов handleRejection()');
                     this.handleRejection();
                 }
                 
@@ -1364,6 +1367,8 @@ const Swipe = {
     },
     
     handleRejection() {
+        console.log('🔥 handleRejection() вызван');
+        
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         if (this.matchPolling) clearInterval(this.matchPolling);
         
@@ -1377,38 +1382,48 @@ const Swipe = {
         
         const savedMode = this.mode;
         
-        // 🔥 ТОГО, КОГО ОТКЛОНИЛИ - СПРАШИВАЕМ
-        if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
-            window.Telegram.WebApp.showPopup({
-                title: 'Тиммейт отклонил',
-                message: 'Вернуться в поиск?',
-                buttons: [
-                    { id: 'cancel', type: 'cancel', text: 'Нет' },
-                    { id: 'ok', type: 'default', text: 'Да' }
-                ]
-            }, (buttonId) => {
-                if (buttonId === 'ok') {
-                    this.exitSwipeMode('handleRejection');
+        if (this.cardTimerInterval) {
+            clearInterval(this.cardTimerInterval);
+            this.cardTimerInterval = null;
+        }
+        
+        // 🔥 ПОКАЗЫВАЕМ ИНТЕРАКТИВНОЕ ОКНО
+        const showQuestion = () => {
+            if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
+                window.Telegram.WebApp.showPopup({
+                    title: 'Тиммейт отклонил',
+                    message: 'Вернуться в поиск?',
+                    buttons: [
+                        { id: 'cancel', type: 'cancel', text: 'Нет' },
+                        { id: 'ok', type: 'default', text: 'Да' }
+                    ]
+                }, (buttonId) => {
+                    console.log('🔘 Нажата кнопка:', buttonId);
+                    if (buttonId === 'ok') {
+                        this.exitSwipeMode('handleRejection');
+                        setTimeout(() => {
+                            if (typeof Search !== 'undefined' && savedMode) {
+                                Search.start(savedMode);
+                            }
+                        }, 300);
+                    } else {
+                        this.exitSwipeMode('handleRejection');
+                    }
+                });
+            } else {
+                const wantSearch = confirm('Тиммейт отклонил. Вернуться в поиск?');
+                this.exitSwipeMode('handleRejection');
+                if (wantSearch) {
                     setTimeout(() => {
                         if (typeof Search !== 'undefined' && savedMode) {
                             Search.start(savedMode);
                         }
                     }, 300);
-                } else {
-                    this.exitSwipeMode('handleRejection');
                 }
-            });
-        } else {
-            const wantSearch = confirm('Тиммейт отклонил. Вернуться в поиск?');
-            this.exitSwipeMode('handleRejection');
-            if (wantSearch) {
-                setTimeout(() => {
-                    if (typeof Search !== 'undefined' && savedMode) {
-                        Search.start(savedMode);
-                    }
-                }, 300);
             }
-        }
+        };
+        
+        setTimeout(showQuestion, 100);
     },
     
     exitSwipeMode(reason) {
