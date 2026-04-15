@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ ВЕРСИЯ С ФИКСАМИ
+// СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ ВЕРСИЯ С ТОСТАМИ
 // ============================================
 
 const Swipe = {
@@ -44,10 +44,55 @@ const Swipe = {
     gameCreating: false,
     chatLink: null,
     inviteLink: null,
+    toastTimeout: null,
     
     hintRunId: null,
     hintInterval: null,
     resizeObserver: null,
+    
+    // Показ тоста
+    showToastMessage(message, isError = false) {
+        if (this.toastTimeout) clearTimeout(this.toastTimeout);
+        const existingToast = document.querySelector('.profile-toast');
+        if (existingToast) existingToast.remove();
+        
+        const toast = document.createElement('div');
+        toast.className = 'profile-toast';
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 10000;
+            transition: transform 0.3s ease;
+            white-space: normal;
+            word-break: break-word;
+            text-align: center;
+            max-width: calc(100vw - 40px);
+            width: auto;
+            min-width: 200px;
+            line-height: 1.4;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        `;
+        
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        toast.offsetHeight;
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        
+        this.toastTimeout = setTimeout(() => {
+            toast.style.transform = 'translateX(-50%) translateY(-100px)';
+            setTimeout(() => toast.remove(), 300);
+        }, 5000);
+    },
     
     init(mode) {
         console.log('🔥 Swipe.init() with mode:', mode);
@@ -608,6 +653,9 @@ const Swipe = {
             this.exitSwipeMode('замена матча');
         }
         
+        // 🔥 ТОСТ: матч найден!
+        this.showToastMessage('Матч найден!');
+        
         this._pendingOpponent = opponent;
         this._pendingMatchId = matchId;
         this._pendingExpiresAt = expiresAt;
@@ -971,8 +1019,7 @@ const Swipe = {
                 if (data.status === 'rejected') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
-                    console.log('🔥 Тиммейт отклонил! Вызов handleRejection()');
-                    // Убираем проверку isWaitingMode
+                    console.log('🔥 Тиммейт отклонил!');
                     this.handleRejection();
                 }
                 
@@ -1079,7 +1126,10 @@ const Swipe = {
         
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         
-        // ТОТ, КТО ОТКЛОНИЛ - СРАЗУ В ПОИСК БЕЗ ВОПРОСА
+        // 🔥 ТОСТ: вы вернулись в поиск
+        this.showToastMessage('Вы вернулись в поиск');
+        
+        // ТОТ, КТО ОТКЛОНИЛ - СРАЗУ В ПОИСК
         if (window.App) {
             App.showScreen('searchScreen', true);
         }
@@ -1367,95 +1417,95 @@ const Swipe = {
         setTimeout(() => this.exitSwipeMode('connectionTimeout'), 2000);
     },
     
-  handleRejection() {
-    console.log('🔥 handleRejection() вызван');
-    
-    // Останавливаем все таймеры
-    if (this.connectionTimer) {
-        clearInterval(this.connectionTimer);
-        this.connectionTimer = null;
-    }
-    if (this.matchPolling) {
-        clearInterval(this.matchPolling);
-        this.matchPolling = null;
-    }
-    if (this.cardTimerInterval) {
-        clearInterval(this.cardTimerInterval);
-        this.cardTimerInterval = null;
-    }
-    
-    const statusEl = document.getElementById('waitingStatus');
-    if (statusEl) {
-        statusEl.innerHTML = 'Тиммейт отклонил';
-        statusEl.style.color = '#FF3B30';
-    }
-    
-    if (window.Settings && window.Settings.error) window.Settings.error();
-    
-    const savedMode = this.mode;
-    
-    // Выходим из режима ожидания
-    this.isWaitingMode = false;
-    
-    // Скрываем экран ожидания
-    const swipeContent = document.getElementById('swipeModeContent');
-    const waitingContent = document.getElementById('waitingModeContent');
-    if (swipeContent) swipeContent.style.display = 'flex';
-    if (waitingContent) waitingContent.classList.remove('active');
-    
-    // Показываем окно с вопросом
-    const showQuestion = () => {
-        console.log('🔥 Показываем окно вопроса');
+    handleRejection() {
+        console.log('🔥 handleRejection() вызван');
         
-        // Пробуем через Telegram WebApp
-        if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp && window.Telegram.WebApp.showPopup) {
-            try {
-                window.Telegram.WebApp.showPopup({
-                    title: 'Тиммейт отклонил',
-                    message: 'Вернуться в поиск?',
-                    buttons: [
-                        { id: 'cancel', type: 'cancel', text: 'Нет' },
-                        { id: 'ok', type: 'default', text: 'Да' }
-                    ]
-                }, (buttonId) => {
-                    console.log('🔘 Нажата кнопка:', buttonId);
-                    if (buttonId === 'ok') {
-                        this.exitSwipeMode('handleRejection');
-                        setTimeout(() => {
-                            if (typeof Search !== 'undefined' && savedMode) {
-                                Search.start(savedMode);
-                            }
-                        }, 300);
-                    } else {
-                        this.exitSwipeMode('handleRejection');
-                    }
-                });
-            } catch(e) {
-                console.error('Ошибка showPopup:', e);
-                // Fallback на confirm
-                const wantSearch = confirm('Тиммейт отклонил. Вернуться в поиск?');
-                this.exitSwipeMode('handleRejection');
-                if (wantSearch) {
-                    setTimeout(() => {
-                        if (typeof Search !== 'undefined' && savedMode) {
-                            Search.start(savedMode);
-                        }
-                    }, 300);
-                }
-            }
-        } else {
-            // Fallback на confirm
-            const wantSearch = confirm('Тиммейт отклонил. Вернуться в поиск?');
-            this.exitSwipeMode('handleRejection');
-            if (wantSearch) {
-                setTimeout(() => {
-                    if (typeof Search !== 'undefined' && savedMode) {
-                        Search.start(savedMode);
-                    }
-                }, 300);
-            }
+        if (this.connectionTimer) {
+            clearInterval(this.connectionTimer);
+            this.connectionTimer = null;
         }
-    };
+        if (this.matchPolling) {
+            clearInterval(this.matchPolling);
+            this.matchPolling = null;
+        }
+        if (this.cardTimerInterval) {
+            clearInterval(this.cardTimerInterval);
+            this.cardTimerInterval = null;
+        }
+        
+        const statusEl = document.getElementById('waitingStatus');
+        if (statusEl) {
+            statusEl.innerHTML = 'Тиммейт отклонил';
+            statusEl.style.color = '#FF3B30';
+        }
+        
+        if (window.Settings && window.Settings.error) window.Settings.error();
+        
+        const savedMode = this.mode;
+        
+        this.isWaitingMode = false;
+        
+        const swipeContent = document.getElementById('swipeModeContent');
+        const waitingContent = document.getElementById('waitingModeContent');
+        if (swipeContent) swipeContent.style.display = 'flex';
+        if (waitingContent) waitingContent.classList.remove('active');
+        
+        // 🔥 ТОСТ: тиммейт отклонил - вы снова в поиске
+        this.showToastMessage('Тиммейт отклонил - вы снова в поиске');
+        
+        this.exitSwipeMode('handleRejection');
+        
+        setTimeout(() => {
+            if (typeof Search !== 'undefined' && savedMode) {
+                Search.start(savedMode);
+            }
+        }, 500);
+    },
     
-    setTimeout(showQuestion, 300);
-},
+    exitSwipeMode(reason) {
+        console.log('🔄 Выход из свайпа. Причина:', reason);
+        this.unblockScroll();
+        this.isWaitingMode = false;
+        this.currentMatchId = null;
+        this.currentPlayer = null;
+        this.matchExpiresAt = null;
+        this.gameCreated = false;
+        this.gameCreating = false;
+        this.chatLink = null;
+        this.inviteLink = null;
+        
+        if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
+        if (this.connectionTimer) clearInterval(this.connectionTimer);
+        if (this.matchPolling) clearInterval(this.matchPolling);
+        
+        if (window.App) App.showScreen('mainScreen', true);
+        else window.location.href = '/';
+    }
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ Swipe: DOM загружен');
+    window.Swipe = Swipe;
+    
+    var swipeScreen = document.getElementById('swipeScreen');
+    if (swipeScreen) {
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (swipeScreen.classList.contains('active') && !Swipe.isInitialized) {
+                        Swipe.init(Swipe.mode || 'FACEIT');
+                    }
+                }
+            });
+        });
+        observer.observe(swipeScreen, { attributes: true });
+    }
+});
+
+if (document.getElementById('swipeScreen') && document.getElementById('swipeScreen').classList.contains('active')) {
+    setTimeout(function() {
+        if (!Swipe.isInitialized) {
+            Swipe.init(Swipe.mode || 'FACEIT');
+        }
+    }, 100);
+}
