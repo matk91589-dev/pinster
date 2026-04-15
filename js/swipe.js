@@ -1038,7 +1038,7 @@ const Swipe = {
     },
     
     rejectPlayer() {
-        console.log('❌ rejectPlayer() called');
+        console.log('❌ rejectPlayer() called - Я ОТКЛОНИЛ');
         
         if (window.Settings && window.Settings.error) window.Settings.error();
         
@@ -1075,38 +1075,16 @@ const Swipe = {
         
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         
-        // 🔥 ИНТЕРАКТИВНОЕ ОКНО ПРИ ОТКЛОНЕНИИ
-        if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
-            window.Telegram.WebApp.showPopup({
-                title: 'Отклонить тиммейта?',
-                message: 'Возвращаем вас в поиск?',
-                buttons: [
-                    { id: 'cancel', type: 'cancel', text: 'Нет' },
-                    { id: 'ok', type: 'default', text: 'Да' }
-                ]
-            }, (buttonId) => {
-                if (buttonId === 'ok') {
-                    this.exitSwipeMode('rejectPlayer');
-                    setTimeout(() => {
-                        if (typeof Search !== 'undefined' && savedMode) {
-                            Search.start(savedMode);
-                        }
-                    }, 300);
-                } else {
-                    this.exitSwipeMode('rejectPlayer');
-                }
-            });
-        } else {
-            const wantSearch = confirm('Отклонить тиммейта? Вернуться в поиск?');
-            this.exitSwipeMode('rejectPlayer');
-            if (wantSearch) {
-                setTimeout(() => {
-                    if (typeof Search !== 'undefined' && savedMode) {
-                        Search.start(savedMode);
-                    }
-                }, 300);
-            }
+        // 🔥 ТОТ, КТО ОТКЛОНИЛ - СРАЗУ В ПОИСК БЕЗ ВОПРОСА
+        if (window.App) {
+            App.showScreen('searchScreen', true);
         }
+        
+        setTimeout(() => {
+            if (typeof Search !== 'undefined' && savedMode) {
+                Search.start(savedMode);
+            }
+        }, 300);
     },
     
     createGame() {
@@ -1399,10 +1377,11 @@ const Swipe = {
         
         const savedMode = this.mode;
         
+        // 🔥 ТОГО, КОГО ОТКЛОНИЛИ - СПРАШИВАЕМ
         if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
             window.Telegram.WebApp.showPopup({
                 title: 'Тиммейт отклонил',
-                message: 'Возвращаем вас в поиск?',
+                message: 'Вернуться в поиск?',
                 buttons: [
                     { id: 'cancel', type: 'cancel', text: 'Нет' },
                     { id: 'ok', type: 'default', text: 'Да' }
@@ -1420,7 +1399,7 @@ const Swipe = {
                 }
             });
         } else {
-            const wantSearch = confirm('Тиммейт отклонил. Хотите вернуться в поиск?');
+            const wantSearch = confirm('Тиммейт отклонил. Вернуться в поиск?');
             this.exitSwipeMode('handleRejection');
             if (wantSearch) {
                 setTimeout(() => {
