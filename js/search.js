@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v5.8 FINAL (СТИЛЬ ПО УМОЛЧАНИЮ FAN)
+// ПОИСК - v5.9 FIXED (ПРИНУДИТЕЛЬНЫЙ СТОП ПЕРЕД СТАРТОМ)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.8 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.9 FIXED)');
 
 const Search = {
     timerInterval: null,
@@ -12,6 +12,7 @@ const Search = {
     currentMatchId: null,
     isSearching: false,
     processedMatchIds: new Set(),
+    savedSearchParams: null, // 🔥 СОХРАНЯЕМ ПАРАМЕТРЫ ДЛЯ ПОВТОРНОГО ПОИСКА
     
     init() {
         console.log('🚀 Search.init()');
@@ -24,7 +25,6 @@ const Search = {
             console.log('🎨 Установлен стиль по умолчанию: fan');
         }
     
-        // Восстанавливаем стиль на всех экранах
         const savedStyle = localStorage.getItem('selected_style');
         const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
         if (styleBtn) {
@@ -33,7 +33,6 @@ const Search = {
             console.log('🎨 Восстановлен стиль:', savedStyle);
         }
     
-        // Наблюдатель за появлением новых экранов
         const observer = new MutationObserver(() => {
             const styleBtnAgain = document.querySelector(`.style-option.${localStorage.getItem('selected_style') || 'fan'}`);
             if (styleBtnAgain && !styleBtnAgain.classList.contains('active')) {
@@ -75,7 +74,6 @@ const Search = {
                             self.setupPublicValidation();
                         }
                         
-                        // Восстанавливаем стиль при открытии экрана
                         setTimeout(() => {
                             let savedStyle = localStorage.getItem('selected_style');
                             if (!savedStyle) {
@@ -497,12 +495,45 @@ const Search = {
     },
     
     start(mode, value) {
-        console.log(`🔍 Search.start: ${mode}`);
+        console.log(`🔍 Search.start: ${mode}`, value);
         if (window.Settings) Settings.click();
+        
+        // 🔥 СОХРАНЯЕМ ПАРАМЕТРЫ ДЛЯ ПОВТОРНОГО ИСПОЛЬЗОВАНИЯ
+        this.savedSearchParams = { mode, value };
         
         setTimeout(() => {
             this.doStartValidation(mode);
         }, 50);
+    },
+    
+    // 🔥 НОВЫЙ МЕТОД: ПРИНУДИТЕЛЬНАЯ ОСТАНОВКА ПЕРЕД ЗАПУСКОМ
+    forceStopAndStart(mode, value) {
+        console.log('🛑 forceStopAndStart:', mode, value);
+        
+        const telegram_id = this.getTelegramId();
+        if (!telegram_id) {
+            console.error('❌ Нет telegram_id');
+            return;
+        }
+        
+        // Сначала останавливаем поиск
+        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegram_id: telegram_id })
+        })
+        .then(() => {
+            console.log('✅ Поиск остановлен, запускаем новый');
+            // Чуть ждём и запускаем
+            setTimeout(() => {
+                this.start(mode, value);
+            }, 200);
+        })
+        .catch(err => {
+            console.error('❌ Ошибка остановки:', err);
+            // Всё равно пробуем запустить
+            this.start(mode, value);
+        });
     },
     
     doStartValidation(mode) {
@@ -588,7 +619,6 @@ const Search = {
     collectData(mode) {
         const data = { style: 'fan', age: 0, steam_link: '', faceit_link: '', rating: 0, rank: '', comment: '' };
         
-        // Стиль из localStorage
         const savedStyle = localStorage.getItem('selected_style');
         if (savedStyle === 'tryhard') {
             data.style = 'tryhard';
@@ -619,7 +649,6 @@ const Search = {
             data.comment = document.getElementById('publicComment')?.value || '';
         }
         
-        // Принудительная подстановка из localStorage если поля пустые
         const steamFromStorage = localStorage.getItem('profile_steam');
         const faceitFromStorage = localStorage.getItem('profile_faceit');
         
@@ -641,8 +670,14 @@ const Search = {
         const telegram_id = this.getTelegramId();
         if (!telegram_id) return App.showAlert('Ошибка авторизации');
         
-        App.showScreen('searchScreen', true);
-        document.getElementById('searchModeTitle').textContent = mode;
+        // 🔥 НЕ ПЕРЕХОДИМ НА SEARCHSCREEN, ЕСЛИ УЖЕ ТАМ
+        const currentScreen = document.querySelector('.screen.active')?.id;
+        if (currentScreen !== 'searchScreen') {
+            App.showScreen('searchScreen', true);
+        }
+        
+        const modeTitle = document.getElementById('searchModeTitle');
+        if (modeTitle) modeTitle.textContent = mode;
         
         this.resetTimer();
         this.startTimer();
@@ -663,7 +698,7 @@ const Search = {
             comment: data.comment || ''
         };
         
-        console.log('📤 ОТПРАВКА НА БЭКЕНД:', requestBody);
+        console.log('📤 ОТПРАВКА НА БЭКЕНД:', JSON.stringify(requestBody, null, 2));
         
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/start', {
             method: 'POST',
@@ -672,18 +707,44 @@ const Search = {
         })
         .then(res => res.json())
         .then(res => {
-            console.log('📥 ОТВЕТ БЭКЕНДА:', res);
-            if (res.status === 'searching') this.startPolling();
-            else if (res.status === 'match_found') this.showSwipe(res);
-            else App.showAlert(res.message || 'Ошибка');
+            console.log('📥 ОТВЕТ БЭКЕНДА:', JSON.stringify(res, null, 2));
+            
+            if (res.status === 'searching') {
+                this.startPolling();
+            } else if (res.status === 'match_found') {
+                this.showSwipe(res);
+            } else {
+                // 🔥 ОШИБКА - НО НЕ УХОДИМ НА ГЛАВНУЮ!
+                console.error('❌ Ошибка от бэкенда:', res);
+                const errorMsg = res.message || res.error || 'Неизвестная ошибка';
+                
+                // Показываем тост, но остаёмся на searchScreen
+                if (typeof Profile !== 'undefined' && Profile.showToast) {
+                    Profile.showToast(errorMsg, true);
+                } else {
+                    alert(errorMsg);
+                }
+                
+                // Сбрасываем состояние поиска
+                this.isSearching = false;
+                this.resetTimer();
+            }
         })
         .catch(err => {
-            console.error('❌ Ошибка:', err);
-            App.showAlert('Ошибка соединения');
+            console.error('❌ Ошибка сети:', err);
+            
+            // НЕ УХОДИМ НА ГЛАВНУЮ!
+            if (typeof Profile !== 'undefined' && Profile.showToast) {
+                Profile.showToast('Ошибка соединения', true);
+            }
+            
+            this.isSearching = false;
+            this.resetTimer();
         });
     },
     
     startPolling() {
+        console.log('🔄 Запущен polling');
         this.pollingInterval = setInterval(() => {
             if (!this.isSearching) return;
             
@@ -694,9 +755,11 @@ const Search = {
             })
             .then(res => res.json())
             .then(data => {
+                console.log('📡 Polling ответ:', data.match_found ? 'МАТЧ!' : 'ждём...');
                 if (data.match_found && !this.processedMatchIds.has(data.match_id)) {
                     this.processedMatchIds.add(data.match_id);
                     clearInterval(this.pollingInterval);
+                    this.pollingInterval = null;
                     this.showSwipe(data);
                 }
             })
@@ -718,7 +781,6 @@ const Search = {
             this.timerInterval = null;
         }
         
-        // Передаем режим в opponent для свайпа
         if (data.opponent && !data.opponent.mode) {
             data.opponent.mode = this.currentMode;
             console.log('🔥 Добавили режим в opponent:', this.currentMode);
@@ -753,21 +815,29 @@ const Search = {
     
     resetTimer() {
         if (this.timerInterval) clearInterval(this.timerInterval);
+        this.timerInterval = null;
         this.seconds = 0;
         const timer = document.getElementById('searchTimer');
         if (timer) timer.textContent = '00:00';
     },
     
     cancel() {
+        console.log('🛑 Отмена поиска');
         this.resetTimer();
-        if (this.pollingInterval) clearInterval(this.pollingInterval);
+        if (this.pollingInterval) {
+            clearInterval(this.pollingInterval);
+            this.pollingInterval = null;
+        }
         this.isSearching = false;
         
-        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ telegram_id: this.getTelegramId() })
-        });
+        const telegram_id = this.getTelegramId();
+        if (telegram_id) {
+            fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telegram_id: telegram_id })
+            }).catch(e => console.error('Ошибка при отмене:', e));
+        }
         
         App.showScreen('mainScreen', true);
     }
