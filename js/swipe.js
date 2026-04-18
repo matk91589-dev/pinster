@@ -129,6 +129,10 @@ const Swipe = {
         this.hideBackArrow();
         this.unblockScroll();
         
+        if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
+        if (this.connectionTimer) clearInterval(this.connectionTimer);
+        if (this.matchPolling) clearInterval(this.matchPolling);
+        
         if (window.App) {
             App.showScreen('searchScreen', true);
         }
@@ -935,6 +939,13 @@ const Swipe = {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
                     this.handleTeammateTimeout();
+                } else if (data.status === 'not_found') {
+                    // 🔥 МАТЧ УДАЛЁН (ТИММЕЙТ ОТКЛОНИЛ ИЛИ ВЫШЕЛ)
+                    clearInterval(this.matchPolling);
+                    this.matchPolling = null;
+                    console.log('🔥 Матч удалён!');
+                    this.showToastMessage('Тиммейт отклонил — вы снова в поиске', true);
+                    this.restartSearch('match_not_found');
                 }
             } catch (error) {
                 console.error('Polling error:', error);
