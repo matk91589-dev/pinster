@@ -5197,11 +5197,13 @@ button:active { transform: scale(0.96); }
     justify-content: center !important;
     background: rgba(0, 0, 0, 0.85) !important;
     backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
     border-radius: 50% !important;
     cursor: pointer !important;
     z-index: 9999 !important;
     transition: all 0.2s ease !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    border: none !important;
 }
 
 .back-arrow-swipe:active {
@@ -5220,7 +5222,7 @@ button:active { transform: scale(0.96); }
     stroke: white !important;
 }
 
-/* ===== ЭКРАН СВАЙПА (ФИКС СЪЕЗЖАНИЯ) ===== */
+/* ===== ЭКРАН СВАЙПА ===== */
 #swipeScreen {
     position: relative !important;
     display: flex !important;
@@ -5230,10 +5232,22 @@ button:active { transform: scale(0.96); }
     width: 100% !important;
     height: 100% !important;
     overflow: hidden !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
 }
 
 .swipe-screen {
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
     padding: 0 !important;
+    margin: 0 !important;
 }
 
 .swipe-screen .content {
@@ -5252,12 +5266,14 @@ button:active { transform: scale(0.96); }
     justify-content: center !important;
     width: 100% !important;
     height: 100% !important;
+    padding: 0 !important;
 }
 
 .swipe-card-wrapper {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    overflow: visible !important;
 }
 
 .swipe-card {
