@@ -124,6 +124,30 @@
             text-transform: lowercase !important;
         }
 
+        /* ===== СТРЕЛКА ТОЛЬКО НА СВАЙПЕ ===== */
+        .back-arrow-swipe {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: transform 0.12s ease;
+        }
+
+        .back-arrow-swipe:active {
+            transform: scale(0.85);
+        }
+
+        .back-arrow-swipe svg {
+            width: 20px;
+            height: 20px;
+        }
+
         .screen {
             position: relative;
         }
@@ -498,7 +522,7 @@
             }
         }
         
-        /* ===== ФИНАЛЬНЫЕ СТИЛИ СТРЕЛКИ (ПЕРЕБИВАЮТ ВСЁ) ===== */
+        /* ===== ФИНАЛЬНЫЕ СТИЛИ СТРЕЛКИ (ТОЛЬКО СТРЕЛКА) ===== */
         .back-arrow-swipe {
             position: absolute !important;
             top: 16px !important;
@@ -534,10 +558,6 @@
         
         .back-arrow-swipe:active svg {
             stroke: white !important;
-        }
-        
-        #swipeScreen {
-            position: relative !important;
         }
     </style>
 </head>
