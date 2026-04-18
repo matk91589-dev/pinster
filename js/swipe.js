@@ -1131,18 +1131,13 @@ const Swipe = {
     rejectPlayer() {
         console.log('❌ rejectPlayer() called - Я ОТКЛОНИЛ');
         
-        if (this.cardTimerInterval) {
-            clearInterval(this.cardTimerInterval);
-            this.cardTimerInterval = null;
-        }
-        
-        if (this.matchPolling) {
-            clearInterval(this.matchPolling);
-            this.matchPolling = null;
-        }
+        if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
+        if (this.matchPolling) clearInterval(this.matchPolling);
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         const savedMode = this.mode;
+        const savedRank = this.currentPlayer?.rating || this.currentPlayer?.rank || '';
+        const savedAge = this.currentPlayer?.age || '';
         
         if (this.currentMatchId) {
             fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
@@ -1153,7 +1148,7 @@ const Swipe = {
                     match_id: this.currentMatchId,
                     response: 'reject'
                 })
-            }).catch(error => console.error('Error rejecting:', error));
+            }).catch(e => console.error('Error rejecting:', e));
         }
         
         this.unblockScroll();
@@ -1164,22 +1159,44 @@ const Swipe = {
         
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         
-        // 🔥 ТОСТ: вы вернулись в поиск
         this.showToastMessage('Вы вернулись в поиск', false);
+        this.hideBackArrow();
         
-        // ТОТ, КТО ОТКЛОНИЛ - СРАЗУ В ПОИСК
         if (window.App) {
             App.showScreen('searchScreen', true);
         }
         
         setTimeout(() => {
             if (typeof Search !== 'undefined' && savedMode) {
-                // Обновляем заголовок экрана поиска
                 const modeTitle = document.getElementById('searchModeTitle');
                 if (modeTitle) modeTitle.textContent = savedMode;
-                Search.start(savedMode);
+                
+                // Заполняем поля
+                if (savedMode === 'FACEIT') {
+                    const eloInput = document.getElementById('faceitELOInput');
+                    const ageInput = document.getElementById('faceitAgeValue');
+                    if (eloInput) eloInput.value = savedRank;
+                    if (ageInput) ageInput.value = savedAge;
+                } else if (savedMode === 'PREMIER') {
+                    const ratingInput = document.getElementById('premierRatingInput');
+                    const ageInput = document.getElementById('premierAgeValue');
+                    if (ratingInput) ratingInput.value = savedRank;
+                    if (ageInput) ageInput.value = savedAge;
+                } else if (savedMode === 'PRIME') {
+                    const rankSelect = document.getElementById('primeRankSelect');
+                    const ageInput = document.getElementById('primeAgeValue');
+                    if (rankSelect) rankSelect.value = savedRank;
+                    if (ageInput) ageInput.value = savedAge;
+                } else if (savedMode === 'PUBLIC') {
+                    const rankSelect = document.getElementById('publicRankSelect');
+                    const ageInput = document.getElementById('publicAgeValue');
+                    if (rankSelect) rankSelect.value = savedRank;
+                    if (ageInput) ageInput.value = savedAge;
+                }
+                
+                Search.start(savedMode, savedRank);
             }
-        }, 300);
+        }, 200);
     },
     
     createGame() {
@@ -1463,66 +1480,92 @@ const Swipe = {
     handleRejection() {
         console.log('🔥 handleRejection() вызван');
         
-        if (this.connectionTimer) {
-            clearInterval(this.connectionTimer);
-            this.connectionTimer = null;
-        }
-        if (this.matchPolling) {
-            clearInterval(this.matchPolling);
-            this.matchPolling = null;
-        }
-        if (this.cardTimerInterval) {
-            clearInterval(this.cardTimerInterval);
-            this.cardTimerInterval = null;
-        }
+        // Очищаем таймеры
+        if (this.connectionTimer) clearInterval(this.connectionTimer);
+        if (this.matchPolling) clearInterval(this.matchPolling);
+        if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
         
+        // Сохраняем параметры для перезапуска поиска
+        const savedMode = this.mode;
+        const savedRank = this.currentPlayer?.rating || this.currentPlayer?.rank || '';
+        const savedAge = this.currentPlayer?.age || '';
+        
+        console.log('📋 Сохранённые параметры:', { savedMode, savedRank, savedAge });
+        
+        // Обновляем UI ожидания
         const statusEl = document.getElementById('waitingStatus');
         if (statusEl) {
             statusEl.innerHTML = 'Тиммейт отклонил';
             statusEl.style.color = '#FF3B30';
         }
         
-        const savedMode = this.mode;
+        // 🔥 ТОСТ
+        this.showToastMessage('Тиммейт отклонил — вы снова в поиске', true);
         
+        // Очищаем состояние свайпа
         this.isWaitingMode = false;
-        
-        const swipeContent = document.getElementById('swipeModeContent');
-        const waitingContent = document.getElementById('waitingModeContent');
-        if (swipeContent) swipeContent.style.display = 'flex';
-        if (waitingContent) waitingContent.classList.remove('active');
-        
-        // 🔥 ТОСТ: тиммейт отклонил - вы снова в поиске
-        this.showToastMessage('Тиммейт отклонил - вы снова в поиске', true);
-        
-        // Выходим из свайпа
-        this.unblockScroll();
         this.currentMatchId = null;
         this.currentPlayer = null;
         this.matchExpiresAt = null;
         this.gameCreated = false;
         this.gameCreating = false;
-        this.chatLink = null;
-        this.inviteLink = null;
         
-        if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
-        if (this.connectionTimer) clearInterval(this.connectionTimer);
-        if (this.matchPolling) clearInterval(this.matchPolling);
-        
+        // Скрываем стрелку
         this.hideBackArrow();
         
-        // 🔥 ПЕРЕХОДИМ НА ЭКРАН ПОИСКА И ЗАПУСКАЕМ ПОИСК
+        // Разблокируем скролл
+        this.unblockScroll();
+        
+        // Сбрасываем видимость контента
+        const swipeContent = document.getElementById('swipeModeContent');
+        const waitingContent = document.getElementById('waitingModeContent');
+        if (swipeContent) swipeContent.style.display = 'flex';
+        if (waitingContent) waitingContent.classList.remove('active');
+        
+        // 🔥 ПЕРЕХОДИМ НА ЭКРАН ПОИСКА
         if (window.App) {
             App.showScreen('searchScreen', true);
         }
         
+        // 🔥 ЗАПОЛНЯЕМ ПОЛЯ И ЗАПУСКАЕМ ПОИСК
         setTimeout(() => {
-            if (typeof Search !== 'undefined' && savedMode) {
-                // Обновляем заголовок экрана поиска
-                const modeTitle = document.getElementById('searchModeTitle');
-                if (modeTitle) modeTitle.textContent = savedMode;
-                Search.start(savedMode);
+            if (typeof Search === 'undefined' || !savedMode) {
+                console.error('❌ Search не найден или нет режима');
+                return;
             }
-        }, 300);
+            
+            // Обновляем заголовок
+            const modeTitle = document.getElementById('searchModeTitle');
+            if (modeTitle) modeTitle.textContent = savedMode;
+            
+            // Заполняем поля в зависимости от режима
+            if (savedMode === 'FACEIT') {
+                const eloInput = document.getElementById('faceitELOInput');
+                const ageInput = document.getElementById('faceitAgeValue');
+                if (eloInput) eloInput.value = savedRank;
+                if (ageInput) ageInput.value = savedAge;
+            } else if (savedMode === 'PREMIER') {
+                const ratingInput = document.getElementById('premierRatingInput');
+                const ageInput = document.getElementById('premierAgeValue');
+                if (ratingInput) ratingInput.value = savedRank;
+                if (ageInput) ageInput.value = savedAge;
+            } else if (savedMode === 'PRIME') {
+                const rankSelect = document.getElementById('primeRankSelect');
+                const ageInput = document.getElementById('primeAgeValue');
+                if (rankSelect) rankSelect.value = savedRank;
+                if (ageInput) ageInput.value = savedAge;
+            } else if (savedMode === 'PUBLIC') {
+                const rankSelect = document.getElementById('publicRankSelect');
+                const ageInput = document.getElementById('publicAgeValue');
+                if (rankSelect) rankSelect.value = savedRank;
+                if (ageInput) ageInput.value = savedAge;
+            }
+            
+            // 🔥 ЗАПУСКАЕМ ПОИСК
+            console.log('🚀 Запускаем Search.start с параметрами:', savedMode, savedRank);
+            Search.start(savedMode, savedRank);
+            
+        }, 200);
     },
     
     exitSwipeMode(reason) {
