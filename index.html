@@ -124,30 +124,6 @@
             text-transform: lowercase !important;
         }
 
-        /* ===== СТРЕЛКА ТОЛЬКО НА СВАЙПЕ ===== */
-        .back-arrow-swipe {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 100;
-            transition: transform 0.12s ease;
-        }
-
-        .back-arrow-swipe:active {
-            transform: scale(0.85);
-        }
-
-        .back-arrow-swipe svg {
-            width: 20px;
-            height: 20px;
-        }
-
         .screen {
             position: relative;
         }
@@ -522,10 +498,10 @@
             }
         }
         
-        /* ===== ФИНАЛЬНЫЕ СТИЛИ СТРЕЛКИ (ТОЛЬКО СТРЕЛКА) ===== */
+        /* ===== СТРЕЛКА НАЗАД (АДАПТИВНАЯ) ===== */
         .back-arrow-swipe {
             position: absolute !important;
-            top: 16px !important;
+            top: 70px !important;
             left: 16px !important;
             width: 44px !important;
             height: 44px !important;
@@ -537,7 +513,7 @@
             -webkit-backdrop-filter: blur(10px) !important;
             border-radius: 50% !important;
             cursor: pointer !important;
-            z-index: 99999 !important;
+            z-index: 100 !important;
             transition: all 0.2s ease !important;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
             border: none !important;
@@ -558,6 +534,46 @@
         
         .back-arrow-swipe:active svg {
             stroke: white !important;
+        }
+        
+        /* Адаптив для стрелки */
+        @media (max-width: 480px) {
+            .back-arrow-swipe {
+                top: 65px !important;
+                left: 14px !important;
+                width: 40px !important;
+                height: 40px !important;
+            }
+            .back-arrow-swipe svg {
+                width: 22px !important;
+                height: 22px !important;
+            }
+        }
+        
+        @media (max-width: 380px) {
+            .back-arrow-swipe {
+                top: 60px !important;
+                left: 12px !important;
+                width: 36px !important;
+                height: 36px !important;
+            }
+            .back-arrow-swipe svg {
+                width: 20px !important;
+                height: 20px !important;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .back-arrow-swipe {
+                top: 55px !important;
+                left: 10px !important;
+                width: 32px !important;
+                height: 32px !important;
+            }
+            .back-arrow-swipe svg {
+                width: 18px !important;
+                height: 18px !important;
+            }
         }
     </style>
 </head>
