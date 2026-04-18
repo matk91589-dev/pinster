@@ -50,6 +50,28 @@ const Swipe = {
     hintInterval: null,
     resizeObserver: null,
     
+    // 🔥 УПРАВЛЕНИЕ СТРЕЛКОЙ НАЗАД
+    showBackArrow() {
+        const arrow = document.querySelector('.back-arrow-swipe');
+        if (arrow) {
+            arrow.style.display = 'flex';
+            arrow.style.visibility = 'visible';
+            arrow.style.opacity = '1';
+            arrow.style.pointerEvents = 'auto';
+            console.log('⬅️ Стрелка назад показана');
+        }
+    },
+    
+    hideBackArrow() {
+        const arrow = document.querySelector('.back-arrow-swipe');
+        if (arrow) {
+            arrow.style.display = 'none';
+            arrow.style.visibility = 'hidden';
+            arrow.style.pointerEvents = 'none';
+            console.log('⬅️ Стрелка назад скрыта');
+        }
+    },
+    
     // Показ тоста
     showToastMessage(message, isError = false) {
         if (this.toastTimeout) clearTimeout(this.toastTimeout);
@@ -63,7 +85,7 @@ const Swipe = {
             top: 60px;
             left: 50%;
             transform: translateX(-50%) translateY(-100px);
-            background: rgba(0, 0, 0, 0.85);
+            background: ${isError ? 'rgba(255, 59, 48, 0.95)' : 'rgba(0, 0, 0, 0.85)'};
             backdrop-filter: blur(10px);
             color: white;
             padding: 10px 16px;
@@ -134,12 +156,12 @@ const Swipe = {
     
     copyToClipboard(text, btnElement) {
         if (!text || text === 'Не указана' || text === '') {
-            if (window.Settings && window.Settings.error) window.Settings.error();
+            this.showToastMessage('Нечего копировать', true);
             return;
         }
         
         navigator.clipboard.writeText(text).then(() => {
-            if (window.Settings && window.Settings.success) window.Settings.success();
+            this.showToastMessage('Скопировано!', false);
             
             if (btnElement) {
                 btnElement.classList.add('copied');
@@ -147,7 +169,7 @@ const Swipe = {
             }
         }).catch(err => {
             console.error('Ошибка копирования:', err);
-            if (window.Settings && window.Settings.error) window.Settings.error();
+            this.showToastMessage('Ошибка копирования', true);
         });
     },
     
@@ -230,6 +252,9 @@ const Swipe = {
             this.cardWrapper.style.transition = '';
             this.cardWrapper.style.transform = 'translateX(0) rotate(0deg) scale(1)';
         }
+        
+        // 🔥 ПОКАЗЫВАЕМ СТРЕЛКУ НАЗАД
+        this.showBackArrow();
         
         setTimeout(() => this.updateButtonsPosition(), 100);
     },
@@ -401,10 +426,10 @@ const Swipe = {
         if (this.isWaitingMode) return;
         
         if (action === 'skip') {
-            if (window.Settings && window.Settings.error) window.Settings.error();
+            this.showToastMessage('Вы отклонили', false);
             this.animateAndReject();
         } else if (action === 'invite') {
-            if (window.Settings && window.Settings.swipe) window.Settings.swipe();
+            this.showToastMessage('Вы приняли', false);
             this.animateAndAccept();
         }
     },
@@ -504,6 +529,9 @@ const Swipe = {
         }
         
         this.isWaitingMode = true;
+        
+        // 🔥 ПОКАЗЫВАЕМ СТРЕЛКУ НАЗАД (на всякий случай)
+        this.showBackArrow();
         
         this.startWaitingTimer();
         
@@ -654,7 +682,7 @@ const Swipe = {
         }
         
         // 🔥 ТОСТ: матч найден!
-        this.showToastMessage('Матч найден!');
+        this.showToastMessage('Матч найден!', false);
         
         this._pendingOpponent = opponent;
         this._pendingMatchId = matchId;
@@ -742,9 +770,7 @@ const Swipe = {
                 clearInterval(this.cardTimerInterval);
                 this.cardTimerInterval = null;
             
-                if (typeof Profile !== 'undefined' && Profile.showToast) {
-                    Profile.showToast('Время истекло', true);
-                }
+                this.showToastMessage('Время истекло', true);
             
                 if (this.currentMatchId) {
                     const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
@@ -902,9 +928,8 @@ const Swipe = {
         const isSwipe = Math.abs(deltaX) > this.SWIPE_THRESHOLD || velocity > this.VELOCITY_THRESHOLD;
         
         if (isSwipe && Math.abs(deltaX) > 10) {
-            if (window.Settings && window.Settings.swipe) window.Settings.swipe();
-            
             if (deltaX > 0) {
+                this.showToastMessage('Вы приняли', false);
                 if (this.cardWrapper) {
                     this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
                     this.cardWrapper.style.transform = 'translateX(200%) rotate(15deg) scale(0.85)';
@@ -917,6 +942,7 @@ const Swipe = {
                     this.acceptPlayer();
                 }, this.ANIMATION_DURATION);
             } else {
+                this.showToastMessage('Вы отклонили', false);
                 if (this.cardWrapper) {
                     this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
                     this.cardWrapper.style.transform = 'translateX(-200%) rotate(-15deg) scale(0.85)';
@@ -945,8 +971,6 @@ const Swipe = {
     
     acceptPlayer() {
         console.log('✅ acceptPlayer() called');
-        
-        if (window.Settings && window.Settings.success) window.Settings.success();
         
         if (this.cardTimerInterval) {
             clearInterval(this.cardTimerInterval);
@@ -977,6 +1001,7 @@ const Swipe = {
         })
         .catch(error => {
             console.error('Accept error:', error);
+            this.showToastMessage('Ошибка при принятии', true);
             setTimeout(() => {
                 this.exitSwipeMode('acceptError');
             }, 1000);
@@ -1057,14 +1082,14 @@ const Swipe = {
                 chatButton.disabled = false;
             }
             
-            if (window.Settings && window.Settings.success) window.Settings.success();
+            this.showToastMessage('Матч создан!', false);
         } else if (status === 'rejected') {
             this.stopWaitingTimer();
             if (statusEl) {
                 statusEl.innerHTML = 'Тиммейт отклонил';
                 statusEl.style.color = '#FF3B30';
             }
-            if (window.Settings && window.Settings.error) window.Settings.error();
+            this.showToastMessage('Тиммейт отклонил', true);
         }
     },
     
@@ -1083,6 +1108,7 @@ const Swipe = {
                     friend_player_id: this.currentPlayer.player_id
                 })
             });
+            console.log('✅ Добавлен в друзья');
         } catch (error) {
             console.error('Ошибка добавления в друзья:', error);
         }
@@ -1090,8 +1116,6 @@ const Swipe = {
     
     rejectPlayer() {
         console.log('❌ rejectPlayer() called - Я ОТКЛОНИЛ');
-        
-        if (window.Settings && window.Settings.error) window.Settings.error();
         
         if (this.cardTimerInterval) {
             clearInterval(this.cardTimerInterval);
@@ -1127,7 +1151,7 @@ const Swipe = {
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         
         // 🔥 ТОСТ: вы вернулись в поиск
-        this.showToastMessage('Вы вернулись в поиск');
+        this.showToastMessage('Вы вернулись в поиск', false);
         
         // ТОТ, КТО ОТКЛОНИЛ - СРАЗУ В ПОИСК
         if (window.App) {
@@ -1231,7 +1255,7 @@ const Swipe = {
                 }
             }
         } else {
-            alert('Ссылка на чат не найдена');
+            this.showToastMessage('Ссылка на чат не найдена', true);
         }
     },
     
@@ -1414,6 +1438,8 @@ const Swipe = {
             statusEl.style.color = '#FF3B30';
         }
         
+        this.showToastMessage('Время ожидания истекло', true);
+        
         setTimeout(() => this.exitSwipeMode('connectionTimeout'), 2000);
     },
     
@@ -1439,8 +1465,6 @@ const Swipe = {
             statusEl.style.color = '#FF3B30';
         }
         
-        if (window.Settings && window.Settings.error) window.Settings.error();
-        
         const savedMode = this.mode;
         
         this.isWaitingMode = false;
@@ -1451,15 +1475,29 @@ const Swipe = {
         if (waitingContent) waitingContent.classList.remove('active');
         
         // 🔥 ТОСТ: тиммейт отклонил - вы снова в поиске
-        this.showToastMessage('Тиммейт отклонил - вы снова в поиске');
+        this.showToastMessage('Тиммейт отклонил - вы снова в поиске', true);
         
-        this.exitSwipeMode('handleRejection');
+        // СНАЧАЛА ЗАПУСКАЕМ ПОИСК
+        if (typeof Search !== 'undefined' && savedMode) {
+            Search.start(savedMode);
+        }
         
-        setTimeout(() => {
-            if (typeof Search !== 'undefined' && savedMode) {
-                Search.start(savedMode);
-            }
-        }, 500);
+        // Выходим без перехода на главный экран
+        this.unblockScroll();
+        this.currentMatchId = null;
+        this.currentPlayer = null;
+        this.matchExpiresAt = null;
+        this.gameCreated = false;
+        this.gameCreating = false;
+        this.chatLink = null;
+        this.inviteLink = null;
+        
+        if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
+        if (this.connectionTimer) clearInterval(this.connectionTimer);
+        if (this.matchPolling) clearInterval(this.matchPolling);
+        
+        // 🔥 СКРЫВАЕМ СТРЕЛКУ НАЗАД
+        this.hideBackArrow();
     },
     
     exitSwipeMode(reason) {
@@ -1478,8 +1516,10 @@ const Swipe = {
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         if (this.matchPolling) clearInterval(this.matchPolling);
         
+        // 🔥 СКРЫВАЕМ СТРЕЛКУ НАЗАД
+        this.hideBackArrow();
+        
         // Не переходим на главный, остаёмся на текущем экране
-        // if (window.App) App.showScreen('mainScreen', true);
     }
 };
 
