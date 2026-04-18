@@ -1194,7 +1194,7 @@ const Swipe = {
                     if (ageInput) ageInput.value = savedAge;
                 }
                 
-                Search.start(savedMode, savedRank);
+                Search.forceStopAndStart(savedMode, savedRank);
             }
         }, 200);
     },
