@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v5.9 FIXED (ПРИНУДИТЕЛЬНЫЙ СТОП ПЕРЕД СТАРТОМ)
+// ПОИСК - v6.0 FINAL (ПОЛНЫЙ ФИКС ДЛЯ ВТОРОГО ИГРОКА)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v5.9 FIXED)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v6.0 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -12,7 +12,8 @@ const Search = {
     currentMatchId: null,
     isSearching: false,
     processedMatchIds: new Set(),
-    savedSearchParams: null, // 🔥 СОХРАНЯЕМ ПАРАМЕТРЫ ДЛЯ ПОВТОРНОГО ПОИСКА
+    savedSearchParams: null,
+    _isRestarting: false,
     
     init() {
         console.log('🚀 Search.init()');
@@ -57,19 +58,15 @@ const Search = {
                     
                     setTimeout(() => {
                         if (screenId === 'faceitScreen') {
-                            console.log('🎯 Заполняем FACEIT');
                             self.fillFaceitScreen();
                             self.setupFaceitValidation();
                         } else if (screenId === 'premierScreen') {
-                            console.log('🎯 Заполняем PREMIER');
                             self.fillPremierScreen();
                             self.setupPremierValidation();
                         } else if (screenId === 'primeScreen') {
-                            console.log('🎯 Заполняем PRIME');
                             self.fillPrimeScreen();
                             self.setupPrimeValidation();
                         } else if (screenId === 'publicScreen') {
-                            console.log('🎯 Заполняем PUBLIC');
                             self.fillPublicScreen();
                             self.setupPublicValidation();
                         }
@@ -84,7 +81,6 @@ const Search = {
                             if (styleBtn) {
                                 document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
                                 styleBtn.classList.add('active');
-                                console.log('🎨 Восстановлен активный стиль для', screenId, ':', savedStyle);
                             }
                         }, 100);
                     }, 100);
@@ -406,17 +402,6 @@ const Search = {
         if (faceitInput && p.faceit) faceitInput.value = p.faceit;
         
         this.updateRatingDisplayInSearch('faceitScreen');
-        console.log('✅ FACEIT заполнен мгновенно:', { age: p.age, faceit: p.faceit });
-        
-        setTimeout(() => {
-            const savedStyle = localStorage.getItem('selected_style') || 'fan';
-            const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
-            if (styleBtn) {
-                document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
-                styleBtn.classList.add('active');
-                console.log('🎨 Принудительно установлен стиль на FACEIT:', savedStyle);
-            }
-        }, 50);
     },
     
     fillPremierScreen() {
@@ -428,17 +413,6 @@ const Search = {
         if (steamInput && p.steam) steamInput.value = p.steam;
         
         this.updateRatingDisplayInSearch('premierScreen');
-        console.log('✅ PREMIER заполнен мгновенно:', { age: p.age, steam: p.steam });
-        
-        setTimeout(() => {
-            const savedStyle = localStorage.getItem('selected_style') || 'fan';
-            const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
-            if (styleBtn) {
-                document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
-                styleBtn.classList.add('active');
-                console.log('🎨 Принудительно установлен стиль на PREMIER:', savedStyle);
-            }
-        }, 50);
     },
     
     fillPrimeScreen() {
@@ -450,17 +424,6 @@ const Search = {
         if (steamInput && p.steam) steamInput.value = p.steam;
         
         this.updateRatingDisplayInSearch('primeScreen');
-        console.log('✅ PRIME заполнен мгновенно:', { age: p.age, steam: p.steam });
-        
-        setTimeout(() => {
-            const savedStyle = localStorage.getItem('selected_style') || 'fan';
-            const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
-            if (styleBtn) {
-                document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
-                styleBtn.classList.add('active');
-                console.log('🎨 Принудительно установлен стиль на PRIME:', savedStyle);
-            }
-        }, 50);
     },
     
     fillPublicScreen() {
@@ -472,17 +435,6 @@ const Search = {
         if (steamInput && p.steam) steamInput.value = p.steam;
         
         this.updateRatingDisplayInSearch('publicScreen');
-        console.log('✅ PUBLIC заполнен мгновенно:', { age: p.age, steam: p.steam });
-        
-        setTimeout(() => {
-            const savedStyle = localStorage.getItem('selected_style') || 'fan';
-            const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
-            if (styleBtn) {
-                document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
-                styleBtn.classList.add('active');
-                console.log('🎨 Принудительно установлен стиль на PUBLIC:', savedStyle);
-            }
-        }, 50);
     },
     
     setStyle(style, element) {
@@ -498,7 +450,6 @@ const Search = {
         console.log(`🔍 Search.start: ${mode}`, value);
         if (window.Settings) Settings.click();
         
-        // 🔥 СОХРАНЯЕМ ПАРАМЕТРЫ ДЛЯ ПОВТОРНОГО ИСПОЛЬЗОВАНИЯ
         this.savedSearchParams = { mode, value };
         
         setTimeout(() => {
@@ -506,7 +457,6 @@ const Search = {
         }, 50);
     },
     
-    // 🔥 НОВЫЙ МЕТОД: ПРИНУДИТЕЛЬНАЯ ОСТАНОВКА ПЕРЕД ЗАПУСКОМ
     forceStopAndStart(mode, value) {
         console.log('🛑 forceStopAndStart:', mode, value);
 
@@ -515,10 +465,10 @@ const Search = {
         const telegram_id = this.getTelegramId();
         if (!telegram_id) {
             console.error('❌ Нет telegram_id');
+            this._isRestarting = false;
             return;
         }
         
-        // Сначала останавливаем поиск
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -526,7 +476,6 @@ const Search = {
         })
         .then(() => {
             console.log('✅ Поиск остановлен, запускаем новый');
-            // Чуть ждём и запускаем
             setTimeout(() => {
                 this._isRestarting = false;
                 this.start(mode, value);
@@ -534,7 +483,7 @@ const Search = {
         })
         .catch(err => {
             console.error('❌ Ошибка остановки:', err);
-            // Всё равно пробуем запустить
+            this._isRestarting = false;
             this.start(mode, value);
         });
     },
@@ -623,12 +572,7 @@ const Search = {
         const data = { style: 'fan', age: 0, steam_link: '', faceit_link: '', rating: 0, rank: '', comment: '' };
         
         const savedStyle = localStorage.getItem('selected_style');
-        if (savedStyle === 'tryhard') {
-            data.style = 'tryhard';
-        } else {
-            data.style = 'fan';
-        }
-        console.log('🎨 Стиль для отправки:', data.style);
+        data.style = savedStyle === 'tryhard' ? 'tryhard' : 'fan';
         
         if (mode === 'FACEIT') {
             data.rating = parseInt(document.getElementById('faceitELOInput')?.value) || 0;
@@ -655,16 +599,8 @@ const Search = {
         const steamFromStorage = localStorage.getItem('profile_steam');
         const faceitFromStorage = localStorage.getItem('profile_faceit');
         
-        if (!data.steam_link && steamFromStorage && steamFromStorage !== '') {
-            data.steam_link = steamFromStorage;
-            console.log('🔥 Подставлен Steam из localStorage:', steamFromStorage);
-        }
-        if (!data.faceit_link && faceitFromStorage && faceitFromStorage !== '') {
-            data.faceit_link = faceitFromStorage;
-            console.log('🔥 Подставлен Faceit из localStorage:', faceitFromStorage);
-        }
-        
-        console.log('📦 ИТОГОВЫЕ ДАННЫЕ:', { steam: data.steam_link, faceit: data.faceit_link, style: data.style });
+        if (!data.steam_link && steamFromStorage) data.steam_link = steamFromStorage;
+        if (!data.faceit_link && faceitFromStorage) data.faceit_link = faceitFromStorage;
         
         return data;
     },
@@ -673,7 +609,6 @@ const Search = {
         const telegram_id = this.getTelegramId();
         if (!telegram_id) return App.showAlert('Ошибка авторизации');
         
-        // 🔥 НЕ ПЕРЕХОДИМ НА SEARCHSCREEN, ЕСЛИ УЖЕ ТАМ
         const currentScreen = document.querySelector('.screen.active')?.id;
         if (currentScreen !== 'searchScreen') {
             App.showScreen('searchScreen', true);
@@ -717,18 +652,13 @@ const Search = {
             } else if (res.status === 'match_found') {
                 this.showSwipe(res);
             } else {
-                // 🔥 ОШИБКА - НО НЕ УХОДИМ НА ГЛАВНУЮ!
                 console.error('❌ Ошибка от бэкенда:', res);
                 const errorMsg = res.message || res.error || 'Неизвестная ошибка';
                 
-                // Показываем тост, но остаёмся на searchScreen
                 if (typeof Profile !== 'undefined' && Profile.showToast) {
                     Profile.showToast(errorMsg, true);
-                } else {
-                    alert(errorMsg);
                 }
                 
-                // Сбрасываем состояние поиска
                 this.isSearching = false;
                 this.resetTimer();
             }
@@ -736,7 +666,6 @@ const Search = {
         .catch(err => {
             console.error('❌ Ошибка сети:', err);
             
-            // НЕ УХОДИМ НА ГЛАВНУЮ!
             if (typeof Profile !== 'undefined' && Profile.showToast) {
                 Profile.showToast('Ошибка соединения', true);
             }
@@ -749,7 +678,10 @@ const Search = {
     startPolling() {
         console.log('🔄 Запущен polling');
         this.pollingInterval = setInterval(() => {
-            if (!this.isSearching) return;
+            if (!this.isSearching) {
+                console.log('⏸️ Поиск остановлен, polling прекращён');
+                return;
+            }
             
             fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/check', {
                 method: 'POST',
@@ -758,20 +690,28 @@ const Search = {
             })
             .then(res => res.json())
             .then(data => {
-                console.log('📡 Polling ответ:', data.match_found ? 'МАТЧ!' : 'ждём...');
-                if (data.match_found && !this.processedMatchIds.has(data.match_id)) {
-                    this.processedMatchIds.add(data.match_id);
-                    clearInterval(this.pollingInterval);
-                    this.pollingInterval = null;
-                    this.showSwipe(data);
+                console.log('📡 Polling ответ:', JSON.stringify(data, null, 2));
+                
+                if (data.match_found) {
+                    console.log('🎯 МАТЧ НАЙДЕН! match_id:', data.match_id);
+                    
+                    if (!this.processedMatchIds.has(data.match_id)) {
+                        console.log('✅ Новый матч, показываем свайп');
+                        this.processedMatchIds.add(data.match_id);
+                        clearInterval(this.pollingInterval);
+                        this.pollingInterval = null;
+                        this.showSwipe(data);
+                    } else {
+                        console.log('⚠️ Матч уже обработан');
+                    }
                 }
             })
-            .catch(e => console.error('Poll error:', e));
+            .catch(e => console.error('❌ Poll error:', e));
         }, 2000);
     },
     
     showSwipe(data) {
-        console.log('🎯 showSwipe:', data);
+        console.log('🎯 showSwipe ВЫЗВАН с данными:', JSON.stringify(data, null, 2));
         this.isSearching = false;
         
         if (this.pollingInterval) {
@@ -789,6 +729,8 @@ const Search = {
             console.log('🔥 Добавили режим в opponent:', this.currentMode);
         }
         
+        console.log('📱 Переходим на swipeScreen...');
+        
         if (window.App && window.App.showScreen) {
             window.App.showScreen('swipeScreen', false);
         } else {
@@ -797,10 +739,12 @@ const Search = {
             if (swipeScreen) swipeScreen.classList.add('active');
         }
         
+        console.log('🎮 Вызываем Swipe.startWithOpponent...');
+        
         if (typeof Swipe !== 'undefined') {
             Swipe.startWithOpponent(data.opponent, data.match_id, data.expires_at, null);
         } else {
-            console.error('❌ Swipe не загружен');
+            console.error('❌ Swipe не загружен!');
             App.showScreen('mainScreen', true);
         }
     },
@@ -826,11 +770,16 @@ const Search = {
     
     cancel() {
         console.log('🛑 Отмена поиска');
-        console.trace('🔍 Кто вызвал cancel?'); // 👈 ПОКАЖЕТ СТЕК ВЫЗОВОВ
-    
-        // 🔥 ЕСЛИ МЫ УЖЕ НЕ В ПОИСКЕ - НЕ УХОДИМ НА ГЛАВНУЮ
-        if (!this.isSearching) {
-            console.log('⚠️ Поиск уже остановлен, игнорируем');
+        
+        if (!this.isSearching && !this._isRestarting) {
+            console.log('⚠️ Поиск уже остановлен');
+            // Всё равно уходим на главную если это ручная отмена
+            this.resetTimer();
+            if (this.pollingInterval) {
+                clearInterval(this.pollingInterval);
+                this.pollingInterval = null;
+            }
+            App.showScreen('mainScreen', true);
             return;
         }
         
@@ -850,7 +799,9 @@ const Search = {
             }).catch(e => console.error('Ошибка при отмене:', e));
         }
         
-        App.showScreen('mainScreen', true);
+        if (!this._isRestarting) {
+            App.showScreen('mainScreen', true);
+        }
     }
 };
 
