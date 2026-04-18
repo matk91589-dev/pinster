@@ -146,25 +146,87 @@ Object.assign(window.App, {
         }
     },
     
-    // 🔥 МЕТОД ДЛЯ СТРЕЛКИ НАЗАД
+    // 🔥 МЕТОД ДЛЯ СТРЕЛКИ НАЗАД (ИСПРАВЛЕН)
     goBack: function() {
         const tg = window.Telegram?.WebApp;
-        if (tg && tg.showPopup) {
-            tg.showPopup({
-                title: 'Выйти?',
-                message: 'Вернуться на главный экран?',
-                buttons: [
-                    { id: 'cancel', type: 'cancel', text: 'Нет' },
-                    { id: 'ok', type: 'default', text: 'Да' }
-                ]
-            }, (buttonId) => {
-                if (buttonId === 'ok') {
+        
+        // Проверяем, находимся ли мы в режиме свайпа
+        const isInSwipe = (typeof Swipe !== 'undefined' && Swipe.currentMatchId);
+        const isInWaiting = (typeof Swipe !== 'undefined' && Swipe.isWaitingMode);
+        
+        // Функция для реального выхода
+        const doExit = () => {
+            if (isInSwipe || isInWaiting) {
+                // Отправляем reject на сервер
+                if (Swipe.currentMatchId) {
+                    const telegram_id = tg?.initDataUnsafe?.user?.id;
+                    fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            telegram_id: telegram_id,
+                            match_id: Swipe.currentMatchId,
+                            response: 'reject'
+                        })
+                    }).catch(e => console.error('Ошибка reject при выходе:', e));
+                }
+                
+                // Очищаем всё в Swipe
+                Swipe.exitSwipeMode('user_back');
+                
+                // Показываем тост
+                if (typeof Swipe.showToastMessage === 'function') {
+                    Swipe.showToastMessage('Поиск отменён', false);
+                }
+            }
+            
+            // Возвращаемся на главный экран
+            this.showScreen('mainScreen', true);
+        };
+        
+        // Если мы в свайпе или ожидании — показываем подтверждение
+        if (isInSwipe || isInWaiting) {
+            const message = isInWaiting 
+                ? 'Выйти из ожидания? Матч будет отменён.'
+                : 'Выйти? Текущий матч будет отменён.';
+            
+            if (tg && tg.showPopup) {
+                tg.showPopup({
+                    title: 'Выйти?',
+                    message: message,
+                    buttons: [
+                        { id: 'cancel', type: 'cancel', text: 'Остаться' },
+                        { id: 'ok', type: 'destructive', text: 'Выйти' }
+                    ]
+                }, (buttonId) => {
+                    if (buttonId === 'ok') {
+                        doExit();
+                    }
+                });
+            } else {
+                if (confirm(message)) {
+                    doExit();
+                }
+            }
+        } else {
+            // Просто главный экран или настройки — обычный выход
+            if (tg && tg.showPopup) {
+                tg.showPopup({
+                    title: 'Выйти?',
+                    message: 'Вернуться на главный экран?',
+                    buttons: [
+                        { id: 'cancel', type: 'cancel', text: 'Нет' },
+                        { id: 'ok', type: 'default', text: 'Да' }
+                    ]
+                }, (buttonId) => {
+                    if (buttonId === 'ok') {
+                        this.showScreen('mainScreen', true);
+                    }
+                });
+            } else {
+                if (confirm('Вернуться на главный экран?')) {
                     this.showScreen('mainScreen', true);
                 }
-            });
-        } else {
-            if (confirm('Вернуться на главный экран?')) {
-                this.showScreen('mainScreen', true);
             }
         }
     },
