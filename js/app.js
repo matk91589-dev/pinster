@@ -146,18 +146,145 @@ Object.assign(window.App, {
         }
     },
     
-    // 🔥 МЕТОД ДЛЯ СТРЕЛКИ НАЗАД (ИСПРАВЛЕН)
-    goBack: function() {
-        const tg = window.Telegram?.WebApp;
+    // 🔥 КАСТОМНЫЙ ПОПАП В СТИЛЕ TELEGRAM
+    showCustomPopup: function(title, message, onConfirm, onCancel, confirmText = 'Выйти', cancelText = 'Остаться', isDestructive = true) {
+        // Удаляем старый попап если есть
+        const oldPopup = document.querySelector('.pingster-popup-overlay');
+        if (oldPopup) oldPopup.remove();
         
-        // Проверяем, находимся ли мы в режиме свайпа
+        const overlay = document.createElement('div');
+        overlay.className = 'pingster-popup-overlay';
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 100000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        `;
+        
+        const popup = document.createElement('div');
+        popup.className = 'pingster-popup';
+        popup.style.cssText = `
+            background: #1C1E24;
+            border-radius: 14px;
+            width: 100%;
+            max-width: 320px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: popupFadeIn 0.2s ease;
+        `;
+        
+        popup.innerHTML = `
+            <div style="font-size: 17px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px;">${title}</div>
+            <div style="font-size: 14px; color: #8E97A6; margin-bottom: 20px; line-height: 1.4;">${message}</div>
+            <div style="display: flex; gap: 8px;">
+                <button class="popup-cancel-btn" style="
+                    flex: 1;
+                    padding: 12px;
+                    border-radius: 10px;
+                    border: none;
+                    background: #2A2F3A;
+                    color: #FFFFFF;
+                    font-size: 15px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: opacity 0.2s;
+                ">${cancelText}</button>
+                <button class="popup-confirm-btn" style="
+                    flex: 1;
+                    padding: 12px;
+                    border-radius: 10px;
+                    border: none;
+                    background: ${isDestructive ? '#FF3B30' : '#FF5500'};
+                    color: #FFFFFF;
+                    font-size: 15px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: opacity 0.2s;
+                ">${confirmText}</button>
+            </div>
+        `;
+        
+        overlay.appendChild(popup);
+        document.body.appendChild(overlay);
+        
+        // Добавляем стиль анимации если его нет
+        if (!document.querySelector('#popup-animation-style')) {
+            const style = document.createElement('style');
+            style.id = 'popup-animation-style';
+            style.textContent = `
+                @keyframes popupFadeIn {
+                    from { opacity: 0; transform: scale(0.95); }
+                    to { opacity: 1; transform: scale(1); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        const cancelBtn = popup.querySelector('.popup-cancel-btn');
+        const confirmBtn = popup.querySelector('.popup-confirm-btn');
+        
+        const close = () => {
+            overlay.style.opacity = '0';
+            popup.style.transform = 'scale(0.95)';
+            setTimeout(() => overlay.remove(), 150);
+        };
+        
+        cancelBtn.onclick = () => {
+            close();
+            if (onCancel) onCancel();
+        };
+        
+        confirmBtn.onclick = () => {
+            close();
+            if (onConfirm) onConfirm();
+        };
+        
+        // Закрытие по клику на оверлей
+        overlay.onclick = (e) => {
+            if (e.target === overlay) {
+                close();
+                if (onCancel) onCancel();
+            }
+        };
+        
+        // Ховер эффекты
+        cancelBtn.onmouseover = () => cancelBtn.style.opacity = '0.8';
+        cancelBtn.onmouseout = () => cancelBtn.style.opacity = '1';
+        confirmBtn.onmouseover = () => confirmBtn.style.opacity = '0.8';
+        confirmBtn.onmouseout = () => confirmBtn.style.opacity = '1';
+    },
+    
+    // 🔥 ПРОВЕРКА НА СВАЙП И ВЫХОД
+    checkSwipeAndExit: function(targetScreenId, updateNav) {
         const isInSwipe = (typeof Swipe !== 'undefined' && Swipe.currentMatchId);
         const isInWaiting = (typeof Swipe !== 'undefined' && Swipe.isWaitingMode);
         
-        // Функция для реального выхода
-        const doExit = () => {
-            if (isInSwipe || isInWaiting) {
-                // Отправляем reject на сервер
+        if (!isInSwipe && !isInWaiting) {
+            // Не в свайпе — просто переходим
+            this._doShowScreen(targetScreenId, updateNav);
+            return;
+        }
+        
+        const message = isInWaiting 
+            ? 'Выйти из ожидания? Матч будет отменён.'
+            : 'Выйти? Текущий матч будет отменён.';
+        
+        this.showCustomPopup(
+            'Выйти?',
+            message,
+            () => {
+                // Подтверждение — выходим
+                const tg = window.Telegram?.WebApp;
                 if (Swipe.currentMatchId) {
                     const telegram_id = tg?.initDataUnsafe?.user?.id;
                     fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
@@ -168,70 +295,28 @@ Object.assign(window.App, {
                             match_id: Swipe.currentMatchId,
                             response: 'reject'
                         })
-                    }).catch(e => console.error('Ошибка reject при выходе:', e));
+                    }).catch(e => console.error('Ошибка reject:', e));
                 }
+                Swipe.exitSwipeMode('navigation');
                 
-                // Очищаем всё в Swipe
-                Swipe.exitSwipeMode('user_back');
-                
-                // Показываем тост
                 if (typeof Swipe.showToastMessage === 'function') {
                     Swipe.showToastMessage('Поиск отменён', false);
                 }
-            }
-            
-            // Возвращаемся на главный экран
-            this.showScreen('mainScreen', true);
-        };
-        
-        // Если мы в свайпе или ожидании — показываем подтверждение
-        if (isInSwipe || isInWaiting) {
-            const message = isInWaiting 
-                ? 'Выйти из ожидания? Матч будет отменён.'
-                : 'Выйти? Текущий матч будет отменён.';
-            
-            if (tg && tg.showPopup) {
-                tg.showPopup({
-                    title: 'Выйти?',
-                    message: message,
-                    buttons: [
-                        { id: 'cancel', type: 'cancel', text: 'Остаться' },
-                        { id: 'ok', type: 'destructive', text: 'Выйти' }
-                    ]
-                }, (buttonId) => {
-                    if (buttonId === 'ok') {
-                        doExit();
-                    }
-                });
-            } else {
-                if (confirm(message)) {
-                    doExit();
-                }
-            }
-        } else {
-            // Просто главный экран или настройки — обычный выход
-            if (tg && tg.showPopup) {
-                tg.showPopup({
-                    title: 'Выйти?',
-                    message: 'Вернуться на главный экран?',
-                    buttons: [
-                        { id: 'cancel', type: 'cancel', text: 'Нет' },
-                        { id: 'ok', type: 'default', text: 'Да' }
-                    ]
-                }, (buttonId) => {
-                    if (buttonId === 'ok') {
-                        this.showScreen('mainScreen', true);
-                    }
-                });
-            } else {
-                if (confirm('Вернуться на главный экран?')) {
-                    this.showScreen('mainScreen', true);
-                }
-            }
-        }
+                
+                this._doShowScreen(targetScreenId, updateNav);
+            },
+            () => {
+                // Отмена — ничего не делаем
+                console.log('Остаёмся на экране');
+            },
+            'Выйти',
+            'Остаться',
+            true
+        );
     },
     
-    showScreen: function(screenId, updateNav = true) {
+    // Внутренний метод для реального перехода
+    _doShowScreen: function(screenId, updateNav = true) {
         const screen = document.getElementById(screenId);
         if (!screen) {
             console.error(`❌ Экран не найден: ${screenId}`);
@@ -285,12 +370,72 @@ Object.assign(window.App, {
         }
     },
     
-    showAlert: function(message) {
-        if (window.Telegram?.WebApp) {
-            window.Telegram.WebApp.showAlert(message);
+    // 🔥 ПУБЛИЧНЫЙ МЕТОД ДЛЯ ПЕРЕХОДА (С ПРОВЕРКОЙ СВАЙПА)
+    showScreen: function(screenId, updateNav = true) {
+        this.checkSwipeAndExit(screenId, updateNav);
+    },
+    
+    // 🔥 МЕТОД ДЛЯ СТРЕЛКИ НАЗАД
+    goBack: function() {
+        const isInSwipe = (typeof Swipe !== 'undefined' && Swipe.currentMatchId);
+        const isInWaiting = (typeof Swipe !== 'undefined' && Swipe.isWaitingMode);
+        
+        const doExit = () => {
+            if (isInSwipe || isInWaiting) {
+                const tg = window.Telegram?.WebApp;
+                if (Swipe.currentMatchId) {
+                    const telegram_id = tg?.initDataUnsafe?.user?.id;
+                    fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            telegram_id: telegram_id,
+                            match_id: Swipe.currentMatchId,
+                            response: 'reject'
+                        })
+                    }).catch(e => console.error('Ошибка reject при выходе:', e));
+                }
+                
+                Swipe.exitSwipeMode('user_back');
+                
+                if (typeof Swipe.showToastMessage === 'function') {
+                    Swipe.showToastMessage('Поиск отменён', false);
+                }
+            }
+            
+            this._doShowScreen('mainScreen', true);
+        };
+        
+        if (isInSwipe || isInWaiting) {
+            const message = isInWaiting 
+                ? 'Выйти из ожидания? Матч будет отменён.'
+                : 'Выйти? Текущий матч будет отменён.';
+            
+            this.showCustomPopup(
+                'Выйти?',
+                message,
+                () => doExit(),
+                () => console.log('Остаёмся'),
+                'Выйти',
+                'Остаться',
+                true
+            );
         } else {
-            alert(message);
+            // Не в свайпе — спрашиваем про возврат на главную
+            this.showCustomPopup(
+                'Выйти?',
+                'Вернуться на главный экран?',
+                () => this._doShowScreen('mainScreen', true),
+                () => console.log('Остаёмся'),
+                'Да',
+                'Нет',
+                false
+            );
         }
+    },
+    
+    showAlert: function(message) {
+        this.showCustomPopup('Pingster', message, () => {}, () => {}, 'OK', '', false);
     }
 });
 
