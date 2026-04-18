@@ -5180,64 +5180,87 @@ button:active { transform: scale(0.96); }
     height: 20px;
 }
 
-/* Стрелка только на экране свайпа */
-.back-arrow-swipe {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 100;
-    transition: transform 0.12s ease;
-}
-
-.back-arrow-swipe:active {
-    transform: scale(0.85);
-}
-
-.back-arrow-swipe svg {
-    width: 20px;
-    height: 20px;
-}
-
-/* Тост чуть ниже хедера */
+/* ===== ТОСТ ===== */
 .profile-toast {
     top: 60px !important;
 }
 
+/* ===== СТРЕЛКА НАЗАД (ОРАНЖЕВАЯ, ЧЁРНЫЙ ФОН КАК У ТОСТОВ) ===== */
 .back-arrow-swipe {
     position: absolute !important;
     top: 16px !important;
     left: 16px !important;
-    width: 40px !important;
-    height: 40px !important;
+    width: 44px !important;
+    height: 44px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    background: rgba(26, 29, 36, 0.8) !important;
-    backdrop-filter: blur(8px) !important;
+    background: rgba(0, 0, 0, 0.85) !important;
+    backdrop-filter: blur(10px) !important;
     border-radius: 50% !important;
     cursor: pointer !important;
     z-index: 9999 !important;
     transition: all 0.2s ease !important;
-    border: 1px solid rgba(255, 85, 0, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
 .back-arrow-swipe:active {
-    background: rgba(255, 85, 0, 0.2) !important;
+    background: #FF5500 !important;
     transform: scale(0.9) !important;
 }
 
 .back-arrow-swipe svg {
     width: 24px !important;
     height: 24px !important;
+    stroke: #FF5500 !important;
+    transition: stroke 0.2s ease !important;
 }
 
-/* Экран свайпа должен быть relative */
+.back-arrow-swipe:active svg {
+    stroke: white !important;
+}
+
+/* ===== ЭКРАН СВАЙПА (ФИКС СЪЕЗЖАНИЯ) ===== */
 #swipeScreen {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+.swipe-screen {
+    padding: 0 !important;
+}
+
+.swipe-screen .content {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.swipe-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.swipe-card-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.swipe-card {
+    margin: 0 auto !important;
     position: relative !important;
 }
