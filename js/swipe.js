@@ -45,13 +45,12 @@ const Swipe = {
     chatLink: null,
     inviteLink: null,
     toastTimeout: null,
-    iAccepted: false, // 🔥 ФЛАГ: я нажал «Принять»
+    iAccepted: false,
     
     hintRunId: null,
     hintInterval: null,
     resizeObserver: null,
     
-    // 🔥 УПРАВЛЕНИЕ СТРЕЛКОЙ НАЗАД
     showBackArrow() {
         const arrow = document.querySelector('.back-arrow-swipe');
         if (arrow) {
@@ -71,7 +70,6 @@ const Swipe = {
         }
     },
     
-    // Показ тоста
     showToastMessage(message, isError = false) {
         if (this.toastTimeout) clearTimeout(this.toastTimeout);
         const existingToast = document.querySelector('.profile-toast');
@@ -115,7 +113,6 @@ const Swipe = {
         }, 5000);
     },
 
-    // 🔥 ПЕРЕЗАПУСК ПОИСКА
     restartSearch(reason = 'reject') {
         const savedMode = this.mode;
         const savedRank = this.currentPlayer?.rating || this.currentPlayer?.rank || '';
@@ -123,31 +120,24 @@ const Swipe = {
         
         console.log('🔄 Перезапуск поиска, причина:', reason, 'режим:', savedMode);
         
-        // Очищаем состояние
         this.isWaitingMode = false;
         this.currentMatchId = null;
         this.currentPlayer = null;
         this.matchExpiresAt = null;
         this.iAccepted = false;
         
-        // Скрываем стрелку
         this.hideBackArrow();
-        
-        // Разблокируем скролл
         this.unblockScroll();
         
-        // Переходим на экран поиска
         if (window.App) {
             App.showScreen('searchScreen', true);
         }
         
-        // Запускаем поиск с сохранёнными параметрами
         setTimeout(() => {
             if (typeof Search !== 'undefined' && savedMode) {
                 const modeTitle = document.getElementById('searchModeTitle');
                 if (modeTitle) modeTitle.textContent = savedMode;
                 
-                // Заполняем поля
                 if (savedMode === 'FACEIT') {
                     const eloInput = document.getElementById('faceitELOInput');
                     const ageInput = document.getElementById('faceitAgeValue');
@@ -175,7 +165,6 @@ const Swipe = {
         }, 200);
     },
 
-    // 🔥 ВОЗВРАТ НА ГЛАВНУЮ
     goToMainScreen(reason = 'timeout') {
         console.log('🏠 Возврат на главную, причина:', reason);
         
@@ -712,6 +701,9 @@ const Swipe = {
         this.blockScroll();
         this.showHintOnce();
         
+        // 🔥 ЗАПУСКАЕМ ПРОВЕРКУ СТАТУСА МАТЧА СРАЗУ ПОСЛЕ ПОКАЗА КАРТОЧКИ
+        this.startMatchStatusPolling(matchId);
+        
         setTimeout(() => this.startSwipeHint(), 300);
         setTimeout(() => this.adjustCardSize(), 50);
         setTimeout(() => this.updateButtonsPosition(), 100);
@@ -923,15 +915,21 @@ const Swipe = {
                 const res = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/status/' + matchId);
                 const data = await res.json();
                 
+                console.log('📡 Статус матча:', data);
+                
                 if (data.status === 'both_accepted') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
+                    if (!this.isWaitingMode) {
+                        this.showWaitingMode();
+                    }
                     this.updateWaitingUI('both_accepted');
                     this.createGame();
                     this.addFriendAfterMatch();
                 } else if (data.status === 'rejected') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
+                    console.log('🔥 Тиммейт отклонил матч!');
                     this.handleRejection();
                 } else if (data.status === 'expired') {
                     clearInterval(this.matchPolling);
@@ -941,7 +939,7 @@ const Swipe = {
             } catch (error) {
                 console.error('Polling error:', error);
             }
-        }, 1500);
+        }, 2000);
     },
     
     updateWaitingUI(status) {
