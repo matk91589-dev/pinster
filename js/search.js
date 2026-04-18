@@ -509,6 +509,8 @@ const Search = {
     // 🔥 НОВЫЙ МЕТОД: ПРИНУДИТЕЛЬНАЯ ОСТАНОВКА ПЕРЕД ЗАПУСКОМ
     forceStopAndStart(mode, value) {
         console.log('🛑 forceStopAndStart:', mode, value);
+
+        this._isRestarting = true;
         
         const telegram_id = this.getTelegramId();
         if (!telegram_id) {
@@ -526,6 +528,7 @@ const Search = {
             console.log('✅ Поиск остановлен, запускаем новый');
             // Чуть ждём и запускаем
             setTimeout(() => {
+                this._isRestarting = false;
                 this.start(mode, value);
             }, 200);
         })
@@ -823,6 +826,14 @@ const Search = {
     
     cancel() {
         console.log('🛑 Отмена поиска');
+        console.trace('🔍 Кто вызвал cancel?'); // 👈 ПОКАЖЕТ СТЕК ВЫЗОВОВ
+    
+        // 🔥 ЕСЛИ МЫ УЖЕ НЕ В ПОИСКЕ - НЕ УХОДИМ НА ГЛАВНУЮ
+        if (!this.isSearching) {
+            console.log('⚠️ Поиск уже остановлен, игнорируем');
+            return;
+        }
+        
         this.resetTimer();
         if (this.pollingInterval) {
             clearInterval(this.pollingInterval);
