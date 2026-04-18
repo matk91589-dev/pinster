@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ ВЕРСИЯ С ТОСТАМИ
+// СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ ВЕРСИЯ СО ВСЕМИ ФИКСАМИ
 // ============================================
 
 const Swipe = {
@@ -59,6 +59,8 @@ const Swipe = {
             arrow.style.opacity = '1';
             arrow.style.pointerEvents = 'auto';
             console.log('⬅️ Стрелка назад показана');
+        } else {
+            console.warn('⚠️ Элемент .back-arrow-swipe не найден');
         }
     },
     
@@ -254,7 +256,9 @@ const Swipe = {
         }
         
         // 🔥 ПОКАЗЫВАЕМ СТРЕЛКУ НАЗАД
-        this.showBackArrow();
+        setTimeout(() => {
+            this.showBackArrow();
+        }, 50);
         
         setTimeout(() => this.updateButtonsPosition(), 100);
     },
@@ -530,8 +534,10 @@ const Swipe = {
         
         this.isWaitingMode = true;
         
-        // 🔥 ПОКАЗЫВАЕМ СТРЕЛКУ НАЗАД (на всякий случай)
-        this.showBackArrow();
+        // 🔥 ПОКАЗЫВАЕМ СТРЕЛКУ НАЗАД
+        setTimeout(() => {
+            this.showBackArrow();
+        }, 50);
         
         this.startWaitingTimer();
         
@@ -755,12 +761,12 @@ const Swipe = {
             clearInterval(this.cardTimerInterval);
             this.cardTimerInterval = null;
         }
-    
+
         if (!this.timerElement) {
             this.timerElement = document.getElementById('swipeTimer');
             if (!this.timerElement) return;
         }
-    
+
         const updateTimer = () => {
             const timeLeft = this.getTimeLeft();
             this.timerElement.innerHTML = timeLeft + 'с';
@@ -770,7 +776,8 @@ const Swipe = {
                 clearInterval(this.cardTimerInterval);
                 this.cardTimerInterval = null;
             
-                this.showToastMessage('Время истекло', true);
+                // 🔥 ТОСТ: ВЫ БЫЛИ НЕАКТИВНЫ
+                this.showToastMessage('Вы были неактивны', true);
             
                 if (this.currentMatchId) {
                     const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
@@ -785,7 +792,14 @@ const Swipe = {
                     }).catch(e => console.error('Ошибка reject по таймеру:', e));
                 }
             
+                // 🔥 ВЫХОДИМ ИЗ СВАЙПА И ВОЗВРАЩАЕМСЯ НА ГЛАВНЫЙ ЭКРАН
                 this.exitSwipeMode('таймер истек');
+                
+                // 🔥 ПЕРЕХОД НА ГЛАВНЫЙ ЭКРАН
+                if (window.App) {
+                    App.showScreen('mainScreen', true);
+                }
+                
                 return;
             }
         
@@ -795,7 +809,7 @@ const Swipe = {
                 this.timerElement.classList.remove('warning');
             }
         };
-    
+
         updateTimer();
         this.cardTimerInterval = setInterval(updateTimer, 1000);
     },
@@ -1160,6 +1174,9 @@ const Swipe = {
         
         setTimeout(() => {
             if (typeof Search !== 'undefined' && savedMode) {
+                // Обновляем заголовок экрана поиска
+                const modeTitle = document.getElementById('searchModeTitle');
+                if (modeTitle) modeTitle.textContent = savedMode;
                 Search.start(savedMode);
             }
         }, 300);
@@ -1477,12 +1494,7 @@ const Swipe = {
         // 🔥 ТОСТ: тиммейт отклонил - вы снова в поиске
         this.showToastMessage('Тиммейт отклонил - вы снова в поиске', true);
         
-        // СНАЧАЛА ЗАПУСКАЕМ ПОИСК
-        if (typeof Search !== 'undefined' && savedMode) {
-            Search.start(savedMode);
-        }
-        
-        // Выходим без перехода на главный экран
+        // Выходим из свайпа
         this.unblockScroll();
         this.currentMatchId = null;
         this.currentPlayer = null;
@@ -1496,8 +1508,21 @@ const Swipe = {
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         if (this.matchPolling) clearInterval(this.matchPolling);
         
-        // 🔥 СКРЫВАЕМ СТРЕЛКУ НАЗАД
         this.hideBackArrow();
+        
+        // 🔥 ПЕРЕХОДИМ НА ЭКРАН ПОИСКА И ЗАПУСКАЕМ ПОИСК
+        if (window.App) {
+            App.showScreen('searchScreen', true);
+        }
+        
+        setTimeout(() => {
+            if (typeof Search !== 'undefined' && savedMode) {
+                // Обновляем заголовок экрана поиска
+                const modeTitle = document.getElementById('searchModeTitle');
+                if (modeTitle) modeTitle.textContent = savedMode;
+                Search.start(savedMode);
+            }
+        }, 300);
     },
     
     exitSwipeMode(reason) {
@@ -1518,8 +1543,6 @@ const Swipe = {
         
         // 🔥 СКРЫВАЕМ СТРЕЛКУ НАЗАД
         this.hideBackArrow();
-        
-        // Не переходим на главный, остаёмся на текущем экране
     }
 };
 
