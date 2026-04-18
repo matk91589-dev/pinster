@@ -5215,7 +5215,7 @@ button:active { transform: scale(0.96); }
     stroke: white !important;
 }
 
-/* ===== СВАЙП-КОНТЕЙНЕР (МИНИМУМ) ===== */
+/* ===== СВАЙП-КОНТЕЙНЕР ===== */
 .swipe-container {
     display: flex !important;
     align-items: center !important;
@@ -5224,15 +5224,5 @@ button:active { transform: scale(0.96); }
     height: 100% !important;
     min-height: 100vh !important;
     padding: 16px !important;
-}
-
-.swipe-card-wrapper {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-.swipe-card {
-    margin: 0 auto !important;
     position: relative !important;
 }
