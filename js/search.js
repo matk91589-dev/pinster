@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v6.0 FINAL (ПОЛНЫЙ ФИКС ДЛЯ ВТОРОГО ИГРОКА)
+// ПОИСК - v6.1 FINAL (ПРОВЕРКА in_queue)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v6.0 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v6.1 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -692,6 +692,29 @@ const Search = {
             .then(data => {
                 console.log('📡 Polling ответ:', JSON.stringify(data, null, 2));
                 
+                // 🔥 ПРОВЕРЯЕМ: А В ОЧЕРЕДИ ЛИ МЫ?
+                if (data.in_queue === false) {
+                    console.log('⚠️ Игрок не в очереди! Перезапускаем поиск...');
+                    clearInterval(this.pollingInterval);
+                    this.pollingInterval = null;
+                    this.isSearching = false;
+                    
+                    // Показываем тост
+                    if (typeof Swipe !== 'undefined' && Swipe.showToastMessage) {
+                        Swipe.showToastMessage('Поиск перезапущен', false);
+                    }
+                    
+                    // Перезапускаем с сохранёнными параметрами
+                    const params = this.savedSearchParams || {};
+                    const mode = params.mode || this.currentMode;
+                    const value = params.value || '';
+                    
+                    setTimeout(() => {
+                        this.forceStopAndStart(mode, value);
+                    }, 500);
+                    return;
+                }
+                
                 if (data.match_found) {
                     console.log('🎯 МАТЧ НАЙДЕН! match_id:', data.match_id);
                     
@@ -773,7 +796,6 @@ const Search = {
         
         if (!this.isSearching && !this._isRestarting) {
             console.log('⚠️ Поиск уже остановлен');
-            // Всё равно уходим на главную если это ручная отмена
             this.resetTimer();
             if (this.pollingInterval) {
                 clearInterval(this.pollingInterval);
