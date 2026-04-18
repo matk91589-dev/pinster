@@ -1,5 +1,5 @@
 // ============================================
-// СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ ВЕРСИЯ СО ВСЕМИ ФИКСАМИ
+// СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ ВЕРСИЯ (ВСЕ СЦЕНАРИИ)
 // ============================================
 
 const Swipe = {
@@ -45,6 +45,7 @@ const Swipe = {
     chatLink: null,
     inviteLink: null,
     toastTimeout: null,
+    iAccepted: false, // 🔥 ФЛАГ: я нажал «Принять»
     
     hintRunId: null,
     hintInterval: null,
@@ -58,9 +59,6 @@ const Swipe = {
             arrow.style.visibility = 'visible';
             arrow.style.opacity = '1';
             arrow.style.pointerEvents = 'auto';
-            console.log('⬅️ Стрелка назад показана');
-        } else {
-            console.warn('⚠️ Элемент .back-arrow-swipe не найден');
         }
     },
     
@@ -70,7 +68,6 @@ const Swipe = {
             arrow.style.display = 'none';
             arrow.style.visibility = 'hidden';
             arrow.style.pointerEvents = 'none';
-            console.log('⬅️ Стрелка назад скрыта');
         }
     },
     
@@ -116,6 +113,88 @@ const Swipe = {
             toast.style.transform = 'translateX(-50%) translateY(-100px)';
             setTimeout(() => toast.remove(), 300);
         }, 5000);
+    },
+
+    // 🔥 ПЕРЕЗАПУСК ПОИСКА
+    restartSearch(reason = 'reject') {
+        const savedMode = this.mode;
+        const savedRank = this.currentPlayer?.rating || this.currentPlayer?.rank || '';
+        const savedAge = this.currentPlayer?.age || '';
+        
+        console.log('🔄 Перезапуск поиска, причина:', reason, 'режим:', savedMode);
+        
+        // Очищаем состояние
+        this.isWaitingMode = false;
+        this.currentMatchId = null;
+        this.currentPlayer = null;
+        this.matchExpiresAt = null;
+        this.iAccepted = false;
+        
+        // Скрываем стрелку
+        this.hideBackArrow();
+        
+        // Разблокируем скролл
+        this.unblockScroll();
+        
+        // Переходим на экран поиска
+        if (window.App) {
+            App.showScreen('searchScreen', true);
+        }
+        
+        // Запускаем поиск с сохранёнными параметрами
+        setTimeout(() => {
+            if (typeof Search !== 'undefined' && savedMode) {
+                const modeTitle = document.getElementById('searchModeTitle');
+                if (modeTitle) modeTitle.textContent = savedMode;
+                
+                // Заполняем поля
+                if (savedMode === 'FACEIT') {
+                    const eloInput = document.getElementById('faceitELOInput');
+                    const ageInput = document.getElementById('faceitAgeValue');
+                    if (eloInput) eloInput.value = savedRank;
+                    if (ageInput) ageInput.value = savedAge;
+                } else if (savedMode === 'PREMIER') {
+                    const ratingInput = document.getElementById('premierRatingInput');
+                    const ageInput = document.getElementById('premierAgeValue');
+                    if (ratingInput) ratingInput.value = savedRank;
+                    if (ageInput) ageInput.value = savedAge;
+                } else if (savedMode === 'PRIME') {
+                    const rankSelect = document.getElementById('primeRankSelect');
+                    const ageInput = document.getElementById('primeAgeValue');
+                    if (rankSelect) rankSelect.value = savedRank;
+                    if (ageInput) ageInput.value = savedAge;
+                } else if (savedMode === 'PUBLIC') {
+                    const rankSelect = document.getElementById('publicRankSelect');
+                    const ageInput = document.getElementById('publicAgeValue');
+                    if (rankSelect) rankSelect.value = savedRank;
+                    if (ageInput) ageInput.value = savedAge;
+                }
+                
+                Search.forceStopAndStart(savedMode, savedRank);
+            }
+        }, 200);
+    },
+
+    // 🔥 ВОЗВРАТ НА ГЛАВНУЮ
+    goToMainScreen(reason = 'timeout') {
+        console.log('🏠 Возврат на главную, причина:', reason);
+        
+        this.isWaitingMode = false;
+        this.currentMatchId = null;
+        this.currentPlayer = null;
+        this.matchExpiresAt = null;
+        this.iAccepted = false;
+        
+        this.hideBackArrow();
+        this.unblockScroll();
+        
+        if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
+        if (this.connectionTimer) clearInterval(this.connectionTimer);
+        if (this.matchPolling) clearInterval(this.matchPolling);
+        
+        if (window.App) {
+            App.showScreen('mainScreen', true);
+        }
     },
     
     init(mode) {
@@ -164,13 +243,11 @@ const Swipe = {
         
         navigator.clipboard.writeText(text).then(() => {
             this.showToastMessage('Скопировано!', false);
-            
             if (btnElement) {
                 btnElement.classList.add('copied');
                 setTimeout(() => btnElement.classList.remove('copied'), 1500);
             }
         }).catch(err => {
-            console.error('Ошибка копирования:', err);
             this.showToastMessage('Ошибка копирования', true);
         });
     },
@@ -193,13 +270,10 @@ const Swipe = {
         
         wrapper.appendChild(valueSpan);
         wrapper.appendChild(copyBtn);
-        
         return wrapper;
     },
     
     forceShowSwipeMode() {
-        console.log('🔧 forceShowSwipeMode()');
-
         const swipeScreen = document.getElementById('swipeScreen');
         if (swipeScreen) {
             swipeScreen.classList.add('active');
@@ -255,31 +329,20 @@ const Swipe = {
             this.cardWrapper.style.transform = 'translateX(0) rotate(0deg) scale(1)';
         }
         
-        // 🔥 ПОКАЗЫВАЕМ СТРЕЛКУ НАЗАД
-        setTimeout(() => {
-            this.showBackArrow();
-        }, 50);
-        
+        setTimeout(() => this.showBackArrow(), 50);
         setTimeout(() => this.updateButtonsPosition(), 100);
     },
     
     initResizeObserver() {
         if (this.resizeObserver) this.resizeObserver.disconnect();
-        
-        this.resizeObserver = new ResizeObserver(() => {
-            this.updateButtonsPosition();
-        });
-        
+        this.resizeObserver = new ResizeObserver(() => this.updateButtonsPosition());
         if (this.card) this.resizeObserver.observe(this.card);
         if (this.cardWrapper) this.resizeObserver.observe(this.cardWrapper);
-        
         window.addEventListener('resize', () => this.updateButtonsPosition());
         window.addEventListener('scroll', () => this.updateButtonsPosition());
     },
     
     createCardWrapper() {
-        console.log('🔨 createCardWrapper()');
-        
         const originalCard = document.getElementById('swipeCard');
         if (!originalCard) return;
         
@@ -360,7 +423,6 @@ const Swipe = {
         const cardWidth = cardRect.width;
         const cardLeft = cardRect.left;
         const cardRight = cardRect.right;
-        
         const screenWidth = window.innerWidth;
         
         let btnWidth = Math.min(Math.max(cardWidth * 0.1, 38), 56);
@@ -440,10 +502,8 @@ const Swipe = {
     
     animateAndAccept() {
         if (!this.cardWrapper) return;
-        
         this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
         this.cardWrapper.style.transform = 'translateX(200%) rotate(15deg) scale(0.85)';
-        
         setTimeout(() => {
             if (this.cardWrapper) {
                 this.cardWrapper.style.transition = '';
@@ -455,10 +515,8 @@ const Swipe = {
     
     animateAndReject() {
         if (!this.cardWrapper) return;
-        
         this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
         this.cardWrapper.style.transform = 'translateX(-200%) rotate(-15deg) scale(0.85)';
-        
         setTimeout(() => {
             if (this.cardWrapper) {
                 this.cardWrapper.style.transition = '';
@@ -473,10 +531,7 @@ const Swipe = {
         this.cardWrapper.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1)';
         this.cardWrapper.style.transform = 'translateX(0) rotate(0deg) scale(1)';
         this.currentX = 0;
-        
-        setTimeout(() => {
-            if (this.cardWrapper) this.cardWrapper.style.transition = '';
-        }, 300);
+        setTimeout(() => { if (this.cardWrapper) this.cardWrapper.style.transition = ''; }, 300);
     },
     
     adjustCardSize() {
@@ -488,21 +543,11 @@ const Swipe = {
         this.updateButtonsPosition();
     },
     
-    showSwipeMode() {
-        console.log('📱 showSwipeMode() called');
-        this.forceShowSwipeMode();
-    },
-    
     showWaitingMode() {
-        console.log('⏳ showWaitingMode() called');
-        
         const swipeContent = document.getElementById('swipeModeContent');
         const waitingContent = document.getElementById('waitingModeContent');
         
-        if (!swipeContent || !waitingContent) {
-            console.error('❌ Контент не найден');
-            return;
-        }
+        if (!swipeContent || !waitingContent) return;
         
         swipeContent.style.display = 'none';
         swipeContent.style.visibility = 'hidden';
@@ -534,29 +579,19 @@ const Swipe = {
         
         this.isWaitingMode = true;
         
-        // 🔥 ПОКАЗЫВАЕМ СТРЕЛКУ НАЗАД
-        setTimeout(() => {
-            this.showBackArrow();
-        }, 50);
-        
+        setTimeout(() => this.showBackArrow(), 50);
         this.startWaitingTimer();
-        
         setTimeout(() => {
             this.loadSelfAvatar();
             this.loadTeammateAvatar();
         }, 50);
-        
-        console.log('✅ Режим ожидания активирован');
     },
     
     loadSelfAvatar() {
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         if (!telegram_id) return;
-        
         const selfAvatarContainer = document.querySelector('.waiting-self-avatar .tg-avatar-svg');
         if (!selfAvatarContainer) return;
-        
-        console.log('🖼️ Загружаем свой аватар...');
         
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/profile/avatar', {
             method: 'POST',
@@ -567,13 +602,11 @@ const Swipe = {
         .then(data => {
             if (data.status === 'ok' && data.avatar && data.avatar !== 'null' && data.avatar !== '') {
                 selfAvatarContainer.innerHTML = '<img src="' + data.avatar + '" alt="avatar">';
-                console.log('✅ Свой аватар загружен');
             } else {
                 selfAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
             }
         })
-        .catch(error => {
-            console.error('❌ Ошибка загрузки аватара:', error);
+        .catch(() => {
             selfAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
         });
     },
@@ -581,17 +614,12 @@ const Swipe = {
     loadTeammateAvatar() {
         const teammateAvatarContainer = document.querySelector('.waiting-teammate-avatar .tg-avatar-svg');
         if (!teammateAvatarContainer) return;
-        
         if (!this.currentPlayer) {
             teammateAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
             return;
         }
-        
-        console.log('🖼️ Загружаем аватар тиммейта:', this.currentPlayer.nick);
-        
         if (this.currentPlayer.avatar && this.currentPlayer.avatar !== 'null' && this.currentPlayer.avatar !== '') {
             teammateAvatarContainer.innerHTML = '<img src="' + this.currentPlayer.avatar + '" alt="avatar">';
-            console.log('✅ Аватар тиммейта загружен');
         } else {
             teammateAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
         }
@@ -600,9 +628,7 @@ const Swipe = {
     startWaitingTimer() {
         let timeLeft = 30;
         const waitingTimerEl = document.getElementById('waitingTimer');
-        
         if (!waitingTimerEl) return;
-        
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         
         waitingTimerEl.textContent = timeLeft + 'с';
@@ -611,11 +637,7 @@ const Swipe = {
         this.connectionTimer = setInterval(() => {
             timeLeft--;
             waitingTimerEl.textContent = timeLeft + 'с';
-            
-            if (timeLeft <= 10 && timeLeft > 0) {
-                waitingTimerEl.classList.add('warning');
-            }
-            
+            if (timeLeft <= 10 && timeLeft > 0) waitingTimerEl.classList.add('warning');
             if (timeLeft <= 0) {
                 clearInterval(this.connectionTimer);
                 this.connectionTimer = null;
@@ -629,88 +651,34 @@ const Swipe = {
         if (this.connectionTimer) {
             clearInterval(this.connectionTimer);
             this.connectionTimer = null;
-            console.log('⏹️ Таймер ожидания остановлен');
-            
             const waitingTimerEl = document.getElementById('waitingTimer');
-            if (waitingTimerEl) {
-                waitingTimerEl.classList.remove('warning');
-            }
+            if (waitingTimerEl) waitingTimerEl.classList.remove('warning');
         }
-    },
-    
-    startSwipeHint() {
-        if (!this.skipBtn || !this.inviteBtn) return;
-        if (this.isWaitingMode) return;
-        
-        if (this.hintRunId) clearTimeout(this.hintRunId);
-        if (this.hintInterval) clearInterval(this.hintInterval);
-        
-        const animateHint = () => {
-            if (this.isWaitingMode) return;
-            
-            this.skipBtn.classList.add('hint-glow');
-            setTimeout(() => {
-                if (this.isWaitingMode) return;
-                this.skipBtn.classList.remove('hint-glow');
-                this.inviteBtn.classList.add('hint-glow');
-                setTimeout(() => {
-                    if (this.isWaitingMode) return;
-                    this.inviteBtn.classList.remove('hint-glow');
-                }, 800);
-            }, 800);
-        };
-        
-        this.hintRunId = setTimeout(() => {
-            animateHint();
-            this.hintInterval = setInterval(() => {
-                if (!this.isDragging && !this.isWaitingMode && this.currentMatchId) {
-                    animateHint();
-                }
-            }, 8000);
-        }, 1000);
     },
     
     startWithOpponent(opponent, matchId, expiresAt, serverTime) {
-        console.log('🎮 startWithOpponent()', opponent, matchId);
-        
         this.isWaitingMode = false;
+        this.iAccepted = false;
         
         const modeFromOpponent = opponent.mode || 'PREMIER';
-        console.log('🔥 Режим из opponent:', modeFromOpponent);
-        
-        if (!this.isInitialized) {
-            this.init(modeFromOpponent);
-        }
-        
+        if (!this.isInitialized) this.init(modeFromOpponent);
         if (this.currentMatchId === matchId) return;
-        if (this.currentMatchId && this.currentMatchId !== matchId) {
-            this.exitSwipeMode('замена матча');
-        }
+        if (this.currentMatchId && this.currentMatchId !== matchId) this.exitSwipeMode('замена матча');
         
-        // 🔥 ТОСТ: матч найден!
         this.showToastMessage('Матч найден!', false);
         
         this._pendingOpponent = opponent;
         this._pendingMatchId = matchId;
         this._pendingExpiresAt = expiresAt;
-        
         this._waitForCardAndStart();
     },
     
     _waitForCardAndStart() {
         const checkCard = () => {
             this.card = document.getElementById('swipeCard');
-            
-            if (!this.card) {
-                console.log('⏳ Ждём появления карточки...');
-                setTimeout(checkCard, 50);
-                return;
-            }
-            
-            console.log('✅ Карточка найдена, запускаем');
+            if (!this.card) { setTimeout(checkCard, 50); return; }
             this._executeStartWithOpponent();
         };
-        
         checkCard();
     },
     
@@ -731,9 +699,9 @@ const Swipe = {
         this.gameCreating = false;
         this.chatLink = null;
         this.inviteLink = null;
+        this.iAccepted = false;
         
         this.matchExpiresAt = Date.now() + 30000;
-        console.log('⏰ Принудительно ставим 30 секунд');
         
         if (this.loading) this.loading.classList.remove('active');
         
@@ -751,21 +719,13 @@ const Swipe = {
     
     getTimeLeft() {
         if (!this.matchExpiresAt) return 30;
-        const clientNow = Date.now();
-        const timeLeft = Math.max(0, Math.floor((this.matchExpiresAt - clientNow) / 1000));
-        return Math.min(timeLeft, 30);
+        return Math.max(0, Math.floor((this.matchExpiresAt - Date.now()) / 1000));
     },
     
     startCardTimer() {
-        if (this.cardTimerInterval) {
-            clearInterval(this.cardTimerInterval);
-            this.cardTimerInterval = null;
-        }
-
-        if (!this.timerElement) {
-            this.timerElement = document.getElementById('swipeTimer');
-            if (!this.timerElement) return;
-        }
+        if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
+        if (!this.timerElement) this.timerElement = document.getElementById('swipeTimer');
+        if (!this.timerElement) return;
 
         const updateTimer = () => {
             const timeLeft = this.getTimeLeft();
@@ -775,39 +735,24 @@ const Swipe = {
                 this.timerElement.classList.add('warning');
                 clearInterval(this.cardTimerInterval);
                 this.cardTimerInterval = null;
-            
-                // 🔥 ТОСТ: ВЫ БЫЛИ НЕАКТИВНЫ
+                
                 this.showToastMessage('Вы были неактивны', true);
-            
+                
                 if (this.currentMatchId) {
                     const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
                     fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            telegram_id: telegram_id,
-                            match_id: this.currentMatchId,
-                            response: 'reject'
-                        })
+                        body: JSON.stringify({ telegram_id, match_id: this.currentMatchId, response: 'reject' })
                     }).catch(e => console.error('Ошибка reject по таймеру:', e));
                 }
-            
-                // 🔥 ВЫХОДИМ ИЗ СВАЙПА И ВОЗВРАЩАЕМСЯ НА ГЛАВНЫЙ ЭКРАН
-                this.exitSwipeMode('таймер истек');
                 
-                // 🔥 ПЕРЕХОД НА ГЛАВНЫЙ ЭКРАН
-                if (window.App) {
-                    App.showScreen('mainScreen', true);
-                }
-                
+                this.goToMainScreen('card_timeout');
                 return;
             }
         
-            if (timeLeft < 10) {
-                this.timerElement.classList.add('warning');
-            } else {
-                this.timerElement.classList.remove('warning');
-            }
+            if (timeLeft < 10) this.timerElement.classList.add('warning');
+            else this.timerElement.classList.remove('warning');
         };
 
         updateTimer();
@@ -819,11 +764,7 @@ const Swipe = {
         document.body.style.position = 'fixed';
         document.body.style.width = '100%';
         document.body.style.height = '100%';
-        
-        if (this.container) {
-            this.container.style.overflow = 'hidden';
-        }
-        
+        if (this.container) this.container.style.overflow = 'hidden';
         window.addEventListener('scroll', this.preventDefaultScroll, { passive: false });
         document.addEventListener('touchmove', this.preventDefaultScroll, { passive: false });
         document.addEventListener('mousewheel', this.preventDefaultScroll, { passive: false });
@@ -834,19 +775,16 @@ const Swipe = {
         document.body.style.position = '';
         document.body.style.width = '';
         document.body.style.height = '';
-        
-        if (this.container) {
-            this.container.style.overflow = '';
-        }
-        
+        if (this.container) this.container.style.overflow = '';
         window.removeEventListener('scroll', this.preventDefaultScroll);
         document.removeEventListener('touchmove', this.preventDefaultScroll);
         document.removeEventListener('mousewheel', this.preventDefaultScroll);
     },
     
+    preventScroll(e) { e.preventDefault(); return false; },
+    
     setupEventListeners() {
         if (!this.card) return;
-        
         this.onDragStartBound = this.onDragStart.bind(this);
         this.onDragMoveBound = this.onDragMove.bind(this);
         this.onDragEndBound = this.onDragEnd.bind(this);
@@ -855,17 +793,10 @@ const Swipe = {
         this.card.addEventListener('touchmove', this.onDragMoveBound, { passive: false });
         this.card.addEventListener('touchend', this.onDragEndBound);
         this.card.addEventListener('touchcancel', this.onDragEndBound);
-        
         this.card.addEventListener('mousedown', this.onDragStartBound);
         window.addEventListener('mousemove', this.onDragMoveBound);
         window.addEventListener('mouseup', this.onDragEndBound);
-        
         this.card.addEventListener('dragstart', (e) => e.preventDefault());
-    },
-    
-    preventScroll(e) {
-        e.preventDefault();
-        return false;
     },
     
     getClientX(e) {
@@ -876,96 +807,70 @@ const Swipe = {
     
     onDragStart(e) {
         if (this.isWaitingMode) return;
-        
-        if (this.hintRunId) {
-            clearTimeout(this.hintRunId);
-            clearInterval(this.hintInterval);
-        }
-        if (this.skipBtn) this.skipBtn.classList.remove('hint-glow');
-        if (this.inviteBtn) this.inviteBtn.classList.remove('hint-glow');
-        
-        if (this.skipBtn && this.skipBtn.contains(e.target)) return;
-        if (this.inviteBtn && this.inviteBtn.contains(e.target)) return;
-        
-        const target = e.target;
-        if (!this.card || !this.card.contains(target)) return;
+        if (this.skipBtn?.contains(e.target)) return;
+        if (this.inviteBtn?.contains(e.target)) return;
+        if (!this.card?.contains(e.target)) return;
         
         this.isDragging = true;
         this.startX = this.getClientX(e);
         this.startTime = Date.now();
-        
         if (this.cardWrapper) this.cardWrapper.classList.add('dragging');
         if (this.card) this.card.style.cursor = 'grabbing';
-        
         e.preventDefault();
     },
     
     onDragMove(e) {
         if (!this.isDragging || this.isWaitingMode) return;
-        
         e.preventDefault();
-        
         const clientX = this.getClientX(e);
         if (clientX === null) return;
-        
         this.currentX = clientX;
         const deltaX = this.currentX - this.startX;
-        
         const percent = deltaX / 150;
         const rotate = percent * 12;
         const scale = 1 + Math.abs(percent) * 0.05;
-        
         if (this.cardWrapper) {
             this.cardWrapper.style.transition = 'none';
-            this.cardWrapper.style.transform = 'translateX(' + deltaX + 'px) rotate(' + rotate + 'deg) scale(' + scale + ')';
+            this.cardWrapper.style.transform = `translateX(${deltaX}px) rotate(${rotate}deg) scale(${scale})`;
         }
-        
         if (deltaX > 0) {
-            if (this.card) this.card.classList.add('swiping-right');
-            if (this.card) this.card.classList.remove('swiping-left');
+            this.card?.classList.add('swiping-right');
+            this.card?.classList.remove('swiping-left');
         } else if (deltaX < 0) {
-            if (this.card) this.card.classList.add('swiping-left');
-            if (this.card) this.card.classList.remove('swiping-right');
+            this.card?.classList.add('swiping-left');
+            this.card?.classList.remove('swiping-right');
         }
     },
     
     onDragEnd(e) {
         if (!this.isDragging || this.isWaitingMode) return;
-        
         this.isDragging = false;
         if (this.card) this.card.style.cursor = 'grab';
         
         const deltaX = this.currentX - this.startX;
         const time = Date.now() - this.startTime;
         const velocity = Math.abs(deltaX / time);
-        
         const isSwipe = Math.abs(deltaX) > this.SWIPE_THRESHOLD || velocity > this.VELOCITY_THRESHOLD;
         
         if (isSwipe && Math.abs(deltaX) > 10) {
             if (deltaX > 0) {
                 this.showToastMessage('Вы приняли', false);
                 if (this.cardWrapper) {
-                    this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
+                    this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.34, 1.2, 0.64, 1)`;
                     this.cardWrapper.style.transform = 'translateX(200%) rotate(15deg) scale(0.85)';
                 }
                 setTimeout(() => {
-                    if (this.cardWrapper) {
-                        this.cardWrapper.style.transition = '';
-                        this.cardWrapper.style.transform = '';
-                    }
+                    if (this.cardWrapper) { this.cardWrapper.style.transition = ''; this.cardWrapper.style.transform = ''; }
                     this.acceptPlayer();
                 }, this.ANIMATION_DURATION);
             } else {
                 this.showToastMessage('Вы отклонили', false);
                 if (this.cardWrapper) {
-                    this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
+                    this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.34, 1.2, 0.64, 1)`;
                     this.cardWrapper.style.transform = 'translateX(-200%) rotate(-15deg) scale(0.85)';
                 }
                 setTimeout(() => {
-                    if (this.cardWrapper) {
-                        this.cardWrapper.style.transition = '';
-                        this.cardWrapper.style.transform = '';
-                    }
+                    if (this.cardWrapper) { this.cardWrapper.style.transition = ''; this.cardWrapper.style.transform = ''; }
                     this.rejectPlayer();
                 }, this.ANIMATION_DURATION);
             }
@@ -973,67 +878,40 @@ const Swipe = {
             this.resetCardPosition();
         }
         
-        if (this.card) {
-            this.card.classList.remove('dragging', 'swiping-right', 'swiping-left');
-        }
-        if (this.cardWrapper) {
-            this.cardWrapper.classList.remove('dragging');
-        }
-        
+        this.card?.classList.remove('dragging', 'swiping-right', 'swiping-left');
+        this.cardWrapper?.classList.remove('dragging');
         e.preventDefault();
     },
     
     acceptPlayer() {
-        console.log('✅ acceptPlayer() called');
+        if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
+        if (!this.currentMatchId) { this.exitSwipeMode('acceptPlayer: нет matchId'); return; }
         
-        if (this.cardTimerInterval) {
-            clearInterval(this.cardTimerInterval);
-            this.cardTimerInterval = null;
-        }
-        
-        if (!this.currentMatchId) {
-            this.exitSwipeMode('acceptPlayer: нет matchId');
-            return;
-        }
-        
+        this.iAccepted = true;
         this.showWaitingMode();
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                telegram_id: telegram_id,
-                match_id: this.currentMatchId,
-                response: 'accept'
-            })
+            body: JSON.stringify({ telegram_id, match_id: this.currentMatchId, response: 'accept' })
         })
         .then(res => res.json())
-        .then((data) => {
-            this.startMatchStatusPolling(this.currentMatchId);
-        })
+        .then(() => this.startMatchStatusPolling(this.currentMatchId))
         .catch(error => {
             console.error('Accept error:', error);
             this.showToastMessage('Ошибка при принятии', true);
-            setTimeout(() => {
-                this.exitSwipeMode('acceptError');
-            }, 1000);
+            setTimeout(() => this.exitSwipeMode('acceptError'), 1000);
         });
     },
     
     startMatchStatusPolling(matchId) {
-        if (this.matchPolling) {
-            clearInterval(this.matchPolling);
-            this.matchPolling = null;
-        }
-        
+        if (this.matchPolling) clearInterval(this.matchPolling);
         let attempts = 0;
         const MAX_ATTEMPTS = 60;
         
         this.matchPolling = setInterval(async () => {
             attempts++;
-            
             if (attempts > MAX_ATTEMPTS) {
                 clearInterval(this.matchPolling);
                 this.matchPolling = null;
@@ -1045,29 +923,21 @@ const Swipe = {
                 const res = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/status/' + matchId);
                 const data = await res.json();
                 
-                console.log('📡 Статус матча:', data);
-                
                 if (data.status === 'both_accepted') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
                     this.updateWaitingUI('both_accepted');
                     this.createGame();
                     this.addFriendAfterMatch();
-                }
-                
-                if (data.status === 'rejected') {
+                } else if (data.status === 'rejected') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
-                    console.log('🔥 Тиммейт отклонил!');
                     this.handleRejection();
-                }
-                
-                if (data.status === 'expired') {
+                } else if (data.status === 'expired') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
-                    this.connectionTimeout();
+                    this.handleTeammateTimeout();
                 }
-                
             } catch (error) {
                 console.error('Polling error:', error);
             }
@@ -1081,13 +951,9 @@ const Swipe = {
         
         if (status === 'both_accepted') {
             this.stopWaitingTimer();
-            
             if (teammateAvatar) teammateAvatar.classList.add('connected');
             if (line) line.classList.add('connected');
-            if (statusEl) {
-                statusEl.innerHTML = 'Матч создан!';
-                statusEl.classList.add('active');
-            }
+            if (statusEl) { statusEl.innerHTML = 'Матч создан!'; statusEl.classList.add('active'); }
             
             const chatButton = document.getElementById('waitingChatButton');
             if (chatButton && this.chatLink) {
@@ -1095,117 +961,46 @@ const Swipe = {
                 chatButton.classList.add('active');
                 chatButton.disabled = false;
             }
-            
             this.showToastMessage('Матч создан!', false);
-        } else if (status === 'rejected') {
-            this.stopWaitingTimer();
-            if (statusEl) {
-                statusEl.innerHTML = 'Тиммейт отклонил';
-                statusEl.style.color = '#FF3B30';
-            }
-            this.showToastMessage('Тиммейт отклонил', true);
         }
     },
     
     async addFriendAfterMatch() {
         if (!this.currentPlayer) return;
-        
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
         if (!telegram_id) return;
-        
         try {
             await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/friends/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    telegram_id: telegram_id,
-                    friend_player_id: this.currentPlayer.player_id
-                })
+                body: JSON.stringify({ telegram_id, friend_player_id: this.currentPlayer.player_id })
             });
-            console.log('✅ Добавлен в друзья');
-        } catch (error) {
-            console.error('Ошибка добавления в друзья:', error);
-        }
+        } catch (error) {}
     },
     
     rejectPlayer() {
-        console.log('❌ rejectPlayer() called - Я ОТКЛОНИЛ');
-        
         if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
         if (this.matchPolling) clearInterval(this.matchPolling);
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        const savedMode = this.mode;
-        const savedRank = this.currentPlayer?.rating || this.currentPlayer?.rank || '';
-        const savedAge = this.currentPlayer?.age || '';
         
         if (this.currentMatchId) {
             fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    telegram_id: telegram_id,
-                    match_id: this.currentMatchId,
-                    response: 'reject'
-                })
+                body: JSON.stringify({ telegram_id, match_id: this.currentMatchId, response: 'reject' })
             }).catch(e => console.error('Error rejecting:', e));
         }
-        
-        this.unblockScroll();
-        this.isWaitingMode = false;
-        this.currentMatchId = null;
-        this.currentPlayer = null;
-        this.matchExpiresAt = null;
         
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         
         this.showToastMessage('Вы вернулись в поиск', false);
-        this.hideBackArrow();
-        
-        if (window.App) {
-            App.showScreen('searchScreen', true);
-        }
-        
-        setTimeout(() => {
-            if (typeof Search !== 'undefined' && savedMode) {
-                const modeTitle = document.getElementById('searchModeTitle');
-                if (modeTitle) modeTitle.textContent = savedMode;
-                
-                // Заполняем поля
-                if (savedMode === 'FACEIT') {
-                    const eloInput = document.getElementById('faceitELOInput');
-                    const ageInput = document.getElementById('faceitAgeValue');
-                    if (eloInput) eloInput.value = savedRank;
-                    if (ageInput) ageInput.value = savedAge;
-                } else if (savedMode === 'PREMIER') {
-                    const ratingInput = document.getElementById('premierRatingInput');
-                    const ageInput = document.getElementById('premierAgeValue');
-                    if (ratingInput) ratingInput.value = savedRank;
-                    if (ageInput) ageInput.value = savedAge;
-                } else if (savedMode === 'PRIME') {
-                    const rankSelect = document.getElementById('primeRankSelect');
-                    const ageInput = document.getElementById('primeAgeValue');
-                    if (rankSelect) rankSelect.value = savedRank;
-                    if (ageInput) ageInput.value = savedAge;
-                } else if (savedMode === 'PUBLIC') {
-                    const rankSelect = document.getElementById('publicRankSelect');
-                    const ageInput = document.getElementById('publicAgeValue');
-                    if (rankSelect) rankSelect.value = savedRank;
-                    if (ageInput) ageInput.value = savedAge;
-                }
-                
-                Search.forceStopAndStart(savedMode, savedRank);
-            }
-        }, 200);
+        this.restartSearch('reject');
     },
     
     createGame() {
         if (this.gameCreating) return;
-        if (!this.currentMatchId) {
-            this.exitSwipeMode('createGame: нет matchId');
-            return;
-        }
-        
+        if (!this.currentMatchId) return;
         this.gameCreating = true;
         
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/game/create', {
@@ -1226,21 +1021,14 @@ const Swipe = {
                 this.updateWaitingChatButton(false);
             }
         })
-        .catch(error => {
-            console.error('Error creating game:', error);
-            this.updateWaitingChatButton(false);
-        })
-        .finally(() => {
-            setTimeout(() => { this.gameCreating = false; }, 3000);
-        });
+        .catch(() => this.updateWaitingChatButton(false))
+        .finally(() => { setTimeout(() => this.gameCreating = false, 3000); });
     },
     
     updateWaitingChatButton(active, chatLink, inviteLink) {
         let button = document.getElementById('waitingChatButton');
         if (!button) return;
-        
         button.textContent = 'Перейти в чат';
-        
         if (active && chatLink) {
             button.classList.remove('disabled');
             button.classList.add('active');
@@ -1248,14 +1036,9 @@ const Swipe = {
             button.style.pointerEvents = 'auto';
             button.style.opacity = '1';
             button.style.background = '#FF5500';
-            
             this.chatLink = chatLink;
             this.inviteLink = inviteLink;
-            
-            button.onclick = (e) => {
-                e.preventDefault();
-                this.openChatLink();
-            };
+            button.onclick = (e) => { e.preventDefault(); this.openChatLink(); };
         } else {
             button.classList.remove('active');
             button.classList.add('disabled');
@@ -1269,24 +1052,14 @@ const Swipe = {
     openChatLink() {
         let chatLink = this.chatLink || localStorage.getItem('currentChatLink');
         let inviteLink = this.inviteLink || localStorage.getItem('currentInviteLink');
-        
         if (chatLink) {
             const tg = window.Telegram?.WebApp;
-            
             if (inviteLink) {
-                if (tg?.openTelegramLink) {
-                    tg.openTelegramLink(inviteLink);
-                    setTimeout(() => tg.openTelegramLink(chatLink), 1500);
-                } else {
-                    window.open(inviteLink, '_blank');
-                    setTimeout(() => window.open(chatLink, '_blank'), 1500);
-                }
+                if (tg?.openTelegramLink) { tg.openTelegramLink(inviteLink); setTimeout(() => tg.openTelegramLink(chatLink), 1500); }
+                else { window.open(inviteLink, '_blank'); setTimeout(() => window.open(chatLink, '_blank'), 1500); }
             } else {
-                if (tg?.openTelegramLink) {
-                    tg.openTelegramLink(chatLink);
-                } else {
-                    window.open(chatLink, '_blank');
-                }
+                if (tg?.openTelegramLink) tg.openTelegramLink(chatLink);
+                else window.open(chatLink, '_blank');
             }
         } else {
             this.showToastMessage('Ссылка на чат не найдена', true);
@@ -1294,10 +1067,6 @@ const Swipe = {
     },
     
     showPlayer(player) {
-        console.log('👤 showPlayer() ПОЛНЫЙ ОБЪЕКТ:', JSON.parse(JSON.stringify(player)));
-        console.log('🔍 steam_link:', player.steam_link);
-        console.log('🔍 faceit_link:', player.faceit_link);
-        console.log('👤 showPlayer()', player);
         this.currentPlayer = player;
         
         const playerIdEl = document.getElementById('swipePlayerId');
@@ -1315,64 +1084,40 @@ const Swipe = {
         if (ratingEl) {
             const trust = player.trust_rating || 0;
             ratingEl.textContent = (trust > 0 ? '+' : '') + trust;
-    
-            if (trust > 0) {
-                ratingEl.style.color = '#4CAF50';
-            } else if (trust < 0) {
-                ratingEl.style.color = '#FF3B30';
-            } else {
-                ratingEl.style.color = '';
-            }
+            ratingEl.style.color = trust > 0 ? '#4CAF50' : trust < 0 ? '#FF3B30' : '';
         }
         
         const modeFromDB = this.mode ? this.mode.toUpperCase() : null;
-        
         if (rankEl) {
-            if (modeFromDB === 'FACEIT') rankEl.textContent = player.rating || '0';
-            else if (modeFromDB === 'PREMIER') rankEl.textContent = player.rating || '0';
+            if (modeFromDB === 'FACEIT' || modeFromDB === 'PREMIER') rankEl.textContent = player.rating || '0';
             else rankEl.textContent = player.rank || '—';
         }
-        
         if (ageEl) ageEl.textContent = player.age ? player.age + ' лет' : '';
-        
-        if (styleEl) {
-            styleEl.textContent = player.style === 'fan' ? 'Fan' : 'Tryhard';
-        }
+        if (styleEl) styleEl.textContent = player.style === 'fan' ? 'Fan' : 'Tryhard';
         
         const steamValue = player.steam_link || 'Не указана';
         if (steamLinkEl && steamValue !== 'Не указана' && steamValue !== '') {
             const wrapper = this.createLinkWithCopy(steamValue);
-            const parent = steamLinkEl.parentNode;
-            steamLinkEl.remove();
-            parent.appendChild(wrapper);
-        } else if (steamLinkEl) {
-            steamLinkEl.textContent = steamValue;
-        }
+            steamLinkEl.parentNode.replaceChild(wrapper, steamLinkEl);
+        } else if (steamLinkEl) steamLinkEl.textContent = steamValue;
         
         const faceitValue = player.faceit_link || 'Не указана';
         if (faceitLinkEl && faceitValue !== 'Не указана' && faceitValue !== '') {
             const wrapper = this.createLinkWithCopy(faceitValue);
-            const parent = faceitLinkEl.parentNode;
-            faceitLinkEl.remove();
-            parent.appendChild(wrapper);
-        } else if (faceitLinkEl) {
-            faceitLinkEl.textContent = faceitValue;
-        }
+            faceitLinkEl.parentNode.replaceChild(wrapper, faceitLinkEl);
+        } else if (faceitLinkEl) faceitLinkEl.textContent = faceitValue;
         
         if (commentEl) commentEl.textContent = player.comment || '';
         
         this.updateAvatar(player);
         this.updateLinksVisibility();
-        
         setTimeout(() => this.adjustCardSize(), 50);
     },
     
     updateAvatar(player) {
         const avatarContainer = document.querySelector('#swipeCard .swipe-avatar .tg-avatar-svg');
         if (!avatarContainer) return;
-        
         const hasAvatar = player.avatar && player.avatar !== 'null' && player.avatar !== '';
-        
         if (hasAvatar) {
             avatarContainer.innerHTML = '<img src="' + player.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:50%;">';
         } else {
@@ -1383,25 +1128,18 @@ const Swipe = {
     updateLinksVisibility() {
         const steamContainer = document.querySelector('.swipe-steam-container');
         const faceitContainer = document.querySelector('.swipe-faceit-container');
-        
-        console.log('🔍 updateLinksVisibility - режим:', this.mode);
-        
         if (this.mode === 'FACEIT') {
             if (steamContainer) steamContainer.style.display = 'none';
             if (faceitContainer) faceitContainer.style.display = 'block';
-            console.log('🔍 Показываем Faceit блок');
         } else {
             if (steamContainer) steamContainer.style.display = 'block';
             if (faceitContainer) faceitContainer.style.display = 'none';
-            console.log('🔍 Показываем Steam блок');
         }
     },
     
     showHintOnce() {
         if (!this.hint) return;
-        
         const hintShown = localStorage.getItem('swipeHintShown');
-        
         if (!hintShown) {
             this.hint.classList.remove('fade-out');
             setTimeout(() => this.hint.classList.add('fade-out'), 3000);
@@ -1411,161 +1149,51 @@ const Swipe = {
         }
     },
     
-    startSwipe(mode) {
-        this.mode = mode;
-        this.playersQueue = [];
-        this.isWaitingMode = false;
-        this.blockScroll();
-        
-        if (this.card) {
-            if (this.loading) this.loading.classList.add('active');
-            this.forceShowSwipeMode();
-        } else {
-            this.init(mode);
-        }
-    },
-    
-    destroy() {
-        this.unblockScroll();
-        
-        if (this.resizeObserver) {
-            this.resizeObserver.disconnect();
-            this.resizeObserver = null;
-        }
-        
-        if (this.card) {
-            this.card.removeEventListener('touchstart', this.onDragStartBound);
-            this.card.removeEventListener('touchmove', this.onDragMoveBound);
-            this.card.removeEventListener('touchend', this.onDragEndBound);
-            this.card.removeEventListener('touchcancel', this.onDragEndBound);
-            this.card.removeEventListener('mousedown', this.onDragStartBound);
-        }
-        
-        window.removeEventListener('mousemove', this.onDragMoveBound);
-        window.removeEventListener('mouseup', this.onDragEndBound);
-        window.removeEventListener('resize', this.updateButtonsPosition);
-        window.removeEventListener('scroll', this.updateButtonsPosition);
-        
+    startSwipeHint() {
+        if (!this.skipBtn || !this.inviteBtn || this.isWaitingMode) return;
         if (this.hintRunId) clearTimeout(this.hintRunId);
         if (this.hintInterval) clearInterval(this.hintInterval);
-        if (this.connectionTimer) clearInterval(this.connectionTimer);
-        if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
-        if (this.matchPolling) clearInterval(this.matchPolling);
         
-        const wrapper = document.querySelector('.swipe-card-wrapper');
-        if (wrapper && this.card) {
-            const parent = wrapper.parentNode;
-            parent.insertBefore(this.card, wrapper);
-            wrapper.remove();
-        }
+        const animateHint = () => {
+            if (this.isWaitingMode) return;
+            this.skipBtn.classList.add('hint-glow');
+            setTimeout(() => {
+                if (this.isWaitingMode) return;
+                this.skipBtn.classList.remove('hint-glow');
+                this.inviteBtn.classList.add('hint-glow');
+                setTimeout(() => { if (!this.isWaitingMode) this.inviteBtn.classList.remove('hint-glow'); }, 800);
+            }, 800);
+        };
+        
+        this.hintRunId = setTimeout(() => {
+            animateHint();
+            this.hintInterval = setInterval(() => {
+                if (!this.isDragging && !this.isWaitingMode && this.currentMatchId) animateHint();
+            }, 8000);
+        }, 1000);
     },
     
     connectionTimeout() {
-        if (this.matchPolling) {
-            clearInterval(this.matchPolling);
-            this.matchPolling = null;
-        }
+        if (this.matchPolling) clearInterval(this.matchPolling);
+        this.matchPolling = null;
         
         const statusEl = document.getElementById('waitingStatus');
-        if (statusEl) {
-            statusEl.innerHTML = 'Время истекло';
-            statusEl.style.color = '#FF3B30';
-        }
+        if (statusEl) { statusEl.innerHTML = 'Время истекло'; statusEl.style.color = '#FF3B30'; }
         
         this.showToastMessage('Время ожидания истекло', true);
-        
         setTimeout(() => this.exitSwipeMode('connectionTimeout'), 2000);
     },
     
+    handleTeammateTimeout() {
+        console.log('⏰ Тиммейт не ответил');
+        this.showToastMessage('Тиммейт не ответил — вы снова в поиске', true);
+        this.restartSearch('teammate_timeout');
+    },
+    
     handleRejection() {
-        console.log('🔥 handleRejection() вызван');
-        
-        // Очищаем таймеры
-        if (this.connectionTimer) clearInterval(this.connectionTimer);
-        if (this.matchPolling) clearInterval(this.matchPolling);
-        if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
-        
-        // Сохраняем параметры для перезапуска поиска
-        const savedMode = this.mode;
-        const savedRank = this.currentPlayer?.rating || this.currentPlayer?.rank || '';
-        const savedAge = this.currentPlayer?.age || '';
-        
-        console.log('📋 Сохранённые параметры:', { savedMode, savedRank, savedAge });
-        
-        // Обновляем UI ожидания
-        const statusEl = document.getElementById('waitingStatus');
-        if (statusEl) {
-            statusEl.innerHTML = 'Тиммейт отклонил';
-            statusEl.style.color = '#FF3B30';
-        }
-        
-        // 🔥 ТОСТ
+        console.log('❌ Тиммейт отклонил');
         this.showToastMessage('Тиммейт отклонил — вы снова в поиске', true);
-        
-        // Очищаем состояние свайпа
-        this.isWaitingMode = false;
-        this.currentMatchId = null;
-        this.currentPlayer = null;
-        this.matchExpiresAt = null;
-        this.gameCreated = false;
-        this.gameCreating = false;
-        
-        // Скрываем стрелку
-        this.hideBackArrow();
-        
-        // Разблокируем скролл
-        this.unblockScroll();
-        
-        // Сбрасываем видимость контента
-        const swipeContent = document.getElementById('swipeModeContent');
-        const waitingContent = document.getElementById('waitingModeContent');
-        if (swipeContent) swipeContent.style.display = 'flex';
-        if (waitingContent) waitingContent.classList.remove('active');
-        
-        // 🔥 ПЕРЕХОДИМ НА ЭКРАН ПОИСКА
-        if (window.App) {
-            App.showScreen('searchScreen', true);
-        }
-        
-        // 🔥 ЗАПОЛНЯЕМ ПОЛЯ И ЗАПУСКАЕМ ПОИСК
-        setTimeout(() => {
-            if (typeof Search === 'undefined' || !savedMode) {
-                console.error('❌ Search не найден или нет режима');
-                return;
-            }
-            
-            // Обновляем заголовок
-            const modeTitle = document.getElementById('searchModeTitle');
-            if (modeTitle) modeTitle.textContent = savedMode;
-            
-            // Заполняем поля в зависимости от режима
-            if (savedMode === 'FACEIT') {
-                const eloInput = document.getElementById('faceitELOInput');
-                const ageInput = document.getElementById('faceitAgeValue');
-                if (eloInput) eloInput.value = savedRank;
-                if (ageInput) ageInput.value = savedAge;
-            } else if (savedMode === 'PREMIER') {
-                const ratingInput = document.getElementById('premierRatingInput');
-                const ageInput = document.getElementById('premierAgeValue');
-                if (ratingInput) ratingInput.value = savedRank;
-                if (ageInput) ageInput.value = savedAge;
-            } else if (savedMode === 'PRIME') {
-                const rankSelect = document.getElementById('primeRankSelect');
-                const ageInput = document.getElementById('primeAgeValue');
-                if (rankSelect) rankSelect.value = savedRank;
-                if (ageInput) ageInput.value = savedAge;
-            } else if (savedMode === 'PUBLIC') {
-                const rankSelect = document.getElementById('publicRankSelect');
-                const ageInput = document.getElementById('publicAgeValue');
-                if (rankSelect) rankSelect.value = savedRank;
-                if (ageInput) ageInput.value = savedAge;
-            }
-            
-            // 🔥 ЗАПУСКАЕМ ПОИСК
-            console.log('🚀 Запускаем Search.start с параметрами:', savedMode, savedRank);
-            Search.start(savedMode, savedRank);
-            
-        }, 200);
+        this.restartSearch('rejected_by_teammate');
     },
     
     exitSwipeMode(reason) {
@@ -1579,20 +1207,18 @@ const Swipe = {
         this.gameCreating = false;
         this.chatLink = null;
         this.inviteLink = null;
+        this.iAccepted = false;
         
         if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
         if (this.connectionTimer) clearInterval(this.connectionTimer);
         if (this.matchPolling) clearInterval(this.matchPolling);
         
-        // 🔥 СКРЫВАЕМ СТРЕЛКУ НАЗАД
         this.hideBackArrow();
     }
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('✅ Swipe: DOM загружен');
     window.Swipe = Swipe;
-    
     var swipeScreen = document.getElementById('swipeScreen');
     if (swipeScreen) {
         var observer = new MutationObserver(function(mutations) {
@@ -1608,10 +1234,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-if (document.getElementById('swipeScreen') && document.getElementById('swipeScreen').classList.contains('active')) {
-    setTimeout(function() {
-        if (!Swipe.isInitialized) {
-            Swipe.init(Swipe.mode || 'FACEIT');
-        }
-    }, 100);
+if (document.getElementById('swipeScreen')?.classList.contains('active')) {
+    setTimeout(() => { if (!Swipe.isInitialized) Swipe.init(Swipe.mode || 'FACEIT'); }, 100);
 }
