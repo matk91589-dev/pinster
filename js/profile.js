@@ -1,8 +1,8 @@
 // ============================================
-// ПРОФИЛЬ - v3.5 FINAL (ФИКС ПРОПАДАНИЯ + МЕНЮ)
+// ПРОФИЛЬ - v3.6 FINAL (ФИКС АВАТАРКИ + ДРУЗЬЯ)
 // ============================================
 
-console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v3.5 FINAL)');
+console.log('🔥 PROFILE.JS ЗАГРУЖЕН (v3.6 FINAL)');
 
 // Константы валидации
 const VALIDATION = {
@@ -63,6 +63,11 @@ const Profile = {
         age: false,
         steam: false,
         faceit: false
+    },
+    
+    // 🔥 Вспомогательная функция для задержки
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     },
     
     updateRatingDisplay() {
@@ -416,7 +421,7 @@ const Profile = {
     
     async loadFriends() {
         if (!this.telegramId) this.telegramId = this.getTelegramId();
-        if (!this.telegramId || this.isFriendsLoaded || this.isLoadingFriends) return;
+        if (!this.telegramId || this.isLoadingFriends) return;
         
         this.isLoadingFriends = true;
         this.updateFriendsLoading();
@@ -533,7 +538,7 @@ const Profile = {
     },
     
     async loadProfileFromServer() {
-        if (this.isProfileLoaded || this.isLoading) return;
+        if (this.isLoading) return;
         this.isLoading = true;
         
         if (!this.telegramId) this.telegramId = this.getTelegramId();
@@ -543,6 +548,9 @@ const Profile = {
         }
         
         try {
+            // 🔥 Дожидаемся готовности DOM
+            await this.delay(50);
+            
             const initResponse = await fetch(`${this.BACKEND_URL}/api/user/init`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -631,13 +639,15 @@ const Profile = {
     
     updateAvatarDisplay() {
         const avatarDiv = document.getElementById('profileAvatar');
-        if (avatarDiv) {
-            if (this.savedAvatarUrl && this.savedAvatarUrl !== 'null') {
-                avatarDiv.innerHTML = `<img src="${this.savedAvatarUrl}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-            } else {
-                avatarDiv.innerHTML = this.savedAvatar;
-            }
+        if (!avatarDiv) return;
+        
+        // 🔥 ФИКС: Принудительное обновление со сбросом кэша
+        if (this.savedAvatarUrl && this.savedAvatarUrl !== 'null') {
+            avatarDiv.innerHTML = `<img src="${this.savedAvatarUrl}?t=${Date.now()}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">`;
+        } else {
+            avatarDiv.innerHTML = this.savedAvatar;
         }
+        console.log('🖼️ Аватар обновлён:', this.savedAvatarUrl ? 'есть' : 'нет');
     },
     
     updateDisplay() {
@@ -1095,7 +1105,7 @@ const Profile = {
         if (this.isInitialized) return;
         this.isInitialized = true;
         
-        console.log('🚀 Profile.init() v3.5 FINAL');
+        console.log('🚀 Profile.init() v3.6 FINAL');
         this.telegramId = this.getTelegramId();
         
         this.tempName = this.savedName;
@@ -1103,9 +1113,11 @@ const Profile = {
         this.tempSteam = this.savedSteam;
         this.tempFaceitLink = this.savedFaceitLink;
         
-        this.loadProfileFromServer();
-        this.loadAvatar();
-        this.loadFriends();
+        // 🔥 СНАЧАЛА ГРУЗИМ ПРОФИЛЬ, ПОТОМ АВАТАР И ДРУЗЕЙ
+        this.loadProfileFromServer().then(() => {
+            this.loadAvatar();
+            this.loadFriends();
+        });
         
         this.setupClickHandlers();
         this.updateLinksWithCopy();
@@ -1114,6 +1126,7 @@ const Profile = {
     }
 };
 
+// Запуск
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => Profile.init());
 } else {
