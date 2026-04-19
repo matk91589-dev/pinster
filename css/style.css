@@ -5226,3 +5226,13 @@ button:active { transform: scale(0.96); }
     padding: 16px !important;
     position: relative !important;
 }
+
+.style-option.active {
+    background: #FF5500 !important;
+    color: white !important;
+}
+
+.style-option.tryhard.active {
+    background: #FF5500 !important;
+    color: white !important;
+}
