@@ -548,7 +548,6 @@ const Profile = {
         }
         
         try {
-            // 🔥 Дожидаемся готовности DOM
             await this.delay(50);
             
             const initResponse = await fetch(`${this.BACKEND_URL}/api/user/init`, {
@@ -613,51 +612,109 @@ const Profile = {
         }
     },
     
-    async loadAvatar() {
+    // 🔥 ФУНКЦИИ АВАТАРА (ИСПРАВЛЕННЫЕ)
+    loadAvatar() {
         if (!this.telegramId) this.telegramId = this.getTelegramId();
         if (!this.telegramId) return;
         
-        try {
-            const response = await fetch(`${this.BACKEND_URL}/api/profile/avatar`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId })
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                if (data.status === 'ok' && data.avatar && data.avatar !== 'null') {
-                    this.savedAvatarUrl = data.avatar;
-                    localStorage.setItem('profile_avatar', data.avatar);
-                    this.updateAvatarDisplay();
-                }
+        console.log('🔄 Загрузка аватара с сервера...');
+        
+        fetch(`${this.BACKEND_URL}/api/profile/avatar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegram_id: this.telegramId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log('📸 Ответ сервера (аватар):', data);
+            if (data.status === 'ok' && data.avatar && data.avatar !== 'null') {
+                this.savedAvatarUrl = data.avatar;
+                localStorage.setItem('profile_avatar', data.avatar);
+                this.updateAvatarDisplay();
+            } else {
+                console.log('❌ Аватар не найден на сервере');
+                this.savedAvatarUrl = null;
+                localStorage.removeItem('profile_avatar');
+                this.updateAvatarDisplay();
             }
-        } catch (error) {
-            console.error('Ошибка загрузки аватара:', error);
-        }
+        })
+        .catch(error => {
+            console.error('❌ Ошибка загрузки аватара:', error);
+        });
     },
     
     updateAvatarDisplay() {
         const avatarDiv = document.getElementById('profileAvatar');
-        if (!avatarDiv) return;
+        if (!avatarDiv) {
+            console.log('❌ Элемент profileAvatar не найден');
+            return;
+        }
         
-        // 🔥 ФИКС ДЛЯ BASE64 И ОБЫЧНЫХ URL
-        if (this.savedAvatarUrl && this.savedAvatarUrl !== 'null' && this.savedAvatarUrl !== '') {
-            // Проверяем, base64 это или обычный URL
-            const isBase64 = this.savedAvatarUrl.startsWith('data:image');
+        const cachedAvatar = localStorage.getItem('profile_avatar');
+        const avatarUrl = cachedAvatar || this.savedAvatarUrl;
+        
+        console.log('🖼️ Обновление аватара. URL:', avatarUrl ? 'есть' : 'нет');
+        
+        if (avatarUrl && avatarUrl !== 'null' && avatarUrl !== '') {
+            const isBase64 = avatarUrl.startsWith('data:image');
             
-            if (isBase64) {
-                // Для base64 не добавляем ?t=
-                avatarDiv.innerHTML = `<img src="${this.savedAvatarUrl}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">`;
-            } else {
-                // Для обычных URL добавляем ?t= для сброса кэша
-                avatarDiv.innerHTML = `<img src="${this.savedAvatarUrl}?t=${Date.now()}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">`;
-            }
-            console.log('🖼️ Аватар обновлён (base64 или URL)');
+            avatarDiv.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = isBase64 ? avatarUrl : `${avatarUrl}?t=${Date.now()}`;
+            img.alt = 'avatar';
+            img.style.cssText = 'width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;';
+            
+            img.onload = () => console.log('✅ Аватар загружен');
+            img.onerror = () => {
+                console.error('❌ Ошибка загрузки аватара');
+                avatarDiv.innerHTML = this.savedAvatar;
+            };
+            
+            avatarDiv.appendChild(img);
         } else {
             avatarDiv.innerHTML = this.savedAvatar;
-            console.log('🖼️ Аватар сброшен на дефолтный');
+            console.log('🖼️ Установлен дефолтный аватар');
         }
+    },
+    
+    refreshAvatar() {
+        console.log('🔄 Принудительное обновление аватара...');
+        this.loadAvatar();
+    },
+    
+    saveAvatarToServer(base64Image) {
+        if (!this.telegramId) this.telegramId = this.getTelegramId();
+        if (!this.telegramId) {
+            this.showToast('Ошибка: нет Telegram ID', true);
+            return;
+        }
+        
+        console.log('💾 Сохранение аватара на сервер...');
+        
+        fetch(`${this.BACKEND_URL}/api/profile/avatar/update`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                telegram_id: this.telegramId,
+                avatar_url: base64Image
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log('📸 Ответ сервера (сохранение):', data);
+            if (data.status === 'ok') {
+                this.savedAvatarUrl = base64Image;
+                localStorage.setItem('profile_avatar', base64Image);
+                this.updateAvatarDisplay();
+                this.showToast('Аватар обновлён');
+            } else {
+                this.showToast('Ошибка сохранения', true);
+            }
+        })
+        .catch(error => {
+            console.error('❌ Ошибка сохранения аватара:', error);
+            this.showToast('Ошибка сохранения', true);
+        });
     },
     
     updateDisplay() {
@@ -711,8 +768,8 @@ const Profile = {
         this.updateFieldError('steamDisplay', false);
         this.updateFieldError('faceitLinkDisplay', false);
         
-        profileScreen?.classList.remove('editable');
-        editToggle?.classList.remove('active');
+        if (profileScreen) profileScreen.classList.remove('editable');
+        if (editToggle) editToggle.classList.remove('active');
         if (applyBtn) {
             applyBtn.classList.remove('visible');
             applyBtn.style.display = 'none';
@@ -750,8 +807,8 @@ const Profile = {
         this.updateFieldError('steamDisplay', false);
         this.updateFieldError('faceitLinkDisplay', false);
         
-        profileScreen?.classList.add('editable');
-        editToggle?.classList.add('active');
+        if (profileScreen) profileScreen.classList.add('editable');
+        if (editToggle) editToggle.classList.add('active');
         if (applyBtn) {
             applyBtn.classList.add('visible');
             applyBtn.style.display = 'inline-block';
@@ -991,6 +1048,14 @@ const Profile = {
                     this.showToast('Для изменений\nперейдите в режим редактирования', true);
                 }
             };
+            // 🔥 Двойной клик для принудительного обновления
+            avatar.ondblclick = () => {
+                console.log('🔄 Принудительное обновление аватара');
+                this.savedAvatarUrl = null;
+                localStorage.removeItem('profile_avatar');
+                this.loadAvatar();
+                this.showToast('Кэш аватара сброшен');
+            };
         }
         
         const profileName = document.getElementById('profileName');
@@ -999,71 +1064,22 @@ const Profile = {
             profileName.onclick = () => this.editName();
         }
         
-        const profileNameLabel = document.querySelector('.profile-name-label');
-        if (profileNameLabel) {
-            profileNameLabel.style.cursor = 'default';
-        }
-        
-        const ageLabel = document.querySelector('.stat-card:last-child .stat-label');
-        if (ageLabel && !ageLabel.hasAttribute('data-field')) {
-            ageLabel.setAttribute('data-field', 'ageValue');
-            ageLabel.setAttribute('data-label', 'ВОЗРАСТ');
-        }
-        
-        const steamLabel = document.querySelector('.profile-stat-card:first-child .profile-stat-label');
-        if (steamLabel && !steamLabel.hasAttribute('data-field')) {
-            steamLabel.setAttribute('data-field', 'steamDisplay');
-            steamLabel.setAttribute('data-label', 'Steam');
-        }
-        
-        const faceitLabel = document.querySelector('.profile-stat-card:last-child .profile-stat-label');
-        if (faceitLabel && !faceitLabel.hasAttribute('data-field')) {
-            faceitLabel.setAttribute('data-field', 'faceitLinkDisplay');
-            faceitLabel.setAttribute('data-label', 'FaceIT');
-        }
-        
         const ageInput = document.getElementById('ageValue');
         if (ageInput) {
             ageInput.addEventListener('input', () => this.validateOnInput());
             ageInput.maxLength = 3;
-            ageInput.onclick = () => {
-                if (!this.editMode) {
-                    this.showToast('Для изменений\nперейдите в режим редактирования', true);
-                }
-            };
         }
         
         const steamInput = document.getElementById('steamDisplay');
         if (steamInput) {
             steamInput.addEventListener('input', () => this.validateOnInput());
             steamInput.maxLength = VALIDATION.STEAM.maxLength;
-            steamInput.onclick = (e) => {
-                if (!e.target.closest('.copy-btn')) {
-                    if (!this.editMode) {
-                        this.showToast('Для изменений\nперейдите в режим редактирования', true);
-                    }
-                }
-            };
         }
         
         const faceitInput = document.getElementById('faceitLinkDisplay');
         if (faceitInput) {
             faceitInput.addEventListener('input', () => this.validateOnInput());
             faceitInput.maxLength = VALIDATION.FACEIT.maxLength;
-            faceitInput.onclick = (e) => {
-                if (!e.target.closest('.copy-btn')) {
-                    if (!this.editMode) {
-                        this.showToast('Для изменений\nперейдите в режим редактирования', true);
-                    }
-                }
-            };
-        }
-        
-        const friendsArrow = document.querySelector('.friends-arrow');
-        if (friendsArrow) {
-            friendsArrow.onclick = () => {
-                if (window.Team?.showTeamPage) Team.showTeamPage();
-            };
         }
         
         const editToggle = document.getElementById('editToggle');
@@ -1079,6 +1095,13 @@ const Profile = {
             applyBtn.onclick = (e) => {
                 e.preventDefault();
                 this.applyChanges();
+            };
+        }
+        
+        const friendsArrow = document.querySelector('.friends-arrow');
+        if (friendsArrow) {
+            friendsArrow.onclick = () => {
+                if (window.Team?.showTeamPage) Team.showTeamPage();
             };
         }
     },
@@ -1123,7 +1146,6 @@ const Profile = {
         this.tempSteam = this.savedSteam;
         this.tempFaceitLink = this.savedFaceitLink;
         
-        // 🔥 СНАЧАЛА ГРУЗИМ ПРОФИЛЬ, ПОТОМ АВАТАР И ДРУЗЕЙ
         this.loadProfileFromServer().then(() => {
             this.loadAvatar();
             this.loadFriends();
