@@ -4980,6 +4980,39 @@ button:active { transform: scale(0.96); }
     transform: scale(0.98) !important;
 }
 
+/* Аватарки — ИСПРАВЛЕНИЕ ОБРЕЗКИ */
+.waiting-self-avatar,
+.waiting-teammate-avatar {
+    width: clamp(40px, 18vw, 60px) !important;
+    height: clamp(40px, 18vw, 60px) !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+}
+
+/* ВОТ ЭТО ГЛАВНЫЙ ФИКС — КАРТИНКА ВНУТРИ КОНТЕЙНЕРА */
+.waiting-self-avatar .tg-avatar-svg,
+.waiting-teammate-avatar .tg-avatar-svg,
+.waiting-self-avatar img,
+.waiting-teammate-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;  /* ЗАСТАВЛЯЕТ КАРТИНКУ ВПИСАТЬСЯ */
+    object-position: center !important;
+    display: block !important;
+}
+
+/* SVG внутри тоже пусть вписывается */
+.waiting-self-avatar svg,
+.waiting-teammate-avatar svg {
+    width: 100% !important;
+    height: 100% !important;
+}
+
 /* Кнопка копирования - ЖЕСТКИЙ ФИКС */
 .link-with-copy {
     position: relative !important;
