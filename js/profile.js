@@ -641,13 +641,23 @@ const Profile = {
         const avatarDiv = document.getElementById('profileAvatar');
         if (!avatarDiv) return;
         
-        // 🔥 ФИКС: Принудительное обновление со сбросом кэша
-        if (this.savedAvatarUrl && this.savedAvatarUrl !== 'null') {
-            avatarDiv.innerHTML = `<img src="${this.savedAvatarUrl}?t=${Date.now()}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">`;
+        // 🔥 ФИКС ДЛЯ BASE64 И ОБЫЧНЫХ URL
+        if (this.savedAvatarUrl && this.savedAvatarUrl !== 'null' && this.savedAvatarUrl !== '') {
+            // Проверяем, base64 это или обычный URL
+            const isBase64 = this.savedAvatarUrl.startsWith('data:image');
+            
+            if (isBase64) {
+                // Для base64 не добавляем ?t=
+                avatarDiv.innerHTML = `<img src="${this.savedAvatarUrl}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">`;
+            } else {
+                // Для обычных URL добавляем ?t= для сброса кэша
+                avatarDiv.innerHTML = `<img src="${this.savedAvatarUrl}?t=${Date.now()}" alt="avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">`;
+            }
+            console.log('🖼️ Аватар обновлён (base64 или URL)');
         } else {
             avatarDiv.innerHTML = this.savedAvatar;
+            console.log('🖼️ Аватар сброшен на дефолтный');
         }
-        console.log('🖼️ Аватар обновлён:', this.savedAvatarUrl ? 'есть' : 'нет');
     },
     
     updateDisplay() {
