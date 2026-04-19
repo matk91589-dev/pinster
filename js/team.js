@@ -1,5 +1,5 @@
 // ============================================
-// КОМАНДА - БЕЗ СТРЕЛОЧЕК И ИНТЕРАКТИВА
+// КОМАНДА - С ПОИСКОМ В ЛИДЕРБОРДЕ (БЕЗ СТРЕЛОЧЕК)
 // ============================================
 
 const Team = {
@@ -36,6 +36,7 @@ const Team = {
             return;
         }
         
+        // 🔥 ЗАГРУЖАЕМ ОБА СПИСКА СРАЗУ
         this.loadFriendsList();
         this.loadLeaderboard();
     },
@@ -72,6 +73,7 @@ const Team = {
             this.currentPlayerId = localStorage.getItem('player_id');
         }
         
+        // Всегда показываем друзей
         this.renderFriendsTab();
         if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
             this.loadFriendsList();
@@ -144,7 +146,7 @@ const Team = {
                 this.filteredLeaderboard = [...this.leaderboard];
                 this.isLeaderboardLoaded = true;
                 console.log('✅ Лидерборд загружен:', this.leaderboard.length);
-                this.renderLeaderboardTab();
+                this.renderLeaderboardTab(); // 🔥 СРАЗУ ОТРИСОВЫВАЕМ
             } else {
                 this.leaderboard = [];
                 this.filteredLeaderboard = [];
@@ -201,9 +203,9 @@ const Team = {
             html += `<div class="empty-friends"><div class="empty-friends-text">у вас пока нет тиммейтов</div></div>`;
         } else {
             this.filteredFriends.forEach(friend => {
-                const firstChar = friend.nick?.[0]?.toUpperCase() || '?';
+                const firstChar = friend.nick && friend.nick.length > 0 ? friend.nick[0].toUpperCase() : '?';
                 html += `
-                <div class="friend-row-static">
+                <div class="friend-row" data-player-id="${friend.player_id}" data-username="${friend.username || ''}" data-nick="${friend.nick || 'Без имени'}">
                     <div class="friend-avatar">
                         ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}
                     </div>
@@ -219,6 +221,21 @@ const Team = {
         content.innerHTML = html;
         
         setTimeout(() => this.setupFriendsSearch(), 50);
+    },
+    
+    showFriendActions(playerId, username, nick, btn) {
+        // 🔥 ФУНКЦИЯ ОСТАВЛЕНА ДЛЯ СОВМЕСТИМОСТИ, НО НЕ ИСПОЛЬЗУЕТСЯ
+        console.log('showFriendActions отключено');
+    },
+    
+    confirmDeleteFriend(playerId, nick) {
+        // 🔥 ФУНКЦИЯ ОСТАВЛЕНА ДЛЯ СОВМЕСТИМОСТИ, НО НЕ ИСПОЛЬЗУЕТСЯ
+        console.log('confirmDeleteFriend отключено');
+    },
+    
+    async removeFriend(friendId, nick) {
+        // 🔥 ФУНКЦИЯ ОСТАВЛЕНА ДЛЯ СОВМЕСТИМОСТИ, НО НЕ ИСПОЛЬЗУЕТСЯ
+        console.log('removeFriend отключено');
     },
     
     setupFriendsSearch() {
@@ -253,12 +270,10 @@ const Team = {
         
         let html = '';
         this.filteredFriends.forEach(friend => {
-            const firstChar = friend.nick?.[0]?.toUpperCase() || '?';
+            const firstChar = friend.nick && friend.nick.length > 0 ? friend.nick[0].toUpperCase() : '?';
             html += `
-            <div class="friend-row-static">
-                <div class="friend-avatar">
-                    ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}
-                </div>
+            <div class="friend-row" data-player-id="${friend.player_id}" data-username="${friend.username || ''}" data-nick="${friend.nick || 'Без имени'}">
+                <div class="friend-avatar">${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}</div>
                 <div class="friend-info">
                     <span class="friend-id">ID: ${friend.player_id}</span>
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
@@ -289,10 +304,10 @@ const Team = {
                 const originalIndex = this.leaderboard.findIndex(p => p.player_id === player.player_id);
                 const place = originalIndex + 1;
                 const isCurrent = player.player_id === this.currentPlayerId;
-                const firstChar = player.nick?.[0]?.toUpperCase() || '?';
+                const firstChar = player.nick && player.nick.length > 0 ? player.nick[0].toUpperCase() : '?';
                 
                 html += `
-                    <div class="friend-row-static">
+                    <div class="friend-row">
                         <div class="friend-avatar">
                             ${player.avatar ? `<img src="${player.avatar}">` : `<span>${firstChar}</span>`}
                         </div>
@@ -350,10 +365,10 @@ const Team = {
             const originalIndex = this.leaderboard.findIndex(p => p.player_id === player.player_id);
             const place = originalIndex + 1;
             const isCurrent = player.player_id === this.currentPlayerId;
-            const firstChar = player.nick?.[0]?.toUpperCase() || '?';
+            const firstChar = player.nick && player.nick.length > 0 ? player.nick[0].toUpperCase() : '?';
             
             html += `
-                <div class="friend-row-static">
+                <div class="friend-row">
                     <div class="friend-avatar">
                         ${player.avatar ? `<img src="${player.avatar}">` : `<span>${firstChar}</span>`}
                     </div>
@@ -369,6 +384,16 @@ const Team = {
             `;
         });
         container.innerHTML = html;
+    },
+    
+    showFriendProfile(playerId) {
+        // 🔥 ОТКЛЮЧЕНО
+        console.log('showFriendProfile отключено');
+    },
+    
+    showPlayerProfile(playerId) {
+        // 🔥 ОТКЛЮЧЕНО
+        console.log('showPlayerProfile отключено');
     },
     
     goBack() {
