@@ -5215,15 +5215,3 @@ button:active { transform: scale(0.96); }
     stroke: white !important;
 }
 
-.link-with-copy {
-    max-width: 100% !important;
-    width: 100% !important;
-}
-
-.link-with-copy .swipe-link-value {
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    max-width: calc(100% - 40px) !important; /* место под кнопку копирования */
-    display: block !important;
-}
