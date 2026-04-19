@@ -816,11 +816,16 @@ const Swipe = {
     
     onDragStart(e) {
         if (this.isWaitingMode) return;
-        if (this.skipBtn?.contains(e.target)) return;
-        if (this.inviteBtn?.contains(e.target)) return;
-        if (e.target.closest('.copy-btn')) return;
-        if (!this.card?.contains(e.target)) return;
-        
+
+        const target = e.target;
+        if (target.closest('.copy-btn')) return;
+        if (target.closest('.swipe-side-btn')) return;
+        if (target.closest('.back-arrow-swipe')) return;
+        if (target.closest('.waiting-close')) return;
+        if (target.closest('.waiting-chat-button')) return;
+    
+        if (!this.card?.contains(target)) return;
+    
         this.isDragging = true;
         this.startX = this.getClientX(e);
         this.startTime = Date.now();
