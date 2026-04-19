@@ -1,5 +1,5 @@
 // ============================================
-// ЗАГРУЗКА АВАТАРКИ (Telegram Mini App версия)
+// ЗАГРУЗКА АВАТАРКИ (Telegram Mini App версия) - ФИКС
 // ============================================
 
 const Avatar = {
@@ -11,7 +11,7 @@ const Avatar = {
     select() {
         if (!Profile.editMode) {
             if (Profile.showToast) {
-                Profile.showToast('Для изменений перейдите в режим редактирования');
+                Profile.showToast('Для изменений перейдите в режим редактирования', true);
             }
             return;
         }
@@ -50,7 +50,7 @@ const Avatar = {
         fileInput.click();
     },
     
-    // ✅ СЖАТИЕ ИЗОБРАЖЕНИЯ
+    // СЖАТИЕ ИЗОБРАЖЕНИЯ
     async compressImage(base64, maxSize = this.MAX_AVATAR_SIZE) {
         return new Promise((resolve) => {
             const img = new Image();
@@ -58,7 +58,7 @@ const Avatar = {
                 const canvas = document.createElement('canvas');
                 let width = img.width;
                 let height = img.height;
-                const maxDim = 300; // 300x300 пикселей достаточно для аватара
+                const maxDim = 300;
                 
                 if (width > height && width > maxDim) {
                     height = (height * maxDim) / width;
@@ -76,7 +76,6 @@ const Avatar = {
                 let quality = 0.7;
                 let result = canvas.toDataURL('image/jpeg', quality);
                 
-                // Если все еще больше 50 KB, уменьшаем качество
                 while (result.length > maxSize && quality > 0.3) {
                     quality -= 0.1;
                     result = canvas.toDataURL('image/jpeg', quality);
@@ -94,30 +93,34 @@ const Avatar = {
         
         if (file.size > this.MAX_FILE_SIZE) {
             if (Profile.showToast) {
-                Profile.showToast('Файл слишком большой! Максимум 5MB');
+                Profile.showToast('Файл слишком большой! Максимум 5MB', true);
             }
             return;
         }
         
         if (!file.type.startsWith('image/')) {
             if (Profile.showToast) {
-                Profile.showToast('Можно загружать только изображения');
+                Profile.showToast('Можно загружать только изображения', true);
             }
             return;
         }
         
-        // Показываем превью
+        // Показываем загрузку
+        if (Profile.showToast) {
+            Profile.showToast('Сжатие и загрузка...');
+        }
+        
         const reader = new FileReader();
         reader.onload = async (e) => {
             const originalBase64 = e.target.result;
             
-            // ✅ СЖИМАЕМ ИЗОБРАЖЕНИЕ
+            // СЖИМАЕМ
             const compressedBase64 = await this.compressImage(originalBase64);
             
-            // Обновляем отображение
+            // 🔥 ОБНОВЛЯЕМ ОТОБРАЖЕНИЕ СРАЗУ
             const avatarDiv = document.getElementById('profileAvatar');
             if (avatarDiv) {
-                avatarDiv.innerHTML = `<img src="${compressedBase64}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                avatarDiv.innerHTML = `<img src="${compressedBase64}" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;">`;
             }
             
             const startAvatar = document.getElementById('startAvatar');
@@ -125,14 +128,65 @@ const Avatar = {
                 startAvatar.innerHTML = `<img src="${compressedBase64}" style="width:100%; height:100%; object-fit:cover;">`;
             }
             
-            // Сохраняем сжатое изображение
-            Profile.tempAvatarUrl = compressedBase64;
-            
-            if (Profile.showToast) {
-                Profile.showToast('Аватарка выбрана, сохраните профиль');
-            }
+            // 🔥 СОХРАНЯЕМ НА СЕРВЕР
+            await this.saveAvatarToServer(compressedBase64);
         };
         reader.readAsDataURL(file);
+    },
+    
+    // 🔥 НОВАЯ ФУНКЦИЯ: СОХРАНЕНИЕ НА СЕРВЕР
+    async saveAvatarToServer(base64Image) {
+        const telegramId = Profile.telegramId || Profile.getTelegramId();
+        
+        if (!telegramId) {
+            console.error('❌ Нет Telegram ID');
+            if (Profile.showToast) {
+                Profile.showToast('Ошибка: нет Telegram ID', true);
+            }
+            return;
+        }
+        
+        console.log('💾 Отправка аватара на сервер...');
+        
+        try {
+            const response = await fetch(`${this.BACKEND_URL}/api/profile/avatar/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    telegram_id: telegramId,
+                    avatar_url: base64Image
+                })
+            });
+            
+            const data = await response.json();
+            console.log('📸 Ответ сервера (аватар):', data);
+            
+            if (data.status === 'ok') {
+                // 🔥 ОБНОВЛЯЕМ ДАННЫЕ В PROFILE
+                Profile.savedAvatarUrl = base64Image;
+                localStorage.setItem('profile_avatar', base64Image);
+                
+                if (Profile.showToast) {
+                    Profile.showToast('Аватар обновлён!');
+                }
+                
+                // 🔥 ПРИНУДИТЕЛЬНО ОБНОВЛЯЕМ ОТОБРАЖЕНИЕ
+                setTimeout(() => {
+                    Profile.updateAvatarDisplay();
+                }, 100);
+                
+            } else {
+                console.error('❌ Ошибка от сервера:', data);
+                if (Profile.showToast) {
+                    Profile.showToast(data.error || 'Ошибка сохранения', true);
+                }
+            }
+        } catch (error) {
+            console.error('❌ Ошибка отправки:', error);
+            if (Profile.showToast) {
+                Profile.showToast('Ошибка соединения', true);
+            }
+        }
     },
     
     setupDragAndDrop() {
@@ -158,7 +212,7 @@ const Avatar = {
             
             if (!Profile.editMode) {
                 if (Profile.showToast) {
-                    Profile.showToast('Для изменений перейдите в режим редактирования');
+                    Profile.showToast('Для изменений перейдите в режим редактирования', true);
                 }
                 return;
             }
