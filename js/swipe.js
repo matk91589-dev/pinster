@@ -258,34 +258,6 @@ const Swipe = {
         });
     },
     
-    createLinkWithCopy(text) {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'link-with-copy';
-        
-        const valueSpan = document.createElement('div');
-        valueSpan.className = 'swipe-link-value';
-        valueSpan.textContent = text;
-        valueSpan.style.cssText = `
-            white-space: nowrap !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-            max-width: calc(100% - 40px) !important;
-        `;
-        
-        const copyBtn = document.createElement('button');
-        copyBtn.className = 'copy-btn';
-        copyBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg>';
-        copyBtn.onclick = (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            this.copyToClipboard(text, copyBtn);
-        };
-        
-        wrapper.appendChild(valueSpan);
-        wrapper.appendChild(copyBtn);
-        return wrapper;
-    },
-    
     forceShowSwipeMode() {
         const swipeScreen = document.getElementById('swipeScreen');
         if (swipeScreen) {
@@ -436,62 +408,40 @@ const Swipe = {
         const cardRight = cardRect.right;
         const screenWidth = window.innerWidth;
         
-        let btnWidth = Math.min(Math.max(cardWidth * 0.1, 38), 56);
-        let btnHeight = Math.min(Math.max(cardHeight * 0.55, 85), 140);
-        
-        const MIN_VISIBLE_OFFSET = 14;
-        let desiredOffset = Math.min(btnWidth * 0.65, 32);
-        
-        const availableLeft = cardLeft;
-        const availableRight = screenWidth - cardRight;
-        
-        let leftOffset = desiredOffset;
-        if (availableLeft < desiredOffset) {
-            leftOffset = Math.max(availableLeft - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
-            if (leftOffset < MIN_VISIBLE_OFFSET) {
-                btnWidth = Math.min(btnWidth, availableLeft - 5);
-                leftOffset = Math.max(btnWidth * 0.4, MIN_VISIBLE_OFFSET);
-            }
-        }
-        
-        let rightOffset = desiredOffset;
-        if (availableRight < desiredOffset) {
-            rightOffset = Math.max(availableRight - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
-            if (rightOffset < MIN_VISIBLE_OFFSET) {
-                btnWidth = Math.min(btnWidth, availableRight - 5);
-                rightOffset = Math.max(btnWidth * 0.4, MIN_VISIBLE_OFFSET);
-            }
-        }
-        
-        if (screenWidth < 400) {
-            btnWidth = Math.min(btnWidth, 44);
-            btnHeight = Math.min(btnHeight, 100);
-            leftOffset = Math.max(leftOffset, 12);
-            rightOffset = Math.max(rightOffset, 12);
-        }
+        // 🔥 АДАПТИВНАЯ ШИРИНА КНОПОК
+        let btnWidth, btnHeight;
         
         if (screenWidth < 340) {
-            btnWidth = Math.min(btnWidth, 38);
-            btnHeight = Math.min(btnHeight, 90);
-            leftOffset = Math.max(leftOffset, 10);
-            rightOffset = Math.max(rightOffset, 10);
+            btnWidth = 38;
+            btnHeight = Math.min(cardHeight * 0.5, 90);
+        } else if (screenWidth < 400) {
+            btnWidth = 44;
+            btnHeight = Math.min(cardHeight * 0.52, 100);
+        } else {
+            btnWidth = Math.min(Math.max(cardWidth * 0.1, 48), 56);
+            btnHeight = Math.min(cardHeight * 0.55, 140);
         }
+        
+        // 🔥 КНОПКИ ВСЕГДА У КРАЯ КАРТОЧКИ
+        const offset = Math.max(btnWidth * 0.25, 12);
         
         this.skipBtn.style.width = btnWidth + 'px';
         this.skipBtn.style.height = btnHeight + 'px';
         this.skipBtn.style.minHeight = btnHeight + 'px';
         this.skipBtn.style.top = '50%';
         this.skipBtn.style.transform = 'translateY(-50%)';
-        this.skipBtn.style.left = '-' + leftOffset + 'px';
+        this.skipBtn.style.left = '-' + offset + 'px';
+        this.skipBtn.style.borderRadius = btnWidth + 'px 0 0 ' + btnWidth + 'px';
         
         this.inviteBtn.style.width = btnWidth + 'px';
         this.inviteBtn.style.height = btnHeight + 'px';
         this.inviteBtn.style.minHeight = btnHeight + 'px';
         this.inviteBtn.style.top = '50%';
         this.inviteBtn.style.transform = 'translateY(-50%)';
-        this.inviteBtn.style.right = '-' + rightOffset + 'px';
+        this.inviteBtn.style.right = '-' + offset + 'px';
+        this.inviteBtn.style.borderRadius = '0 ' + btnWidth + 'px ' + btnWidth + 'px 0';
         
-        const iconSize = Math.min(btnWidth * 0.55, 22);
+        const iconSize = Math.min(btnWidth * 0.5, 22);
         const allSvgs = document.querySelectorAll('.swipe-side-btn svg');
         allSvgs.forEach(svg => {
             svg.style.width = iconSize + 'px';
@@ -1124,8 +1074,6 @@ const Swipe = {
         const rankEl = document.getElementById('swipeRank');
         const ageEl = document.getElementById('swipeAge');
         const styleEl = document.getElementById('swipeStyle');
-        const steamLinkEl = document.getElementById('swipeSteamLink');
-        const faceitLinkEl = document.getElementById('swipeFaceitLink');
         const commentEl = document.getElementById('swipeComment');
         
         if (playerIdEl) playerIdEl.textContent = player.player_id || '';
@@ -1147,17 +1095,32 @@ const Swipe = {
         if (ageEl) ageEl.textContent = player.age ? player.age + ' лет' : '';
         if (styleEl) styleEl.textContent = player.style === 'fan' ? 'Fan' : 'Tryhard';
         
-        const steamValue = player.steam_link || 'Не указана';
-        if (steamLinkEl && steamValue !== 'Не указана' && steamValue !== '') {
-            const wrapper = this.createLinkWithCopy(steamValue);
-            steamLinkEl.parentNode.replaceChild(wrapper, steamLinkEl);
-        } else if (steamLinkEl) steamLinkEl.textContent = steamValue;
+        // 🔥 ПРОСТО ОБНОВЛЯЕМ ТЕКСТ ССЫЛОК, НЕ ЗАМЕНЯЕМ ЭЛЕМЕНТЫ
+        const steamLinkEl = document.getElementById('swipeSteamLink');
+        if (steamLinkEl) {
+            const steamValue = player.steam_link || 'Не указана';
+            steamLinkEl.textContent = steamValue;
+            steamLinkEl.style.cssText = `
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                cursor: pointer !important;
+            `;
+            steamLinkEl.onclick = () => this.copyToClipboard(steamValue, null);
+        }
         
-        const faceitValue = player.faceit_link || 'Не указана';
-        if (faceitLinkEl && faceitValue !== 'Не указана' && faceitValue !== '') {
-            const wrapper = this.createLinkWithCopy(faceitValue);
-            faceitLinkEl.parentNode.replaceChild(wrapper, faceitLinkEl);
-        } else if (faceitLinkEl) faceitLinkEl.textContent = faceitValue;
+        const faceitLinkEl = document.getElementById('swipeFaceitLink');
+        if (faceitLinkEl) {
+            const faceitValue = player.faceit_link || 'Не указана';
+            faceitLinkEl.textContent = faceitValue;
+            faceitLinkEl.style.cssText = `
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                cursor: pointer !important;
+            `;
+            faceitLinkEl.onclick = () => this.copyToClipboard(faceitValue, null);
+        }
         
         if (commentEl) commentEl.textContent = player.comment || '';
         
