@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v6.2 FINAL (ПРОВЕРКА in_queue + АКТИВНЫЙ СТИЛЬ)
+// ПОИСК - v6.3 FINAL (ПРОВЕРКА in_queue + ИНЛАЙН-СТИЛИ)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v6.2 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v6.3 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -29,15 +29,19 @@ const Search = {
     
         const savedStyle = localStorage.getItem('selected_style');
         
-        // 🔥 ПРИНУДИТЕЛЬНО АКТИВИРУЕМ СТИЛЬ НА ВСЕХ ЭКРАНАХ
+        // 🔥 ПРИНУДИТЕЛЬНО АКТИВИРУЕМ СТИЛЬ С ИНЛАЙН-ОКРАСКОЙ
         setTimeout(() => {
             document.querySelectorAll('.style-option').forEach(btn => {
                 btn.classList.remove('active');
+                btn.style.background = '';
+                btn.style.color = '';
             });
             
             const activeBtns = document.querySelectorAll(`.style-option.${savedStyle}`);
             activeBtns.forEach(btn => {
                 btn.classList.add('active');
+                btn.style.background = '#FF5500';
+                btn.style.color = 'white';
             });
             
             console.log('🎨 Принудительно активирован стиль:', savedStyle);
@@ -46,12 +50,22 @@ const Search = {
         // Наблюдатель за появлением новых экранов
         const observer = new MutationObserver(() => {
             const currentStyle = localStorage.getItem('selected_style') || 'fan';
-            const styleBtn = document.querySelector(`.style-option.${currentStyle}`);
-            if (styleBtn && !styleBtn.classList.contains('active')) {
-                document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
-                styleBtn.classList.add('active');
-                console.log('🎨 MutationObserver восстановил стиль:', currentStyle);
-            }
+            const styleBtns = document.querySelectorAll('.style-option');
+            
+            styleBtns.forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.background = '';
+                btn.style.color = '';
+            });
+            
+            const activeBtns = document.querySelectorAll(`.style-option.${currentStyle}`);
+            activeBtns.forEach(btn => {
+                btn.classList.add('active');
+                btn.style.background = '#FF5500';
+                btn.style.color = 'white';
+            });
+            
+            console.log('🎨 MutationObserver восстановил стиль:', currentStyle);
         });
         observer.observe(document.body, { childList: true, subtree: true });
     },
@@ -83,20 +97,27 @@ const Search = {
                             self.setupPublicValidation();
                         }
                         
-                        // 🔥 ВОССТАНАВЛИВАЕМ АКТИВНЫЙ СТИЛЬ
+                        // 🔥 ВОССТАНАВЛИВАЕМ АКТИВНЫЙ СТИЛЬ С ИНЛАЙН-ОКРАСКОЙ
                         setTimeout(() => {
                             let savedStyle = localStorage.getItem('selected_style');
                             if (!savedStyle) {
                                 savedStyle = 'fan';
                                 localStorage.setItem('selected_style', 'fan');
                             }
-                            document.querySelectorAll('.style-option').forEach(opt => {
-                                opt.classList.remove('active');
+                            
+                            document.querySelectorAll('.style-option').forEach(btn => {
+                                btn.classList.remove('active');
+                                btn.style.background = '';
+                                btn.style.color = '';
                             });
-                            const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
-                            if (styleBtn) {
-                                styleBtn.classList.add('active');
-                            }
+                            
+                            const activeBtns = document.querySelectorAll(`.style-option.${savedStyle}`);
+                            activeBtns.forEach(btn => {
+                                btn.classList.add('active');
+                                btn.style.background = '#FF5500';
+                                btn.style.color = 'white';
+                            });
+                            
                             console.log('🎨 Стиль восстановлен для', screenId, ':', savedStyle);
                         }, 50);
                     }, 100);
@@ -456,9 +477,18 @@ const Search = {
     setStyle(style, element) {
         console.log('🎨 setStyle:', style);
         localStorage.setItem('selected_style', style);
+        
         const parent = element.parentElement;
-        parent.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
+        parent.querySelectorAll('.style-option').forEach(opt => {
+            opt.classList.remove('active');
+            opt.style.background = '';
+            opt.style.color = '';
+        });
+        
         element.classList.add('active');
+        element.style.background = '#FF5500';
+        element.style.color = 'white';
+        
         if (window.Settings) Settings.click();
     },
     
