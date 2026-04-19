@@ -2782,19 +2782,6 @@ input:checked + .slider:before {
     color: var(--text-primary);
 }
 
-/* Статус */
-.waiting-status {
-    font-size: clamp(13px, 3.5vw, 14px);
-    text-align: center;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin: 8px 0;
-}
-
-.waiting-status.active {
-    color: var(--accent);
-}
-
 /* Таймер ожидания */
 .waiting-timer-container {
     display: flex;
