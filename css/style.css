@@ -4824,19 +4824,20 @@ button:active { transform: scale(0.96); }
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 8px !important;
+    gap: 20px !important;
     margin-bottom: 20px !important;
 }
 
-/* Аватарки — КРУГЛЫЕ, макс 70px */
+/* Аватарки — КРУГЛЫЕ, адаптивные */
 .waiting-self-avatar,
 .waiting-teammate-avatar {
-    width: min(70px, 18vw) !important;
-    height: min(70px, 18vw) !important;
+    width: min(70px, 20vw) !important;
+    height: min(70px, 20vw) !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
     border-radius: 50% !important;
     overflow: hidden !important;
-    border: 2px solid rgba(0, 255, 136, 0.3) !important;
-    box-shadow: 0 0 20px rgba(0, 255, 136, 0.2) !important;
+    flex-shrink: 0 !important;
 }
 
 .waiting-self-avatar .tg-avatar-svg,
@@ -4847,29 +4848,55 @@ button:active { transform: scale(0.96); }
     align-items: center !important;
     justify-content: center !important;
     background: #2A2F3A !important;
+    border-radius: 50% !important;
 }
 
+/* Твоя аватарка — без обводки, статичная */
 .waiting-self-avatar {
-    animation: avatarPulse 2s infinite !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
-@keyframes avatarPulse {
-    0% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
-    50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 255, 136, 0.4); }
-    100% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
+/* Аватарка тиммейта — пульсирует оранжевым пока идёт поиск */
+.waiting-teammate-avatar.searching {
+    border: 2px solid #FF5500 !important;
+    box-shadow: 0 0 20px rgba(255, 85, 0, 0.4) !important;
+    animation: teammatePulse 2s infinite !important;
 }
 
-.waiting-teammate-avatar {
-    opacity: 0.5 !important;
+@keyframes teammatePulse {
+    0% { 
+        transform: scale(1); 
+        box-shadow: 0 0 15px rgba(255, 85, 0, 0.3);
+        border-color: #FF5500;
+    }
+    50% { 
+        transform: scale(1.05); 
+        box-shadow: 0 0 25px rgba(255, 85, 0, 0.6);
+        border-color: #FF8C00;
+    }
+    100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 15px rgba(255, 85, 0, 0.3);
+        border-color: #FF5500;
+    }
+}
+
+/* Аватарка тиммейта когда матч найден — без обводок, статичная */
+.waiting-teammate-avatar.matched {
+    border: none !important;
+    box-shadow: none !important;
+    animation: none !important;
+    opacity: 1 !important;
 }
 
 /* Линия между аватарками */
 .waiting-line {
-    width: 30px !important;
+    width: 40px !important;
     height: 2px !important;
-    background: rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
     border-radius: 1px !important;
-    margin: 0 4px !important;
+    flex-shrink: 0 !important;
 }
 
 .waiting-line-pulse {
@@ -4896,10 +4923,10 @@ button:active { transform: scale(0.96); }
     padding: 0 12px !important;
 }
 
-/* Кнопка чата */
+/* Кнопка чата — фикс выхода за края */
 .waiting-chat-button {
-    margin: 16px 20px 20px 20px !important;
-    padding: 16px !important;
+    margin: 0 20px 20px 20px !important;
+    padding: 14px 20px !important;
     background: linear-gradient(135deg, #FF5500 0%, #FF3B30 100%) !important;
     border: none !important;
     border-radius: 16px !important;
@@ -4908,6 +4935,9 @@ button:active { transform: scale(0.96); }
     font-weight: 600 !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
+    width: auto !important;
+    max-width: calc(100% - 40px) !important;
+    box-sizing: border-box !important;
 }
 
 .waiting-chat-button.disabled {
