@@ -4963,7 +4963,7 @@ button:active { transform: scale(0.96); }
 
 /* Статус - как в других экранах */
 .waiting-status {
-    font-size: 9px !important;
+    font-size: 11px !important;
     font-weight: 400 !important;
     text-align: center !important;
     color: var(--text-secondary, #9BA1B0) !important;
@@ -4973,7 +4973,7 @@ button:active { transform: scale(0.96); }
 .waiting-status.active {
     color: #FF5500 !important;
     font-weight: 500 !important;
-    font-size: 10px !important;
+    font-size: 12px !important;
 }
 
 /* Кнопка чата - как mode-search-btn */
