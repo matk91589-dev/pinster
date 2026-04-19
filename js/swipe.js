@@ -2,7 +2,6 @@
 // СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ ВЕРСИЯ (ТАЙМЕР 40С + СИНХРОНИЗАЦИЯ)
 // ============================================
 
-// 🔥 УМНОЕ СОКРАЩЕНИЕ РАНГОВ
 function abbreviateRank(rank) {
     if (!rank || rank === '—') return '—';
     
@@ -819,6 +818,7 @@ const Swipe = {
         if (this.isWaitingMode) return;
         if (this.skipBtn?.contains(e.target)) return;
         if (this.inviteBtn?.contains(e.target)) return;
+        if (e.target.closest('.copy-btn')) return;
         if (!this.card?.contains(e.target)) return;
         
         this.isDragging = true;
