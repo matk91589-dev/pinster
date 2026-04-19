@@ -5226,3 +5226,61 @@ button:active { transform: scale(0.96); }
     object-fit: cover !important;
     object-position: center !important;
 }
+
+/* Аватарки — КРУГЛЫЕ, максимум 70px */
+.avatar-large {
+    width: min(70px, 18vw) !important;      /* Макс 70px */
+    height: min(70px, 18vw) !important;     /* Такая же высота — для круга */
+    border-radius: 50% !important;         
+    object-fit: cover !important;
+    border: 2px solid rgba(0, 255, 136, 0.3) !important;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.2) !important;
+}
+
+/* Пульсация для левой аватарки */
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
+    50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 255, 136, 0.4); }
+    100% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
+}
+
+.avatar-large.searching {
+    animation: pulse 2s infinite !important;
+}
+
+/* Текст — мин 10px, макс 14px */
+.waiting-text {
+    font-size: clamp(10px, 4vw, 14px) !important;
+    font-weight: 500 !important;
+    color: #ffffff !important;
+    text-align: center !important;
+    margin-top: 16px !important;
+    opacity: 0.8 !important;
+    letter-spacing: 0.3px !important;
+    padding: 0 12px !important;
+}
+
+/* Подпись снизу */
+.waiting-subtitle {
+    font-size: clamp(9px, 3.5vw, 12px) !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+    text-align: center !important;
+    margin-top: 6px !important;
+}
+
+/* Контейнеры */
+.waiting-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 100vh !important;
+    padding: 16px !important;
+}
+
+.avatars-row {
+    display: flex !important;
+    gap: 12px !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
