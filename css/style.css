@@ -4760,7 +4760,7 @@ button:active { transform: scale(0.96); }
     }
 }
 
-/* ===== ЭКРАН ОЖИДАНИЯ ===== */
+/* ===== ЭКРАН ОЖИДАНИЯ — ПОЛНЫЙ СБРОС ===== */
 #waitingModeContent {
     position: absolute !important;
     top: 0 !important;
@@ -4828,15 +4828,11 @@ button:active { transform: scale(0.96); }
     margin-bottom: 20px !important;
 }
 
-/* Аватарки — ФИКС РАЗМЕРА, чтобы влазили полностью */
+/* Аватарки — АДАПТИВНЫЕ */
 .waiting-self-avatar,
 .waiting-teammate-avatar {
-    width: 70px !important;
-    height: 70px !important;
-    max-width: 20vw !important;
-    max-height: 20vw !important;
-    min-width: 50px !important;
-    min-height: 50px !important;
+    width: clamp(50px, 20vw, 80px) !important;
+    height: clamp(50px, 20vw, 80px) !important;
     border-radius: 50% !important;
     overflow: hidden !important;
     flex-shrink: 0 !important;
@@ -4858,24 +4854,28 @@ button:active { transform: scale(0.96); }
 
 .waiting-self-avatar svg,
 .waiting-teammate-avatar svg {
-    width: 60% !important;
-    height: 60% !important;
+    width: 55% !important;
+    height: 55% !important;
 }
 
-/* Твоя аватарка — БЕЗ ВСЕГО */
+/* Твоя аватарка — БЕЗ ОБВОДКИ */
 .waiting-self-avatar,
-.waiting-self-avatar .tg-avatar-svg,
-.waiting-self-avatar svg {
+.waiting-self-avatar * {
     border: none !important;
     box-shadow: none !important;
     outline: none !important;
 }
 
-/* Аватарка тиммейта — пульсирует оранжевым пока идёт поиск */
+/* Аватарка тиммейта — пульсирует при поиске */
 .waiting-teammate-avatar.searching {
     border: 2px solid #FF5500 !important;
     box-shadow: 0 0 20px rgba(255, 85, 0, 0.4) !important;
     animation: teammatePulse 2s infinite !important;
+}
+
+.waiting-teammate-avatar.searching * {
+    border: none !important;
+    box-shadow: none !important;
 }
 
 @keyframes teammatePulse {
@@ -4896,21 +4896,14 @@ button:active { transform: scale(0.96); }
     }
 }
 
-/* Аватарка тиммейта когда матч найден — АБСОЛЮТНО БЕЗ ВСЕГО */
+/* Аватарка тиммейта — матч найден, БЕЗ ВСЕГО */
 .waiting-teammate-avatar.matched,
-.waiting-teammate-avatar.matched .tg-avatar-svg,
-.waiting-teammate-avatar.matched svg {
+.waiting-teammate-avatar.matched * {
     border: none !important;
     box-shadow: none !important;
     outline: none !important;
     animation: none !important;
     opacity: 1 !important;
-}
-
-/* Убираем обводку у родителя */
-.waiting-teammate-avatar.matched {
-    border: none !important;
-    box-shadow: none !important;
 }
 
 /* Линия между аватарками */
@@ -4935,10 +4928,10 @@ button:active { transform: scale(0.96); }
     50% { opacity: 1; transform: scaleX(1); }
 }
 
-/* Текст — по центру, на 10% ниже центра */
+/* Текст — на 10% ниже центра */
 .waiting-status {
     position: relative !important;
-    top: 10% !important;
+    top: 5vh !important;
     font-size: clamp(10px, 4vw, 14px) !important;
     font-weight: 500 !important;
     color: #ffffff !important;
@@ -4946,13 +4939,13 @@ button:active { transform: scale(0.96); }
     opacity: 0.8 !important;
     letter-spacing: 0.3px !important;
     padding: 0 12px !important;
-    margin-top: 0 !important;
 }
 
-/* Кнопка чата — ВОЗВРАЩАЕМ НОРМАЛЬНЫЙ РАЗМЕР */
+/* Кнопка чата — 60% ширины, по центру внизу */
 .waiting-chat-button {
-    margin: 0 20px 20px 20px !important;
-    padding: 14px 20px !important;
+    position: relative !important;
+    margin: 0 auto 20px auto !important;
+    padding: 14px 0 !important;
     background: linear-gradient(135deg, #FF5500 0%, #FF3B30 100%) !important;
     border: none !important;
     border-radius: 16px !important;
@@ -4961,9 +4954,10 @@ button:active { transform: scale(0.96); }
     font-weight: 600 !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
-    width: auto !important;
-    max-width: calc(100% - 40px) !important;
+    width: 60% !important;
+    max-width: 300px !important;
     box-sizing: border-box !important;
+    text-align: center !important;
 }
 
 .waiting-chat-button.disabled {
