@@ -5215,3 +5215,26 @@ button:active { transform: scale(0.96); }
     stroke: white !important;
 }
 
+/* ===== ФИКС АВАТАРКИ НА КАРТОЧКЕ ===== */
+.swipe-avatar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    overflow: hidden !important;
+}
+
+.swipe-avatar .tg-avatar-svg {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.swipe-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+}
