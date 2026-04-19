@@ -650,9 +650,9 @@ const Swipe = {
         const modeFromOpponent = opponent.mode || 'PREMIER';
         if (!this.isInitialized) this.init(modeFromOpponent);
         if (this.currentMatchId === matchId) return;
-        if (this.currentMatchId && this.currentMatchId !== matchId) this.exitSwipeMode('замена матча');
+        if (this.currentMatchId && this.currentMatchId !== matchId) this.exitSwipeMode('замена мэтча');
         
-        this.showToastMessage('Матч найден!', false);
+        this.showToastMessage('Мэтч найден!', false);
         
         this._pendingOpponent = opponent;
         this._pendingMatchId = matchId;
@@ -939,7 +939,7 @@ const Swipe = {
                 const res = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/status/' + matchId);
                 const data = await res.json();
                 
-                console.log('📡 Статус матча:', data);
+                console.log('📡 Статус мэтча:', data);
                 
                 if (data.status === 'both_accepted') {
                     clearInterval(this.matchPolling);
@@ -953,7 +953,7 @@ const Swipe = {
                 } else if (data.status === 'rejected') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
-                    console.log('🔥 Тиммейт отклонил матч!');
+                    console.log('🔥 Тиммейт отклонил мэтч!');
                     this.handleRejection();
                 } else if (data.status === 'expired') {
                     clearInterval(this.matchPolling);
@@ -962,7 +962,7 @@ const Swipe = {
                 } else if (data.status === 'not_found') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
-                    console.log('🔥 Матч удалён!');
+                    console.log('🔥 Мэтч удалён!');
                     this.showToastMessage('Тиммейт отклонил — вы снова в поиске', true);
                     this.restartSearch('match_not_found');
                 }
@@ -990,7 +990,7 @@ const Swipe = {
             }
             
             if (statusEl) { 
-                statusEl.innerHTML = 'Матч создан!'; 
+                statusEl.innerHTML = 'Мэтч создан!'; 
                 statusEl.classList.add('active'); 
             }
             
@@ -1000,7 +1000,7 @@ const Swipe = {
                 chatButton.classList.add('active');
                 chatButton.disabled = false;
             }
-            this.showToastMessage('Матч создан!', false);
+            this.showToastMessage('Мэтч создан!', false);
         }
     },
     
