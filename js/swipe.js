@@ -397,7 +397,7 @@ const Swipe = {
         }, 50);
     },
     
-   updateButtonsPosition() {
+    updateButtonsPosition() {
         if (!this.skipBtn || !this.inviteBtn || !this.card) return;
         if (this.isWaitingMode) return;
         
@@ -1117,31 +1117,86 @@ const Swipe = {
         if (ageEl) ageEl.textContent = player.age ? player.age + ' лет' : '';
         if (styleEl) styleEl.textContent = player.style === 'fan' ? 'Fan' : 'Tryhard';
         
-        // 🔥 ПРОСТО ОБНОВЛЯЕМ ТЕКСТ ССЫЛОК, НЕ ЗАМЕНЯЕМ ЭЛЕМЕНТЫ
-        const steamLinkEl = document.getElementById('swipeSteamLink');
-        if (steamLinkEl) {
+        // 🔥 STEAM ССЫЛКА С КНОПКОЙ КОПИРОВАНИЯ
+        const steamContainer = document.querySelector('.swipe-steam-container');
+        if (steamContainer) {
             const steamValue = player.steam_link || 'Не указана';
-            steamLinkEl.textContent = steamValue;
-            steamLinkEl.style.cssText = `
+            steamContainer.innerHTML = '';
+            
+            const label = document.createElement('div');
+            label.className = 'swipe-link-label';
+            label.textContent = 'Ссылка Steam';
+            steamContainer.appendChild(label);
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'link-with-copy';
+            
+            const linkEl = document.createElement('div');
+            linkEl.className = 'swipe-link-value';
+            linkEl.textContent = steamValue;
+            linkEl.style.cssText = `
                 white-space: nowrap !important;
                 overflow: hidden !important;
                 text-overflow: ellipsis !important;
-                cursor: pointer !important;
             `;
-            steamLinkEl.onclick = () => this.copyToClipboard(steamValue, null);
+            
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" width="18" height="18">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/>
+                </svg>
+            `;
+            copyBtn.onclick = (e) => {
+                e.stopPropagation();
+                this.copyToClipboard(steamValue, copyBtn);
+            };
+            
+            wrapper.appendChild(linkEl);
+            wrapper.appendChild(copyBtn);
+            steamContainer.appendChild(wrapper);
         }
         
-        const faceitLinkEl = document.getElementById('swipeFaceitLink');
-        if (faceitLinkEl) {
+        // 🔥 FACEIT ССЫЛКА С КНОПКОЙ КОПИРОВАНИЯ
+        const faceitContainer = document.querySelector('.swipe-faceit-container');
+        if (faceitContainer) {
             const faceitValue = player.faceit_link || 'Не указана';
-            faceitLinkEl.textContent = faceitValue;
-            faceitLinkEl.style.cssText = `
+            faceitContainer.innerHTML = '';
+            
+            const label = document.createElement('div');
+            label.className = 'swipe-link-label';
+            label.textContent = 'Ссылка Faceit';
+            faceitContainer.appendChild(label);
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'link-with-copy';
+            
+            const linkEl = document.createElement('div');
+            linkEl.className = 'swipe-link-value';
+            linkEl.textContent = faceitValue;
+            linkEl.style.cssText = `
                 white-space: nowrap !important;
                 overflow: hidden !important;
                 text-overflow: ellipsis !important;
-                cursor: pointer !important;
             `;
-            faceitLinkEl.onclick = () => this.copyToClipboard(faceitValue, null);
+            
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" width="18" height="18">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/>
+                </svg>
+            `;
+            copyBtn.onclick = (e) => {
+                e.stopPropagation();
+                this.copyToClipboard(faceitValue, copyBtn);
+            };
+            
+            wrapper.appendChild(linkEl);
+            wrapper.appendChild(copyBtn);
+            faceitContainer.appendChild(wrapper);
         }
         
         if (commentEl) commentEl.textContent = player.comment || '';
