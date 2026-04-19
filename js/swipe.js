@@ -538,11 +538,17 @@ const Swipe = {
         waitingContent.classList.add('active');
         waitingContent.style.visibility = 'visible';
         
+        // 🔥 КАРТОЧКА СТАТИЧНАЯ - УБИРАЕМ ВОЗМОЖНОСТЬ DRAG
         if (this.card) {
             this.card.style.position = 'relative';
             this.card.style.display = 'block';
             this.card.style.visibility = 'visible';
             this.card.style.opacity = '1';
+            this.card.style.pointerEvents = 'none'; // 🔥 ОТКЛЮЧАЕМ ВЗАИМОДЕЙСТВИЕ
+        }
+        
+        if (this.cardWrapper) {
+            this.cardWrapper.style.pointerEvents = 'none'; // 🔥 ОТКЛЮЧАЕМ DRAG
         }
         
         if (this.skipBtn) {
@@ -560,7 +566,9 @@ const Swipe = {
         
         this.isWaitingMode = true;
         
+        // 🔥 ПОКАЗЫВАЕМ СТРЕЛКУ НАЗАД
         setTimeout(() => this.showBackArrow(), 50);
+        
         setTimeout(() => {
             this.loadSelfAvatar();
             this.loadTeammateAvatar();
@@ -1272,8 +1280,20 @@ const Swipe = {
         const statusEl = document.getElementById('waitingStatus');
         if (statusEl) { statusEl.innerHTML = 'Время истекло'; statusEl.style.color = '#FF3B30'; }
         
-        this.showToastMessage('Время ожидания истекло', true);
-        setTimeout(() => this.exitSwipeMode('connectionTimeout'), 2000);
+        // 🔥 ТОСТ: ВРЕМЯ ВЫШЛО - ВЫ СНОВА В ПОИСКЕ
+        this.showToastMessage('Время вышло — вы снова в поиске', true);
+        
+        // 🔥 ВОЗВРАЩАЕМ В ПОИСК
+        const savedMode = this.mode;
+        this.exitSwipeMode('connectionTimeout');
+        
+        setTimeout(() => {
+            if (typeof Search !== 'undefined' && savedMode) {
+                const modeTitle = document.getElementById('searchModeTitle');
+                if (modeTitle) modeTitle.textContent = savedMode;
+                Search.forceStopAndStart(savedMode, this.currentPlayer?.rating || this.currentPlayer?.rank || '');
+            }
+        }, 300);
     },
     
     handleTeammateTimeout() {
