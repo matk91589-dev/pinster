@@ -403,34 +403,18 @@ const Swipe = {
         
         const cardRect = this.card.getBoundingClientRect();
         const cardHeight = cardRect.height;
-        const cardWidth = cardRect.width;
-        const cardLeft = cardRect.left;
-        const cardRight = cardRect.right;
-        const screenWidth = window.innerWidth;
         
-        // 🔥 АДАПТИВНАЯ ШИРИНА КНОПОК
-        let btnWidth, btnHeight;
+        // 🔥 РАЗМЕР КНОПОК
+        const btnWidth = 56;
+        const btnHeight = Math.min(cardHeight * 0.55, 140);
         
-        if (screenWidth < 340) {
-            btnWidth = 38;
-            btnHeight = Math.min(cardHeight * 0.5, 90);
-        } else if (screenWidth < 400) {
-            btnWidth = 44;
-            btnHeight = Math.min(cardHeight * 0.52, 100);
-        } else {
-            btnWidth = Math.min(Math.max(cardWidth * 0.1, 48), 56);
-            btnHeight = Math.min(cardHeight * 0.55, 140);
-        }
-        
-        // 🔥 КНОПКИ ВСЕГДА У КРАЯ КАРТОЧКИ
-        const offset = Math.max(btnWidth * 0.25, 12);
-        
+        // 🔥 КНОПКИ ПОЛНОСТЬЮ ВЫСТУПАЮТ НАРУЖУ, ПРИЛЕГАЯ К КАРТОЧКЕ
         this.skipBtn.style.width = btnWidth + 'px';
         this.skipBtn.style.height = btnHeight + 'px';
         this.skipBtn.style.minHeight = btnHeight + 'px';
         this.skipBtn.style.top = '50%';
         this.skipBtn.style.transform = 'translateY(-50%)';
-        this.skipBtn.style.left = '-' + offset + 'px';
+        this.skipBtn.style.left = '-' + btnWidth + 'px';  // 🔥 ВСЯ КНОПКА СНАРУЖИ
         this.skipBtn.style.borderRadius = btnWidth + 'px 0 0 ' + btnWidth + 'px';
         
         this.inviteBtn.style.width = btnWidth + 'px';
@@ -438,10 +422,10 @@ const Swipe = {
         this.inviteBtn.style.minHeight = btnHeight + 'px';
         this.inviteBtn.style.top = '50%';
         this.inviteBtn.style.transform = 'translateY(-50%)';
-        this.inviteBtn.style.right = '-' + offset + 'px';
+        this.inviteBtn.style.right = '-' + btnWidth + 'px';  // 🔥 ВСЯ КНОПКА СНАРУЖИ
         this.inviteBtn.style.borderRadius = '0 ' + btnWidth + 'px ' + btnWidth + 'px 0';
         
-        const iconSize = Math.min(btnWidth * 0.5, 22);
+        const iconSize = Math.min(btnWidth * 0.5, 24);
         const allSvgs = document.querySelectorAll('.swipe-side-btn svg');
         allSvgs.forEach(svg => {
             svg.style.width = iconSize + 'px';
