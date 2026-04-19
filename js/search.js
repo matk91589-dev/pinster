@@ -1,8 +1,8 @@
 // ============================================
-// ПОИСК - v6.1 FINAL (ПРОВЕРКА in_queue)
+// ПОИСК - v6.2 FINAL (ПРОВЕРКА in_queue + АКТИВНЫЙ СТИЛЬ)
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v6.1 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v6.2 FINAL)');
 
 const Search = {
     timerInterval: null,
@@ -21,24 +21,36 @@ const Search = {
         this.ensureMatchAccepted();
         this.hookIntoScreenChange();
     
+        // 🔥 УСТАНАВЛИВАЕМ СТИЛЬ ПО УМОЛЧАНИЮ
         if (!localStorage.getItem('selected_style')) {
             localStorage.setItem('selected_style', 'fan');
             console.log('🎨 Установлен стиль по умолчанию: fan');
         }
     
         const savedStyle = localStorage.getItem('selected_style');
-        const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
-        if (styleBtn) {
-            document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
-            styleBtn.classList.add('active');
-            console.log('🎨 Восстановлен стиль:', savedStyle);
-        }
+        
+        // 🔥 ПРИНУДИТЕЛЬНО АКТИВИРУЕМ СТИЛЬ НА ВСЕХ ЭКРАНАХ
+        setTimeout(() => {
+            document.querySelectorAll('.style-option').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            const activeBtns = document.querySelectorAll(`.style-option.${savedStyle}`);
+            activeBtns.forEach(btn => {
+                btn.classList.add('active');
+            });
+            
+            console.log('🎨 Принудительно активирован стиль:', savedStyle);
+        }, 100);
     
+        // Наблюдатель за появлением новых экранов
         const observer = new MutationObserver(() => {
-            const styleBtnAgain = document.querySelector(`.style-option.${localStorage.getItem('selected_style') || 'fan'}`);
-            if (styleBtnAgain && !styleBtnAgain.classList.contains('active')) {
+            const currentStyle = localStorage.getItem('selected_style') || 'fan';
+            const styleBtn = document.querySelector(`.style-option.${currentStyle}`);
+            if (styleBtn && !styleBtn.classList.contains('active')) {
                 document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
-                styleBtnAgain.classList.add('active');
+                styleBtn.classList.add('active');
+                console.log('🎨 MutationObserver восстановил стиль:', currentStyle);
             }
         });
         observer.observe(document.body, { childList: true, subtree: true });
@@ -71,18 +83,22 @@ const Search = {
                             self.setupPublicValidation();
                         }
                         
+                        // 🔥 ВОССТАНАВЛИВАЕМ АКТИВНЫЙ СТИЛЬ
                         setTimeout(() => {
                             let savedStyle = localStorage.getItem('selected_style');
                             if (!savedStyle) {
                                 savedStyle = 'fan';
                                 localStorage.setItem('selected_style', 'fan');
                             }
+                            document.querySelectorAll('.style-option').forEach(opt => {
+                                opt.classList.remove('active');
+                            });
                             const styleBtn = document.querySelector(`.style-option.${savedStyle}`);
                             if (styleBtn) {
-                                document.querySelectorAll('.style-option').forEach(opt => opt.classList.remove('active'));
                                 styleBtn.classList.add('active');
                             }
-                        }, 100);
+                            console.log('🎨 Стиль восстановлен для', screenId, ':', savedStyle);
+                        }, 50);
                     }, 100);
                 };
                 
