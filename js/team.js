@@ -1,6 +1,6 @@
 // ============================================
 // КОМАНДА - ТИММЕЙТЫ НАЖИМАЮТСЯ, ЛИДЕРБОРД - НЕТ
-// БЕЗ ДИАЛОГА ПОДТВЕРЖДЕНИЯ, С ТОСТОМ
+// С ДИАЛОГОМ ПОДТВЕРЖДЕНИЯ, КАК В PROFILE.JS
 // ============================================
 
 const Team = {
@@ -104,7 +104,6 @@ const Team = {
                 this.isFriendsLoaded = true;
                 console.log('✅ Тиммейты загружены:', this.friendsList.length);
                 this.renderFriendsTab();
-                // 🔥 СИНХРОНИЗИРУЕМ С PROFILE
                 this.syncWithProfile();
             } else {
                 this.friendsList = [];
@@ -125,7 +124,6 @@ const Team = {
         }
     },
     
-    // 🔥 СИНХРОНИЗАЦИЯ С PROFILE
     syncWithProfile() {
         if (window.Profile) {
             Profile.friendsList = [...this.friendsList];
@@ -241,7 +239,6 @@ const Team = {
         html += '</div>';
         content.innerHTML = html;
         
-        // 🔥 ТИММЕЙТЫ НАЖИМАЮТСЯ — ВЕШАЕМ ОБРАБОТЧИКИ
         document.querySelectorAll('#friendsTabList .friend-arrow-menu').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
@@ -261,27 +258,36 @@ const Team = {
         if (oldMenu) oldMenu.remove();
         
         const rect = btn.getBoundingClientRect();
-        const menuHeight = 110;
+        const menuWidth = 210;
+        const menuHeight = 85;
         const spaceBelow = window.innerHeight - rect.bottom;
-        
+        const spaceRight = window.innerWidth - rect.right;
+    
         let top;
         if (spaceBelow < menuHeight) {
             top = rect.top - menuHeight - 5;
         } else {
             top = rect.bottom + 5;
         }
-        
+    
+        let left;
+        if (spaceRight < menuWidth) {
+            left = window.innerWidth - menuWidth - 10;
+        } else {
+            left = rect.right - menuWidth + 10;
+        }
+    
         const menu = document.createElement('div');
         menu.className = 'friend-actions-menu';
         menu.innerHTML = `
-            <div class="friend-actions-popup" style="top: ${top}px; left: ${rect.right - 170}px;">
+            <div class="friend-actions-popup" style="top: ${top}px; left: ${left}px;">
                 <div class="friend-action-item write-btn">Написать в Telegram</div>
                 <div class="friend-action-item delete-btn">Удалить из тиммейтов</div>
             </div>
         `;
-        
+    
         document.body.appendChild(menu);
-        
+    
         const closeMenu = (e) => {
             if (!menu.contains(e.target)) {
                 menu.remove();
@@ -289,10 +295,9 @@ const Team = {
             }
         };
         setTimeout(() => document.addEventListener('click', closeMenu), 10);
-        
+    
         menu.querySelector('.write-btn').onclick = () => {
             menu.remove();
-            
             if (username && username !== 'null' && username !== '') {
                 const url = `https://t.me/${username}`;
                 if (window.Telegram?.WebApp?.openLink) {
@@ -306,15 +311,39 @@ const Team = {
                 this.showToast('У пользователя нет username в Telegram', true);
             }
         };
-        
+    
         menu.querySelector('.delete-btn').onclick = () => {
             menu.remove();
-            // 🔥 УДАЛЯЕМ БЕЗ ДИАЛОГА, СРАЗУ
-            this.removeFriend(playerId, nick);
+            // 🔥 ДИАЛОГ ПОДТВЕРЖДЕНИЯ — КАК В PROFILE.JS
+            this.confirmDeleteFriend(playerId, nick);
         };
     },
     
-    // 🔥 ТОСТ ВМЕСТО ALERT
+    // 🔥 ДИАЛОГ ПОДТВЕРЖДЕНИЯ (КАК В PROFILE.JS)
+    confirmDeleteFriend(playerId, nick) {
+        const dialog = document.createElement('div');
+        dialog.className = 'friend-delete-dialog';
+        dialog.innerHTML = `
+            <div class="friend-delete-overlay"></div>
+            <div class="friend-delete-popup">
+                <div class="friend-delete-title">Удалить тиммейта?</div>
+                <div class="friend-delete-message">Вы уверены, что хотите удалить ${nick || 'этого игрока'} из списка тиммейтов?</div>
+                <div class="friend-delete-buttons">
+                    <button class="friend-delete-cancel">Отмена</button>
+                    <button class="friend-delete-confirm">Удалить</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(dialog);
+        
+        dialog.querySelector('.friend-delete-overlay').onclick = () => dialog.remove();
+        dialog.querySelector('.friend-delete-cancel').onclick = () => dialog.remove();
+        dialog.querySelector('.friend-delete-confirm').onclick = async () => {
+            dialog.remove();
+            await this.removeFriend(playerId, nick);
+        };
+    },
+    
     showToast(message, isError = false) {
         if (window.Profile && Profile.showToast) {
             Profile.showToast(message, isError);
@@ -339,14 +368,10 @@ const Team = {
             });
             const data = await response.json();
             if (data.status === 'ok') {
-                // 🔥 УДАЛЯЕМ ИЗ ЛОКАЛЬНЫХ СПИСКОВ
                 this.friendsList = this.friendsList.filter(f => f.player_id !== friendId);
                 this.filteredFriends = this.filteredFriends.filter(f => f.player_id !== friendId);
-                
-                // 🔥 ОБНОВЛЯЕМ ОТОБРАЖЕНИЕ
                 this.renderFriendsTab();
                 
-                // 🔥 СИНХРОНИЗИРУЕМ С PROFILE
                 if (window.Profile) {
                     Profile.friendsList = Profile.friendsList.filter(f => f.player_id !== friendId);
                     if (typeof Profile.updateFriendsDisplay === 'function') {
@@ -354,7 +379,6 @@ const Team = {
                     }
                 }
                 
-                // 🔥 ПОКАЗЫВАЕМ ТОСТ
                 this.showToast('Тиммейт удалён');
             } else {
                 this.showToast('Ошибка при удалении', true);
@@ -410,7 +434,6 @@ const Team = {
         });
         container.innerHTML = html;
         
-        // 🔥 ТИММЕЙТЫ НАЖИМАЮТСЯ — ВЕШАЕМ ОБРАБОТЧИКИ
         document.querySelectorAll('#friendsTabList .friend-arrow-menu').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
@@ -446,7 +469,6 @@ const Team = {
                 const isCurrent = player.player_id === this.currentPlayerId;
                 const firstChar = player.nick && player.nick.length > 0 ? player.nick[0].toUpperCase() : '?';
                 
-                // 🔥 ЛИДЕРБОРД — СТРЕЛОЧКИ УБРАНЫ, НАЖАТЬ НЕЛЬЗЯ
                 html += `
                     <div class="friend-row" style="pointer-events: none;">
                         <div class="friend-avatar">
@@ -508,7 +530,6 @@ const Team = {
             const isCurrent = player.player_id === this.currentPlayerId;
             const firstChar = player.nick && player.nick.length > 0 ? player.nick[0].toUpperCase() : '?';
             
-            // 🔥 ЛИДЕРБОРД — СТРЕЛОЧКИ УБРАНЫ, НАЖАТЬ НЕЛЬЗЯ
             html += `
                 <div class="friend-row" style="pointer-events: none;">
                     <div class="friend-avatar">
