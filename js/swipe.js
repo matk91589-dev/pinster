@@ -1116,6 +1116,19 @@ const Swipe = {
         const styleEl = document.getElementById('swipeStyle');
         const commentEl = document.getElementById('swipeComment');
         
+        // 🔥 МЕНЯЕМ ЛЕЙБЛ В ЗАВИСИМОСТИ ОТ РЕЖИМА
+        const rankLabel = document.querySelector('.swipe-stats-row .swipe-stat-item:first-child .swipe-stat-label');
+        if (rankLabel) {
+            const modeUpper = this.mode ? this.mode.toUpperCase() : '';
+            if (modeUpper === 'FACEIT') {
+                rankLabel.textContent = 'FACEIT ELO';
+            } else if (modeUpper === 'PREMIER') {
+                rankLabel.textContent = 'CS RATING';
+            } else {
+                rankLabel.textContent = 'РАНГ';
+            }
+        }
+        
         if (playerIdEl) playerIdEl.textContent = player.player_id || '';
         if (playerNickEl) playerNickEl.textContent = player.nick || '';
         if (ratingEl) {
