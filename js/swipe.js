@@ -2,6 +2,22 @@
 // СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ ВЕРСИЯ (ВСЕ СЦЕНАРИИ)
 // ============================================
 
+// 🔥 УМНОЕ СОКРАЩЕНИЕ РАНГОВ
+function abbreviateRank(rank) {
+    if (!rank || rank === '—') return '—';
+    
+    const words = rank.split(' ');
+    if (words.length === 1) return rank;
+    
+    // Проверяем длину — если и так влезает, не сокращаем
+    if (rank.length <= 15) return rank;
+    
+    const firstWord = words[0];
+    const restAbbr = words.slice(1).map(w => w[0] + '.').join('');
+    
+    return firstWord + ' ' + restAbbr;
+}
+
 const Swipe = {
     // Элементы DOM
     card: null,
@@ -1098,8 +1114,12 @@ const Swipe = {
         
         const modeFromDB = this.mode ? this.mode.toUpperCase() : null;
         if (rankEl) {
-            if (modeFromDB === 'FACEIT' || modeFromDB === 'PREMIER') rankEl.textContent = player.rating || '0';
-            else rankEl.textContent = player.rank || '—';
+            if (modeFromDB === 'FACEIT' || modeFromDB === 'PREMIER') {
+                rankEl.textContent = player.rating || '0';
+            } else {
+                // 🔥 ИСПОЛЬЗУЕМ УМНОЕ СОКРАЩЕНИЕ ДЛЯ PRIME/PUBLIC
+                rankEl.textContent = abbreviateRank(player.rank || '—');
+            }
         }
         if (ageEl) ageEl.textContent = player.age ? player.age + ' лет' : '';
         if (styleEl) styleEl.textContent = player.style === 'fan' ? 'Fan' : 'Tryhard';
