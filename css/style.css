@@ -4810,15 +4810,14 @@ button:active { transform: scale(0.96); }
     50% { opacity: 0.6; }
 }
 
-/* Контейнер аватарок — ПОДНЯТ ВЫШЕ */
+/* Контейнер аватарок */
 .waiting-avatars-container {
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    justify-content: flex-start !important;
+    justify-content: center !important;
     padding: 20px !important;
-    padding-top: 50px !important;
 }
 
 .waiting-avatars {
@@ -4829,16 +4828,21 @@ button:active { transform: scale(0.96); }
     margin-bottom: 20px !important;
 }
 
-/* Аватарки — КРУГЛЫЕ, адаптивные */
+/* Аватарки — ФИКС РАЗМЕРА, чтобы влазили полностью */
 .waiting-self-avatar,
 .waiting-teammate-avatar {
-    width: min(70px, 20vw) !important;
-    height: min(70px, 20vw) !important;
+    width: 70px !important;
+    height: 70px !important;
+    max-width: 20vw !important;
+    max-height: 20vw !important;
     min-width: 50px !important;
     min-height: 50px !important;
     border-radius: 50% !important;
     overflow: hidden !important;
     flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .waiting-self-avatar .tg-avatar-svg,
@@ -4850,6 +4854,12 @@ button:active { transform: scale(0.96); }
     justify-content: center !important;
     background: #2A2F3A !important;
     border-radius: 50% !important;
+}
+
+.waiting-self-avatar svg,
+.waiting-teammate-avatar svg {
+    width: 60% !important;
+    height: 60% !important;
 }
 
 /* Твоя аватарка — БЕЗ ВСЕГО */
@@ -4866,12 +4876,6 @@ button:active { transform: scale(0.96); }
     border: 2px solid #FF5500 !important;
     box-shadow: 0 0 20px rgba(255, 85, 0, 0.4) !important;
     animation: teammatePulse 2s infinite !important;
-}
-
-.waiting-teammate-avatar.searching .tg-avatar-svg,
-.waiting-teammate-avatar.searching svg {
-    border: none !important;
-    box-shadow: none !important;
 }
 
 @keyframes teammatePulse {
@@ -4903,6 +4907,12 @@ button:active { transform: scale(0.96); }
     opacity: 1 !important;
 }
 
+/* Убираем обводку у родителя */
+.waiting-teammate-avatar.matched {
+    border: none !important;
+    box-shadow: none !important;
+}
+
 /* Линия между аватарками */
 .waiting-line {
     width: 40px !important;
@@ -4925,8 +4935,10 @@ button:active { transform: scale(0.96); }
     50% { opacity: 1; transform: scaleX(1); }
 }
 
-/* Текст — мин 10px, макс 14px */
+/* Текст — по центру, на 10% ниже центра */
 .waiting-status {
+    position: relative !important;
+    top: 10% !important;
     font-size: clamp(10px, 4vw, 14px) !important;
     font-weight: 500 !important;
     color: #ffffff !important;
@@ -4934,24 +4946,24 @@ button:active { transform: scale(0.96); }
     opacity: 0.8 !important;
     letter-spacing: 0.3px !important;
     padding: 0 12px !important;
+    margin-top: 0 !important;
 }
 
-/* Кнопка чата — ЕЩЁ УЖЕ, по центру */
+/* Кнопка чата — ВОЗВРАЩАЕМ НОРМАЛЬНЫЙ РАЗМЕР */
 .waiting-chat-button {
-    margin: 0 auto 20px auto !important;
-    padding: 12px 0 !important;
+    margin: 0 20px 20px 20px !important;
+    padding: 14px 20px !important;
     background: linear-gradient(135deg, #FF5500 0%, #FF3B30 100%) !important;
     border: none !important;
     border-radius: 16px !important;
     color: white !important;
-    font-size: 15px !important;
+    font-size: 16px !important;
     font-weight: 600 !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
-    width: 50% !important;
-    max-width: 200px !important;
+    width: auto !important;
+    max-width: calc(100% - 40px) !important;
     box-sizing: border-box !important;
-    text-align: center !important;
 }
 
 .waiting-chat-button.disabled {
