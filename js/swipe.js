@@ -397,35 +397,73 @@ const Swipe = {
         }, 50);
     },
     
-    updateButtonsPosition() {
+   updateButtonsPosition() {
         if (!this.skipBtn || !this.inviteBtn || !this.card) return;
         if (this.isWaitingMode) return;
         
         const cardRect = this.card.getBoundingClientRect();
         const cardHeight = cardRect.height;
+        const cardWidth = cardRect.width;
+        const cardLeft = cardRect.left;
+        const cardRight = cardRect.right;
+        const screenWidth = window.innerWidth;
         
-        // 🔥 РАЗМЕР КНОПОК
-        const btnWidth = 56;
-        const btnHeight = Math.min(cardHeight * 0.55, 140);
+        let btnWidth = Math.min(Math.max(cardWidth * 0.1, 38), 56);
+        let btnHeight = Math.min(Math.max(cardHeight * 0.55, 85), 140);
         
-        // 🔥 КНОПКИ ПОЛНОСТЬЮ ВЫСТУПАЮТ НАРУЖУ, ПРИЛЕГАЯ К КАРТОЧКЕ
+        const MIN_VISIBLE_OFFSET = 14;
+        let desiredOffset = Math.min(btnWidth * 0.65, 32);
+        
+        const availableLeft = cardLeft;
+        const availableRight = screenWidth - cardRight;
+        
+        let leftOffset = desiredOffset;
+        if (availableLeft < desiredOffset) {
+            leftOffset = Math.max(availableLeft - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
+            if (leftOffset < MIN_VISIBLE_OFFSET) {
+                btnWidth = Math.min(btnWidth, availableLeft - 5);
+                leftOffset = Math.max(btnWidth * 0.4, MIN_VISIBLE_OFFSET);
+            }
+        }
+        
+        let rightOffset = desiredOffset;
+        if (availableRight < desiredOffset) {
+            rightOffset = Math.max(availableRight - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
+            if (rightOffset < MIN_VISIBLE_OFFSET) {
+                btnWidth = Math.min(btnWidth, availableRight - 5);
+                rightOffset = Math.max(btnWidth * 0.4, MIN_VISIBLE_OFFSET);
+            }
+        }
+        
+        if (screenWidth < 400) {
+            btnWidth = Math.min(btnWidth, 44);
+            btnHeight = Math.min(btnHeight, 100);
+            leftOffset = Math.max(leftOffset, 12);
+            rightOffset = Math.max(rightOffset, 12);
+        }
+        
+        if (screenWidth < 340) {
+            btnWidth = Math.min(btnWidth, 38);
+            btnHeight = Math.min(btnHeight, 90);
+            leftOffset = Math.max(leftOffset, 10);
+            rightOffset = Math.max(rightOffset, 10);
+        }
+        
         this.skipBtn.style.width = btnWidth + 'px';
         this.skipBtn.style.height = btnHeight + 'px';
         this.skipBtn.style.minHeight = btnHeight + 'px';
         this.skipBtn.style.top = '50%';
         this.skipBtn.style.transform = 'translateY(-50%)';
-        this.skipBtn.style.left = '-' + btnWidth + 'px';  // 🔥 ВСЯ КНОПКА СНАРУЖИ
-        this.skipBtn.style.borderRadius = btnWidth + 'px 0 0 ' + btnWidth + 'px';
+        this.skipBtn.style.left = '-' + leftOffset + 'px';
         
         this.inviteBtn.style.width = btnWidth + 'px';
         this.inviteBtn.style.height = btnHeight + 'px';
         this.inviteBtn.style.minHeight = btnHeight + 'px';
         this.inviteBtn.style.top = '50%';
         this.inviteBtn.style.transform = 'translateY(-50%)';
-        this.inviteBtn.style.right = '-' + btnWidth + 'px';  // 🔥 ВСЯ КНОПКА СНАРУЖИ
-        this.inviteBtn.style.borderRadius = '0 ' + btnWidth + 'px ' + btnWidth + 'px 0';
+        this.inviteBtn.style.right = '-' + rightOffset + 'px';
         
-        const iconSize = Math.min(btnWidth * 0.5, 24);
+        const iconSize = Math.min(btnWidth * 0.55, 22);
         const allSvgs = document.querySelectorAll('.swipe-side-btn svg');
         allSvgs.forEach(svg => {
             svg.style.width = iconSize + 'px';
