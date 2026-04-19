@@ -1,5 +1,5 @@
 // ============================================
-// КОМАНДА - С ПОИСКОМ В ЛИДЕРБОРДЕ
+// КОМАНДА - БЕЗ СТРЕЛОЧЕК И ИНТЕРАКТИВА
 // ============================================
 
 const Team = {
@@ -36,7 +36,6 @@ const Team = {
             return;
         }
         
-        // 🔥 ЗАГРУЖАЕМ ОБА СПИСКА СРАЗУ
         this.loadFriendsList();
         this.loadLeaderboard();
     },
@@ -73,7 +72,6 @@ const Team = {
             this.currentPlayerId = localStorage.getItem('player_id');
         }
         
-        // Всегда показываем друзей
         this.renderFriendsTab();
         if (!this.isFriendsLoaded && !this.isLoadingFriends && this.telegramId) {
             this.loadFriendsList();
@@ -146,7 +144,7 @@ const Team = {
                 this.filteredLeaderboard = [...this.leaderboard];
                 this.isLeaderboardLoaded = true;
                 console.log('✅ Лидерборд загружен:', this.leaderboard.length);
-                this.renderLeaderboardTab(); // 🔥 СРАЗУ ОТРИСОВЫВАЕМ
+                this.renderLeaderboardTab();
             } else {
                 this.leaderboard = [];
                 this.filteredLeaderboard = [];
@@ -203,9 +201,9 @@ const Team = {
             html += `<div class="empty-friends"><div class="empty-friends-text">у вас пока нет тиммейтов</div></div>`;
         } else {
             this.filteredFriends.forEach(friend => {
-                const firstChar = friend.nick && friend.nick.length > 0 ? friend.nick[0].toUpperCase() : '?';
+                const firstChar = friend.nick?.[0]?.toUpperCase() || '?';
                 html += `
-                <div class="friend-row" data-player-id="${friend.player_id}" data-username="${friend.username || ''}" data-nick="${friend.nick || 'Без имени'}">
+                <div class="friend-row-static">
                     <div class="friend-avatar">
                         ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}
                     </div>
@@ -213,7 +211,6 @@ const Team = {
                         <span class="friend-id">ID: ${friend.player_id}</span>
                         <span class="friend-name">${friend.nick || 'Без имени'}</span>
                     </div>
-                    <div class="friend-arrow-menu">→</div>
                 </div>`;
             });
         }
@@ -221,127 +218,7 @@ const Team = {
         html += '</div>';
         content.innerHTML = html;
         
-        document.querySelectorAll('#friendsTabList .friend-arrow-menu').forEach(btn => {
-            btn.onclick = (e) => {
-                e.stopPropagation();
-                const row = btn.closest('.friend-row');
-                const playerId = row.dataset.playerId;
-                const username = row.dataset.username;
-                const nick = row.dataset.nick;
-                this.showFriendActions(playerId, username, nick, btn);
-            };
-        });
-        
         setTimeout(() => this.setupFriendsSearch(), 50);
-    },
-    
-    showFriendActions(playerId, username, nick, btn) {
-        const oldMenu = document.querySelector('.friend-actions-menu');
-        if (oldMenu) oldMenu.remove();
-        
-        const rect = btn.getBoundingClientRect();
-        const menuHeight = 110;
-        const spaceBelow = window.innerHeight - rect.bottom;
-        
-        let top;
-        if (spaceBelow < menuHeight) {
-            top = rect.top - menuHeight - 5;
-        } else {
-            top = rect.bottom + 5;
-        }
-        
-        const menu = document.createElement('div');
-        menu.className = 'friend-actions-menu';
-        menu.innerHTML = `
-            <div class="friend-actions-popup" style="top: ${top}px; left: ${rect.right - 170}px;">
-                <div class="friend-action-item write-btn">Написать в Telegram</div>
-                <div class="friend-action-item delete-btn">Удалить из тиммейтов</div>
-            </div>
-        `;
-        
-        document.body.appendChild(menu);
-        
-        const closeMenu = (e) => {
-            if (!menu.contains(e.target)) {
-                menu.remove();
-                document.removeEventListener('click', closeMenu);
-            }
-        };
-        setTimeout(() => document.addEventListener('click', closeMenu), 10);
-        
-        // 🔥 НАПИСАТЬ — белый текст 🔥
-        menu.querySelector('.write-btn').onclick = () => {
-            menu.remove();
-            
-            if (username && username !== 'null' && username !== '') {
-                const url = `https://t.me/${username}`;
-                if (window.Telegram?.WebApp?.openLink) {
-                    window.Telegram.WebApp.openLink(url);
-                } else if (window.Telegram?.WebApp?.openTelegramLink) {
-                    window.Telegram.WebApp.openTelegramLink(url);
-                } else {
-                    window.open(url, '_blank');
-                }
-            } else {
-                if (window.App) App.showAlert('У пользователя нет username в Telegram');
-            }
-        };
-        
-        // 🔥 УДАЛИТЬ — оранжевый/красный текст 🔥
-        menu.querySelector('.delete-btn').onclick = () => {
-            menu.remove();
-            this.confirmDeleteFriend(playerId, nick);
-        };
-    },
-    
-    confirmDeleteFriend(playerId, nick) {
-        const dialog = document.createElement('div');
-        dialog.className = 'friend-delete-dialog';
-        dialog.innerHTML = `
-            <div class="friend-delete-overlay"></div>
-            <div class="friend-delete-popup">
-                <div class="friend-delete-title">Удалить тиммейта?</div>
-                <div class="friend-delete-message">Вы уверены, что хотите удалить ${nick || 'этого игрока'} из списка тиммейтов?</div>
-                <div class="friend-delete-buttons">
-                    <button class="friend-delete-cancel">Отмена</button>
-                    <button class="friend-delete-confirm">Удалить</button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(dialog);
-        
-        dialog.querySelector('.friend-delete-overlay').onclick = () => dialog.remove();
-        dialog.querySelector('.friend-delete-cancel').onclick = () => dialog.remove();
-        dialog.querySelector('.friend-delete-confirm').onclick = () => {
-            dialog.remove();
-            this.removeFriend(playerId, nick);
-        };
-    },
-    
-    async removeFriend(friendId, nick) {
-        if (!this.telegramId) return;
-        
-        try {
-            const response = await fetch(`${this.BACKEND_URL}/api/friends/remove`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    telegram_id: this.telegramId,
-                    friend_player_id: friendId
-                })
-            });
-            const data = await response.json();
-            if (data.status === 'ok') {
-                this.friendsList = this.friendsList.filter(f => f.player_id !== friendId);
-                this.filteredFriends = [...this.friendsList];
-                this.renderFriendsTab();
-                if (window.App) App.showAlert('Тиммейт удалён');
-            }
-        } catch(e) {
-            console.error('Ошибка удаления:', e);
-            if (window.App) App.showAlert('Ошибка при удалении');
-        }
     },
     
     setupFriendsSearch() {
@@ -376,29 +253,19 @@ const Team = {
         
         let html = '';
         this.filteredFriends.forEach(friend => {
-            const firstChar = friend.nick && friend.nick.length > 0 ? friend.nick[0].toUpperCase() : '?';
+            const firstChar = friend.nick?.[0]?.toUpperCase() || '?';
             html += `
-            <div class="friend-row" data-player-id="${friend.player_id}" data-username="${friend.username || ''}" data-nick="${friend.nick || 'Без имени'}">
-                <div class="friend-avatar">${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}</div>
+            <div class="friend-row-static">
+                <div class="friend-avatar">
+                    ${friend.avatar ? `<img src="${friend.avatar}">` : `<span>${firstChar}</span>`}
+                </div>
                 <div class="friend-info">
                     <span class="friend-id">ID: ${friend.player_id}</span>
                     <span class="friend-name">${friend.nick || 'Без имени'}</span>
                 </div>
-                <div class="friend-arrow-menu">→</div>
             </div>`;
         });
         container.innerHTML = html;
-        
-        document.querySelectorAll('#friendsTabList .friend-arrow-menu').forEach(btn => {
-            btn.onclick = (e) => {
-                e.stopPropagation();
-                const row = btn.closest('.friend-row');
-                const playerId = row.dataset.playerId;
-                const username = row.dataset.username;
-                const nick = row.dataset.nick;
-                this.showFriendActions(playerId, username, nick, btn);
-            };
-        });
     },
     
     renderLeaderboardTab() {
@@ -422,10 +289,10 @@ const Team = {
                 const originalIndex = this.leaderboard.findIndex(p => p.player_id === player.player_id);
                 const place = originalIndex + 1;
                 const isCurrent = player.player_id === this.currentPlayerId;
-                const firstChar = player.nick && player.nick.length > 0 ? player.nick[0].toUpperCase() : '?';
+                const firstChar = player.nick?.[0]?.toUpperCase() || '?';
                 
                 html += `
-                    <div class="friend-row" onclick="Team.showPlayerProfile('${player.player_id}')">
+                    <div class="friend-row-static">
                         <div class="friend-avatar">
                             ${player.avatar ? `<img src="${player.avatar}">` : `<span>${firstChar}</span>`}
                         </div>
@@ -435,7 +302,7 @@ const Team = {
                         </div>
                         <div class="leaderboard-right">
                             <span class="leaderboard-place">#${place}</span>
-                            ${isCurrent ? '<span class="leaderboard-current-badge">вы</span>' : '<span class="friend-arrow leaderboard-arrow">→</span>'}
+                            ${isCurrent ? '<span class="leaderboard-current-badge">вы</span>' : ''}
                         </div>
                     </div>
                 `;
@@ -483,10 +350,10 @@ const Team = {
             const originalIndex = this.leaderboard.findIndex(p => p.player_id === player.player_id);
             const place = originalIndex + 1;
             const isCurrent = player.player_id === this.currentPlayerId;
-            const firstChar = player.nick && player.nick.length > 0 ? player.nick[0].toUpperCase() : '?';
+            const firstChar = player.nick?.[0]?.toUpperCase() || '?';
             
             html += `
-                <div class="friend-row" onclick="Team.showPlayerProfile('${player.player_id}')">
+                <div class="friend-row-static">
                     <div class="friend-avatar">
                         ${player.avatar ? `<img src="${player.avatar}">` : `<span>${firstChar}</span>`}
                     </div>
@@ -496,20 +363,12 @@ const Team = {
                     </div>
                     <div class="leaderboard-right">
                         <span class="leaderboard-place">#${place}</span>
-                        ${isCurrent ? '<span class="leaderboard-current-badge">вы</span>' : '<span class="friend-arrow leaderboard-arrow">→</span>'}
+                        ${isCurrent ? '<span class="leaderboard-current-badge">вы</span>' : ''}
                     </div>
                 </div>
             `;
         });
         container.innerHTML = html;
-    },
-    
-    showFriendProfile(playerId) {
-        if (window.App) App.showAlert(`Профиль тиммейта ${playerId}\n(функция в разработке)`);
-    },
-    
-    showPlayerProfile(playerId) {
-        if (window.App) App.showAlert(`Профиль игрока ${playerId}\n(функция в разработке)`);
     },
     
     goBack() {
