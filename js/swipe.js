@@ -980,7 +980,6 @@ const Swipe = {
         if (status === 'both_accepted') {
             this.stopWaitingTimer();
             
-            // ЗАПОЛНЯЕМ ЛИНИЮ И УБИРАЕМ ПУЛЬСАЦИЮ С ТИММЕЙТА
             if (teammateAvatar) {
                 teammateAvatar.classList.add('matched');
                 teammateAvatar.classList.remove('searching');
@@ -995,11 +994,51 @@ const Swipe = {
             }
             
             const chatButton = document.getElementById('waitingChatButton');
-            if (chatButton && this.chatLink) {
+            
+            // 🔥 БЕРЁМ chatLink ИЗ localStorage ЕСЛИ ЕЩЁ НЕТ В this.chatLink
+            const link = this.chatLink || localStorage.getItem('currentChatLink');
+            
+            console.log('🔗 chatLink в updateWaitingUI:', link);
+            
+            if (chatButton && link) {
                 chatButton.classList.remove('disabled');
                 chatButton.classList.add('active');
                 chatButton.disabled = false;
+                chatButton.style.pointerEvents = 'auto';
+                chatButton.style.opacity = '1';
+                chatButton.style.background = '#FF5500';
+                
+                // 🔥 УСТАНАВЛИВАЕМ ОБРАБОТЧИК
+                chatButton.onclick = (e) => {
+                    e.preventDefault();
+                    this.openChatLink();
+                };
+            } else {
+                console.log('⏳ chatLink ещё не получен, ждём...');
+                // 🔥 ЕСЛИ chatLink ЕЩЁ НЕТ — ПРОБУЕМ КАЖДЫЕ 500мс
+                const checkInterval = setInterval(() => {
+                    const updatedLink = this.chatLink || localStorage.getItem('currentChatLink');
+                    if (updatedLink) {
+                        clearInterval(checkInterval);
+                        if (chatButton) {
+                            chatButton.classList.remove('disabled');
+                            chatButton.classList.add('active');
+                            chatButton.disabled = false;
+                            chatButton.style.pointerEvents = 'auto';
+                            chatButton.style.opacity = '1';
+                            chatButton.style.background = '#FF5500';
+                            chatButton.onclick = (e) => {
+                                e.preventDefault();
+                                this.openChatLink();
+                            };
+                        }
+                    }
+                }, 500);
+                
+                // Останавливаем проверку через 10 секунд
+                setTimeout(() => clearInterval(checkInterval), 10000);
             }
+            
             this.showToastMessage('Мэтч создан!', false);
         }
     },
