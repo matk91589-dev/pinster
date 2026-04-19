@@ -1,5 +1,5 @@
 // ============================================
-// ЗАГРУЗКА АВАТАРКИ (Telegram Mini App версия) - ФИКС
+// ЗАГРУЗКА АВАТАРКИ (Telegram Mini App версия) - ФИНАЛ
 // ============================================
 
 const Avatar = {
@@ -117,7 +117,7 @@ const Avatar = {
             // СЖИМАЕМ
             const compressedBase64 = await this.compressImage(originalBase64);
             
-            // 🔥 ОБНОВЛЯЕМ ОТОБРАЖЕНИЕ СРАЗУ
+            // ОБНОВЛЯЕМ ОТОБРАЖЕНИЕ СРАЗУ
             const avatarDiv = document.getElementById('profileAvatar');
             if (avatarDiv) {
                 avatarDiv.innerHTML = `<img src="${compressedBase64}" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;">`;
@@ -128,13 +128,13 @@ const Avatar = {
                 startAvatar.innerHTML = `<img src="${compressedBase64}" style="width:100%; height:100%; object-fit:cover;">`;
             }
             
-            // 🔥 СОХРАНЯЕМ НА СЕРВЕР
+            // СОХРАНЯЕМ НА СЕРВЕР
             await this.saveAvatarToServer(compressedBase64);
         };
         reader.readAsDataURL(file);
     },
     
-    // 🔥 НОВАЯ ФУНКЦИЯ: СОХРАНЕНИЕ НА СЕРВЕР
+    // СОХРАНЕНИЕ НА СЕРВЕР (с перебором форматов)
     async saveAvatarToServer(base64Image) {
         const telegramId = Profile.telegramId || Profile.getTelegramId();
         
@@ -148,45 +148,140 @@ const Avatar = {
         
         console.log('💾 Отправка аватара на сервер...');
         
+        // 🔥 Формат 1: avatar
         try {
             const response = await fetch(`${this.BACKEND_URL}/api/profile/avatar/update`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    telegram_id: telegramId,
+                    telegram_id: String(telegramId),
+                    avatar: base64Image
+                })
+            });
+            
+            const data = await response.json();
+            console.log('📸 Ответ сервера (формат 1):', data);
+            
+            if (data.status === 'ok') {
+                this.onSaveSuccess(base64Image);
+                return;
+            }
+        } catch (e) {
+            console.log('❌ Формат 1 не сработал:', e);
+        }
+        
+        // 🔥 Формат 2: avatar_url
+        try {
+            const response = await fetch(`${this.BACKEND_URL}/api/profile/avatar/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    telegram_id: String(telegramId),
                     avatar_url: base64Image
                 })
             });
             
             const data = await response.json();
-            console.log('📸 Ответ сервера (аватар):', data);
+            console.log('📸 Ответ сервера (формат 2):', data);
             
             if (data.status === 'ok') {
-                // 🔥 ОБНОВЛЯЕМ ДАННЫЕ В PROFILE
-                Profile.savedAvatarUrl = base64Image;
-                localStorage.setItem('profile_avatar', base64Image);
-                
-                if (Profile.showToast) {
-                    Profile.showToast('Аватар обновлён!');
-                }
-                
-                // 🔥 ПРИНУДИТЕЛЬНО ОБНОВЛЯЕМ ОТОБРАЖЕНИЕ
-                setTimeout(() => {
-                    Profile.updateAvatarDisplay();
-                }, 100);
-                
-            } else {
-                console.error('❌ Ошибка от сервера:', data);
-                if (Profile.showToast) {
-                    Profile.showToast(data.error || 'Ошибка сохранения', true);
-                }
+                this.onSaveSuccess(base64Image);
+                return;
             }
-        } catch (error) {
-            console.error('❌ Ошибка отправки:', error);
-            if (Profile.showToast) {
-                Profile.showToast('Ошибка соединения', true);
-            }
+        } catch (e) {
+            console.log('❌ Формат 2 не сработал:', e);
         }
+        
+        // 🔥 Формат 3: image
+        try {
+            const response = await fetch(`${this.BACKEND_URL}/api/profile/avatar/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    telegram_id: String(telegramId),
+                    image: base64Image
+                })
+            });
+            
+            const data = await response.json();
+            console.log('📸 Ответ сервера (формат 3):', data);
+            
+            if (data.status === 'ok') {
+                this.onSaveSuccess(base64Image);
+                return;
+            }
+        } catch (e) {
+            console.log('❌ Формат 3 не сработал:', e);
+        }
+        
+        // 🔥 Формат 4: только base64 в теле
+        try {
+            const response = await fetch(`${this.BACKEND_URL}/api/profile/avatar/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    telegram_id: String(telegramId),
+                    data: base64Image
+                })
+            });
+            
+            const data = await response.json();
+            console.log('📸 Ответ сервера (формат 4):', data);
+            
+            if (data.status === 'ok') {
+                this.onSaveSuccess(base64Image);
+                return;
+            }
+        } catch (e) {
+            console.log('❌ Формат 4 не сработал:', e);
+        }
+        
+        // 🔥 Формат 5: через FormData
+        try {
+            const formData = new FormData();
+            formData.append('telegram_id', String(telegramId));
+            formData.append('avatar', base64Image);
+            
+            const response = await fetch(`${this.BACKEND_URL}/api/profile/avatar/update`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            console.log('📸 Ответ сервера (формат 5 - FormData):', data);
+            
+            if (data.status === 'ok') {
+                this.onSaveSuccess(base64Image);
+                return;
+            }
+        } catch (e) {
+            console.log('❌ Формат 5 не сработал:', e);
+        }
+        
+        // Если ни один формат не сработал
+        console.error('❌ Все форматы не сработали');
+        if (Profile.showToast) {
+            Profile.showToast('Ошибка: сервер не принимает аватар', true);
+        }
+    },
+    
+    // Успешное сохранение
+    onSaveSuccess(base64Image) {
+        console.log('✅ Аватар сохранён на сервере');
+        
+        Profile.savedAvatarUrl = base64Image;
+        localStorage.setItem('profile_avatar', base64Image);
+        
+        if (Profile.showToast) {
+            Profile.showToast('Аватар обновлён!');
+        }
+        
+        // Принудительно обновляем отображение
+        setTimeout(() => {
+            if (Profile.updateAvatarDisplay) {
+                Profile.updateAvatarDisplay();
+            }
+        }, 100);
     },
     
     setupDragAndDrop() {
