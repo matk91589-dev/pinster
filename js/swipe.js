@@ -1076,7 +1076,7 @@ const Swipe = {
         this.restartSearch('reject');
     },
     
-    createGame() {
+   createGame() {
         if (this.gameCreating) return;
         if (!this.currentMatchId) return;
         this.gameCreating = true;
@@ -1088,19 +1088,75 @@ const Swipe = {
         })
         .then(res => res.json())
         .then(data => {
-            if (data.status === 'ok' && data.chat_link) {
+            console.log('📦 Ответ createGame:', data);
+            
+            // 🔥 ЕСЛИ ЕСТЬ chat_link — АКТИВИРУЕМ
+            if (data.chat_link) {
                 this.chatLink = data.chat_link;
                 this.inviteLink = data.invite_link;
                 localStorage.setItem('currentChatLink', data.chat_link);
                 if (data.invite_link) localStorage.setItem('currentInviteLink', data.invite_link);
                 this.updateWaitingChatButton(true, data.chat_link, data.invite_link);
                 this.gameCreated = true;
-            } else {
-                this.updateWaitingChatButton(false);
+            }
+            // 🔥 ЕСЛИ ИГРА УЖЕ СУЩЕСТВУЕТ — ПРОБУЕМ ПОЛУЧИТЬ ССЫЛКУ ЧЕРЕЗ API
+            else if (data.already_exists) {
+                console.log('🔄 Игра уже существует, получаем ссылку...');
+                // Ждём и пробуем получить chat_link из localStorage или повторным запросом
+                this.retryGetChatLink();
+            }
+            // 🔥 В ОСТАЛЬНЫХ СЛУЧАЯХ — НЕ ДЕЛАЕМ КНОПКУ СЕРОЙ!
+            else {
+                console.log('⏳ chat_link ещё не готов, ждём...');
+                this.retryGetChatLink();
             }
         })
-        .catch(() => this.updateWaitingChatButton(false))
-        .finally(() => { setTimeout(() => this.gameCreating = false, 3000); });
+        .catch(error => {
+            console.error('❌ Ошибка createGame:', error);
+            // НЕ ВЫЗЫВАЕМ updateWaitingChatButton(false)!
+            this.retryGetChatLink();
+        })
+        .finally(() => {
+            setTimeout(() => this.gameCreating = false, 3000);
+        });
+    },
+    
+    // 🔥 НОВАЯ ФУНКЦИЯ ДЛЯ ПОВТОРНЫХ ПОПЫТОК
+    retryGetChatLink() {
+        let attempts = 0;
+        const maxAttempts = 20;
+        
+        const checkLink = () => {
+            attempts++;
+            
+            // Проверяем localStorage
+            const savedLink = localStorage.getItem('currentChatLink');
+            if (savedLink) {
+                console.log('✅ Нашли chat_link в localStorage:', savedLink);
+                this.chatLink = savedLink;
+                this.updateWaitingChatButton(true, savedLink, null);
+                this.gameCreated = true;
+                return;
+            }
+            
+            // Проверяем this.chatLink
+            if (this.chatLink) {
+                console.log('✅ chat_link уже есть:', this.chatLink);
+                this.updateWaitingChatButton(true, this.chatLink, this.inviteLink);
+                this.gameCreated = true;
+                return;
+            }
+            
+            if (attempts < maxAttempts) {
+                setTimeout(checkLink, 500);
+            } else {
+                console.log('❌ Не удалось получить chat_link после 10 секунд');
+                // ТОЛЬКО ТОГДА ДЕЛАЕМ СЕРОЙ
+                this.updateWaitingChatButton(false);
+            }
+        };
+        
+        setTimeout(checkLink, 500);
     },
     
     updateWaitingChatButton(active, chatLink, inviteLink) {
