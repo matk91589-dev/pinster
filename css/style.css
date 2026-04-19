@@ -5215,56 +5215,11 @@ button:active { transform: scale(0.96); }
     stroke: white !important;
 }
 
-/* ===== СВАЙП-КОНТЕЙНЕР ===== */
-.swipe-container {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-height: 100vh !important;
-    padding: 16px !important;
-    position: relative !important;
-}
-
-.style-option.active {
-    background: #FF5500 !important;
-    color: white !important;
-}
-
-.style-option.tryhard.active {
-    background: #FF5500 !important;
-    color: white !important;
-}
-
-/* Ссылка в одну строку */
+/* ===== ФИКС КАРТОЧКИ: ССЫЛКА В ОДНУ СТРОКУ + КЛИКИ НЕ СВАЙПАЮТ ===== */
 .swipe-link-value {
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     max-width: 100% !important;
     display: block !important;
-}
-
-/* Кнопка копирования не триггерит ничего */
-.copy-btn {
-    position: relative !important;
-    z-index: 100 !important;
-    pointer-events: auto !important;
-}
-
-/* Весь контент карточки не перехватывает клики (свайп только drag) */
-.swipe-card-content,
-.swipe-card-content * {
-    pointer-events: none !important;
-}
-
-/* Но кнопки копирования и боковые кнопки — кликабельны */
-.copy-btn,
-.swipe-side-btn,
-.swipe-side-btn *,
-.back-arrow-swipe,
-.waiting-close,
-.waiting-chat-button {
-    pointer-events: auto !important;
 }
