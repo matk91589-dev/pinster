@@ -4810,14 +4810,15 @@ button:active { transform: scale(0.96); }
     50% { opacity: 0.6; }
 }
 
-/* Контейнер аватарок */
+/* Контейнер аватарок — ПОДНЯТ ВЫШЕ */
 .waiting-avatars-container {
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
     padding: 20px !important;
+    padding-top: 50px !important;
 }
 
 .waiting-avatars {
@@ -4851,10 +4852,13 @@ button:active { transform: scale(0.96); }
     border-radius: 50% !important;
 }
 
-/* Твоя аватарка — без обводки, статичная */
-.waiting-self-avatar {
+/* Твоя аватарка — БЕЗ ВСЕГО */
+.waiting-self-avatar,
+.waiting-self-avatar .tg-avatar-svg,
+.waiting-self-avatar svg {
     border: none !important;
     box-shadow: none !important;
+    outline: none !important;
 }
 
 /* Аватарка тиммейта — пульсирует оранжевым пока идёт поиск */
@@ -4862,6 +4866,12 @@ button:active { transform: scale(0.96); }
     border: 2px solid #FF5500 !important;
     box-shadow: 0 0 20px rgba(255, 85, 0, 0.4) !important;
     animation: teammatePulse 2s infinite !important;
+}
+
+.waiting-teammate-avatar.searching .tg-avatar-svg,
+.waiting-teammate-avatar.searching svg {
+    border: none !important;
+    box-shadow: none !important;
 }
 
 @keyframes teammatePulse {
@@ -4882,10 +4892,13 @@ button:active { transform: scale(0.96); }
     }
 }
 
-/* Аватарка тиммейта когда матч найден — без обводок, статичная */
-.waiting-teammate-avatar.matched {
+/* Аватарка тиммейта когда матч найден — АБСОЛЮТНО БЕЗ ВСЕГО */
+.waiting-teammate-avatar.matched,
+.waiting-teammate-avatar.matched .tg-avatar-svg,
+.waiting-teammate-avatar.matched svg {
     border: none !important;
     box-shadow: none !important;
+    outline: none !important;
     animation: none !important;
     opacity: 1 !important;
 }
@@ -4923,21 +4936,22 @@ button:active { transform: scale(0.96); }
     padding: 0 12px !important;
 }
 
-/* Кнопка чата — фикс выхода за края */
+/* Кнопка чата — ЕЩЁ УЖЕ, по центру */
 .waiting-chat-button {
-    margin: 0 20px 20px 20px !important;
-    padding: 14px 20px !important;
+    margin: 0 auto 20px auto !important;
+    padding: 12px 0 !important;
     background: linear-gradient(135deg, #FF5500 0%, #FF3B30 100%) !important;
     border: none !important;
     border-radius: 16px !important;
     color: white !important;
-    font-size: 16px !important;
+    font-size: 15px !important;
     font-weight: 600 !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
-    width: auto !important;
-    max-width: calc(100% - 40px) !important;
+    width: 50% !important;
+    max-width: 200px !important;
     box-sizing: border-box !important;
+    text-align: center !important;
 }
 
 .waiting-chat-button.disabled {
