@@ -36,12 +36,13 @@ const Swipe = {
     startX: 0,
     currentX: 0,
     startTime: 0,
+    hasMoved: false,  // 🔥 ФЛАГ ДВИЖЕНИЯ
     
     // Константы
     SWIPE_THRESHOLD: 100,
     VELOCITY_THRESHOLD: 0.4,
     ANIMATION_DURATION: 350,
-    MATCH_TIMEOUT: 40, // 🔥 40 СЕКУНД
+    MATCH_TIMEOUT: 40,
     
     // Данные
     currentPlayer: null,
@@ -133,8 +134,6 @@ const Swipe = {
         const savedRank = this.currentPlayer?.rating || this.currentPlayer?.rank || '';
         const savedAge = this.currentPlayer?.age || '';
         
-        console.log('🔄 Перезапуск поиска, причина:', reason, 'режим:', savedMode);
-        
         this.isWaitingMode = false;
         this.currentMatchId = null;
         this.currentPlayer = null;
@@ -156,25 +155,17 @@ const Swipe = {
                 if (modeTitle) modeTitle.textContent = savedMode;
                 
                 if (savedMode === 'FACEIT') {
-                    const eloInput = document.getElementById('faceitELOInput');
-                    const ageInput = document.getElementById('faceitAgeValue');
-                    if (eloInput) eloInput.value = savedRank;
-                    if (ageInput) ageInput.value = savedAge;
+                    document.getElementById('faceitELOInput').value = savedRank;
+                    document.getElementById('faceitAgeValue').value = savedAge;
                 } else if (savedMode === 'PREMIER') {
-                    const ratingInput = document.getElementById('premierRatingInput');
-                    const ageInput = document.getElementById('premierAgeValue');
-                    if (ratingInput) ratingInput.value = savedRank;
-                    if (ageInput) ageInput.value = savedAge;
+                    document.getElementById('premierRatingInput').value = savedRank;
+                    document.getElementById('premierAgeValue').value = savedAge;
                 } else if (savedMode === 'PRIME') {
-                    const rankSelect = document.getElementById('primeRankSelect');
-                    const ageInput = document.getElementById('primeAgeValue');
-                    if (rankSelect) rankSelect.value = savedRank;
-                    if (ageInput) ageInput.value = savedAge;
+                    document.getElementById('primeRankSelect').value = savedRank;
+                    document.getElementById('primeAgeValue').value = savedAge;
                 } else if (savedMode === 'PUBLIC') {
-                    const rankSelect = document.getElementById('publicRankSelect');
-                    const ageInput = document.getElementById('publicAgeValue');
-                    if (rankSelect) rankSelect.value = savedRank;
-                    if (ageInput) ageInput.value = savedAge;
+                    document.getElementById('publicRankSelect').value = savedRank;
+                    document.getElementById('publicAgeValue').value = savedAge;
                 }
                 
                 Search.forceStopAndStart(savedMode, savedRank);
@@ -183,8 +174,6 @@ const Swipe = {
     },
 
     goToMainScreen(reason = 'timeout') {
-        console.log('🏠 Возврат на главную, причина:', reason);
-        
         this.isWaitingMode = false;
         this.currentMatchId = null;
         this.currentPlayer = null;
@@ -202,8 +191,6 @@ const Swipe = {
     },
     
     init(mode) {
-        console.log('🔥 Swipe.init() with mode:', mode);
-        
         this.mode = mode;
         this.card = document.getElementById('swipeCard');
         this.container = document.getElementById('swipeContainer');
@@ -213,10 +200,7 @@ const Swipe = {
         this.labelRight = document.getElementById('swipeLabelRight');
         this.timerElement = document.getElementById('swipeTimer');
         
-        if (!this.card) {
-            console.error('❌ Swipe card not found!');
-            return;
-        }
+        if (!this.card) return;
         
         this.card.style.display = 'block';
         this.card.style.visibility = 'visible';
@@ -235,8 +219,6 @@ const Swipe = {
         
         this.initResizeObserver();
         this.forceShowSwipeMode();
-        
-        console.log('✅ Swipe.init() завершён');
     },
     
     copyToClipboard(text, btnElement) {
@@ -251,9 +233,7 @@ const Swipe = {
                 btnElement.classList.add('copied');
                 setTimeout(() => btnElement.classList.remove('copied'), 1500);
             }
-        }).catch(err => {
-            this.showToastMessage('Ошибка копирования', true);
-        });
+        }).catch(() => this.showToastMessage('Ошибка копирования', true));
     },
     
     createLinkWithCopy(text) {
@@ -294,7 +274,6 @@ const Swipe = {
         if (waitingContent) {
             waitingContent.classList.remove('active');
             waitingContent.style.display = 'none';
-            waitingContent.style.visibility = 'hidden';
         }
         
         if (this.card) {
@@ -341,7 +320,6 @@ const Swipe = {
         if (this.card) this.resizeObserver.observe(this.card);
         if (this.cardWrapper) this.resizeObserver.observe(this.cardWrapper);
         window.addEventListener('resize', () => this.updateButtonsPosition());
-        window.addEventListener('scroll', () => this.updateButtonsPosition());
     },
     
     createCardWrapper() {
@@ -393,32 +371,18 @@ const Swipe = {
         this.skipBtn = leftWrapper;
         this.inviteBtn = rightWrapper;
         
-        this.skipBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.onSideButtonClick('skip');
-        });
-        
-        this.inviteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.onSideButtonClick('invite');
-        });
+        this.skipBtn.addEventListener('click', (e) => { e.stopPropagation(); this.onSideButtonClick('skip'); });
+        this.inviteBtn.addEventListener('click', (e) => { e.stopPropagation(); this.onSideButtonClick('invite'); });
         
         setTimeout(() => {
-            if (this.skipBtn) {
-                this.skipBtn.classList.add('visible');
-                this.skipBtn.style.display = 'flex';
-            }
-            if (this.inviteBtn) {
-                this.inviteBtn.classList.add('visible');
-                this.inviteBtn.style.display = 'flex';
-            }
+            if (this.skipBtn) { this.skipBtn.classList.add('visible'); this.skipBtn.style.display = 'flex'; }
+            if (this.inviteBtn) { this.inviteBtn.classList.add('visible'); this.inviteBtn.style.display = 'flex'; }
             this.updateButtonsPosition();
         }, 50);
     },
     
     updateButtonsPosition() {
-        if (!this.skipBtn || !this.inviteBtn || !this.card) return;
-        if (this.isWaitingMode) return;
+        if (!this.skipBtn || !this.inviteBtn || !this.card || this.isWaitingMode) return;
         
         const cardRect = this.card.getBoundingClientRect();
         const cardHeight = cardRect.height;
@@ -433,97 +397,50 @@ const Swipe = {
         const MIN_VISIBLE_OFFSET = 14;
         let desiredOffset = Math.min(btnWidth * 0.65, 32);
         
-        const availableLeft = cardLeft;
-        const availableRight = screenWidth - cardRight;
-        
         let leftOffset = desiredOffset;
-        if (availableLeft < desiredOffset) {
-            leftOffset = Math.max(availableLeft - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
-            if (leftOffset < MIN_VISIBLE_OFFSET) {
-                btnWidth = Math.min(btnWidth, availableLeft - 5);
-                leftOffset = Math.max(btnWidth * 0.4, MIN_VISIBLE_OFFSET);
-            }
-        }
+        if (cardLeft < desiredOffset) leftOffset = Math.max(cardLeft - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
         
         let rightOffset = desiredOffset;
-        if (availableRight < desiredOffset) {
-            rightOffset = Math.max(availableRight - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
-            if (rightOffset < MIN_VISIBLE_OFFSET) {
-                btnWidth = Math.min(btnWidth, availableRight - 5);
-                rightOffset = Math.max(btnWidth * 0.4, MIN_VISIBLE_OFFSET);
-            }
-        }
+        if (screenWidth - cardRight < desiredOffset) rightOffset = Math.max(screenWidth - cardRight - MIN_VISIBLE_OFFSET, MIN_VISIBLE_OFFSET);
         
-        if (screenWidth < 400) {
-            btnWidth = Math.min(btnWidth, 44);
-            btnHeight = Math.min(btnHeight, 100);
-            leftOffset = Math.max(leftOffset, 12);
-            rightOffset = Math.max(rightOffset, 12);
-        }
-        
-        if (screenWidth < 340) {
-            btnWidth = Math.min(btnWidth, 38);
-            btnHeight = Math.min(btnHeight, 90);
-            leftOffset = Math.max(leftOffset, 10);
-            rightOffset = Math.max(rightOffset, 10);
-        }
+        if (screenWidth < 400) { btnWidth = 44; btnHeight = 100; leftOffset = 12; rightOffset = 12; }
+        if (screenWidth < 340) { btnWidth = 38; btnHeight = 90; leftOffset = 10; rightOffset = 10; }
         
         this.skipBtn.style.width = btnWidth + 'px';
         this.skipBtn.style.height = btnHeight + 'px';
-        this.skipBtn.style.minHeight = btnHeight + 'px';
         this.skipBtn.style.top = '50%';
         this.skipBtn.style.transform = 'translateY(-50%)';
         this.skipBtn.style.left = '-' + leftOffset + 'px';
         
         this.inviteBtn.style.width = btnWidth + 'px';
         this.inviteBtn.style.height = btnHeight + 'px';
-        this.inviteBtn.style.minHeight = btnHeight + 'px';
         this.inviteBtn.style.top = '50%';
         this.inviteBtn.style.transform = 'translateY(-50%)';
         this.inviteBtn.style.right = '-' + rightOffset + 'px';
-        
-        const iconSize = Math.min(btnWidth * 0.55, 22);
-        const allSvgs = document.querySelectorAll('.swipe-side-btn svg');
-        allSvgs.forEach(svg => {
-            svg.style.width = iconSize + 'px';
-            svg.style.height = iconSize + 'px';
-        });
     },
     
     onSideButtonClick(action) {
         if (this.isWaitingMode) return;
-        
-        if (action === 'skip') {
-            this.showToastMessage('Вы отклонили', false);
-            this.animateAndReject();
-        } else if (action === 'invite') {
-            this.showToastMessage('Вы приняли', false);
-            this.animateAndAccept();
-        }
+        if (action === 'skip') { this.showToastMessage('Вы отклонили', false); this.animateAndReject(); }
+        else if (action === 'invite') { this.showToastMessage('Вы приняли', false); this.animateAndAccept(); }
     },
     
     animateAndAccept() {
         if (!this.cardWrapper) return;
-        this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
+        this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.34, 1.2, 0.64, 1)`;
         this.cardWrapper.style.transform = 'translateX(200%) rotate(15deg) scale(0.85)';
         setTimeout(() => {
-            if (this.cardWrapper) {
-                this.cardWrapper.style.transition = '';
-                this.cardWrapper.style.transform = '';
-            }
+            if (this.cardWrapper) { this.cardWrapper.style.transition = ''; this.cardWrapper.style.transform = ''; }
             this.acceptPlayer();
         }, this.ANIMATION_DURATION);
     },
     
     animateAndReject() {
         if (!this.cardWrapper) return;
-        this.cardWrapper.style.transition = 'transform ' + this.ANIMATION_DURATION + 'ms cubic-bezier(0.34, 1.2, 0.64, 1)';
+        this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.34, 1.2, 0.64, 1)`;
         this.cardWrapper.style.transform = 'translateX(-200%) rotate(-15deg) scale(0.85)';
         setTimeout(() => {
-            if (this.cardWrapper) {
-                this.cardWrapper.style.transition = '';
-                this.cardWrapper.style.transform = '';
-            }
+            if (this.cardWrapper) { this.cardWrapper.style.transition = ''; this.cardWrapper.style.transform = ''; }
             this.rejectPlayer();
         }, this.ANIMATION_DURATION);
     },
@@ -532,59 +449,25 @@ const Swipe = {
         if (!this.cardWrapper) return;
         this.cardWrapper.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1)';
         this.cardWrapper.style.transform = 'translateX(0) rotate(0deg) scale(1)';
-        this.currentX = 0;
         setTimeout(() => { if (this.cardWrapper) this.cardWrapper.style.transition = ''; }, 300);
-    },
-    
-    adjustCardSize() {
-        if (!this.card || this.isWaitingMode) return;
-        if (this.cardWrapper) {
-            this.cardWrapper.style.marginLeft = 'auto';
-            this.cardWrapper.style.marginRight = 'auto';
-        }
-        this.updateButtonsPosition();
     },
     
     showWaitingMode() {
         const swipeContent = document.getElementById('swipeModeContent');
         const waitingContent = document.getElementById('waitingModeContent');
-        
         if (!swipeContent || !waitingContent) return;
         
         swipeContent.style.display = 'none';
-        swipeContent.style.visibility = 'hidden';
-        
         waitingContent.classList.add('active');
         waitingContent.style.visibility = 'visible';
         
-        if (this.card) {
-            this.card.style.position = 'relative';
-            this.card.style.display = 'block';
-            this.card.style.visibility = 'visible';
-            this.card.style.opacity = '1';
-        }
-        
-        if (this.skipBtn) {
-            this.skipBtn.style.display = 'none';
-            this.skipBtn.style.visibility = 'hidden';
-            this.skipBtn.style.pointerEvents = 'none';
-        }
-        if (this.inviteBtn) {
-            this.inviteBtn.style.display = 'none';
-            this.inviteBtn.style.visibility = 'hidden';
-            this.inviteBtn.style.pointerEvents = 'none';
-        }
-        
+        if (this.skipBtn) { this.skipBtn.style.display = 'none'; this.skipBtn.style.pointerEvents = 'none'; }
+        if (this.inviteBtn) { this.inviteBtn.style.display = 'none'; this.inviteBtn.style.pointerEvents = 'none'; }
         if (this.timerElement) this.timerElement.style.display = 'none';
         
         this.isWaitingMode = true;
-        
         setTimeout(() => this.showBackArrow(), 50);
-        // 🔥 ТАЙМЕР ЗАПУСКАЕТСЯ ИЗ acceptPlayer С ОСТАВШИМСЯ ВРЕМЕНЕМ
-        setTimeout(() => {
-            this.loadSelfAvatar();
-            this.loadTeammateAvatar();
-        }, 50);
+        setTimeout(() => { this.loadSelfAvatar(); this.loadTeammateAvatar(); }, 50);
     },
     
     loadSelfAvatar() {
@@ -596,36 +479,25 @@ const Swipe = {
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/profile/avatar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ telegram_id: telegram_id })
+            body: JSON.stringify({ telegram_id })
         })
         .then(res => res.json())
         .then(data => {
-            if (data.status === 'ok' && data.avatar && data.avatar !== 'null' && data.avatar !== '') {
-                selfAvatarContainer.innerHTML = '<img src="' + data.avatar + '" alt="avatar">';
-            } else {
-                selfAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+            if (data.status === 'ok' && data.avatar && data.avatar !== 'null') {
+                selfAvatarContainer.innerHTML = `<img src="${data.avatar}" alt="avatar">`;
             }
         })
-        .catch(() => {
-            selfAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
-        });
+        .catch(() => {});
     },
     
     loadTeammateAvatar() {
         const teammateAvatarContainer = document.querySelector('.waiting-teammate-avatar .tg-avatar-svg');
         if (!teammateAvatarContainer) return;
-        if (!this.currentPlayer) {
-            teammateAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
-            return;
-        }
-        if (this.currentPlayer.avatar && this.currentPlayer.avatar !== 'null' && this.currentPlayer.avatar !== '') {
-            teammateAvatarContainer.innerHTML = '<img src="' + this.currentPlayer.avatar + '" alt="avatar">';
-        } else {
-            teammateAvatarContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+        if (this.currentPlayer?.avatar && this.currentPlayer.avatar !== 'null') {
+            teammateAvatarContainer.innerHTML = `<img src="${this.currentPlayer.avatar}" alt="avatar">`;
         }
     },
     
-    // 🔥 ТАЙМЕР ОЖИДАНИЯ С НАЧАЛЬНЫМ ЗНАЧЕНИЕМ
     startWaitingTimer(initialTime = 40) {
         let timeLeft = initialTime;
         const waitingTimerEl = document.getElementById('waitingTimer');
@@ -652,8 +524,6 @@ const Swipe = {
         if (this.connectionTimer) {
             clearInterval(this.connectionTimer);
             this.connectionTimer = null;
-            const waitingTimerEl = document.getElementById('waitingTimer');
-            if (waitingTimerEl) waitingTimerEl.classList.remove('warning');
         }
     },
     
@@ -664,10 +534,8 @@ const Swipe = {
         const modeFromOpponent = opponent.mode || 'PREMIER';
         if (!this.isInitialized) this.init(modeFromOpponent);
         if (this.currentMatchId === matchId) return;
-        if (this.currentMatchId && this.currentMatchId !== matchId) this.exitSwipeMode('замена матча');
         
         this.showToastMessage('Матч найден!', false);
-        
         this._pendingOpponent = opponent;
         this._pendingMatchId = matchId;
         this._pendingExpiresAt = expiresAt;
@@ -690,24 +558,13 @@ const Swipe = {
         
         this._pendingOpponent = null;
         this._pendingMatchId = null;
-        this._pendingExpiresAt = null;
         
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
         this.mode = opponent.mode || this.mode;
-        
-        this.gameCreated = false;
-        this.gameCreating = false;
-        this.chatLink = null;
-        this.inviteLink = null;
         this.iAccepted = false;
         
-        // 🔥 ИСПОЛЬЗУЕМ ВРЕМЯ С СЕРВЕРА ЕСЛИ ЕСТЬ, ИНАЧЕ 40 СЕКУНД
-        if (expiresAt) {
-            this.matchExpiresAt = new Date(expiresAt).getTime();
-        } else {
-            this.matchExpiresAt = Date.now() + (this.MATCH_TIMEOUT * 1000);
-        }
+        this.matchExpiresAt = expiresAt ? new Date(expiresAt).getTime() : Date.now() + (this.MATCH_TIMEOUT * 1000);
         
         if (this.loading) this.loading.classList.remove('active');
         
@@ -718,7 +575,6 @@ const Swipe = {
         this.blockScroll();
         this.showHintOnce();
         
-        // 🔥 ЗАПУСКАЕМ ПРОВЕРКУ СТАТУСА МАТЧА СРАЗУ ПОСЛЕ ПОКАЗА КАРТОЧКИ
         this.startMatchStatusPolling(matchId);
         
         setTimeout(() => this.startSwipeHint(), 300);
@@ -753,15 +609,14 @@ const Swipe = {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ telegram_id, match_id: this.currentMatchId, response: 'reject' })
-                    }).catch(e => console.error('Ошибка reject по таймеру:', e));
+                    }).catch(e => console.error('Ошибка reject:', e));
                 }
                 
                 this.goToMainScreen('card_timeout');
                 return;
             }
         
-            if (timeLeft < 10) this.timerElement.classList.add('warning');
-            else this.timerElement.classList.remove('warning');
+            this.timerElement.classList.toggle('warning', timeLeft < 10);
         };
 
         updateTimer();
@@ -771,26 +626,18 @@ const Swipe = {
     blockScroll() {
         document.body.style.overflow = 'hidden';
         document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-        document.body.style.height = '100%';
-        if (this.container) this.container.style.overflow = 'hidden';
         window.addEventListener('scroll', this.preventDefaultScroll, { passive: false });
         document.addEventListener('touchmove', this.preventDefaultScroll, { passive: false });
-        document.addEventListener('mousewheel', this.preventDefaultScroll, { passive: false });
     },
     
     unblockScroll() {
         document.body.style.overflow = '';
         document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.height = '';
-        if (this.container) this.container.style.overflow = '';
         window.removeEventListener('scroll', this.preventDefaultScroll);
         document.removeEventListener('touchmove', this.preventDefaultScroll);
-        document.removeEventListener('mousewheel', this.preventDefaultScroll);
     },
     
-    preventScroll(e) { e.preventDefault(); return false; },
+    preventScroll(e) { e.preventDefault(); },
     
     setupEventListeners() {
         if (!this.card) return;
@@ -801,11 +648,9 @@ const Swipe = {
         this.card.addEventListener('touchstart', this.onDragStartBound, { passive: false });
         this.card.addEventListener('touchmove', this.onDragMoveBound, { passive: false });
         this.card.addEventListener('touchend', this.onDragEndBound);
-        this.card.addEventListener('touchcancel', this.onDragEndBound);
         this.card.addEventListener('mousedown', this.onDragStartBound);
         window.addEventListener('mousemove', this.onDragMoveBound);
         window.addEventListener('mouseup', this.onDragEndBound);
-        this.card.addEventListener('dragstart', (e) => e.preventDefault());
     },
     
     getClientX(e) {
@@ -827,6 +672,7 @@ const Swipe = {
         if (!this.card?.contains(target)) return;
     
         this.isDragging = true;
+        this.hasMoved = false;  // 🔥 СБРАСЫВАЕМ ФЛАГ
         this.startX = this.getClientX(e);
         this.startTime = Date.now();
         if (this.cardWrapper) this.cardWrapper.classList.add('dragging');
@@ -837,24 +683,31 @@ const Swipe = {
     onDragMove(e) {
         if (!this.isDragging || this.isWaitingMode) return;
         e.preventDefault();
+        
         const clientX = this.getClientX(e);
         if (clientX === null) return;
+        
         this.currentX = clientX;
         const deltaX = this.currentX - this.startX;
+        
+        // 🔥 ЕСЛИ ЕСТЬ ДВИЖЕНИЕ БОЛЕЕ 5px — СТАВИМ ФЛАГ
+        if (Math.abs(deltaX) > 5) {
+            this.hasMoved = true;
+        }
+        
+        if (!this.hasMoved) return;  // 🔥 НЕ ДВИГАЕМ ПОКА НЕ СДВИНУЛИ
+        
         const percent = deltaX / 150;
         const rotate = percent * 12;
         const scale = 1 + Math.abs(percent) * 0.05;
+        
         if (this.cardWrapper) {
             this.cardWrapper.style.transition = 'none';
             this.cardWrapper.style.transform = `translateX(${deltaX}px) rotate(${rotate}deg) scale(${scale})`;
         }
-        if (deltaX > 0) {
-            this.card?.classList.add('swiping-right');
-            this.card?.classList.remove('swiping-left');
-        } else if (deltaX < 0) {
-            this.card?.classList.add('swiping-left');
-            this.card?.classList.remove('swiping-right');
-        }
+        
+        this.card?.classList.toggle('swiping-right', deltaX > 0);
+        this.card?.classList.toggle('swiping-left', deltaX < 0);
     },
     
     onDragEnd(e) {
@@ -862,32 +715,25 @@ const Swipe = {
         this.isDragging = false;
         if (this.card) this.card.style.cursor = 'grab';
         
+        // 🔥 ЕСЛИ НЕ БЫЛО ДВИЖЕНИЯ — ПРОСТО СБРАСЫВАЕМ, НЕ СВАЙПАЕМ
+        if (!this.hasMoved) {
+            this.resetCardPosition();
+            this.card?.classList.remove('dragging', 'swiping-right', 'swiping-left');
+            this.cardWrapper?.classList.remove('dragging');
+            return;
+        }
+        
         const deltaX = this.currentX - this.startX;
-        const time = Date.now() - this.startTime;
-        const velocity = Math.abs(deltaX / time);
+        const velocity = Math.abs(deltaX / (Date.now() - this.startTime));
         const isSwipe = Math.abs(deltaX) > this.SWIPE_THRESHOLD || velocity > this.VELOCITY_THRESHOLD;
         
         if (isSwipe && Math.abs(deltaX) > 10) {
             if (deltaX > 0) {
                 this.showToastMessage('Вы приняли', false);
-                if (this.cardWrapper) {
-                    this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.34, 1.2, 0.64, 1)`;
-                    this.cardWrapper.style.transform = 'translateX(200%) rotate(15deg) scale(0.85)';
-                }
-                setTimeout(() => {
-                    if (this.cardWrapper) { this.cardWrapper.style.transition = ''; this.cardWrapper.style.transform = ''; }
-                    this.acceptPlayer();
-                }, this.ANIMATION_DURATION);
+                this.animateAndAccept();
             } else {
                 this.showToastMessage('Вы отклонили', false);
-                if (this.cardWrapper) {
-                    this.cardWrapper.style.transition = `transform ${this.ANIMATION_DURATION}ms cubic-bezier(0.34, 1.2, 0.64, 1)`;
-                    this.cardWrapper.style.transform = 'translateX(-200%) rotate(-15deg) scale(0.85)';
-                }
-                setTimeout(() => {
-                    if (this.cardWrapper) { this.cardWrapper.style.transition = ''; this.cardWrapper.style.transform = ''; }
-                    this.rejectPlayer();
-                }, this.ANIMATION_DURATION);
+                this.animateAndReject();
             }
         } else {
             this.resetCardPosition();
@@ -895,25 +741,16 @@ const Swipe = {
         
         this.card?.classList.remove('dragging', 'swiping-right', 'swiping-left');
         this.cardWrapper?.classList.remove('dragging');
-        e.preventDefault();
     },
     
-    // 🔥 acceptPlayer С СИНХРОНИЗАЦИЕЙ ТАЙМЕРА
     acceptPlayer() {
-        if (this.cardTimerInterval) {
-            clearInterval(this.cardTimerInterval);
-            this.cardTimerInterval = null;
-        }
-        if (!this.currentMatchId) { this.exitSwipeMode('acceptPlayer: нет matchId'); return; }
+        if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
+        if (!this.currentMatchId) return;
         
         this.iAccepted = true;
-        
-        // 🔥 СОХРАНЯЕМ ОСТАВШЕЕСЯ ВРЕМЯ
         const remainingTime = this.getTimeLeft();
         
         this.showWaitingMode();
-        
-        // 🔥 ЗАПУСКАЕМ ТАЙМЕР ОЖИДАНИЯ С ОСТАВШИМСЯ ВРЕМЕНЕМ
         this.startWaitingTimer(remainingTime);
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
@@ -922,10 +759,8 @@ const Swipe = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ telegram_id, match_id: this.currentMatchId, response: 'accept' })
         })
-        .then(res => res.json())
         .then(() => this.startMatchStatusPolling(this.currentMatchId))
         .catch(error => {
-            console.error('Accept error:', error);
             this.showToastMessage('Ошибка при принятии', true);
             setTimeout(() => this.exitSwipeMode('acceptError'), 1000);
         });
@@ -934,7 +769,7 @@ const Swipe = {
     startMatchStatusPolling(matchId) {
         if (this.matchPolling) clearInterval(this.matchPolling);
         let attempts = 0;
-        const MAX_ATTEMPTS = 80; // 🔥 40 сек / 0.5 сек = 80
+        const MAX_ATTEMPTS = 80;
         
         this.matchPolling = setInterval(async () => {
             attempts++;
@@ -946,35 +781,24 @@ const Swipe = {
             }
             
             try {
-                const res = await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/status/' + matchId);
+                const res = await fetch(`https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/status/${matchId}`);
                 const data = await res.json();
-                
-                console.log('📡 Статус матча:', data);
                 
                 if (data.status === 'both_accepted') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
-                    if (!this.isWaitingMode) {
-                        this.showWaitingMode();
-                    }
+                    if (!this.isWaitingMode) this.showWaitingMode();
                     this.updateWaitingUI('both_accepted');
                     this.createGame();
-                    this.addFriendAfterMatch();
                 } else if (data.status === 'rejected') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
-                    console.log('🔥 Тиммейт отклонил матч!');
                     this.handleRejection();
-                } else if (data.status === 'expired') {
+                } else if (data.status === 'expired' || data.status === 'not_found') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
-                    this.handleTeammateTimeout();
-                } else if (data.status === 'not_found') {
-                    clearInterval(this.matchPolling);
-                    this.matchPolling = null;
-                    console.log('🔥 Матч удалён!');
                     this.showToastMessage('Тиммейт отклонил — вы снова в поиске', true);
-                    this.restartSearch('match_not_found');
+                    this.restartSearch('match_expired');
                 }
             } catch (error) {
                 console.error('Polling error:', error);
@@ -983,14 +807,11 @@ const Swipe = {
     },
     
     updateWaitingUI(status) {
-        const statusEl = document.getElementById('waitingStatus');
-        const line = document.querySelector('.waiting-line');
-        const teammateAvatar = document.querySelector('.waiting-teammate-avatar');
-        
         if (status === 'both_accepted') {
             this.stopWaitingTimer();
-            if (teammateAvatar) teammateAvatar.classList.add('connected');
-            if (line) line.classList.add('connected');
+            document.querySelector('.waiting-teammate-avatar')?.classList.add('connected');
+            document.querySelector('.waiting-line')?.classList.add('connected');
+            const statusEl = document.getElementById('waitingStatus');
             if (statusEl) { statusEl.innerHTML = 'Матч создан!'; statusEl.classList.add('active'); }
             
             const chatButton = document.getElementById('waitingChatButton');
@@ -1003,25 +824,11 @@ const Swipe = {
         }
     },
     
-    async addFriendAfterMatch() {
-        if (!this.currentPlayer) return;
-        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        if (!telegram_id) return;
-        try {
-            await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/friends/add', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id, friend_player_id: this.currentPlayer.player_id })
-            });
-        } catch (error) {}
-    },
-    
     rejectPlayer() {
         if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
         if (this.matchPolling) clearInterval(this.matchPolling);
         
         const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        
         if (this.currentMatchId) {
             fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
                 method: 'POST',
@@ -1030,15 +837,12 @@ const Swipe = {
             }).catch(e => console.error('Error rejecting:', e));
         }
         
-        if (this.connectionTimer) clearInterval(this.connectionTimer);
-        
         this.showToastMessage('Вы вернулись в поиск', false);
         this.restartSearch('reject');
     },
     
     createGame() {
-        if (this.gameCreating) return;
-        if (!this.currentMatchId) return;
+        if (this.gameCreating || !this.currentMatchId) return;
         this.gameCreating = true;
         
         fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/game/create', {
@@ -1050,20 +854,15 @@ const Swipe = {
         .then(data => {
             if (data.status === 'ok' && data.chat_link) {
                 this.chatLink = data.chat_link;
-                this.inviteLink = data.invite_link;
                 localStorage.setItem('currentChatLink', data.chat_link);
-                if (data.invite_link) localStorage.setItem('currentInviteLink', data.invite_link);
-                this.updateWaitingChatButton(true, data.chat_link, data.invite_link);
-                this.gameCreated = true;
-            } else {
-                this.updateWaitingChatButton(false);
+                this.updateWaitingChatButton(true, data.chat_link);
             }
         })
-        .catch(() => this.updateWaitingChatButton(false))
+        .catch(() => {})
         .finally(() => { setTimeout(() => this.gameCreating = false, 3000); });
     },
     
-    updateWaitingChatButton(active, chatLink, inviteLink) {
+    updateWaitingChatButton(active, chatLink) {
         let button = document.getElementById('waitingChatButton');
         if (!button) return;
         button.textContent = 'Перейти в чат';
@@ -1071,84 +870,47 @@ const Swipe = {
             button.classList.remove('disabled');
             button.classList.add('active');
             button.disabled = false;
-            button.style.pointerEvents = 'auto';
-            button.style.opacity = '1';
             button.style.background = '#FF5500';
             this.chatLink = chatLink;
-            this.inviteLink = inviteLink;
             button.onclick = (e) => { e.preventDefault(); this.openChatLink(); };
-        } else {
-            button.classList.remove('active');
-            button.classList.add('disabled');
-            button.disabled = true;
-            button.style.pointerEvents = 'none';
-            button.style.opacity = '0.5';
-            button.onclick = null;
         }
     },
     
     openChatLink() {
-        let chatLink = this.chatLink || localStorage.getItem('currentChatLink');
-        let inviteLink = this.inviteLink || localStorage.getItem('currentInviteLink');
+        const chatLink = this.chatLink || localStorage.getItem('currentChatLink');
         if (chatLink) {
             const tg = window.Telegram?.WebApp;
-            if (inviteLink) {
-                if (tg?.openTelegramLink) { tg.openTelegramLink(inviteLink); setTimeout(() => tg.openTelegramLink(chatLink), 1500); }
-                else { window.open(inviteLink, '_blank'); setTimeout(() => window.open(chatLink, '_blank'), 1500); }
-            } else {
-                if (tg?.openTelegramLink) tg.openTelegramLink(chatLink);
-                else window.open(chatLink, '_blank');
-            }
-        } else {
-            this.showToastMessage('Ссылка на чат не найдена', true);
+            if (tg?.openTelegramLink) tg.openTelegramLink(chatLink);
+            else window.open(chatLink, '_blank');
         }
     },
     
     showPlayer(player) {
         this.currentPlayer = player;
         
-        const playerIdEl = document.getElementById('swipePlayerId');
-        const playerNickEl = document.getElementById('swipePlayerNick');
-        const ratingEl = document.getElementById('swipeRatingValue');
-        const rankEl = document.getElementById('swipeRank');
-        const ageEl = document.getElementById('swipeAge');
-        const styleEl = document.getElementById('swipeStyle');
-        const steamLinkEl = document.getElementById('swipeSteamLink');
-        const faceitLinkEl = document.getElementById('swipeFaceitLink');
-        const commentEl = document.getElementById('swipeComment');
+        document.getElementById('swipePlayerId').textContent = player.player_id || '';
+        document.getElementById('swipePlayerNick').textContent = player.nick || '';
         
-        if (playerIdEl) playerIdEl.textContent = player.player_id || '';
-        if (playerNickEl) playerNickEl.textContent = player.nick || '';
+        const ratingEl = document.getElementById('swipeRatingValue');
         if (ratingEl) {
             const trust = player.trust_rating || 0;
             ratingEl.textContent = (trust > 0 ? '+' : '') + trust;
             ratingEl.style.color = trust > 0 ? '#4CAF50' : trust < 0 ? '#FF3B30' : '';
         }
         
-        const modeFromDB = this.mode ? this.mode.toUpperCase() : null;
+        const rankEl = document.getElementById('swipeRank');
         if (rankEl) {
+            const modeFromDB = this.mode?.toUpperCase();
             if (modeFromDB === 'FACEIT' || modeFromDB === 'PREMIER') {
                 rankEl.textContent = player.rating || '0';
             } else {
                 rankEl.textContent = abbreviateRank(player.rank || '—');
             }
         }
-        if (ageEl) ageEl.textContent = player.age ? player.age + ' лет' : '';
-        if (styleEl) styleEl.textContent = player.style === 'fan' ? 'Fan' : 'Tryhard';
         
-        const steamValue = player.steam_link || 'Не указана';
-        if (steamLinkEl && steamValue !== 'Не указана' && steamValue !== '') {
-            const wrapper = this.createLinkWithCopy(steamValue);
-            steamLinkEl.parentNode.replaceChild(wrapper, steamLinkEl);
-        } else if (steamLinkEl) steamLinkEl.textContent = steamValue;
-        
-        const faceitValue = player.faceit_link || 'Не указана';
-        if (faceitLinkEl && faceitValue !== 'Не указана' && faceitValue !== '') {
-            const wrapper = this.createLinkWithCopy(faceitValue);
-            faceitLinkEl.parentNode.replaceChild(wrapper, faceitLinkEl);
-        } else if (faceitLinkEl) faceitLinkEl.textContent = faceitValue;
-        
-        if (commentEl) commentEl.textContent = player.comment || '';
+        document.getElementById('swipeAge').textContent = player.age ? player.age + ' лет' : '';
+        document.getElementById('swipeStyle').textContent = player.style === 'fan' ? 'Fan' : 'Tryhard';
+        document.getElementById('swipeComment').textContent = player.comment || '';
         
         this.updateAvatar(player);
         this.updateLinksVisibility();
@@ -1158,11 +920,8 @@ const Swipe = {
     updateAvatar(player) {
         const avatarContainer = document.querySelector('#swipeCard .swipe-avatar .tg-avatar-svg');
         if (!avatarContainer) return;
-        const hasAvatar = player.avatar && player.avatar !== 'null' && player.avatar !== '';
-        if (hasAvatar) {
-            avatarContainer.innerHTML = '<img src="' + player.avatar + '" alt="avatar" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:50%;">';
-        } else {
-            avatarContainer.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" style="display:block; margin:auto;"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>';
+        if (player.avatar && player.avatar !== 'null') {
+            avatarContainer.innerHTML = `<img src="${player.avatar}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
         }
     },
     
@@ -1178,15 +937,21 @@ const Swipe = {
         }
     },
     
+    adjustCardSize() {
+        if (!this.card || this.isWaitingMode) return;
+        if (this.cardWrapper) {
+            this.cardWrapper.style.marginLeft = 'auto';
+            this.cardWrapper.style.marginRight = 'auto';
+        }
+        this.updateButtonsPosition();
+    },
+    
     showHintOnce() {
         if (!this.hint) return;
-        const hintShown = localStorage.getItem('swipeHintShown');
-        if (!hintShown) {
+        if (!localStorage.getItem('swipeHintShown')) {
             this.hint.classList.remove('fade-out');
             setTimeout(() => this.hint.classList.add('fade-out'), 3000);
             localStorage.setItem('swipeHintShown', 'true');
-        } else {
-            this.hint.classList.add('fade-out');
         }
     },
     
@@ -1216,38 +981,21 @@ const Swipe = {
     
     connectionTimeout() {
         if (this.matchPolling) clearInterval(this.matchPolling);
-        this.matchPolling = null;
-        
-        const statusEl = document.getElementById('waitingStatus');
-        if (statusEl) { statusEl.innerHTML = 'Время истекло'; statusEl.style.color = '#FF3B30'; }
-        
         this.showToastMessage('Время ожидания истекло', true);
         setTimeout(() => this.exitSwipeMode('connectionTimeout'), 2000);
     },
     
-    handleTeammateTimeout() {
-        console.log('⏰ Тиммейт не ответил');
-        this.showToastMessage('Тиммейт не ответил — вы снова в поиске', true);
-        this.restartSearch('teammate_timeout');
-    },
-    
     handleRejection() {
-        console.log('❌ Тиммейт отклонил');
         this.showToastMessage('Тиммейт отклонил — вы снова в поиске', true);
         this.restartSearch('rejected_by_teammate');
     },
     
     exitSwipeMode(reason) {
-        console.log('🔄 Выход из свайпа. Причина:', reason);
         this.unblockScroll();
         this.isWaitingMode = false;
         this.currentMatchId = null;
         this.currentPlayer = null;
         this.matchExpiresAt = null;
-        this.gameCreated = false;
-        this.gameCreating = false;
-        this.chatLink = null;
-        this.inviteLink = null;
         this.iAccepted = false;
         
         if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
@@ -1258,23 +1006,21 @@ const Swipe = {
     }
 };
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     window.Swipe = Swipe;
-    var swipeScreen = document.getElementById('swipeScreen');
+    const swipeScreen = document.getElementById('swipeScreen');
     if (swipeScreen) {
-        var observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+        new MutationObserver(mutations => {
+            mutations.forEach(m => {
+                if (m.type === 'attributes' && m.attributeName === 'class') {
                     if (swipeScreen.classList.contains('active') && !Swipe.isInitialized) {
                         Swipe.init(Swipe.mode || 'FACEIT');
                     }
                 }
             });
-        });
-        observer.observe(swipeScreen, { attributes: true });
+        }).observe(swipeScreen, { attributes: true });
+    }
+    if (document.getElementById('swipeScreen')?.classList.contains('active')) {
+        setTimeout(() => { if (!Swipe.isInitialized) Swipe.init(Swipe.mode || 'FACEIT'); }, 100);
     }
 });
-
-if (document.getElementById('swipeScreen')?.classList.contains('active')) {
-    setTimeout(() => { if (!Swipe.isInitialized) Swipe.init(Swipe.mode || 'FACEIT'); }, 100);
-}
