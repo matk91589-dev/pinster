@@ -1,5 +1,6 @@
 // ============================================
 // КОМАНДА - ТИММЕЙТЫ НАЖИМАЮТСЯ, ЛИДЕРБОРД - НЕТ
+// БЕЗ ДИАЛОГА ПОДТВЕРЖДЕНИЯ, С ТОСТОМ
 // ============================================
 
 const Team = {
@@ -103,11 +104,14 @@ const Team = {
                 this.isFriendsLoaded = true;
                 console.log('✅ Тиммейты загружены:', this.friendsList.length);
                 this.renderFriendsTab();
+                // 🔥 СИНХРОНИЗИРУЕМ С PROFILE
+                this.syncWithProfile();
             } else {
                 this.friendsList = [];
                 this.filteredFriends = [];
                 this.isFriendsLoaded = true;
                 this.renderFriendsTab();
+                this.syncWithProfile();
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки тиммейтов:', error);
@@ -115,8 +119,20 @@ const Team = {
             this.filteredFriends = [];
             this.isFriendsLoaded = true;
             this.renderFriendsTab();
+            this.syncWithProfile();
         } finally {
             this.isLoadingFriends = false;
+        }
+    },
+    
+    // 🔥 СИНХРОНИЗАЦИЯ С PROFILE
+    syncWithProfile() {
+        if (window.Profile) {
+            Profile.friendsList = [...this.friendsList];
+            Profile.isFriendsLoaded = true;
+            if (typeof Profile.updateFriendsDisplay === 'function') {
+                Profile.updateFriendsDisplay();
+            }
         }
     },
     
@@ -287,39 +303,26 @@ const Team = {
                     window.open(url, '_blank');
                 }
             } else {
-                if (window.App) App.showAlert('У пользователя нет username в Telegram');
+                this.showToast('У пользователя нет username в Telegram', true);
             }
         };
         
         menu.querySelector('.delete-btn').onclick = () => {
             menu.remove();
-            this.confirmDeleteFriend(playerId, nick);
+            // 🔥 УДАЛЯЕМ БЕЗ ДИАЛОГА, СРАЗУ
+            this.removeFriend(playerId, nick);
         };
     },
     
-    confirmDeleteFriend(playerId, nick) {
-        const dialog = document.createElement('div');
-        dialog.className = 'friend-delete-dialog';
-        dialog.innerHTML = `
-            <div class="friend-delete-overlay"></div>
-            <div class="friend-delete-popup">
-                <div class="friend-delete-title">Удалить тиммейта?</div>
-                <div class="friend-delete-message">Вы уверены, что хотите удалить ${nick || 'этого игрока'} из списка тиммейтов?</div>
-                <div class="friend-delete-buttons">
-                    <button class="friend-delete-cancel">Отмена</button>
-                    <button class="friend-delete-confirm">Удалить</button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(dialog);
-        
-        dialog.querySelector('.friend-delete-overlay').onclick = () => dialog.remove();
-        dialog.querySelector('.friend-delete-cancel').onclick = () => dialog.remove();
-        dialog.querySelector('.friend-delete-confirm').onclick = () => {
-            dialog.remove();
-            this.removeFriend(playerId, nick);
-        };
+    // 🔥 ТОСТ ВМЕСТО ALERT
+    showToast(message, isError = false) {
+        if (window.Profile && Profile.showToast) {
+            Profile.showToast(message, isError);
+        } else if (window.App && App.showAlert) {
+            App.showAlert(message);
+        } else {
+            alert(message);
+        }
     },
     
     async removeFriend(friendId, nick) {
@@ -336,14 +339,29 @@ const Team = {
             });
             const data = await response.json();
             if (data.status === 'ok') {
+                // 🔥 УДАЛЯЕМ ИЗ ЛОКАЛЬНЫХ СПИСКОВ
                 this.friendsList = this.friendsList.filter(f => f.player_id !== friendId);
-                this.filteredFriends = [...this.friendsList];
+                this.filteredFriends = this.filteredFriends.filter(f => f.player_id !== friendId);
+                
+                // 🔥 ОБНОВЛЯЕМ ОТОБРАЖЕНИЕ
                 this.renderFriendsTab();
-                if (window.App) App.showAlert('Тиммейт удалён');
+                
+                // 🔥 СИНХРОНИЗИРУЕМ С PROFILE
+                if (window.Profile) {
+                    Profile.friendsList = Profile.friendsList.filter(f => f.player_id !== friendId);
+                    if (typeof Profile.updateFriendsDisplay === 'function') {
+                        Profile.updateFriendsDisplay();
+                    }
+                }
+                
+                // 🔥 ПОКАЗЫВАЕМ ТОСТ
+                this.showToast('Тиммейт удалён');
+            } else {
+                this.showToast('Ошибка при удалении', true);
             }
         } catch(e) {
             console.error('Ошибка удаления:', e);
-            if (window.App) App.showAlert('Ошибка при удалении');
+            this.showToast('Ошибка при удалении', true);
         }
     },
     
@@ -508,15 +526,6 @@ const Team = {
             `;
         });
         container.innerHTML = html;
-    },
-    
-    showFriendProfile(playerId) {
-        if (window.App) App.showAlert(`Профиль тиммейта ${playerId}\n(функция в разработке)`);
-    },
-    
-    showPlayerProfile(playerId) {
-        // 🔥 ОТКЛЮЧЕНО ДЛЯ ЛИДЕРБОРДА
-        console.log('showPlayerProfile отключено');
     },
     
     goBack() {
