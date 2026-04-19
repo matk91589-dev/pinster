@@ -4862,13 +4862,17 @@ button:active { transform: scale(0.96); }
     gap: 40px !important;
 }
 
-/* ===== АВАТАРКИ ОЖИДАНИЯ - УМЕНЬШЕННЫЕ И НЕ ОБРЕЗАННЫЕ ===== */
+/* ===== АВАТАРКИ ОЖИДАНИЯ - ПОЛНЫЙ ФИКС ===== */
 .waiting-self-avatar,
 .waiting-teammate-avatar {
-    width: 60px !important;
-    height: 60px !important;
+    width: 70px !important;
+    height: 70px !important;
+    min-width: 70px !important;
+    min-height: 70px !important;
+    max-width: 70px !important;
+    max-height: 70px !important;
     border-radius: 50% !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     background: var(--input-bg, #1A1D24) !important;
     border: 2px solid var(--border-color, #2A2F3A) !important;
     transition: all 0.3s ease !important;
@@ -4882,6 +4886,10 @@ button:active { transform: scale(0.96); }
 .waiting-teammate-avatar .tg-avatar-svg {
     width: 100% !important;
     height: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -4891,16 +4899,22 @@ button:active { transform: scale(0.96); }
 .waiting-teammate-avatar img {
     width: 100% !important;
     height: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
     object-fit: cover !important;
-    object-position: center !important;
+    border-radius: 50% !important;
 }
 
-/* Адаптация под маленькие экраны */
+/* Адаптация */
 @media (max-width: 480px) {
     .waiting-self-avatar,
     .waiting-teammate-avatar {
-        width: 50px !important;
-        height: 50px !important;
+        width: 55px !important;
+        height: 55px !important;
+        min-width: 55px !important;
+        min-height: 55px !important;
+        max-width: 55px !important;
+        max-height: 55px !important;
     }
 }
 
@@ -4909,14 +4923,11 @@ button:active { transform: scale(0.96); }
     .waiting-teammate-avatar {
         width: 45px !important;
         height: 45px !important;
+        min-width: 45px !important;
+        min-height: 45px !important;
+        max-width: 45px !important;
+        max-height: 45px !important;
     }
-}
-
-.waiting-self-avatar img,
-.waiting-teammate-avatar img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
 }
 
 /* Аватарка тиммейта изначально затемнена */
@@ -4985,7 +4996,7 @@ button:active { transform: scale(0.96); }
     padding: 14px 0 !important;
     border-radius: 30px !important;
     font-size: 15px !important;
-    font-weight: 700 !important;
+    font-weight: 500 !important;
     text-align: center !important;
     cursor: pointer !important;
     border: none !important;
