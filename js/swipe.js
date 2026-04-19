@@ -2,7 +2,6 @@
 // СВАЙП-КАРТОЧКИ - ФИНАЛЬНАЯ ВЕРСИЯ (ВСЕ СЦЕНАРИИ)
 // ============================================
 
-// 🔥 УМНОЕ СОКРАЩЕНИЕ РАНГОВ
 function abbreviateRank(rank) {
     if (!rank || rank === '—') return '—';
     
@@ -980,9 +979,20 @@ const Swipe = {
         
         if (status === 'both_accepted') {
             this.stopWaitingTimer();
-            if (teammateAvatar) teammateAvatar.classList.add('connected');
-            if (line) line.classList.add('connected');
-            if (statusEl) { statusEl.innerHTML = 'Матч создан!'; statusEl.classList.add('active'); }
+            
+            // ЗАПОЛНЯЕМ ЛИНИЮ И УБИРАЕМ ПУЛЬСАЦИЮ С ТИММЕЙТА
+            if (teammateAvatar) {
+                teammateAvatar.classList.add('matched');
+                teammateAvatar.classList.remove('searching');
+            }
+            if (line) {
+                line.classList.add('matched');
+            }
+            
+            if (statusEl) { 
+                statusEl.innerHTML = 'Матч создан!'; 
+                statusEl.classList.add('active'); 
+            }
             
             const chatButton = document.getElementById('waitingChatButton');
             if (chatButton && this.chatLink) {
