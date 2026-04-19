@@ -5236,3 +5236,17 @@ button:active { transform: scale(0.96); }
     background: #FF5500 !important;
     color: white !important;
 }
+
+/* Ссылка в одну строку на карточке */
+.swipe-link-value {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block !important;
+}
+
+/* Кнопка копирования не триггерит свайп */
+.copy-btn {
+    touch-action: none !important;
+    pointer-events: auto !important;
+}
