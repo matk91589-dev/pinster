@@ -2840,7 +2840,7 @@ input:checked + .slider:before {
     padding: 14px;
     border-radius: 100px;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 500;
     text-align: center;
     cursor: pointer;
     transition: all 0.25s ease;
@@ -4862,16 +4862,54 @@ button:active { transform: scale(0.96); }
     gap: 40px !important;
 }
 
-/* Аватарки в стиле Pingster */
+/* ===== АВАТАРКИ ОЖИДАНИЯ - УМЕНЬШЕННЫЕ И НЕ ОБРЕЗАННЫЕ ===== */
 .waiting-self-avatar,
 .waiting-teammate-avatar {
-    width: 80px !important;
-    height: 80px !important;
+    width: 60px !important;
+    height: 60px !important;
     border-radius: 50% !important;
     overflow: hidden !important;
     background: var(--input-bg, #1A1D24) !important;
     border: 2px solid var(--border-color, #2A2F3A) !important;
     transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+}
+
+.waiting-self-avatar .tg-avatar-svg,
+.waiting-teammate-avatar .tg-avatar-svg {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.waiting-self-avatar img,
+.waiting-teammate-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+}
+
+/* Адаптация под маленькие экраны */
+@media (max-width: 480px) {
+    .waiting-self-avatar,
+    .waiting-teammate-avatar {
+        width: 50px !important;
+        height: 50px !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .waiting-self-avatar,
+    .waiting-teammate-avatar {
+        width: 45px !important;
+        height: 45px !important;
+    }
 }
 
 .waiting-self-avatar img,
@@ -4927,8 +4965,8 @@ button:active { transform: scale(0.96); }
 
 /* Статус - как в других экранах */
 .waiting-status {
-    font-size: 16px !important;
-    font-weight: 500 !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
     text-align: center !important;
     color: var(--text-secondary, #9BA1B0) !important;
     letter-spacing: 0.3px !important;
@@ -4987,55 +5025,6 @@ button:active { transform: scale(0.96); }
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
-}
-
-/* Адаптация под маленькие экраны */
-@media (max-width: 480px) {
-    .waiting-self-avatar,
-    .waiting-teammate-avatar {
-        width: 65px !important;
-        height: 65px !important;
-    }
-    
-    .waiting-avatars {
-        gap: 30px !important;
-    }
-    
-    .waiting-line {
-        width: 40px !important;
-    }
-    
-    .waiting-timer {
-        padding: 6px 14px !important;
-        font-size: 13px !important;
-    }
-    
-    .waiting-close {
-        font-size: 24px !important;
-    }
-    
-    .waiting-status {
-        font-size: 14px !important;
-    }
-    
-    .waiting-chat-button {
-        width: 200px !important;
-        padding: 12px 0 !important;
-        font-size: 14px !important;
-    }
-}
-
-@media (max-width: 380px) {
-    .waiting-self-avatar,
-    .waiting-teammate-avatar {
-        width: 55px !important;
-        height: 55px !important;
-    }
-    
-    .waiting-chat-button {
-        width: 180px !important;
-        padding: 10px 0 !important;
-    }
 }
 
 /* Кнопка копирования - ЖЕСТКИЙ ФИКС */
