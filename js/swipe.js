@@ -949,7 +949,6 @@ const Swipe = {
                     }
                     this.updateWaitingUI('both_accepted');
                     this.createGame();
-                    this.addFriendAfterMatch();
                 } else if (data.status === 'rejected') {
                     clearInterval(this.matchPolling);
                     this.matchPolling = null;
@@ -1041,19 +1040,6 @@ const Swipe = {
             
             this.showToastMessage('Мэтч создан!', false);
         }
-    },
-    
-    async addFriendAfterMatch() {
-        if (!this.currentPlayer) return;
-        const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        if (!telegram_id) return;
-        try {
-            await fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/friends/add', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id, friend_player_id: this.currentPlayer.player_id })
-            });
-        } catch (error) {}
     },
     
     rejectPlayer() {
