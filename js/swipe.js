@@ -643,7 +643,8 @@ const Swipe = {
         }
     },
     
-    startWithOpponent(opponent, matchId, expiresAt, serverTime) {
+    startWithOpponent(opponent, matchId, expiresAt, serverTime, timeLeft) {
+        // 🔥 ПРИНИМАЕМ time_left С СЕРВЕРА!
         this.isWaitingMode = false;
         this.iAccepted = false;
         
@@ -657,6 +658,7 @@ const Swipe = {
         this._pendingOpponent = opponent;
         this._pendingMatchId = matchId;
         this._pendingExpiresAt = expiresAt;
+        this._pendingTimeLeft = timeLeft;  // 🔥 СОХРАНЯЕМ time_left!
         this._waitForCardAndStart();
     },
     
@@ -673,10 +675,12 @@ const Swipe = {
         const opponent = this._pendingOpponent;
         const matchId = this._pendingMatchId;
         const expiresAt = this._pendingExpiresAt;
+        const timeLeft = this._pendingTimeLeft;  // 🔥 ЗАБИРАЕМ В ЛОКАЛЬНУЮ ПЕРЕМЕННУЮ
         
         this._pendingOpponent = null;
         this._pendingMatchId = null;
         this._pendingExpiresAt = null;
+        this._pendingTimeLeft = null;  // 🔥 СБРАСЫВАЕМ
         
         this.currentMatchId = matchId;
         this.currentPlayer = opponent;
@@ -688,10 +692,16 @@ const Swipe = {
         this.inviteLink = null;
         this.iAccepted = false;
         
-        if (expiresAt) {
+        // 🔥 ИСПОЛЬЗУЕМ ЛОКАЛЬНУЮ ПЕРЕМЕННУЮ timeLeft (НЕ this._pendingTimeLeft)!
+        if (timeLeft !== undefined && timeLeft !== null) {
+            this.matchExpiresAt = Date.now() + (timeLeft * 1000);
+            console.log('🕐 Таймер синхронизирован с сервера:', timeLeft + 'с');
+        } else if (expiresAt) {
             this.matchExpiresAt = new Date(expiresAt).getTime();
+            console.log('🕐 Таймер из expiresAt');
         } else {
             this.matchExpiresAt = Date.now() + (this.MATCH_TIMEOUT * 1000);
+            console.log('🕐 Таймер по умолчанию');
         }
         
         if (this.loading) this.loading.classList.remove('active');
@@ -699,7 +709,7 @@ const Swipe = {
         this.resetCardPosition();
         this.forceShowSwipeMode();
         this.showPlayer(opponent);
-        this.startCardTimer();
+        this.startCardTimer(timeLeft);  // 🔥 ПЕРЕДАЁМ timeLeft В ТАЙМЕР
         this.blockScroll();
         this.showHintOnce();
         
@@ -715,13 +725,20 @@ const Swipe = {
         return Math.max(0, Math.floor((this.matchExpiresAt - Date.now()) / 1000));
     },
     
-    startCardTimer() {
+    startCardTimer(initialTime = null) {
         if (this.cardTimerInterval) clearInterval(this.cardTimerInterval);
         if (!this.timerElement) this.timerElement = document.getElementById('swipeTimer');
         if (!this.timerElement) return;
-
+        
+        // 🔥 ЕСЛИ ПЕРЕДАНО НАЧАЛЬНОЕ ВРЕМЯ — УСТАНАВЛИВАЕМ ЕГО
+        if (initialTime !== null && initialTime > 0) {
+            this._cachedTimeLeft = initialTime;
+        }
+    
         const updateTimer = () => {
-            const timeLeft = this.getTimeLeft();
+            const timeLeft = this._cachedTimeLeft !== undefined 
+                ? this._cachedTimeLeft-- 
+                : this.getTimeLeft();
             this.timerElement.innerHTML = timeLeft + 'с';
         
             if (timeLeft <= 0) {
