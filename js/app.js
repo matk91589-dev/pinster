@@ -17,7 +17,7 @@
         });
     }
 
-    // Функция для обновления username на сервере (только при реальных изменениях)
+    // Функция для обновления username на сервере
     let lastUsername = '';
     function updateUsername() {
         const tg = window.Telegram?.WebApp;
@@ -31,20 +31,45 @@
             fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/user/update-username', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    telegram_id: telegram_id,
-                    username: username
-                })
+                body: JSON.stringify({ telegram_id, username })
             })
             .then(res => res.json())
             .then(data => {
-                if (data.status === 'ok') {
-                    console.log('✅ Username обновлён:', data.username);
-                }
+                if (data.status === 'ok') console.log('✅ Username обновлён:', data.username);
             })
             .catch(e => console.error('Ошибка обновления username:', e));
         }
     }
+
+    // 🔥 ОЖИДАНИЕ ЗАГРУЗКИ ПРОФИЛЯ
+    window.waitForProfile = function(callback, maxAttempts = 20) {
+        let attempts = 0;
+        
+        const check = () => {
+            attempts++;
+            
+            // Проверяем что Profile существует и загружен
+            if (typeof Profile !== 'undefined' && Profile.isProfileLoaded) {
+                console.log('✅ Профиль загружен, продолжаем');
+                callback();
+                return;
+            }
+            
+            // Проверяем что профиль в процессе загрузки
+            if (typeof Profile !== 'undefined' && Profile.isLoading) {
+                console.log(`⏳ Профиль загружается... (попытка ${attempts})`);
+            }
+            
+            if (attempts < maxAttempts) {
+                setTimeout(check, 200);
+            } else {
+                console.log('⚠️ Таймаут загрузки профиля, продолжаем без него');
+                callback();
+            }
+        };
+        
+        check();
+    };
 
     // Функция для показа главного экрана
     function showMainScreen() {
@@ -120,12 +145,9 @@
                 if (data.player_id) {
                     localStorage.setItem('player_id', data.player_id);
                     if (data.nick) localStorage.setItem('nick', data.nick);
-                    if (data.pingcoins) localStorage.setItem('pingcoins', data.pingcoins);
                 }
             })
             .catch(error => console.error('Error initializing user:', error));
-        } else {
-            console.warn('Нет Telegram ID');
         }
     }
 })();
@@ -148,7 +170,6 @@ Object.assign(window.App, {
     
     // 🔥 КАСТОМНЫЙ ПОПАП В СТИЛЕ TELEGRAM
     showCustomPopup: function(title, message, onConfirm, onCancel, confirmText = 'Выйти', cancelText = 'Остаться', isDestructive = true) {
-        // Удаляем старый попап если есть
         const oldPopup = document.querySelector('.pingster-popup-overlay');
         if (oldPopup) oldPopup.remove();
         
@@ -217,7 +238,6 @@ Object.assign(window.App, {
         overlay.appendChild(popup);
         document.body.appendChild(overlay);
         
-        // Добавляем стиль анимации если его нет
         if (!document.querySelector('#popup-animation-style')) {
             const style = document.createElement('style');
             style.id = 'popup-animation-style';
@@ -249,7 +269,6 @@ Object.assign(window.App, {
             if (onConfirm) onConfirm();
         };
         
-        // Закрытие по клику на оверлей
         overlay.onclick = (e) => {
             if (e.target === overlay) {
                 close();
@@ -257,20 +276,17 @@ Object.assign(window.App, {
             }
         };
         
-        // Ховер эффекты
         cancelBtn.onmouseover = () => cancelBtn.style.opacity = '0.8';
         cancelBtn.onmouseout = () => cancelBtn.style.opacity = '1';
         confirmBtn.onmouseover = () => confirmBtn.style.opacity = '0.8';
         confirmBtn.onmouseout = () => confirmBtn.style.opacity = '1';
     },
     
-    // 🔥 ПРОВЕРКА НА СВАЙП И ВЫХОД
     checkSwipeAndExit: function(targetScreenId, updateNav) {
         const isInSwipe = (typeof Swipe !== 'undefined' && Swipe.currentMatchId);
         const isInWaiting = (typeof Swipe !== 'undefined' && Swipe.isWaitingMode);
         
         if (!isInSwipe && !isInWaiting) {
-            // Не в свайпе — просто переходим
             this._doShowScreen(targetScreenId, updateNav);
             return;
         }
@@ -283,39 +299,28 @@ Object.assign(window.App, {
             'Выйти?',
             message,
             () => {
-                // Подтверждение — выходим
                 const tg = window.Telegram?.WebApp;
                 if (Swipe.currentMatchId) {
                     const telegram_id = tg?.initDataUnsafe?.user?.id;
                     fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            telegram_id: telegram_id,
-                            match_id: Swipe.currentMatchId,
-                            response: 'reject'
-                        })
+                        body: JSON.stringify({ telegram_id, match_id: Swipe.currentMatchId, response: 'reject' })
                     }).catch(e => console.error('Ошибка reject:', e));
                 }
                 Swipe.exitSwipeMode('navigation');
-                
                 if (typeof Swipe.showToastMessage === 'function') {
                     Swipe.showToastMessage('Поиск отменён', false);
                 }
-                
                 this._doShowScreen(targetScreenId, updateNav);
             },
-            () => {
-                // Отмена — ничего не делаем
-                console.log('Остаёмся на экране');
-            },
+            () => console.log('Остаёмся на экране'),
             'Выйти',
             'Остаться',
             true
         );
     },
     
-    // Внутренний метод для реального перехода
     _doShowScreen: function(screenId, updateNav = true) {
         const screen = document.getElementById(screenId);
         if (!screen) {
@@ -325,15 +330,24 @@ Object.assign(window.App, {
         
         console.log('📱 Переход на экран:', screenId);
         
+        // 🔥 ЕСЛИ ЭТО ЭКРАН РЕЖИМА — ЖДЁМ ЗАГРУЗКИ ПРОФИЛЯ!
+        const modeScreens = ['faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen'];
+        if (modeScreens.includes(screenId)) {
+            window.waitForProfile(() => {
+                this._actuallyShowScreen(screen, screenId, updateNav);
+            });
+        } else {
+            this._actuallyShowScreen(screen, screenId, updateNav);
+        }
+    },
+    
+    _actuallyShowScreen: function(screen, screenId, updateNav) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         screen.classList.add('active');
         this.currentScreen = screenId;
         
         if (updateNav) {
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             if (screenId === 'mainScreen') {
                 document.getElementById('navMain')?.classList.add('active');
             } else if (screenId === 'profileScreen') {
@@ -343,11 +357,7 @@ Object.assign(window.App, {
         
         const settingsIcon = document.getElementById('settingsIcon');
         if (settingsIcon) {
-            if (screenId === 'settingsScreen') {
-                settingsIcon.classList.add('active');
-            } else {
-                settingsIcon.classList.remove('active');
-            }
+            settingsIcon.classList.toggle('active', screenId === 'settingsScreen');
         }
         
         this.hapticFeedback('light');
@@ -368,14 +378,48 @@ Object.assign(window.App, {
                 if (Settings.init) Settings.init();
             }, 100);
         }
+        
+        // 🔥 ЗАПОЛНЯЕМ ПОЛЯ РЕЖИМОВ ДАННЫМИ ИЗ ПРОФИЛЯ
+        this.fillModeFields(screenId);
     },
     
-    // 🔥 ПУБЛИЧНЫЙ МЕТОД ДЛЯ ПЕРЕХОДА (С ПРОВЕРКОЙ СВАЙПА)
+    // 🔥 НОВАЯ ФУНКЦИЯ: ЗАПОЛНЕНИЕ ПОЛЕЙ РЕЖИМОВ
+    fillModeFields: function(screenId) {
+        if (typeof Profile === 'undefined') return;
+        
+        const ageValue = Profile.savedAge || localStorage.getItem('profile_age') || '';
+        const steamLink = Profile.savedSteam || localStorage.getItem('profile_steam') || '';
+        const faceitLink = Profile.savedFaceitLink || localStorage.getItem('profile_faceit') || '';
+        
+        setTimeout(() => {
+            if (screenId === 'faceitScreen') {
+                const ageInput = document.getElementById('faceitAgeValue');
+                const faceitInput = document.getElementById('faceitLinkInput');
+                if (ageInput && ageValue) ageInput.value = ageValue;
+                if (faceitInput && faceitLink) faceitInput.value = faceitLink;
+            } else if (screenId === 'premierScreen') {
+                const ageInput = document.getElementById('premierAgeValue');
+                const steamInput = document.getElementById('premierSteamInput');
+                if (ageInput && ageValue) ageInput.value = ageValue;
+                if (steamInput && steamLink) steamInput.value = steamLink;
+            } else if (screenId === 'primeScreen') {
+                const ageInput = document.getElementById('primeAgeValue');
+                const steamInput = document.getElementById('primeSteamInput');
+                if (ageInput && ageValue) ageInput.value = ageValue;
+                if (steamInput && steamLink) steamInput.value = steamLink;
+            } else if (screenId === 'publicScreen') {
+                const ageInput = document.getElementById('publicAgeValue');
+                const steamInput = document.getElementById('publicSteamInput');
+                if (ageInput && ageValue) ageInput.value = ageValue;
+                if (steamInput && steamLink) steamInput.value = steamLink;
+            }
+        }, 100);
+    },
+    
     showScreen: function(screenId, updateNav = true) {
         this.checkSwipeAndExit(screenId, updateNav);
     },
     
-    // 🔥 МЕТОД ДЛЯ СТРЕЛКИ НАЗАД
     goBack: function() {
         const isInSwipe = (typeof Swipe !== 'undefined' && Swipe.currentMatchId);
         const isInWaiting = (typeof Swipe !== 'undefined' && Swipe.isWaitingMode);
@@ -388,21 +432,14 @@ Object.assign(window.App, {
                     fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            telegram_id: telegram_id,
-                            match_id: Swipe.currentMatchId,
-                            response: 'reject'
-                        })
+                        body: JSON.stringify({ telegram_id, match_id: Swipe.currentMatchId, response: 'reject' })
                     }).catch(e => console.error('Ошибка reject при выходе:', e));
                 }
-                
                 Swipe.exitSwipeMode('user_back');
-                
                 if (typeof Swipe.showToastMessage === 'function') {
                     Swipe.showToastMessage('Поиск отменён', false);
                 }
             }
-            
             this._doShowScreen('mainScreen', true);
         };
         
@@ -411,26 +448,9 @@ Object.assign(window.App, {
                 ? 'Выйти из ожидания? Мэтч будет отменён.'
                 : 'Выйти? Текущий мэтч будет отменён.';
             
-            this.showCustomPopup(
-                'Выйти?',
-                message,
-                () => doExit(),
-                () => console.log('Остаёмся'),
-                'Выйти',
-                'Остаться',
-                true
-            );
+            this.showCustomPopup('Выйти?', message, () => doExit(), () => console.log('Остаёмся'), 'Выйти', 'Остаться', true);
         } else {
-            // Не в свайпе — спрашиваем про возврат на главную
-            this.showCustomPopup(
-                'Выйти?',
-                'Вернуться на главный экран?',
-                () => this._doShowScreen('mainScreen', true),
-                () => console.log('Остаёмся'),
-                'Да',
-                'Нет',
-                false
-            );
+            this.showCustomPopup('Выйти?', 'Вернуться на главный экран?', () => this._doShowScreen('mainScreen', true), () => console.log('Остаёмся'), 'Да', 'Нет', false);
         }
     },
     
@@ -450,9 +470,7 @@ window.addEventListener('load', function() {
         const loader = document.getElementById('app-loader');
         if (loader) {
             loader.style.opacity = '0';
-            setTimeout(function() {
-                loader.remove();
-            }, 300);
+            setTimeout(() => loader.remove(), 300);
         }
         console.log('✅ Лоадер удален');
     }, 100);
