@@ -380,25 +380,28 @@ Object.assign(window.App, {
         }
     },
     
-    // 🔥 ЗАПОЛНЕНИЕ ПОЛЕЙ РЕЖИМОВ (улучшенная версия)
+    // 🔥 ЗАПОЛНЕНИЕ ПОЛЕЙ РЕЖИМОВ (улучшенная версия с репутацией)
     fillModeFields: function(screenId) {
         // Берём данные из Profile если есть, иначе из localStorage
         let ageValue = '';
         let steamLink = '';
         let faceitLink = '';
+        let rating = '0';
         
         if (typeof Profile !== 'undefined') {
             ageValue = Profile.savedAge || '';
             steamLink = Profile.savedSteam || '';
             faceitLink = Profile.savedFaceitLink || '';
+            rating = Profile.savedRating || '0';
         }
         
         // Fallback на localStorage
         if (!ageValue) ageValue = localStorage.getItem('profile_age') || '';
         if (!steamLink) steamLink = localStorage.getItem('profile_steam') || '';
         if (!faceitLink) faceitLink = localStorage.getItem('profile_faceit') || '';
+        if (rating === '0' || !rating) rating = localStorage.getItem('user_rating') || '0';
         
-        console.log(`📝 Заполняем поля для ${screenId}:`, { ageValue, steamLink, faceitLink });
+        console.log(`📝 Заполняем поля для ${screenId}:`, { ageValue, steamLink, faceitLink, rating });
         
         // Заполняем поля
         setTimeout(() => {
@@ -422,6 +425,14 @@ Object.assign(window.App, {
                 const steamInput = document.getElementById('publicSteamInput');
                 if (ageInput && ageValue) ageInput.value = ageValue;
                 if (steamInput && steamLink) steamInput.value = steamLink;
+            }
+            
+            // 🔥 ЗАПОЛНЯЕМ РЕПУТАЦИЮ (если есть поле)
+            const ratingElement = document.getElementById(screenId + 'RatingValue') || 
+                                  document.querySelector(`#${screenId} .rating-value`);
+            if (ratingElement) {
+                const ratingNum = parseInt(rating) || 0;
+                ratingElement.textContent = (ratingNum > 0 ? '+' : '') + ratingNum;
             }
         }, 50);
     },
