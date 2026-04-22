@@ -550,12 +550,26 @@ const Profile = {
         try {
             await this.delay(50);
             
-            const initResponse = await fetch(`${this.BACKEND_URL}/api/user/init`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId })
-            });
+            // 🔥 ЗАПУСКАЕМ ВСЕ ЗАПРОСЫ ПАРАЛЛЕЛЬНО!
+            const [initResponse, profileResponse, ratingResponse] = await Promise.all([
+                fetch(`${this.BACKEND_URL}/api/user/init`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegram_id: this.telegramId })
+                }),
+                fetch(`${this.BACKEND_URL}/api/profile/get`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegram_id: this.telegramId })
+                }),
+                fetch(`${this.BACKEND_URL}/api/user/rating`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegram_id: this.telegramId })
+                })
+            ]);
             
+            // Обработка init
             if (initResponse.ok) {
                 const initData = await initResponse.json();
                 if (initData.status === 'ok') {
@@ -564,14 +578,9 @@ const Profile = {
                 }
             }
             
-            const response = await fetch(`${this.BACKEND_URL}/api/profile/get`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId })
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
+            // Обработка профиля
+            if (profileResponse.ok) {
+                const data = await profileResponse.json();
                 if (data.status === 'ok') {
                     this.savedName = data.nick || '-';
                     this.savedAge = data.age || '';
@@ -592,19 +601,15 @@ const Profile = {
                     this.isProfileLoaded = true;
                 }
             }
-
-            const ratingResponse = await fetch(`${this.BACKEND_URL}/api/user/rating`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.telegramId })
-            });
             
-            const ratingData = await ratingResponse.json();
-            if (ratingData.status === 'ok') {
-                this.savedRating = ratingData.rating;
-                // 🔥 СОХРАНЯЕМ В localStorage!
-                localStorage.setItem('user_rating', ratingData.rating);
-                this.updateRatingDisplay();
+            // 🔥 ОБРАБОТКА РЕПУТАЦИИ (ПАРАЛЛЕЛЬНО!)
+            if (ratingResponse.ok) {
+                const ratingData = await ratingResponse.json();
+                if (ratingData.status === 'ok') {
+                    this.savedRating = ratingData.rating;
+                    localStorage.setItem('user_rating', ratingData.rating); // 🔥 СОХРАНЯЕМ!
+                    this.updateRatingDisplay();
+                }
             }
             
         } catch (error) {
