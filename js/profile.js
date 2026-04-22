@@ -602,6 +602,8 @@ const Profile = {
             const ratingData = await ratingResponse.json();
             if (ratingData.status === 'ok') {
                 this.savedRating = ratingData.rating;
+                // 🔥 СОХРАНЯЕМ В localStorage!
+                localStorage.setItem('user_rating', ratingData.rating);
                 this.updateRatingDisplay();
             }
             
