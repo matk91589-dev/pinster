@@ -41,34 +41,36 @@
         }
     }
 
-    // 🔥 ОЖИДАНИЕ ЗАГРУЗКИ ПРОФИЛЯ
-    window.waitForProfile = function(callback, maxAttempts = 20) {
-        let attempts = 0;
+    // 🔥 ПРОСТАЯ ПРОВЕРКА ГОТОВНОСТИ ПРОФИЛЯ (без блокировок)
+    window.ensureProfileLoaded = function(callback) {
+        // Если Profile уже загружен - сразу выполняем
+        if (typeof Profile !== 'undefined' && Profile.isProfileLoaded) {
+            callback();
+            return;
+        }
         
-        const check = () => {
-            attempts++;
+        // Если Profile существует но ещё грузится - ждём
+        if (typeof Profile !== 'undefined' && Profile.isLoading) {
+            console.log('⏳ Ждём загрузки профиля...');
+            const checkInterval = setInterval(() => {
+                if (Profile.isProfileLoaded) {
+                    clearInterval(checkInterval);
+                    callback();
+                }
+            }, 100);
             
-            // Проверяем что Profile существует и загружен
-            if (typeof Profile !== 'undefined' && Profile.isProfileLoaded) {
-                console.log('✅ Профиль загружен, продолжаем');
+            // Таймаут 3 секунды
+            setTimeout(() => {
+                clearInterval(checkInterval);
+                console.log('⚠️ Таймаут загрузки профиля, продолжаем');
                 callback();
-                return;
-            }
-            
-            // Проверяем что профиль в процессе загрузки
-            if (typeof Profile !== 'undefined' && Profile.isLoading) {
-                console.log(`⏳ Профиль загружается... (попытка ${attempts})`);
-            }
-            
-            if (attempts < maxAttempts) {
-                setTimeout(check, 200);
-            } else {
-                console.log('⚠️ Таймаут загрузки профиля, продолжаем без него');
-                callback();
-            }
-        };
+            }, 3000);
+            return;
+        }
         
-        check();
+        // Если Profile ещё не инициализирован - просто продолжаем
+        console.log('ℹ️ Profile ещё не инициализирован, продолжаем');
+        callback();
     };
 
     // Функция для показа главного экрана
@@ -330,18 +332,7 @@ Object.assign(window.App, {
         
         console.log('📱 Переход на экран:', screenId);
         
-        // 🔥 ЕСЛИ ЭТО ЭКРАН РЕЖИМА — ЖДЁМ ЗАГРУЗКИ ПРОФИЛЯ!
-        const modeScreens = ['faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen'];
-        if (modeScreens.includes(screenId)) {
-            window.waitForProfile(() => {
-                this._actuallyShowScreen(screen, screenId, updateNav);
-            });
-        } else {
-            this._actuallyShowScreen(screen, screenId, updateNav);
-        }
-    },
-    
-    _actuallyShowScreen: function(screen, screenId, updateNav) {
+        // 🔥 УБИРАЕМ БЛОКИРОВКУ! Просто показываем экран
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         screen.classList.add('active');
         this.currentScreen = screenId;
@@ -379,18 +370,37 @@ Object.assign(window.App, {
             }, 100);
         }
         
-        // 🔥 ЗАПОЛНЯЕМ ПОЛЯ РЕЖИМОВ ДАННЫМИ ИЗ ПРОФИЛЯ
-        this.fillModeFields(screenId);
+        // 🔥 ЗАПОЛНЯЕМ ПОЛЯ РЕЖИМОВ (если профиль ещё не загружен - подождём немного)
+        const modeScreens = ['faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen'];
+        if (modeScreens.includes(screenId)) {
+            // Пробуем сразу заполнить
+            this.fillModeFields(screenId);
+            // И ещё раз через 300мс когда профиль точно подгрузится
+            setTimeout(() => this.fillModeFields(screenId), 300);
+        }
     },
     
-    // 🔥 НОВАЯ ФУНКЦИЯ: ЗАПОЛНЕНИЕ ПОЛЕЙ РЕЖИМОВ
+    // 🔥 ЗАПОЛНЕНИЕ ПОЛЕЙ РЕЖИМОВ (улучшенная версия)
     fillModeFields: function(screenId) {
-        if (typeof Profile === 'undefined') return;
+        // Берём данные из Profile если есть, иначе из localStorage
+        let ageValue = '';
+        let steamLink = '';
+        let faceitLink = '';
         
-        const ageValue = Profile.savedAge || localStorage.getItem('profile_age') || '';
-        const steamLink = Profile.savedSteam || localStorage.getItem('profile_steam') || '';
-        const faceitLink = Profile.savedFaceitLink || localStorage.getItem('profile_faceit') || '';
+        if (typeof Profile !== 'undefined') {
+            ageValue = Profile.savedAge || '';
+            steamLink = Profile.savedSteam || '';
+            faceitLink = Profile.savedFaceitLink || '';
+        }
         
+        // Fallback на localStorage
+        if (!ageValue) ageValue = localStorage.getItem('profile_age') || '';
+        if (!steamLink) steamLink = localStorage.getItem('profile_steam') || '';
+        if (!faceitLink) faceitLink = localStorage.getItem('profile_faceit') || '';
+        
+        console.log(`📝 Заполняем поля для ${screenId}:`, { ageValue, steamLink, faceitLink });
+        
+        // Заполняем поля
         setTimeout(() => {
             if (screenId === 'faceitScreen') {
                 const ageInput = document.getElementById('faceitAgeValue');
@@ -413,7 +423,7 @@ Object.assign(window.App, {
                 if (ageInput && ageValue) ageInput.value = ageValue;
                 if (steamInput && steamLink) steamInput.value = steamLink;
             }
-        }, 100);
+        }, 50);
     },
     
     showScreen: function(screenId, updateNav = true) {
