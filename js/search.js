@@ -453,36 +453,75 @@ const Search = {
     start(mode, value) {
         if (window.Settings) Settings.click();
         this.savedSearchParams = { mode, value };
-        setTimeout(() => this.doStartValidation(mode), 50);
+        
+        // 🔥 СНАЧАЛА ПРОВЕРЯЕМ ФОРУМ, ПОТОМ ЗАПУСКАЕМ ВАЛИДАЦИЮ
+        if (window.App && window.App.checkForumBeforeSearch) {
+            window.App.checkForumBeforeSearch((inForum) => {
+                if (inForum) {
+                    setTimeout(() => this.doStartValidation(mode), 50);
+                } else {
+                    // Пользователь не в форуме и отказался вступать
+                    console.log('Поиск отменён: пользователь не в форуме');
+                }
+            });
+        } else {
+            // Если App не загружен — запускаем без проверки
+            setTimeout(() => this.doStartValidation(mode), 50);
+        }
     },
     
     // 🔥 ПРИНУДИТЕЛЬНАЯ ОСТАНОВКА ПЕРЕД ЗАПУСКОМ
-    forceStopAndStart(mode, value) {
-        this._isRestarting = true;
-        
-        const telegram_id = this.getTelegramId();
-        if (!telegram_id) {
-            this._isRestarting = false;
-            return;
-        }
-        
-        // 🔥 СНАЧАЛА ОСТАНАВЛИВАЕМ ПОИСК
-        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ telegram_id: telegram_id })
-        })
-        .then(() => {
-            setTimeout(() => {
+        forceStopAndStart(mode, value) {
+            this._isRestarting = true;
+            
+            const telegram_id = this.getTelegramId();
+            if (!telegram_id) {
                 this._isRestarting = false;
-                this.start(mode, value);
-            }, 300);
-        })
-        .catch(() => {
-            this._isRestarting = false;
-            this.start(mode, value);
-        });
-    },
+                return;
+            }
+            
+            // 🔥 СНАЧАЛА ПРОВЕРЯЕМ ФОРУМ
+            if (window.App && window.App.checkForumBeforeSearch) {
+                window.App.checkForumBeforeSearch((inForum) => {
+                    if (!inForum) {
+                        this._isRestarting = false;
+                        return;
+                    }
+                    
+                    fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ telegram_id: telegram_id })
+                    })
+                    .then(() => {
+                        setTimeout(() => {
+                            this._isRestarting = false;
+                            this.start(mode, value);
+                        }, 300);
+                    })
+                    .catch(() => {
+                        this._isRestarting = false;
+                        this.start(mode, value);
+                    });
+                });
+            } else {
+                fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegram_id: telegram_id })
+                })
+                .then(() => {
+                    setTimeout(() => {
+                        this._isRestarting = false;
+                        this.start(mode, value);
+                    }, 300);
+                })
+                .catch(() => {
+                    this._isRestarting = false;
+                    this.start(mode, value);
+                });
+            }
+        },
     
     doStartValidation(mode) {
         let isValid = true;
