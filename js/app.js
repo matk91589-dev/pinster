@@ -43,13 +43,11 @@
 
     // 🔥 ПРОСТАЯ ПРОВЕРКА ГОТОВНОСТИ ПРОФИЛЯ (без блокировок)
     window.ensureProfileLoaded = function(callback) {
-        // Если Profile уже загружен - сразу выполняем
         if (typeof Profile !== 'undefined' && Profile.isProfileLoaded) {
             callback();
             return;
         }
         
-        // Если Profile существует но ещё грузится - ждём
         if (typeof Profile !== 'undefined' && Profile.isLoading) {
             console.log('⏳ Ждём загрузки профиля...');
             const checkInterval = setInterval(() => {
@@ -59,7 +57,6 @@
                 }
             }, 100);
             
-            // Таймаут 3 секунды
             setTimeout(() => {
                 clearInterval(checkInterval);
                 console.log('⚠️ Таймаут загрузки профиля, продолжаем');
@@ -68,7 +65,6 @@
             return;
         }
         
-        // Если Profile ещё не инициализирован - просто продолжаем
         console.log('ℹ️ Profile ещё не инициализирован, продолжаем');
         callback();
     };
@@ -284,6 +280,69 @@ Object.assign(window.App, {
         confirmBtn.onmouseout = () => confirmBtn.style.opacity = '1';
     },
     
+    // 🔥 ПРОВЕРКА ФОРУМА ПЕРЕД ПОИСКОМ
+    checkForumBeforeSearch: function(callback) {
+        const tg = window.Telegram?.WebApp;
+        const telegram_id = tg?.initDataUnsafe?.user?.id;
+        
+        if (!telegram_id) {
+            if (callback) callback(false);
+            return;
+        }
+        
+        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/check-forum', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: telegram_id })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.in_forum) {
+                // В форуме — продолжаем
+                if (callback) callback(true);
+            } else {
+                // Не в форуме — показываем предложение
+                this.showForumRequired(callback);
+            }
+        })
+        .catch(() => {
+            // Ошибка — пропускаем
+            if (callback) callback(true);
+        });
+    },
+    
+    // 🔥 ОКНО "ВСТУПИ В ФОРУМ"
+    showForumRequired: function(callback) {
+        this.showCustomPopup(
+            '🔍 Поиск тиммейтов',
+            'Чтобы начать поиск, вступи в наш форум.\n\nТам ты найдёшь тиммейтов и сможешь общаться с комьюнити!',
+            () => {
+                // Нажал "Вступить" — открываем форум
+                const tg = window.Telegram?.WebApp;
+                if (tg?.openTelegramLink) {
+                    tg.openTelegramLink('https://t.me/pingster_team');
+                } else if (tg?.openLink) {
+                    tg.openLink('https://t.me/pingster_team');
+                } else {
+                    window.open('https://t.me/pingster_team', '_blank');
+                }
+                
+                // Ждём возврата и проверяем форум
+                setTimeout(() => {
+                    this.checkForumBeforeSearch(callback);
+                }, 2000);
+            },
+            () => {
+                // Нажал "Отмена"
+                console.log('Пользователь отказался вступать в форум');
+                if (callback) callback(false);
+            },
+            'Вступить',
+            'Позже',
+            false
+        );
+    },
+    
     checkSwipeAndExit: function(targetScreenId, updateNav) {
         const isInSwipe = (typeof Swipe !== 'undefined' && Swipe.currentMatchId);
         const isInWaiting = (typeof Swipe !== 'undefined' && Swipe.isWaitingMode);
@@ -332,7 +391,6 @@ Object.assign(window.App, {
         
         console.log('📱 Переход на экран:', screenId);
         
-        // 🔥 УБИРАЕМ БЛОКИРОВКУ! Просто показываем экран
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         screen.classList.add('active');
         this.currentScreen = screenId;
@@ -370,19 +428,14 @@ Object.assign(window.App, {
             }, 100);
         }
         
-        // 🔥 ЗАПОЛНЯЕМ ПОЛЯ РЕЖИМОВ (если профиль ещё не загружен - подождём немного)
         const modeScreens = ['faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen'];
         if (modeScreens.includes(screenId)) {
-            // Пробуем сразу заполнить
             this.fillModeFields(screenId);
-            // И ещё раз через 300мс когда профиль точно подгрузится
             setTimeout(() => this.fillModeFields(screenId), 300);
         }
     },
     
-    // 🔥 ЗАПОЛНЕНИЕ ПОЛЕЙ РЕЖИМОВ (улучшенная версия с репутацией)
     fillModeFields: function(screenId) {
-        // Берём данные из Profile если есть, иначе из localStorage
         let ageValue = '';
         let steamLink = '';
         let faceitLink = '';
@@ -395,7 +448,6 @@ Object.assign(window.App, {
             rating = Profile.savedRating || '0';
         }
         
-        // Fallback на localStorage
         if (!ageValue) ageValue = localStorage.getItem('profile_age') || '';
         if (!steamLink) steamLink = localStorage.getItem('profile_steam') || '';
         if (!faceitLink) faceitLink = localStorage.getItem('profile_faceit') || '';
@@ -403,7 +455,6 @@ Object.assign(window.App, {
         
         console.log(`📝 Заполняем поля для ${screenId}:`, { ageValue, steamLink, faceitLink, rating });
         
-        // Заполняем поля
         setTimeout(() => {
             if (screenId === 'faceitScreen') {
                 const ageInput = document.getElementById('faceitAgeValue');
@@ -427,7 +478,6 @@ Object.assign(window.App, {
                 if (steamInput && steamLink) steamInput.value = steamLink;
             }
             
-            // 🔥 ЗАПОЛНЯЕМ РЕПУТАЦИЮ (если есть поле)
             const ratingElement = document.getElementById(screenId + 'RatingValue') || 
                                   document.querySelector(`#${screenId} .rating-value`);
             if (ratingElement) {
