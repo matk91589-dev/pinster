@@ -314,8 +314,8 @@ Object.assign(window.App, {
     // 🔥 ОКНО "ВСТУПИ В ФОРУМ"
     showForumRequired: function(callback) {
         this.showCustomPopup(
-            '🔍 Поиск тиммейтов',
-            'Чтобы начать поиск, вступи в наш форум.\n\nТам ты найдёшь тиммейтов и сможешь общаться с комьюнити!',
+            ' Поиск тиммейтов ',
+            'Чтобы начать поиск, вступи в наш форум.\n\n Это нужно для корректного создания матча',
             () => {
                 // Нажал "Вступить" — открываем форум
                 const tg = window.Telegram?.WebApp;
@@ -338,7 +338,7 @@ Object.assign(window.App, {
                 if (callback) callback(false);
             },
             'Вступить',
-            'Позже',
+            'Отмена',
             false
         );
     },
