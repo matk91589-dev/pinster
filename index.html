@@ -13,525 +13,133 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        body {
-            background-color: #0D0F15;
-            margin: 0;
-            padding: 0;
-        }
-        
-        #app-loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #0D0F15;
-            z-index: 999999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.3s ease;
-        }
-        
-        .loader-spinner {
-            width: 44px;
-            height: 44px;
-            border: 3px solid rgba(255, 85, 0, 0.2);
-            border-top: 3px solid #FF5500;
-            border-radius: 50%;
-            animation: loaderSpin 0.8s linear infinite;
-        }
-        
-        @keyframes loaderSpin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .loader-spinner.hidden {
-            display: none;
-        }
-        
-        .icon-settings.active svg {
-            stroke: #FF5500 !important;
-        }
-        
-        .icon-settings:hover svg {
-            stroke: #FF5500 !important;
-        }
-        
-        .link-with-copy {
-            position: relative;
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
-        
-        .link-with-copy .swipe-link-value,
-        .link-with-copy .profile-stat-value,
-        .link-with-copy .input-field {
-            width: 100%;
-            padding-right: 40px !important;
-        }
-        
-        .copy-btn {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            z-index: 5;
-        }
-        
-        .copy-btn svg {
-            width: 18px;
-            height: 18px;
-            stroke: #9BA1B0;
-            transition: stroke 0.2s ease;
-        }
-        
-        .copy-btn:hover {
-            background: rgba(255, 85, 0, 0.15);
-        }
-        
-        .copy-btn:hover svg {
-            stroke: #FF5500;
-        }
-        
-        .copy-btn.copied svg {
-            stroke: #4CAF50;
-        }
-        
-        .input-label span {
-            color: #FF3B30 !important;
-            font-weight: 600 !important;
-            font-size: 11px !important;
-            margin-left: 4px !important;
-            text-transform: lowercase !important;
-        }
-        
-        .stat-label span {
-            color: #FF3B30 !important;
-            font-weight: 600 !important;
-            font-size: 11px !important;
-            margin-left: 4px !important;
-            text-transform: lowercase !important;
-        }
-
-        .screen {
-            position: relative;
-        }
+        body { background-color: #0D0F15; margin: 0; padding: 0; }
+        #app-loader { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0D0F15; z-index: 999999; display: flex; align-items: center; justify-content: center; transition: opacity 0.3s ease; }
+        .loader-spinner { width: 44px; height: 44px; border: 3px solid rgba(255,85,0,0.2); border-top: 3px solid #FF5500; border-radius: 50%; animation: loaderSpin 0.8s linear infinite; }
+        @keyframes loaderSpin { to { transform: rotate(360deg); } }
+        .loader-spinner.hidden { display: none; }
+        .icon-settings.active svg { stroke: #FF5500 !important; }
+        .icon-settings:hover svg { stroke: #FF5500 !important; }
+        .link-with-copy { position: relative; display: flex; align-items: center; width: 100%; }
+        .link-with-copy .swipe-link-value, .link-with-copy .profile-stat-value, .link-with-copy .input-field { width: 100%; padding-right: 40px !important; }
+        .copy-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; padding: 6px; display: flex; align-items: center; justify-content: center; border-radius: 6px; transition: all 0.2s ease; z-index: 5; }
+        .copy-btn svg { width: 18px; height: 18px; stroke: #9BA1B0; transition: stroke 0.2s ease; }
+        .copy-btn:hover { background: rgba(255,85,0,0.15); }
+        .copy-btn:hover svg { stroke: #FF5500; }
+        .copy-btn.copied svg { stroke: #4CAF50; }
+        .input-label span { color: #FF3B30 !important; font-weight: 600 !important; font-size: 11px !important; margin-left: 4px !important; text-transform: lowercase !important; }
+        .stat-label span { color: #FF3B30 !important; font-weight: 600 !important; font-size: 11px !important; margin-left: 4px !important; text-transform: lowercase !important; }
+        .screen { position: relative; }
     </style>
     
     <link rel="stylesheet" href="css/style.css">
     
     <style>
-        .swipe-card {
-            width: 420px !important;
-            height: 420px !important;
-            position: relative !important;
-        }
+        .swipe-card { width: 420px !important; height: 420px !important; position: relative !important; }
+        .swipe-card-content { display: flex !important; flex-direction: column !important; justify-content: space-between !important; height: 100% !important; flex: 1 !important; position: relative !important; }
+        #swipeModeContent { display: flex !important; flex-direction: column !important; justify-content: space-between !important; flex: 1 !important; gap: 14px !important; }
+        .swipe-player-row { margin-bottom: 0 !important; }
+        .swipe-stats-row.three-cols { margin: 4px 0 !important; }
+        .swipe-steam-container, .swipe-faceit-container { margin: 2px 0 !important; }
+        .swipe-comment { margin-top: 4px !important; flex: 1 !important; display: flex !important; flex-direction: column !important; }
+        .swipe-comment-text { flex: 1 !important; min-height: auto !important; }
+        .swipe-link-value { font-size: 14px !important; padding: 12px 14px !important; word-break: break-all !important; cursor: pointer !important; transition: background 0.2s ease !important; }
+        .swipe-link-value:active { background: var(--surface-hover) !important; }
         
-        .swipe-card-content {
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-between !important;
-            height: 100% !important;
-            flex: 1 !important;
-            position: relative !important;
-        }
+        @media (max-width:500px) and (min-width:451px) { .swipe-card { width:380px !important; height:380px !important; } }
+        @media (max-width:450px) and (min-width:401px) { .swipe-card { width:360px !important; height:360px !important; } }
+        @media (max-width:400px) and (min-width:351px) { .swipe-card { width:330px !important; height:330px !important; } }
+        @media (max-width:350px) { .swipe-card { width:300px !important; height:300px !important; } }
+        @media (min-width:768px) and (max-width:1024px) { .swipe-card { width:480px !important; height:480px !important; } }
+        @media (min-width:1025px) { .swipe-card { width:520px !important; height:520px !important; } }
         
-        #swipeModeContent {
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-between !important;
-            flex: 1 !important;
-            gap: 14px !important;
-        }
+        .swipe-screen .content { padding: 0 !important; margin: 0 !important; }
+        .swipe-container { padding: 0 !important; margin: 0 !important; width: 100% !important; }
+        .swipe-card-wrapper { display: flex !important; justify-content: center !important; align-items: center !important; }
         
-        .swipe-player-row {
-            margin-bottom: 0 !important;
-        }
-        
-        .swipe-stats-row.three-cols {
-            margin: 4px 0 !important;
-        }
-        
-        .swipe-steam-container,
-        .swipe-faceit-container {
-            margin: 2px 0 !important;
-        }
-        
-        .swipe-comment {
-            margin-top: 4px !important;
-            flex: 1 !important;
-            display: flex !important;
-            flex-direction: column !important;
-        }
-        
-        .swipe-comment-text {
-            flex: 1 !important;
-            min-height: auto !important;
-        }
-        
-        .swipe-link-value {
-            font-size: 14px !important;
-            padding: 12px 14px !important;
-            word-break: break-all !important;
-            cursor: pointer !important;
-            transition: background 0.2s ease !important;
-        }
-        
-        .swipe-link-value:active {
-            background: var(--surface-hover) !important;
-        }
-        
-        @media (max-width: 500px) and (min-width: 451px) {
-            .swipe-card { width: 380px !important; height: 380px !important; }
-            .swipe-avatar { width: 70px !important; height: 70px !important; }
-            .swipe-player-nick { font-size: 18px !important; }
-            .swipe-card-content { padding: 16px !important; }
-            #swipeModeContent { gap: 12px !important; }
-            .swipe-link-value { font-size: 13px !important; padding: 10px 12px !important; }
-        }
-        
-        @media (max-width: 450px) and (min-width: 401px) {
-            .swipe-card { width: 360px !important; height: 360px !important; }
-            .swipe-avatar { width: 65px !important; height: 65px !important; }
-            .swipe-player-nick { font-size: 17px !important; }
-            .swipe-player-id { font-size: 10px !important; }
-            .swipe-card-content { padding: 14px !important; }
-            #swipeModeContent { gap: 11px !important; }
-            .swipe-stats-row.three-cols .swipe-stat-value { padding: 6px 4px !important; font-size: 13px !important; }
-            .swipe-link-value { font-size: 12px !important; padding: 9px 11px !important; }
-            .swipe-comment-text { font-size: 12px !important; padding: 10px !important; }
-        }
-        
-        @media (max-width: 400px) and (min-width: 351px) {
-            .swipe-card { width: 330px !important; height: 330px !important; }
-            .swipe-avatar { width: 60px !important; height: 60px !important; }
-            .swipe-player-nick { font-size: 17px !important; }
-            .swipe-player-id { font-size: 9px !important; }
-            .swipe-rating-value { font-size: 14px !important; }
-            .swipe-card-content { padding: 12px !important; }
-            #swipeModeContent { gap: 10px !important; }
-            .swipe-stats-row.three-cols .swipe-stat-value { padding: 5px 3px !important; font-size: 12px !important; }
-            .swipe-link-label { font-size: 8px !important; }
-            .swipe-link-value { font-size: 11px !important; padding: 8px 10px !important; }
-            .swipe-comment-text { font-size: 11px !important; padding: 8px !important; }
-            .swipe-timer { font-size: 11px !important; padding: 4px 10px !important; top: 10px !important; left: 10px !important; }
-        }
-        
-        @media (max-width: 350px) {
-            .swipe-card { width: 300px !important; height: 300px !important; }
-            .swipe-avatar { width: 55px !important; height: 55px !important; }
-            .swipe-player-nick { font-size: 15px !important; }
-            .swipe-player-id { font-size: 8px !important; }
-            .swipe-rating-value { font-size: 13px !important; }
-            .swipe-card-content { padding: 11px !important; }
-            #swipeModeContent { gap: 9px !important; }
-            .swipe-stats-row.three-cols { gap: 8px !important; }
-            .swipe-stats-row.three-cols .swipe-stat-value { padding: 5px 3px !important; font-size: 12px !important; }
-            .swipe-link-label { font-size: 8px !important; }
-            .swipe-link-value { font-size: 10px !important; padding: 7px 9px !important; }
-            .swipe-comment-text { font-size: 10px !important; padding: 8px !important; }
-            .swipe-timer { font-size: 10px !important; padding: 3px 8px !important; top: 8px !important; left: 8px !important; }
-        }
-        
-        @media (min-width: 768px) and (max-width: 1024px) {
-            .swipe-card { width: 480px !important; height: 480px !important; }
-        }
-        
-        @media (min-width: 1025px) {
-            .swipe-card { width: 520px !important; height: 520px !important; }
-        }
-        
-        .swipe-screen .content {
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-        
-        .swipe-container {
-            padding: 0 !important;
-            margin: 0 !important;
-            width: 100% !important;
-        }
-        
-        .swipe-card-wrapper {
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-        }
-        
-        /* ===== ЭКРАН ОЖИДАНИЯ ===== */
-        #waitingModeContent {
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            flex-direction: column !important;
-            background: #1A1D24 !important;
-            border-radius: 28px !important;
-            z-index: 999 !important;
-            display: none !important;
-        }
+        #waitingModeContent { position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; flex-direction: column !important; background: #1A1D24 !important; border-radius: 28px !important; z-index: 999 !important; display: none !important; }
+        #waitingModeContent.active { display: flex !important; }
 
-        #waitingModeContent.active {
-            display: flex !important;
-        }
-
-        .waiting-header {
-            position: absolute !important;
-            top: 16px !important;
-            left: 16px !important;
-            right: 16px !important;
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            z-index: 20 !important;
-        }
-
-        .waiting-timer {
-            background: rgba(0, 0, 0, 0.65) !important;
-            backdrop-filter: blur(8px) !important;
-            padding: 6px 14px !important;
-            border-radius: 30px !important;
-            font-size: 14px !important;
-            font-weight: 600 !important;
-            color: #fff !important;
-            font-family: monospace !important;
-        }
-
-        .waiting-timer.warning {
-            color: #FF6B4A !important;
-            animation: timerPulse 0.8s infinite !important;
-        }
+        .back-arrow-swipe { position: absolute !important; top: 70px !important; left: 16px !important; width: 44px !important; height: 44px !important; display: flex !important; align-items: center !important; justify-content: center !important; background: rgba(0,0,0,0.85) !important; backdrop-filter: blur(10px) !important; -webkit-backdrop-filter: blur(10px) !important; border-radius: 50% !important; cursor: pointer !important; z-index: 100 !important; transition: all 0.2s ease !important; box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important; border: none !important; outline: none !important; }
+        .back-arrow-swipe:active { background: #FF5500 !important; transform: scale(0.9) !important; }
+        .back-arrow-swipe svg { width: 24px !important; height: 24px !important; stroke: #FF5500 !important; transition: stroke 0.2s ease !important; }
+        .back-arrow-swipe:active svg { stroke: white !important; }
         
-        @keyframes timerPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-
-    
-        /* ===== СТРЕЛКА НАЗАД (АДАПТИВНАЯ) ===== */
-        .back-arrow-swipe {
-            position: absolute !important;
-            top: 70px !important;
-            left: 16px !important;
-            width: 44px !important;
-            height: 44px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            background: rgba(0, 0, 0, 0.85) !important;
-            backdrop-filter: blur(10px) !important;
-            -webkit-backdrop-filter: blur(10px) !important;
-            border-radius: 50% !important;
-            cursor: pointer !important;
-            z-index: 100 !important;
-            transition: all 0.2s ease !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-            border: none !important;
-            outline: none !important;
-        }
-        
-        .back-arrow-swipe:active {
-            background: #FF5500 !important;
-            transform: scale(0.9) !important;
-        }
-        
-        .back-arrow-swipe svg {
-            width: 24px !important;
-            height: 24px !important;
-            stroke: #FF5500 !important;
-            transition: stroke 0.2s ease !important;
-        }
-        
-        .back-arrow-swipe:active svg {
-            stroke: white !important;
-        }
-        
-        /* Адаптив для стрелки */
-        @media (max-width: 480px) {
-            .back-arrow-swipe {
-                top: 65px !important;
-                left: 14px !important;
-                width: 40px !important;
-                height: 40px !important;
-            }
-            .back-arrow-swipe svg {
-                width: 22px !important;
-                height: 22px !important;
-            }
-        }
-        
-        @media (max-width: 380px) {
-            .back-arrow-swipe {
-                top: 60px !important;
-                left: 12px !important;
-                width: 36px !important;
-                height: 36px !important;
-            }
-            .back-arrow-swipe svg {
-                width: 20px !important;
-                height: 20px !important;
-            }
-        }
-        
-        @media (max-width: 320px) {
-            .back-arrow-swipe {
-                top: 55px !important;
-                left: 10px !important;
-                width: 32px !important;
-                height: 32px !important;
-            }
-            .back-arrow-swipe svg {
-                width: 18px !important;
-                height: 18px !important;
-            }
-        }
+        /* Стили для экрана анкет */
+        .anketa-card { background: #1A1D24; border-radius: 12px; padding: 14px; margin: 8px 0; }
+        .anketa-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .anketa-card-mode { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; }
+        .anketa-card-mode.faceit { background: rgba(0,255,0,0.15); color: #4CAF50; }
+        .anketa-card-mode.premier { background: rgba(255,85,0,0.15); color: #FF5500; }
+        .anketa-card-mode.prime { background: rgba(0,150,255,0.15); color: #0096FF; }
+        .anketa-card-mode.public { background: rgba(255,255,0,0.15); color: #FFD600; }
+        .anketa-card-rank { font-size: 14px; font-weight: 700; color: #FFFFFF; }
+        .anketa-card-about { font-size: 13px; color: #8E97A6; margin-top: 4px; }
+        .anketa-empty { text-align: center; padding: 40px 20px; color: #8E97A6; font-size: 14px; }
+        .like-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: #1A1D24; border-radius: 12px; margin: 8px 0; }
+        .like-item-avatar { width: 40px; height: 40px; border-radius: 50%; background: #2A2F3A; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #FF5500; }
+        .like-item-info { flex: 1; }
+        .like-item-nick { font-size: 14px; font-weight: 600; color: #FFFFFF; }
+        .like-item-mode { font-size: 11px; color: #8E97A6; }
+        .like-item-action { padding: 8px 14px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .like-item-action.like-back { background: #FF5500; color: #fff; }
+        .like-item-action.write { background: #2A2F3A; color: #fff; }
     </style>
 </head>
 <body>
-    <div id="app-loader">
-        <div class="loader-spinner"></div>
-    </div>
+    <div id="app-loader"><div class="loader-spinner"></div></div>
     
     <script>
         window.copyToClipboard = function(text, btnElement) {
-            if (!text || text === '' || text === 'Не указана') {
-                if (window.Settings && window.Settings.error) window.Settings.error();
-                return;
-            }
-            
+            if (!text || text === '' || text === 'Не указана') { if (window.Settings && window.Settings.error) window.Settings.error(); return; }
             navigator.clipboard.writeText(text).then(() => {
                 if (window.Settings && window.Settings.success) window.Settings.success();
-                if (btnElement) {
-                    btnElement.classList.add('copied');
-                    setTimeout(() => btnElement.classList.remove('copied'), 1500);
-                }
-            }).catch(err => {
-                console.error('Ошибка копирования:', err);
-                if (window.Settings && window.Settings.error) window.Settings.error();
-            });
+                if (btnElement) { btnElement.classList.add('copied'); setTimeout(() => btnElement.classList.remove('copied'), 1500); }
+            }).catch(err => { console.error('Ошибка копирования:', err); if (window.Settings && window.Settings.error) window.Settings.error(); });
         };
         
         window.copyFieldValue = function(fieldId, btnElement) {
             const input = document.getElementById(fieldId);
-            if (!input || !input.value) {
-                if (window.Settings && window.Settings.error) window.Settings.error();
-                return;
-            }
-            
+            if (!input || !input.value) { if (window.Settings && window.Settings.error) window.Settings.error(); return; }
             navigator.clipboard.writeText(input.value).then(() => {
                 if (window.Settings && window.Settings.success) window.Settings.success();
-                btnElement.classList.add('copied');
-                setTimeout(() => btnElement.classList.remove('copied'), 1500);
-            }).catch(err => {
-                console.error('Ошибка копирования:', err);
-                if (window.Settings && window.Settings.error) window.Settings.error();
-            });
+                btnElement.classList.add('copied'); setTimeout(() => btnElement.classList.remove('copied'), 1500);
+            }).catch(err => { console.error('Ошибка копирования:', err); if (window.Settings && window.Settings.error) window.Settings.error(); });
         };
         
         (function() {
             const version = Date.now();
-            document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-                if (link.href && !link.href.includes('telegram')) {
-                    link.href = link.href.split('?')[0] + '?v=' + version;
-                }
-            });
-            
+            document.querySelectorAll('link[rel="stylesheet"]').forEach(link => { if (link.href && !link.href.includes('telegram')) link.href = link.href.split('?')[0] + '?v=' + version; });
             let telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
             if (telegramId) {
                 localStorage.setItem('telegram_id', telegramId);
-                
                 const cachedNick = localStorage.getItem('profile_nick');
                 if (cachedNick) {
                     setTimeout(() => {
-                        const nameEl = document.getElementById('profileName');
-                        if (nameEl && nameEl.textContent === '-') {
-                            nameEl.textContent = cachedNick;
-                        }
-                        const ageEl = document.getElementById('ageValue');
-                        if (ageEl && !ageEl.value) {
-                            ageEl.value = localStorage.getItem('profile_age') || '';
-                        }
-                        const steamEl = document.getElementById('steamDisplay');
-                        if (steamEl && !steamEl.value) {
-                            steamEl.value = localStorage.getItem('profile_steam') || '';
-                        }
-                        const faceitEl = document.getElementById('faceitLinkDisplay');
-                        if (faceitEl && !faceitEl.value) {
-                            faceitEl.value = localStorage.getItem('profile_faceit') || '';
-                        }
+                        const nameEl = document.getElementById('profileName'); if (nameEl && nameEl.textContent === '-') nameEl.textContent = cachedNick;
+                        const ageEl = document.getElementById('ageValue'); if (ageEl && !ageEl.value) ageEl.value = localStorage.getItem('profile_age') || '';
+                        const steamEl = document.getElementById('steamDisplay'); if (steamEl && !steamEl.value) steamEl.value = localStorage.getItem('profile_steam') || '';
+                        const faceitEl = document.getElementById('faceitLinkDisplay'); if (faceitEl && !faceitEl.value) faceitEl.value = localStorage.getItem('profile_faceit') || '';
                     }, 50);
                 }
-                
-                fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/profile/get', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ telegram_id: telegramId })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'ok') {
-                        if (data.nick) localStorage.setItem('profile_nick', data.nick);
-                        if (data.age) localStorage.setItem('profile_age', data.age);
-                        if (data.steam_link) localStorage.setItem('profile_steam', data.steam_link);
-                        if (data.faceit_link) localStorage.setItem('profile_faceit', data.faceit_link);
-                        
-                        const nameEl = document.getElementById('profileName');
-                        if (nameEl) nameEl.textContent = data.nick || '-';
-                        const ageEl = document.getElementById('ageValue');
-                        if (ageEl) ageEl.value = data.age || '';
-                        const steamEl = document.getElementById('steamDisplay');
-                        if (steamEl) steamEl.value = data.steam_link || '';
-                        const faceitEl = document.getElementById('faceitLinkDisplay');
-                        if (faceitEl) faceitEl.value = data.faceit_link || '';
+                fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/profile/get', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({telegram_id:telegramId}) })
+                .then(r=>r.json()).then(data=>{
+                    if(data.status==='ok'){ if(data.nick) localStorage.setItem('profile_nick',data.nick); if(data.age) localStorage.setItem('profile_age',data.age); if(data.steam_link) localStorage.setItem('profile_steam',data.steam_link); if(data.faceit_link) localStorage.setItem('profile_faceit',data.faceit_link);
+                        const nameEl=document.getElementById('profileName'); if(nameEl) nameEl.textContent=data.nick||'-';
+                        const ageEl=document.getElementById('ageValue'); if(ageEl) ageEl.value=data.age||'';
+                        const steamEl=document.getElementById('steamDisplay'); if(steamEl) steamEl.value=data.steam_link||'';
+                        const faceitEl=document.getElementById('faceitLinkDisplay'); if(faceitEl) faceitEl.value=data.faceit_link||'';
                     }
-                })
-                .catch(e => console.error('Profile preload error:', e));
+                }).catch(e=>console.error('Profile preload error:',e));
             }
-            
-            setTimeout(function() {
-                console.log('🧹 Очистка устаревших строк настроек...');
-                const allRows = document.querySelectorAll('.settings-row');
-                let deleted = 0;
-                allRows.forEach(row => {
-                    const label = row.querySelector('.settings-row-label');
-                    if (label) {
-                        const text = (label.innerText || '').toLowerCase();
-                        if (text.includes('реферальн') || text.includes('инвентарь')) {
-                            row.remove();
-                            deleted++;
-                            console.log('🗑️ Удалена:', text);
-                        }
-                    }
-                });
-                if (deleted > 0) console.log('✅ Удалено строк:', deleted);
-                else console.log('✅ Устаревших строк не найдено');
-            }, 200);
         })();
     </script>
     
     <div class="phone-frame">
-        
         <header class="header">
-            <div class="logo" onclick="Logo.handleClick()">
-                <span class="ping">Ping</span><span class="ster">ster</span>
-            </div>
+            <div class="logo" onclick="Logo.handleClick()"><span class="ping">Ping</span><span class="ster">ster</span></div>
             <div id="settingsIcon" class="icon-settings" onclick="App.openSettings()">
-                <svg viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/>
-                </svg>
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/></svg>
             </div>
         </header>
 
@@ -553,49 +161,19 @@
                 <div class="title-row"><div class="title-left"><div class="section-title">Ваш профиль</div><div class="edit-controls"><div id="editToggle" class="edit-title-icon" onclick="Profile.toggleEditMode()"><svg viewBox="0 0 24 24"><path d="M12 20h9" stroke="white" stroke-width="2"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="white" stroke-width="2"/></svg></div><div id="applyBtn" class="apply-btn" onclick="Profile.applyChanges()">Применить</div></div></div></div>
                 <div class="profile-header"><div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()"><div class="tg-avatar-svg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#ffffff" stroke-width="2" fill="none"/></svg></div></div><div class="profile-info"><div class="profile-name-label">ваш никнейм</div><div class="profile-name-row"><span id="profileName" class="profile-name" onclick="Profile.editName()">-</span></div></div></div>
                 <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Репутация</div>
-                        <div class="stat-value"><input id="ratingValue" placeholder="0" value="0" readonly disabled><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Возраст</div>
-                        <div class="stat-value"><input id="ageValue" placeholder="0-100" maxlength="3" readonly></div>
-                    </div>
+                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input id="ratingValue" placeholder="0" value="0" readonly disabled><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
+                    <div class="stat-card"><div class="stat-label">Возраст</div><div class="stat-value"><input id="ageValue" placeholder="0-100" maxlength="3" readonly></div></div>
                 </div>
                 <div class="profile-stats">
-                    <div class="profile-stat-card">
-                        <div class="profile-stat-label">Ссылка Steam</div>
-                        <div class="link-with-copy">
-                            <input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" readonly>
-                            <button class="copy-btn" onclick="copyToClipboard(document.getElementById('steamDisplay').value, this)">
-                                <svg viewBox="0 0 24 24" width="18" height="18">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="profile-stat-card">
-                        <div class="profile-stat-label">Ссылка Faceit</div>
-                        <div class="link-with-copy">
-                            <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit" readonly>
-                            <button class="copy-btn" onclick="copyToClipboard(document.getElementById('faceitLinkDisplay').value, this)">
-                                <svg viewBox="0 0 24 24" width="18" height="18">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+                    <div class="profile-stat-card"><div class="profile-stat-label">Ссылка Steam</div><div class="link-with-copy"><input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" readonly><button class="copy-btn" onclick="copyToClipboard(document.getElementById('steamDisplay').value, this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div></div>
+                    <div class="profile-stat-card"><div class="profile-stat-label">Ссылка Faceit</div><div class="link-with-copy"><input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit" readonly><button class="copy-btn" onclick="copyToClipboard(document.getElementById('faceitLinkDisplay').value, this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div></div>
                 </div>
                 <div class="friends-section"><div class="friends-header"><span class="friends-title">Ваши тиммейты: 0</span><div class="friends-actions"><div class="friends-arrow" onclick="Team.showTeamPage()"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div></div><div class="friends-list" id="friendsList"></div></div>
             </div>
 
             <!-- КОМАНДА -->
             <div id="teamScreen" class="screen team-screen">
-                <div class="team-header" style="display: flex; align-items: center; justify-content: flex-start; position: relative; padding: 12px 16px;">
-                    <div style="flex: 1;"></div>
-                </div>
+                <div class="team-header" style="display:flex;align-items:center;justify-content:flex-start;position:relative;padding:12px 16px;"><div style="flex:1;"></div></div>
                 <div class="team-tabs">
                     <div class="team-tab active" onclick="Team.switchTab('friends', this)">ВАШИ ТИММЕЙТЫ</div>
                     <div class="team-tab" onclick="Team.switchTab('leaderboard', this)">ЛИДЕРБОРД</div>
@@ -603,81 +181,44 @@
                 <div class="team-content" id="teamContent"></div>
             </div>
 
-            <!-- СВАЙП - ТОЛЬКО ЗДЕСЬ ЕСТЬ СТРЕЛКА -->
-            <div id="swipeScreen" class="screen swipe-screen">
-                <div class="back-arrow-swipe" onclick="App.goBack()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M15 18L9 12L15 6" stroke="#FF5500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+            <!-- АНКЕТЫ (НОВЫЙ ЭКРАН) -->
+            <div id="anketaScreen" class="screen anketa-screen">
+                <div class="team-header" style="display:flex;align-items:center;justify-content:flex-start;position:relative;padding:12px 16px;"><div style="flex:1;"></div></div>
+                <div class="team-tabs">
+                    <div class="team-tab active" onclick="Anketa.switchTab('my', this)">МОИ АНКЕТЫ</div>
+                    <div class="team-tab" onclick="Anketa.switchTab('likes', this)">ЛАЙКИ</div>
                 </div>
+                <div class="team-content" id="anketaContent">
+                    <div id="anketaMyTab" style="padding: 8px 0;">
+                        <div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div>
+                    </div>
+                    <div id="anketaLikesTab" style="display:none;padding:8px 0;">
+                        <div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- СВАЙП -->
+            <div id="swipeScreen" class="screen swipe-screen">
+                <div class="back-arrow-swipe" onclick="App.goBack()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#FF5500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
                 <div id="swipeContainer" class="swipe-container">
                     <div id="swipeCard" class="swipe-card">
-                        <div class="swipe-timer" id="swipeTimer">40с</div>
+                        <div class="swipe-timer" id="swipeTimer" style="display:none;">40с</div>
                         <div class="swipe-card-content">
                             <div id="swipeModeContent">
                                 <div class="swipe-player-row">
-                                    <div class="swipe-avatar">
-                                        <div class="tg-avatar-svg" style="width:70px;height:70px">
-                                            <svg width="35" height="35" viewBox="0 0 24 24">
-                                                <circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/>
-                                                <path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <div class="swipe-name-block">
-                                        <div class="swipe-player-id" id="swipePlayerId"></div>
-                                        <div class="swipe-player-nick" id="swipePlayerNick"></div>
-                                    </div>
-                                    <div class="swipe-rating-block">
-                                        <span class="swipe-rating-value" id="swipeRatingValue"></span>
-                                        <span class="heart-icon">
-                                            <svg width="18" height="18" viewBox="0 0 24 24">
-                                                <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#F5F5F5" stroke-width="2" fill="none"/>
-                                            </svg>
-                                        </span>
-                                    </div>
+                                    <div class="swipe-avatar"><div class="tg-avatar-svg" style="width:70px;height:70px"><svg width="35" height="35" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div>
+                                    <div class="swipe-name-block"><div class="swipe-player-id" id="swipePlayerId"></div><div class="swipe-player-nick" id="swipePlayerNick"></div></div>
+                                    <div class="swipe-rating-block"><span class="swipe-rating-value" id="swipeRatingValue"></span><span class="heart-icon"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="#F5F5F5" stroke-width="2" fill="none"/></svg></span></div>
                                 </div>
                                 <div class="swipe-stats-row three-cols">
-                                    <div class="swipe-stat-item">
-                                        <div class="swipe-stat-label">РАНГ</div>
-                                        <div class="swipe-stat-value" id="swipeRank"></div>
-                                    </div>
-                                    <div class="swipe-stat-item">
-                                        <div class="swipe-stat-label">ВОЗРАСТ</div>
-                                        <div class="swipe-stat-value" id="swipeAge"></div>
-                                    </div>
-                                    <div class="swipe-stat-item">
-                                        <div class="swipe-stat-label">СТИЛЬ</div>
-                                        <div class="swipe-stat-value" id="swipeStyle"></div>
-                                    </div>
+                                    <div class="swipe-stat-item"><div class="swipe-stat-label">РАНГ</div><div class="swipe-stat-value" id="swipeRank"></div></div>
+                                    <div class="swipe-stat-item"><div class="swipe-stat-label">ВОЗРАСТ</div><div class="swipe-stat-value" id="swipeAge"></div></div>
+                                    <div class="swipe-stat-item"><div class="swipe-stat-label" id="swipeStyleLabel" style="display:none;">СТИЛЬ</div><div class="swipe-stat-value" id="swipeStyle" style="display:none;"></div></div>
                                 </div>
-                                <div class="swipe-steam-container">
-                                    <div class="swipe-link-label">Ссылка Steam</div>
-                                    <div id="swipeSteamLink" class="swipe-link-value"></div>
-                                </div>
-                                <div class="swipe-faceit-container">
-                                    <div class="swipe-link-label">Ссылка Faceit</div>
-                                    <div id="swipeFaceitLink" class="swipe-link-value"></div>
-                                </div>
-                                <div class="swipe-comment">
-                                    <div class="swipe-comment-label">Комментарий</div>
-                                    <div class="swipe-comment-text" id="swipeComment"></div>
-                                </div>
-                            </div>
-                            
-                            <div id="waitingModeContent" style="display: none;">
-                                <div class="waiting-header">
-                                    <div class="waiting-timer" id="waitingTimer">40с</div>
-                                </div>
-                                <div class="waiting-avatars-container">
-                                    <div class="waiting-avatars">
-                                        <div class="waiting-self-avatar"><div class="tg-avatar-svg"></div></div>
-                                        <div class="waiting-line"><div class="waiting-line-pulse"></div></div>
-                                        <div class="waiting-teammate-avatar"><div class="tg-avatar-svg"></div></div>
-                                    </div>
-                                    <div class="waiting-status" id="waitingStatus">Ожидание тиммейта...</div>
-                                </div>
-                                <button class="waiting-chat-button disabled" id="waitingChatButton" disabled>Перейти в чат</button>
+                                <div class="swipe-steam-container"><div class="swipe-link-label">Ссылка Steam</div><div id="swipeSteamLink" class="swipe-link-value"></div></div>
+                                <div class="swipe-faceit-container"><div class="swipe-link-label">Ссылка Faceit</div><div id="swipeFaceitLink" class="swipe-link-value"></div></div>
+                                <div class="swipe-comment"><div class="swipe-comment-label">О себе</div><div class="swipe-comment-text" id="swipeComment"></div></div>
                             </div>
                         </div>
                     </div>
@@ -696,7 +237,6 @@
                 <div class="settings-section"><div class="settings-section-title">ОСНОВНЫЕ</div>
                     <div class="settings-row" onclick="Team.showTeamPage()"><span class="settings-row-label">тиммейты</span><span class="settings-arrow">→</span></div>
                 </div>
-
                 <div class="settings-section"><div class="settings-section-title">СОЦСЕТИ</div>
                     <a href="https://t.me/pingster_team_channel" target="_blank" class="settings-row-link"><span class="settings-row-label">Telegram канал</span><span class="settings-arrow">→</span></a>
                     <a href="https://tiktok.com/@pingster_team" target="_blank" class="settings-row-link"><span class="settings-row-label">TikTok</span><span class="settings-arrow">→</span></a>
@@ -709,167 +249,85 @@
             <!-- FACEIT -->
             <div id="faceitScreen" class="screen faceit-screen">
                 <div class="mode-header"><div class="mode-title faceit">FACEIT</div></div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
+                <div class="mode-subtitle">Введите ваши актуальные данные</div>
                 <div class="input-label">Faceit ELO <span>*обязательно</span></div>
                 <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000">
                 <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Репутация</div>
-                        <div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Возраст <span>*обязательно</span></div>
-                        <div class="stat-value"><input type="text" id="faceitAgeValue" placeholder="0-100" maxlength="3"></div>
-                    </div>
+                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
+                    <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="faceitAgeValue" placeholder="0-100" maxlength="3"></div></div>
                 </div>
                 <div class="input-label">Ссылка Faceit</div>
-                <div class="link-with-copy">
-                    <input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit">
-                    <button class="copy-btn" onclick="copyFieldValue('faceitLinkInput', this)">
-                        <svg viewBox="0 0 24 24" width="18" height="18">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/>
-                        </svg>
-                    </button>
-                </div>
-                <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
-                <div class="comment-section"><textarea class="comment-input" id="faceitComment" placeholder="Комментарий"></textarea></div>
-                <button class="mode-search-btn" onclick="Search.start('FACEIT', document.getElementById('faceitELOInput').value)">Начать поиск</button>
+                <div class="link-with-copy"><input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit"><button class="copy-btn" onclick="copyFieldValue('faceitLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
+                <div class="comment-section"><textarea class="comment-input" id="faceitComment" placeholder="О себе"></textarea></div>
+                <button class="mode-search-btn" onclick="Search.startBrowse('FACEIT', document.getElementById('faceitELOInput').value)">Смотреть анкеты</button>
             </div>
 
             <!-- PREMIER -->
             <div id="premierScreen" class="screen premier-screen">
                 <div class="mode-header"><div class="mode-title premier">PREMIER</div></div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
+                <div class="mode-subtitle">Введите ваши актуальные данные</div>
                 <div class="input-label">CS Rating <span>*обязательно</span></div>
                 <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-40000">
                 <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Репутация</div>
-                        <div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Возраст <span>*обязательно</span></div>
-                        <div class="stat-value"><input type="text" id="premierAgeValue" placeholder="0-100" maxlength="3"></div>
-                    </div>
+                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
+                    <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="premierAgeValue" placeholder="0-100" maxlength="3"></div></div>
                 </div>
                 <div class="input-label">Ссылка Steam</div>
-                <div class="link-with-copy">
-                    <input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam">
-                    <button class="copy-btn" onclick="copyFieldValue('premierSteamInput', this)">
-                        <svg viewBox="0 0 24 24" width="18" height="18">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/>
-                        </svg>
-                    </button>
-                </div>
-                <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
-                <div class="comment-section"><textarea class="comment-input" id="premierComment" placeholder="Комментарий"></textarea></div>
-                <button class="mode-search-btn" onclick="Search.start('PREMIER', document.getElementById('premierRatingInput').value)">Начать поиск</button>
+                <div class="link-with-copy"><input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam"><button class="copy-btn" onclick="copyFieldValue('premierSteamInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
+                <div class="comment-section"><textarea class="comment-input" id="premierComment" placeholder="О себе"></textarea></div>
+                <button class="mode-search-btn" onclick="Search.startBrowse('PREMIER', document.getElementById('premierRatingInput').value)">Смотреть анкеты</button>
             </div>
 
             <!-- PRIME -->
             <div id="primeScreen" class="screen prime-screen">
                 <div class="mode-header"><div class="mode-title prime">PRIME</div></div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
+                <div class="mode-subtitle">Введите ваши актуальные данные</div>
                 <div class="input-label">Звание <span>*обязательно</span></div>
                 <select class="rank-select" id="primeRankSelect">
                     <option value="">Выберите ранг</option>
-                    <option>Silver 1</option>
-                    <option>Silver 2</option>
-                    <option>Silver 3</option>
-                    <option>Silver 4</option>
-                    <option>Silver Elite</option>
-                    <option>Gold Nova 1</option>
-                    <option>Gold Nova 2</option>
-                    <option>Gold Nova 3</option>
-                    <option>Gold Nova Master</option>
-                    <option>Master Guardian 1</option>
-                    <option>Master Guardian 2</option>
-                    <option>Master Guardian Elite</option>
-                    <option>Distinguished Master Guardian</option>
-                    <option>Legendary Eagle</option>
-                    <option>Legendary Eagle Master</option>
-                    <option>Supreme Master First Class</option>
-                    <option>Global Elite</option>
+                    <option>Silver 1</option><option>Silver 2</option><option>Silver 3</option><option>Silver 4</option>
+                    <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option><option>Gold Nova 3</option>
+                    <option>Gold Nova Master</option><option>Master Guardian 1</option><option>Master Guardian 2</option>
+                    <option>Master Guardian Elite</option><option>Distinguished Master Guardian</option>
+                    <option>Legendary Eagle</option><option>Legendary Eagle Master</option>
+                    <option>Supreme Master First Class</option><option>Global Elite</option>
                 </select>
                 <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Репутация</div>
-                        <div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Возраст <span>*обязательно</span></div>
-                        <div class="stat-value"><input type="text" id="primeAgeValue" placeholder="0-100" maxlength="3"></div>
-                    </div>
+                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
+                    <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="primeAgeValue" placeholder="0-100" maxlength="3"></div></div>
                 </div>
                 <div class="input-label">Ссылка Steam</div>
-                <div class="link-with-copy">
-                    <input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam">
-                    <button class="copy-btn" onclick="copyFieldValue('primeSteamInput', this)">
-                        <svg viewBox="0 0 24 24" width="18" height="18">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/>
-                        </svg>
-                    </button>
-                </div>
-                <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
-                <div class="comment-section"><textarea class="comment-input" id="primeComment" placeholder="Комментарий"></textarea></div>
-                <button class="mode-search-btn" onclick="Search.start('PRIME', document.getElementById('primeRankSelect').value)">Начать поиск</button>
+                <div class="link-with-copy"><input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam"><button class="copy-btn" onclick="copyFieldValue('primeSteamInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
+                <div class="comment-section"><textarea class="comment-input" id="primeComment" placeholder="О себе"></textarea></div>
+                <button class="mode-search-btn" onclick="Search.startBrowse('PRIME', document.getElementById('primeRankSelect').value)">Смотреть анкеты</button>
             </div>
 
             <!-- PUBLIC -->
             <div id="publicScreen" class="screen public-screen">
                 <div class="mode-header"><div class="mode-title public">PUBLIC</div></div>
-                <div class="mode-subtitle">введите ваши актуальные данные</div>
+                <div class="mode-subtitle">Введите ваши актуальные данные</div>
                 <div class="input-label">Звание <span>*обязательно</span></div>
                 <select class="rank-select" id="publicRankSelect">
                     <option value="">Выберите ранг</option>
-                    <option>Silver 1</option>
-                    <option>Silver 2</option>
-                    <option>Silver 3</option>
-                    <option>Silver 4</option>
-                    <option>Silver Elite</option>
-                    <option>Gold Nova 1</option>
-                    <option>Gold Nova 2</option>
-                    <option>Gold Nova 3</option>
-                    <option>Gold Nova Master</option>
-                    <option>Master Guardian 1</option>
-                    <option>Master Guardian 2</option>
-                    <option>Master Guardian Elite</option>
-                    <option>Distinguished Master Guardian</option>
-                    <option>Legendary Eagle</option>
-                    <option>Legendary Eagle Master</option>
-                    <option>Supreme Master First Class</option>
-                    <option>Global Elite</option>
+                    <option>Silver 1</option><option>Silver 2</option><option>Silver 3</option><option>Silver 4</option>
+                    <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option><option>Gold Nova 3</option>
+                    <option>Gold Nova Master</option><option>Master Guardian 1</option><option>Master Guardian 2</option>
+                    <option>Master Guardian Elite</option><option>Distinguished Master Guardian</option>
+                    <option>Legendary Eagle</option><option>Legendary Eagle Master</option>
+                    <option>Supreme Master First Class</option><option>Global Elite</option>
                 </select>
                 <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-label">Репутация</div>
-                        <div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Возраст <span>*обязательно</span></div>
-                        <div class="stat-value"><input type="text" id="publicAgeValue" placeholder="0-100" maxlength="3"></div>
-                    </div>
+                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
+                    <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="publicAgeValue" placeholder="0-100" maxlength="3"></div></div>
                 </div>
                 <div class="input-label">Ссылка Steam</div>
-                <div class="link-with-copy">
-                    <input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam">
-                    <button class="copy-btn" onclick="copyFieldValue('publicSteamInput', this)">
-                        <svg viewBox="0 0 24 24" width="18" height="18">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/>
-                        </svg>
-                    </button>
-                </div>
-                <div class="play-style"><div class="style-option fan active" onclick="Search.setStyle('fan', this)">Fan</div><div class="style-option tryhard" onclick="Search.setStyle('tryhard', this)">Tryhard</div></div>
-                <div class="comment-section"><textarea class="comment-input" id="publicComment" placeholder="Комментарий"></textarea></div>
-                <button class="mode-search-btn" onclick="Search.start('PUBLIC', document.getElementById('publicRankSelect').value)">Начать поиск</button>
+                <div class="link-with-copy"><input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam"><button class="copy-btn" onclick="copyFieldValue('publicSteamInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
+                <div class="comment-section"><textarea class="comment-input" id="publicComment" placeholder="О себе"></textarea></div>
+                <button class="mode-search-btn" onclick="Search.startBrowse('PUBLIC', document.getElementById('publicRankSelect').value)">Смотреть анкеты</button>
             </div>
 
-            <!-- ПОИСК -->
-            <div id="searchScreen" class="screen search-screen">
+            <!-- ПОИСК (оставляем для совместимости, но скрываем) -->
+            <div id="searchScreen" class="screen search-screen" style="display:none;">
                 <div class="search-header"><div class="search-title" id="searchModeTitle">FACEIT</div><div class="search-timer" id="searchTimer">00:00</div></div>
                 <div class="search-status" id="searchStatus">Поиск тиммейта начат</div>
                 <div class="spinner"></div>
@@ -882,6 +340,10 @@
                 <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
                 <span class="nav-label">Главная</span>
             </div>
+            <div class="nav-item" onclick="App.showScreen('anketaScreen', true)" id="navAnketa">
+                <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18H4V4h16v16zM6 7h5v2H6V7zm0 4h8v2H6v-2zm0 4h12v2H6v-2z"/></svg></span>
+                <span class="nav-label">Анкеты</span>
+            </div>
             <div class="nav-item" onclick="App.showScreen('profileScreen', true)" id="navProfile">
                 <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
                 <span class="nav-label">Профиль</span>
@@ -891,83 +353,33 @@
 
     <script>
         function updateSettingsIcon() {
-            const settingsIcon = document.getElementById('settingsIcon');
-            const currentScreen = document.querySelector('.screen.active')?.id;
-            if (settingsIcon) {
-                if (currentScreen === 'settingsScreen') {
-                    settingsIcon.classList.add('active');
-                } else {
-                    settingsIcon.classList.remove('active');
-                }
-            }
+            const s = document.getElementById('settingsIcon');
+            const c = document.querySelector('.screen.active')?.id;
+            if (s) s.classList.toggle('active', c === 'settingsScreen');
         }
-        
         if (!window.App) window.App = {};
-        
-        window.App.openSettings = function() {
-            window.App.showScreen('settingsScreen', true);
-            setTimeout(updateSettingsIcon, 50);
-        };
-        
-        if (window.App && !window.App._originalShowScreen) {
-            window.App._originalShowScreen = window.App.showScreen;
-            window.App.showScreen = function(screenId, updateNav) {
-                window.App._originalShowScreen.call(window.App, screenId, updateNav);
-                setTimeout(updateSettingsIcon, 50);
-            };
-        }
+        window.App.openSettings = function() { window.App.showScreen('settingsScreen', true); setTimeout(updateSettingsIcon, 50); };
         
         (function() {
             const version = window.BUILD_VERSION || Date.now();
-            
-            const jsFiles = [
-                'js/config.js',
-                'js/globals.js', 
-                'js/app.js',
-                'js/settings.js',
-                'js/profile.js',
-                'js/avatar.js',
-                'js/friends.js',
-                'js/search.js',
-                'js/logo.js',
-                'js/team.js',
-                'js/swipe.js'
-            ];
-            
+            const jsFiles = ['js/config.js','js/globals.js','js/app.js','js/settings.js','js/profile.js','js/avatar.js','js/friends.js','js/search.js','js/logo.js','js/team.js','js/anketa.js','js/swipe.js'];
             let loadedCount = 0;
-            
             function loadScript(src) {
                 return new Promise((resolve) => {
                     const script = document.createElement('script');
                     script.src = src + '?v=' + version;
-                    script.onload = () => {
-                        loadedCount++;
-                        console.log(`✅ ${src.split('/').pop()} (${loadedCount}/${jsFiles.length})`);
-                        resolve();
-                    };
-                    script.onerror = () => {
-                        console.error(`❌ ${src}`);
-                        loadedCount++;
-                        resolve();
-                    };
+                    script.onload = () => { loadedCount++; console.log(`✅ ${src.split('/').pop()} (${loadedCount}/${jsFiles.length})`); resolve(); };
+                    script.onerror = () => { console.error(`❌ ${src}`); loadedCount++; resolve(); };
                     document.head.appendChild(script);
                 });
             }
-            
             Promise.all(jsFiles.map(file => loadScript(file))).then(() => {
                 console.log('🎉 Все скрипты загружены');
-                
                 const loader = document.getElementById('app-loader');
-                if (loader) {
-                    loader.style.opacity = '0';
-                    setTimeout(() => loader.remove(), 300);
-                }
-                
+                if (loader) { loader.style.opacity = '0'; setTimeout(() => loader.remove(), 300); }
                 setTimeout(() => {
                     if (window.Profile && !window.Profile.isProfileLoaded) {
-                        if (!window.Profile.telegramId) {
-                            window.Profile.telegramId = window.Profile.getTelegramId();
-                        }
+                        if (!window.Profile.telegramId) window.Profile.telegramId = window.Profile.getTelegramId();
                         window.Profile.loadProfileFromServer();
                         window.Profile.loadAvatar();
                     }
