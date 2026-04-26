@@ -41,39 +41,10 @@
         }
     }
 
-    // 🔥 ПРОСТАЯ ПРОВЕРКА ГОТОВНОСТИ ПРОФИЛЯ (без блокировок)
-    window.ensureProfileLoaded = function(callback) {
-        if (typeof Profile !== 'undefined' && Profile.isProfileLoaded) {
-            callback();
-            return;
-        }
-        
-        if (typeof Profile !== 'undefined' && Profile.isLoading) {
-            console.log('⏳ Ждём загрузки профиля...');
-            const checkInterval = setInterval(() => {
-                if (Profile.isProfileLoaded) {
-                    clearInterval(checkInterval);
-                    callback();
-                }
-            }, 100);
-            
-            setTimeout(() => {
-                clearInterval(checkInterval);
-                console.log('⚠️ Таймаут загрузки профиля, продолжаем');
-                callback();
-            }, 3000);
-            return;
-        }
-        
-        console.log('ℹ️ Profile ещё не инициализирован, продолжаем');
-        callback();
-    };
-
     // Функция для показа главного экрана
     function showMainScreen() {
         const mainScreen = document.getElementById('mainScreen');
         if (mainScreen) {
-            console.log('✅ mainScreen найден, показываем');
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             mainScreen.classList.add('active');
             
@@ -99,7 +70,7 @@
             setTimeout(() => {
                 updateUsername();
                 initUser();
-            }, 100);
+            }, 50);  // 🔥 БЫСТРЕЕ!
             initModules();
         });
     } else {
@@ -108,7 +79,7 @@
         setTimeout(() => {
             updateUsername();
             initUser();
-        }, 100);
+        }, 50);  // 🔥 БЫСТРЕЕ!
         initModules();
     }
     
@@ -116,11 +87,15 @@
         setTimeout(() => {
             try {
                 if (typeof Search !== 'undefined') Search.init();
+                if (typeof Profile !== 'undefined' && !Profile.isProfileLoaded) {
+                    Profile.loadProfileFromServer();
+                    Profile.loadAvatar();
+                }
                 console.log('✅ Модули инициализированы');
             } catch (e) {
                 console.error('Ошибка инициализации модулей:', e);
             }
-        }, 300);
+        }, 150);  // 🔥 БЫСТРЕЕ — 150мс вместо 300мс
     }
     
     function initUser() {
@@ -257,90 +232,18 @@ Object.assign(window.App, {
             setTimeout(() => overlay.remove(), 150);
         };
         
-        cancelBtn.onclick = () => {
-            close();
-            if (onCancel) onCancel();
-        };
-        
-        confirmBtn.onclick = () => {
-            close();
-            if (onConfirm) onConfirm();
-        };
+        cancelBtn.onclick = () => { close(); if (onCancel) onCancel(); };
+        confirmBtn.onclick = () => { close(); if (onConfirm) onConfirm(); };
         
         overlay.onclick = (e) => {
-            if (e.target === overlay) {
-                close();
-                if (onCancel) onCancel();
-            }
+            if (e.target === overlay) { close(); if (onCancel) onCancel(); }
         };
-        
-        cancelBtn.onmouseover = () => cancelBtn.style.opacity = '0.8';
-        cancelBtn.onmouseout = () => cancelBtn.style.opacity = '1';
-        confirmBtn.onmouseover = () => confirmBtn.style.opacity = '0.8';
-        confirmBtn.onmouseout = () => confirmBtn.style.opacity = '1';
     },
     
-    // 🔥 ПРОВЕРКА ФОРУМА ПЕРЕД ПОИСКОМ
+    // 🔥 ПРОВЕРКА ФОРУМА — ВРЕМЕННО ОТКЛЮЧЕНА!
     checkForumBeforeSearch: function(callback) {
-        const tg = window.Telegram?.WebApp;
-        const telegram_id = tg?.initDataUnsafe?.user?.id;
-        
-        if (!telegram_id) {
-            if (callback) callback(false);
-            return;
-        }
-        
-        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/check-forum', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: telegram_id })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.in_forum) {
-                // В форуме — продолжаем
-                if (callback) callback(true);
-            } else {
-                // Не в форуме — показываем предложение
-                this.showForumRequired(callback);
-            }
-        })
-        .catch(() => {
-            // Ошибка — пропускаем
-            if (callback) callback(true);
-        });
-    },
-    
-    // 🔥 ОКНО "ВСТУПИ В ФОРУМ"
-    showForumRequired: function(callback) {
-        this.showCustomPopup(
-            ' Поиск тиммейтов ',
-            'Чтобы начать поиск, вступи в наш форум.\n\n Это нужно для корректного создания матча',
-            () => {
-                // Нажал "Вступить" — открываем форум
-                const tg = window.Telegram?.WebApp;
-                if (tg?.openTelegramLink) {
-                    tg.openTelegramLink('https://t.me/pingster_team');
-                } else if (tg?.openLink) {
-                    tg.openLink('https://t.me/pingster_team');
-                } else {
-                    window.open('https://t.me/pingster_team', '_blank');
-                }
-                
-                // Ждём возврата и проверяем форум
-                setTimeout(() => {
-                    this.checkForumBeforeSearch(callback);
-                }, 2000);
-            },
-            () => {
-                // Нажал "Отмена"
-                console.log('Пользователь отказался вступать в форум');
-                if (callback) callback(false);
-            },
-            'Вступить',
-            'Отмена',
-            false
-        );
+        // 🔥 ПРОПУСКАЕМ ВСЕХ БЕЗ ПРОВЕРКИ ФОРУМА!
+        if (callback) callback(true);
     },
     
     checkSwipeAndExit: function(targetScreenId, updateNav) {
@@ -356,40 +259,27 @@ Object.assign(window.App, {
             ? 'Выйти из ожидания? Мэтч будет отменён.'
             : 'Выйти? Текущий мэтч будет отменён.';
         
-        this.showCustomPopup(
-            'Выйти?',
-            message,
+        this.showCustomPopup('Выйти?', message,
             () => {
                 const tg = window.Telegram?.WebApp;
                 if (Swipe.currentMatchId) {
                     const telegram_id = tg?.initDataUnsafe?.user?.id;
                     fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ telegram_id, match_id: Swipe.currentMatchId, response: 'reject' })
                     }).catch(e => console.error('Ошибка reject:', e));
                 }
                 Swipe.exitSwipeMode('navigation');
-                if (typeof Swipe.showToastMessage === 'function') {
-                    Swipe.showToastMessage('Поиск отменён', false);
-                }
+                if (typeof Swipe.showToastMessage === 'function') Swipe.showToastMessage('Поиск отменён', false);
                 this._doShowScreen(targetScreenId, updateNav);
             },
-            () => console.log('Остаёмся на экране'),
-            'Выйти',
-            'Остаться',
-            true
+            () => {}, 'Выйти', 'Остаться', true
         );
     },
     
     _doShowScreen: function(screenId, updateNav = true) {
         const screen = document.getElementById(screenId);
-        if (!screen) {
-            console.error(`❌ Экран не найден: ${screenId}`);
-            return;
-        }
-        
-        console.log('📱 Переход на экран:', screenId);
+        if (!screen) return;
         
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         screen.classList.add('active');
@@ -397,94 +287,52 @@ Object.assign(window.App, {
         
         if (updateNav) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            if (screenId === 'mainScreen') {
-                document.getElementById('navMain')?.classList.add('active');
-            } else if (screenId === 'profileScreen') {
-                document.getElementById('navProfile')?.classList.add('active');
-            }
-        }
-        
-        const settingsIcon = document.getElementById('settingsIcon');
-        if (settingsIcon) {
-            settingsIcon.classList.toggle('active', screenId === 'settingsScreen');
+            if (screenId === 'mainScreen') document.getElementById('navMain')?.classList.add('active');
+            else if (screenId === 'profileScreen') document.getElementById('navProfile')?.classList.add('active');
         }
         
         this.hapticFeedback('light');
         
-        if (screenId === 'profileScreen' && typeof Profile !== 'undefined') {
-            setTimeout(() => {
-                if (!Profile.isProfileLoaded && !Profile.isLoading) {
-                    Profile.loadProfileFromServer();
-                    Profile.loadAvatar();
-                } else if (Profile.updateDisplay) {
-                    Profile.updateDisplay();
-                }
-            }, 200);
-        }
-        
-        if (screenId === 'settingsScreen' && typeof Settings !== 'undefined') {
-            setTimeout(() => {
-                if (Settings.init) Settings.init();
-            }, 100);
-        }
-        
         const modeScreens = ['faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen'];
         if (modeScreens.includes(screenId)) {
             this.fillModeFields(screenId);
-            setTimeout(() => this.fillModeFields(screenId), 300);
         }
     },
     
     fillModeFields: function(screenId) {
-        let ageValue = '';
-        let steamLink = '';
-        let faceitLink = '';
-        let rating = '0';
+        let ageValue = localStorage.getItem('profile_age') || '';
+        let steamLink = localStorage.getItem('profile_steam') || '';
+        let faceitLink = localStorage.getItem('profile_faceit') || '';
+        let rating = localStorage.getItem('user_rating') || '0';
         
         if (typeof Profile !== 'undefined') {
-            ageValue = Profile.savedAge || '';
-            steamLink = Profile.savedSteam || '';
-            faceitLink = Profile.savedFaceitLink || '';
-            rating = Profile.savedRating || '0';
+            if (Profile.savedAge) ageValue = Profile.savedAge;
+            if (Profile.savedSteam) steamLink = Profile.savedSteam;
+            if (Profile.savedFaceitLink) faceitLink = Profile.savedFaceitLink;
+            if (Profile.savedRating) rating = String(Profile.savedRating);
         }
         
-        if (!ageValue) ageValue = localStorage.getItem('profile_age') || '';
-        if (!steamLink) steamLink = localStorage.getItem('profile_steam') || '';
-        if (!faceitLink) faceitLink = localStorage.getItem('profile_faceit') || '';
-        if (rating === '0' || !rating) rating = localStorage.getItem('user_rating') || '0';
-        
-        console.log(`📝 Заполняем поля для ${screenId}:`, { ageValue, steamLink, faceitLink, rating });
-        
-        setTimeout(() => {
-            if (screenId === 'faceitScreen') {
-                const ageInput = document.getElementById('faceitAgeValue');
-                const faceitInput = document.getElementById('faceitLinkInput');
-                if (ageInput && ageValue) ageInput.value = ageValue;
-                if (faceitInput && faceitLink) faceitInput.value = faceitLink;
-            } else if (screenId === 'premierScreen') {
-                const ageInput = document.getElementById('premierAgeValue');
-                const steamInput = document.getElementById('premierSteamInput');
-                if (ageInput && ageValue) ageInput.value = ageValue;
-                if (steamInput && steamLink) steamInput.value = steamLink;
-            } else if (screenId === 'primeScreen') {
-                const ageInput = document.getElementById('primeAgeValue');
-                const steamInput = document.getElementById('primeSteamInput');
-                if (ageInput && ageValue) ageInput.value = ageValue;
-                if (steamInput && steamLink) steamInput.value = steamLink;
-            } else if (screenId === 'publicScreen') {
-                const ageInput = document.getElementById('publicAgeValue');
-                const steamInput = document.getElementById('publicSteamInput');
-                if (ageInput && ageValue) ageInput.value = ageValue;
-                if (steamInput && steamLink) steamInput.value = steamLink;
-            }
-            
-            const ratingElement = document.getElementById(screenId + 'RatingValue') || 
-                                  document.querySelector(`#${screenId} .rating-value`);
-            if (ratingElement) {
-                const ratingNum = parseInt(rating) || 0;
-                ratingElement.textContent = (ratingNum > 0 ? '+' : '') + ratingNum;
-            }
-        }, 50);
+        if (screenId === 'faceitScreen') {
+            const ageInput = document.getElementById('faceitAgeValue');
+            const faceitInput = document.getElementById('faceitLinkInput');
+            if (ageInput && ageValue) ageInput.value = ageValue;
+            if (faceitInput && faceitLink) faceitInput.value = faceitLink;
+        } else if (screenId === 'premierScreen') {
+            const ageInput = document.getElementById('premierAgeValue');
+            const steamInput = document.getElementById('premierSteamInput');
+            if (ageInput && ageValue) ageInput.value = ageValue;
+            if (steamInput && steamLink) steamInput.value = steamLink;
+        } else if (screenId === 'primeScreen') {
+            const ageInput = document.getElementById('primeAgeValue');
+            const steamInput = document.getElementById('primeSteamInput');
+            if (ageInput && ageValue) ageInput.value = ageValue;
+            if (steamInput && steamLink) steamInput.value = steamLink;
+        } else if (screenId === 'publicScreen') {
+            const ageInput = document.getElementById('publicAgeValue');
+            const steamInput = document.getElementById('publicSteamInput');
+            if (ageInput && ageValue) ageInput.value = ageValue;
+            if (steamInput && steamLink) steamInput.value = steamLink;
+        }
     },
     
     showScreen: function(screenId, updateNav = true) {
@@ -492,37 +340,7 @@ Object.assign(window.App, {
     },
     
     goBack: function() {
-        const isInSwipe = (typeof Swipe !== 'undefined' && Swipe.currentMatchId);
-        const isInWaiting = (typeof Swipe !== 'undefined' && Swipe.isWaitingMode);
-        
-        const doExit = () => {
-            if (isInSwipe || isInWaiting) {
-                const tg = window.Telegram?.WebApp;
-                if (Swipe.currentMatchId) {
-                    const telegram_id = tg?.initDataUnsafe?.user?.id;
-                    fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/respond', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ telegram_id, match_id: Swipe.currentMatchId, response: 'reject' })
-                    }).catch(e => console.error('Ошибка reject при выходе:', e));
-                }
-                Swipe.exitSwipeMode('user_back');
-                if (typeof Swipe.showToastMessage === 'function') {
-                    Swipe.showToastMessage('Поиск отменён', false);
-                }
-            }
-            this._doShowScreen('mainScreen', true);
-        };
-        
-        if (isInSwipe || isInWaiting) {
-            const message = isInWaiting 
-                ? 'Выйти из ожидания? Мэтч будет отменён.'
-                : 'Выйти? Текущий мэтч будет отменён.';
-            
-            this.showCustomPopup('Выйти?', message, () => doExit(), () => console.log('Остаёмся'), 'Выйти', 'Остаться', true);
-        } else {
-            this.showCustomPopup('Выйти?', 'Вернуться на главный экран?', () => this._doShowScreen('mainScreen', true), () => console.log('Остаёмся'), 'Да', 'Нет', false);
-        }
+        this._doShowScreen('mainScreen', true);
     },
     
     showAlert: function(message) {
@@ -535,7 +353,6 @@ window.App = window.App;
 // ============================================
 // УДАЛЕНИЕ ЛОАДЕРА
 // ============================================
-
 window.addEventListener('load', function() {
     setTimeout(function() {
         const loader = document.getElementById('app-loader');
@@ -543,6 +360,5 @@ window.addEventListener('load', function() {
             loader.style.opacity = '0';
             setTimeout(() => loader.remove(), 300);
         }
-        console.log('✅ Лоадер удален');
-    }, 100);
+    }, 50);  // 🔥 БЫСТРЕЕ — 50мс вместо 100мс
 });
