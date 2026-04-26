@@ -1187,20 +1187,45 @@ const Swipe = {
     },
     
     openChatLink() {
-        let chatLink = this.chatLink || localStorage.getItem('currentChatLink');
-        let inviteLink = this.inviteLink || localStorage.getItem('currentInviteLink');
-        if (chatLink) {
-            const tg = window.Telegram?.WebApp;
-            if (inviteLink) {
-                if (tg?.openTelegramLink) { tg.openTelegramLink(inviteLink); setTimeout(() => tg.openTelegramLink(chatLink), 1500); }
-                else { window.open(inviteLink, '_blank'); setTimeout(() => window.open(chatLink, '_blank'), 1500); }
-            } else {
-                if (tg?.openTelegramLink) tg.openTelegramLink(chatLink);
-                else window.open(chatLink, '_blank');
-            }
-        } else {
+        const tg = window.Telegram?.WebApp;
+        const telegram_id = tg?.initDataUnsafe?.user?.id;
+        const chatLink = this.chatLink || localStorage.getItem('currentChatLink');
+        
+        if (!chatLink) {
             this.showToastMessage('Ссылка на чат не найдена', true);
+            return;
         }
+        
+        // Проверяем форум
+        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/check-forum', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: telegram_id })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.in_forum) {
+                // В форуме — сразу в чат
+                tg.openTelegramLink(chatLink);
+            } else {
+                // Не в форуме — показываем окно
+                window.App.showCustomPopup(
+                    '💬 Вступите в форум',
+                    'Мы не можем соединить вас в чате, потому что вы не состоите в форуме.\n\nВступите, и чат сразу откроется!',
+                    () => {
+                        tg.openTelegramLink('https://t.me/pingster_team');
+                    },
+                    null,
+                    'Вступить',
+                    'Закрыть',
+                    false
+                );
+            }
+        })
+        .catch(() => {
+            // Ошибка — просто открываем чат
+            tg.openTelegramLink(chatLink);
+        });
     },
     
     showPlayer(player) {
