@@ -1,66 +1,17 @@
 // ============================================
-// ПОИСК - v6.4 FINAL (ФИКС 409 + РАЗДЕЛЕНИЕ PRIME/PUBLIC)
+// АНКЕТЫ + ЛАЙКИ - Pingster v2.0
 // ============================================
 
-console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v6.4 FINAL)');
+console.log('🔥 SEARCH.JS ЗАГРУЖЕН (v2.0 - ANKETA MODE)');
 
 const Search = {
-    timerInterval: null,
-    seconds: 0,
     currentMode: '',
-    pollingInterval: null,
-    currentMatchId: null,
-    isSearching: false,
-    processedMatchIds: new Set(),
-    savedSearchParams: null,
-    _isRestarting: false,
-    _isCancelling: false,  // 🔥 ФЛАГ ЧТОБЫ НЕ ДВОЙНОЙ CANCEL
+    isBrowsing: false,
+    likedPlayerIds: new Set(),
     
     init() {
-        console.log('🚀 Search.init()');
-        this.resetTimer();
-        this.ensureMatchAccepted();
+        console.log('🚀 Search.init() v2.0');
         this.hookIntoScreenChange();
-    
-        if (!localStorage.getItem('selected_style')) {
-            localStorage.setItem('selected_style', 'fan');
-        }
-    
-        const savedStyle = localStorage.getItem('selected_style');
-        
-        setTimeout(() => {
-            document.querySelectorAll('.style-option').forEach(btn => {
-                btn.classList.remove('active');
-                btn.style.background = '';
-                btn.style.color = '';
-            });
-            
-            const activeBtns = document.querySelectorAll(`.style-option.${savedStyle}`);
-            activeBtns.forEach(btn => {
-                btn.classList.add('active');
-                btn.style.background = '#FF5500';
-                btn.style.color = 'white';
-            });
-        }, 100);
-    
-        const observer = new MutationObserver(() => {
-            const currentStyle = localStorage.getItem('selected_style') || 'fan';
-            const styleBtns = document.querySelectorAll('.style-option');
-            
-            styleBtns.forEach(btn => {
-                btn.classList.remove('active');
-                btn.style.background = '';
-                btn.style.color = '';
-            });
-            
-            const activeBtns = document.querySelectorAll(`.style-option.${currentStyle}`);
-            activeBtns.forEach(btn => {
-                btn.classList.add('active');
-                btn.style.background = '#FF5500';
-                btn.style.color = 'white';
-            });
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
     },
 
     hookIntoScreenChange() {
@@ -77,55 +28,25 @@ const Search = {
                     setTimeout(() => {
                         if (screenId === 'faceitScreen') {
                             self.fillFaceitScreen();
-                            self.setupFaceitValidation();
                         } else if (screenId === 'premierScreen') {
                             self.fillPremierScreen();
-                            self.setupPremierValidation();
                         } else if (screenId === 'primeScreen') {
                             self.fillPrimeScreen();
-                            self.setupPrimeValidation();
                         } else if (screenId === 'publicScreen') {
                             self.fillPublicScreen();
-                            self.setupPublicValidation();
                         }
-                        
-                        setTimeout(() => {
-                            let savedStyle = localStorage.getItem('selected_style') || 'fan';
-                            
-                            document.querySelectorAll('.style-option').forEach(btn => {
-                                btn.classList.remove('active');
-                                btn.style.background = '';
-                                btn.style.color = '';
-                            });
-                            
-                            const activeBtns = document.querySelectorAll(`.style-option.${savedStyle}`);
-                            activeBtns.forEach(btn => {
-                                btn.classList.add('active');
-                                btn.style.background = '#FF5500';
-                                btn.style.color = 'white';
-                            });
-                        }, 50);
                     }, 100);
                 };
             }
         }, 50);
     },
     
-    ensureMatchAccepted() {
-        if (!window.MatchAccepted) {
-            window.MatchAccepted = {
-                show(teammateInfo, chatLink) {
-                    if (window.Telegram?.WebApp?.openTelegramLink && chatLink) {
-                        window.Telegram.WebApp.openTelegramLink(chatLink);
-                    }
-                    App.showScreen('mainScreen', true);
-                }
-            };
-        }
-    },
-    
     getTelegramId() {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
+    },
+    
+    getPlayerId() {
+        return localStorage.getItem('player_id') || null;
     },
     
     getProfileData() {
@@ -133,271 +54,14 @@ const Search = {
             return {
                 age: window.Profile.savedAge || '',
                 steam: window.Profile.savedSteam || '',
-                faceit: window.Profile.savedFaceitLink || '',
-                rating: window.Profile.savedRating || 0
+                faceit: window.Profile.savedFaceitLink || ''
             };
         }
-        
         return {
             age: localStorage.getItem('profile_age') || '',
             steam: localStorage.getItem('profile_steam') || '',
-            faceit: localStorage.getItem('profile_faceit') || '',
-            rating: parseInt(localStorage.getItem('profile_rating')) || 0
+            faceit: localStorage.getItem('profile_faceit') || ''
         };
-    },
-    
-    updateRatingDisplayInSearch(screenId) {
-        const p = this.getProfileData();
-        const rating = p.rating || 0;
-        
-        let ratingInput = null;
-        
-        if (screenId === 'faceitScreen') {
-            ratingInput = document.querySelector('#faceitScreen .stat-card:first-child .stat-value input');
-        } else if (screenId === 'premierScreen') {
-            ratingInput = document.querySelector('#premierScreen .stat-card:first-child .stat-value input');
-        } else if (screenId === 'primeScreen') {
-            ratingInput = document.querySelector('#primeScreen .stat-card:first-child .stat-value input');
-        } else if (screenId === 'publicScreen') {
-            ratingInput = document.querySelector('#publicScreen .stat-card:first-child .stat-value input');
-        }
-        
-        if (ratingInput) {
-            ratingInput.value = (rating > 0 ? '+' : '') + rating;
-            
-            if (rating > 0) {
-                ratingInput.style.color = '#4CAF50';
-            } else if (rating < 0) {
-                ratingInput.style.color = '#FF3B30';
-            } else {
-                ratingInput.style.color = '#FFFFFF';
-            }
-        }
-    },
-    
-    validateSteamLink(link) {
-        if (!link || link.trim() === '') return true;
-        const patterns = [
-            /^https:\/\/steamcommunity\.com\/(id|profiles)\/[a-zA-Z0-9_-]+\/?$/,
-            /^https:\/\/s\.team\/[a-zA-Z0-9_-]+\/?$/
-        ];
-        return patterns.some(p => p.test(link.trim()));
-    },
-    
-    validateFaceitLink(link) {
-        if (!link || link.trim() === '') return true;
-        const pattern = /^https:\/\/www\.faceit\.com\/[a-z]{2}\/players\/[a-zA-Z0-9_-]+\/?$/;
-        return pattern.test(link.trim());
-    },
-    
-    showError(input, isError) {
-        if (!input) return;
-        if (isError) {
-            input.style.color = '#FF3B30';
-            input.style.borderColor = '#FF3B30';
-        } else {
-            input.style.color = '';
-            input.style.borderColor = '';
-        }
-    },
-    
-    setupCommentCounter(commentInput) {
-        if (!commentInput) return;
-        commentInput.setAttribute('maxlength', '100');
-        const parent = commentInput.parentElement;
-        let counter = parent.querySelector('.comment-counter');
-        if (!counter) {
-            counter = document.createElement('div');
-            counter.className = 'comment-counter';
-            counter.style.cssText = `
-                position: absolute;
-                bottom: 8px;
-                right: 12px;
-                font-size: 11px;
-                color: #8E97A6;
-                font-weight: 400;
-                pointer-events: none;
-            `;
-            parent.style.position = 'relative';
-            parent.appendChild(counter);
-        }
-        const updateCounter = () => {
-            const len = commentInput.value.length;
-            counter.textContent = `${len}/100`;
-            counter.style.color = len >= 100 ? '#FF3B30' : '#8E97A6';
-        };
-        updateCounter();
-        commentInput.addEventListener('input', updateCounter);
-    },
-    
-    setupFaceitValidation() {
-        const ageInput = document.getElementById('faceitAgeValue');
-        const ratingInput = document.getElementById('faceitELOInput');
-        const faceitInput = document.getElementById('faceitLinkInput');
-        const commentInput = document.getElementById('faceitComment');
-        
-        if (ageInput) {
-            ageInput.setAttribute('maxlength', '3');
-            ageInput.oninput = () => {
-                const val = ageInput.value;
-                const num = parseInt(val);
-                const valid = val === '' || (!isNaN(num) && num >= 0 && num <= 100);
-                this.showError(ageInput, !valid && val !== '');
-            };
-        }
-        
-        if (ratingInput) {
-            ratingInput.setAttribute('maxlength', '4');
-            ratingInput.oninput = () => {
-                const val = ratingInput.value;
-                const num = parseInt(val);
-                const valid = val === '' || (!isNaN(num) && num >= 0 && num <= 5000);
-                this.showError(ratingInput, !valid && val !== '');
-            };
-        }
-        
-        if (faceitInput) {
-            faceitInput.onblur = () => {
-                const val = faceitInput.value;
-                if (val && !this.validateFaceitLink(val)) {
-                    this.showError(faceitInput, true);
-                    if (typeof Profile !== 'undefined' && Profile.showToast) {
-                        Profile.showToast('Ссылка не валидна', true);
-                    }
-                } else {
-                    this.showError(faceitInput, false);
-                }
-            };
-            faceitInput.oninput = () => this.showError(faceitInput, false);
-        }
-        
-        if (commentInput) this.setupCommentCounter(commentInput);
-    },
-    
-    setupPremierValidation() {
-        const ageInput = document.getElementById('premierAgeValue');
-        const ratingInput = document.getElementById('premierRatingInput');
-        const steamInput = document.getElementById('premierSteamInput');
-        const commentInput = document.getElementById('premierComment');
-        
-        if (ageInput) {
-            ageInput.setAttribute('maxlength', '3');
-            ageInput.oninput = () => {
-                const val = ageInput.value;
-                const num = parseInt(val);
-                const valid = val === '' || (!isNaN(num) && num >= 0 && num <= 100);
-                this.showError(ageInput, !valid && val !== '');
-            };
-        }
-        
-        if (ratingInput) {
-            ratingInput.setAttribute('maxlength', '5');
-            ratingInput.oninput = () => {
-                const val = ratingInput.value;
-                const num = parseInt(val);
-                const valid = val === '' || (!isNaN(num) && num >= 0 && num <= 40000);
-                this.showError(ratingInput, !valid && val !== '');
-            };
-        }
-        
-        if (steamInput) {
-            steamInput.onblur = () => {
-                const val = steamInput.value;
-                if (val && !this.validateSteamLink(val)) {
-                    this.showError(steamInput, true);
-                    if (typeof Profile !== 'undefined' && Profile.showToast) {
-                        Profile.showToast('Ссылка не валидна', true);
-                    }
-                } else {
-                    this.showError(steamInput, false);
-                }
-            };
-            steamInput.oninput = () => this.showError(steamInput, false);
-        }
-        
-        if (commentInput) this.setupCommentCounter(commentInput);
-    },
-    
-    setupPrimeValidation() {
-        const ageInput = document.getElementById('primeAgeValue');
-        const rankSelect = document.getElementById('primeRankSelect');
-        const steamInput = document.getElementById('primeSteamInput');
-        const commentInput = document.getElementById('primeComment');
-        
-        if (ageInput) {
-            ageInput.setAttribute('maxlength', '3');
-            ageInput.oninput = () => {
-                const val = ageInput.value;
-                const num = parseInt(val);
-                const valid = val === '' || (!isNaN(num) && num >= 0 && num <= 100);
-                this.showError(ageInput, !valid && val !== '');
-            };
-        }
-        
-        if (rankSelect) {
-            rankSelect.onchange = () => {
-                const valid = rankSelect.value !== '' && rankSelect.value !== 'Выберите ранг';
-                this.showError(rankSelect, !valid);
-            };
-        }
-        
-        if (steamInput) {
-            steamInput.onblur = () => {
-                const val = steamInput.value;
-                if (val && !this.validateSteamLink(val)) {
-                    this.showError(steamInput, true);
-                    if (typeof Profile !== 'undefined' && Profile.showToast) {
-                        Profile.showToast('Ссылка не валидна', true);
-                    }
-                } else {
-                    this.showError(steamInput, false);
-                }
-            };
-            steamInput.oninput = () => this.showError(steamInput, false);
-        }
-        
-        if (commentInput) this.setupCommentCounter(commentInput);
-    },
-    
-    setupPublicValidation() {
-        const ageInput = document.getElementById('publicAgeValue');
-        const rankSelect = document.getElementById('publicRankSelect');
-        const steamInput = document.getElementById('publicSteamInput');
-        const commentInput = document.getElementById('publicComment');
-        
-        if (ageInput) {
-            ageInput.setAttribute('maxlength', '3');
-            ageInput.oninput = () => {
-                const val = ageInput.value;
-                const num = parseInt(val);
-                const valid = val === '' || (!isNaN(num) && num >= 0 && num <= 100);
-                this.showError(ageInput, !valid && val !== '');
-            };
-        }
-        
-        if (rankSelect) {
-            rankSelect.onchange = () => {
-                const valid = rankSelect.value !== '' && rankSelect.value !== 'Выберите ранг';
-                this.showError(rankSelect, !valid);
-            };
-        }
-        
-        if (steamInput) {
-            steamInput.onblur = () => {
-                const val = steamInput.value;
-                if (val && !this.validateSteamLink(val)) {
-                    this.showError(steamInput, true);
-                    if (typeof Profile !== 'undefined' && Profile.showToast) {
-                        Profile.showToast('Ссылка не валидна', true);
-                    }
-                } else {
-                    this.showError(steamInput, false);
-                }
-            };
-            steamInput.oninput = () => this.showError(steamInput, false);
-        }
-        
-        if (commentInput) this.setupCommentCounter(commentInput);
     },
     
     fillFaceitScreen() {
@@ -406,7 +70,6 @@ const Search = {
         const faceitInput = document.getElementById('faceitLinkInput');
         if (ageInput && p.age) ageInput.value = p.age;
         if (faceitInput && p.faceit) faceitInput.value = p.faceit;
-        this.updateRatingDisplayInSearch('faceitScreen');
     },
     
     fillPremierScreen() {
@@ -415,7 +78,6 @@ const Search = {
         const steamInput = document.getElementById('premierSteamInput');
         if (ageInput && p.age) ageInput.value = p.age;
         if (steamInput && p.steam) steamInput.value = p.steam;
-        this.updateRatingDisplayInSearch('premierScreen');
     },
     
     fillPrimeScreen() {
@@ -424,7 +86,6 @@ const Search = {
         const steamInput = document.getElementById('primeSteamInput');
         if (ageInput && p.age) ageInput.value = p.age;
         if (steamInput && p.steam) steamInput.value = p.steam;
-        this.updateRatingDisplayInSearch('primeScreen');
     },
     
     fillPublicScreen() {
@@ -433,176 +94,77 @@ const Search = {
         const steamInput = document.getElementById('publicSteamInput');
         if (ageInput && p.age) ageInput.value = p.age;
         if (steamInput && p.steam) steamInput.value = p.steam;
-        this.updateRatingDisplayInSearch('publicScreen');
     },
-    
-    setStyle(style, element) {
-        localStorage.setItem('selected_style', style);
-        const parent = element.parentElement;
-        parent.querySelectorAll('.style-option').forEach(opt => {
-            opt.classList.remove('active');
-            opt.style.background = '';
-            opt.style.color = '';
-        });
-        element.classList.add('active');
-        element.style.background = '#FF5500';
-        element.style.color = 'white';
-        if (window.Settings) Settings.click();
-    },
-    
-    start(mode, value) {
-        if (window.Settings) Settings.click();
-        this.savedSearchParams = { mode, value };
+
+    // 🔥 ЗАПУСК ПРОСМОТРА АНКЕТ (вместо поиска)
+    startBrowse(mode, value) {
+        this.currentMode = mode;
+        this.likedPlayerIds.clear();
         
-        // 🔥 СНАЧАЛА ПРОВЕРЯЕМ ФОРУМ, ПОТОМ ЗАПУСКАЕМ ВАЛИДАЦИЮ
-        if (window.App && window.App.checkForumBeforeSearch) {
-            window.App.checkForumBeforeSearch((inForum) => {
-                if (inForum) {
-                    setTimeout(() => this.doStartValidation(mode), 50);
-                } else {
-                    // Пользователь не в форуме и отказался вступать
-                    console.log('Поиск отменён: пользователь не в форуме');
-                }
-            });
-        } else {
-            // Если App не загружен — запускаем без проверки
-            setTimeout(() => this.doStartValidation(mode), 50);
-        }
-    },
-    
-    // 🔥 ПРИНУДИТЕЛЬНАЯ ОСТАНОВКА ПЕРЕД ЗАПУСКОМ
-        forceStopAndStart(mode, value) {
-            this._isRestarting = true;
-            
-            const telegram_id = this.getTelegramId();
-            if (!telegram_id) {
-                this._isRestarting = false;
-                return;
-            }
-            
-            // 🔥 СНАЧАЛА ПРОВЕРЯЕМ ФОРУМ
-            if (window.App && window.App.checkForumBeforeSearch) {
-                window.App.checkForumBeforeSearch((inForum) => {
-                    if (!inForum) {
-                        this._isRestarting = false;
-                        return;
-                    }
-                    
-                    fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ telegram_id: telegram_id })
-                    })
-                    .then(() => {
-                        setTimeout(() => {
-                            this._isRestarting = false;
-                            this.start(mode, value);
-                        }, 300);
-                    })
-                    .catch(() => {
-                        this._isRestarting = false;
-                        this.start(mode, value);
-                    });
-                });
-            } else {
-                fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ telegram_id: telegram_id })
-                })
-                .then(() => {
-                    setTimeout(() => {
-                        this._isRestarting = false;
-                        this.start(mode, value);
-                    }, 300);
-                })
-                .catch(() => {
-                    this._isRestarting = false;
-                    this.start(mode, value);
-                });
-            }
-        },
-    
-    doStartValidation(mode) {
-        let isValid = true;
-        let errorMsg = '';
-        
-        if (mode === 'FACEIT') {
-            const age = document.getElementById('faceitAgeValue')?.value || '';
-            const rating = document.getElementById('faceitELOInput')?.value || '';
-            const faceitLink = document.getElementById('faceitLinkInput')?.value || '';
-            
-            if (!age) { isValid = false; errorMsg = 'Укажите возраст'; }
-            else if (!rating) { isValid = false; errorMsg = 'Укажите Faceit ELO'; }
-            else if (faceitLink && !this.validateFaceitLink(faceitLink)) { isValid = false; errorMsg = 'Ссылка Faceit не валидна'; }
-            else {
-                const ageNum = parseInt(age);
-                const ratingNum = parseInt(rating);
-                if (ageNum < 0 || ageNum > 100) { isValid = false; errorMsg = 'Возраст 0-100'; }
-                else if (ratingNum < 0 || ratingNum > 5000) { isValid = false; errorMsg = 'ELO 0-5000'; }
-            }
-        } else if (mode === 'PREMIER') {
-            const age = document.getElementById('premierAgeValue')?.value || '';
-            const rating = document.getElementById('premierRatingInput')?.value || '';
-            const steamLink = document.getElementById('premierSteamInput')?.value || '';
-            
-            if (!age) { isValid = false; errorMsg = 'Укажите возраст'; }
-            else if (!rating) { isValid = false; errorMsg = 'Укажите CS Rating'; }
-            else if (steamLink && !this.validateSteamLink(steamLink)) { isValid = false; errorMsg = 'Ссылка Steam не валидна'; }
-            else {
-                const ageNum = parseInt(age);
-                const ratingNum = parseInt(rating);
-                if (ageNum < 0 || ageNum > 100) { isValid = false; errorMsg = 'Возраст 0-100'; }
-                else if (ratingNum < 0 || ratingNum > 40000) { isValid = false; errorMsg = 'Rating 0-40000'; }
-            }
-        } else if (mode === 'PRIME') {
-            const age = document.getElementById('primeAgeValue')?.value || '';
-            const rank = document.getElementById('primeRankSelect')?.value || '';
-            const steamLink = document.getElementById('primeSteamInput')?.value || '';
-            
-            if (!age) { isValid = false; errorMsg = 'Укажите возраст'; }
-            else if (!rank || rank === 'Выберите ранг') { isValid = false; errorMsg = 'Выберите ранг'; }
-            else if (steamLink && !this.validateSteamLink(steamLink)) { isValid = false; errorMsg = 'Ссылка Steam не валидна'; }
-            else {
-                const ageNum = parseInt(age);
-                if (ageNum < 0 || ageNum > 100) { isValid = false; errorMsg = 'Возраст 0-100'; }
-            }
-        } else if (mode === 'PUBLIC') {
-            const age = document.getElementById('publicAgeValue')?.value || '';
-            const rank = document.getElementById('publicRankSelect')?.value || '';
-            const steamLink = document.getElementById('publicSteamInput')?.value || '';
-            
-            if (!age) { isValid = false; errorMsg = 'Укажите возраст'; }
-            else if (!rank || rank === 'Выберите ранг') { isValid = false; errorMsg = 'Выберите ранг'; }
-            else if (steamLink && !this.validateSteamLink(steamLink)) { isValid = false; errorMsg = 'Ссылка Steam не валидна'; }
-            else {
-                const ageNum = parseInt(age);
-                if (ageNum < 0 || ageNum > 100) { isValid = false; errorMsg = 'Возраст 0-100'; }
-            }
-        }
-        
-        if (!isValid) {
-            if (typeof Profile !== 'undefined' && Profile.showToast) {
-                Profile.showToast(errorMsg, true);
-            } else {
-                App.showAlert(errorMsg);
-            }
+        const telegram_id = this.getTelegramId();
+        if (!telegram_id) {
+            App.showAlert('Ошибка авторизации');
             return;
         }
         
-        this.currentMode = mode;
-        this.isSearching = true;
-        this.processedMatchIds.clear();
-        
+        // Создаём/обновляем анкету
         const data = this.collectData(mode);
-        this.doSearch(mode, data);
+        
+        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/anketa/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                telegram_id: String(telegram_id),
+                mode: mode.toLowerCase(),
+                rank: String(data.rating || data.rank),
+                age: data.age || undefined,
+                steam_link: data.steam_link || undefined,
+                faceit_link: data.faceit_link || undefined,
+                about: data.comment || ''
+            })
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.status === 'ok') {
+                this.showNextAnketa(telegram_id, mode);
+            } else {
+                App.showAlert(res.message || 'Ошибка создания анкеты');
+            }
+        })
+        .catch(() => {
+            App.showAlert('Ошибка соединения');
+        });
+    },
+    
+    // 🔥 ПОЛУЧИТЬ СЛЕДУЮЩУЮ АНКЕТУ
+    showNextAnketa(telegram_id, mode) {
+        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/anketa/next', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                telegram_id: String(telegram_id),
+                mode: mode.toLowerCase()
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'ok' && data.anketa) {
+                this.showSwipe(data.anketa);
+            } else if (data.status === 'empty') {
+                // Анкеты кончились
+                if (typeof Swipe !== 'undefined' && Swipe.showToastMessage) {
+                    Swipe.showToastMessage('Анкеты закончились, заходи позже', false);
+                }
+                setTimeout(() => App.showScreen('mainScreen', true), 1000);
+            }
+        })
+        .catch(() => {
+            App.showScreen('mainScreen', true);
+        });
     },
     
     collectData(mode) {
-        const data = { style: 'fan', age: 0, steam_link: '', faceit_link: '', rating: 0, rank: '', comment: '' };
-        
-        const savedStyle = localStorage.getItem('selected_style');
-        data.style = savedStyle === 'tryhard' ? 'tryhard' : 'fan';
+        const data = { age: 0, steam_link: '', faceit_link: '', rating: 0, rank: '', comment: '' };
         
         if (mode === 'FACEIT') {
             data.rating = parseInt(document.getElementById('faceitELOInput')?.value) || 0;
@@ -628,120 +190,13 @@ const Search = {
         
         const steamFromStorage = localStorage.getItem('profile_steam');
         const faceitFromStorage = localStorage.getItem('profile_faceit');
-        
         if (!data.steam_link && steamFromStorage) data.steam_link = steamFromStorage;
         if (!data.faceit_link && faceitFromStorage) data.faceit_link = faceitFromStorage;
         
         return data;
     },
     
-    doSearch(mode, data) {
-        const telegram_id = this.getTelegramId();
-        if (!telegram_id) return App.showAlert('Ошибка авторизации');
-        
-        const currentScreen = document.querySelector('.screen.active')?.id;
-        if (currentScreen !== 'searchScreen') {
-            App.showScreen('searchScreen', true);
-        }
-        
-        const modeTitle = document.getElementById('searchModeTitle');
-        if (modeTitle) modeTitle.textContent = mode;
-        
-        this.resetTimer();
-        this.startTimer();
-        
-        // 🔥 КАЖДЫЙ РЕЖИМ ОТПРАВЛЯЕТ СВОЁ УНИКАЛЬНОЕ НАЗВАНИЕ
-        let backendMode = mode.toLowerCase();
-        
-        const requestBody = {
-            telegram_id: telegram_id,
-            mode: backendMode,  // 👈 ТЕПЕРЬ ОТПРАВЛЯЕТСЯ "prime" или "public"
-            rating_value: String(data.rating || data.rank),
-            style: data.style,
-            age: data.age,
-            steam_link: data.steam_link || null,
-            faceit_link: data.faceit_link || null,
-            comment: data.comment || ''
-        };
-        
-        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/start', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody)
-        })
-        .then(res => res.json())
-        .then(res => {
-            if (res.status === 'searching') {
-                this.startPolling();
-            } else if (res.status === 'match_found') {
-                this.showSwipe(res);
-            } else {
-                const errorMsg = res.message || res.error || 'Неизвестная ошибка';
-                if (typeof Profile !== 'undefined' && Profile.showToast) {
-                    Profile.showToast(errorMsg, true);
-                }
-                this.isSearching = false;
-                this.resetTimer();
-            }
-        })
-        .catch(() => {
-            if (typeof Profile !== 'undefined' && Profile.showToast) {
-                Profile.showToast('Ошибка соединения', true);
-            }
-            this.isSearching = false;
-            this.resetTimer();
-        });
-    },
-    
-    startPolling() {
-        this.pollingInterval = setInterval(() => {
-            if (!this.isSearching) return;
-            
-            fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/match/check', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: this.getTelegramId() })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.in_queue === false) {
-                    clearInterval(this.pollingInterval);
-                    this.pollingInterval = null;
-                    this.isSearching = false;
-                    
-                    if (typeof Swipe !== 'undefined' && Swipe.showToastMessage) {
-                        Swipe.showToastMessage('Поиск перезапущен', false);
-                    }
-                    
-                    const params = this.savedSearchParams || {};
-                    const mode = params.mode || this.currentMode;
-                    const value = params.value || '';
-                    
-                    setTimeout(() => this.forceStopAndStart(mode, value), 500);
-                    return;
-                }
-                
-                if (data.match_found && !this.processedMatchIds.has(data.match_id)) {
-                    this.processedMatchIds.add(data.match_id);
-                    clearInterval(this.pollingInterval);
-                    this.pollingInterval = null;
-                    this.showSwipe(data);
-                }
-            })
-            .catch(e => console.error('Poll error:', e));
-        }, 2000);
-    },
-    
-    showSwipe(data) {
-        this.isSearching = false;
-        
-        if (this.pollingInterval) clearInterval(this.pollingInterval);
-        if (this.timerInterval) clearInterval(this.timerInterval);
-        
-        if (data.opponent && !data.opponent.mode) {
-            data.opponent.mode = this.currentMode;
-        }
-        
+    showSwipe(anketa) {
         if (window.App && window.App.showScreen) {
             window.App.showScreen('swipeScreen', false);
         } else {
@@ -750,60 +205,33 @@ const Search = {
         }
         
         if (typeof Swipe !== 'undefined') {
-            Swipe.startWithOpponent(data.opponent, data.match_id, data.expires_at, null);
+            Swipe.startWithAnketa(anketa, this.currentMode);
         } else {
             App.showScreen('mainScreen', true);
         }
     },
     
-    startTimer() {
-        this.seconds = 0;
-        this.timerInterval = setInterval(() => {
-            this.seconds++;
-            const m = Math.floor(this.seconds / 60).toString().padStart(2, '0');
-            const s = (this.seconds % 60).toString().padStart(2, '0');
-            const timer = document.getElementById('searchTimer');
-            if (timer) timer.textContent = `${m}:${s}`;
-        }, 1000);
-    },
-    
-    resetTimer() {
-        if (this.timerInterval) clearInterval(this.timerInterval);
-        this.timerInterval = null;
-        this.seconds = 0;
-        const timer = document.getElementById('searchTimer');
-        if (timer) timer.textContent = '00:00';
-    },
-    
-    cancel() {
-        // 🔥 ЗАЩИТА ОТ ДВОЙНОГО ВЫЗОВА
-        if (this._isCancelling) return;
-        this._isCancelling = true;
-        
-        // 🔥 ПРИНУДИТЕЛЬНО ОСТАНАВЛИВАЕМ ПОИСК
+    // 🔥 ЛАЙК
+    likePlayer(likedPlayerId, callback) {
         const telegram_id = this.getTelegramId();
-        if (telegram_id) {
-            fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/search/stop', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: telegram_id })
-            }).finally(() => {
-                this._isCancelling = false;
-            });
-        } else {
-            this._isCancelling = false;
-        }
+        if (!telegram_id) return;
         
-        this.resetTimer();
-        if (this.pollingInterval) {
-            clearInterval(this.pollingInterval);
-            this.pollingInterval = null;
-        }
-        this.isSearching = false;
-        
-        if (!this._isRestarting) {
-            App.showScreen('mainScreen', true);
-        }
+        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/like', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                telegram_id: String(telegram_id),
+                liked_player_id: likedPlayerId
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            this.likedPlayerIds.add(likedPlayerId);
+            if (callback) callback(data);
+        })
+        .catch(() => {
+            if (callback) callback(null);
+        });
     }
 };
 
