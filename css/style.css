@@ -2084,7 +2084,7 @@ input:checked + .slider:before {
 
 .comment-section {
     width: 100%;
-    margin: 1vh 0;
+    margin: 0;
 }
 
 .comment-label {
