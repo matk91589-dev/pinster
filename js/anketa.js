@@ -1,15 +1,15 @@
 // ============================================
-// АНКЕТЫ + ЛАЙКИ - Экран управления v2.0
+// АНКЕТЫ + ЛАЙКИ - Экран управления v2.1
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v2.0)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v2.1)');
 
 const Anketa = {
     currentTab: 'my',
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
 
     init() {
-        console.log('🚀 Anketa.init() v2.0');
+        console.log('🚀 Anketa.init() v2.1');
         this.loadMyAnketas();
     },
 
@@ -36,10 +36,6 @@ const Anketa = {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
     },
 
-    getPlayerId() {
-        return localStorage.getItem('player_id') || null;
-    },
-
     // 🔥 ЗАГРУЗКА МОИХ АНКЕТ
     loadMyAnketas() {
         const container = document.getElementById('anketaMyTab');
@@ -48,11 +44,11 @@ const Anketa = {
 
         const telegram_id = this.getTelegramId();
         if (!telegram_id) {
-            container.innerHTML = '<div class="anketa-empty"><div class="anketa-empty-icon">📝</div>Ошибка авторизации</div>';
+            container.innerHTML = '<div class="anketa-empty">Ошибка авторизации</div>';
             return;
         }
 
-        // Загружаем профиль для получения аватарки и данных
+        // Загружаем профиль для получения аватарки
         fetch(`${this.BACKEND_URL}/api/profile/get`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -60,56 +56,60 @@ const Anketa = {
         })
         .then(r => r.json())
         .then(profile => {
-            // Показываем плашки независимо от профиля
-            const modes = [
-                { id: 'faceit', name: 'FACEIT', icon: 'F', cls: 'faceit' },
-                { id: 'premier', name: 'PREMIER', icon: 'P', cls: 'premier' },
-                { id: 'prime', name: 'PRIME', icon: 'R', cls: 'prime' },
-                { id: 'public', name: 'PUBLIC', icon: 'B', cls: 'public' }
-            ];
-
             const avatarUrl = profile?.avatar || localStorage.getItem('profile_avatar') || null;
 
-            let html = '<div class="anketa-empty"><div class="anketa-empty-icon">📝</div>Нет созданных анкет</div>';
+            const modes = [
+                { id: 'faceit', name: 'FACEIT', cls: 'faceit' },
+                { id: 'premier', name: 'PREMIER', cls: 'premier' },
+                { id: 'prime', name: 'PRIME', cls: 'prime' },
+                { id: 'public', name: 'PUBLIC', cls: 'public' }
+            ];
+
+            let html = '';
+
+            // Центрированная надпись
+            html += '<div class="anketa-empty">У вас нет созданных анкет</div>';
+
+            // Разделитель
             html += '<div class="anketa-divider"></div>';
 
+            // Плашки как на стартовом экране
             modes.forEach(m => {
                 const avatarHtml = avatarUrl
-                    ? `<img src="${avatarUrl}" alt="${m.name}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`
-                    : m.icon;
+                    ? `<span class="anketa-mode-avatar" style="background-image:url(${avatarUrl})"></span>`
+                    : `<span class="anketa-mode-letter">${m.name[0]}</span>`;
 
                 html += `
-                <div class="anketa-card" onclick="App.showScreen('${m.id}Screen', true)">
-                    <div class="anketa-card-icon ${m.cls}">${avatarHtml}</div>
-                    <div class="anketa-card-info">
-                        <div class="anketa-card-title">${m.name}</div>
-                        <div class="anketa-card-subtitle">Создать / Обновить</div>
+                <div class="mode-btn ${m.cls}" onclick="App.showScreen('${m.id}Screen', true)" style="display:flex;align-items:center;gap:12px;cursor:pointer;">
+                    ${avatarHtml}
+                    <div style="flex:1;display:flex;flex-direction:column;">
+                        <span class="mode-btn-title">${m.name}</span>
+                        <span class="mode-btn-subtitle">Создать / Обновить</span>
                     </div>
-                    <div class="anketa-card-arrow">→</div>
+                    <span class="mode-btn-arrow">→</span>
                 </div>`;
             });
 
             container.innerHTML = html;
         })
         .catch(() => {
-            // Если профиль не загрузился — показываем плашки без аватарки
             const modes = [
-                { id: 'faceit', name: 'FACEIT', icon: 'F', cls: 'faceit' },
-                { id: 'premier', name: 'PREMIER', icon: 'P', cls: 'premier' },
-                { id: 'prime', name: 'PRIME', icon: 'R', cls: 'prime' },
-                { id: 'public', name: 'PUBLIC', icon: 'B', cls: 'public' }
+                { id: 'faceit', name: 'FACEIT', cls: 'faceit' },
+                { id: 'premier', name: 'PREMIER', cls: 'premier' },
+                { id: 'prime', name: 'PRIME', cls: 'prime' },
+                { id: 'public', name: 'PUBLIC', cls: 'public' }
             ];
-            let html = '<div class="anketa-empty"><div class="anketa-empty-icon">📝</div>Нет созданных анкет</div>';
+            let html = '<div class="anketa-empty">У вас нет созданных анкет</div>';
             html += '<div class="anketa-divider"></div>';
             modes.forEach(m => {
                 html += `
-                <div class="anketa-card" onclick="App.showScreen('${m.id}Screen', true)">
-                    <div class="anketa-card-icon ${m.cls}">${m.icon}</div>
-                    <div class="anketa-card-info">
-                        <div class="anketa-card-title">${m.name}</div>
-                        <div class="anketa-card-subtitle">Создать / Обновить</div>
+                <div class="mode-btn ${m.cls}" onclick="App.showScreen('${m.id}Screen', true)" style="display:flex;align-items:center;gap:12px;cursor:pointer;">
+                    <span class="anketa-mode-letter">${m.name[0]}</span>
+                    <div style="flex:1;display:flex;flex-direction:column;">
+                        <span class="mode-btn-title">${m.name}</span>
+                        <span class="mode-btn-subtitle">Создать / Обновить</span>
                     </div>
-                    <div class="anketa-card-arrow">→</div>
+                    <span class="mode-btn-arrow">→</span>
                 </div>`;
             });
             container.innerHTML = html;
@@ -124,7 +124,7 @@ const Anketa = {
 
         const telegram_id = this.getTelegramId();
         if (!telegram_id) {
-            container.innerHTML = '<div class="anketa-empty"><div class="anketa-empty-icon">💔</div>Ошибка авторизации</div>';
+            container.innerHTML = '<div class="anketa-empty">Ошибка авторизации</div>';
             return;
         }
 
@@ -136,7 +136,7 @@ const Anketa = {
         .then(r => r.json())
         .then(data => {
             if (data.status !== 'ok') {
-                container.innerHTML = '<div class="anketa-empty"><div class="anketa-empty-icon">💔</div>Ошибка загрузки</div>';
+                container.innerHTML = '<div class="anketa-empty">Ошибка загрузки</div>';
                 return;
             }
 
@@ -145,35 +145,29 @@ const Anketa = {
             // Взаимные мэтчи
             if (data.mutual && data.mutual.length > 0) {
                 html += '<div class="likes-section-title" style="color:#4CAF50;">❤️ Взаимные мэтчи</div>';
-                data.mutual.forEach(m => {
-                    html += this.buildLikeItem(m, 'mutual');
-                });
+                data.mutual.forEach(m => html += this.buildLikeItem(m, 'mutual'));
             }
 
             // Тебя лайкнули
             if (data.liked_me && data.liked_me.length > 0) {
                 html += '<div class="likes-section-title" style="color:#FF5500;">👍 Тебя лайкнули</div>';
-                data.liked_me.forEach(m => {
-                    html += this.buildLikeItem(m, 'liked_me');
-                });
+                data.liked_me.forEach(m => html += this.buildLikeItem(m, 'liked_me'));
             }
 
             // Ты лайкнул
             if (data.i_liked && data.i_liked.length > 0) {
                 html += '<div class="likes-section-title" style="color:#8E97A6;">💔 Ты лайкнул (ждут ответа)</div>';
-                data.i_liked.forEach(m => {
-                    html += this.buildLikeItem(m, 'i_liked');
-                });
+                data.i_liked.forEach(m => html += this.buildLikeItem(m, 'i_liked'));
             }
 
             if (!html) {
-                html = '<div class="anketa-empty"><div class="anketa-empty-icon">💭</div>Пока нет лайков<br><br>Смотрите анкеты в любом режиме и лайкайте тиммейтов!</div>';
+                html = '<div class="anketa-empty">Пока нет лайков<br><br>Смотрите анкеты в любом режиме и лайкайте тиммейтов!</div>';
             }
 
             container.innerHTML = html;
         })
         .catch(() => {
-            container.innerHTML = '<div class="anketa-empty"><div class="anketa-empty-icon">💔</div>Ошибка загрузки</div>';
+            container.innerHTML = '<div class="anketa-empty">Ошибка загрузки</div>';
         });
     },
 
@@ -186,9 +180,11 @@ const Anketa = {
 
         let actionBtn = '';
         if (type === 'mutual') {
-            actionBtn = '<button class="like-item-action write">Написать</button>';
+            actionBtn = '<div class="friend-arrow" style="cursor:pointer;" onclick="Anketa.viewProfile(\'' + (m.liked_player_id || '') + '\')">→</div>';
         } else if (type === 'liked_me') {
             actionBtn = `<button class="like-item-action like-back" onclick="Anketa.likeBack('${m.liker_player_id}')">❤️ Лайкнуть</button>`;
+        } else {
+            actionBtn = '<div class="friend-arrow" style="cursor:pointer;opacity:0.3;">→</div>';
         }
 
         return `
@@ -200,6 +196,12 @@ const Anketa = {
             </div>
             ${actionBtn}
         </div>`;
+    },
+
+    // 🔥 ПОСМОТРЕТЬ ПРОФИЛЬ (заглушка на будущее)
+    viewProfile(playerId) {
+        console.log('🔍 Открыть профиль:', playerId);
+        // В будущем: App.showScreen('playerProfileScreen')
     },
 
     // 🔥 ЛАЙКНУТЬ В ОТВЕТ
