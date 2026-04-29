@@ -5402,3 +5402,71 @@ html, body { overflow-x: hidden !important; max-width: 100vw !important; }
 @media (hover: none) {
     * { transition: opacity 0.2s ease, color 0.2s ease !important; }
 }
+
+/* ===== СТИЛИ ДЛЯ ПЛАШЕК АНКЕТ ===== */
+.anketa-mode-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+}
+
+.anketa-mode-letter {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255,85,0,0.15);
+    color: #FF5500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.mode-btn-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #E5E7EB;
+}
+
+.mode-btn-subtitle {
+    font-size: 12px;
+    color: #8E97A6;
+    margin-top: 2px;
+}
+
+.mode-btn-arrow {
+    font-size: 22px;
+    color: #FF5500;
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+/* Разделитель */
+.anketa-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    margin: 16px 0;
+}
+
+/* Пустое состояние */
+.anketa-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #8E97A6;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Заголовки секций лайков */
+.likes-section-title {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px 4px 6px 4px;
+    letter-spacing: 0.3px;
+}
