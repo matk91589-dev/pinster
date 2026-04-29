@@ -5180,3 +5180,102 @@ button:active { transform: scale(0.96); }
     object-position: center !important;
 }
 
+/* ===== ЭКРАН АНКЕТ - ПРЕМИАЛЬНЫЙ СТИЛЬ ===== */
+
+/* Карточка анкеты */
+.anketa-card {
+    background: #1A1D24;
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid #2A2F3A;
+    position: relative;
+    overflow: hidden;
+}
+
+.anketa-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #FF5500;
+    border-radius: 0 4px 4px 0;
+}
+
+.anketa-card:hover {
+    background: #1F232B;
+    border-color: #FF5500;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255, 85, 0, 0.15);
+}
+
+.anketa-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.anketa-card-icon.faceit { background: rgba(0, 255, 0, 0.12); color: #4CAF50; }
+.anketa-card-icon.premier { background: rgba(255, 85, 0, 0.12); color: #FF5500; }
+.anketa-card-icon.prime { background: rgba(0, 150, 255, 0.12); color: #0096FF; }
+.anketa-card-icon.public { background: rgba(255, 255, 0, 0.12); color: #FFD600; }
+
+.anketa-card-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.anketa-card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #F5F5F5;
+}
+
+.anketa-card-subtitle {
+    font-size: 12px;
+    color: #8E97A6;
+}
+
+.anketa-card-arrow {
+    font-size: 22px;
+    color: #FF5500;
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+/* Разделитель */
+.anketa-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    margin: 14px 0;
+}
+
+/* Пустое состояние */
+.anketa-empty {
+    text-align: center;
+    padding: 30px 20px;
+    color: #8E97A6;
+    font-size: 14px;
+}
+
+.anketa-empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
