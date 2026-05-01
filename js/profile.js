@@ -127,16 +127,6 @@ const Profile = {
         } else { div.innerHTML = this.savedAvatar; }
     },
 
-    saveAvatarToServer(base64Image) {
-        if (!this.telegramId) this.telegramId = this.getTelegramId();
-        if (!this.telegramId) { this.showToast('Ошибка: нет Telegram ID', true); return; }
-        fetch(`${this.BACKEND_URL}/api/profile/avatar/update`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({telegram_id:this.telegramId, avatar_url:base64Image}) })
-        .then(r => r.json()).then(d => {
-            if (d.status === 'ok') { this.savedAvatarUrl = base64Image; localStorage.setItem('profile_avatar', base64Image); this.updateAvatarDisplay(); this.showToast('Аватар обновлён'); }
-            else this.showToast('Ошибка сохранения', true);
-        }).catch(() => this.showToast('Ошибка сохранения', true));
-    },
-
     updateDisplay() {
         const nameEl = document.getElementById('profileName'); if (nameEl) nameEl.textContent = this.editMode ? this.tempName : this.savedName;
         const ageEl = document.getElementById('ageValue'); if (ageEl) ageEl.value = this.editMode ? this.tempAge : this.savedAge;
@@ -222,7 +212,28 @@ const Profile = {
     editFaceitLink() { if (!this.editMode) { this.showToast('Для изменений\nперейдите в режим редактирования', true); return; } const el = document.getElementById('faceitLinkDisplay'); if (el) { el.focus(); el.select(); } },
 
     setupClickHandlers() {
-        const av = document.getElementById('profileAvatar'); if (av) { av.style.cursor = 'pointer'; av.onclick = () => { if (this.editMode) { if (window.Avatar?.select) Avatar.select(); } else this.showToast('Для изменений\nперейдите в режим редактирования', true); }; av.ondblclick = () => { this.savedAvatarUrl = null; localStorage.removeItem('profile_avatar'); this.loadAvatar(); this.showToast('Кэш аватара сброшен'); }; }
+        const av = document.getElementById('profileAvatar');
+        if (av) {
+            av.style.cursor = 'pointer';
+
+            // ОДИН КЛИК — полный экран (или выбор файла в режиме редактирования)
+            av.onclick = () => {
+                if (this.editMode) {
+                    if (window.Avatar?.select) Avatar.select();
+                } else {
+                    if (window.Avatar?.view) Avatar.view();
+                }
+            };
+
+            // ДВОЙНОЙ КЛИК — сброс кэша аватара
+            av.ondblclick = () => {
+                this.savedAvatarUrl = null;
+                localStorage.removeItem('profile_avatar');
+                this.loadAvatar();
+                this.showToast('Кэш аватара сброшен');
+            };
+        }
+
         const pn = document.getElementById('profileName'); if (pn) { pn.style.cursor = 'pointer'; pn.onclick = () => this.editName(); }
         ['ageValue','steamDisplay','faceitLinkDisplay'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('input', () => this.validateOnInput()); });
         document.getElementById('ageValue').maxLength = 3; document.getElementById('steamDisplay').maxLength = VALIDATION.STEAM.maxLength; document.getElementById('faceitLinkDisplay').maxLength = VALIDATION.FACEIT.maxLength;
