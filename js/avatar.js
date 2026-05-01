@@ -1,5 +1,5 @@
 // ============================================
-// АВАТАР - v2.1 (Полный экран + Drag & Drop)
+// АВАТАР - v2.2 (Полный экран + Drag & Drop)
 // ============================================
 
 const Avatar = {
@@ -26,9 +26,7 @@ const Avatar = {
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.88);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.75);
             z-index: 100000;
             display: flex;
             align-items: center;
@@ -36,17 +34,14 @@ const Avatar = {
             animation: avatarFadeIn 0.2s ease;
         `;
 
-        // Крестик (SVG)
+        // Крестик (только SVG, без круга)
         const closeBtn = document.createElement('div');
         closeBtn.style.cssText = `
             position: absolute;
             top: 20px;
             left: 20px;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(4px);
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -55,11 +50,11 @@ const Avatar = {
             transition: all 0.2s ease;
         `;
         closeBtn.innerHTML = `
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 9V5a1 1 0 0 1 1-1h4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
-                <path d="M20 9V5a1 1 0 0 0-1-1h-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
-                <path d="M4 15v4a1 1 0 0 0 1 1h4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
-                <path d="M20 15v4a1 1 0 0 1-1 1h-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 9V5a1 1 0 0 1 1-1h4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity="0.9"/>
+                <path d="M20 9V5a1 1 0 0 0-1-1h-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity="0.9"/>
+                <path d="M4 15v4a1 1 0 0 0 1 1h4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity="0.9"/>
+                <path d="M20 15v4a1 1 0 0 1-1 1h-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity="0.9"/>
                 <path d="M7 7L17 17" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
                 <path d="M17 7L7 17" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
             </svg>
@@ -67,12 +62,20 @@ const Avatar = {
 
         // Ховер на крестик
         closeBtn.onmouseover = () => {
-            closeBtn.style.background = 'rgba(255, 85, 0, 0.5)';
-            closeBtn.style.transform = 'scale(1.05)';
+            closeBtn.style.transform = 'scale(1.1)';
+            closeBtn.querySelector('svg').style.opacity = '0.7';
         };
         closeBtn.onmouseout = () => {
-            closeBtn.style.background = 'rgba(255, 255, 255, 0.08)';
             closeBtn.style.transform = 'scale(1)';
+            closeBtn.querySelector('svg').style.opacity = '1';
+        };
+
+        // Нажатие на крестик
+        closeBtn.onmousedown = () => {
+            closeBtn.style.transform = 'scale(0.9)';
+        };
+        closeBtn.onmouseup = () => {
+            closeBtn.style.transform = 'scale(1.1)';
         };
 
         // Изображение
