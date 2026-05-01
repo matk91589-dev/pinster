@@ -17,7 +17,6 @@
         #app-loader { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0D0F15; z-index: 999999; display: flex; align-items: center; justify-content: center; transition: opacity 0.3s ease; }
         .loader-spinner { width: 44px; height: 44px; border: 3px solid rgba(255,85,0,0.2); border-top: 3px solid #FF5500; border-radius: 50%; animation: loaderSpin 0.8s linear infinite; }
         @keyframes loaderSpin { to { transform: rotate(360deg); } }
-        .loader-spinner.hidden { display: none; }
         .icon-settings.active svg { stroke: #FF5500 !important; }
         .icon-settings:hover svg { stroke: #FF5500 !important; }
         .link-with-copy { position: relative; display: flex; align-items: center; width: 100%; }
@@ -30,11 +29,19 @@
         .input-label span { color: #FF3B30 !important; font-weight: 600 !important; font-size: 11px !important; margin-left: 4px !important; text-transform: lowercase !important; }
         .stat-label span { color: #FF3B30 !important; font-weight: 600 !important; font-size: 11px !important; margin-left: 4px !important; text-transform: lowercase !important; }
         .screen { position: relative; }
-    </style>
-    
-    <link rel="stylesheet" href="css/style.css">
-    
-    <style>
+
+        /* Плашка-заглушка */
+        .anketa-placeholder {
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed rgba(255,255,255,0.12);
+            border-radius: 14px;
+            padding: 32px 20px;
+            text-align: center;
+            color: #8E97A6;
+            font-size: 14px;
+            margin: 12px 0;
+        }
+
         .swipe-card { width: 420px !important; height: 420px !important; position: relative !important; }
         .swipe-card-content { display: flex !important; flex-direction: column !important; justify-content: space-between !important; height: 100% !important; flex: 1 !important; position: relative !important; }
         #swipeModeContent { display: flex !important; flex-direction: column !important; justify-content: space-between !important; flex: 1 !important; gap: 14px !important; }
@@ -65,7 +72,6 @@
         .back-arrow-swipe svg { width: 24px !important; height: 24px !important; stroke: #FF5500 !important; transition: stroke 0.2s ease !important; }
         .back-arrow-swipe:active svg { stroke: white !important; }
         
-        /* Стили для экрана анкет */
         .anketa-card { background: #1A1D24; border-radius: 12px; padding: 14px; margin: 8px 0; }
         .anketa-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .anketa-card-mode { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; }
@@ -73,8 +79,6 @@
         .anketa-card-mode.premier { background: rgba(255,85,0,0.15); color: #FF5500; }
         .anketa-card-mode.prime { background: rgba(0,150,255,0.15); color: #0096FF; }
         .anketa-card-mode.public { background: rgba(255,255,0,0.15); color: #FFD600; }
-        .anketa-card-rank { font-size: 14px; font-weight: 700; color: #FFFFFF; }
-        .anketa-card-about { font-size: 13px; color: #8E97A6; margin-top: 4px; }
         .anketa-empty { text-align: center; padding: 40px 20px; color: #8E97A6; font-size: 14px; }
         .like-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: #1A1D24; border-radius: 12px; margin: 8px 0; }
         .like-item-avatar { width: 40px; height: 40px; border-radius: 50%; background: #2A2F3A; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #FF5500; }
@@ -85,6 +89,8 @@
         .like-item-action.like-back { background: #FF5500; color: #fff; }
         .like-item-action.write { background: #2A2F3A; color: #fff; }
     </style>
+    
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div id="app-loader"><div class="loader-spinner"></div></div>
@@ -189,12 +195,66 @@
                     <div class="team-tab" onclick="Anketa.switchTab('likes', this)">ЛАЙКИ</div>
                 </div>
                 <div class="team-content" id="anketaContent">
-                    <div id="anketaMyTab" style="padding: 8px 0;">
-                        <div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div>
+                    <div id="anketaMyTab" style="padding: 8px 0;"><div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div></div>
+                    <div id="anketaLikesTab" style="display:none;padding:8px 0;"><div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div></div>
+                </div>
+            </div>
+
+            <!-- СОЗДАНИЕ АНКЕТЫ (НОВЫЙ ЭКРАН) -->
+            <div id="createAnketaScreen" class="screen faceit-screen">
+                <div class="mode-header"><div class="mode-title faceit">Создание анкеты</div></div>
+                <div class="mode-subtitle" id="createAnketaSubtitle">*создаем новую анкету</div>
+                
+                <div class="input-label">Режим <span>*обязательно</span></div>
+                <select class="rank-select" id="createAnketaMode" onchange="Anketa.onModeChange()">
+                    <option value="">Выберите режим</option>
+                    <option value="faceit">FACEIT</option>
+                    <option value="premier">PREMIER</option>
+                    <option value="prime">PRIME</option>
+                    <option value="public">PUBLIC</option>
+                </select>
+
+                <!-- Заглушка (видна пока режим не выбран) -->
+                <div id="createAnketaPlaceholder" class="anketa-placeholder">
+                    Выберите режим, чтобы<br>заполнить поля анкеты
+                </div>
+
+                <!-- Поля для всех режимов (скрыты пока режим не выбран) -->
+                <div id="createAnketaFields" style="display:none;">
+                    <!-- Для FACEIT/PREMIER -->
+                    <div id="createAnketaRatingField" style="display:none;">
+                        <div class="input-label" id="createAnketaRatingLabel">Faceit ELO <span>*обязательно</span></div>
+                        <input type="number" class="search-input-field" id="createAnketaRatingInput" placeholder="0-5000">
                     </div>
-                    <div id="anketaLikesTab" style="display:none;padding:8px 0;">
-                        <div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div>
+
+                    <!-- Для PRIME/PUBLIC -->
+                    <div id="createAnketaRankField" style="display:none;">
+                        <div class="input-label">Звание <span>*обязательно</span></div>
+                        <select class="rank-select" id="createAnketaRankSelect">
+                            <option value="">Выберите ранг</option>
+                            <option>Silver 1</option><option>Silver 2</option><option>Silver 3</option><option>Silver 4</option>
+                            <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option><option>Gold Nova 3</option>
+                            <option>Gold Nova Master</option><option>Master Guardian 1</option><option>Master Guardian 2</option>
+                            <option>Master Guardian Elite</option><option>Distinguished Master Guardian</option>
+                            <option>Legendary Eagle</option><option>Legendary Eagle Master</option>
+                            <option>Supreme Master First Class</option><option>Global Elite</option>
+                        </select>
                     </div>
+
+                    <div class="stats-row">
+                        <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
+                        <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="createAnketaAge" placeholder="0-100" maxlength="3"></div></div>
+                    </div>
+
+                    <div id="createAnketaLinkField" style="display:none;">
+                        <div class="input-label" id="createAnketaLinkLabel">Ссылка</div>
+                        <div class="link-with-copy"><input type="text" class="input-field" id="createAnketaLinkInput" placeholder="Ссылка"><button class="copy-btn" onclick="copyFieldValue('createAnketaLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
+                    </div>
+
+                    <div class="input-label">О себе</div>
+                    <div class="comment-section"><textarea class="comment-input" id="createAnketaAbout" placeholder="Введите комментарий"></textarea></div>
+
+                    <button class="mode-search-btn" onclick="Anketa.submitAnketa()">Создать анкету</button>
                 </div>
             </div>
 
@@ -330,7 +390,7 @@
                 <button class="mode-search-btn" onclick="Search.startBrowse('PUBLIC', document.getElementById('publicRankSelect').value)">Смотреть анкеты</button>
             </div>
 
-            <!-- ПОИСК (оставляем для совместимости, но скрываем) -->
+            <!-- ПОИСК (скрыт) -->
             <div id="searchScreen" class="screen search-screen" style="display:none;">
                 <div class="search-header"><div class="search-title" id="searchModeTitle">FACEIT</div><div class="search-timer" id="searchTimer">00:00</div></div>
                 <div class="search-status" id="searchStatus">Поиск тиммейта начат</div>
