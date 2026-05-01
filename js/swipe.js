@@ -123,7 +123,6 @@ const Swipe = {
     like() {
         this.animate(1);
 
-        // 🔥 Отправляем лайк через API
         if (this.current && this.current.player_id && window.Search) {
             Search.likePlayer(this.current.player_id, (data) => {
                 if (data && data.status === 'match') {
@@ -169,7 +168,6 @@ const Swipe = {
         }
     },
 
-    // 🔥 Вызывается из Search когда анкета получена
     startWithAnketa(anketa, mode) {
         this.mode = mode || anketa.mode;
         if (!this.initialized) this.init(this.mode);
@@ -179,6 +177,20 @@ const Swipe = {
     show(data) {
         this.current = data;
 
+        // АВАТАРКА КАК ФОН КАРТОЧКИ
+        const card = document.getElementById('swipeCard');
+        if (card) {
+            if (data.avatar && data.avatar !== 'null' && data.avatar !== '') {
+                card.style.backgroundImage = `url(${data.avatar})`;
+                card.style.backgroundSize = 'cover';
+                card.style.backgroundPosition = 'center';
+            } else {
+                card.style.backgroundImage = '';
+                card.style.background = 'var(--surface)';
+            }
+        }
+
+        // Информация поверх аватарки
         const nickEl = document.getElementById('swipePlayerNick');
         if (nickEl) nickEl.textContent = data.nick || '';
 
@@ -194,33 +206,21 @@ const Swipe = {
         const playerIdEl = document.getElementById('swipePlayerId');
         if (playerIdEl) playerIdEl.textContent = data.player_id || '';
 
-        this.updateAvatar(data);
+        const ratingEl = document.getElementById('swipeRatingValue');
+        if (ratingEl) {
+            const r = data.trust_rating || data.rating || 0;
+            ratingEl.textContent = (r > 0 ? '+' : '') + r;
+        }
+
         this.updateLinks(data);
     },
 
-    updateAvatar(p) {
-        const el = document.querySelector('.swipe-avatar .tg-avatar-svg');
-        if (!el) return;
-
-        if (p.avatar && p.avatar !== 'null' && p.avatar !== '') {
-            el.innerHTML = `<img src="${p.avatar}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
-        } else {
-            el.innerHTML = `<svg width="35" height="35" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="#FF5500" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#FF5500" stroke-width="2" fill="none"/></svg>`;
-        }
-    },
-
     updateLinks(data) {
-        // Steam
         const steamEl = document.getElementById('swipeSteamLink');
-        if (steamEl) {
-            steamEl.textContent = data.steam_link || 'Не указана';
-        }
+        if (steamEl) steamEl.textContent = data.steam_link || 'Не указана';
 
-        // Faceit
         const faceitEl = document.getElementById('swipeFaceitLink');
-        if (faceitEl) {
-            faceitEl.textContent = data.faceit_link || 'Не указана';
-        }
+        if (faceitEl) faceitEl.textContent = data.faceit_link || 'Не указана';
     },
 
     showToastMessage(message, isError = false) {
