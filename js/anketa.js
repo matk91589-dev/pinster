@@ -1,15 +1,15 @@
 // ============================================
-// АНКЕТЫ + ЛАЙКИ - Экран управления v2.2
+// АНКЕТЫ + ЛАЙКИ - Экран управления v2.3
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v2.2)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v2.3)');
 
 const Anketa = {
     currentTab: 'my',
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
 
     init() {
-        console.log('🚀 Anketa.init() v2.2');
+        console.log('🚀 Anketa.init() v2.3');
         this.loadMyAnketas();
     },
 
@@ -36,7 +36,7 @@ const Anketa = {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
     },
 
-    // 🔥 ЗАГРУЗКА МОИХ АНКЕТ
+    // 🔥 ЗАГРУЗКА МОИХ АНКЕТ (ОДНА ПЛАШКА)
     loadMyAnketas() {
         const container = document.getElementById('anketaMyTab');
         if (!container) return;
@@ -48,7 +48,6 @@ const Anketa = {
             return;
         }
 
-        // Проверяем есть ли уже созданные анкеты
         fetch(`${this.BACKEND_URL}/api/profile/get`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -56,33 +55,11 @@ const Anketa = {
         })
         .then(r => r.json())
         .then(profile => {
-            const avatarUrl = profile?.avatar || localStorage.getItem('profile_avatar') || null;
-
-            const modes = [
-                { id: 'faceit', name: 'FACEIT', cls: 'faceit' },
-                { id: 'premier', name: 'PREMIER', cls: 'premier' },
-                { id: 'prime', name: 'PRIME', cls: 'prime' },
-                { id: 'public', name: 'PUBLIC', cls: 'public' }
-            ];
-
             let html = '';
-
-            // Центрированная надпись
             html += '<div class="anketa-empty">У вас нет созданных анкет</div>';
-
-            // Разделитель
             html += '<div class="anketa-divider"></div>';
-
-            // Плашки ТОЧНО ТАКИЕ ЖЕ как на главном экране
             html += '<div class="mode-container">';
-
-            modes.forEach(m => {
-                html += `
-                <button class="mode-btn ${m.cls}" onclick="Anketa.goToMode('${m.id}')">
-                    ${m.name}
-                </button>`;
-            });
-
+            html += '<button class="mode-btn faceit" onclick="Anketa.goToCreateAnketa()">📝 Создать анкету</button>';
             html += '</div>';
 
             container.innerHTML = html;
@@ -91,79 +68,175 @@ const Anketa = {
             let html = '<div class="anketa-empty">У вас нет созданных анкет</div>';
             html += '<div class="anketa-divider"></div>';
             html += '<div class="mode-container">';
-            ['faceit','premier','prime','public'].forEach(m => {
-                html += `
-                <button class="mode-btn ${m}" onclick="Anketa.goToMode('${m}')">
-                    ${m.toUpperCase()}
-                </button>`;
-            });
+            html += '<button class="mode-btn faceit" onclick="Anketa.goToCreateAnketa()">📝 Создать анкету</button>';
             html += '</div>';
             container.innerHTML = html;
         });
     },
 
-    // 🔥 ПЕРЕХОД В РЕЖИМ (создать анкету или смотреть)
-    goToMode(modeId) {
-        // Переходим на экран режима
-        App.showScreen(modeId + 'Screen', true);
+    // 🔥 ПЕРЕХОД НА ЭКРАН СОЗДАНИЯ АНКЕТЫ
+    goToCreateAnketa() {
+        App.showScreen('createAnketaScreen', true);
 
-        // Меняем кнопку "Смотреть анкеты" на "Создать анкету" если анкеты ещё нет
         setTimeout(() => {
-            const searchBtn = document.querySelector(`#${modeId}Screen .mode-search-btn`);
-            if (searchBtn) {
-                // Проверяем есть ли анкета для этого режима
-                const telegram_id = this.getTelegramId();
-                fetch(`${this.BACKEND_URL}/api/anketa/next`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ telegram_id: String(telegram_id), mode: modeId })
-                })
-                .then(r => r.json())
-                .then(data => {
-                    if (data.status === 'empty' || data.status === 'error') {
-                        // Нет анкет — меняем на "Создать анкету"
-                        searchBtn.textContent = 'Создать анкету';
-                        searchBtn.onclick = () => {
-                            // Берём данные из полей и создаём анкету
-                            const mode = document.querySelector(`#${modeId}Screen .mode-title`)?.textContent || modeId.toUpperCase();
-                            let value = '';
-                            if (modeId === 'faceit') value = document.getElementById('faceitELOInput')?.value || '';
-                            else if (modeId === 'premier') value = document.getElementById('premierRatingInput')?.value || '';
-                            else if (modeId === 'prime') value = document.getElementById('primeRankSelect')?.value || '';
-                            else if (modeId === 'public') value = document.getElementById('publicRankSelect')?.value || '';
+            const modeSelect = document.getElementById('createAnketaMode');
+            const placeholder = document.getElementById('createAnketaPlaceholder');
+            const fields = document.getElementById('createAnketaFields');
+            const ratingField = document.getElementById('createAnketaRatingField');
+            const rankField = document.getElementById('createAnketaRankField');
+            const linkField = document.getElementById('createAnketaLinkField');
+            const subtitle = document.getElementById('createAnketaSubtitle');
 
-                            Search.startBrowse(mode, value);
+            if (modeSelect) modeSelect.value = '';
+            if (placeholder) placeholder.style.display = 'block';
+            if (fields) fields.style.display = 'none';
+            if (ratingField) ratingField.style.display = 'none';
+            if (rankField) rankField.style.display = 'none';
+            if (linkField) linkField.style.display = 'none';
+            if (subtitle) subtitle.textContent = '*создаем новую анкету';
 
-                            // После создания показываем интерактивное окно
-                            setTimeout(() => {
-                                App.showCustomPopup(
-                                    '✅ Анкета создана!',
-                                    'Теперь вы можете смотреть анкеты других игроков.',
-                                    () => { App.showScreen('swipeScreen', false); },
-                                    () => { App.showScreen('mainScreen', true); },
-                                    'Смотреть анкеты',
-                                    'На главную',
-                                    false
-                                );
-                            }, 500);
-                        };
-                    } else {
-                        // Есть анкеты — "Смотреть анкеты"
-                        searchBtn.textContent = 'Смотреть анкеты';
-                        searchBtn.onclick = () => {
-                            const mode = document.querySelector(`#${modeId}Screen .mode-title`)?.textContent || modeId.toUpperCase();
-                            let value = '';
-                            if (modeId === 'faceit') value = document.getElementById('faceitELOInput')?.value || '';
-                            else if (modeId === 'premier') value = document.getElementById('premierRatingInput')?.value || '';
-                            else if (modeId === 'prime') value = document.getElementById('primeRankSelect')?.value || '';
-                            else if (modeId === 'public') value = document.getElementById('publicRankSelect')?.value || '';
+            // Подставляем возраст из профиля
+            const savedAge = localStorage.getItem('profile_age') || (typeof Profile !== 'undefined' ? Profile.savedAge : '') || '';
+            const ageInput = document.getElementById('createAnketaAge');
+            if (ageInput && savedAge) ageInput.value = savedAge;
 
-                            Search.startBrowse(mode, value);
-                        };
-                    }
-                });
+            // Подставляем ссылки из профиля
+            const savedSteam = localStorage.getItem('profile_steam') || (typeof Profile !== 'undefined' ? Profile.savedSteam : '') || '';
+            const savedFaceit = localStorage.getItem('profile_faceit') || (typeof Profile !== 'undefined' ? Profile.savedFaceitLink : '') || '';
+            const linkInput = document.getElementById('createAnketaLinkInput');
+            if (linkInput) linkInput.value = savedSteam || savedFaceit || '';
+        }, 100);
+    },
+
+    // 🔥 ВЫБОР РЕЖИМА — ПОКАЗЫВАЕМ НУЖНЫЕ ПОЛЯ
+    onModeChange() {
+        const mode = document.getElementById('createAnketaMode').value;
+        const placeholder = document.getElementById('createAnketaPlaceholder');
+        const fields = document.getElementById('createAnketaFields');
+        const ratingField = document.getElementById('createAnketaRatingField');
+        const rankField = document.getElementById('createAnketaRankField');
+        const linkField = document.getElementById('createAnketaLinkField');
+        const ratingLabel = document.getElementById('createAnketaRatingLabel');
+        const ratingInput = document.getElementById('createAnketaRatingInput');
+        const linkLabel = document.getElementById('createAnketaLinkLabel');
+        const linkInput = document.getElementById('createAnketaLinkInput');
+        const subtitle = document.getElementById('createAnketaSubtitle');
+
+        if (!mode) {
+            if (placeholder) placeholder.style.display = 'block';
+            if (fields) fields.style.display = 'none';
+            return;
+        }
+
+        if (placeholder) placeholder.style.display = 'none';
+        if (fields) fields.style.display = 'block';
+
+        if (mode === 'faceit') {
+            if (subtitle) subtitle.textContent = '*создаем анкету для FACEIT';
+            if (ratingField) ratingField.style.display = 'block';
+            if (rankField) rankField.style.display = 'none';
+            if (ratingLabel) ratingLabel.innerHTML = 'Faceit ELO <span>*обязательно</span>';
+            if (ratingInput) { ratingInput.placeholder = '0-5000'; ratingInput.maxLength = 4; }
+            if (linkField) linkField.style.display = 'block';
+            if (linkLabel) linkLabel.textContent = 'Ссылка Faceit';
+            if (linkInput) linkInput.placeholder = 'Ссылка на Faceit';
+        } else if (mode === 'premier') {
+            if (subtitle) subtitle.textContent = '*создаем анкету для PREMIER';
+            if (ratingField) ratingField.style.display = 'block';
+            if (rankField) rankField.style.display = 'none';
+            if (ratingLabel) ratingLabel.innerHTML = 'CS Rating <span>*обязательно</span>';
+            if (ratingInput) { ratingInput.placeholder = '0-40000'; ratingInput.maxLength = 5; }
+            if (linkField) linkField.style.display = 'block';
+            if (linkLabel) linkLabel.textContent = 'Ссылка Steam';
+            if (linkInput) linkInput.placeholder = 'Ссылка на Steam';
+        } else if (mode === 'prime') {
+            if (subtitle) subtitle.textContent = '*создаем анкету для PRIME';
+            if (ratingField) ratingField.style.display = 'none';
+            if (rankField) rankField.style.display = 'block';
+            if (linkField) linkField.style.display = 'block';
+            if (linkLabel) linkLabel.textContent = 'Ссылка Steam';
+            if (linkInput) linkInput.placeholder = 'Ссылка на Steam';
+        } else if (mode === 'public') {
+            if (subtitle) subtitle.textContent = '*создаем анкету для PUBLIC';
+            if (ratingField) ratingField.style.display = 'none';
+            if (rankField) rankField.style.display = 'block';
+            if (linkField) linkField.style.display = 'block';
+            if (linkLabel) linkLabel.textContent = 'Ссылка Steam';
+            if (linkInput) linkInput.placeholder = 'Ссылка на Steam';
+        }
+
+        // Подставляем ссылку под режим
+        const savedSteam = localStorage.getItem('profile_steam') || (typeof Profile !== 'undefined' ? Profile.savedSteam : '') || '';
+        const savedFaceit = localStorage.getItem('profile_faceit') || (typeof Profile !== 'undefined' ? Profile.savedFaceitLink : '') || '';
+        if (linkInput) {
+            linkInput.value = (mode === 'faceit') ? savedFaceit : savedSteam;
+        }
+    },
+
+    // 🔥 ОТПРАВКА АНКЕТЫ
+    submitAnketa() {
+        const mode = document.getElementById('createAnketaMode').value;
+        const age = document.getElementById('createAnketaAge')?.value || '';
+        const about = document.getElementById('createAnketaAbout')?.value || '';
+        const linkInput = document.getElementById('createAnketaLinkInput')?.value || '';
+
+        let rank = '';
+        if (mode === 'faceit' || mode === 'premier') {
+            rank = document.getElementById('createAnketaRatingInput')?.value || '';
+        } else {
+            rank = document.getElementById('createAnketaRankSelect')?.value || '';
+        }
+
+        if (!mode) { App.showAlert('Выберите режим'); return; }
+        if (!age) { App.showAlert('Укажите возраст'); return; }
+        if (!rank || rank === 'Выберите ранг') {
+            const msg = (mode === 'faceit') ? 'Укажите Faceit ELO' : (mode === 'premier') ? 'Укажите CS Rating' : 'Выберите ранг';
+            App.showAlert(msg);
+            return;
+        }
+
+        const telegram_id = this.getTelegramId();
+        if (!telegram_id) { App.showAlert('Ошибка авторизации'); return; }
+
+        const body = {
+            telegram_id: String(telegram_id),
+            mode: mode,
+            rank: String(rank),
+            age: age,
+            about: about
+        };
+
+        if (mode === 'faceit') {
+            body.faceit_link = linkInput;
+        } else {
+            body.steam_link = linkInput;
+        }
+
+        fetch(`${this.BACKEND_URL}/api/anketa/create`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                App.showCustomPopup(
+                    '✅ Анкета создана!',
+                    'Теперь вы можете смотреть анкеты других игроков.',
+                    () => {
+                        Search.startBrowse(mode.toUpperCase(), rank);
+                        App.showScreen('swipeScreen', false);
+                    },
+                    () => { App.showScreen('mainScreen', true); },
+                    'Смотреть анкеты',
+                    'На главную',
+                    false
+                );
+            } else {
+                App.showAlert(data.message || 'Ошибка создания анкеты');
             }
-        }, 300);
+        })
+        .catch(() => { App.showAlert('Ошибка соединения'); });
     },
 
     // 🔥 ЗАГРУЗКА ЛАЙКОВ
