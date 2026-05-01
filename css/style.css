@@ -5539,3 +5539,35 @@ html, body {
     background: rgba(0,0,0,0.5) !important;
     backdrop-filter: blur(4px);
 }
+
+/* 💞 Пульс для взаимных мэтчей */
+@keyframes matchPulse {
+    0%, 100% { 
+        filter: drop-shadow(0 0 3px rgba(255,85,0,0.4));
+        transform: scale(1);
+    }
+    50% { 
+        filter: drop-shadow(0 0 10px rgba(255,85,0,0.8));
+        transform: scale(1.08);
+    }
+}
+
+.icon-match-pulse {
+    animation: matchPulse 2s ease-in-out infinite;
+}
+
+/* 👀 Дыхание для "Тебя лайкнули" */
+@keyframes eyeBreath {
+    0%, 100% { 
+        filter: drop-shadow(0 0 2px rgba(255,85,0,0.3));
+        opacity: 0.85;
+    }
+    50% { 
+        filter: drop-shadow(0 0 7px rgba(255,85,0,0.6));
+        opacity: 1;
+    }
+}
+
+.icon-eye-pulse {
+    animation: eyeBreath 3s ease-in-out infinite;
+}
