@@ -1,5 +1,5 @@
 // ============================================
-// АВАТАР - v2.0 (Полный экран + Drag & Drop)
+// АВАТАР - v2.1 (Полный экран + Drag & Drop)
 // ============================================
 
 const Avatar = {
@@ -17,7 +17,7 @@ const Avatar = {
             return;
         }
 
-        // Создаём оверлей
+        // Оверлей с затемнением (как в играх)
         const overlay = document.createElement('div');
         overlay.className = 'avatar-fullscreen-overlay';
         overlay.style.cssText = `
@@ -26,51 +26,67 @@ const Avatar = {
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.92);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 100000;
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: avatarFadeIn 0.25s ease;
+            animation: avatarFadeIn 0.2s ease;
         `;
 
-        // Крестик
+        // Крестик (SVG)
         const closeBtn = document.createElement('div');
         closeBtn.style.cssText = `
             position: absolute;
             top: 20px;
             left: 20px;
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 100001;
-            font-size: 20px;
-            color: #fff;
-            font-weight: 300;
-            transition: background 0.2s;
+            transition: all 0.2s ease;
         `;
-        closeBtn.textContent = '✕';
-        closeBtn.onmouseover = () => closeBtn.style.background = 'rgba(255, 85, 0, 0.6)';
-        closeBtn.onmouseout = () => closeBtn.style.background = 'rgba(255, 255, 255, 0.12)';
+        closeBtn.innerHTML = `
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 9V5a1 1 0 0 1 1-1h4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M20 9V5a1 1 0 0 0-1-1h-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M4 15v4a1 1 0 0 0 1 1h4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M20 15v4a1 1 0 0 1-1 1h-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M7 7L17 17" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+                <path d="M17 7L7 17" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        `;
+
+        // Ховер на крестик
+        closeBtn.onmouseover = () => {
+            closeBtn.style.background = 'rgba(255, 85, 0, 0.5)';
+            closeBtn.style.transform = 'scale(1.05)';
+        };
+        closeBtn.onmouseout = () => {
+            closeBtn.style.background = 'rgba(255, 255, 255, 0.08)';
+            closeBtn.style.transform = 'scale(1)';
+        };
 
         // Изображение
         const img = document.createElement('img');
         img.src = avatarUrl;
         img.style.cssText = `
-            max-width: 90vw;
-            max-height: 90vh;
+            max-width: 92vw;
+            max-height: 92vh;
             width: auto;
             height: auto;
             object-fit: contain;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            animation: avatarZoomIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         `;
 
         overlay.appendChild(closeBtn);
@@ -84,12 +100,16 @@ const Avatar = {
             setTimeout(() => overlay.remove(), 200);
         };
 
-        closeBtn.onclick = close;
-        overlay.onclick = (e) => {
-            if (e.target === overlay) close();
+        closeBtn.onclick = (e) => {
+            e.stopPropagation();
+            close();
         };
 
-        // Анимация появления
+        overlay.onclick = (e) => {
+            if (e.target === overlay || e.target === img) close();
+        };
+
+        // Анимации
         if (!document.querySelector('#avatar-fullscreen-style')) {
             const style = document.createElement('style');
             style.id = 'avatar-fullscreen-style';
@@ -97,6 +117,10 @@ const Avatar = {
                 @keyframes avatarFadeIn {
                     from { opacity: 0; }
                     to { opacity: 1; }
+                }
+                @keyframes avatarZoomIn {
+                    from { transform: scale(0.9); opacity: 0; }
+                    to { transform: scale(1); opacity: 1; }
                 }
             `;
             document.head.appendChild(style);
@@ -193,7 +217,6 @@ const Avatar = {
         reader.onload = async (e) => {
             const compressedBase64 = await this.compressImage(e.target.result);
 
-            // Обновляем отображение сразу
             const avatarDiv = document.getElementById('profileAvatar');
             if (avatarDiv) {
                 avatarDiv.innerHTML = `<img src="${compressedBase64}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;">`;
