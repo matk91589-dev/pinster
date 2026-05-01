@@ -1,15 +1,15 @@
 // ============================================
-// АНКЕТЫ + ЛАЙКИ - Экран управления v2.5
+// АНКЕТЫ + ЛАЙКИ - Экран управления v2.6
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v2.5)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v2.6)');
 
 const Anketa = {
     currentTab: 'my',
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
 
     init() {
-        console.log('🚀 Anketa.init() v2.5');
+        console.log('🚀 Anketa.init() v2.6');
         this.loadMyAnketas();
     },
 
@@ -36,7 +36,7 @@ const Anketa = {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
     },
 
-    // 🔥 ЗАГРУЗКА МОИХ АНКЕТ (СЛОТЫ С ВОПРОСИКОМ)
+    // 🔥 ЗАГРУЗКА МОИХ АНКЕТ
     loadMyAnketas() {
         const container = document.getElementById('anketaMyTab');
         if (!container) return;
@@ -55,12 +55,11 @@ const Anketa = {
             { id: 'public', name: 'PUBLIC', color: '#FFD600', bg: 'rgba(255,255,0,0.12)' }
         ];
 
-        // Загружаем анкеты
         fetch(`${this.BACKEND_URL}/api/anketa/list?telegram_id=${telegram_id}`)
             .then(r => r.json())
             .then(anketaData => {
                 const anketaMap = {};
-                if (anketaData.anketas) {
+                if (anketaData && anketaData.anketas) {
                     anketaData.anketas.forEach(a => { anketaMap[a.mode] = a; });
                 }
 
@@ -69,87 +68,80 @@ const Anketa = {
                     return (anketaMap[b.id] ? 1 : 0) - (anketaMap[a.id] ? 1 : 0);
                 });
 
-                let html = '';
+                let html = '<div class="anketa-scroll">';
 
-                sortedModes.forEach(m => {
+                sortedModes.forEach((m, index) => {
                     const anketa = anketaMap[m.id];
 
+                    // Бейджик режима
+                    html += `<div class="anketa-mode-badge" style="background:${m.bg};color:${m.color};margin-top:${index > 0 ? '8px' : '0'};">${m.name}</div>`;
+
                     if (anketa) {
-                        // ✅ ЗАПОЛНЕННЫЙ СЛОТ
+                        // ✅ ЗАПОЛНЕННАЯ КАРТОЧКА
                         html += `
-                        <div class="anketa-slot filled" style="border-left: 4px solid ${m.color};">
-                            <div class="anketa-slot-header">
-                                <span class="anketa-slot-badge" style="background:${m.bg};color:${m.color};">${m.name}</span>
-                                <span class="anketa-slot-rank">${anketa.rank || '—'}</span>
+                        <div class="anketa-card-filled" style="border-left: 4px solid ${m.color};">
+                            <div class="anketa-card-rank">${anketa.rank || '—'}</div>
+                            <div class="anketa-card-details">
+                                ${anketa.age ? `<span>${anketa.age} лет</span>` : ''}
+                                ${anketa.about ? `<span class="anketa-card-about-text">${anketa.about.substring(0, 60)}${anketa.about.length > 60 ? '...' : ''}</span>` : ''}
                             </div>
-                            <div class="anketa-slot-info">
-                                ${anketa.age ? `<span class="anketa-slot-age">${anketa.age} лет</span>` : ''}
-                                ${anketa.about ? `<span class="anketa-slot-about">${anketa.about.substring(0, 60)}${anketa.about.length > 60 ? '...' : ''}</span>` : ''}
-                            </div>
-                            <div class="anketa-slot-actions">
-                                <button class="anketa-slot-btn edit" onclick="Anketa.editAnketa('${m.id}')">✏️</button>
-                                <button class="anketa-slot-btn delete" onclick="Anketa.deleteAnketa('${m.id}')">🗑️</button>
-                            </div>
+                        </div>
+                        <div class="anketa-card-buttons">
+                            <button class="anketa-btn edit" onclick="Anketa.editAnketa('${m.id}')">✏️ Редактировать</button>
+                            <button class="anketa-btn delete" onclick="Anketa.deleteAnketa('${m.id}')">🗑️ Удалить</button>
                         </div>`;
                     } else {
-                        // ❌ ПУСТОЙ СЛОТ — КАРТОЧКА С ВОПРОСИКОМ
+                        // ❌ ПУСТАЯ КАРТОЧКА
                         html += `
-                        <div class="anketa-slot empty-card">
-                            <div class="anketa-slot-empty-content">
-                                <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
-                                    <defs>
-                                        <filter id="softGlow-${m.id}">
-                                            <feGaussianBlur stdDeviation="2.5" result="blur"/>
-                                            <feMerge>
-                                                <feMergeNode in="blur"/>
-                                                <feMergeNode in="SourceGraphic"/>
-                                            </feMerge>
-                                        </filter>
-                                    </defs>
-                                    <path d="M32 50V48" stroke="${m.color}" stroke-width="3" stroke-linecap="round" filter="url(#softGlow-${m.id})"/>
-                                    <path d="M24.5 25.5C24.5 20.8 27.8 18 32 18C36.2 18 39.5 20.8 39.5 25C39.5 29.5 35.8 31.2 33.8 32.8C32.5 33.8 32 34.8 32 37"
-                                        stroke="${m.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#softGlow-${m.id})"/>
-                                </svg>
-                                <div class="anketa-slot-mode-name" style="color:${m.color};">${m.name}</div>
-                            </div>
-                            <button class="anketa-slot-btn create" onclick="Anketa.goToMode('${m.id}')">Создать</button>
+                        <div class="anketa-card-empty">
+                            <svg width="80" height="80" viewBox="0 0 64 64" fill="none" class="anketa-question-icon">
+                                <path d="M32 48V50" stroke="${m.color}" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+                                <path d="M26 24.5C26 19.8 29.2 17 33 17C36.8 17 40 19.6 40 23.8C40 28 36.5 29.8 34.5 31.2C33.2 32.1 32.6 33 32.6 35.2"
+                                    stroke="${m.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.4"/>
+                                <circle cx="32" cy="53" r="2.2" fill="${m.color}" opacity="0.5"/>
+                            </svg>
+                            <div class="anketa-card-empty-text">Анкета не создана</div>
+                        </div>
+                        <div class="anketa-card-buttons">
+                            <button class="anketa-btn create" onclick="Anketa.goToMode('${m.id}')">Создать анкету</button>
                         </div>`;
+                    }
+
+                    // Разделитель (кроме последнего)
+                    if (index < sortedModes.length - 1) {
+                        html += '<div class="anketa-divider"></div>';
                     }
                 });
 
+                html += '</div>';
                 container.innerHTML = html;
             })
             .catch(() => {
-                // Fallback: все пустые слоты
-                let html = '';
-                modes.forEach(m => {
+                let html = '<div class="anketa-scroll">';
+                modes.forEach((m, index) => {
+                    html += `<div class="anketa-mode-badge" style="background:${m.bg};color:${m.color};margin-top:${index > 0 ? '8px' : '0'};">${m.name}</div>`;
                     html += `
-                    <div class="anketa-slot empty-card">
-                        <div class="anketa-slot-empty-content">
-                            <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
-                                <defs>
-                                    <filter id="softGlow-fb-${m.id}">
-                                        <feGaussianBlur stdDeviation="2.5" result="blur"/>
-                                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                                    </filter>
-                                </defs>
-                                <path d="M32 50V48" stroke="${m.color}" stroke-width="3" stroke-linecap="round" filter="url(#softGlow-fb-${m.id})"/>
-                                <path d="M24.5 25.5C24.5 20.8 27.8 18 32 18C36.2 18 39.5 20.8 39.5 25C39.5 29.5 35.8 31.2 33.8 32.8C32.5 33.8 32 34.8 32 37"
-                                    stroke="${m.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#softGlow-fb-${m.id})"/>
-                            </svg>
-                            <div class="anketa-slot-mode-name" style="color:${m.color};">${m.name}</div>
-                        </div>
-                        <button class="anketa-slot-btn create" onclick="Anketa.goToMode('${m.id}')">Создать</button>
+                    <div class="anketa-card-empty">
+                        <svg width="80" height="80" viewBox="0 0 64 64" fill="none" class="anketa-question-icon">
+                            <path d="M32 48V50" stroke="${m.color}" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+                            <path d="M26 24.5C26 19.8 29.2 17 33 17C36.8 17 40 19.6 40 23.8C40 28 36.5 29.8 34.5 31.2C33.2 32.1 32.6 33 32.6 35.2"
+                                stroke="${m.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.4"/>
+                            <circle cx="32" cy="53" r="2.2" fill="${m.color}" opacity="0.5"/>
+                        </svg>
+                        <div class="anketa-card-empty-text">Анкета не создана</div>
+                    </div>
+                    <div class="anketa-card-buttons">
+                        <button class="anketa-btn create" onclick="Anketa.goToMode('${m.id}')">Создать анкету</button>
                     </div>`;
+                    if (index < modes.length - 1) html += '<div class="anketa-divider"></div>';
                 });
+                html += '</div>';
                 container.innerHTML = html;
             });
     },
 
-    // 🔥 ПЕРЕХОД В РЕЖИМ ДЛЯ СОЗДАНИЯ АНКЕТЫ
     goToMode(modeId) {
         App.showScreen(modeId + 'Screen', true);
-
         setTimeout(() => {
             const searchBtn = document.querySelector(`#${modeId}Screen .mode-search-btn`);
             if (searchBtn) {
@@ -160,48 +152,28 @@ const Anketa = {
                     else if (modeId === 'premier') value = document.getElementById('premierRatingInput')?.value || '';
                     else if (modeId === 'prime') value = document.getElementById('primeRankSelect')?.value || '';
                     else if (modeId === 'public') value = document.getElementById('publicRankSelect')?.value || '';
-
                     Search.startBrowse(modeId.toUpperCase(), value);
-
                     setTimeout(() => {
-                        App.showCustomPopup(
-                            '✅ Анкета создана!',
-                            'Теперь вы можете смотреть анкеты других игроков.',
+                        App.showCustomPopup('✅ Анкета создана!', 'Теперь вы можете смотреть анкеты других игроков.',
                             () => { App.showScreen('swipeScreen', false); },
                             () => { App.showScreen('mainScreen', true); },
-                            'Смотреть анкеты',
-                            'На главную',
-                            false
-                        );
+                            'Смотреть анкеты', 'На главную', false);
                     }, 500);
                 };
             }
         }, 300);
     },
 
-    editAnketa(modeId) {
-        this.goToMode(modeId);
-    },
+    editAnketa(modeId) { this.goToMode(modeId); },
 
     deleteAnketa(modeId) {
-        App.showCustomPopup(
-            'Удалить анкету?',
-            `Анкета для ${modeId.toUpperCase()} будет удалена.`,
-            () => {
-                const telegram_id = this.getTelegramId();
-                fetch(`${this.BACKEND_URL}/api/anketa/delete`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ telegram_id: String(telegram_id), mode: modeId })
-                })
-                .then(r => r.json())
-                .then(data => {
-                    if (data.status === 'ok') this.loadMyAnketas();
-                })
-                .catch(() => {});
-            },
-            null, 'Удалить', 'Отмена', true
-        );
+        App.showCustomPopup('Удалить анкету?', `Анкета для ${modeId.toUpperCase()} будет удалена.`, () => {
+            const telegram_id = this.getTelegramId();
+            fetch(`${this.BACKEND_URL}/api/anketa/delete`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telegram_id: String(telegram_id), mode: modeId })
+            }).then(r => r.json()).then(data => { if (data.status === 'ok') this.loadMyAnketas(); }).catch(() => {});
+        }, null, 'Удалить', 'Отмена', true);
     },
 
     // 🔥 ЗАГРУЗКА ЛАЙКОВ
@@ -211,23 +183,15 @@ const Anketa = {
         container.innerHTML = '<div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div>';
 
         const telegram_id = this.getTelegramId();
-        if (!telegram_id) {
-            container.innerHTML = '<div class="anketa-empty">Ошибка авторизации</div>';
-            return;
-        }
+        if (!telegram_id) { container.innerHTML = '<div class="anketa-empty">Ошибка авторизации</div>'; return; }
 
         fetch(`${this.BACKEND_URL}/api/likes/list`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ telegram_id: String(telegram_id) })
         })
         .then(r => r.json())
         .then(data => {
-            if (data.status !== 'ok') {
-                container.innerHTML = '<div class="anketa-empty">Ошибка загрузки</div>';
-                return;
-            }
-
+            if (data.status !== 'ok') { container.innerHTML = '<div class="anketa-empty">Ошибка загрузки</div>'; return; }
             let html = '';
 
             if (data.mutual && data.mutual.length > 0) {
@@ -238,7 +202,6 @@ const Anketa = {
                     </svg>Взаимные мэтчи</div>`;
                 data.mutual.forEach(m => html += this.buildLikeItem(m, 'mutual'));
             }
-
             if (data.liked_me && data.liked_me.length > 0) {
                 html += `<div class="likes-section-title" style="display:flex;align-items:center;gap:6px;color:#FF5500;">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="icon-eye-pulse">
@@ -248,7 +211,6 @@ const Anketa = {
                     </svg>Тебя лайкнули</div>`;
                 data.liked_me.forEach(m => html += this.buildLikeItem(m, 'liked_me'));
             }
-
             if (data.i_liked && data.i_liked.length > 0) {
                 html += `<div class="likes-section-title" style="display:flex;align-items:center;gap:6px;color:#8E97A6;">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -257,11 +219,7 @@ const Anketa = {
                     </svg>Ты лайкнул</div>`;
                 data.i_liked.forEach(m => html += this.buildLikeItem(m, 'i_liked'));
             }
-
-            if (!html) {
-                html = '<div class="anketa-empty">Пока нет лайков<br><br>Смотрите анкеты в любом режиме и лайкайте тиммейтов!</div>';
-            }
-
+            if (!html) html = '<div class="anketa-empty">Пока нет лайков<br><br>Смотрите анкеты в любом режиме и лайкайте тиммейтов!</div>';
             container.innerHTML = html;
         })
         .catch(() => { container.innerHTML = '<div class="anketa-empty">Ошибка загрузки</div>'; });
@@ -272,40 +230,25 @@ const Anketa = {
         const avatarHtml = avatarUrl
             ? `<img src="${avatarUrl}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
             : (m.nick || '?')[0].toUpperCase();
-
         let actionBtn = '';
-        if (type === 'mutual') {
-            actionBtn = '<div class="friend-arrow" style="cursor:pointer;">→</div>';
-        } else if (type === 'liked_me') {
-            actionBtn = `<button class="like-item-action like-back" onclick="Anketa.likeBack('${m.liker_player_id}')">❤️ Лайкнуть</button>`;
-        } else {
-            actionBtn = '<div class="friend-arrow" style="cursor:pointer;opacity:0.3;">→</div>';
-        }
-
-        return `<div class="like-item">
-            <div class="like-item-avatar">${avatarHtml}</div>
-            <div class="like-item-info">
-                <div class="like-item-nick">${m.nick || 'Без имени'}</div>
-                <div class="like-item-mode">${m.mode || ''} • ${m.rank || ''}</div>
-            </div>${actionBtn}</div>`;
+        if (type === 'mutual') actionBtn = '<div class="friend-arrow" style="cursor:pointer;">→</div>';
+        else if (type === 'liked_me') actionBtn = `<button class="like-item-action like-back" onclick="Anketa.likeBack('${m.liker_player_id}')">❤️ Лайкнуть</button>`;
+        else actionBtn = '<div class="friend-arrow" style="cursor:pointer;opacity:0.3;">→</div>';
+        return `<div class="like-item"><div class="like-item-avatar">${avatarHtml}</div><div class="like-item-info"><div class="like-item-nick">${m.nick || 'Без имени'}</div><div class="like-item-mode">${m.mode || ''} • ${m.rank || ''}</div></div>${actionBtn}</div>`;
     },
 
     likeBack(likedPlayerId) {
         const telegram_id = this.getTelegramId();
         if (!telegram_id) return;
         fetch(`${this.BACKEND_URL}/api/like`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ telegram_id: String(telegram_id), liked_player_id: likedPlayerId })
         })
         .then(r => r.json())
         .then(data => {
-            if (data.status === 'match') {
-                App.showCustomPopup('❤️ Взаимный мэтч!', 'Проверь Telegram — бот прислал контакт!', null, null, 'OK', '', false);
-            }
+            if (data.status === 'match') App.showCustomPopup('❤️ Взаимный мэтч!', 'Проверь Telegram — бот прислал контакт!', null, null, 'OK', '', false);
             this.loadLikes();
-        })
-        .catch(() => {});
+        }).catch(() => {});
     }
 };
 
