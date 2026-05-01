@@ -5571,3 +5571,49 @@ html, body {
 .icon-eye-pulse {
     animation: eyeBreath 3s ease-in-out infinite;
 }
+
+/* Пустая карточка с вопросиком */
+.anketa-slot.empty-card {
+    background: #1A1D24;
+    border-radius: 14px;
+    padding: 24px 18px;
+    margin: 10px 0;
+    border: 1px dashed rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 100px;
+}
+
+.anketa-slot-empty-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.anketa-slot-mode-name {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.anketa-slot-btn.create {
+    background: #FF5500;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.anketa-slot-btn.create:hover {
+    background: #FF6A33;
+    transform: translateY(-1px);
+}
