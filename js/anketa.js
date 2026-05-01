@@ -1,15 +1,15 @@
 // ============================================
-// АНКЕТЫ + ЛАЙКИ - Экран управления v2.3
+// АНКЕТЫ + ЛАЙКИ - Экран управления v2.4
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v2.3)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v2.4)');
 
 const Anketa = {
     currentTab: 'my',
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
 
     init() {
-        console.log('🚀 Anketa.init() v2.3');
+        console.log('🚀 Anketa.init() v2.4');
         this.loadMyAnketas();
     },
 
@@ -36,210 +36,58 @@ const Anketa = {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
     },
 
-    // 🔥 ЗАГРУЗКА МОИХ АНКЕТ (ОДНА ПЛАШКА)
+    // 🔥 ЗАГРУЗКА МОИХ АНКЕТ
     loadMyAnketas() {
         const container = document.getElementById('anketaMyTab');
         if (!container) return;
         container.innerHTML = '<div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div>';
 
-        const telegram_id = this.getTelegramId();
-        if (!telegram_id) {
-            container.innerHTML = '<div class="anketa-empty">Ошибка авторизации</div>';
-            return;
-        }
+        let html = '<div class="anketa-empty">У вас нет созданных анкет</div>';
+        html += '<div class="anketa-divider"></div>';
+        html += '<div class="mode-container">';
 
-        fetch(`${this.BACKEND_URL}/api/profile/get`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ telegram_id: String(telegram_id) })
-        })
-        .then(r => r.json())
-        .then(profile => {
-            let html = '';
-            html += '<div class="anketa-empty">У вас нет созданных анкет</div>';
-            html += '<div class="anketa-divider"></div>';
-            html += '<div class="mode-container">';
-            html += '<button class="mode-btn faceit" onclick="Anketa.goToCreateAnketa()">📝 Создать анкету</button>';
-            html += '</div>';
-
-            container.innerHTML = html;
-        })
-        .catch(() => {
-            let html = '<div class="anketa-empty">У вас нет созданных анкет</div>';
-            html += '<div class="anketa-divider"></div>';
-            html += '<div class="mode-container">';
-            html += '<button class="mode-btn faceit" onclick="Anketa.goToCreateAnketa()">📝 Создать анкету</button>';
-            html += '</div>';
-            container.innerHTML = html;
+        ['faceit','premier','prime','public'].forEach(m => {
+            html += `<button class="mode-btn ${m}" onclick="Anketa.goToMode('${m}')">${m.toUpperCase()}</button>`;
         });
+
+        html += '</div>';
+        container.innerHTML = html;
     },
 
-    // 🔥 ПЕРЕХОД НА ЭКРАН СОЗДАНИЯ АНКЕТЫ
-    goToCreateAnketa() {
-        App.showScreen('createAnketaScreen', true);
+    // 🔥 ПЕРЕХОД В РЕЖИМ ДЛЯ СОЗДАНИЯ АНКЕТЫ
+    goToMode(modeId) {
+        App.showScreen(modeId + 'Screen', true);
 
         setTimeout(() => {
-            const modeSelect = document.getElementById('createAnketaMode');
-            const placeholder = document.getElementById('createAnketaPlaceholder');
-            const fields = document.getElementById('createAnketaFields');
-            const ratingField = document.getElementById('createAnketaRatingField');
-            const rankField = document.getElementById('createAnketaRankField');
-            const linkField = document.getElementById('createAnketaLinkField');
-            const subtitle = document.getElementById('createAnketaSubtitle');
+            const searchBtn = document.querySelector(`#${modeId}Screen .mode-search-btn`);
+            if (searchBtn) {
+                searchBtn.textContent = 'Создать анкету';
+                searchBtn.onclick = () => {
+                    let value = '';
+                    if (modeId === 'faceit') value = document.getElementById('faceitELOInput')?.value || '';
+                    else if (modeId === 'premier') value = document.getElementById('premierRatingInput')?.value || '';
+                    else if (modeId === 'prime') value = document.getElementById('primeRankSelect')?.value || '';
+                    else if (modeId === 'public') value = document.getElementById('publicRankSelect')?.value || '';
 
-            if (modeSelect) modeSelect.value = '';
-            if (placeholder) placeholder.style.display = 'block';
-            if (fields) fields.style.display = 'none';
-            if (ratingField) ratingField.style.display = 'none';
-            if (rankField) rankField.style.display = 'none';
-            if (linkField) linkField.style.display = 'none';
-            if (subtitle) subtitle.textContent = '*создаем новую анкету';
+                    Search.startBrowse(modeId.toUpperCase(), value);
 
-            // Подставляем возраст из профиля
-            const savedAge = localStorage.getItem('profile_age') || (typeof Profile !== 'undefined' ? Profile.savedAge : '') || '';
-            const ageInput = document.getElementById('createAnketaAge');
-            if (ageInput && savedAge) ageInput.value = savedAge;
-
-            // Подставляем ссылки из профиля
-            const savedSteam = localStorage.getItem('profile_steam') || (typeof Profile !== 'undefined' ? Profile.savedSteam : '') || '';
-            const savedFaceit = localStorage.getItem('profile_faceit') || (typeof Profile !== 'undefined' ? Profile.savedFaceitLink : '') || '';
-            const linkInput = document.getElementById('createAnketaLinkInput');
-            if (linkInput) linkInput.value = savedSteam || savedFaceit || '';
-        }, 100);
-    },
-
-    // 🔥 ВЫБОР РЕЖИМА — ПОКАЗЫВАЕМ НУЖНЫЕ ПОЛЯ
-    onModeChange() {
-        const mode = document.getElementById('createAnketaMode').value;
-        const placeholder = document.getElementById('createAnketaPlaceholder');
-        const fields = document.getElementById('createAnketaFields');
-        const ratingField = document.getElementById('createAnketaRatingField');
-        const rankField = document.getElementById('createAnketaRankField');
-        const linkField = document.getElementById('createAnketaLinkField');
-        const ratingLabel = document.getElementById('createAnketaRatingLabel');
-        const ratingInput = document.getElementById('createAnketaRatingInput');
-        const linkLabel = document.getElementById('createAnketaLinkLabel');
-        const linkInput = document.getElementById('createAnketaLinkInput');
-        const subtitle = document.getElementById('createAnketaSubtitle');
-
-        if (!mode) {
-            if (placeholder) placeholder.style.display = 'block';
-            if (fields) fields.style.display = 'none';
-            return;
-        }
-
-        if (placeholder) placeholder.style.display = 'none';
-        if (fields) fields.style.display = 'block';
-
-        if (mode === 'faceit') {
-            if (subtitle) subtitle.textContent = '*создаем анкету для FACEIT';
-            if (ratingField) ratingField.style.display = 'block';
-            if (rankField) rankField.style.display = 'none';
-            if (ratingLabel) ratingLabel.innerHTML = 'Faceit ELO <span>*обязательно</span>';
-            if (ratingInput) { ratingInput.placeholder = '0-5000'; ratingInput.maxLength = 4; }
-            if (linkField) linkField.style.display = 'block';
-            if (linkLabel) linkLabel.textContent = 'Ссылка Faceit';
-            if (linkInput) linkInput.placeholder = 'Ссылка на Faceit';
-        } else if (mode === 'premier') {
-            if (subtitle) subtitle.textContent = '*создаем анкету для PREMIER';
-            if (ratingField) ratingField.style.display = 'block';
-            if (rankField) rankField.style.display = 'none';
-            if (ratingLabel) ratingLabel.innerHTML = 'CS Rating <span>*обязательно</span>';
-            if (ratingInput) { ratingInput.placeholder = '0-40000'; ratingInput.maxLength = 5; }
-            if (linkField) linkField.style.display = 'block';
-            if (linkLabel) linkLabel.textContent = 'Ссылка Steam';
-            if (linkInput) linkInput.placeholder = 'Ссылка на Steam';
-        } else if (mode === 'prime') {
-            if (subtitle) subtitle.textContent = '*создаем анкету для PRIME';
-            if (ratingField) ratingField.style.display = 'none';
-            if (rankField) rankField.style.display = 'block';
-            if (linkField) linkField.style.display = 'block';
-            if (linkLabel) linkLabel.textContent = 'Ссылка Steam';
-            if (linkInput) linkInput.placeholder = 'Ссылка на Steam';
-        } else if (mode === 'public') {
-            if (subtitle) subtitle.textContent = '*создаем анкету для PUBLIC';
-            if (ratingField) ratingField.style.display = 'none';
-            if (rankField) rankField.style.display = 'block';
-            if (linkField) linkField.style.display = 'block';
-            if (linkLabel) linkLabel.textContent = 'Ссылка Steam';
-            if (linkInput) linkInput.placeholder = 'Ссылка на Steam';
-        }
-
-        // Подставляем ссылку под режим
-        const savedSteam = localStorage.getItem('profile_steam') || (typeof Profile !== 'undefined' ? Profile.savedSteam : '') || '';
-        const savedFaceit = localStorage.getItem('profile_faceit') || (typeof Profile !== 'undefined' ? Profile.savedFaceitLink : '') || '';
-        if (linkInput) {
-            linkInput.value = (mode === 'faceit') ? savedFaceit : savedSteam;
-        }
-    },
-
-    // 🔥 ОТПРАВКА АНКЕТЫ
-    submitAnketa() {
-        const mode = document.getElementById('createAnketaMode').value;
-        const age = document.getElementById('createAnketaAge')?.value || '';
-        const about = document.getElementById('createAnketaAbout')?.value || '';
-        const linkInput = document.getElementById('createAnketaLinkInput')?.value || '';
-
-        let rank = '';
-        if (mode === 'faceit' || mode === 'premier') {
-            rank = document.getElementById('createAnketaRatingInput')?.value || '';
-        } else {
-            rank = document.getElementById('createAnketaRankSelect')?.value || '';
-        }
-
-        if (!mode) { App.showAlert('Выберите режим'); return; }
-        if (!age) { App.showAlert('Укажите возраст'); return; }
-        if (!rank || rank === 'Выберите ранг') {
-            const msg = (mode === 'faceit') ? 'Укажите Faceit ELO' : (mode === 'premier') ? 'Укажите CS Rating' : 'Выберите ранг';
-            App.showAlert(msg);
-            return;
-        }
-
-        const telegram_id = this.getTelegramId();
-        if (!telegram_id) { App.showAlert('Ошибка авторизации'); return; }
-
-        const body = {
-            telegram_id: String(telegram_id),
-            mode: mode,
-            rank: String(rank),
-            age: age,
-            about: about
-        };
-
-        if (mode === 'faceit') {
-            body.faceit_link = linkInput;
-        } else {
-            body.steam_link = linkInput;
-        }
-
-        fetch(`${this.BACKEND_URL}/api/anketa/create`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.status === 'ok') {
-                App.showCustomPopup(
-                    '✅ Анкета создана!',
-                    'Теперь вы можете смотреть анкеты других игроков.',
-                    () => {
-                        Search.startBrowse(mode.toUpperCase(), rank);
-                        App.showScreen('swipeScreen', false);
-                    },
-                    () => { App.showScreen('mainScreen', true); },
-                    'Смотреть анкеты',
-                    'На главную',
-                    false
-                );
-            } else {
-                App.showAlert(data.message || 'Ошибка создания анкеты');
+                    setTimeout(() => {
+                        App.showCustomPopup(
+                            '✅ Анкета создана!',
+                            'Теперь вы можете смотреть анкеты других игроков.',
+                            () => { App.showScreen('swipeScreen', false); },
+                            () => { App.showScreen('mainScreen', true); },
+                            'Смотреть анкеты',
+                            'На главную',
+                            false
+                        );
+                    }, 500);
+                };
             }
-        })
-        .catch(() => { App.showAlert('Ошибка соединения'); });
+        }, 300);
     },
 
-    // 🔥 ЗАГРУЗКА ЛАЙКОВ
+    // 🔥 ЗАГРУЗКА ЛАЙКОВ (С ИКОНКАМИ SVG)
     loadLikes() {
         const container = document.getElementById('anketaLikesTab');
         if (!container) return;
@@ -265,18 +113,56 @@ const Anketa = {
 
             let html = '';
 
+            // 💞 ВЗАИМНЫЕ МЭТЧИ
             if (data.mutual && data.mutual.length > 0) {
-                html += '<div class="likes-section-title" style="color:#4CAF50;">❤️ Взаимные мэтчи</div>';
+                html += `
+                <div class="likes-section-title" style="display:flex;align-items:center;gap:6px;color:#FF5500;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="icon-match-pulse">
+                        <defs>
+                            <filter id="glow-match">
+                                <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                        </defs>
+                        <path d="M20.8 4.6c-1.7-1.7-4.4-1.7-6.1 0L12 7.3l-2.7-2.7c-1.7-1.7-4.4-1.7-6.1 0-1.7 1.7-1.7 4.4 0 6.1L12 21l8.8-9.9c1.7-1.7 1.7-4.4 0-6.1z"
+                            stroke="#FF5500" stroke-width="1.8" fill="none" filter="url(#glow-match)"/>
+                    </svg>
+                    Взаимные мэтчи
+                </div>`;
                 data.mutual.forEach(m => html += this.buildLikeItem(m, 'mutual'));
             }
 
+            // 👀 ТЕБЯ ЛАЙКНУЛИ
             if (data.liked_me && data.liked_me.length > 0) {
-                html += '<div class="likes-section-title" style="color:#FF5500;">👍 Тебя лайкнули</div>';
+                html += `
+                <div class="likes-section-title" style="display:flex;align-items:center;gap:6px;color:#FF5500;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="icon-eye-pulse">
+                        <defs>
+                            <filter id="glow-eye">
+                                <feGaussianBlur stdDeviation="2" result="blur"/>
+                                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                        </defs>
+                        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"
+                            stroke="#FF5500" stroke-width="1.8" fill="none" filter="url(#glow-eye)"/>
+                        <circle cx="12" cy="12" r="3" stroke="#FF5500" stroke-width="1.8" fill="none"/>
+                    </svg>
+                    Тебя лайкнули
+                </div>`;
                 data.liked_me.forEach(m => html += this.buildLikeItem(m, 'liked_me'));
             }
 
+            // 👍 ТЫ ЛАЙКНУЛ
             if (data.i_liked && data.i_liked.length > 0) {
-                html += '<div class="likes-section-title" style="color:#8E97A6;">💔 Ты лайкнул (ждут ответа)</div>';
+                html += `
+                <div class="likes-section-title" style="display:flex;align-items:center;gap:6px;color:#8E97A6;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                        <path d="M7 22V10H3v12h4z" stroke="#8E97A6" stroke-width="1.8"/>
+                        <path d="M7 10l5-7c.6-.8 1.8-1 2.6-.4.8.6 1 1.8.4 2.6L13 10h6c1.1 0 2 .9 2 2v1c0 .3-.1.7-.2 1l-2.2 7c-.3.7-1 1.2-1.8 1.2H7"
+                            stroke="#8E97A6" stroke-width="1.8" fill="none"/>
+                    </svg>
+                    Ты лайкнул
+                </div>`;
                 data.i_liked.forEach(m => html += this.buildLikeItem(m, 'i_liked'));
             }
 
