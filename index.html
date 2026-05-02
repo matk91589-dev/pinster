@@ -20,120 +20,50 @@
         .icon-settings.active svg { stroke: #FF5500 !important; }
         .icon-settings:hover svg { stroke: #FF5500 !important; }
         .link-with-copy { position: relative; display: flex; align-items: center; width: 100%; }
-        .link-with-copy .swipe-link-value, .link-with-copy .profile-stat-value, .link-with-copy .input-field { width: 100%; padding-right: 40px !important; }
+        .link-with-copy .input-field { width: 100%; padding-right: 40px !important; }
         .copy-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; padding: 6px; display: flex; align-items: center; justify-content: center; border-radius: 6px; transition: all 0.2s ease; z-index: 5; }
         .copy-btn svg { width: 18px; height: 18px; stroke: #9BA1B0; transition: stroke 0.2s ease; }
         .copy-btn:hover { background: rgba(255,85,0,0.15); }
         .copy-btn:hover svg { stroke: #FF5500; }
         .copy-btn.copied svg { stroke: #4CAF50; }
-        .input-label span { color: #FF3B30 !important; font-weight: 600 !important; font-size: 11px !important; margin-left: 4px !important; text-transform: lowercase !important; }
-        .stat-label span { color: #FF3B30 !important; font-weight: 600 !important; font-size: 11px !important; margin-left: 4px !important; text-transform: lowercase !important; }
+        .input-label span { color: #FF3B30 !important; font-weight: 600 !important; font-size: 11px !important; margin-left: 4px !important; }
         .screen { position: relative; }
         
         .swipe-card { width: 420px !important; height: 420px !important; position: relative !important; }
-        .swipe-card-content { display: flex !important; flex-direction: column !important; justify-content: space-between !important; height: 100% !important; flex: 1 !important; position: relative !important; }
-        #swipeModeContent { display: flex !important; flex-direction: column !important; justify-content: space-between !important; flex: 1 !important; gap: 14px !important; }
-        .swipe-player-row { margin-bottom: 0 !important; }
-        .swipe-stats-row.three-cols { margin: 4px 0 !important; }
-        .swipe-steam-container, .swipe-faceit-container { margin: 2px 0 !important; }
-        .swipe-comment { margin-top: 4px !important; flex: 1 !important; display: flex !important; flex-direction: column !important; }
-        .swipe-comment-text { flex: 1 !important; min-height: auto !important; }
-        .swipe-link-value { font-size: 14px !important; padding: 12px 14px !important; word-break: break-all !important; cursor: pointer !important; transition: background 0.2s ease !important; }
-        .swipe-link-value:active { background: var(--surface-hover) !important; }
-        
-        @media (max-width:500px) and (min-width:451px) { .swipe-card { width:380px !important; height:380px !important; } }
-        @media (max-width:450px) and (min-width:401px) { .swipe-card { width:360px !important; height:360px !important; } }
-        @media (max-width:400px) and (min-width:351px) { .swipe-card { width:330px !important; height:330px !important; } }
-        @media (max-width:350px) { .swipe-card { width:300px !important; height:300px !important; } }
-        @media (min-width:768px) and (max-width:1024px) { .swipe-card { width:480px !important; height:480px !important; } }
-        @media (min-width:1025px) { .swipe-card { width:520px !important; height:520px !important; } }
-        
-        .swipe-screen .content { padding: 0 !important; margin: 0 !important; }
-        .swipe-container { padding: 0 !important; margin: 0 !important; width: 100% !important; }
-        .swipe-card-wrapper { display: flex !important; justify-content: center !important; align-items: center !important; }
-        
-        #waitingModeContent { position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; flex-direction: column !important; background: #1A1D24 !important; border-radius: 28px !important; z-index: 999 !important; display: none !important; }
-        #waitingModeContent.active { display: flex !important; }
-
-        .back-arrow-swipe { position: absolute !important; top: 70px !important; left: 16px !important; width: 44px !important; height: 44px !important; display: flex !important; align-items: center !important; justify-content: center !important; background: rgba(0,0,0,0.85) !important; backdrop-filter: blur(10px) !important; -webkit-backdrop-filter: blur(10px) !important; border-radius: 50% !important; cursor: pointer !important; z-index: 100 !important; transition: all 0.2s ease !important; box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important; border: none !important; outline: none !important; }
-        .back-arrow-swipe:active { background: #FF5500 !important; transform: scale(0.9) !important; }
-        .back-arrow-swipe svg { width: 24px !important; height: 24px !important; stroke: #FF5500 !important; transition: stroke 0.2s ease !important; }
-        .back-arrow-swipe:active svg { stroke: white !important; }
+        @media (max-width:400px) { .swipe-card { width:330px !important; height:330px !important; } }
         
         /* 🔥 ПОПАП "СОЗДАЙ КАРТОЧКУ" */
-        .create-card-popup-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.25s ease;
+        .popup-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px); z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+            animation: fadeIn 0.2s ease;
         }
-        .create-card-popup {
-            background: linear-gradient(145deg, #1c1c24, #18181e);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 20px;
-            padding: 28px 24px;
-            text-align: center;
-            max-width: 320px;
-            width: 90%;
+        .popup-card {
+            background: linear-gradient(145deg, #1c1c24, #16161c);
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
+            padding: 32px 24px; text-align: center; max-width: 320px; width: 85%;
             box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
-        .create-card-popup-icon {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 16px;
-            background: rgba(255,85,0,0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .popup-card-icon {
+            width: 64px; height: 64px; margin: 0 auto 16px;
+            background: rgba(255,85,0,0.1); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
         }
-        .create-card-popup-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 8px;
+        .popup-card-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .popup-card-text { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 24px; line-height: 1.5; }
+        .popup-card-btn {
+            width: 100%; height: 48px; border-radius: 12px; border: none;
+            background: #FF5500; color: #fff; font-size: 14px; font-weight: 600;
+            cursor: pointer; margin-bottom: 10px; transition: all 0.2s ease;
         }
-        .create-card-popup-text {
-            font-size: 13px;
-            color: rgba(255,255,255,0.5);
-            margin-bottom: 20px;
-            line-height: 1.5;
+        .popup-card-btn:active { transform: scale(0.97); background: #FF6B1A; }
+        .popup-card-close {
+            background: transparent; border: none; color: rgba(255,255,255,0.4);
+            font-size: 13px; cursor: pointer; padding: 8px;
         }
-        .create-card-popup-btn {
-            width: 100%;
-            height: 46px;
-            border-radius: 12px;
-            border: none;
-            background: #FF5500;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 8px;
-            transition: all 0.2s ease;
-        }
-        .create-card-popup-btn:active {
-            transform: scale(0.97);
-            background: #FF6B1A;
-        }
-        .create-card-popup-close {
-            background: transparent;
-            border: none;
-            color: rgba(255,255,255,0.4);
-            font-size: 13px;
-            cursor: pointer;
-            padding: 8px;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
     
     <link rel="stylesheet" href="css/style.css">
@@ -143,46 +73,39 @@
     
     <script>
         window.copyToClipboard = function(text, btnElement) {
-            if (!text || text === '' || text === 'Не указана') { if (window.Settings && window.Settings.error) window.Settings.error(); return; }
+            if (!text || text === '' || text === 'Не указана') return;
             navigator.clipboard.writeText(text).then(() => {
-                if (window.Settings && window.Settings.success) window.Settings.success();
                 if (btnElement) { btnElement.classList.add('copied'); setTimeout(() => btnElement.classList.remove('copied'), 1500); }
-            }).catch(err => { console.error('Ошибка копирования:', err); if (window.Settings && window.Settings.error) window.Settings.error(); });
+            }).catch(() => {});
         };
         
         window.copyFieldValue = function(fieldId, btnElement) {
             const input = document.getElementById(fieldId);
-            if (!input || !input.value) { if (window.Settings && window.Settings.error) window.Settings.error(); return; }
+            if (!input || !input.value) return;
             navigator.clipboard.writeText(input.value).then(() => {
-                if (window.Settings && window.Settings.success) window.Settings.success();
                 btnElement.classList.add('copied'); setTimeout(() => btnElement.classList.remove('copied'), 1500);
-            }).catch(err => { console.error('Ошибка копирования:', err); if (window.Settings && window.Settings.error) window.Settings.error(); });
+            }).catch(() => {});
         };
         
         (function() {
             const version = Date.now();
-            document.querySelectorAll('link[rel="stylesheet"]').forEach(link => { if (link.href && !link.href.includes('telegram')) link.href = link.href.split('?')[0] + '?v=' + version; });
+            document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+                if (link.href && !link.href.includes('telegram')) link.href = link.href.split('?')[0] + '?v=' + version;
+            });
             let telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
             if (telegramId) {
                 localStorage.setItem('telegram_id', telegramId);
-                const cachedNick = localStorage.getItem('profile_nick');
-                if (cachedNick) {
-                    setTimeout(() => {
-                        const nameEl = document.getElementById('profileName'); if (nameEl && nameEl.textContent === '-') nameEl.textContent = cachedNick;
-                        const ageEl = document.getElementById('ageValue'); if (ageEl && !ageEl.value) ageEl.value = localStorage.getItem('profile_age') || '';
-                        const steamEl = document.getElementById('steamDisplay'); if (steamEl && !steamEl.value) steamEl.value = localStorage.getItem('profile_steam') || '';
-                        const faceitEl = document.getElementById('faceitLinkDisplay'); if (faceitEl && !faceitEl.value) faceitEl.value = localStorage.getItem('profile_faceit') || '';
-                    }, 50);
-                }
-                fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/profile/get', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({telegram_id:telegramId}) })
-                .then(r=>r.json()).then(data=>{
-                    if(data.status==='ok'){ if(data.nick) localStorage.setItem('profile_nick',data.nick); if(data.age) localStorage.setItem('profile_age',data.age); if(data.steam_link) localStorage.setItem('profile_steam',data.steam_link); if(data.faceit_link) localStorage.setItem('profile_faceit',data.faceit_link);
-                        const nameEl=document.getElementById('profileName'); if(nameEl) nameEl.textContent=data.nick||'-';
-                        const ageEl=document.getElementById('ageValue'); if(ageEl) ageEl.value=data.age||'';
-                        const steamEl=document.getElementById('steamDisplay'); if(steamEl) steamEl.value=data.steam_link||'';
-                        const faceitEl=document.getElementById('faceitLinkDisplay'); if(faceitEl) faceitEl.value=data.faceit_link||'';
+                fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/profile/get', {
+                    method: 'POST', headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({telegram_id:telegramId})
+                }).then(r=>r.json()).then(data=>{
+                    if(data.status==='ok'){
+                        if(data.nick) localStorage.setItem('profile_nick',data.nick);
+                        if(data.age) localStorage.setItem('profile_age',data.age);
+                        if(data.steam_link) localStorage.setItem('profile_steam',data.steam_link);
+                        if(data.faceit_link) localStorage.setItem('profile_faceit',data.faceit_link);
                     }
-                }).catch(e=>console.error('Profile preload error:',e));
+                }).catch(()=>{});
             }
         })();
     </script>
@@ -233,7 +156,7 @@
                 <div class="team-content" id="teamContent"></div>
             </div>
 
-            <!-- МОИ КАРТОЧКИ (бывшие АНКЕТЫ) -->
+            <!-- МОИ КАРТОЧКИ -->
             <div id="anketaScreen" class="screen anketa-screen">
                 <div class="team-header" style="display:flex;align-items:center;justify-content:flex-start;position:relative;padding:12px 16px;"><div style="flex:1;"></div></div>
                 <div class="team-tabs">
@@ -241,65 +164,93 @@
                     <div class="team-tab" onclick="Anketa.switchTab('likes', this)">ЛАЙКИ</div>
                 </div>
                 <div class="team-content" id="anketaContent">
-                    <div id="anketaMyTab" style="padding: 8px 0;"><div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div></div>
+                    <div id="anketaMyTab" style="padding:8px 0;"><div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div></div>
                     <div id="anketaLikesTab" style="display:none;padding:8px 0;"><div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div></div>
                 </div>
             </div>
 
-            <!-- СОЗДАНИЕ КАРТОЧКИ (единый экран) -->
-            <div id="createCardScreen" class="screen faceit-screen">
-                <div class="mode-header"><div class="mode-title" id="createCardModeTitle">Создание карточки</div></div>
-                <div class="mode-subtitle" id="createCardSubtitle">*создаем новую карточку</div>
-                
-                <div class="input-label">Режим <span>*обязательно</span></div>
-                <select class="rank-select" id="createCardMode" onchange="CreateCard.onModeChange()">
-                    <option value="">Выберите режим</option>
-                    <option value="faceit">FACEIT</option>
-                    <option value="premier">PREMIER</option>
-                    <option value="prime">PRIME</option>
-                    <option value="public">PUBLIC</option>
+            <!-- FACEIT ЭКРАН -->
+            <div id="faceitScreen" class="screen faceit-screen">
+                <div class="mode-header"><div class="mode-title faceit">FACEIT</div></div>
+                <div class="mode-subtitle">Создайте карточку для поиска</div>
+                <div class="input-label">Faceit ELO <span>*обязательно</span></div>
+                <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000">
+                <div class="stats-row">
+                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
+                    <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="faceitAge" placeholder="0-100" maxlength="3"></div></div>
+                </div>
+                <div class="input-label">Ссылка Faceit</div>
+                <div class="link-with-copy"><input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit"><button class="copy-btn" onclick="copyFieldValue('faceitLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
+                <div class="input-label">О себе</div>
+                <div class="comment-section"><textarea class="comment-input" id="faceitAbout" placeholder="Введите комментарий"></textarea></div>
+                <button class="mode-search-btn" onclick="App.createCard('faceit')">Создать карточку</button>
+            </div>
+
+            <!-- PREMIER ЭКРАН -->
+            <div id="premierScreen" class="screen premier-screen">
+                <div class="mode-header"><div class="mode-title premier">PREMIER</div></div>
+                <div class="mode-subtitle">Создайте карточку для поиска</div>
+                <div class="input-label">CS Rating <span>*обязательно</span></div>
+                <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-40000">
+                <div class="stats-row">
+                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
+                    <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="premierAge" placeholder="0-100" maxlength="3"></div></div>
+                </div>
+                <div class="input-label">Ссылка Steam</div>
+                <div class="link-with-copy"><input type="text" class="input-field" id="premierLinkInput" placeholder="Ссылка на Steam"><button class="copy-btn" onclick="copyFieldValue('premierLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
+                <div class="input-label">О себе</div>
+                <div class="comment-section"><textarea class="comment-input" id="premierAbout" placeholder="Введите комментарий"></textarea></div>
+                <button class="mode-search-btn" onclick="App.createCard('premier')">Создать карточку</button>
+            </div>
+
+            <!-- PRIME ЭКРАН -->
+            <div id="primeScreen" class="screen prime-screen">
+                <div class="mode-header"><div class="mode-title prime">PRIME</div></div>
+                <div class="mode-subtitle">Создайте карточку для поиска</div>
+                <div class="input-label">Звание <span>*обязательно</span></div>
+                <select class="rank-select" id="primeRankSelect">
+                    <option value="">Выберите ранг</option>
+                    <option>Silver 1</option><option>Silver 2</option><option>Silver 3</option><option>Silver 4</option>
+                    <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option><option>Gold Nova 3</option>
+                    <option>Gold Nova Master</option><option>Master Guardian 1</option><option>Master Guardian 2</option>
+                    <option>Master Guardian Elite</option><option>Distinguished Master Guardian</option>
+                    <option>Legendary Eagle</option><option>Legendary Eagle Master</option>
+                    <option>Supreme Master First Class</option><option>Global Elite</option>
                 </select>
-
-                <!-- Заглушка -->
-                <div id="createCardPlaceholder" class="anketa-placeholder">
-                    Выберите режим, чтобы<br>заполнить поля карточки
+                <div class="stats-row">
+                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
+                    <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="primeAge" placeholder="0-100" maxlength="3"></div></div>
                 </div>
+                <div class="input-label">Ссылка Steam</div>
+                <div class="link-with-copy"><input type="text" class="input-field" id="primeLinkInput" placeholder="Ссылка на Steam"><button class="copy-btn" onclick="copyFieldValue('primeLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
+                <div class="input-label">О себе</div>
+                <div class="comment-section"><textarea class="comment-input" id="primeAbout" placeholder="Введите комментарий"></textarea></div>
+                <button class="mode-search-btn" onclick="App.createCard('prime')">Создать карточку</button>
+            </div>
 
-                <!-- Поля -->
-                <div id="createCardFields" style="display:none;">
-                    <div id="createCardRatingField" style="display:none;">
-                        <div class="input-label" id="createCardRatingLabel">Faceit ELO <span>*обязательно</span></div>
-                        <input type="number" class="search-input-field" id="createCardRatingInput" placeholder="0-5000">
-                    </div>
-
-                    <div id="createCardRankField" style="display:none;">
-                        <div class="input-label">Звание <span>*обязательно</span></div>
-                        <select class="rank-select" id="createCardRankSelect">
-                            <option value="">Выберите ранг</option>
-                            <option>Silver 1</option><option>Silver 2</option><option>Silver 3</option><option>Silver 4</option>
-                            <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option><option>Gold Nova 3</option>
-                            <option>Gold Nova Master</option><option>Master Guardian 1</option><option>Master Guardian 2</option>
-                            <option>Master Guardian Elite</option><option>Distinguished Master Guardian</option>
-                            <option>Legendary Eagle</option><option>Legendary Eagle Master</option>
-                            <option>Supreme Master First Class</option><option>Global Elite</option>
-                        </select>
-                    </div>
-
-                    <div class="stats-row">
-                        <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
-                        <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="createCardAge" placeholder="0-100" maxlength="3"></div></div>
-                    </div>
-
-                    <div id="createCardLinkField" style="display:none;">
-                        <div class="input-label" id="createCardLinkLabel">Ссылка</div>
-                        <div class="link-with-copy"><input type="text" class="input-field" id="createCardLinkInput" placeholder="Ссылка"><button class="copy-btn" onclick="copyFieldValue('createCardLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
-                    </div>
-
-                    <div class="input-label">О себе</div>
-                    <div class="comment-section"><textarea class="comment-input" id="createCardAbout" placeholder="Введите комментарий"></textarea></div>
-
-                    <button class="mode-search-btn" id="createCardSubmitBtn" onclick="CreateCard.submit()">Создать карточку</button>
+            <!-- PUBLIC ЭКРАН -->
+            <div id="publicScreen" class="screen public-screen">
+                <div class="mode-header"><div class="mode-title public">PUBLIC</div></div>
+                <div class="mode-subtitle">Создайте карточку для поиска</div>
+                <div class="input-label">Звание <span>*обязательно</span></div>
+                <select class="rank-select" id="publicRankSelect">
+                    <option value="">Выберите ранг</option>
+                    <option>Silver 1</option><option>Silver 2</option><option>Silver 3</option><option>Silver 4</option>
+                    <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option><option>Gold Nova 3</option>
+                    <option>Gold Nova Master</option><option>Master Guardian 1</option><option>Master Guardian 2</option>
+                    <option>Master Guardian Elite</option><option>Distinguished Master Guardian</option>
+                    <option>Legendary Eagle</option><option>Legendary Eagle Master</option>
+                    <option>Supreme Master First Class</option><option>Global Elite</option>
+                </select>
+                <div class="stats-row">
+                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
+                    <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="publicAge" placeholder="0-100" maxlength="3"></div></div>
                 </div>
+                <div class="input-label">Ссылка Steam</div>
+                <div class="link-with-copy"><input type="text" class="input-field" id="publicLinkInput" placeholder="Ссылка на Steam"><button class="copy-btn" onclick="copyFieldValue('publicLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
+                <div class="input-label">О себе</div>
+                <div class="comment-section"><textarea class="comment-input" id="publicAbout" placeholder="Введите комментарий"></textarea></div>
+                <button class="mode-search-btn" onclick="App.createCard('public')">Создать карточку</button>
             </div>
 
             <!-- СВАЙП -->
@@ -350,7 +301,7 @@
                 </div>
             </div>
 
-            <!-- ПОИСК (скрыт) -->
+            <!-- ПОИСК -->
             <div id="searchScreen" class="screen search-screen" style="display:none;">
                 <div class="search-header"><div class="search-title" id="searchModeTitle">FACEIT</div><div class="search-timer" id="searchTimer">00:00</div></div>
                 <div class="search-status" id="searchStatus">Поиск тиммейта начат</div>
@@ -359,7 +310,7 @@
             </div>
         </main>
 
-        <!-- 🔥 НИЖНЯЯ НАВИГАЦИЯ (с новой иконкой карточки) -->
+        <!-- 🔥 НАВИГАЦИЯ -->
         <nav class="bottom-nav">
             <div class="nav-item active" onclick="App.showScreen('mainScreen', true)" id="navMain">
                 <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
@@ -367,7 +318,6 @@
             </div>
             <div class="nav-item" onclick="App.showScreen('anketaScreen', true)" id="navCards">
                 <span class="nav-icon">
-                    <!-- 🔥 ИКОНКА КАРТОЧКИ -->
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M5 7V5h4M19 7V5h-4M5 17v2h4M19 17v2h-4" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>
                         <circle cx="12" cy="10" r="2" stroke="#fff" stroke-width="1.5"/>
@@ -394,7 +344,7 @@
         
         (function() {
             const version = window.BUILD_VERSION || Date.now();
-            const jsFiles = ['js/config.js','js/globals.js','js/app.js','js/settings.js','js/profile.js','js/avatar.js','js/friends.js','js/search.js','js/logo.js','js/team.js','js/anketa.js','js/swipe.js','js/create-card.js'];
+            const jsFiles = ['js/config.js','js/globals.js','js/app.js','js/settings.js','js/profile.js','js/avatar.js','js/friends.js','js/search.js','js/logo.js','js/team.js','js/anketa.js','js/swipe.js'];
             let loadedCount = 0;
             function loadScript(src) {
                 return new Promise((resolve) => {
