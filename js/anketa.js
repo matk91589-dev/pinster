@@ -205,46 +205,67 @@ const Anketa = {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
     },
 
+   // 🔥 ЗАГРУЗКА МОИХ КАРТОЧЕК
     loadMyAnketas() {
         const container = document.getElementById('anketaMyTab');
-        if (!container) return;
+        if (!container) {
+            console.error('❌ Контейнер anketaMyTab не найден!');
+            return;
+        }
+        console.log('📦 Anketa v7.5 — загрузка...');
         container.innerHTML = '<div class="anketa-loading">Загрузка...</div>';
-
+    
         const telegram_id = this.getTelegramId();
         if (!telegram_id) {
             container.innerHTML = '<div class="anketa-empty-text">Ошибка авторизации</div>';
             return;
         }
-
+    
         const modes = [
             { id: 'faceit', name: 'FACEIT' },
             { id: 'premier', name: 'PREMIER' },
             { id: 'prime', name: 'PRIME' },
             { id: 'public', name: 'PUBLIC' }
         ];
-
-        fetch(`${this.BACKEND_URL}/api/anketa/list?telegram_id=${telegram_id}`)
+    
+        // 🔥 ФИКС: POST вместо GET
+        fetch(`${this.BACKEND_URL}/api/anketa/list`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegram_id: String(telegram_id) })
+        })
             .then(r => r.json())
             .then(anketaData => {
                 const anketaMap = {};
                 if (anketaData && anketaData.anketas) {
                     anketaData.anketas.forEach(a => { anketaMap[a.mode] = a; });
                 }
-                const sorted = [...modes].sort((a, b) => (anketaMap[b.id] ? 1 : 0) - (anketaMap[a.id] ? 1 : 0));
-
-                let html = '<div class="anketa-scroll"><div class="anketa-divider-top"></div>';
+    
+                const sorted = [...modes].sort((a, b) => 
+                    (anketaMap[b.id] ? 1 : 0) - (anketaMap[a.id] ? 1 : 0)
+                );
+    
+                let html = '<div class="anketa-scroll">';
+                html += '<div class="anketa-divider-top"></div>';
                 sorted.forEach((m, i) => {
                     html += this.buildSlot(m, anketaMap[m.id]);
-                    if (i < sorted.length - 1) html += '<div class="anketa-divider"></div>';
+                    if (i < sorted.length - 1) {
+                        html += '<div class="anketa-divider"></div>';
+                    }
                 });
                 html += '</div>';
                 container.innerHTML = html;
+                console.log('✅ Карточек отрисовано:', sorted.length);
             })
-            .catch(() => {
-                let html = '<div class="anketa-scroll"><div class="anketa-divider-top"></div>';
+            .catch(err => {
+                console.error('❌ Ошибка API:', err);
+                let html = '<div class="anketa-scroll">';
+                html += '<div class="anketa-divider-top"></div>';
                 modes.forEach((m, i) => {
                     html += this.buildSlot(m, null);
-                    if (i < modes.length - 1) html += '<div class="anketa-divider"></div>';
+                    if (i < modes.length - 1) {
+                        html += '<div class="anketa-divider"></div>';
+                    }
                 });
                 html += '</div>';
                 container.innerHTML = html;
