@@ -29,19 +29,7 @@
         .input-label span { color: #FF3B30 !important; font-weight: 600 !important; font-size: 11px !important; margin-left: 4px !important; text-transform: lowercase !important; }
         .stat-label span { color: #FF3B30 !important; font-weight: 600 !important; font-size: 11px !important; margin-left: 4px !important; text-transform: lowercase !important; }
         .screen { position: relative; }
-
-        /* Плашка-заглушка */
-        .anketa-placeholder {
-            background: rgba(255,255,255,0.03);
-            border: 1px dashed rgba(255,255,255,0.12);
-            border-radius: 14px;
-            padding: 32px 20px;
-            text-align: center;
-            color: #8E97A6;
-            font-size: 14px;
-            margin: 12px 0;
-        }
-
+        
         .swipe-card { width: 420px !important; height: 420px !important; position: relative !important; }
         .swipe-card-content { display: flex !important; flex-direction: column !important; justify-content: space-between !important; height: 100% !important; flex: 1 !important; position: relative !important; }
         #swipeModeContent { display: flex !important; flex-direction: column !important; justify-content: space-between !important; flex: 1 !important; gap: 14px !important; }
@@ -72,22 +60,80 @@
         .back-arrow-swipe svg { width: 24px !important; height: 24px !important; stroke: #FF5500 !important; transition: stroke 0.2s ease !important; }
         .back-arrow-swipe:active svg { stroke: white !important; }
         
-        .anketa-card { background: #1A1D24; border-radius: 12px; padding: 14px; margin: 8px 0; }
-        .anketa-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        .anketa-card-mode { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; }
-        .anketa-card-mode.faceit { background: rgba(0,255,0,0.15); color: #4CAF50; }
-        .anketa-card-mode.premier { background: rgba(255,85,0,0.15); color: #FF5500; }
-        .anketa-card-mode.prime { background: rgba(0,150,255,0.15); color: #0096FF; }
-        .anketa-card-mode.public { background: rgba(255,255,0,0.15); color: #FFD600; }
-        .anketa-empty { text-align: center; padding: 40px 20px; color: #8E97A6; font-size: 14px; }
-        .like-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: #1A1D24; border-radius: 12px; margin: 8px 0; }
-        .like-item-avatar { width: 40px; height: 40px; border-radius: 50%; background: #2A2F3A; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #FF5500; }
-        .like-item-info { flex: 1; }
-        .like-item-nick { font-size: 14px; font-weight: 600; color: #FFFFFF; }
-        .like-item-mode { font-size: 11px; color: #8E97A6; }
-        .like-item-action { padding: 8px 14px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; }
-        .like-item-action.like-back { background: #FF5500; color: #fff; }
-        .like-item-action.write { background: #2A2F3A; color: #fff; }
+        /* 🔥 ПОПАП "СОЗДАЙ КАРТОЧКУ" */
+        .create-card-popup-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.25s ease;
+        }
+        .create-card-popup {
+            background: linear-gradient(145deg, #1c1c24, #18181e);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 28px 24px;
+            text-align: center;
+            max-width: 320px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .create-card-popup-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            background: rgba(255,85,0,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .create-card-popup-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .create-card-popup-text {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .create-card-popup-btn {
+            width: 100%;
+            height: 46px;
+            border-radius: 12px;
+            border: none;
+            background: #FF5500;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+        .create-card-popup-btn:active {
+            transform: scale(0.97);
+            background: #FF6B1A;
+        }
+        .create-card-popup-close {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+            cursor: pointer;
+            padding: 8px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
     
     <link rel="stylesheet" href="css/style.css">
@@ -155,10 +201,10 @@
                 <div class="section-title">Выбор режима</div>
                 <div class="section-subtitle">Подберите подходящий</div>
                 <div class="mode-container">
-                    <button class="mode-btn faceit" onclick="App.showScreen('faceitScreen', true)">FACEIT</button>
-                    <button class="mode-btn premier" onclick="App.showScreen('premierScreen', true)">PREMIER</button>
-                    <button class="mode-btn prime" onclick="App.showScreen('primeScreen', true)">PRIME</button>
-                    <button class="mode-btn public" onclick="App.showScreen('publicScreen', true)">PUBLIC</button>
+                    <button class="mode-btn faceit" onclick="App.handleModeClick('faceit')">FACEIT</button>
+                    <button class="mode-btn premier" onclick="App.handleModeClick('premier')">PREMIER</button>
+                    <button class="mode-btn prime" onclick="App.handleModeClick('prime')">PRIME</button>
+                    <button class="mode-btn public" onclick="App.handleModeClick('public')">PUBLIC</button>
                 </div>
             </div>
 
@@ -187,11 +233,11 @@
                 <div class="team-content" id="teamContent"></div>
             </div>
 
-            <!-- АНКЕТЫ (НОВЫЙ ЭКРАН) -->
+            <!-- МОИ КАРТОЧКИ (бывшие АНКЕТЫ) -->
             <div id="anketaScreen" class="screen anketa-screen">
                 <div class="team-header" style="display:flex;align-items:center;justify-content:flex-start;position:relative;padding:12px 16px;"><div style="flex:1;"></div></div>
                 <div class="team-tabs">
-                    <div class="team-tab active" onclick="Anketa.switchTab('my', this)">МОИ АНКЕТЫ</div>
+                    <div class="team-tab active" onclick="Anketa.switchTab('my', this)">МОИ КАРТОЧКИ</div>
                     <div class="team-tab" onclick="Anketa.switchTab('likes', this)">ЛАЙКИ</div>
                 </div>
                 <div class="team-content" id="anketaContent">
@@ -200,13 +246,13 @@
                 </div>
             </div>
 
-            <!-- СОЗДАНИЕ АНКЕТЫ (НОВЫЙ ЭКРАН) -->
-            <div id="createAnketaScreen" class="screen faceit-screen">
-                <div class="mode-header"><div class="mode-title faceit">Создание анкеты</div></div>
-                <div class="mode-subtitle" id="createAnketaSubtitle">*создаем новую анкету</div>
+            <!-- СОЗДАНИЕ КАРТОЧКИ (единый экран) -->
+            <div id="createCardScreen" class="screen faceit-screen">
+                <div class="mode-header"><div class="mode-title" id="createCardModeTitle">Создание карточки</div></div>
+                <div class="mode-subtitle" id="createCardSubtitle">*создаем новую карточку</div>
                 
                 <div class="input-label">Режим <span>*обязательно</span></div>
-                <select class="rank-select" id="createAnketaMode" onchange="Anketa.onModeChange()">
+                <select class="rank-select" id="createCardMode" onchange="CreateCard.onModeChange()">
                     <option value="">Выберите режим</option>
                     <option value="faceit">FACEIT</option>
                     <option value="premier">PREMIER</option>
@@ -214,23 +260,21 @@
                     <option value="public">PUBLIC</option>
                 </select>
 
-                <!-- Заглушка (видна пока режим не выбран) -->
-                <div id="createAnketaPlaceholder" class="anketa-placeholder">
-                    Выберите режим, чтобы<br>заполнить поля анкеты
+                <!-- Заглушка -->
+                <div id="createCardPlaceholder" class="anketa-placeholder">
+                    Выберите режим, чтобы<br>заполнить поля карточки
                 </div>
 
-                <!-- Поля для всех режимов (скрыты пока режим не выбран) -->
-                <div id="createAnketaFields" style="display:none;">
-                    <!-- Для FACEIT/PREMIER -->
-                    <div id="createAnketaRatingField" style="display:none;">
-                        <div class="input-label" id="createAnketaRatingLabel">Faceit ELO <span>*обязательно</span></div>
-                        <input type="number" class="search-input-field" id="createAnketaRatingInput" placeholder="0-5000">
+                <!-- Поля -->
+                <div id="createCardFields" style="display:none;">
+                    <div id="createCardRatingField" style="display:none;">
+                        <div class="input-label" id="createCardRatingLabel">Faceit ELO <span>*обязательно</span></div>
+                        <input type="number" class="search-input-field" id="createCardRatingInput" placeholder="0-5000">
                     </div>
 
-                    <!-- Для PRIME/PUBLIC -->
-                    <div id="createAnketaRankField" style="display:none;">
+                    <div id="createCardRankField" style="display:none;">
                         <div class="input-label">Звание <span>*обязательно</span></div>
-                        <select class="rank-select" id="createAnketaRankSelect">
+                        <select class="rank-select" id="createCardRankSelect">
                             <option value="">Выберите ранг</option>
                             <option>Silver 1</option><option>Silver 2</option><option>Silver 3</option><option>Silver 4</option>
                             <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option><option>Gold Nova 3</option>
@@ -243,18 +287,18 @@
 
                     <div class="stats-row">
                         <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
-                        <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="createAnketaAge" placeholder="0-100" maxlength="3"></div></div>
+                        <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="createCardAge" placeholder="0-100" maxlength="3"></div></div>
                     </div>
 
-                    <div id="createAnketaLinkField" style="display:none;">
-                        <div class="input-label" id="createAnketaLinkLabel">Ссылка</div>
-                        <div class="link-with-copy"><input type="text" class="input-field" id="createAnketaLinkInput" placeholder="Ссылка"><button class="copy-btn" onclick="copyFieldValue('createAnketaLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
+                    <div id="createCardLinkField" style="display:none;">
+                        <div class="input-label" id="createCardLinkLabel">Ссылка</div>
+                        <div class="link-with-copy"><input type="text" class="input-field" id="createCardLinkInput" placeholder="Ссылка"><button class="copy-btn" onclick="copyFieldValue('createCardLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
                     </div>
 
                     <div class="input-label">О себе</div>
-                    <div class="comment-section"><textarea class="comment-input" id="createAnketaAbout" placeholder="Введите комментарий"></textarea></div>
+                    <div class="comment-section"><textarea class="comment-input" id="createCardAbout" placeholder="Введите комментарий"></textarea></div>
 
-                    <button class="mode-search-btn" onclick="Anketa.submitAnketa()">Создать анкету</button>
+                    <button class="mode-search-btn" id="createCardSubmitBtn" onclick="CreateCard.submit()">Создать карточку</button>
                 </div>
             </div>
 
@@ -306,90 +350,6 @@
                 </div>
             </div>
 
-            <!-- FACEIT -->
-            <div id="faceitScreen" class="screen faceit-screen">
-                <div class="mode-header"><div class="mode-title faceit">FACEIT</div></div>
-                <div class="mode-subtitle">Введите ваши актуальные данные</div>
-                <div class="input-label">Faceit ELO <span>*обязательно</span></div>
-                <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000">
-                <div class="stats-row">
-                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
-                    <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="faceitAgeValue" placeholder="0-100" maxlength="3"></div></div>
-                </div>
-                <div class="input-label">Ссылка Faceit</div>
-                <div class="link-with-copy"><input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit"><button class="copy-btn" onclick="copyFieldValue('faceitLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
-                <div class="input-label">О себе</div>
-                <div class="comment-section"><textarea class="comment-input" id="faceitComment" placeholder="Введите комментарий"></textarea></div>
-                <button class="mode-search-btn" onclick="Search.startBrowse('FACEIT', document.getElementById('faceitELOInput').value)">Смотреть анкеты</button>
-            </div>
-
-            <!-- PREMIER -->
-            <div id="premierScreen" class="screen premier-screen">
-                <div class="mode-header"><div class="mode-title premier">PREMIER</div></div>
-                <div class="mode-subtitle">Введите ваши актуальные данные</div>
-                <div class="input-label">CS Rating <span>*обязательно</span></div>
-                <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-40000">
-                <div class="stats-row">
-                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
-                    <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="premierAgeValue" placeholder="0-100" maxlength="3"></div></div>
-                </div>
-                <div class="input-label">Ссылка Steam</div>
-                <div class="link-with-copy"><input type="text" class="input-field" id="premierSteamInput" placeholder="Ссылка на Steam"><button class="copy-btn" onclick="copyFieldValue('premierSteamInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
-                <div class="input-label">О себе</div>
-                <div class="comment-section"><textarea class="comment-input" id="premierComment" placeholder="Введите комментарий"></textarea></div>
-                <button class="mode-search-btn" onclick="Search.startBrowse('PREMIER', document.getElementById('premierRatingInput').value)">Смотреть анкеты</button>
-            </div>
-
-            <!-- PRIME -->
-            <div id="primeScreen" class="screen prime-screen">
-                <div class="mode-header"><div class="mode-title prime">PRIME</div></div>
-                <div class="mode-subtitle">Введите ваши актуальные данные</div>
-                <div class="input-label">Звание <span>*обязательно</span></div>
-                <select class="rank-select" id="primeRankSelect">
-                    <option value="">Выберите ранг</option>
-                    <option>Silver 1</option><option>Silver 2</option><option>Silver 3</option><option>Silver 4</option>
-                    <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option><option>Gold Nova 3</option>
-                    <option>Gold Nova Master</option><option>Master Guardian 1</option><option>Master Guardian 2</option>
-                    <option>Master Guardian Elite</option><option>Distinguished Master Guardian</option>
-                    <option>Legendary Eagle</option><option>Legendary Eagle Master</option>
-                    <option>Supreme Master First Class</option><option>Global Elite</option>
-                </select>
-                <div class="stats-row">
-                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
-                    <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="primeAgeValue" placeholder="0-100" maxlength="3"></div></div>
-                </div>
-                <div class="input-label">Ссылка Steam</div>
-                <div class="link-with-copy"><input type="text" class="input-field" id="primeSteamInput" placeholder="Ссылка на Steam"><button class="copy-btn" onclick="copyFieldValue('primeSteamInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
-                <div class="input-label">О себе</div>
-                <div class="comment-section"><textarea class="comment-input" id="primeComment" placeholder="Введите комментарий"></textarea></div>
-                <button class="mode-search-btn" onclick="Search.startBrowse('PRIME', document.getElementById('primeRankSelect').value)">Смотреть анкеты</button>
-            </div>
-
-            <!-- PUBLIC -->
-            <div id="publicScreen" class="screen public-screen">
-                <div class="mode-header"><div class="mode-title public">PUBLIC</div></div>
-                <div class="mode-subtitle">Введите ваши актуальные данные</div>
-                <div class="input-label">Звание <span>*обязательно</span></div>
-                <select class="rank-select" id="publicRankSelect">
-                    <option value="">Выберите ранг</option>
-                    <option>Silver 1</option><option>Silver 2</option><option>Silver 3</option><option>Silver 4</option>
-                    <option>Silver Elite</option><option>Gold Nova 1</option><option>Gold Nova 2</option><option>Gold Nova 3</option>
-                    <option>Gold Nova Master</option><option>Master Guardian 1</option><option>Master Guardian 2</option>
-                    <option>Master Guardian Elite</option><option>Distinguished Master Guardian</option>
-                    <option>Legendary Eagle</option><option>Legendary Eagle Master</option>
-                    <option>Supreme Master First Class</option><option>Global Elite</option>
-                </select>
-                <div class="stats-row">
-                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
-                    <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="publicAgeValue" placeholder="0-100" maxlength="3"></div></div>
-                </div>
-                <div class="input-label">Ссылка Steam</div>
-                <div class="link-with-copy"><input type="text" class="input-field" id="publicSteamInput" placeholder="Ссылка на Steam"><button class="copy-btn" onclick="copyFieldValue('publicSteamInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
-                <div class="input-label">О себе</div>
-                <div class="comment-section"><textarea class="comment-input" id="publicComment" placeholder="Введите комментарий"></textarea></div>
-                <button class="mode-search-btn" onclick="Search.startBrowse('PUBLIC', document.getElementById('publicRankSelect').value)">Смотреть анкеты</button>
-            </div>
-
             <!-- ПОИСК (скрыт) -->
             <div id="searchScreen" class="screen search-screen" style="display:none;">
                 <div class="search-header"><div class="search-title" id="searchModeTitle">FACEIT</div><div class="search-timer" id="searchTimer">00:00</div></div>
@@ -399,14 +359,22 @@
             </div>
         </main>
 
+        <!-- 🔥 НИЖНЯЯ НАВИГАЦИЯ (с новой иконкой карточки) -->
         <nav class="bottom-nav">
             <div class="nav-item active" onclick="App.showScreen('mainScreen', true)" id="navMain">
                 <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
                 <span class="nav-label">Главная</span>
             </div>
-            <div class="nav-item" onclick="App.showScreen('anketaScreen', true)" id="navAnketa">
-                <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18H4V4h16v16zM6 7h5v2H6V7zm0 4h8v2H6v-2zm0 4h12v2H6v-2z"/></svg></span>
-                <span class="nav-label">Анкеты</span>
+            <div class="nav-item" onclick="App.showScreen('anketaScreen', true)" id="navCards">
+                <span class="nav-icon">
+                    <!-- 🔥 ИКОНКА КАРТОЧКИ -->
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 7V5h4M19 7V5h-4M5 17v2h4M19 17v2h-4" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>
+                        <circle cx="12" cy="10" r="2" stroke="#fff" stroke-width="1.5"/>
+                        <path d="M8.5 16c1.3-2 5.7-2 7 0" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <span class="nav-label">Карточки</span>
             </div>
             <div class="nav-item" onclick="App.showScreen('profileScreen', true)" id="navProfile">
                 <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
@@ -426,7 +394,7 @@
         
         (function() {
             const version = window.BUILD_VERSION || Date.now();
-            const jsFiles = ['js/config.js','js/globals.js','js/app.js','js/settings.js','js/profile.js','js/avatar.js','js/friends.js','js/search.js','js/logo.js','js/team.js','js/anketa.js','js/swipe.js'];
+            const jsFiles = ['js/config.js','js/globals.js','js/app.js','js/settings.js','js/profile.js','js/avatar.js','js/friends.js','js/search.js','js/logo.js','js/team.js','js/anketa.js','js/swipe.js','js/create-card.js'];
             let loadedCount = 0;
             function loadScript(src) {
                 return new Promise((resolve) => {
