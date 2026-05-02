@@ -1,8 +1,8 @@
 // ============================================
-// АНКЕТЫ + ЛАЙКИ - Экран управления v6.0
+// АНКЕТЫ + ЛАЙКИ - Экран управления v6.1
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v6.0)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v6.1)');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,7 +16,7 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v6.0');
+        console.log('🚀 Anketa.init() v6.1');
         this.injectStyles();
         this.loadMyAnketas();
     },
@@ -27,15 +27,18 @@ const Anketa = {
         const style = document.createElement('style');
         style.id = 'anketa-v6-styles';
         style.textContent = `
-            /* СКРОЛЛ */
+            /* ============================= */
+            /* СКРОЛЛ                        */
+            /* ============================= */
             .anketa-scroll {
                 display: flex;
                 flex-direction: column;
                 gap: 0;
-                max-height: calc(100vh - 160px);
                 overflow-y: auto;
-                padding: 12px 16px 40px;
+                padding: 8px 16px 40px;
                 -webkit-overflow-scrolling: touch;
+                flex: 1;
+                min-height: 0;
             }
 
             .anketa-loading,
@@ -46,44 +49,80 @@ const Anketa = {
                 font-size: 14px;
             }
 
-            /* РАЗДЕЛИТЕЛЬ */
-            .anketa-divider {
-                height: 1px;
-                margin: 10px 0;
-                background: rgba(255,255,255,0.06);
+            /* ============================= */
+            /* РАЗДЕЛИТЕЛИ                    */
+            /* ============================= */
+
+            .anketa-divider-top {
+                height: 2px;
+                margin: 0 0 14px 0;
+                background: rgba(255,255,255,0.12);
+                border-radius: 1px;
                 flex-shrink: 0;
             }
 
-            /* КАРТОЧКА */
+            .anketa-divider {
+                height: 1px;
+                margin: 14px 0;
+                background: rgba(255,255,255,0.09);
+                border-radius: 0.5px;
+                flex-shrink: 0;
+            }
+
+            /* ============================= */
+            /* КАРТОЧКА                       */
+            /* ============================= */
+
             .anketa-card {
                 position: relative;
                 width: 100%;
+                min-height: 340px;
                 aspect-ratio: 4 / 5;
                 border-radius: 18px;
                 overflow: hidden;
-                background: linear-gradient(145deg, #1a1a1e, #141418);
                 border: 1px solid rgba(255,255,255,0.06);
                 box-shadow: 
                     0 10px 30px rgba(0,0,0,0.4),
                     inset 0 1px 0 rgba(255,255,255,0.04);
                 transition: transform 0.2s ease, box-shadow 0.2s ease;
-                animation: cardSlideUp 0.4s ease both;
+                flex-shrink: 0;
+                
+                opacity: 0;
+                animation: cardSlideDown 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
             }
 
-            .anketa-card:nth-child(2) { animation-delay: 0.05s; }
-            .anketa-card:nth-child(4) { animation-delay: 0.1s; }
-            .anketa-card:nth-child(6) { animation-delay: 0.15s; }
-            .anketa-card:nth-child(8) { animation-delay: 0.2s; }
-
-            .anketa-card:active {
-                transform: scale(0.98);
+            .anketa-card.empty {
+                background: linear-gradient(
+                    160deg,
+                    #1e1e24 0%,
+                    #19191f 30%,
+                    #15151b 60%,
+                    #18181e 100%
+                );
+                border: 1px solid rgba(255,255,255,0.05);
             }
 
             .anketa-card.filled {
                 background: linear-gradient(145deg, #1c1c22, #16161c);
             }
 
-            /* CORNER RIBBON */
+            .anketa-card:nth-child(1) { animation-delay: 0.00s; }
+            .anketa-card:nth-child(2) { animation-delay: 0.08s; }
+            .anketa-card:nth-child(3) { animation-delay: 0.16s; }
+            .anketa-card:nth-child(4) { animation-delay: 0.24s; }
+            .anketa-card:nth-child(5) { animation-delay: 0.32s; }
+            .anketa-card:nth-child(6) { animation-delay: 0.40s; }
+            .anketa-card:nth-child(7) { animation-delay: 0.48s; }
+            .anketa-card:nth-child(8) { animation-delay: 0.56s; }
+
+            .anketa-card:active {
+                transform: scale(0.98);
+            }
+
+            /* ============================= */
+            /* CORNER RIBBON                 */
+            /* ============================= */
+
             .anketa-ribbon {
                 position: absolute;
                 top: 0;
@@ -100,7 +139,10 @@ const Anketa = {
                 border-bottom: 1px solid var(--ribbon-color, #FF5500);
             }
 
-            /* WATERMARK (пустая) */
+            /* ============================= */
+            /* WATERMARK (пустая)            */
+            /* ============================= */
+
             .anketa-watermark {
                 position: absolute;
                 inset: 0;
@@ -114,15 +156,18 @@ const Anketa = {
             .anketa-watermark svg {
                 width: 120%;
                 height: auto;
-                opacity: 0.06;
-                filter: blur(1px);
+                opacity: 0.05;
+                filter: blur(1.5px);
             }
 
             .anketa-card.filled .anketa-watermark {
                 display: none;
             }
 
-            /* КОНТЕНТ */
+            /* ============================= */
+            /* КОНТЕНТ                       */
+            /* ============================= */
+
             .anketa-content {
                 position: relative;
                 z-index: 2;
@@ -134,7 +179,10 @@ const Anketa = {
                 padding: 20px;
             }
 
-            /* ЗАПОЛНЕННАЯ ИНФО */
+            /* ============================= */
+            /* ЗАПОЛНЕННАЯ ИНФО              */
+            /* ============================= */
+
             .anketa-info {
                 text-align: center;
                 width: 100%;
@@ -162,7 +210,10 @@ const Anketa = {
                 text-shadow: 0 1px 4px rgba(0,0,0,0.5);
             }
 
-            /* ЗАТЕМНЕНИЕ СНИЗУ */
+            /* ============================= */
+            /* ЗАТЕМНЕНИЕ СНИЗУ               */
+            /* ============================= */
+
             .anketa-card.filled::after {
                 content: '';
                 position: absolute;
@@ -176,7 +227,10 @@ const Anketa = {
                 border-radius: 0 0 18px 18px;
             }
 
-            /* КНОПКИ ВНУТРИ */
+            /* ============================= */
+            /* КНОПКИ ВНУТРИ                 */
+            /* ============================= */
+
             .anketa-card-actions {
                 position: absolute;
                 bottom: 12px;
@@ -239,13 +293,25 @@ const Anketa = {
                 transform: translateY(-1px);
             }
 
-            /* АНИМАЦИЯ */
-            @keyframes cardSlideUp {
-                from { opacity: 0; transform: translateY(16px); }
-                to { opacity: 1; transform: translateY(0); }
+            /* ============================= */
+            /* АНИМАЦИЯ ПОЯВЛЕНИЯ            */
+            /* ============================= */
+
+            @keyframes cardSlideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
 
-            /* ЛАЙКИ */
+            /* ============================= */
+            /* ЛАЙКИ                         */
+            /* ============================= */
+
             .anketa-likes-section {
                 font-size: 14px;
                 font-weight: 600;
@@ -379,6 +445,8 @@ const Anketa = {
                 );
 
                 let html = '<div class="anketa-scroll">';
+                // 🔥 ВЕРХНИЙ РАЗДЕЛИТЕЛЬ
+                html += '<div class="anketa-divider-top"></div>';
                 sorted.forEach((m, i) => {
                     html += this.buildSlot(m, anketaMap[m.id]);
                     if (i < sorted.length - 1) {
@@ -392,6 +460,7 @@ const Anketa = {
             .catch(err => {
                 console.error('❌ Ошибка API:', err);
                 let html = '<div class="anketa-scroll">';
+                html += '<div class="anketa-divider-top"></div>';
                 modes.forEach((m, i) => {
                     html += this.buildSlot(m, null);
                     if (i < modes.length - 1) {
@@ -407,10 +476,8 @@ const Anketa = {
     buildSlot(mode, anketa) {
         const rc = this.RIBBON_COLORS[mode.id] || this.RIBBON_COLORS.faceit;
 
-        // Ribbon
         const ribbonHTML = `<div class="anketa-ribbon" style="--ribbon-bg:${rc.bg};--ribbon-color:${rc.color};">${mode.name}</div>`;
 
-        // Watermark (знак вопроса фоном)
         const watermarkHTML = `
             <div class="anketa-watermark">
                 <svg viewBox="0 0 64 64" fill="none">
@@ -421,7 +488,7 @@ const Anketa = {
             </div>`;
 
         if (anketa) {
-            // ========== ЗАПОЛНЕННАЯ КАРТОЧКА ==========
+            // ЗАПОЛНЕННАЯ КАРТОЧКА
             return `
             <div class="anketa-card filled">
                 ${ribbonHTML}
@@ -441,7 +508,7 @@ const Anketa = {
             </div>`;
         }
 
-        // ========== ПУСТАЯ КАРТОЧКА ==========
+        // ПУСТАЯ КАРТОЧКА
         return `
         <div class="anketa-card empty">
             ${ribbonHTML}
@@ -640,4 +707,4 @@ if (origShow) {
 }
 
 window.Anketa = Anketa;
-console.log('✅ Anketa v6.0 готов');
+console.log('✅ Anketa v6.1 готов');
