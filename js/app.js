@@ -1,5 +1,5 @@
 // ============================================
-// ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ - Pingster v2.5
+// ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ - Pingster v2.6
 // ============================================
 
 (function() {
@@ -89,7 +89,7 @@
 })();
 
 // ============================================
-// НАВИГАЦИЯ - Pingster v2.5
+// НАВИГАЦИЯ - Pingster v2.6
 // ============================================
 
 window.App = window.App || {};
@@ -100,17 +100,22 @@ Object.assign(window.App, {
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
     
     hapticFeedback: function(style = 'light') {
-        window.Telegram?.WebApp?.HapticFeedback?.impactOccurred(style);
+        // 🔥 ФИКС: только валидные стили
+        const validStyles = ['light', 'medium', 'heavy', 'rigid', 'soft'];
+        const useStyle = validStyles.includes(style) ? style : 'light';
+        try {
+            window.Telegram?.WebApp?.HapticFeedback?.impactOccurred(useStyle);
+        } catch(e) {
+            // Игнорируем ошибки haptic
+        }
     },
     
-    // 🔥 ПОЛУЧИТЬ TELEGRAM ID
     getTelegramId: function() {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || localStorage.getItem('telegram_id') || null;
     },
     
     // 🔥 ПОПАП "СОЗДАЙ КАРТОЧКУ"
     showCreateCardPopup: function(mode) {
-        // Удаляем старый попап если есть
         const old = document.querySelector('.popup-overlay');
         if (old) old.remove();
         
@@ -146,7 +151,6 @@ Object.assign(window.App, {
         
         overlay.querySelector('#popupCreateBtn').onclick = () => {
             close();
-            // Открываем экран режима для создания карточки
             App.showScreen(mode + 'Screen', true);
         };
         
@@ -154,7 +158,7 @@ Object.assign(window.App, {
         overlay.onclick = (e) => { if (e.target === overlay) close(); };
     },
     
-    // 🔥 ОБРАБОТЧИК КЛИКА ПО РЕЖИМУ НА ГЛАВНОЙ
+    // 🔥 ОБРАБОТЧИК КЛИКА ПО РЕЖИМУ (ФИКС: POST вместо GET)
     handleModeClick: function(mode) {
         const telegramId = this.getTelegramId();
         if (!telegramId) {
@@ -162,33 +166,33 @@ Object.assign(window.App, {
             return;
         }
         
-        // Проверяем есть ли карточка для этого режима
-        fetch(`${this.BACKEND_URL}/api/anketa/list?telegram_id=${telegramId}`)
-            .then(r => r.json())
-            .then(data => {
-                const cards = data.anketas || [];
-                const hasCard = cards.find(c => c.mode === mode);
-                
-                if (hasCard) {
-                    // Карточка есть — сразу в свайп
-                    const rankValue = hasCard.rank || hasCard.elo || '';
-                    if (typeof Search !== 'undefined') {
-                        Search.startBrowse(mode.toUpperCase(), rankValue);
-                    } else {
-                        App.showScreen('swipeScreen', false);
-                    }
+        fetch(`${this.BACKEND_URL}/api/anketa/list`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegram_id: String(telegramId) })
+        })
+        .then(r => r.json())
+        .then(data => {
+            const cards = data.anketas || [];
+            const hasCard = cards.find(c => c.mode === mode);
+            
+            if (hasCard) {
+                const rankValue = hasCard.rank || hasCard.elo || '';
+                if (typeof Search !== 'undefined') {
+                    Search.startBrowse(mode.toUpperCase(), rankValue);
                 } else {
-                    // Карточки нет — показываем попап
-                    this.showCreateCardPopup(mode);
+                    App.showScreen('swipeScreen', false);
                 }
-            })
-            .catch(() => {
-                // Ошибка — просто показываем попап
+            } else {
                 this.showCreateCardPopup(mode);
-            });
+            }
+        })
+        .catch(() => {
+            this.showCreateCardPopup(mode);
+        });
     },
     
-    // 🔥 СОЗДАНИЕ КАРТОЧКИ (из экрана режима)
+    // 🔥 СОЗДАНИЕ КАРТОЧКИ (ФИКС: haptic 'medium')
     createCard: function(mode) {
         const telegramId = this.getTelegramId();
         if (!telegramId) {
@@ -201,7 +205,6 @@ Object.assign(window.App, {
         let link = '';
         let about = '';
         
-        // Собираем данные в зависимости от режима
         if (mode === 'faceit') {
             rank = document.getElementById('faceitELOInput')?.value || '';
             age = document.getElementById('faceitAge')?.value || '';
@@ -224,7 +227,6 @@ Object.assign(window.App, {
             about = document.getElementById('publicAbout')?.value || '';
         }
         
-        // Валидация
         if (!rank) {
             this.showAlert('Укажите ранг / ELO / CS Rating');
             return;
@@ -253,12 +255,12 @@ Object.assign(window.App, {
         .then(r => r.json())
         .then(data => {
             if (data.status === 'ok') {
-                this.hapticFeedback('success');
+                // 🔥 ФИКС: 'medium' вместо 'success'
+                this.hapticFeedback('medium');
                 this.showCustomPopup(
                     '✅ Карточка создана!',
                     'Смотреть карточки других игроков?',
                     () => {
-                        // Запускаем поиск
                         if (typeof Search !== 'undefined') {
                             Search.startBrowse(mode.toUpperCase(), rank);
                         } else {
