@@ -265,16 +265,16 @@ const Anketa = {
         ];
     
         try {
-            // Загружаем профиль (ник, аватарка, ID)
+            // 🔥 ЗАГРУЖАЕМ ПРОФИЛЬ
             const profileRes = await fetch(`${this.BACKEND_URL}/api/profile/get`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ telegram_id: String(telegram_id) })
             });
             const profileData = await profileRes.json();
+            console.log('👤 Профиль загружен:', profileData);
             
-            // Получаем player_id отдельно
-            let playerId = null;
+            // 🔥 ЗАГРУЖАЕМ АВАТАР И ДОБАВЛЯЕМ В profileData
             try {
                 const avatarRes = await fetch(`${this.BACKEND_URL}/api/profile/avatar`, {
                     method: 'POST',
@@ -282,8 +282,12 @@ const Anketa = {
                     body: JSON.stringify({ telegram_id: String(telegram_id) })
                 });
                 const avatarData = await avatarRes.json();
-                // Будем использовать profile/avatar эндпоинт чтобы достать аватарку
-            } catch(e) {}
+                profileData.avatar = avatarData.avatar || null;
+                console.log('🖼 Аватар:', profileData.avatar);
+            } catch(e) {
+                profileData.avatar = null;
+                console.log('⚠ Аватар не загружен');
+            }
             
             // Загружаем анкеты
             const anketaRes = await fetch(`${this.BACKEND_URL}/api/anketa/list`, {
@@ -292,6 +296,7 @@ const Anketa = {
                 body: JSON.stringify({ telegram_id: String(telegram_id) })
             });
             const anketaData = await anketaRes.json();
+            console.log('📋 Анкеты:', anketaData);
             
             const anketaMap = {};
             if (anketaData && anketaData.anketas) {
@@ -328,7 +333,6 @@ const Anketa = {
             container.innerHTML = html;
         }
     },
-
     buildSlot(mode, anketa, profileData = {}) {
         const rc = this.RIBBON_COLORS[mode.id] || this.RIBBON_COLORS.faceit;
         const ribbonHTML = `<div class="anketa-ribbon" style="--ribbon-bg:${rc.bg};--ribbon-color:${rc.color};">${mode.name}</div>`;
