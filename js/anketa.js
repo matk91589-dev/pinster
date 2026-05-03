@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - Экран управления v8.0 PREMIUM (FIXED)
+// КАРТОЧКИ + ЛАЙКИ - Экран управления v9.0 FINAL
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v8.0 PREMIUM FIXED)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v9.0 FINAL)');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,15 +16,15 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v8.0 PREMIUM FIXED');
+        console.log('🚀 Anketa.init() v9.0 FINAL');
         this.injectStyles();
         this.loadMyAnketas();
     },
 
     injectStyles() {
-        if (document.getElementById('anketa-v8-styles')) return;
+        if (document.getElementById('anketa-v9-styles')) return;
         const style = document.createElement('style');
-        style.id = 'anketa-v8-styles';
+        style.id = 'anketa-v9-styles';
         style.textContent = `
             .anketa-scroll {
                 display: flex; flex-direction: column; gap: 0;
@@ -55,11 +55,20 @@ const Anketa = {
                 flex-shrink: 0; opacity: 0;
                 animation: cardSlideUp 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
                 scroll-snap-align: center;
-                /* 🔥 ВАЖНО: Базовые свойства фона */
+                background-color: #1c1c24;
+            }
+            
+            /* 🔥 АВАТАР-СЛОЙ */
+            .anketa-card.filled::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background-image: var(--avatar);
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;
-                background-color: #1c1c24; /* Запасной цвет */
+                transform: scale(1.05);
+                z-index: 0;
             }
             
             /* OVERLAY ДЛЯ ЧИТАБЕЛЬНОСТИ */
@@ -79,26 +88,29 @@ const Anketa = {
                 box-shadow: 0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.02);
             }
             
-            /* КОНТЕНТ */
+            /* КОНТЕНТ — ЛЕВЫЙ UX */
             .anketa-content {
                 position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
-                padding: 20px 16px 16px;
+                padding: 24px 20px 20px;
                 display: flex; flex-direction: column;
-                align-items: center; gap: 4px;
+                align-items: flex-start;
+                text-align: left;
+                gap: 6px;
             }
             
-            /* ID (PLAYER ID) */
+            /* ID */
             .anketa-id {
                 font-size: 10px; font-weight: 500; letter-spacing: 0.5px;
                 color: rgba(255,255,255,0.5); text-transform: uppercase;
                 order: 1;
             }
             
-            /* NICK */
+            /* NICK — ГЛАВНЫЙ АКЦЕНТ */
             .anketa-nick {
-                font-size: 24px; font-weight: 700; color: #FFFFFF;
+                font-size: 26px; font-weight: 800; color: #FFFFFF;
                 text-shadow: 0 2px 12px rgba(0,0,0,0.5);
                 letter-spacing: -0.3px; order: 2;
+                line-height: 1.1;
             }
             
             /* STATS ROW */
@@ -116,26 +128,34 @@ const Anketa = {
             /* ABOUT */
             .anketa-about {
                 font-size: 12px; color: rgba(255,255,255,0.5);
-                text-align: center; max-width: 80%; line-height: 1.4;
-                font-style: italic; order: 4; margin-top: 4px;
+                line-height: 1.4;
+                font-style: italic; order: 4;
                 text-shadow: 0 1px 4px rgba(0,0,0,0.4);
                 display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
                 overflow: hidden;
+                max-width: 100%;
             }
             
-            /* LINKS */
-            .anketa-links {
-                display: flex; gap: 12px; order: 5; margin-top: 6px;
+            /* 🔥 КНОПКА ПРОФИЛЬ */
+            .anketa-profile-btn {
+                margin-top: 8px; order: 5;
+                width: 100%; height: 38px;
+                border-radius: 10px;
+                border: 1px solid rgba(255,255,255,0.08);
+                background: rgba(255,255,255,0.06);
+                color: white;
+                font-size: 13px; font-weight: 600;
+                cursor: pointer;
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                transition: all 0.2s ease;
             }
-            .anketa-link-icon {
-                width: 24px; height: 24px; opacity: 0.7;
-                background: rgba(255,255,255,0.1); border-radius: 50%;
-                display: flex; align-items: center; justify-content: center;
-                font-size: 12px; color: rgba(255,255,255,0.8);
-                text-decoration: none;
+            .anketa-profile-btn:active {
+                background: rgba(255,255,255,0.12);
+                transform: scale(0.98);
             }
             
-            /* КНОПКИ */
+            /* КНОПКИ ИЗМЕНИТЬ/УДАЛИТЬ */
             .anketa-card-actions {
                 position: absolute; bottom: 12px; left: 12px; right: 12px;
                 display: flex; gap: 8px; z-index: 4;
@@ -241,40 +261,39 @@ const Anketa = {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
     },
 
-    // 🔥 НОВОЕ: Загружаем и профиль, и анкеты
     async loadMyAnketas() {
         const container = document.getElementById('anketaMyTab');
         if (!container) {
             console.error('❌ Контейнер anketaMyTab не найден!');
             return;
         }
-        console.log('📦 Anketa v8.0 — загрузка...');
+        console.log('📦 Anketa v9.0 — загрузка...');
         container.innerHTML = '<div class="anketa-loading">Загрузка...</div>';
-    
+
         const telegram_id = this.getTelegramId();
         if (!telegram_id) {
             container.innerHTML = '<div class="anketa-empty-text">Ошибка авторизации</div>';
             return;
         }
-    
+
         const modes = [
             { id: 'faceit', name: 'FACEIT' },
             { id: 'premier', name: 'PREMIER' },
             { id: 'prime', name: 'PRIME' },
             { id: 'public', name: 'PUBLIC' }
         ];
-    
+
         try {
-            // 🔥 ЗАГРУЖАЕМ ПРОФИЛЬ
+            // Загружаем профиль
             const profileRes = await fetch(`${this.BACKEND_URL}/api/profile/get`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ telegram_id: String(telegram_id) })
             });
             const profileData = await profileRes.json();
-            console.log('👤 Профиль загружен:', profileData);
+            console.log('👤 Профиль:', profileData);
             
-            // 🔥 ЗАГРУЖАЕМ АВАТАР И ДОБАВЛЯЕМ В profileData
+            // Загружаем аватар
             try {
                 const avatarRes = await fetch(`${this.BACKEND_URL}/api/profile/avatar`, {
                     method: 'POST',
@@ -283,10 +302,8 @@ const Anketa = {
                 });
                 const avatarData = await avatarRes.json();
                 profileData.avatar = avatarData.avatar || null;
-                console.log('🖼 Аватар:', profileData.avatar);
             } catch(e) {
                 profileData.avatar = null;
-                console.log('⚠ Аватар не загружен');
             }
             
             // Загружаем анкеты
@@ -296,17 +313,16 @@ const Anketa = {
                 body: JSON.stringify({ telegram_id: String(telegram_id) })
             });
             const anketaData = await anketaRes.json();
-            console.log('📋 Анкеты:', anketaData);
             
             const anketaMap = {};
             if (anketaData && anketaData.anketas) {
                 anketaData.anketas.forEach(a => { anketaMap[a.mode] = a; });
             }
-    
+
             const sorted = [...modes].sort((a, b) => 
                 (anketaMap[b.id] ? 1 : 0) - (anketaMap[a.id] ? 1 : 0)
             );
-    
+
             let html = '<div class="anketa-scroll">';
             html += '<div class="anketa-divider-top"></div>';
             sorted.forEach((m, i) => {
@@ -333,19 +349,14 @@ const Anketa = {
             container.innerHTML = html;
         }
     },
+
     buildSlot(mode, anketa, profileData = {}) {
         const rc = this.RIBBON_COLORS[mode.id] || this.RIBBON_COLORS.faceit;
         const ribbonHTML = `<div class="anketa-ribbon" style="--ribbon-bg:${rc.bg};--ribbon-color:${rc.color};">${mode.name}</div>`;
 
         if (anketa) {
-            // Аватар из профиля (если есть)
             const avatarUrl = profileData.avatar || null;
-            const avatarStyle = avatarUrl 
-                ? `background-image: url(${avatarUrl});` 
-                : 'background: linear-gradient(145deg, #1c1c24 0%, #18181e 40%, #15151b 100%);';
-            
-            // Ник из профиля или из анкеты (если нигде нет - "Player")
-            const nick = profileData.nick || anketa.nick || 'Player';
+            const nick = profileData.nick || 'Player';
             
             // Stats row: RANK • AGE • MODE
             const statsParts = [];
@@ -353,40 +364,30 @@ const Anketa = {
             if (anketa.age) statsParts.push(`<span>${anketa.age} y.o.</span>`);
             statsParts.push(`<span>${mode.name}</span>`);
             
-            const statsRowHTML = `<div class="anketa-stats-row">${statsParts.join(' <span class="anketa-stats-sep">•</span> ')}</div>`;
-
-            // About
             const aboutHTML = anketa.about 
                 ? `<div class="anketa-about">${anketa.about.substring(0, 100)}${anketa.about.length > 100 ? '…' : ''}</div>`
                 : '';
 
-            // ID (player_id из профиля)
             const playerId = profileData.player_id || anketa.player_id || '';
             const idHTML = playerId ? `<div class="anketa-id">ID ${playerId}</div>` : '';
 
-            // Links (из профиля)
-            const linksHTML = [];
-            if (profileData.faceit_link || anketa.link) {
-                linksHTML.push(`<div class="anketa-link-icon" title="FACEIT">F</div>`);
-            }
-            if (profileData.steam_link) {
-                linksHTML.push(`<div class="anketa-link-icon" title="Steam">⚙</div>`);
-            }
-            const linksSectionHTML = linksHTML.length > 0 
-                ? `<div class="anketa-links">${linksHTML.join('')}</div>` 
-                : '';
-
             return `
-            <div class="anketa-card filled has-avatar" style="${avatarStyle}">
+            <div class="anketa-card filled" style="--avatar:url(${avatarUrl || ''})">
                 ${ribbonHTML}
                 <div class="anketa-card-overlay"></div>
+
                 <div class="anketa-content">
                     ${idHTML}
                     <div class="anketa-nick">${nick}</div>
-                    ${statsRowHTML}
-                    ${linksSectionHTML}
+                    <div class="anketa-stats-row">
+                        ${statsParts.join(' <span class="anketa-stats-sep">•</span> ')}
+                    </div>
                     ${aboutHTML}
+                    <button class="anketa-profile-btn" onclick="Anketa.openProfile('${mode.id}')">
+                        Открыть профиль
+                    </button>
                 </div>
+
                 <div class="anketa-card-actions">
                     <button class="anketa-card-btn edit" onclick="Anketa.editAnketa('${mode.id}')">Изменить</button>
                     <button class="anketa-card-btn delete" onclick="Anketa.deleteAnketa('${mode.id}')">Удалить</button>
@@ -401,6 +402,17 @@ const Anketa = {
                 <button class="anketa-card-btn create" onclick="Anketa.goToMode('${mode.id}')">Создать карточку</button>
             </div>
         </div>`;
+    },
+
+    // 🔥 НОВЫЙ МЕТОД: Открыть профиль
+    openProfile(modeId) {
+        console.log('📂 Открыть профиль:', modeId);
+        // Показываем экран профиля или детальную информацию
+        if (window.App && App.showScreen) {
+            App.showScreen('profileScreen', { mode: modeId });
+        } else {
+            console.log('⚠ App.showScreen не найден');
+        }
     },
 
     goToMode(modeId) {
@@ -499,4 +511,4 @@ if (origShow) {
 }
 
 window.Anketa = Anketa;
-console.log('✅ Anketa v8.0 PREMIUM FIXED готов');
+console.log('✅ Anketa v9.0 FINAL готов');
