@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - Экран управления v12.3 FINAL
+// КАРТОЧКИ + ЛАЙКИ - Экран управления v12.4 FINAL
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v12.3 FINAL)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v12.4 FINAL)');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,7 +16,7 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v12.3 FINAL');
+        console.log('🚀 Anketa.init() v12.4 FINAL');
         this.injectStyles();
         this.loadMyAnketas();
     },
@@ -67,7 +67,7 @@ const Anketa = {
                 background-repeat: no-repeat;
             }
             
-            /* 🔥 БОЛЬШОЕ ЧЁРНОЕ ЗАТЕМНЕНИЕ СНИЗУ — ВЫШЕ И СИЛЬНЕЕ */
+            /* ЧЁРНОЕ ЗАТЕМНЕНИЕ СНИЗУ */
             .anketa-card.filled::after {
                 content: '';
                 position: absolute;
@@ -93,40 +93,47 @@ const Anketa = {
                 box-shadow: 0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.02);
             }
             
-            /* КОНТЕНТ — ВНУТРИ ЧЁРНОЙ ЗОНЫ */
+            /* КОНТЕНТ — КНОПКА ВНИЗУ, ТЕКСТ НАД НЕЙ */
             .anketa-content {
                 position: absolute;
                 bottom: 0;
                 left: 0;
                 right: 0;
                 z-index: 2;
-                padding: 40px 16px 14px 16px;
+                padding: 0 16px 8px 16px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+            
+            /* ТЕКСТОВЫЙ БЛОК НАД КНОПКОЙ */
+            .anketa-text-block {
                 display: flex;
                 flex-direction: column;
                 align-items: flex-start;
                 text-align: left;
                 gap: 3px;
+                margin-bottom: 12px;
+                width: 100%;
             }
             
-            /* ID — ОРАНЖЕВЫЙ */
+            /* ID */
             .anketa-id {
                 font-size: 10px;
                 font-weight: 600;
                 letter-spacing: 0.8px;
                 color: #FF5500;
                 text-transform: uppercase;
-                order: 1;
-                opacity: 0.9;
             }
             
-            /* NICK — ГЛАВНЫЙ */
+            /* NICK */
             .anketa-nick {
                 font-size: 28px;
                 font-weight: 800;
                 color: #FFFFFF;
                 text-shadow: 0 2px 12px rgba(0,0,0,0.7);
                 letter-spacing: -0.3px;
-                order: 2;
                 line-height: 1.2;
                 margin-top: 2px;
             }
@@ -140,7 +147,6 @@ const Anketa = {
                 align-items: center;
                 gap: 8px;
                 white-space: nowrap;
-                order: 3;
                 margin-top: 4px;
             }
             .anketa-stats-row span:nth-child(1) {
@@ -164,7 +170,6 @@ const Anketa = {
                 color: rgba(255,255,255,0.55);
                 line-height: 1.5;
                 font-style: italic;
-                order: 4;
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
@@ -173,9 +178,8 @@ const Anketa = {
                 margin-top: 6px;
             }
             
-            /* CTA КНОПКА */
+            /* CTA КНОПКА — В САМОМ НИЗУ */
             .anketa-profile-btn {
-                order: 5;
                 width: 100%;
                 height: 40px;
                 border-radius: 10px;
@@ -189,8 +193,8 @@ const Anketa = {
                 -webkit-backdrop-filter: blur(8px);
                 transition: all 0.2s ease;
                 letter-spacing: 0.3px;
-                margin-top: 14px;
                 box-shadow: 0 0 18px rgba(255,85,0,0.12);
+                flex-shrink: 0;
             }
             .anketa-profile-btn:active {
                 background: rgba(255,85,0,0.1);
@@ -341,7 +345,7 @@ const Anketa = {
             console.error('❌ Контейнер anketaMyTab не найден!');
             return;
         }
-        console.log('📦 Anketa v12.3 — загрузка...');
+        console.log('📦 Anketa v12.4 — загрузка...');
         container.innerHTML = '<div class="anketa-loading">Загрузка...</div>';
 
         const telegram_id = this.getTelegramId();
@@ -486,20 +490,21 @@ const Anketa = {
             <div class="anketa-card filled" style="${cardStyle}">
                 ${ribbonHTML}
                 
-                <!-- Кнопки управления -->
                 <div class="anketa-card-controls">
                     <span class="anketa-control-link edit" onclick="Anketa.editAnketa('${mode.id}')">Изменить</span>
                     <span class="anketa-control-link delete" onclick="Anketa.deleteAnketa('${mode.id}')">Удалить</span>
                 </div>
                 
-                <!-- ВЕСЬ ТЕКСТ ВНУТРИ ЧЁРНОЙ ЗОНЫ -->
+                <!-- КНОПКА В САМОМ НИЗУ, ТЕКСТ НАД НЕЙ -->
                 <div class="anketa-content">
-                    ${playerId ? `<div class="anketa-id">ID ${playerId}</div>` : ''}
-                    <div class="anketa-nick">${nick}</div>
-                    <div class="anketa-stats-row">
-                        ${statsParts.join(' <span class="anketa-stats-sep">•</span> ')}
+                    <div class="anketa-text-block">
+                        ${playerId ? `<div class="anketa-id">ID ${playerId}</div>` : ''}
+                        <div class="anketa-nick">${nick}</div>
+                        <div class="anketa-stats-row">
+                            ${statsParts.join(' <span class="anketa-stats-sep">•</span> ')}
+                        </div>
+                        ${aboutHTML}
                     </div>
-                    ${aboutHTML}
                     <button class="anketa-profile-btn" 
                         onclick="Anketa.openProfileLink('${profileLink.replace(/'/g, "\\'")}', '${mode.id}')">
                         ${buttonText}
@@ -633,4 +638,4 @@ if (origShow) {
 }
 
 window.Anketa = Anketa;
-console.log('✅ Anketa v12.3 FINAL готов');
+console.log('✅ Anketa v12.4 FINAL готов');
