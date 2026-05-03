@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - Экран управления v12.0 PRO
+// КАРТОЧКИ + ЛАЙКИ - Экран управления v12.1 PRO FINAL
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v12.0 PRO)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v12.1 PRO FINAL)');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,7 +16,7 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v12.0 PRO');
+        console.log('🚀 Anketa.init() v12.1 PRO FINAL');
         this.injectStyles();
         this.loadMyAnketas();
     },
@@ -56,20 +56,34 @@ const Anketa = {
                 animation: cardSlideUp 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
                 scroll-snap-align: center;
                 background-color: #0a0a0f;
-            }
-            
-            /* АВАТАР — отдельный слой */
-            .anketa-card-avatar-layer {
-                position: absolute;
-                top: 0; left: 0; right: 0;
-                height: 58%;
                 background-size: cover;
                 background-position: center 20%;
                 background-repeat: no-repeat;
-                z-index: 0;
             }
             
-            /* UI-ПАНЕЛЬ — жёсткое стекло снизу 42% */
+            /* 🔥 АВАТАР — на всю карточку */
+            .anketa-card.filled {
+                background-size: cover;
+                background-position: center 20%;
+                background-repeat: no-repeat;
+            }
+            
+            /* 🔥 ЗАТЕМНЯЮЩИЙ СЛОЙ НА АВАТАР */
+            .anketa-card.filled::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    to bottom,
+                    rgba(0,0,0,0.20) 0%,
+                    rgba(0,0,0,0.40) 40%,
+                    rgba(0,0,0,0.60) 100%
+                );
+                z-index: 1;
+                pointer-events: none;
+            }
+            
+            /* 🔥 СТЕКЛЯННАЯ UI-ПАНЕЛЬ ПОВЕРХ АВАТАРКИ */
             .anketa-ui-panel {
                 position: absolute;
                 bottom: 0;
@@ -78,17 +92,17 @@ const Anketa = {
                 height: 42%;
                 background: linear-gradient(
                     to top,
-                    rgba(0,0,0,0.98) 0%,
-                    rgba(0,0,0,0.92) 35%,
-                    rgba(0,0,0,0.55) 60%,
+                    rgba(0,0,0,0.92) 0%,
+                    rgba(0,0,0,0.85) 35%,
+                    rgba(0,0,0,0.45) 65%,
                     rgba(0,0,0,0.0) 100%
                 );
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
                 z-index: 2;
             }
             
-            /* ГРАНИЦА UI-ПАНЕЛИ */
+            /* ТОНКАЯ ГРАНИЦА ПАНЕЛИ */
             .anketa-ui-panel::before {
                 content: '';
                 position: absolute;
@@ -96,7 +110,15 @@ const Anketa = {
                 left: 16px;
                 right: 16px;
                 height: 1px;
-                background: rgba(255,255,255,0.06);
+                background: rgba(255,255,255,0.08);
+            }
+            
+            /* ВИНЬЕТКА ПО КРАЯМ */
+            .anketa-card.filled {
+                box-shadow: 
+                    inset 0 0 60px rgba(0,0,0,0.4),
+                    0 10px 30px rgba(0,0,0,0.4), 
+                    0 0 0 1px rgba(255,255,255,0.04);
             }
             
             .anketa-card.empty {
@@ -105,7 +127,7 @@ const Anketa = {
                 box-shadow: 0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.02);
             }
             
-            /* КОНТЕНТ */
+            /* КОНТЕНТ — на стеклянной панели */
             .anketa-content {
                 position: absolute;
                 bottom: 0;
@@ -143,7 +165,7 @@ const Anketa = {
                 margin-top: 2px;
             }
             
-            /* STATS ROW — Mode • Rank • Age */
+            /* 🔥 STATS ROW — ИЕРАРХИЯ */
             .anketa-stats-row {
                 font-size: 14px;
                 font-weight: 500;
@@ -155,8 +177,18 @@ const Anketa = {
                 order: 3;
                 margin-top: 4px;
             }
+            .anketa-stats-row span:nth-child(1) {
+                opacity: 1;
+                font-weight: 600;
+            }
+            .anketa-stats-row span:nth-child(2) {
+                opacity: 0.8;
+            }
+            .anketa-stats-row span:nth-child(3) {
+                opacity: 0.6;
+            }
             .anketa-stats-sep {
-                color: rgba(255,255,255,0.35);
+                color: rgba(255,255,255,0.3);
                 font-size: 10px;
             }
             
@@ -175,13 +207,13 @@ const Anketa = {
                 margin-top: 4px;
             }
             
-            /* КНОПКА ПРОФИЛЬ — в самом низу */
+            /* 🔥 CTA КНОПКА — АКЦЕНТНАЯ */
             .anketa-profile-btn {
                 order: 5;
                 width: 100%;
                 height: 40px;
                 border-radius: 10px;
-                border: 1px solid rgba(255,255,255,0.12);
+                border: 1px solid rgba(255,85,0,0.25);
                 background: rgba(255,255,255,0.06);
                 color: white;
                 font-size: 13px;
@@ -192,9 +224,12 @@ const Anketa = {
                 transition: all 0.2s ease;
                 letter-spacing: 0.3px;
                 margin-top: 12px;
+                box-shadow: 0 0 18px rgba(255,85,0,0.12);
             }
             .anketa-profile-btn:active {
-                background: rgba(255,255,255,0.14);
+                background: rgba(255,85,0,0.1);
+                border-color: rgba(255,85,0,0.4);
+                box-shadow: 0 0 24px rgba(255,85,0,0.2);
                 transform: scale(0.98);
             }
             
@@ -340,7 +375,7 @@ const Anketa = {
             console.error('❌ Контейнер anketaMyTab не найден!');
             return;
         }
-        console.log('📦 Anketa v12.0 — загрузка...');
+        console.log('📦 Anketa v12.1 — загрузка...');
         container.innerHTML = '<div class="anketa-loading">Загрузка...</div>';
 
         const telegram_id = this.getTelegramId();
@@ -441,17 +476,17 @@ const Anketa = {
         const ribbonHTML = `<div class="anketa-ribbon" style="--ribbon-bg:${rc.bg};--ribbon-color:${rc.color};">${mode.name}</div>`;
 
         if (anketa) {
+            // 🔥 АВАТАР — на всю карточку как background-image
             const avatarUrl = profileData.avatar || '';
-            const avatarLayerStyle = avatarUrl 
+            const cardStyle = avatarUrl 
                 ? `background-image: url(${avatarUrl});` 
                 : '';
             
             const nick = profileData.nick || 'Player';
             const playerId = profileData.player_id || '';
             
-            // 🔥 СТАТС: Mode • Rank • Age
+            // Stats: Mode • Rank • Age с иерархией
             const statsParts = [];
-            
             const modeName = mode.id === 'premier' ? 'Premier' : mode.name;
             statsParts.push(`<span>${modeName}</span>`);
             
@@ -469,12 +504,11 @@ const Anketa = {
                 statsParts.push(`<span>${anketa.age} y.o.</span>`);
             }
             
-            // About — только если есть
             const aboutHTML = anketa.about && anketa.about.trim() 
                 ? `<div class="anketa-about">${anketa.about.substring(0, 120)}${anketa.about.length > 120 ? '…' : ''}</div>`
                 : '';
             
-            // 🔥 КНОПКА: Open Faceit / Open Steam
+            // 🔥 КНОПКА
             let profileLink = '#';
             let buttonText = 'Open Steam профиль';
             
@@ -486,18 +520,19 @@ const Anketa = {
             }
             
             return `
-            <div class="anketa-card filled">
-                <div class="anketa-card-avatar-layer" style="${avatarLayerStyle}"></div>
+            <div class="anketa-card filled" style="${cardStyle}">
                 ${ribbonHTML}
                 
+                <!-- 🔥 СТЕКЛЯННАЯ ПАНЕЛЬ ПОВЕРХ АВАТАРКИ -->
                 <div class="anketa-ui-panel"></div>
                 
-                <!-- Кнопки управления — правый верхний угол -->
+                <!-- Кнопки управления -->
                 <div class="anketa-card-controls">
                     <span class="anketa-control-link edit" onclick="Anketa.editAnketa('${mode.id}')">Изменить</span>
                     <span class="anketa-control-link delete" onclick="Anketa.deleteAnketa('${mode.id}')">Удалить</span>
                 </div>
                 
+                <!-- 🔥 ВЕСЬ ТЕКСТ НА СТЕКЛЕ -->
                 <div class="anketa-content">
                     ${playerId ? `<div class="anketa-id">ID ${playerId}</div>` : ''}
                     <div class="anketa-nick">${nick}</div>
@@ -513,7 +548,6 @@ const Anketa = {
             </div>`;
         }
 
-        // Пустая карточка
         return `
         <div class="anketa-card empty">
             ${ribbonHTML}
@@ -639,4 +673,4 @@ if (origShow) {
 }
 
 window.Anketa = Anketa;
-console.log('✅ Anketa v12.0 PRO готов');
+console.log('✅ Anketa v12.1 PRO FINAL готов');
