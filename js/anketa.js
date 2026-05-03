@@ -470,7 +470,7 @@ const Anketa = {
             let profileLink = '#';
             let buttonText = 'Open Steam профиль';
             
-            if (mode.id === 'faceit' || mode.id === 'premier') {
+            if (mode.id === 'faceit') {
                 profileLink = profileData.faceit_link || anketa.link || '#';
                 buttonText = 'Open Faceit профиль';
             } else {
