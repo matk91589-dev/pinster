@@ -45,7 +45,6 @@ const Anketa = {
                 background: rgba(255,255,255,0.07); border-radius: 0.5px; flex-shrink: 0;
             }
             
-            /* КАРТОЧКА */
             .anketa-card {
                 position: relative; width: 100%; min-height: 340px;
                 aspect-ratio: 4 / 5; border-radius: 18px; overflow: hidden;
@@ -67,7 +66,6 @@ const Anketa = {
                 background-repeat: no-repeat;
             }
             
-            /* ЧЁРНОЕ ЗАТЕМНЕНИЕ СНИЗУ */
             .anketa-card.filled::after {
                 content: '';
                 position: absolute;
@@ -93,32 +91,29 @@ const Anketa = {
                 box-shadow: 0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.02);
             }
             
-            /* КОНТЕНТ — КНОПКА ВНИЗУ, ТЕКСТ НАД НЕЙ */
             .anketa-content {
                 position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
+                bottom: 8px;
+                left: 16px;
+                right: 16px;
                 z-index: 2;
-                padding: 0 16px 8px 16px;
                 display: flex;
                 flex-direction: column;
                 align-items: flex-start;
                 text-align: left;
+                gap: 0;
             }
             
-            /* ТЕКСТОВЫЙ БЛОК НАД КНОПКОЙ */
             .anketa-text-block {
                 display: flex;
                 flex-direction: column;
                 align-items: flex-start;
                 text-align: left;
                 gap: 3px;
-                margin-bottom: 12px;
+                margin-bottom: 10px;
                 width: 100%;
             }
             
-            /* ID */
             .anketa-id {
                 font-size: 10px;
                 font-weight: 600;
@@ -127,7 +122,6 @@ const Anketa = {
                 text-transform: uppercase;
             }
             
-            /* NICK */
             .anketa-nick {
                 font-size: 28px;
                 font-weight: 800;
@@ -138,7 +132,6 @@ const Anketa = {
                 margin-top: 2px;
             }
             
-            /* STATS ROW */
             .anketa-stats-row {
                 font-size: 14px;
                 font-weight: 500;
@@ -164,7 +157,6 @@ const Anketa = {
                 font-size: 10px;
             }
             
-            /* ABOUT */
             .anketa-about {
                 font-size: 12px;
                 color: rgba(255,255,255,0.55);
@@ -178,7 +170,6 @@ const Anketa = {
                 margin-top: 6px;
             }
             
-            /* CTA КНОПКА — В САМОМ НИЗУ */
             .anketa-profile-btn {
                 width: 100%;
                 height: 40px;
@@ -195,6 +186,7 @@ const Anketa = {
                 letter-spacing: 0.3px;
                 box-shadow: 0 0 18px rgba(255,85,0,0.12);
                 flex-shrink: 0;
+                margin: 0;
             }
             .anketa-profile-btn:active {
                 background: rgba(255,85,0,0.1);
@@ -203,7 +195,6 @@ const Anketa = {
                 transform: scale(0.98);
             }
             
-            /* КНОПКИ УПРАВЛЕНИЯ */
             .anketa-card-controls {
                 position: absolute;
                 top: 12px;
@@ -236,7 +227,6 @@ const Anketa = {
                 color: rgba(255,100,100,0.85);
             }
             
-            /* КНОПКА СОЗДАТЬ */
             .anketa-card-actions {
                 position: absolute; bottom: 12px; left: 12px; right: 12px;
                 display: flex; gap: 8px; z-index: 4;
@@ -260,7 +250,6 @@ const Anketa = {
             }
             .anketa-card-btn.create:active { box-shadow: inset 0 2px 6px rgba(0,0,0,0.35), 0 1px 4px rgba(255,85,0,0.2); }
             
-            /* РИББОН */
             .anketa-ribbon {
                 position: absolute; top: 0; left: 0; z-index: 5;
                 padding: 7px 18px 6px 14px;
@@ -272,13 +261,11 @@ const Anketa = {
                 border-bottom: 1px solid var(--ribbon-color, #FF5500);
             }
             
-            /* ИНТЕРАКТИВ */
             .anketa-card:hover, .anketa-card:active { 
                 transform: scale(0.97) !important; 
                 transition: transform 0.15s ease; 
             }
             
-            /* АНИМАЦИИ */
             .anketa-card:nth-child(1) { animation-delay: 0.00s; }
             .anketa-card:nth-child(2) { animation-delay: 0.07s; }
             .anketa-card:nth-child(3) { animation-delay: 0.14s; }
@@ -293,7 +280,6 @@ const Anketa = {
                 to { opacity: 1; transform: translateY(0); }
             }
             
-            /* LIKES */
             .anketa-likes-section {
                 font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.9);
                 padding: 16px 16px 8px; letter-spacing: 0.3px;
@@ -495,7 +481,6 @@ const Anketa = {
                     <span class="anketa-control-link delete" onclick="Anketa.deleteAnketa('${mode.id}')">Удалить</span>
                 </div>
                 
-                <!-- КНОПКА В САМОМ НИЗУ, ТЕКСТ НАД НЕЙ -->
                 <div class="anketa-content">
                     <div class="anketa-text-block">
                         ${playerId ? `<div class="anketa-id">ID ${playerId}</div>` : ''}
