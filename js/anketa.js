@@ -55,13 +55,11 @@ const Anketa = {
                 flex-shrink: 0; opacity: 0;
                 animation: cardSlideUp 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
                 scroll-snap-align: center;
-            }
-            
-            /* АВАТАР-ФОН */
-            .anketa-card.has-avatar {
+                /* 🔥 ВАЖНО: Базовые свойства фона */
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;
+                background-color: #1c1c24; /* Запасной цвет */
             }
             
             /* OVERLAY ДЛЯ ЧИТАБЕЛЬНОСТИ */
