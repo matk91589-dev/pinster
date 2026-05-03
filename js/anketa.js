@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - Экран управления v8.0 PREMIUM
+// КАРТОЧКИ + ЛАЙКИ - Экран управления v8.0 PREMIUM (FIXED)
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v8.0 PREMIUM)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v8.0 PREMIUM FIXED)');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,7 +16,7 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v8.0 PREMIUM');
+        console.log('🚀 Anketa.init() v8.0 PREMIUM FIXED');
         this.injectStyles();
         this.loadMyAnketas();
     },
@@ -55,8 +55,6 @@ const Anketa = {
                 flex-shrink: 0; opacity: 0;
                 animation: cardSlideUp 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
                 scroll-snap-align: center;
-                background-size: cover;
-                background-position: center;
             }
             
             /* АВАТАР-ФОН */
@@ -91,7 +89,7 @@ const Anketa = {
                 align-items: center; gap: 4px;
             }
             
-            /* ID */
+            /* ID (PLAYER ID) */
             .anketa-id {
                 font-size: 10px; font-weight: 500; letter-spacing: 0.5px;
                 color: rgba(255,255,255,0.5); text-transform: uppercase;
@@ -132,10 +130,11 @@ const Anketa = {
                 display: flex; gap: 12px; order: 5; margin-top: 6px;
             }
             .anketa-link-icon {
-                width: 20px; height: 20px; opacity: 0.6;
+                width: 24px; height: 24px; opacity: 0.7;
                 background: rgba(255,255,255,0.1); border-radius: 50%;
                 display: flex; align-items: center; justify-content: center;
-                font-size: 11px; color: rgba(255,255,255,0.7);
+                font-size: 12px; color: rgba(255,255,255,0.8);
+                text-decoration: none;
             }
             
             /* КНОПКИ */
@@ -244,7 +243,8 @@ const Anketa = {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null;
     },
 
-    loadMyAnketas() {
+    // 🔥 НОВОЕ: Загружаем и профиль, и анкеты
+    async loadMyAnketas() {
         const container = document.getElementById('anketaMyTab');
         if (!container) {
             console.error('❌ Контейнер anketaMyTab не найден!');
@@ -266,79 +266,112 @@ const Anketa = {
             { id: 'public', name: 'PUBLIC' }
         ];
     
-        fetch(`${this.BACKEND_URL}/api/anketa/list`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ telegram_id: String(telegram_id) })
-        })
-            .then(r => r.json())
-            .then(anketaData => {
-                const anketaMap = {};
-                if (anketaData && anketaData.anketas) {
-                    anketaData.anketas.forEach(a => { anketaMap[a.mode] = a; });
-                }
-    
-                const sorted = [...modes].sort((a, b) => 
-                    (anketaMap[b.id] ? 1 : 0) - (anketaMap[a.id] ? 1 : 0)
-                );
-    
-                let html = '<div class="anketa-scroll">';
-                html += '<div class="anketa-divider-top"></div>';
-                sorted.forEach((m, i) => {
-                    html += this.buildSlot(m, anketaMap[m.id]);
-                    if (i < sorted.length - 1) {
-                        html += '<div class="anketa-divider"></div>';
-                    }
-                });
-                html += '</div>';
-                container.innerHTML = html;
-                console.log('✅ Карточек отрисовано:', sorted.length);
-            })
-            .catch(err => {
-                console.error('❌ Ошибка API:', err);
-                let html = '<div class="anketa-scroll">';
-                html += '<div class="anketa-divider-top"></div>';
-                modes.forEach((m, i) => {
-                    html += this.buildSlot(m, null);
-                    if (i < modes.length - 1) {
-                        html += '<div class="anketa-divider"></div>';
-                    }
-                });
-                html += '</div>';
-                container.innerHTML = html;
+        try {
+            // Загружаем профиль (ник, аватарка, ID)
+            const profileRes = await fetch(`${this.BACKEND_URL}/api/profile/get`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telegram_id: String(telegram_id) })
             });
+            const profileData = await profileRes.json();
+            
+            // Получаем player_id отдельно
+            let playerId = null;
+            try {
+                const avatarRes = await fetch(`${this.BACKEND_URL}/api/profile/avatar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegram_id: String(telegram_id) })
+                });
+                const avatarData = await avatarRes.json();
+                // Будем использовать profile/avatar эндпоинт чтобы достать аватарку
+            } catch(e) {}
+            
+            // Загружаем анкеты
+            const anketaRes = await fetch(`${this.BACKEND_URL}/api/anketa/list`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telegram_id: String(telegram_id) })
+            });
+            const anketaData = await anketaRes.json();
+            
+            const anketaMap = {};
+            if (anketaData && anketaData.anketas) {
+                anketaData.anketas.forEach(a => { anketaMap[a.mode] = a; });
+            }
+    
+            const sorted = [...modes].sort((a, b) => 
+                (anketaMap[b.id] ? 1 : 0) - (anketaMap[a.id] ? 1 : 0)
+            );
+    
+            let html = '<div class="anketa-scroll">';
+            html += '<div class="anketa-divider-top"></div>';
+            sorted.forEach((m, i) => {
+                html += this.buildSlot(m, anketaMap[m.id], profileData);
+                if (i < sorted.length - 1) {
+                    html += '<div class="anketa-divider"></div>';
+                }
+            });
+            html += '</div>';
+            container.innerHTML = html;
+            console.log('✅ Карточек отрисовано:', sorted.length);
+            
+        } catch (err) {
+            console.error('❌ Ошибка API:', err);
+            let html = '<div class="anketa-scroll">';
+            html += '<div class="anketa-divider-top"></div>';
+            modes.forEach((m, i) => {
+                html += this.buildSlot(m, null, {});
+                if (i < modes.length - 1) {
+                    html += '<div class="anketa-divider"></div>';
+                }
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
     },
 
-    buildSlot(mode, anketa) {
+    buildSlot(mode, anketa, profileData = {}) {
         const rc = this.RIBBON_COLORS[mode.id] || this.RIBBON_COLORS.faceit;
         const ribbonHTML = `<div class="anketa-ribbon" style="--ribbon-bg:${rc.bg};--ribbon-color:${rc.color};">${mode.name}</div>`;
 
         if (anketa) {
-            // Формируем аватар-фон
-            const avatarStyle = anketa.avatar 
-                ? `background-image: url(${anketa.avatar});` 
+            // Аватар из профиля (если есть)
+            const avatarUrl = profileData.avatar || null;
+            const avatarStyle = avatarUrl 
+                ? `background-image: url(${avatarUrl});` 
                 : 'background: linear-gradient(145deg, #1c1c24 0%, #18181e 40%, #15151b 100%);';
+            
+            // Ник из профиля или из анкеты (если нигде нет - "Player")
+            const nick = profileData.nick || anketa.nick || 'Player';
             
             // Stats row: RANK • AGE • MODE
             const statsParts = [];
             if (anketa.rank) statsParts.push(`<span style="color:#FFFFFF;font-weight:600;">${anketa.rank}</span>`);
             if (anketa.age) statsParts.push(`<span>${anketa.age} y.o.</span>`);
-            if (mode.name) statsParts.push(`<span>${mode.name}</span>`);
-            const statsRowHTML = statsParts.length > 0
-                ? `<div class="anketa-stats-row">${statsParts.join(' <span class="anketa-stats-sep">•</span> ')}</div>`
-                : '';
+            statsParts.push(`<span>${mode.name}</span>`);
+            
+            const statsRowHTML = `<div class="anketa-stats-row">${statsParts.join(' <span class="anketa-stats-sep">•</span> ')}</div>`;
 
             // About
             const aboutHTML = anketa.about 
                 ? `<div class="anketa-about">${anketa.about.substring(0, 100)}${anketa.about.length > 100 ? '…' : ''}</div>`
                 : '';
 
-            // ID
-            const idHTML = anketa.id ? `<div class="anketa-id">ID ${anketa.id}</div>` : '';
+            // ID (player_id из профиля)
+            const playerId = profileData.player_id || anketa.player_id || '';
+            const idHTML = playerId ? `<div class="anketa-id">ID ${playerId}</div>` : '';
 
-            // Links (social icons — placeholder)
-            const linksHTML = anketa.telegram || anketa.steam 
-                ? `<div class="anketa-links">${anketa.telegram ? '<div class="anketa-link-icon">✈</div>' : ''}${anketa.steam ? '<div class="anketa-link-icon">⚙</div>' : ''}</div>`
+            // Links (из профиля)
+            const linksHTML = [];
+            if (profileData.faceit_link || anketa.link) {
+                linksHTML.push(`<div class="anketa-link-icon" title="FACEIT">F</div>`);
+            }
+            if (profileData.steam_link) {
+                linksHTML.push(`<div class="anketa-link-icon" title="Steam">⚙</div>`);
+            }
+            const linksSectionHTML = linksHTML.length > 0 
+                ? `<div class="anketa-links">${linksHTML.join('')}</div>` 
                 : '';
 
             return `
@@ -347,9 +380,9 @@ const Anketa = {
                 <div class="anketa-card-overlay"></div>
                 <div class="anketa-content">
                     ${idHTML}
-                    <div class="anketa-nick">${anketa.nick || anketa.rank || 'Player'}</div>
+                    <div class="anketa-nick">${nick}</div>
                     ${statsRowHTML}
-                    ${linksHTML}
+                    ${linksSectionHTML}
                     ${aboutHTML}
                 </div>
                 <div class="anketa-card-actions">
@@ -464,4 +497,4 @@ if (origShow) {
 }
 
 window.Anketa = Anketa;
-console.log('✅ Anketa v8.0 PREMIUM готов');
+console.log('✅ Anketa v8.0 PREMIUM FIXED готов');
