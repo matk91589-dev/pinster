@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - Экран управления v12.5 FINAL
+// КАРТОЧКИ + ЛАЙКИ - Экран управления v12.6 FINAL
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v12.5 FINAL)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v12.6 FINAL)');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,7 +16,7 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v12.5 FINAL');
+        console.log('🚀 Anketa.init() v12.6 FINAL');
         this.injectStyles();
         this.loadMyAnketas();
     },
@@ -91,10 +91,10 @@ const Anketa = {
                 box-shadow: 0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.02);
             }
             
-            /* ТЕКСТОВЫЙ БЛОК — над кнопкой */
+            /* ТЕКСТОВЫЙ БЛОК — 2.5x от кнопки */
             .anketa-text-block {
                 position: absolute;
-                bottom: 60px;
+                bottom: 68px;
                 left: 16px;
                 right: 16px;
                 z-index: 2;
@@ -123,45 +123,38 @@ const Anketa = {
                 margin-top: 2px;
             }
             
+            /* STATS ROW — белый, точки крупнее */
             .anketa-stats-row {
                 font-size: 14px;
                 font-weight: 500;
-                color: rgba(255,255,255,0.85);
+                color: #FFFFFF;
                 display: flex;
                 align-items: center;
-                gap: 8px;
+                gap: 10px;
                 white-space: nowrap;
                 margin-top: 4px;
             }
-            .anketa-stats-row span:nth-child(1) {
-                opacity: 1;
-                font-weight: 600;
-            }
-            .anketa-stats-row span:nth-child(2) {
-                opacity: 0.8;
-            }
-            .anketa-stats-row span:nth-child(3) {
-                opacity: 0.6;
-            }
             .anketa-stats-sep {
-                color: rgba(255,255,255,0.3);
-                font-size: 10px;
+                color: rgba(255,255,255,0.6);
+                font-size: 14px;
+                font-weight: 700;
             }
             
+            /* ABOUT — белый, крупнее, без наклона */
             .anketa-about {
-                font-size: 12px;
-                color: rgba(255,255,255,0.55);
+                font-size: 14px;
+                color: #FFFFFF;
                 line-height: 1.5;
-                font-style: italic;
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
                 max-width: 100%;
                 margin-top: 6px;
+                font-weight: 400;
             }
             
-            /* КНОПКА — АБСОЛЮТНО В САМОМ НИЗУ */
+            /* КНОПКА — В САМОМ НИЗУ */
             .anketa-profile-btn {
                 position: absolute;
                 bottom: 8px;
@@ -325,7 +318,7 @@ const Anketa = {
             console.error('❌ Контейнер anketaMyTab не найден!');
             return;
         }
-        console.log('📦 Anketa v12.5 — загрузка...');
+        console.log('📦 Anketa v12.6 — загрузка...');
         container.innerHTML = '<div class="anketa-loading">Загрузка...</div>';
 
         const telegram_id = this.getTelegramId();
@@ -434,16 +427,23 @@ const Anketa = {
             const nick = profileData.nick || 'Player';
             const playerId = profileData.player_id || '';
             
+            // 🔥 STATS: Mode • Rank • Age
             const statsParts = [];
             const modeName = mode.id === 'premier' ? 'Premier' : mode.name;
             statsParts.push(`<span>${modeName}</span>`);
             
             if (anketa.rank) {
                 let rankText = anketa.rank;
-                if (mode.id === 'faceit' || mode.id === 'premier') {
-                    rankText = rankText.includes('elo') || rankText.includes('ELO') 
+                if (mode.id === 'faceit') {
+                    // Faceit: добавляем "elo" маленькими
+                    rankText = rankText.toLowerCase().includes('elo') 
+                        ? rankText.toLowerCase() 
+                        : `${rankText} elo`;
+                } else if (mode.id === 'premier') {
+                    // Premier: добавляем "rating"
+                    rankText = rankText.toLowerCase().includes('rating') 
                         ? rankText 
-                        : `${rankText} ELO`;
+                        : `${rankText} rating`;
                 }
                 statsParts.push(`<span>${rankText}</span>`);
             }
@@ -616,4 +616,4 @@ if (origShow) {
 }
 
 window.Anketa = Anketa;
-console.log('✅ Anketa v12.5 FINAL готов');
+console.log('✅ Anketa v12.6 FINAL готов');
