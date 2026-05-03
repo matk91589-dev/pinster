@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - Экран управления v12.7 FINAL
+// КАРТОЧКИ + ЛАЙКИ - Экран управления v12.8 FINAL
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v12.7 FINAL)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v12.8 FINAL)');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,7 +16,24 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v12.7 FINAL');
+        console.log('🚀 Anketa.init() v12.8 FINAL');
+        
+        // 🔥 Фикс body и html для desktop
+        document.documentElement.style.height = '100%';
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.height = '100%';
+        document.body.style.overflow = 'hidden';
+        document.body.style.overscrollBehavior = 'none';
+        
+        // 🔥 Фикс контейнера anketaScreen
+        const screen = document.getElementById('anketaScreen');
+        if (screen) {
+            screen.style.height = '100dvh';
+            screen.style.display = 'flex';
+            screen.style.flexDirection = 'column';
+            screen.style.overflow = 'hidden';
+        }
+        
         this.injectStyles();
         this.loadMyAnketas();
     },
@@ -28,38 +45,55 @@ const Anketa = {
         style.textContent = `
             .anketa-scroll {
                 display: flex; flex-direction: column; gap: 0;
-                overflow-y: auto; padding: 8px 16px 40px;
-                -webkit-overflow-scrolling: touch; flex: 1; min-height: 0;
-                scroll-behavior: smooth; scroll-snap-type: y mandatory;
+                flex: 1; min-height: 0;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                
+                /* 🔥 АДАПТИВНЫЙ ПАДДИНГ С SAFE-AREA */
+                padding: 8px 16px calc(90px + env(safe-area-inset-bottom, 0px));
+                
+                /* 🔥 ПЛАВНЫЙ СКРОЛЛ БЕЗ ЦЕНТРИРОВАНИЯ */
+                scroll-behavior: smooth;
+                scroll-snap-type: y mandatory;
             }
+            
             .anketa-loading, .anketa-empty-text {
                 text-align: center; padding: 40px 20px;
                 color: rgba(255,255,255,0.35); font-size: 14px;
             }
             .anketa-divider-top {
                 height: 2px; margin: 0 0 14px 0;
-                background: rgba(255,255,255,0.10); border-radius: 1px; flex-shrink: 0;
+                background: rgba(255,255,255,0.10); border-radius: 1px;
+                flex-shrink: 0;
             }
             .anketa-divider {
                 height: 1px; margin: 14px 0;
-                background: rgba(255,255,255,0.07); border-radius: 0.5px; flex-shrink: 0;
+                background: rgba(255,255,255,0.07); border-radius: 0.5px;
+                flex-shrink: 0;
             }
             
             .anketa-card {
-                position: relative; width: 100%; min-height: 340px;
-                aspect-ratio: 4 / 5; border-radius: 18px; overflow: hidden;
+                position: relative; width: 100%;
+                
+                /* 🔥 ФИКС ВЫСОТЫ ДЛЯ DESKTOP */
+                height: clamp(340px, 60vh, 520px);
+                max-height: 520px;
+                
+                border-radius: 18px; overflow: hidden;
                 box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
                 border: 1px solid rgba(255,255,255,0.06);
                 transition: transform 0.15s ease, box-shadow 0.15s ease;
                 flex-shrink: 0; opacity: 0;
                 animation: cardSlideUp 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-                scroll-snap-align: center;
+                
+                /* 🔥 СКРОЛЛ ОТ КРАЯ, А НЕ ЦЕНТР */
+                scroll-snap-align: start;
+                
                 background-color: #0a0a0f;
                 background-size: cover;
                 background-position: center 20%;
                 background-repeat: no-repeat;
                 
-                /* 🔥 FLEX ДЛЯ АДАПТИВНОСТИ */
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-end;
@@ -99,7 +133,7 @@ const Anketa = {
                 align-items: center;
             }
             
-            /* ТЕКСТОВЫЙ БЛОК — адаптивный flex */
+            /* ТЕКСТОВЫЙ БЛОК */
             .anketa-text-block {
                 position: relative;
                 z-index: 2;
@@ -130,7 +164,6 @@ const Anketa = {
                 margin-top: 2px;
             }
             
-            /* STATS ROW — белый, точки крупнее */
             .anketa-stats-row {
                 font-size: 14px;
                 font-weight: 500;
@@ -148,7 +181,6 @@ const Anketa = {
                 font-weight: 700;
             }
             
-            /* ABOUT — белый, крупнее */
             .anketa-about {
                 font-size: 14px;
                 color: #FFFFFF;
@@ -162,7 +194,7 @@ const Anketa = {
                 font-weight: 400;
             }
             
-            /* КНОПКА — АБСОЛЮТНО ВНИЗУ, z-index выше */
+            /* КНОПКА */
             .anketa-profile-btn {
                 position: absolute;
                 bottom: 8px;
@@ -190,7 +222,6 @@ const Anketa = {
                 transform: scale(0.98);
             }
             
-            /* Кнопки управления */
             .anketa-card-controls {
                 position: absolute;
                 top: 12px;
@@ -223,7 +254,6 @@ const Anketa = {
                 color: rgba(255,100,100,0.85);
             }
             
-            /* Кнопка создать (пустая карточка) */
             .anketa-card-actions {
                 position: absolute; bottom: 12px; left: 12px; right: 12px;
                 display: flex; gap: 8px; z-index: 4;
@@ -247,7 +277,6 @@ const Anketa = {
             }
             .anketa-card-btn.create:active { box-shadow: inset 0 2px 6px rgba(0,0,0,0.35), 0 1px 4px rgba(255,85,0,0.2); }
             
-            /* Риббон */
             .anketa-ribbon {
                 position: absolute; top: 0; left: 0; z-index: 5;
                 padding: 7px 18px 6px 14px;
@@ -330,7 +359,7 @@ const Anketa = {
             console.error('❌ Контейнер anketaMyTab не найден!');
             return;
         }
-        console.log('📦 Anketa v12.7 — загрузка...');
+        console.log('📦 Anketa v12.8 — загрузка...');
         container.innerHTML = '<div class="anketa-loading">Загрузка...</div>';
 
         const telegram_id = this.getTelegramId();
@@ -439,7 +468,6 @@ const Anketa = {
             const nick = profileData.nick || 'Player';
             const playerId = profileData.player_id || '';
             
-            // Stats: Mode • Rank • Age
             const statsParts = [];
             const modeName = mode.id === 'premier' ? 'Premier' : mode.name;
             statsParts.push(`<span>${modeName}</span>`);
@@ -466,16 +494,14 @@ const Anketa = {
                 ? `<div class="anketa-about">${anketa.about.substring(0, 120)}${anketa.about.length > 120 ? '…' : ''}</div>`
                 : '';
             
-            // 🔥 Кнопка: Faceit/Premier → Faceit, остальные → Steam
             let profileLink = '#';
             let buttonText = 'Open Steam профиль';
             
-            if (mode.id === 'faceit') {
+            if (mode.id === 'faceit' || mode.id === 'premier') {
                 profileLink = profileData.faceit_link || anketa.link || '#';
                 buttonText = 'Open Faceit профиль';
             } else {
                 profileLink = profileData.steam_link || anketa.link || '#';
-                buttonText = 'Open Steam профиль';
             }
             
             return `
@@ -628,4 +654,4 @@ if (origShow) {
 }
 
 window.Anketa = Anketa;
-console.log('✅ Anketa v12.7 FINAL готов');
+console.log('✅ Anketa v12.8 FINAL готов');
