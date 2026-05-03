@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - Экран управления v12.8 FINAL
+// КАРТОЧКИ + ЛАЙКИ - Экран управления v13.0 PREMIER
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v12.8 FINAL)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v13.0 PREMIER)');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,16 +16,14 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v12.8 FINAL');
+        console.log('🚀 Anketa.init() v13.0 PREMIER');
         
-        // 🔥 Фикс body и html для desktop
         document.documentElement.style.height = '100%';
         document.documentElement.style.overflow = 'hidden';
         document.body.style.height = '100%';
         document.body.style.overflow = 'hidden';
         document.body.style.overscrollBehavior = 'none';
         
-        // 🔥 Фикс контейнера anketaScreen
         const screen = document.getElementById('anketaScreen');
         if (screen) {
             screen.style.height = '100dvh';
@@ -39,55 +37,76 @@ const Anketa = {
     },
 
     injectStyles() {
-        if (document.getElementById('anketa-v12-styles')) return;
+        if (document.getElementById('anketa-v13-styles')) return;
         const style = document.createElement('style');
-        style.id = 'anketa-v12-styles';
+        style.id = 'anketa-v13-styles';
         style.textContent = `
+            :root {
+                --top-bar-height: 56px;
+                --bottom-nav-height: 76px;
+            }
+            
+            /* 🔥 СКРОЛЛ ЗОНА — БЕЗ SNAP */
             .anketa-scroll {
-                display: flex; flex-direction: column; gap: 0;
-                flex: 1; min-height: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 0;
+                flex: 1;
+                min-height: 0;
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
                 
-                /* 🔥 АДАПТИВНЫЙ ПАДДИНГ С SAFE-AREA */
-                padding: 8px 16px calc(90px + env(safe-area-inset-bottom, 0px));
+                padding-top: calc(var(--top-bar-height) + 12px);
+                padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+                padding-left: 16px;
+                padding-right: 16px;
                 
-                /* 🔥 ПЛАВНЫЙ СКРОЛЛ БЕЗ ЦЕНТРИРОВАНИЯ */
                 scroll-behavior: smooth;
-                scroll-snap-type: y mandatory;
+                overscroll-behavior: contain;
             }
             
             .anketa-loading, .anketa-empty-text {
-                text-align: center; padding: 40px 20px;
-                color: rgba(255,255,255,0.35); font-size: 14px;
+                text-align: center;
+                padding: 40px 20px;
+                color: rgba(255,255,255,0.35);
+                font-size: 14px;
             }
+            
             .anketa-divider-top {
-                height: 2px; margin: 0 0 14px 0;
-                background: rgba(255,255,255,0.10); border-radius: 1px;
-                flex-shrink: 0;
-            }
-            .anketa-divider {
-                height: 1px; margin: 14px 0;
-                background: rgba(255,255,255,0.07); border-radius: 0.5px;
+                height: 2px;
+                margin: 0 0 14px 0;
+                background: rgba(255,255,255,0.10);
+                border-radius: 1px;
                 flex-shrink: 0;
             }
             
+            .anketa-divider {
+                height: 1px;
+                margin: 14px 0;
+                background: rgba(255,255,255,0.07);
+                border-radius: 0.5px;
+                flex-shrink: 0;
+            }
+            
+            /* 🔥 КАРТОЧКА — PREMIER FEEL */
             .anketa-card {
-                position: relative; width: 100%;
-                
-                /* 🔥 ФИКС ВЫСОТЫ ДЛЯ DESKTOP */
+                position: relative;
+                width: 100%;
                 height: clamp(340px, 60vh, 520px);
                 max-height: 520px;
                 
-                border-radius: 18px; overflow: hidden;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
-                border: 1px solid rgba(255,255,255,0.06);
-                transition: transform 0.15s ease, box-shadow 0.15s ease;
-                flex-shrink: 0; opacity: 0;
-                animation: cardSlideUp 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+                border-radius: 18px;
+                overflow: hidden;
                 
-                /* 🔥 СКРОЛЛ ОТ КРАЯ, А НЕ ЦЕНТР */
-                scroll-snap-align: start;
+                box-shadow:
+                    0 10px 30px rgba(0,0,0,0.35),
+                    0 0 0 1px rgba(255,255,255,0.05);
+                border: 1px solid rgba(255,255,255,0.06);
+                
+                flex-shrink: 0;
+                opacity: 0;
+                
+                animation: cardIn 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
                 
                 background-color: #0a0a0f;
                 background-size: cover;
@@ -98,6 +117,31 @@ const Anketa = {
                 flex-direction: column;
                 justify-content: flex-end;
                 padding: 16px;
+                
+                /* 🔥 PERFORMANCE */
+                will-change: transform, opacity;
+                transform: translateZ(0);
+                backface-visibility: hidden;
+                
+                transition: transform 0.25s ease, box-shadow 0.25s ease;
+            }
+            
+            /* 🔥 HOVER — ТОЛЬКО DESKTOP */
+            @media (hover: hover) {
+                .anketa-card:hover {
+                    transform: translateY(-4px) scale(1.01) !important;
+                    box-shadow:
+                        0 14px 40px rgba(0,0,0,0.45),
+                        0 0 0 1px rgba(255,255,255,0.08);
+                }
+            }
+            
+            /* 🔥 ACTIVE — ТОЛЬКО MOBILE */
+            @media (hover: none) {
+                .anketa-card:active {
+                    transform: scale(0.98) !important;
+                    transition: transform 0.15s ease;
+                }
             }
             
             .anketa-card.filled {
@@ -175,6 +219,7 @@ const Anketa = {
                 margin-top: 4px;
                 flex-wrap: wrap;
             }
+            
             .anketa-stats-sep {
                 color: rgba(255,255,255,0.6);
                 font-size: 14px;
@@ -215,6 +260,7 @@ const Anketa = {
                 letter-spacing: 0.3px;
                 box-shadow: 0 0 18px rgba(255,85,0,0.12);
             }
+            
             .anketa-profile-btn:active {
                 background: rgba(255,85,0,0.15);
                 border-color: rgba(255,85,0,0.5);
@@ -232,6 +278,7 @@ const Anketa = {
                 gap: 8px;
                 align-items: flex-end;
             }
+            
             .anketa-control-link {
                 font-size: 13px;
                 font-weight: 600;
@@ -244,97 +291,177 @@ const Anketa = {
                 backdrop-filter: blur(6px);
                 -webkit-backdrop-filter: blur(6px);
             }
+            
             .anketa-control-link:active {
                 opacity: 0.7;
             }
+            
             .anketa-control-link.edit {
                 color: rgba(255,255,255,0.85);
             }
+            
             .anketa-control-link.delete {
                 color: rgba(255,100,100,0.85);
             }
             
             .anketa-card-actions {
-                position: absolute; bottom: 12px; left: 12px; right: 12px;
-                display: flex; gap: 8px; z-index: 4;
+                position: absolute;
+                bottom: 12px;
+                left: 12px;
+                right: 12px;
+                display: flex;
+                gap: 8px;
+                z-index: 4;
             }
-            .anketa-card-actions.single { justify-content: center; }
+            
+            .anketa-card-actions.single {
+                justify-content: center;
+            }
+            
             .anketa-card-btn {
-                flex: 1; height: 42px; border-radius: 11px; border: none;
-                font-size: 13px; font-weight: 600; cursor: pointer;
+                flex: 1;
+                height: 42px;
+                border-radius: 11px;
+                border: none;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
                 transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
-                text-align: center; display: flex; align-items: center; justify-content: center;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 letter-spacing: 0.2px;
                 box-shadow: inset 0 -2px 0 rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.25);
             }
+            
             .anketa-card-btn:active {
                 transform: translateY(1px) scale(0.98);
                 box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
                 transition: all 0.1s cubic-bezier(0.22, 0.61, 0.36, 1);
             }
+            
             .anketa-card-btn.create {
-                background: linear-gradient(135deg, #FF5500 0%, #FF6B20 100%); color: #fff;
+                background: linear-gradient(135deg, #FF5500 0%, #FF6B20 100%);
+                color: #fff;
             }
-            .anketa-card-btn.create:active { box-shadow: inset 0 2px 6px rgba(0,0,0,0.35), 0 1px 4px rgba(255,85,0,0.2); }
             
             .anketa-ribbon {
-                position: absolute; top: 0; left: 0; z-index: 5;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 5;
                 padding: 7px 18px 6px 14px;
-                font-size: 11px; font-weight: 700; letter-spacing: 0.9px; text-transform: uppercase;
-                background: var(--ribbon-bg, rgba(18,18,24,0.92)); color: var(--ribbon-color, #FF5500);
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 0.9px;
+                text-transform: uppercase;
+                background: var(--ribbon-bg, rgba(18,18,24,0.92));
+                color: var(--ribbon-color, #FF5500);
                 clip-path: polygon(0 0, 100% 0, 86% 100%, 0 100%);
                 box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
                 border-bottom: 1px solid var(--ribbon-color, #FF5500);
             }
             
-            .anketa-card:hover, .anketa-card:active { 
-                transform: scale(0.97) !important; 
-                transition: transform 0.15s ease; 
-            }
-            
-            .anketa-card:nth-child(1) { animation-delay: 0.00s; }
-            .anketa-card:nth-child(2) { animation-delay: 0.07s; }
-            .anketa-card:nth-child(3) { animation-delay: 0.14s; }
-            .anketa-card:nth-child(4) { animation-delay: 0.21s; }
-            .anketa-card:nth-child(5) { animation-delay: 0.28s; }
-            .anketa-card:nth-child(6) { animation-delay: 0.35s; }
-            .anketa-card:nth-child(7) { animation-delay: 0.42s; }
-            .anketa-card:nth-child(8) { animation-delay: 0.49s; }
-            
-            @keyframes cardSlideUp {
-                from { opacity: 0; transform: translateY(24px); }
-                to { opacity: 1; transform: translateY(0); }
+            /* 🔥 НОВАЯ АНИМАЦИЯ */
+            @keyframes cardIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(18px) scale(0.98);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
             }
             
             /* LIKES */
             .anketa-likes-section {
-                font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.9);
-                padding: 16px 16px 8px; letter-spacing: 0.3px;
+                font-size: 14px;
+                font-weight: 600;
+                color: rgba(255,255,255,0.9);
+                padding: 16px 16px 8px;
+                letter-spacing: 0.3px;
             }
+            
             .anketa-like-item {
-                display: flex; align-items: center; padding: 12px 16px; gap: 10px;
-                border-radius: 12px; margin: 2px 8px; transition: background 0.2s ease;
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                gap: 10px;
+                border-radius: 12px;
+                margin: 2px 8px;
+                transition: background 0.2s ease;
             }
-            .anketa-like-item:active { background: rgba(255,255,255,0.03); }
+            
+            .anketa-like-item:active {
+                background: rgba(255,255,255,0.03);
+            }
+            
             .anketa-like-avatar {
-                width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.08);
-                display: flex; align-items: center; justify-content: center;
-                font-weight: 700; font-size: 16px; color: #fff; overflow: hidden; flex-shrink: 0;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.08);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 16px;
+                color: #fff;
+                overflow: hidden;
+                flex-shrink: 0;
             }
-            .anketa-like-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-            .anketa-like-info { flex: 1; }
-            .anketa-like-nick { font-size: 14px; font-weight: 600; color: #fff; }
-            .anketa-like-mode { font-size: 12px; color: rgba(255,255,255,0.45); }
+            
+            .anketa-like-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 50%;
+            }
+            
+            .anketa-like-info {
+                flex: 1;
+            }
+            
+            .anketa-like-nick {
+                font-size: 14px;
+                font-weight: 600;
+                color: #fff;
+            }
+            
+            .anketa-like-mode {
+                font-size: 12px;
+                color: rgba(255,255,255,0.45);
+            }
+            
             .anketa-like-btn {
-                width: 40px; height: 40px; border-radius: 50%; border: none;
-                background: rgba(255,85,0,0.15); font-size: 18px; cursor: pointer;
-                display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: none;
+                background: rgba(255,85,0,0.15);
+                font-size: 18px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
                 transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
                 box-shadow: inset 0 -1px 0 rgba(0,0,0,0.2);
             }
-            .anketa-like-btn:active { background: rgba(255,85,0,0.3); transform: scale(0.92); }
-            .anketa-like-arrow { font-size: 20px; opacity: 0.35; }
+            
+            .anketa-like-btn:active {
+                background: rgba(255,85,0,0.3);
+                transform: scale(0.92);
+            }
+            
+            .anketa-like-arrow {
+                font-size: 20px;
+                opacity: 0.35;
+            }
         `;
         document.head.appendChild(style);
     },
@@ -359,7 +486,7 @@ const Anketa = {
             console.error('❌ Контейнер anketaMyTab не найден!');
             return;
         }
-        console.log('📦 Anketa v12.8 — загрузка...');
+        console.log('📦 Anketa v13.0 — загрузка...');
         container.innerHTML = '<div class="anketa-loading">Загрузка...</div>';
 
         const telegram_id = this.getTelegramId();
@@ -654,4 +781,4 @@ if (origShow) {
 }
 
 window.Anketa = Anketa;
-console.log('✅ Anketa v12.8 FINAL готов');
+console.log('✅ Anketa v13.0 PREMIER готов');
