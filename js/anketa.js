@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - Экран управления v13.0 PREMIER
+// КАРТОЧКИ + ЛАЙКИ - Экран управления v14.0 PREMIER FEED
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v13.0 PREMIER)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v14.0 PREMIER FEED)');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,7 +16,7 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v13.0 PREMIER');
+        console.log('🚀 Anketa.init() v14.0 PREMIER FEED');
         
         document.documentElement.style.height = '100%';
         document.documentElement.style.overflow = 'hidden';
@@ -37,31 +37,33 @@ const Anketa = {
     },
 
     injectStyles() {
-        if (document.getElementById('anketa-v13-styles')) return;
+        if (document.getElementById('anketa-v14-styles')) return;
         const style = document.createElement('style');
-        style.id = 'anketa-v13-styles';
+        style.id = 'anketa-v14-styles';
         style.textContent = `
             :root {
                 --top-bar-height: 56px;
                 --bottom-nav-height: 76px;
             }
             
-            /* 🔥 СКРОЛЛ ЗОНА — БЕЗ SNAP */
+            /* 🔥 СКРОЛЛ ЗОНА — ЖЁСТКАЯ SAFE ЗОНА */
             .anketa-scroll {
-                display: flex;
-                flex-direction: column;
-                gap: 0;
+                position: relative;
                 flex: 1;
                 min-height: 0;
+                
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
                 
-                padding-top: calc(var(--top-bar-height) + 12px);
-                padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+                padding-top: calc(var(--top-bar-height) + env(safe-area-inset-top, 0px));
+                padding-bottom: calc(var(--bottom-nav-height) + 24px + env(safe-area-inset-bottom, 0px));
                 padding-left: 16px;
                 padding-right: 16px;
                 
-                scroll-behavior: smooth;
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+                
                 overscroll-behavior: contain;
             }
             
@@ -74,7 +76,7 @@ const Anketa = {
             
             .anketa-divider-top {
                 height: 2px;
-                margin: 0 0 14px 0;
+                margin: 0;
                 background: rgba(255,255,255,0.10);
                 border-radius: 1px;
                 flex-shrink: 0;
@@ -82,18 +84,19 @@ const Anketa = {
             
             .anketa-divider {
                 height: 1px;
-                margin: 14px 0;
+                margin: 0;
                 background: rgba(255,255,255,0.07);
                 border-radius: 0.5px;
                 flex-shrink: 0;
             }
             
-            /* 🔥 КАРТОЧКА — PREMIER FEEL */
+            /* 🔥 КАРТОЧКА — ПРЕДСКАЗУЕМЫЙ UI */
             .anketa-card {
                 position: relative;
                 width: 100%;
-                height: clamp(340px, 60vh, 520px);
-                max-height: 520px;
+                
+                aspect-ratio: 16 / 20;
+                max-height: 460px;
                 
                 border-radius: 18px;
                 overflow: hidden;
@@ -118,7 +121,6 @@ const Anketa = {
                 justify-content: flex-end;
                 padding: 16px;
                 
-                /* 🔥 PERFORMANCE */
                 will-change: transform, opacity;
                 transform: translateZ(0);
                 backface-visibility: hidden;
@@ -126,10 +128,10 @@ const Anketa = {
                 transition: transform 0.25s ease, box-shadow 0.25s ease;
             }
             
-            /* 🔥 HOVER — ТОЛЬКО DESKTOP */
+            /* 🔥 HOVER — ТОЛЬКО DESKTOP, БЕЗ ДЁРГАНЬЯ */
             @media (hover: hover) {
                 .anketa-card:hover {
-                    transform: translateY(-4px) scale(1.01) !important;
+                    transform: translateY(-2px);
                     box-shadow:
                         0 14px 40px rgba(0,0,0,0.45),
                         0 0 0 1px rgba(255,255,255,0.08);
@@ -139,7 +141,7 @@ const Anketa = {
             /* 🔥 ACTIVE — ТОЛЬКО MOBILE */
             @media (hover: none) {
                 .anketa-card:active {
-                    transform: scale(0.98) !important;
+                    transform: scale(0.98);
                     transition: transform 0.15s ease;
                 }
             }
@@ -365,15 +367,17 @@ const Anketa = {
                 border-bottom: 1px solid var(--ribbon-color, #FF5500);
             }
             
-            /* 🔥 НОВАЯ АНИМАЦИЯ */
+            /* 🔥 НОВАЯ АНИМАЦИЯ — PREMIUM BLUR ENTRANCE */
             @keyframes cardIn {
                 from {
                     opacity: 0;
-                    transform: translateY(18px) scale(0.98);
+                    transform: translateY(16px) scale(0.985);
+                    filter: blur(2px);
                 }
                 to {
                     opacity: 1;
                     transform: translateY(0) scale(1);
+                    filter: blur(0);
                 }
             }
             
@@ -486,7 +490,7 @@ const Anketa = {
             console.error('❌ Контейнер anketaMyTab не найден!');
             return;
         }
-        console.log('📦 Anketa v13.0 — загрузка...');
+        console.log('📦 Anketa v14.0 — загрузка...');
         container.innerHTML = '<div class="anketa-loading">Загрузка...</div>';
 
         const telegram_id = this.getTelegramId();
@@ -554,26 +558,38 @@ const Anketa = {
             const sorted = [...modes].sort((a, b) => 
                 (anketaMap[b.id] ? 1 : 0) - (anketaMap[a.id] ? 1 : 0)
             );
+            
+            // 🔥 ОГРАНИЧЕНИЕ: максимум 4 карточки
+            const sortedLimited = sorted.slice(0, 4);
 
             let html = '<div class="anketa-scroll">';
             html += '<div class="anketa-divider-top"></div>';
-            sorted.forEach((m, i) => {
+            sortedLimited.forEach((m, i) => {
                 html += this.buildSlot(m, anketaMap[m.id], profileData);
-                if (i < sorted.length - 1) {
+                if (i < sortedLimited.length - 1) {
                     html += '<div class="anketa-divider"></div>';
                 }
             });
             html += '</div>';
             container.innerHTML = html;
-            console.log('✅ Карточек отрисовано:', sorted.length);
+            
+            // 🔥 СБРОС СКРОЛЛА ПОСЛЕ РЕНДЕРА
+            setTimeout(() => {
+                const scroll = document.querySelector('.anketa-scroll');
+                if (scroll) {
+                    scroll.scrollTop = 0;
+                }
+            }, 50);
+            
+            console.log('✅ Карточек отрисовано:', sortedLimited.length);
             
         } catch (err) {
             console.error('❌ Ошибка API:', err);
             let html = '<div class="anketa-scroll">';
             html += '<div class="anketa-divider-top"></div>';
-            modes.forEach((m, i) => {
+            modes.slice(0, 4).forEach((m, i) => {
                 html += this.buildSlot(m, null, {});
-                if (i < modes.length - 1) {
+                if (i < 3) {
                     html += '<div class="anketa-divider"></div>';
                 }
             });
@@ -781,4 +797,4 @@ if (origShow) {
 }
 
 window.Anketa = Anketa;
-console.log('✅ Anketa v13.0 PREMIER готов');
+console.log('✅ Anketa v14.0 PREMIER FEED готов');
