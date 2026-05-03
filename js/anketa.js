@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - Экран управления v12.2 FINAL FIX
+// КАРТОЧКИ + ЛАЙКИ - Экран управления v12.3 FINAL
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v12.2 FINAL FIX)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v12.3 FINAL)');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,7 +16,7 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v12.2 FINAL FIX');
+        console.log('🚀 Anketa.init() v12.3 FINAL');
         this.injectStyles();
         this.loadMyAnketas();
     },
@@ -61,26 +61,26 @@ const Anketa = {
                 background-repeat: no-repeat;
             }
             
-            /* 🔥 АВАТАР НА ВСЮ КАРТОЧКУ */
             .anketa-card.filled {
                 background-size: cover;
                 background-position: center 20%;
                 background-repeat: no-repeat;
             }
             
-            /* 🔥 ЧЁРНОЕ ЗАТЕМНЕНИЕ ВНИЗУ */
+            /* 🔥 БОЛЬШОЕ ЧЁРНОЕ ЗАТЕМНЕНИЕ СНИЗУ — ВЫШЕ И СИЛЬНЕЕ */
             .anketa-card.filled::after {
                 content: '';
                 position: absolute;
                 bottom: 0;
                 left: 0;
                 right: 0;
-                height: 55%;
+                height: 65%;
                 background: linear-gradient(
                     to top,
-                    rgba(0,0,0,0.95) 0%,
-                    rgba(0,0,0,0.85) 30%,
-                    rgba(0,0,0,0.55) 60%,
+                    rgba(0,0,0,0.98) 0%,
+                    rgba(0,0,0,0.95) 25%,
+                    rgba(0,0,0,0.85) 50%,
+                    rgba(0,0,0,0.55) 75%,
                     rgba(0,0,0,0.0) 100%
                 );
                 z-index: 1;
@@ -93,19 +93,19 @@ const Anketa = {
                 box-shadow: 0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.02);
             }
             
-            /* КОНТЕНТ — на затемнении внизу */
+            /* КОНТЕНТ — ВНУТРИ ЧЁРНОЙ ЗОНЫ */
             .anketa-content {
                 position: absolute;
                 bottom: 0;
                 left: 0;
                 right: 0;
                 z-index: 2;
-                padding: 30px 16px 12px 16px;
+                padding: 40px 16px 14px 16px;
                 display: flex;
                 flex-direction: column;
                 align-items: flex-start;
                 text-align: left;
-                gap: 2px;
+                gap: 3px;
             }
             
             /* ID — ОРАНЖЕВЫЙ */
@@ -119,7 +119,7 @@ const Anketa = {
                 opacity: 0.9;
             }
             
-            /* NICK — ГЛАВНЫЙ ЭЛЕМЕНТ */
+            /* NICK — ГЛАВНЫЙ */
             .anketa-nick {
                 font-size: 28px;
                 font-weight: 800;
@@ -131,7 +131,7 @@ const Anketa = {
                 margin-top: 2px;
             }
             
-            /* STATS ROW — ИЕРАРХИЯ */
+            /* STATS ROW */
             .anketa-stats-row {
                 font-size: 14px;
                 font-weight: 500;
@@ -170,7 +170,7 @@ const Anketa = {
                 -webkit-box-orient: vertical;
                 overflow: hidden;
                 max-width: 100%;
-                margin-top: 4px;
+                margin-top: 6px;
             }
             
             /* CTA КНОПКА */
@@ -189,7 +189,7 @@ const Anketa = {
                 -webkit-backdrop-filter: blur(8px);
                 transition: all 0.2s ease;
                 letter-spacing: 0.3px;
-                margin-top: 12px;
+                margin-top: 14px;
                 box-shadow: 0 0 18px rgba(255,85,0,0.12);
             }
             .anketa-profile-btn:active {
@@ -341,7 +341,7 @@ const Anketa = {
             console.error('❌ Контейнер anketaMyTab не найден!');
             return;
         }
-        console.log('📦 Anketa v12.2 — загрузка...');
+        console.log('📦 Anketa v12.3 — загрузка...');
         container.innerHTML = '<div class="anketa-loading">Загрузка...</div>';
 
         const telegram_id = this.getTelegramId();
@@ -492,7 +492,7 @@ const Anketa = {
                     <span class="anketa-control-link delete" onclick="Anketa.deleteAnketa('${mode.id}')">Удалить</span>
                 </div>
                 
-                <!-- ТЕКСТ НА ЧЁРНОМ ЗАТЕМНЕНИИ ВНИЗУ -->
+                <!-- ВЕСЬ ТЕКСТ ВНУТРИ ЧЁРНОЙ ЗОНЫ -->
                 <div class="anketa-content">
                     ${playerId ? `<div class="anketa-id">ID ${playerId}</div>` : ''}
                     <div class="anketa-nick">${nick}</div>
@@ -633,4 +633,4 @@ if (origShow) {
 }
 
 window.Anketa = Anketa;
-console.log('✅ Anketa v12.2 FINAL FIX готов');
+console.log('✅ Anketa v12.3 FINAL готов');
