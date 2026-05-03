@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - Экран управления v12.4 FINAL
+// КАРТОЧКИ + ЛАЙКИ - Экран управления v12.5 FINAL
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v12.4 FINAL)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v12.5 FINAL)');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,7 +16,7 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v12.4 FINAL');
+        console.log('🚀 Anketa.init() v12.5 FINAL');
         this.injectStyles();
         this.loadMyAnketas();
     },
@@ -91,9 +91,10 @@ const Anketa = {
                 box-shadow: 0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.02);
             }
             
-            .anketa-content {
+            /* ТЕКСТОВЫЙ БЛОК — над кнопкой */
+            .anketa-text-block {
                 position: absolute;
-                bottom: 8px;
+                bottom: 60px;
                 left: 16px;
                 right: 16px;
                 z-index: 2;
@@ -101,17 +102,7 @@ const Anketa = {
                 flex-direction: column;
                 align-items: flex-start;
                 text-align: left;
-                gap: 0;
-            }
-            
-            .anketa-text-block {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                text-align: left;
                 gap: 3px;
-                margin-bottom: 10px;
-                width: 100%;
             }
             
             .anketa-id {
@@ -170,8 +161,13 @@ const Anketa = {
                 margin-top: 6px;
             }
             
+            /* КНОПКА — АБСОЛЮТНО В САМОМ НИЗУ */
             .anketa-profile-btn {
-                width: 100%;
+                position: absolute;
+                bottom: 8px;
+                left: 16px;
+                right: 16px;
+                z-index: 2;
                 height: 40px;
                 border-radius: 10px;
                 border: 1px solid rgba(255,85,0,0.25);
@@ -185,8 +181,6 @@ const Anketa = {
                 transition: all 0.2s ease;
                 letter-spacing: 0.3px;
                 box-shadow: 0 0 18px rgba(255,85,0,0.12);
-                flex-shrink: 0;
-                margin: 0;
             }
             .anketa-profile-btn:active {
                 background: rgba(255,85,0,0.1);
@@ -331,7 +325,7 @@ const Anketa = {
             console.error('❌ Контейнер anketaMyTab не найден!');
             return;
         }
-        console.log('📦 Anketa v12.4 — загрузка...');
+        console.log('📦 Anketa v12.5 — загрузка...');
         container.innerHTML = '<div class="anketa-loading">Загрузка...</div>';
 
         const telegram_id = this.getTelegramId();
@@ -481,20 +475,19 @@ const Anketa = {
                     <span class="anketa-control-link delete" onclick="Anketa.deleteAnketa('${mode.id}')">Удалить</span>
                 </div>
                 
-                <div class="anketa-content">
-                    <div class="anketa-text-block">
-                        ${playerId ? `<div class="anketa-id">ID ${playerId}</div>` : ''}
-                        <div class="anketa-nick">${nick}</div>
-                        <div class="anketa-stats-row">
-                            ${statsParts.join(' <span class="anketa-stats-sep">•</span> ')}
-                        </div>
-                        ${aboutHTML}
+                <div class="anketa-text-block">
+                    ${playerId ? `<div class="anketa-id">ID ${playerId}</div>` : ''}
+                    <div class="anketa-nick">${nick}</div>
+                    <div class="anketa-stats-row">
+                        ${statsParts.join(' <span class="anketa-stats-sep">•</span> ')}
                     </div>
-                    <button class="anketa-profile-btn" 
-                        onclick="Anketa.openProfileLink('${profileLink.replace(/'/g, "\\'")}', '${mode.id}')">
-                        ${buttonText}
-                    </button>
+                    ${aboutHTML}
                 </div>
+                
+                <button class="anketa-profile-btn" 
+                    onclick="Anketa.openProfileLink('${profileLink.replace(/'/g, "\\'")}', '${mode.id}')">
+                    ${buttonText}
+                </button>
             </div>`;
         }
 
@@ -623,4 +616,4 @@ if (origShow) {
 }
 
 window.Anketa = Anketa;
-console.log('✅ Anketa v12.4 FINAL готов');
+console.log('✅ Anketa v12.5 FINAL готов');
