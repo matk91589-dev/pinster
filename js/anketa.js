@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - Экран управления v14.0 PREMIER FEED
+// КАРТОЧКИ + ЛАЙКИ - Экран управления v14.1 FIX
 // ============================================
 
-console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v14.0 PREMIER FEED)');
+console.log('🔥 ANKETA.JS ЗАГРУЖЕН (v14.1 FIX)');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,7 +16,7 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v14.0 PREMIER FEED');
+        console.log('🚀 Anketa.init() v14.1 FIX');
         
         document.documentElement.style.height = '100%';
         document.documentElement.style.overflow = 'hidden';
@@ -46,7 +46,7 @@ const Anketa = {
                 --bottom-nav-height: 76px;
             }
             
-            /* 🔥 СКРОЛЛ ЗОНА — ЖЁСТКАЯ SAFE ЗОНА */
+            /* 🔥 СКРОЛЛ ЗОНА — УБРАН ЛИШНИЙ ПАДДИНГ СВЕРХУ */
             .anketa-scroll {
                 position: relative;
                 flex: 1;
@@ -55,10 +55,8 @@ const Anketa = {
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
                 
-                padding-top: calc(var(--top-bar-height) + env(safe-area-inset-top, 0px));
+                padding: 0 16px;
                 padding-bottom: calc(var(--bottom-nav-height) + 24px + env(safe-area-inset-bottom, 0px));
-                padding-left: 16px;
-                padding-right: 16px;
                 
                 display: flex;
                 flex-direction: column;
@@ -75,22 +73,18 @@ const Anketa = {
             }
             
             .anketa-divider-top {
-                height: 2px;
+                height: 8px;
                 margin: 0;
-                background: rgba(255,255,255,0.10);
-                border-radius: 1px;
                 flex-shrink: 0;
             }
             
             .anketa-divider {
-                height: 1px;
+                height: 0;
                 margin: 0;
-                background: rgba(255,255,255,0.07);
-                border-radius: 0.5px;
                 flex-shrink: 0;
             }
             
-            /* 🔥 КАРТОЧКА — ПРЕДСКАЗУЕМЫЙ UI */
+            /* 🔥 КАРТОЧКА */
             .anketa-card {
                 position: relative;
                 width: 100%;
@@ -128,7 +122,10 @@ const Anketa = {
                 transition: transform 0.25s ease, box-shadow 0.25s ease;
             }
             
-            /* 🔥 HOVER — ТОЛЬКО DESKTOP, БЕЗ ДЁРГАНЬЯ */
+            .anketa-card:first-child {
+                margin-top: 8px;
+            }
+            
             @media (hover: hover) {
                 .anketa-card:hover {
                     transform: translateY(-2px);
@@ -138,7 +135,6 @@ const Anketa = {
                 }
             }
             
-            /* 🔥 ACTIVE — ТОЛЬКО MOBILE */
             @media (hover: none) {
                 .anketa-card:active {
                     transform: scale(0.98);
@@ -179,7 +175,6 @@ const Anketa = {
                 align-items: center;
             }
             
-            /* ТЕКСТОВЫЙ БЛОК */
             .anketa-text-block {
                 position: relative;
                 z-index: 2;
@@ -241,7 +236,6 @@ const Anketa = {
                 font-weight: 400;
             }
             
-            /* КНОПКА */
             .anketa-profile-btn {
                 position: absolute;
                 bottom: 8px;
@@ -367,7 +361,6 @@ const Anketa = {
                 border-bottom: 1px solid var(--ribbon-color, #FF5500);
             }
             
-            /* 🔥 НОВАЯ АНИМАЦИЯ — PREMIUM BLUR ENTRANCE */
             @keyframes cardIn {
                 from {
                     opacity: 0;
@@ -381,7 +374,6 @@ const Anketa = {
                 }
             }
             
-            /* LIKES */
             .anketa-likes-section {
                 font-size: 14px;
                 font-weight: 600;
@@ -490,7 +482,7 @@ const Anketa = {
             console.error('❌ Контейнер anketaMyTab не найден!');
             return;
         }
-        console.log('📦 Anketa v14.0 — загрузка...');
+        console.log('📦 Anketa v14.1 — загрузка...');
         container.innerHTML = '<div class="anketa-loading">Загрузка...</div>';
 
         const telegram_id = this.getTelegramId();
@@ -559,7 +551,6 @@ const Anketa = {
                 (anketaMap[b.id] ? 1 : 0) - (anketaMap[a.id] ? 1 : 0)
             );
             
-            // 🔥 ОГРАНИЧЕНИЕ: максимум 4 карточки
             const sortedLimited = sorted.slice(0, 4);
 
             let html = '<div class="anketa-scroll">';
@@ -573,7 +564,6 @@ const Anketa = {
             html += '</div>';
             container.innerHTML = html;
             
-            // 🔥 СБРОС СКРОЛЛА ПОСЛЕ РЕНДЕРА
             setTimeout(() => {
                 const scroll = document.querySelector('.anketa-scroll');
                 if (scroll) {
@@ -682,18 +672,12 @@ const Anketa = {
     },
 
     openProfileLink(link, modeId) {
-        console.log('🔗 Открыть профиль:', link, 'режим:', modeId);
         if (!link || link === '#') {
             if (window.App?.showCustomPopup) {
-                App.showCustomPopup(
-                    'Ссылка не указана',
-                    'Добавьте ссылку на профиль в настройках',
-                    null, null, 'OK', '', false
-                );
+                App.showCustomPopup('Ссылка не указана', 'Добавьте ссылку на профиль в настройках', null, null, 'OK', '', false);
             }
             return;
         }
-        
         if (window.Telegram?.WebApp?.openLink) {
             Telegram.WebApp.openLink(link);
         } else {
@@ -702,14 +686,17 @@ const Anketa = {
     },
 
     goToMode(modeId) {
+        // 🔥 Проверяем что App существует
+        if (!window.App || !App.showScreen) {
+            console.error('❌ App не загружен');
+            return;
+        }
         App.showScreen(modeId + 'Screen', true);
         setTimeout(() => {
             const btn = document.querySelector(`#${modeId}Screen .mode-search-btn`);
             if (btn) {
                 btn.textContent = 'Создать карточку';
-                btn.onclick = () => {
-                    App.createCard(modeId);
-                };
+                btn.onclick = () => App.createCard(modeId);
             }
         }, 300);
     },
@@ -797,4 +784,4 @@ if (origShow) {
 }
 
 window.Anketa = Anketa;
-console.log('✅ Anketa v14.0 PREMIER FEED готов');
+console.log('✅ Anketa v14.1 FIX готов');
