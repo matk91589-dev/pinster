@@ -1,5 +1,5 @@
 // ============================================
-// ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ - Pingster v3.0
+// ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ - Pingster v4.0
 // ============================================
 
 (function() {
@@ -47,12 +47,12 @@
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
             showMainScreen();
-            setTimeout(() => { updateUsername(); initUser(); preloadCards(); }, 50);
+            setTimeout(() => { updateUsername(); initUser(); }, 50);
             initModules();
         });
     } else {
         showMainScreen();
-        setTimeout(() => { updateUsername(); initUser(); preloadCards(); }, 50);
+        setTimeout(() => { updateUsername(); initUser(); }, 50);
         initModules();
     }
     
@@ -80,38 +80,16 @@
                 if (data.player_id) {
                     localStorage.setItem('player_id', data.player_id);
                     if (data.nick) localStorage.setItem('nick', data.nick);
+                    // 🔥 Загружаем карточки сразу после инициализации
+                    window.App.refreshCards();
                 }
             }).catch(error => console.error('Error initializing user:', error));
         }
     }
-
-    // 🔥 ПРЕДЗАГРУЗКА КАРТОЧЕК ПРИ СТАРТЕ
-    function preloadCards() {
-        const tg = window.Telegram?.WebApp;
-        const telegramId = tg?.initDataUnsafe?.user?.id;
-        if (!telegramId) return;
-
-        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/anketa/list', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ telegram_id: String(telegramId) })
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.anketas && window.App) {
-                window.App.cachedCards = {};
-                data.anketas.forEach(c => {
-                    window.App.cachedCards[c.mode] = c;
-                });
-                console.log('🃏 Карточки закэшированы:', Object.keys(window.App.cachedCards));
-            }
-        })
-        .catch(() => {});
-    }
 })();
 
 // ============================================
-// НАВИГАЦИЯ - Pingster v3.0
+// НАВИГАЦИЯ - Pingster v4.0
 // ============================================
 
 window.App = window.App || {};
@@ -119,42 +97,86 @@ window.App = window.App || {};
 Object.assign(window.App, {
     currentScreen: null,
     cachedCards: {},
+    cardsLoaded: false,
     
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
     
     hapticFeedback: function(style = 'light') {
         const validStyles = ['light', 'medium', 'heavy', 'rigid', 'soft'];
         const useStyle = validStyles.includes(style) ? style : 'light';
-        try {
-            window.Telegram?.WebApp?.HapticFeedback?.impactOccurred(useStyle);
-        } catch(e) {}
+        try { window.Telegram?.WebApp?.HapticFeedback?.impactOccurred(useStyle); } catch(e) {}
     },
     
     getTelegramId: function() {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || localStorage.getItem('telegram_id') || null;
     },
 
-    // 🔥 МГНОВЕННАЯ ПРОВЕРКА КАРТОЧКИ (БЕЗ ЗАПРОСА)
+    // 🔥 ПРОВЕРКА КАРТОЧКИ (с fallback на API)
     handleModeClick: function(mode) {
-        const hasCard = !!this.cachedCards[mode];
+        const telegramId = this.getTelegramId();
+        if (!telegramId) {
+            this.showScreen(mode + 'Screen', true);
+            return;
+        }
+
+        // Проверяем кэш
+        const cachedCard = this.cachedCards[mode];
         
-        if (hasCard) {
-            // Карточка есть — сразу в свайп
-            const card = this.cachedCards[mode];
-            const rankValue = card.rank || '';
+        if (cachedCard) {
+            // Карточка есть в кэше — сразу в свайп
+            console.log(`🃏 Карточка ${mode} из кэша`);
+            this.openSwipe(mode, cachedCard.rank || '');
+            return;
+        }
+
+        // Кэш пустой или не загружен — проверяем API
+        console.log(`📡 Кэш пуст, проверяем API для ${mode}`);
+        this.checkCardViaAPI(mode);
+    },
+
+    // 🔥 FALLBACK: проверка через API
+    checkCardViaAPI: function(mode) {
+        const telegramId = this.getTelegramId();
+        
+        fetch(`${this.BACKEND_URL}/api/anketa/list`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegram_id: String(telegramId) })
+        })
+        .then(r => r.json())
+        .then(data => {
+            const cards = data.anketas || [];
             
-            if (typeof Search !== 'undefined') {
-                Search.startBrowse(mode.toUpperCase(), rankValue);
+            // Обновляем кэш
+            this.cachedCards = {};
+            cards.forEach(c => { this.cachedCards[c.mode] = c; });
+            this.cardsLoaded = true;
+            
+            const hasCard = cards.find(c => c.mode === mode);
+            
+            if (hasCard) {
+                console.log(`✅ Карточка ${mode} найдена через API`);
+                this.openSwipe(mode, hasCard.rank || '');
             } else {
-                this.showScreen('swipeScreen', false);
+                console.log(`❌ Карточка ${mode} не найдена`);
+                this.showCreateCardPopup(mode);
             }
-        } else {
-            // Карточки нет — попап
+        })
+        .catch(() => {
             this.showCreateCardPopup(mode);
+        });
+    },
+
+    // 🔥 ОТКРЫТЬ СВАЙП
+    openSwipe: function(mode, rankValue) {
+        if (typeof Search !== 'undefined') {
+            Search.startBrowse(mode.toUpperCase(), rankValue);
+        } else {
+            this.showScreen('swipeScreen', false);
         }
     },
 
-    // 🔥 ОБНОВИТЬ КЭШ ПОСЛЕ СОЗДАНИЯ
+    // 🔥 ОБНОВИТЬ КЭШ
     refreshCards: function() {
         const telegramId = this.getTelegramId();
         if (!telegramId) return;
@@ -168,9 +190,9 @@ Object.assign(window.App, {
         .then(data => {
             if (data.anketas) {
                 this.cachedCards = {};
-                data.anketas.forEach(c => {
-                    this.cachedCards[c.mode] = c;
-                });
+                data.anketas.forEach(c => { this.cachedCards[c.mode] = c; });
+                this.cardsLoaded = true;
+                console.log('🃏 Кэш обновлён:', Object.keys(this.cachedCards));
             }
         })
         .catch(() => {});
@@ -246,7 +268,7 @@ Object.assign(window.App, {
         .then(r => r.json())
         .then(data => {
             if (data.status === 'ok') {
-                // 🔥 Обновляем кэш
+                // 🔥 Обновляем кэш и сразу открываем свайп
                 this.refreshCards();
                 this.hapticFeedback('medium');
                 this.showCustomPopup(
@@ -275,7 +297,7 @@ Object.assign(window.App, {
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:100000;display:flex;align-items:center;justify-content:center;padding:16px;';
         
         const popup = document.createElement('div');
-        popup.style.cssText = 'background:#1C1E24;border-radius:14px;width:100%;max-width:320px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.5);animation:popupFadeIn 0.2s ease;';
+        popup.style.cssText = 'background:#1C1E24;border-radius:14px;width:100%;max-width:320px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.5);';
         popup.innerHTML = `
             <div style="font-size:17px;font-weight:600;color:#FFFFFF;margin-bottom:8px;">${title}</div>
             <div style="font-size:14px;color:#8E97A6;margin-bottom:20px;line-height:1.4;">${message}</div>
@@ -287,11 +309,9 @@ Object.assign(window.App, {
         overlay.appendChild(popup);
         document.body.appendChild(overlay);
         
-        const cancelBtn = popup.querySelector('.popup-cancel-btn');
-        const confirmBtn = popup.querySelector('.popup-confirm-btn');
-        const close = () => { overlay.style.opacity='0'; popup.style.transform='scale(0.95)'; setTimeout(()=>overlay.remove(),150); };
-        cancelBtn.onclick = () => { close(); if (onCancel) onCancel(); };
-        confirmBtn.onclick = () => { close(); if (onConfirm) onConfirm(); };
+        const close = () => { overlay.style.opacity='0'; setTimeout(()=>overlay.remove(),150); };
+        popup.querySelector('.popup-cancel-btn').onclick = () => { close(); if (onCancel) onCancel(); };
+        popup.querySelector('.popup-confirm-btn').onclick = () => { close(); if (onConfirm) onConfirm(); };
         overlay.onclick = (e) => { if (e.target===overlay) { close(); if (onCancel) onCancel(); } };
     },
     
@@ -318,7 +338,6 @@ Object.assign(window.App, {
         if (screenId === 'profileScreen' && typeof Profile !== 'undefined') {
             setTimeout(() => {
                 if (!Profile.isProfileLoaded && !Profile.isLoading) { Profile.loadProfileFromServer(); Profile.loadAvatar(); }
-                else if (Profile.updateDisplay) Profile.updateDisplay();
             }, 200);
         }
         if (screenId === 'anketaScreen' && typeof Anketa !== 'undefined') {
@@ -331,6 +350,7 @@ Object.assign(window.App, {
     },
     
     goBack: function() {
+        // 🔥 Проверяем SwipeController вместо Swipe
         if (typeof Swipe !== 'undefined' && Swipe.current) {
             this.showCustomPopup('Выйти?', 'Вернуться на главный экран?', 
                 () => { 
@@ -346,6 +366,32 @@ Object.assign(window.App, {
     
     showAlert: function(message) {
         this.showCustomPopup('Pingster', message, () => {}, () => {}, 'OK', '', false);
+    },
+
+    // 🔥 НАСТРОЙКИ → КАРТОЧКИ
+    goToCards: function(tab) {
+        App.showScreen('anketaScreen', true);
+        setTimeout(() => {
+            if (typeof Anketa !== 'undefined') {
+                const tabEl = document.querySelector(tab === 'my' 
+                    ? '#anketaScreen .team-tab:first-child' 
+                    : '#anketaScreen .team-tab:last-child');
+                Anketa.switchTab(tab, tabEl);
+            }
+        }, 200);
+    },
+    
+    // 🔥 НАСТРОЙКИ → ТИММЕЙТЫ / ЛИДЕРБОРД
+    goToTeam: function(tab) {
+        App.showScreen('teamScreen', true);
+        setTimeout(() => {
+            if (typeof Team !== 'undefined') {
+                const tabEl = document.querySelector(tab === 'friends'
+                    ? '#teamScreen .team-tab:first-child'
+                    : '#teamScreen .team-tab:last-child');
+                Team.switchTab(tab, tabEl);
+            }
+        }, 200);
     }
 });
 
