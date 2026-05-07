@@ -1,5 +1,5 @@
 // ============================================
-// ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ - Pingster v2.6
+// ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ - Pingster v3.0
 // ============================================
 
 (function() {
@@ -39,8 +39,6 @@
             mainScreen.classList.add('active');
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             document.getElementById('navMain')?.classList.add('active');
-            const settingsIcon = document.getElementById('settingsIcon');
-            if (settingsIcon) settingsIcon.classList.remove('active');
             return true;
         }
         return false;
@@ -49,12 +47,12 @@
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
             showMainScreen();
-            setTimeout(() => { updateUsername(); initUser(); }, 50);
+            setTimeout(() => { updateUsername(); initUser(); preloadCards(); }, 50);
             initModules();
         });
     } else {
         showMainScreen();
-        setTimeout(() => { updateUsername(); initUser(); }, 50);
+        setTimeout(() => { updateUsername(); initUser(); preloadCards(); }, 50);
         initModules();
     }
     
@@ -86,35 +84,98 @@
             }).catch(error => console.error('Error initializing user:', error));
         }
     }
+
+    // 🔥 ПРЕДЗАГРУЗКА КАРТОЧЕК ПРИ СТАРТЕ
+    function preloadCards() {
+        const tg = window.Telegram?.WebApp;
+        const telegramId = tg?.initDataUnsafe?.user?.id;
+        if (!telegramId) return;
+
+        fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/anketa/list', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegram_id: String(telegramId) })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.anketas && window.App) {
+                window.App.cachedCards = {};
+                data.anketas.forEach(c => {
+                    window.App.cachedCards[c.mode] = c;
+                });
+                console.log('🃏 Карточки закэшированы:', Object.keys(window.App.cachedCards));
+            }
+        })
+        .catch(() => {});
+    }
 })();
 
 // ============================================
-// НАВИГАЦИЯ - Pingster v2.6
+// НАВИГАЦИЯ - Pingster v3.0
 // ============================================
 
 window.App = window.App || {};
 
 Object.assign(window.App, {
     currentScreen: null,
+    cachedCards: {},
     
     BACKEND_URL: 'https://matk91589-dev-pingster-backend-cee8.twc1.net',
     
     hapticFeedback: function(style = 'light') {
-        // 🔥 ФИКС: только валидные стили
         const validStyles = ['light', 'medium', 'heavy', 'rigid', 'soft'];
         const useStyle = validStyles.includes(style) ? style : 'light';
         try {
             window.Telegram?.WebApp?.HapticFeedback?.impactOccurred(useStyle);
-        } catch(e) {
-            // Игнорируем ошибки haptic
-        }
+        } catch(e) {}
     },
     
     getTelegramId: function() {
         return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || localStorage.getItem('telegram_id') || null;
     },
+
+    // 🔥 МГНОВЕННАЯ ПРОВЕРКА КАРТОЧКИ (БЕЗ ЗАПРОСА)
+    handleModeClick: function(mode) {
+        const hasCard = !!this.cachedCards[mode];
+        
+        if (hasCard) {
+            // Карточка есть — сразу в свайп
+            const card = this.cachedCards[mode];
+            const rankValue = card.rank || '';
+            
+            if (typeof Search !== 'undefined') {
+                Search.startBrowse(mode.toUpperCase(), rankValue);
+            } else {
+                this.showScreen('swipeScreen', false);
+            }
+        } else {
+            // Карточки нет — попап
+            this.showCreateCardPopup(mode);
+        }
+    },
+
+    // 🔥 ОБНОВИТЬ КЭШ ПОСЛЕ СОЗДАНИЯ
+    refreshCards: function() {
+        const telegramId = this.getTelegramId();
+        if (!telegramId) return;
+
+        fetch(`${this.BACKEND_URL}/api/anketa/list`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegram_id: String(telegramId) })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.anketas) {
+                this.cachedCards = {};
+                data.anketas.forEach(c => {
+                    this.cachedCards[c.mode] = c;
+                });
+            }
+        })
+        .catch(() => {});
+    },
     
-    // 🔥 ПОПАП "СОЗДАЙ КАРТОЧКУ"
     showCreateCardPopup: function(mode) {
         const old = document.querySelector('.popup-overlay');
         if (old) old.remove();
@@ -127,16 +188,10 @@ Object.assign(window.App, {
         overlay.innerHTML = `
             <div class="popup-card">
                 <div class="popup-card-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 7V5h4M19 7V5h-4M5 17v2h4M19 17v2h-4" stroke="#FF5500" stroke-width="1.4" stroke-linecap="round"/>
-                        <circle cx="12" cy="10" r="2" stroke="#FF5500" stroke-width="1.5"/>
-                        <path d="M8.5 16c1.3-2 5.7-2 7 0" stroke="#FF5500" stroke-width="1.5" stroke-linecap="round"/>
-                    </svg>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5 7V5h4M19 7V5h-4M5 17v2h4M19 17v2h-4" stroke="#FF5500" stroke-width="1.4" stroke-linecap="round"/><circle cx="12" cy="10" r="2" stroke="#FF5500" stroke-width="1.5"/><path d="M8.5 16c1.3-2 5.7-2 7 0" stroke="#FF5500" stroke-width="1.5" stroke-linecap="round"/></svg>
                 </div>
                 <div class="popup-card-title">Нет карточки</div>
-                <div class="popup-card-text">
-                    Чтобы начать поиск в режиме <b>${modeName}</b>, сначала создайте свою карточку
-                </div>
+                <div class="popup-card-text">Чтобы начать поиск в режиме <b>${modeName}</b>, сначала создайте свою карточку</div>
                 <button class="popup-card-btn" id="popupCreateBtn">Создать карточку</button>
                 <button class="popup-card-close" id="popupCloseBtn">Закрыть</button>
             </div>
@@ -144,66 +199,17 @@ Object.assign(window.App, {
         
         document.body.appendChild(overlay);
         
-        const close = () => {
-            overlay.style.opacity = '0';
-            setTimeout(() => overlay.remove(), 200);
-        };
-        
-        overlay.querySelector('#popupCreateBtn').onclick = () => {
-            close();
-            App.showScreen(mode + 'Screen', true);
-        };
-        
+        const close = () => { overlay.style.opacity = '0'; setTimeout(() => overlay.remove(), 200); };
+        overlay.querySelector('#popupCreateBtn').onclick = () => { close(); App.showScreen(mode + 'Screen', true); };
         overlay.querySelector('#popupCloseBtn').onclick = close;
         overlay.onclick = (e) => { if (e.target === overlay) close(); };
     },
     
-    // 🔥 ОБРАБОТЧИК КЛИКА ПО РЕЖИМУ (ФИКС: POST вместо GET)
-    handleModeClick: function(mode) {
-        const telegramId = this.getTelegramId();
-        if (!telegramId) {
-            this.showScreen(mode + 'Screen', true);
-            return;
-        }
-        
-        fetch(`${this.BACKEND_URL}/api/anketa/list`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ telegram_id: String(telegramId) })
-        })
-        .then(r => r.json())
-        .then(data => {
-            const cards = data.anketas || [];
-            const hasCard = cards.find(c => c.mode === mode);
-            
-            if (hasCard) {
-                const rankValue = hasCard.rank || hasCard.elo || '';
-                if (typeof Search !== 'undefined') {
-                    Search.startBrowse(mode.toUpperCase(), rankValue);
-                } else {
-                    App.showScreen('swipeScreen', false);
-                }
-            } else {
-                this.showCreateCardPopup(mode);
-            }
-        })
-        .catch(() => {
-            this.showCreateCardPopup(mode);
-        });
-    },
-    
-    // 🔥 СОЗДАНИЕ КАРТОЧКИ (ФИКС: haptic 'medium')
     createCard: function(mode) {
         const telegramId = this.getTelegramId();
-        if (!telegramId) {
-            this.showAlert('Ошибка авторизации');
-            return;
-        }
+        if (!telegramId) { this.showAlert('Ошибка авторизации'); return; }
         
-        let rank = '';
-        let age = '';
-        let link = '';
-        let about = '';
+        let rank = '', age = '', link = '', about = '';
         
         if (mode === 'faceit') {
             rank = document.getElementById('faceitELOInput')?.value || '';
@@ -227,25 +233,10 @@ Object.assign(window.App, {
             about = document.getElementById('publicAbout')?.value || '';
         }
         
-        if (!rank) {
-            this.showAlert('Укажите ранг / ELO / CS Rating');
-            return;
-        }
-        if (!age || age < 1 || age > 100) {
-            this.showAlert('Укажите возраст (1-100)');
-            return;
-        }
+        if (!rank) { this.showAlert('Укажите ранг / ELO / CS Rating'); return; }
+        if (!age || age < 1 || age > 100) { this.showAlert('Укажите возраст (1-100)'); return; }
         
-        const payload = {
-            telegram_id: String(telegramId),
-            mode: mode,
-            rank: rank,
-            age: parseInt(age),
-            link: link,
-            about: about
-        };
-        
-        console.log('🃏 Создание карточки:', payload);
+        const payload = { telegram_id: String(telegramId), mode: mode, rank: rank, age: parseInt(age), link: link, about: about };
         
         fetch(`${this.BACKEND_URL}/api/anketa/create`, {
             method: 'POST',
@@ -255,31 +246,24 @@ Object.assign(window.App, {
         .then(r => r.json())
         .then(data => {
             if (data.status === 'ok') {
-                // 🔥 ФИКС: 'medium' вместо 'success'
+                // 🔥 Обновляем кэш
+                this.refreshCards();
                 this.hapticFeedback('medium');
                 this.showCustomPopup(
                     '✅ Карточка создана!',
                     'Смотреть карточки других игроков?',
                     () => {
-                        if (typeof Search !== 'undefined') {
-                            Search.startBrowse(mode.toUpperCase(), rank);
-                        } else {
-                            App.showScreen('swipeScreen', false);
-                        }
+                        if (typeof Search !== 'undefined') Search.startBrowse(mode.toUpperCase(), rank);
+                        else App.showScreen('swipeScreen', false);
                     },
                     () => App.showScreen('mainScreen', true),
-                    'Смотреть',
-                    'На главную',
-                    false
+                    'Смотреть', 'На главную', false
                 );
             } else {
                 this.showAlert('Ошибка: ' + (data.message || 'попробуйте позже'));
             }
         })
-        .catch(err => {
-            console.error('Ошибка создания карточки:', err);
-            this.showAlert('Ошибка соединения');
-        });
+        .catch(err => { console.error('Ошибка создания карточки:', err); this.showAlert('Ошибка соединения'); });
     },
     
     showCustomPopup: function(title, message, onConfirm, onCancel, confirmText = 'Выйти', cancelText = 'Остаться', isDestructive = true) {
@@ -288,7 +272,7 @@ Object.assign(window.App, {
         
         const overlay = document.createElement('div');
         overlay.className = 'pingster-popup-overlay';
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:100000;display:flex;align-items:center;justify-content:center;padding:16px;';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:100000;display:flex;align-items:center;justify-content:center;padding:16px;';
         
         const popup = document.createElement('div');
         popup.style.cssText = 'background:#1C1E24;border-radius:14px;width:100%;max-width:320px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.5);animation:popupFadeIn 0.2s ease;';
@@ -302,13 +286,6 @@ Object.assign(window.App, {
         
         overlay.appendChild(popup);
         document.body.appendChild(overlay);
-        
-        if (!document.querySelector('#popup-animation-style')) {
-            const style = document.createElement('style');
-            style.id = 'popup-animation-style';
-            style.textContent = '@keyframes popupFadeIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}';
-            document.head.appendChild(style);
-        }
         
         const cancelBtn = popup.querySelector('.popup-cancel-btn');
         const confirmBtn = popup.querySelector('.popup-confirm-btn');
@@ -344,42 +321,8 @@ Object.assign(window.App, {
                 else if (Profile.updateDisplay) Profile.updateDisplay();
             }, 200);
         }
-        if (screenId === 'settingsScreen' && typeof Settings !== 'undefined') {
-            setTimeout(() => { if (Settings.init) Settings.init(); }, 100);
-        }
         if (screenId === 'anketaScreen' && typeof Anketa !== 'undefined') {
             setTimeout(() => Anketa.init(), 100);
-        }
-        
-        const modeScreens = ['faceitScreen', 'premierScreen', 'primeScreen', 'publicScreen'];
-        if (modeScreens.includes(screenId)) {
-            this.fillModeFields(screenId);
-        }
-    },
-    
-    fillModeFields: function(screenId) {
-        let ageValue = localStorage.getItem('profile_age') || '';
-        let steamLink = localStorage.getItem('profile_steam') || '';
-        let faceitLink = localStorage.getItem('profile_faceit') || '';
-        
-        if (typeof Profile !== 'undefined') {
-            if (Profile.savedAge) ageValue = Profile.savedAge;
-            if (Profile.savedSteam) steamLink = Profile.savedSteam;
-            if (Profile.savedFaceitLink) faceitLink = Profile.savedFaceitLink;
-        }
-        
-        if (screenId === 'faceitScreen') {
-            const a = document.getElementById('faceitAge'); if (a && ageValue) a.value = ageValue;
-            const f = document.getElementById('faceitLinkInput'); if (f && faceitLink) f.value = faceitLink;
-        } else if (screenId === 'premierScreen') {
-            const a = document.getElementById('premierAge'); if (a && ageValue) a.value = ageValue;
-            const s = document.getElementById('premierLinkInput'); if (s && steamLink) s.value = steamLink;
-        } else if (screenId === 'primeScreen') {
-            const a = document.getElementById('primeAge'); if (a && ageValue) a.value = ageValue;
-            const s = document.getElementById('primeLinkInput'); if (s && steamLink) s.value = steamLink;
-        } else if (screenId === 'publicScreen') {
-            const a = document.getElementById('publicAge'); if (a && ageValue) a.value = ageValue;
-            const s = document.getElementById('publicLinkInput'); if (s && steamLink) s.value = steamLink;
         }
     },
     
@@ -388,12 +331,10 @@ Object.assign(window.App, {
     },
     
     goBack: function() {
-        const isInSwipe = (typeof Swipe !== 'undefined' && Swipe.currentAnketa);
-        
-        if (isInSwipe) {
+        if (typeof Swipe !== 'undefined' && Swipe.current) {
             this.showCustomPopup('Выйти?', 'Вернуться на главный экран?', 
                 () => { 
-                    if (typeof Swipe !== 'undefined') Swipe.exitSwipeMode('user_back');
+                    if (typeof Swipe !== 'undefined') Swipe.exitSwipeMode();
                     this._doShowScreen('mainScreen', true); 
                 }, 
                 () => {}, 'Да', 'Нет', false
