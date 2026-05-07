@@ -1,5 +1,5 @@
 // ============================================
-// SWIPE SYSTEM — Pingster v3.1 (ANKETA STYLE + MODE FROM DB)
+// SWIPE SYSTEM — Pingster v3.2 (FIXED)
 // ============================================
 
 const Swipe = {
@@ -23,133 +23,156 @@ const Swipe = {
     },
 
     injectStyles() {
-        if (document.getElementById('swipe-v31-styles')) return;
+        if (document.getElementById('swipe-v32-styles')) return;
         const style = document.createElement('style');
-        style.id = 'swipe-v31-styles';
+        style.id = 'swipe-v32-styles';
         style.textContent = `
+            #swipeScreen { display: block !important; }
+            #swipeContainer { 
+                display: flex !important; 
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+                padding: 80px 0 20px !important;
+                width: 100% !important; 
+                min-height: 100vh !important;
+                overflow-y: auto !important;
+            }
+            #swipeCardContainer { 
+                display: flex !important; 
+                flex-direction: column !important; 
+                align-items: center !important; 
+                width: 100% !important; 
+            }
+            
             .swipe-player-card {
-                position: relative;
-                width: 90vw;
-                max-width: 380px;
-                aspect-ratio: 16 / 20;
-                max-height: 460px;
-                border-radius: 18px;
-                overflow: hidden;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05);
-                border: 1px solid rgba(255,255,255,0.06);
-                margin: 0 auto;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-end;
-                padding: 16px;
-                background-color: #0a0a0f;
-                background-size: cover;
-                background-position: center 20%;
-                background-repeat: no-repeat;
-                transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.3s ease;
-                opacity: 1;
+                position: relative !important;
+                width: 90vw !important;
+                max-width: 380px !important;
+                aspect-ratio: 16 / 20 !important;
+                max-height: 460px !important;
+                min-height: 380px !important;
+                border-radius: 18px !important;
+                overflow: hidden !important;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05) !important;
+                border: 1px solid rgba(255,255,255,0.06) !important;
+                margin: 0 auto !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: flex-end !important;
+                padding: 16px !important;
+                background-color: #0a0a0f !important;
+                background-size: cover !important;
+                background-position: center 20% !important;
+                background-repeat: no-repeat !important;
+                opacity: 1 !important;
+                visibility: visible !important;
             }
             .swipe-player-card.filled::after {
-                content: '';
-                position: absolute; bottom: 0; left: 0; right: 0;
-                height: 65%;
-                background: linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.55) 75%, rgba(0,0,0,0.0) 100%);
-                z-index: 1; pointer-events: none;
+                content: '' !important;
+                position: absolute !important; bottom: 0 !important; left: 0 !important; right: 0 !important;
+                height: 65% !important;
+                background: linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.55) 75%, rgba(0,0,0,0.0) 100%) !important;
+                z-index: 1 !important; pointer-events: none !important;
             }
             .swipe-card-ribbon {
-                position: absolute; top: 0; left: 0; z-index: 5;
-                padding: 7px 18px 6px 14px;
-                font-size: 11px; font-weight: 700; letter-spacing: 0.9px; text-transform: uppercase;
-                background: var(--ribbon-bg, rgba(18,18,24,0.92));
-                color: var(--ribbon-color, #FF5500);
-                clip-path: polygon(0 0, 100% 0, 86% 100%, 0 100%);
-                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-                border-bottom: 1px solid var(--ribbon-color, #FF5500);
+                position: absolute !important; top: 0 !important; left: 0 !important; z-index: 5 !important;
+                padding: 7px 18px 6px 14px !important;
+                font-size: 11px !important; font-weight: 700 !important; letter-spacing: 0.9px !important; text-transform: uppercase !important;
+                background: var(--ribbon-bg, rgba(18,18,24,0.92)) !important;
+                color: var(--ribbon-color, #FF5500) !important;
+                clip-path: polygon(0 0, 100% 0, 86% 100%, 0 100%) !important;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+                backdrop-filter: blur(8px) !important; -webkit-backdrop-filter: blur(8px) !important;
+                border-bottom: 1px solid var(--ribbon-color, #FF5500) !important;
             }
             .swipe-text-block {
-                position: relative; z-index: 2;
-                display: flex; flex-direction: column;
-                align-items: flex-start; text-align: left;
-                gap: 3px; margin-bottom: 56px; width: 100%;
+                position: relative !important; z-index: 2 !important;
+                display: flex !important; flex-direction: column !important;
+                align-items: flex-start !important; text-align: left !important;
+                gap: 3px !important; margin-bottom: 56px !important; width: 100% !important;
             }
             .swipe-id {
-                font-size: 10px; font-weight: 600; letter-spacing: 0.8px;
-                color: #FF5500; text-transform: uppercase;
+                font-size: 10px !important; font-weight: 600 !important; letter-spacing: 0.8px !important;
+                color: #FF5500 !important; text-transform: uppercase !important;
             }
             .swipe-nick {
-                font-size: 28px; font-weight: 800; color: #FFFFFF;
-                text-shadow: 0 2px 12px rgba(0,0,0,0.7);
-                letter-spacing: -0.3px; line-height: 1.2; margin-top: 2px;
+                font-size: 28px !important; font-weight: 800 !important; color: #FFFFFF !important;
+                text-shadow: 0 2px 12px rgba(0,0,0,0.7) !important;
+                letter-spacing: -0.3px !important; line-height: 1.2 !important; margin-top: 2px !important;
             }
             .swipe-stats-row {
-                font-size: 14px; font-weight: 500; color: #FFFFFF;
-                display: flex; align-items: center; gap: 10px;
-                white-space: nowrap; margin-top: 4px; flex-wrap: wrap;
+                font-size: 14px !important; font-weight: 500 !important; color: #FFFFFF !important;
+                display: flex !important; align-items: center !important; gap: 10px !important;
+                white-space: nowrap !important; margin-top: 4px !important; flex-wrap: wrap !important;
             }
             .swipe-stats-sep {
-                color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 700;
+                color: rgba(255,255,255,0.6) !important; font-size: 14px !important; font-weight: 700 !important;
             }
             .swipe-about {
-                font-size: 14px; color: #FFFFFF; line-height: 1.5;
-                display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-                overflow: hidden; max-width: 100%; margin-top: 6px; font-weight: 400;
+                font-size: 14px !important; color: #FFFFFF !important; line-height: 1.5 !important;
+                display: -webkit-box !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important;
+                overflow: hidden !important; max-width: 100% !important; margin-top: 6px !important; font-weight: 400 !important;
             }
             .swipe-profile-btn {
-                position: absolute; bottom: 8px; left: 16px; right: 16px;
-                z-index: 3; height: 40px; border-radius: 10px;
-                border: 1px solid rgba(255,85,0,0.25);
-                background: rgba(255,255,255,0.08); color: white;
-                font-size: 13px; font-weight: 600; cursor: pointer;
-                backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-                transition: all 0.2s ease; letter-spacing: 0.3px;
-                box-shadow: 0 0 18px rgba(255,85,0,0.12);
+                position: absolute !important; bottom: 8px !important; left: 16px !important; right: 16px !important;
+                z-index: 3 !important; height: 40px !important; border-radius: 10px !important;
+                border: 1px solid rgba(255,85,0,0.25) !important;
+                background: rgba(255,255,255,0.08) !important; color: white !important;
+                font-size: 13px !important; font-weight: 600 !important; cursor: pointer !important;
+                backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important;
+                transition: all 0.2s ease !important; letter-spacing: 0.3px !important;
+                box-shadow: 0 0 18px rgba(255,85,0,0.12) !important;
             }
             .swipe-profile-btn:active {
-                background: rgba(255,85,0,0.15);
-                border-color: rgba(255,85,0,0.5);
-                box-shadow: 0 0 24px rgba(255,85,0,0.2); transform: scale(0.98);
+                background: rgba(255,85,0,0.15) !important;
+                border-color: rgba(255,85,0,0.5) !important;
             }
             .swipe-actions {
-                display: flex; justify-content: center; gap: 40px;
-                margin-top: 20px; padding: 10px 0;
+                display: flex !important; justify-content: center !important; gap: 40px !important;
+                margin-top: 20px !important; padding: 10px 0 !important;
+                opacity: 1 !important; visibility: visible !important;
             }
             .swipe-btn {
-                width: 64px; height: 64px; border-radius: 50%; border: none;
-                font-size: 28px; cursor: pointer;
-                transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
-                display: flex; align-items: center; justify-content: center;
-                box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+                width: 64px !important; height: 64px !important; border-radius: 50% !important; border: none !important;
+                font-size: 28px !important; cursor: pointer !important;
+                transition: all 0.2s ease !important;
+                display: flex !important; align-items: center !important; justify-content: center !important;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important;
+                opacity: 1 !important; visibility: visible !important;
             }
-            .swipe-btn:active { transform: scale(0.9); }
+            .swipe-btn:active { transform: scale(0.9) !important; }
             .swipe-btn.like {
-                background: linear-gradient(135deg, #FF5500, #FF6B20); color: #fff;
-                box-shadow: 0 4px 20px rgba(255,85,0,0.35);
+                background: linear-gradient(135deg, #FF5500, #FF6B20) !important; color: #fff !important;
+                box-shadow: 0 4px 20px rgba(255,85,0,0.35) !important;
             }
             .swipe-btn.skip {
-                background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);
-                border: 1px solid rgba(255,255,255,0.1);
+                background: rgba(255,255,255,0.1) !important; color: rgba(255,255,255,0.6) !important;
+                border: 1px solid rgba(255,255,255,0.1) !important;
             }
             .swipe-toast {
-                position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
-                background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
-                color: white; padding: 10px 20px; border-radius: 30px;
-                font-size: 13px; font-weight: 500; z-index: 10000;
-                white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                position: fixed !important; top: 60px !important; left: 50% !important; transform: translateX(-50%) !important;
+                background: rgba(0,0,0,0.85) !important; backdrop-filter: blur(10px) !important;
+                color: white !important; padding: 10px 20px !important; border-radius: 30px !important;
+                font-size: 13px !important; font-weight: 500 !important; z-index: 10000 !important;
+                white-space: nowrap !important; box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
             }
-            .swipe-toast.match { background: rgba(255,85,0,0.9); }
+            .swipe-toast.match { background: rgba(255,85,0,0.9) !important; }
         `;
         document.head.appendChild(style);
     },
 
     createCardContainer() {
         const container = document.getElementById('swipeContainer');
-        if (!container) return;
+        if (!container) {
+            console.error('❌ swipeContainer не найден');
+            return;
+        }
         container.innerHTML = '';
 
         this.cardContainer = document.createElement('div');
         this.cardContainer.id = 'swipeCardContainer';
-        this.cardContainer.style.cssText = 'display:flex;flex-direction:column;align-items:center;width:100%;';
+        this.cardContainer.style.cssText = 'display:flex !important;flex-direction:column !important;align-items:center !important;width:100% !important;';
         container.appendChild(this.cardContainer);
 
         const actions = document.createElement('div');
@@ -173,25 +196,25 @@ const Swipe = {
 
     show(data) {
         this.current = data;
+        console.log('🃏 Swipe.show:', data);
 
-        // 🔥 mode из данных анкеты (из БД)
         const anketaMode = (data.mode || this.mode || 'faceit').toLowerCase();
         const rc = this.RIBBON_COLORS[anketaMode] || this.RIBBON_COLORS.faceit;
         const modeDisplayName = anketaMode.toUpperCase();
 
         if (!this.cardContainer) this.createCardContainer();
+        if (!this.cardContainer) return;
 
         const oldCard = this.cardContainer.querySelector('.swipe-player-card');
-        if (oldCard) {
-            oldCard.style.opacity = '0';
-            oldCard.style.transform = 'scale(0.95)';
-            setTimeout(() => oldCard.remove(), 200);
-        }
+        if (oldCard) oldCard.remove();
 
         const card = document.createElement('div');
         card.className = 'swipe-player-card filled';
         card.style.setProperty('--ribbon-bg', rc.bg);
         card.style.setProperty('--ribbon-color', rc.color);
+        card.style.setProperty('display', 'flex', 'important');
+        card.style.setProperty('opacity', '1', 'important');
+        card.style.setProperty('visibility', 'visible', 'important');
 
         if (data.avatar && data.avatar !== 'null' && data.avatar !== '') {
             card.style.backgroundImage = `url(${data.avatar})`;
@@ -239,6 +262,8 @@ const Swipe = {
 
         const actions = this.cardContainer.querySelector('#swipeActions');
         this.cardContainer.insertBefore(card, actions);
+
+        console.log('🃏 Карточка в DOM:', card.offsetWidth, '×', card.offsetHeight);
     },
 
     openProfile(link) {
@@ -276,12 +301,20 @@ const Swipe = {
     next() {
         if (window.Search) {
             const id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-            Search.showNextAnketa(id, this.mode);
+            setTimeout(() => Search.showNextAnketa(id, this.mode), 100);
         }
     },
 
     startWithAnketa(anketa, mode) {
         this.mode = (anketa.mode || mode || 'faceit').toLowerCase();
+        
+        const container = document.getElementById('swipeContainer');
+        if (!container) {
+            console.error('❌ swipeContainer не найден, пробуем снова...');
+            setTimeout(() => this.startWithAnketa(anketa, mode), 200);
+            return;
+        }
+        
         if (!this.initialized) this.init(this.mode);
         this.show(anketa);
         this.showBackArrow();
@@ -309,3 +342,4 @@ const Swipe = {
 };
 
 window.Swipe = Swipe;
+console.log('✅ Swipe v3.2 готов');
