@@ -1,167 +1,379 @@
 // ============================================
-// SWIPE SYSTEM — Pingster v2.0 (PREMIUM)
+// SWIPE SYSTEM — Pingster v3.0 (ANKETA STYLE)
 // ============================================
 
 const Swipe = {
-    card: null,
-    wrapper: null,
-    isDragging: false,
-    startX: 0,
-    currentX: 0,
-    startTime: 0,
-
-    THRESHOLD: 110,
-    VELOCITY: 0.45,
-    ANIM: 320,
-
     current: null,
     mode: null,
     initialized: false,
+    cardContainer: null,
+
+    RIBBON_COLORS: {
+        faceit:   { bg: 'rgba(18,18,24,0.92)', color: '#FF5500', glow: 'rgba(255,85,0,0.08)' },
+        premier:  { bg: 'rgba(18,18,24,0.92)', color: '#FF5500', glow: 'rgba(255,85,0,0.08)' },
+        prime:    { bg: 'rgba(18,18,24,0.92)', color: '#C0C6D0', glow: 'rgba(192,198,208,0.04)' },
+        public:   { bg: 'rgba(18,18,24,0.92)', color: '#C0C6D0', glow: 'rgba(192,198,208,0.04)' }
+    },
 
     init(mode) {
         this.mode = mode;
-        this.card = document.getElementById('swipeCard');
-        if (!this.card) return;
-
-        this.createWrapper();
-        this.bind();
+        this.injectStyles();
+        this.createCardContainer();
         this.initialized = true;
     },
 
-    createWrapper() {
-        if (this.wrapper) return;
+    injectStyles() {
+        if (document.getElementById('swipe-v3-styles')) return;
+        const style = document.createElement('style');
+        style.id = 'swipe-v3-styles';
+        style.textContent = `
+            /* 🔥 КАРТОЧКА — ТОЧНО КАК В ANKETA */
+            .swipe-player-card {
+                position: relative;
+                width: 90vw;
+                max-width: 380px;
+                aspect-ratio: 16 / 20;
+                max-height: 460px;
+                border-radius: 18px;
+                overflow: hidden;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05);
+                border: 1px solid rgba(255,255,255,0.06);
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                padding: 16px;
+                background-color: #0a0a0f;
+                background-size: cover;
+                background-position: center 20%;
+                background-repeat: no-repeat;
+                transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.3s ease;
+                opacity: 1;
+            }
 
-        const w = document.createElement('div');
-        w.className = 'swipe-card-wrapper';
-        this.card.parentNode.insertBefore(w, this.card);
-        w.appendChild(this.card);
+            .swipe-player-card.filled::after {
+                content: '';
+                position: absolute;
+                bottom: 0; left: 0; right: 0;
+                height: 65%;
+                background: linear-gradient(
+                    to top,
+                    rgba(0,0,0,0.98) 0%,
+                    rgba(0,0,0,0.95) 25%,
+                    rgba(0,0,0,0.85) 50%,
+                    rgba(0,0,0,0.55) 75%,
+                    rgba(0,0,0,0.0) 100%
+                );
+                z-index: 1;
+                pointer-events: none;
+            }
 
-        this.wrapper = w;
-        this.createButtons();
+            /* RIBBON */
+            .swipe-card-ribbon {
+                position: absolute;
+                top: 0; left: 0; z-index: 5;
+                padding: 7px 18px 6px 14px;
+                font-size: 11px; font-weight: 700;
+                letter-spacing: 0.9px; text-transform: uppercase;
+                background: var(--ribbon-bg, rgba(18,18,24,0.92));
+                color: var(--ribbon-color, #FF5500);
+                clip-path: polygon(0 0, 100% 0, 86% 100%, 0 100%);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                border-bottom: 1px solid var(--ribbon-color, #FF5500);
+            }
+
+            /* ТЕКСТОВЫЙ БЛОК */
+            .swipe-text-block {
+                position: relative; z-index: 2;
+                display: flex; flex-direction: column;
+                align-items: flex-start; text-align: left;
+                gap: 3px; margin-bottom: 56px; width: 100%;
+            }
+
+            .swipe-id {
+                font-size: 10px; font-weight: 600;
+                letter-spacing: 0.8px; color: #FF5500;
+                text-transform: uppercase;
+            }
+
+            .swipe-nick {
+                font-size: 28px; font-weight: 800; color: #FFFFFF;
+                text-shadow: 0 2px 12px rgba(0,0,0,0.7);
+                letter-spacing: -0.3px; line-height: 1.2; margin-top: 2px;
+            }
+
+            .swipe-stats-row {
+                font-size: 14px; font-weight: 500; color: #FFFFFF;
+                display: flex; align-items: center; gap: 10px;
+                white-space: nowrap; margin-top: 4px; flex-wrap: wrap;
+            }
+
+            .swipe-stats-sep {
+                color: rgba(255,255,255,0.6);
+                font-size: 14px; font-weight: 700;
+            }
+
+            .swipe-about {
+                font-size: 14px; color: #FFFFFF; line-height: 1.5;
+                display: -webkit-box;
+                -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+                overflow: hidden; max-width: 100%; margin-top: 6px;
+                font-weight: 400;
+            }
+
+            /* КНОПКА ПРОФИЛЯ */
+            .swipe-profile-btn {
+                position: absolute; bottom: 8px; left: 16px; right: 16px;
+                z-index: 3; height: 40px; border-radius: 10px;
+                border: 1px solid rgba(255,85,0,0.25);
+                background: rgba(255,255,255,0.08); color: white;
+                font-size: 13px; font-weight: 600; cursor: pointer;
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                transition: all 0.2s ease; letter-spacing: 0.3px;
+                box-shadow: 0 0 18px rgba(255,85,0,0.12);
+            }
+
+            .swipe-profile-btn:active {
+                background: rgba(255,85,0,0.15);
+                border-color: rgba(255,85,0,0.5);
+                box-shadow: 0 0 24px rgba(255,85,0,0.2);
+                transform: scale(0.98);
+            }
+
+            /* 🔥 КНОПКИ ЛАЙК/СКИП */
+            .swipe-actions {
+                display: flex;
+                justify-content: center;
+                gap: 40px;
+                margin-top: 20px;
+                padding: 10px 0;
+            }
+
+            .swipe-btn {
+                width: 64px; height: 64px;
+                border-radius: 50%; border: none;
+                font-size: 28px; cursor: pointer;
+                transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
+                display: flex; align-items: center; justify-content: center;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            }
+
+            .swipe-btn:active {
+                transform: scale(0.9);
+            }
+
+            .swipe-btn.like {
+                background: linear-gradient(135deg, #FF5500, #FF6B20);
+                color: #fff;
+                box-shadow: 0 4px 20px rgba(255,85,0,0.35);
+            }
+
+            .swipe-btn.like:active {
+                box-shadow: 0 6px 28px rgba(255,85,0,0.5);
+            }
+
+            .swipe-btn.skip {
+                background: rgba(255,255,255,0.1);
+                color: rgba(255,255,255,0.6);
+                border: 1px solid rgba(255,255,255,0.1);
+            }
+
+            .swipe-btn.skip:active {
+                background: rgba(255,255,255,0.2);
+                color: #fff;
+            }
+
+            /* ТОСТ */
+            .swipe-toast {
+                position: fixed; top: 60px; left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0,0,0,0.85);
+                backdrop-filter: blur(10px);
+                color: white; padding: 10px 20px;
+                border-radius: 30px; font-size: 13px;
+                font-weight: 500; z-index: 10000;
+                white-space: nowrap;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                pointer-events: none;
+            }
+
+            .swipe-toast.match {
+                background: rgba(255,85,0,0.9);
+            }
+        `;
+        document.head.appendChild(style);
     },
 
-    createButtons() {
-        const left = document.createElement('div');
-        const right = document.createElement('div');
+    createCardContainer() {
+        const container = document.getElementById('swipeContainer');
+        if (!container) return;
 
-        left.className = 'swipe-side-btn skip-btn';
-        right.className = 'swipe-side-btn invite-btn';
+        container.innerHTML = '';
 
-        left.innerHTML = '←';
-        right.innerHTML = '→';
+        this.cardContainer = document.createElement('div');
+        this.cardContainer.id = 'swipeCardContainer';
+        this.cardContainer.style.cssText = 'display:flex;flex-direction:column;align-items:center;width:100%;';
+        container.appendChild(this.cardContainer);
 
-        this.wrapper.appendChild(left);
-        this.wrapper.appendChild(right);
-
-        left.onclick = () => this.reject();
-        right.onclick = () => this.like();
+        const actions = document.createElement('div');
+        actions.className = 'swipe-actions';
+        actions.id = 'swipeActions';
+        actions.innerHTML = `
+            <button class="swipe-btn skip" onclick="Swipe.reject()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <button class="swipe-btn like" onclick="Swipe.like()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+            </button>
+        `;
+        this.cardContainer.appendChild(actions);
     },
 
-    bind() {
-        this.card.addEventListener('touchstart', e => this.start(e), { passive: false });
-        this.card.addEventListener('touchmove', e => this.move(e), { passive: false });
-        this.card.addEventListener('touchend', e => this.end(e));
+    // 🔥 ПОКАЗАТЬ КАРТОЧКУ (СТИЛЬ ANKETA)
+    show(data) {
+        this.current = data;
 
-        this.card.addEventListener('mousedown', e => this.start(e));
-        window.addEventListener('mousemove', e => this.move(e));
-        window.addEventListener('mouseup', e => this.end(e));
-    },
-
-    getX(e) {
-        return e.touches ? e.touches[0].clientX : e.clientX;
-    },
-
-    start(e) {
-        if (e.target.closest('.copy-btn')) return;
-
-        this.isDragging = true;
-        this.startX = this.getX(e);
-        this.startTime = Date.now();
-        this.wrapper.style.transition = 'none';
-    },
-
-    move(e) {
-        if (!this.isDragging) return;
-
-        e.preventDefault();
-
-        const x = this.getX(e);
-        const dx = x - this.startX;
-
-        this.currentX = dx;
-
-        const rotate = dx * 0.08;
-        const scale = 1 - Math.min(Math.abs(dx) / 1000, 0.05);
-
-        this.wrapper.style.transform =
-            `translateX(${dx}px) rotate(${rotate}deg) scale(${scale})`;
-
-        this.card.classList.toggle('swiping-right', dx > 0);
-        this.card.classList.toggle('swiping-left', dx < 0);
-    },
-
-    end() {
-        if (!this.isDragging) return;
-
-        this.isDragging = false;
-
-        const time = Date.now() - this.startTime;
-        const velocity = Math.abs(this.currentX / time);
-
-        if (
-            Math.abs(this.currentX) > this.THRESHOLD ||
-            velocity > this.VELOCITY
-        ) {
-            this.currentX > 0 ? this.like() : this.reject();
-        } else {
-            this.reset();
+        if (!this.cardContainer) {
+            this.createCardContainer();
         }
 
-        this.card.classList.remove('swiping-left', 'swiping-right');
+        const rc = this.RIBBON_COLORS[this.mode] || this.RIBBON_COLORS.faceit;
+        const modeName = (this.mode || data.mode || 'faceit').toUpperCase();
+
+        // Удаляем старую карточку
+        const oldCard = this.cardContainer.querySelector('.swipe-player-card');
+        if (oldCard) {
+            oldCard.style.opacity = '0';
+            oldCard.style.transform = 'scale(0.95)';
+            setTimeout(() => oldCard.remove(), 200);
+        }
+
+        // Создаём новую карточку
+        const card = document.createElement('div');
+        card.className = 'swipe-player-card filled';
+        card.style.setProperty('--ribbon-bg', rc.bg);
+        card.style.setProperty('--ribbon-color', rc.color);
+
+        // Аватарка как фон
+        if (data.avatar && data.avatar !== 'null' && data.avatar !== '') {
+            card.style.backgroundImage = `url(${data.avatar})`;
+        } else {
+            card.style.background = 'linear-gradient(145deg, #1c1c24, #16161c)';
+        }
+
+        const statsParts = [];
+        const modeDisplayName = this.mode === 'premier' ? 'Premier' : modeName;
+        statsParts.push(`<span>${modeDisplayName}</span>`);
+
+        if (data.rank) {
+            let rankText = data.rank;
+            if (this.mode === 'faceit') {
+                rankText = rankText.toLowerCase().includes('elo') ? rankText.toLowerCase() : `${rankText} elo`;
+            } else if (this.mode === 'premier') {
+                rankText = rankText.toLowerCase().includes('rating') ? rankText : `${rankText} rating`;
+            }
+            statsParts.push(`<span>${rankText}</span>`);
+        }
+
+        if (data.age) {
+            statsParts.push(`<span>${data.age} y.o.</span>`);
+        }
+
+        const aboutHTML = data.about && data.about.trim()
+            ? `<div class="swipe-about">${data.about.substring(0, 120)}${data.about.length > 120 ? '…' : ''}</div>`
+            : '';
+
+        let profileLink = '#';
+        let buttonText = 'Open Steam профиль';
+
+        if (this.mode === 'faceit' || this.mode === 'premier') {
+            profileLink = data.faceit_link || '#';
+            buttonText = 'Open Faceit профиль';
+        } else {
+            profileLink = data.steam_link || '#';
+        }
+
+        card.innerHTML = `
+            <div class="swipe-card-ribbon">${modeDisplayName}</div>
+            <div class="swipe-text-block">
+                ${data.player_id ? `<div class="swipe-id">ID ${data.player_id}</div>` : ''}
+                <div class="swipe-nick">${data.nick || 'Без имени'}</div>
+                <div class="swipe-stats-row">
+                    ${statsParts.join(' <span class="swipe-stats-sep">•</span> ')}
+                </div>
+                ${aboutHTML}
+            </div>
+            <button class="swipe-profile-btn" onclick="Swipe.openProfile('${profileLink.replace(/'/g, "\\'")}')">
+                ${buttonText}
+            </button>
+        `;
+
+        const actions = this.cardContainer.querySelector('#swipeActions');
+        this.cardContainer.insertBefore(card, actions);
+
+        requestAnimationFrame(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'scale(1)';
+        });
+    },
+
+    openProfile(link) {
+        if (!link || link === '#') return;
+        if (window.Telegram?.WebApp?.openLink) {
+            Telegram.WebApp.openLink(link);
+        } else {
+            window.open(link, '_blank');
+        }
     },
 
     like() {
-        this.animate(1);
+        if (!this.current || !this.current.player_id) return;
 
-        if (this.current && this.current.player_id && window.Search) {
+        this.animateCard('right');
+
+        if (window.Search) {
             Search.likePlayer(this.current.player_id, (data) => {
                 if (data && data.status === 'match') {
-                    this.showToastMessage('❤️ Взаимный мэтч! Проверь бота!', false);
+                    this.showToast('❤️ Взаимный мэтч! Проверь бота!', true);
                 } else {
-                    this.showToastMessage('👍 Лайк!', false);
+                    this.showToast('👍 Лайк!');
                 }
             });
         }
 
-        setTimeout(() => this.next(), this.ANIM);
+        setTimeout(() => this.next(), 350);
     },
 
     reject() {
-        this.animate(-1);
-        this.showToastMessage('Пропущено', false);
+        if (!this.current) return;
 
-        setTimeout(() => this.next(), this.ANIM);
+        this.animateCard('left');
+        this.showToast('👎 Пропущено');
+
+        setTimeout(() => this.next(), 350);
     },
 
-    animate(dir) {
-        this.wrapper.style.transition =
-            `transform ${this.ANIM}ms cubic-bezier(.22,.61,.36,1)`;
+    animateCard(direction) {
+        const card = this.cardContainer.querySelector('.swipe-player-card');
+        if (!card) return;
 
-        this.wrapper.style.transform =
-            `translateX(${dir * 180}%) rotate(${dir * 14}deg) scale(0.9)`;
-    },
+        const translateX = direction === 'right' ? '120%' : '-120%';
+        const rotate = direction === 'right' ? '15deg' : '-15deg';
 
-    reset() {
-        this.wrapper.style.transition =
-            'transform 0.28s cubic-bezier(.2,.8,.2,1)';
-
-        this.wrapper.style.transform =
-            'translateX(0) rotate(0) scale(1)';
+        card.style.transition = 'transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.3s ease';
+        card.style.transform = `translateX(${translateX}) rotate(${rotate})`;
+        card.style.opacity = '0';
     },
 
     next() {
-        this.reset();
-
         if (window.Search) {
             const id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
             Search.showNextAnketa(id, this.mode);
@@ -172,79 +384,15 @@ const Swipe = {
         this.mode = mode || anketa.mode;
         if (!this.initialized) this.init(this.mode);
         this.show(anketa);
+        this.showBackArrow();
     },
 
-    show(data) {
-        this.current = data;
-
-        // АВАТАРКА КАК ФОН КАРТОЧКИ
-        const card = document.getElementById('swipeCard');
-        if (card) {
-            if (data.avatar && data.avatar !== 'null' && data.avatar !== '') {
-                card.style.backgroundImage = `url(${data.avatar})`;
-                card.style.backgroundSize = 'cover';
-                card.style.backgroundPosition = 'center';
-            } else {
-                card.style.backgroundImage = '';
-                card.style.background = 'var(--surface)';
-            }
-        }
-
-        // Информация поверх аватарки
-        const nickEl = document.getElementById('swipePlayerNick');
-        if (nickEl) nickEl.textContent = data.nick || '';
-
-        const rankEl = document.getElementById('swipeRank');
-        if (rankEl) rankEl.textContent = data.rank || '—';
-
-        const ageEl = document.getElementById('swipeAge');
-        if (ageEl) ageEl.textContent = data.age ? data.age + ' лет' : '';
-
-        const commentEl = document.getElementById('swipeComment');
-        if (commentEl) commentEl.textContent = data.about || '';
-
-        const playerIdEl = document.getElementById('swipePlayerId');
-        if (playerIdEl) playerIdEl.textContent = data.player_id || '';
-
-        const ratingEl = document.getElementById('swipeRatingValue');
-        if (ratingEl) {
-            const r = data.trust_rating || data.rating || 0;
-            ratingEl.textContent = (r > 0 ? '+' : '') + r;
-        }
-
-        this.updateLinks(data);
-    },
-
-    updateLinks(data) {
-        const steamEl = document.getElementById('swipeSteamLink');
-        if (steamEl) steamEl.textContent = data.steam_link || 'Не указана';
-
-        const faceitEl = document.getElementById('swipeFaceitLink');
-        if (faceitEl) faceitEl.textContent = data.faceit_link || 'Не указана';
-    },
-
-    showToastMessage(message, isError = false) {
-        const existing = document.querySelector('.profile-toast');
-        if (existing) existing.remove();
+    showToast(message, isMatch = false) {
+        const old = document.querySelector('.swipe-toast');
+        if (old) old.remove();
 
         const toast = document.createElement('div');
-        toast.className = 'profile-toast';
-        toast.style.cssText = `
-            position: fixed;
-            top: 60px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: ${isError ? 'rgba(255,59,48,0.95)' : 'rgba(0,0,0,0.85)'};
-            backdrop-filter: blur(10px);
-            color: white;
-            padding: 10px 16px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 500;
-            z-index: 10000;
-            white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        `;
+        toast.className = 'swipe-toast' + (isMatch ? ' match' : '');
         toast.textContent = message;
         document.body.appendChild(toast);
 
