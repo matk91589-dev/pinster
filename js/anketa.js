@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - v15.3 PREMIUM FINAL
+// КАРТОЧКИ + ЛАЙКИ - v15.4 FINAL
 // ============================================
 
-console.log('🔥 ANKETA.JS v15.3 PREMIUM FINAL');
+console.log('🔥 ANKETA.JS v15.4 FINAL');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,7 +16,7 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v15.3');
+        console.log('🚀 Anketa.init() v15.4');
         document.documentElement.style.height = '100%';
         document.documentElement.style.overflow = 'hidden';
         document.body.style.height = '100%';
@@ -34,22 +34,18 @@ const Anketa = {
     },
 
     injectStyles() {
-        if (document.getElementById('anketa-v153-styles')) return;
+        if (document.getElementById('anketa-v154-styles')) return;
         const style = document.createElement('style');
-        style.id = 'anketa-v153-styles';
+        style.id = 'anketa-v154-styles';
         style.textContent = `
             :root { --top-bar-height: 56px; --bottom-nav-height: 76px; }
             
-            /* 🔥 СКРОЛЛ — НЕ УХОДИТ ПОД НАВИГАЦИЮ */
             .anketa-scroll {
                 position: relative; flex: 1; min-height: 0;
                 overflow-y: auto; -webkit-overflow-scrolling: touch;
-                padding: 0 16px;
-                padding-bottom: 16px;
-                margin-bottom: 0;
+                padding: 0 16px; padding-bottom: 16px;
                 display: flex; flex-direction: column; gap: 14px;
-                overscroll-behavior: contain;
-                height: 100%;
+                overscroll-behavior: contain; height: 100%;
             }
             .anketa-loading, .anketa-empty-text { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.35); font-size: 14px; }
             .anketa-divider-top { height: 8px; margin: 0; flex-shrink: 0; }
@@ -70,39 +66,43 @@ const Anketa = {
                 padding: 16px;
                 will-change: transform; transform: translateZ(0); backface-visibility: hidden;
                 transform-style: preserve-3d;
-                transition: transform 0.35s cubic-bezier(0.22,0.61,0.36,1), box-shadow 0.35s ease;
+                transition: transform 0.15s ease, box-shadow 0.15s ease;
             }
             .anketa-card:first-child { margin-top: 8px; }
             
+            /* 🔥 GLINT — РАБОТАЕТ НА ТЕЛЕФОНЕ */
             .anketa-card .card-glint {
                 position: absolute; top: 0; left: -60%; width: 60%; height: 100%; z-index: 10;
-                background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.05) 60%, transparent 100%);
+                background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.16) 50%, rgba(255,255,255,0.06) 60%, transparent 100%);
                 transform: skewX(-18deg); pointer-events: none; opacity: 0;
+                transition: left 0.5s cubic-bezier(0.22,0.61,0.36,1), opacity 0.05s;
             }
-            .anketa-card.glinting .card-glint {
-                left: 120%; opacity: 1;
-                transition: left 0.55s cubic-bezier(0.22,0.61,0.36,1), opacity 0.05s;
+            .anketa-card.glinting .card-glint { left: 120%; opacity: 1; }
+            
+            /* 🔥 ПРОДАВЛИВАНИЕ — ЧЁТКОЕ */
+            .anketa-card:active {
+                transform: scale(0.96) !important;
+                transition: transform 0.1s ease !important;
             }
-            .anketa-card:active { transform: scale(0.965); transition: transform 0.12s ease; }
+            .anketa-card.pressing {
+                transform: scale(0.96) !important;
+                transition: transform 0.1s ease !important;
+            }
             
             .anketa-card::before {
                 content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
                 background: linear-gradient(155deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 18%, transparent 36%, transparent 100%);
             }
             
-            @media (hover: hover) {
-                .anketa-card:hover { background-position: center 18%; }
-            }
-            
             .anketa-card.filled { background-size: cover; background-position: center 20%; background-repeat: no-repeat; }
             
-            /* 🔥 ГРАДИЕНТ 60% — ЧЕРНЫЙ, ТЕКСТ ВИДЕН */
+            /* 🔥 ГРАДИЕНТ 50% / 55% ЕСЛИ ТЕКСТ > 40 СИМВОЛОВ */
             .anketa-card.filled::after {
-                content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%; z-index: 1; pointer-events: none;
+                content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 50%; z-index: 1; pointer-events: none;
                 background: linear-gradient(to top, rgba(0,0,0,0.99) 0%, rgba(0,0,0,0.96) 15%, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.50) 70%, rgba(0,0,0,0.10) 100%);
             }
             .anketa-card.filled.long-about::after {
-                height: 65%;
+                height: 55%;
                 background: linear-gradient(to top, rgba(0,0,0,0.99) 0%, rgba(0,0,0,0.97) 12%, rgba(0,0,0,0.88) 35%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.15) 100%);
             }
             
@@ -119,7 +119,6 @@ const Anketa = {
             }
             .anketa-id { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; color: #FF5500; text-transform: uppercase; }
             
-            /* 🔥 ТЕКСТ ЖИРНЕЕ */
             .anketa-nick {
                 font-size: 28px; font-weight: 900; color: #FFFFFF;
                 text-shadow: 0 2px 14px rgba(0,0,0,0.7), 0 8px 28px rgba(0,0,0,0.6);
@@ -141,18 +140,20 @@ const Anketa = {
                 word-wrap: break-word; overflow-wrap: break-word;
             }
             
-            /* 🔥 PREMIUM CTA */
+            /* 🔥 CTA — ПЛОСКАЯ КАК CREATE */
             .anketa-profile-btn {
                 position: absolute; left: 12px; right: 12px; bottom: 12px;
-                z-index: 5; height: 48px; border-radius: 14px;
-                border: 1px solid rgba(255,255,255,0.08);
-                background: linear-gradient(180deg, rgba(255,85,0,0.96) 0%, rgba(255,115,25,0.96) 100%);
+                z-index: 5; height: 46px; border-radius: 11px; border: none;
+                background: linear-gradient(135deg, #FF5500 0%, #FF6B20 100%);
                 color: white; font-size: 14px; font-weight: 700; letter-spacing: 0.2px;
                 cursor: pointer;
-                box-shadow: 0 10px 28px rgba(255,85,0,0.24), inset 0 1px 0 rgba(255,255,255,0.16), inset 0 -2px 0 rgba(0,0,0,0.18);
-                transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+                box-shadow: inset 0 -2px 0 rgba(0,0,0,0.25), 0 2px 8px rgba(255,85,0,0.25);
+                transition: transform .12s ease, box-shadow .12s ease;
             }
-            .anketa-profile-btn:active { transform: scale(0.97); box-shadow: 0 6px 16px rgba(255,85,0,0.18); filter: brightness(0.96); }
+            .anketa-profile-btn:active {
+                transform: translateY(1px) scale(0.98);
+                box-shadow: inset 0 2px 6px rgba(0,0,0,0.3), 0 1px 4px rgba(255,85,0,0.2);
+            }
             
             .anketa-card-controls {
                 position: absolute; top: 12px; right: 12px; z-index: 6;
@@ -174,11 +175,12 @@ const Anketa = {
             .anketa-card-btn {
                 flex: 1; height: 42px; border-radius: 11px; border: none;
                 font-size: 13px; font-weight: 600; cursor: pointer;
-                transition: all 0.2s ease; text-align: center;
+                transition: all 0.15s ease; text-align: center;
                 display: flex; align-items: center; justify-content: center;
                 box-shadow: inset 0 -2px 0 rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.25);
             }
             .anketa-card-btn.create { background: linear-gradient(135deg, #FF5500, #FF6B20); color: #fff; }
+            .anketa-card-btn:active { transform: translateY(1px) scale(0.98); box-shadow: inset 0 2px 6px rgba(0,0,0,0.3); }
             
             .anketa-ribbon {
                 position: absolute; top: 0; left: 0; z-index: 6;
@@ -210,25 +212,38 @@ const Anketa = {
         document.head.appendChild(style);
     },
 
+    // 🔥 БЛИК — ЧЕРЕЗ КЛАСС ДЛЯ МОБИЛ
     triggerGlint(card) {
         card.classList.add('glinting');
-        setTimeout(() => card.classList.remove('glinting'), 550);
+        setTimeout(() => card.classList.remove('glinting'), 500);
+    },
+
+    // 🔥 ПРОДАВЛИВАНИЕ — ЧЕРЕЗ КЛАСС ДЛЯ МОБИЛ
+    triggerPress(card) {
+        card.classList.add('pressing');
+        setTimeout(() => card.classList.remove('pressing'), 120);
     },
 
     applyEffects(card) {
+        card.addEventListener('pointerdown', (e) => {
+            this.triggerPress(card);
+            this.triggerGlint(card);
+        });
+        // Tilt только для десктопа (hover)
         card.addEventListener('pointermove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const rotateY = (x / rect.width - 0.5) * 5;
-            const rotateX = -(y / rect.height - 0.5) * 5;
-            card.style.transform = `translate3d(0,-2px,0) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            if (window.matchMedia('(hover: hover)').matches) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const rotateY = (x / rect.width - 0.5) * 5;
+                const rotateX = -(y / rect.height - 0.5) * 5;
+                card.style.transform = `translate3d(0,-2px,0) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            }
         });
         card.addEventListener('pointerleave', () => {
             card.style.transition = 'transform .35s cubic-bezier(.22,.61,.36,1)';
             card.style.transform = 'translate3d(0,0,0) rotateX(0) rotateY(0)';
         });
-        card.addEventListener('pointerdown', () => this.triggerGlint(card));
     },
 
     switchTab(tab, element) {
@@ -312,7 +327,8 @@ const Anketa = {
                 ? `<div class="anketa-about">${aboutText.substring(0, 100)}${aboutText.length > 100 ? '…' : ''}</div>`
                 : '';
             
-            const longClass = aboutText.length > 50 ? ' long-about' : '';
+            // 🔥 50% по умолчанию, 55% если about > 40 символов
+            const longClass = aboutText.length > 40 ? ' long-about' : '';
             
             const isFaceitPremier = mode.id==='faceit'||mode.id==='premier';
             const buttonText = isFaceitPremier ? 'Открыть Faceit игрока' : 'Открыть Steam игрока';
@@ -345,7 +361,6 @@ const Anketa = {
         (window.Telegram?.WebApp?.openLink||window.open)(link, '_blank');
     },
 
-    // 🔥 РЕДАКТИРОВАНИЕ — ЗАПОЛНЯЕТ ДАННЫЕ
     goToMode(modeId) {
         App.showScreen(modeId + 'Screen', true);
         setTimeout(() => {
@@ -354,13 +369,11 @@ const Anketa = {
                 btn.textContent = 'Обновить карточку';
                 btn.onclick = () => App.createCard(modeId);
             }
-            // 🔥 Заполняем данные из кэша или API
             this.fillEditForm(modeId);
         }, 300);
     },
 
     fillEditForm(modeId) {
-        // Сначала пробуем из загруженных данных
         const telegram_id = this.getTelegramId();
         if (!telegram_id) return;
 
@@ -375,43 +388,26 @@ const Anketa = {
             const card = cards.find(c => c.mode === modeId);
             if (!card) return;
 
-            // Заполняем поля
             if (modeId === 'faceit') {
-                const elo = document.getElementById('faceitELOInput');
-                const age = document.getElementById('faceitAge');
-                const link = document.getElementById('faceitLinkInput');
-                const about = document.getElementById('faceitAbout');
-                if (elo) elo.value = card.rank || '';
-                if (age) age.value = card.age || '';
-                if (link) link.value = card.link || '';
-                if (about) about.value = card.about || '';
+                const elo = document.getElementById('faceitELOInput'); if (elo) elo.value = card.rank || '';
+                const age = document.getElementById('faceitAge'); if (age) age.value = card.age || '';
+                const link = document.getElementById('faceitLinkInput'); if (link) link.value = card.link || '';
+                const about = document.getElementById('faceitAbout'); if (about) about.value = card.about || '';
             } else if (modeId === 'premier') {
-                const rating = document.getElementById('premierRatingInput');
-                const age = document.getElementById('premierAge');
-                const link = document.getElementById('premierLinkInput');
-                const about = document.getElementById('premierAbout');
-                if (rating) rating.value = card.rank || '';
-                if (age) age.value = card.age || '';
-                if (link) link.value = card.link || '';
-                if (about) about.value = card.about || '';
+                const r = document.getElementById('premierRatingInput'); if (r) r.value = card.rank || '';
+                const a = document.getElementById('premierAge'); if (a) a.value = card.age || '';
+                const l = document.getElementById('premierLinkInput'); if (l) l.value = card.link || '';
+                const ab = document.getElementById('premierAbout'); if (ab) ab.value = card.about || '';
             } else if (modeId === 'prime') {
-                const rank = document.getElementById('primeRankSelect');
-                const age = document.getElementById('primeAge');
-                const link = document.getElementById('primeLinkInput');
-                const about = document.getElementById('primeAbout');
-                if (rank) rank.value = card.rank || '';
-                if (age) age.value = card.age || '';
-                if (link) link.value = card.link || '';
-                if (about) about.value = card.about || '';
+                const r = document.getElementById('primeRankSelect'); if (r) r.value = card.rank || '';
+                const a = document.getElementById('primeAge'); if (a) a.value = card.age || '';
+                const l = document.getElementById('primeLinkInput'); if (l) l.value = card.link || '';
+                const ab = document.getElementById('primeAbout'); if (ab) ab.value = card.about || '';
             } else if (modeId === 'public') {
-                const rank = document.getElementById('publicRankSelect');
-                const age = document.getElementById('publicAge');
-                const link = document.getElementById('publicLinkInput');
-                const about = document.getElementById('publicAbout');
-                if (rank) rank.value = card.rank || '';
-                if (age) age.value = card.age || '';
-                if (link) link.value = card.link || '';
-                if (about) about.value = card.about || '';
+                const r = document.getElementById('publicRankSelect'); if (r) r.value = card.rank || '';
+                const a = document.getElementById('publicAge'); if (a) a.value = card.age || '';
+                const l = document.getElementById('publicLinkInput'); if (l) l.value = card.link || '';
+                const ab = document.getElementById('publicAbout'); if (ab) ab.value = card.about || '';
             }
         })
         .catch(() => {});
@@ -433,4 +429,4 @@ document.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('an
 const origShow=window.App?.showScreen;
 if(origShow){window.App.showScreen=function(s,d){origShow.call(window.App,s,d);if(s==='anketaScreen')setTimeout(()=>Anketa.init(),200);};}
 window.Anketa=Anketa;
-console.log('✅ Anketa v15.3 PREMIUM FINAL готов');
+console.log('✅ Anketa v15.4 FINAL готов');
