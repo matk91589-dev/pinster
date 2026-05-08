@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - v15.6 FIXED MOBILE
+// КАРТОЧКИ + ЛАЙКИ - v15.7 JS ANIMATION
 // ============================================
 
-console.log('🔥 ANKETA.JS v15.6 FIXED MOBILE');
+console.log('🔥 ANKETA.JS v15.7 JS ANIMATION');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,7 +16,7 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v15.6');
+        console.log('🚀 Anketa.init() v15.7');
         document.body.style.height = window.innerHeight + 'px';
         document.body.style.overflow = 'hidden';
         document.body.style.overscrollBehavior = 'none';
@@ -32,9 +32,9 @@ const Anketa = {
     },
 
     injectStyles() {
-        if (document.getElementById('anketa-v156-styles')) return;
+        if (document.getElementById('anketa-v157-styles')) return;
         const style = document.createElement('style');
-        style.id = 'anketa-v156-styles';
+        style.id = 'anketa-v157-styles';
         style.textContent = `
             .anketa-scroll {
                 flex: 1; min-height: 0;
@@ -54,7 +54,6 @@ const Anketa = {
                 box-shadow: 0 20px 50px rgba(0,0,0,0.48), 0 8px 20px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(255,255,255,0.05);
                 border: 1px solid rgba(255,255,255,0.06);
                 flex-shrink: 0; opacity: 0;
-                animation: cardIn 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
                 background-color: #0a0a0f;
                 background-size: cover; background-position: center 20%; background-repeat: no-repeat;
                 display: flex; flex-direction: column; justify-content: flex-end;
@@ -65,7 +64,6 @@ const Anketa = {
             }
             .anketa-card:first-child { margin-top: 8px; }
             
-            /* 🔥 GLINT */
             .anketa-card .card-glint {
                 position: absolute; top: 0; left: -60%; width: 60%; height: 100%; z-index: 10;
                 background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.16) 50%, rgba(255,255,255,0.06) 60%, transparent 100%);
@@ -81,7 +79,6 @@ const Anketa = {
             
             .anketa-card.filled { background-size: cover; background-position: center 20%; background-repeat: no-repeat; }
             
-            /* 🔥 ГРАДИЕНТ 50% — ЧЕРНЕЕ СРАЗУ */
             .anketa-card.filled::after {
                 content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 50%; z-index: 1; pointer-events: none;
                 background: linear-gradient(to top, rgba(0,0,0,0.99) 0%, rgba(0,0,0,0.95) 15%, rgba(0,0,0,0.82) 45%, rgba(0,0,0,0.45) 75%, transparent 100%);
@@ -122,7 +119,6 @@ const Anketa = {
                 word-wrap: break-word; overflow-wrap: break-word;
             }
             
-            /* 🔥 CTA — КАК КНОПКА CREATE */
             .anketa-profile-btn {
                 position: absolute; left: 12px; right: 12px; bottom: 12px;
                 z-index: 5; height: 42px; border-radius: 11px; border: none;
@@ -176,12 +172,6 @@ const Anketa = {
                 clip-path: polygon(0 0, 100% 0, 86% 100%, 0 100%);
                 box-shadow: 0 2px 6px rgba(0,0,0,0.3);
                 border-bottom: 1px solid var(--ribbon-color, #FF5500);
-            }
-            
-            /* 🔥 БЕЗ BLUR В АНИМАЦИИ */
-            @keyframes cardIn {
-                0% { opacity: 0; transform: translateY(16px) scale(0.985); }
-                100% { opacity: 1; transform: translateY(0) scale(1); }
             }
             
             .anketa-likes-section { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.9); padding: 16px 16px 8px; }
@@ -261,10 +251,22 @@ const Anketa = {
             html += '</div>';
             container.innerHTML = html;
 
-            // 🔥 DOUBLE RAF — ГАРАНТИЯ АНИМАЦИИ В TELEGRAM WEBVIEW
+            // 🔥 JS ANIMATION — РАБОТАЕТ ВЕЗДЕ
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    container.querySelectorAll('.anketa-card').forEach(card => this.applyEffects(card));
+                    const cards = container.querySelectorAll('.anketa-card');
+                    cards.forEach((card, index) => {
+                        card.animate([
+                            { opacity: 0, transform: 'translateY(16px) scale(0.985)' },
+                            { opacity: 1, transform: 'translateY(0) scale(1)' }
+                        ], {
+                            duration: 500,
+                            delay: index * 60,
+                            easing: 'cubic-bezier(0.22, 0.61, 0.36, 1)',
+                            fill: 'forwards'
+                        });
+                        this.applyEffects(card);
+                    });
                 });
             });
 
@@ -274,7 +276,19 @@ const Anketa = {
             html += '</div>'; container.innerHTML = html;
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    container.querySelectorAll('.anketa-card').forEach(card => this.applyEffects(card));
+                    const cards = container.querySelectorAll('.anketa-card');
+                    cards.forEach((card, index) => {
+                        card.animate([
+                            { opacity: 0, transform: 'translateY(16px) scale(0.985)' },
+                            { opacity: 1, transform: 'translateY(0) scale(1)' }
+                        ], {
+                            duration: 500,
+                            delay: index * 60,
+                            easing: 'cubic-bezier(0.22, 0.61, 0.36, 1)',
+                            fill: 'forwards'
+                        });
+                        this.applyEffects(card);
+                    });
                 });
             });
         }
@@ -350,4 +364,4 @@ document.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('an
 const origShow=window.App?.showScreen;
 if(origShow){window.App.showScreen=function(s,d){origShow.call(window.App,s,d);if(s==='anketaScreen')setTimeout(()=>Anketa.init(),200);};}
 window.Anketa=Anketa;
-console.log('✅ Anketa v15.6 FIXED MOBILE готов');
+console.log('✅ Anketa v15.7 JS ANIMATION готов');
