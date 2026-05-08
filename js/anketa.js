@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - v15.2 PREMIUM FIX 2
+// КАРТОЧКИ + ЛАЙКИ - v15.3 PREMIUM FINAL
 // ============================================
 
-console.log('🔥 ANKETA.JS v15.2 PREMIUM FIX 2');
+console.log('🔥 ANKETA.JS v15.3 PREMIUM FINAL');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,7 +16,7 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v15.2');
+        console.log('🚀 Anketa.init() v15.3');
         document.documentElement.style.height = '100%';
         document.documentElement.style.overflow = 'hidden';
         document.body.style.height = '100%';
@@ -34,18 +34,22 @@ const Anketa = {
     },
 
     injectStyles() {
-        if (document.getElementById('anketa-v152-styles')) return;
+        if (document.getElementById('anketa-v153-styles')) return;
         const style = document.createElement('style');
-        style.id = 'anketa-v152-styles';
+        style.id = 'anketa-v153-styles';
         style.textContent = `
             :root { --top-bar-height: 56px; --bottom-nav-height: 76px; }
             
+            /* 🔥 СКРОЛЛ — НЕ УХОДИТ ПОД НАВИГАЦИЮ */
             .anketa-scroll {
                 position: relative; flex: 1; min-height: 0;
                 overflow-y: auto; -webkit-overflow-scrolling: touch;
-                padding: 0 16px; padding-bottom: calc(var(--bottom-nav-height) + 24px);
+                padding: 0 16px;
+                padding-bottom: 16px;
+                margin-bottom: 0;
                 display: flex; flex-direction: column; gap: 14px;
                 overscroll-behavior: contain;
+                height: 100%;
             }
             .anketa-loading, .anketa-empty-text { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.35); font-size: 14px; }
             .anketa-divider-top { height: 8px; margin: 0; flex-shrink: 0; }
@@ -70,7 +74,6 @@ const Anketa = {
             }
             .anketa-card:first-child { margin-top: 8px; }
             
-            /* 🔥 СВЕТОВОЙ БЛИК — ДЛЯ ВСЕХ КАРТОЧЕК */
             .anketa-card .card-glint {
                 position: absolute; top: 0; left: -60%; width: 60%; height: 100%; z-index: 10;
                 background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.05) 60%, transparent 100%);
@@ -82,7 +85,6 @@ const Anketa = {
             }
             .anketa-card:active { transform: scale(0.965); transition: transform 0.12s ease; }
             
-            /* 🔥 CINEMATIC LIGHT */
             .anketa-card::before {
                 content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
                 background: linear-gradient(155deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 18%, transparent 36%, transparent 100%);
@@ -94,15 +96,14 @@ const Anketa = {
             
             .anketa-card.filled { background-size: cover; background-position: center 20%; background-repeat: no-repeat; }
             
-            /* 🔥 ГРАДИЕНТ 50% — СРАЗУ РЕЗКИЙ СТАРТ */
+            /* 🔥 ГРАДИЕНТ 60% — ЧЕРНЫЙ, ТЕКСТ ВИДЕН */
             .anketa-card.filled::after {
-                content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 50%; z-index: 1; pointer-events: none;
-                background: linear-gradient(to top, rgba(0,0,0,0.99) 0%, rgba(0,0,0,0.94) 18%, rgba(0,0,0,0.78) 50%, rgba(0,0,0,0.35) 78%, transparent 100%);
+                content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%; z-index: 1; pointer-events: none;
+                background: linear-gradient(to top, rgba(0,0,0,0.99) 0%, rgba(0,0,0,0.96) 15%, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.50) 70%, rgba(0,0,0,0.10) 100%);
             }
-            /* 🔥 ДЛИННЫЙ КОММЕНТАРИЙ — 55% */
             .anketa-card.filled.long-about::after {
-                height: 55%;
-                background: linear-gradient(to top, rgba(0,0,0,0.99) 0%, rgba(0,0,0,0.95) 15%, rgba(0,0,0,0.80) 45%, rgba(0,0,0,0.40) 75%, transparent 100%);
+                height: 65%;
+                background: linear-gradient(to top, rgba(0,0,0,0.99) 0%, rgba(0,0,0,0.97) 12%, rgba(0,0,0,0.88) 35%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.15) 100%);
             }
             
             .anketa-card.empty {
@@ -116,27 +117,27 @@ const Anketa = {
                 display: flex; flex-direction: column; align-items: flex-start; text-align: left;
                 gap: 3px; margin-bottom: 62px; width: 100%;
             }
-            .anketa-id { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; color: #FF5500; text-transform: uppercase; }
+            .anketa-id { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; color: #FF5500; text-transform: uppercase; }
             
+            /* 🔥 ТЕКСТ ЖИРНЕЕ */
             .anketa-nick {
-                font-size: 28px; font-weight: 800; color: #FFFFFF;
-                text-shadow: 0 2px 12px rgba(0,0,0,0.6), 0 8px 24px rgba(0,0,0,0.5);
+                font-size: 28px; font-weight: 900; color: #FFFFFF;
+                text-shadow: 0 2px 14px rgba(0,0,0,0.7), 0 8px 28px rgba(0,0,0,0.6);
                 letter-spacing: -0.3px; line-height: 1.2; margin-top: 2px;
             }
             
-            /* 🔥 СТАТЫ — ПРОСТО ТЕКСТ */
             .anketa-stats-row {
-                font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.8);
+                font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.9);
                 display: flex; align-items: center; gap: 8px;
                 white-space: nowrap; margin-top: 4px; flex-wrap: wrap;
+                text-shadow: 0 1px 4px rgba(0,0,0,0.6);
             }
-            .anketa-stats-sep { color: rgba(255,255,255,0.5); font-size: 14px; font-weight: 600; }
+            .anketa-stats-sep { color: rgba(255,255,255,0.5); font-size: 14px; font-weight: 700; }
             
-            /* 🔥 ABOUT — ПЕРЕНОС НА 2 СТРОКИ */
             .anketa-about {
-                font-size: 14px; color: rgba(255,255,255,0.78);
-                line-height: 1.5; max-width: 100%; margin-top: 8px; font-weight: 400;
-                text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+                font-size: 14px; color: rgba(255,255,255,0.85);
+                line-height: 1.5; max-width: 100%; margin-top: 8px; font-weight: 600;
+                text-shadow: 0 1px 4px rgba(0,0,0,0.6);
                 word-wrap: break-word; overflow-wrap: break-word;
             }
             
@@ -153,7 +154,6 @@ const Anketa = {
             }
             .anketa-profile-btn:active { transform: scale(0.97); box-shadow: 0 6px 16px rgba(255,85,0,0.18); filter: brightness(0.96); }
             
-            /* 🔥 CONTROLS — РОВНЫЕ */
             .anketa-card-controls {
                 position: absolute; top: 12px; right: 12px; z-index: 6;
                 display: flex; flex-direction: column; gap: 6px; align-items: flex-end;
@@ -180,7 +180,6 @@ const Anketa = {
             }
             .anketa-card-btn.create { background: linear-gradient(135deg, #FF5500, #FF6B20); color: #fff; }
             
-            /* 🔥 RIBBON — РОВНЫЙ */
             .anketa-ribbon {
                 position: absolute; top: 0; left: 0; z-index: 6;
                 padding: 6px 16px 5px 12px;
@@ -194,7 +193,7 @@ const Anketa = {
             
             @keyframes cardIn {
                 0% { opacity: 0; transform: translateY(16px) scale(0.985); filter: blur(2px); }
-                0.01% { opacity: 0; } /* 🔥 ПРОПУСКАЕМ 1 СТАРТОВЫЙ ЦИКЛ */
+                0.01% { opacity: 0; }
                 100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
             }
             
@@ -211,13 +210,11 @@ const Anketa = {
         document.head.appendChild(style);
     },
 
-    // 🔥 БЛИК — ДЛЯ ВСЕХ КАРТОЧЕК
     triggerGlint(card) {
         card.classList.add('glinting');
         setTimeout(() => card.classList.remove('glinting'), 550);
     },
 
-    // 🔥 PARALLAX TILT + GLINT
     applyEffects(card) {
         card.addEventListener('pointermove', (e) => {
             const rect = card.getBoundingClientRect();
@@ -231,7 +228,6 @@ const Anketa = {
             card.style.transition = 'transform .35s cubic-bezier(.22,.61,.36,1)';
             card.style.transform = 'translate3d(0,0,0) rotateX(0) rotateY(0)';
         });
-        // 🔥 Блик по клику
         card.addEventListener('pointerdown', () => this.triggerGlint(card));
     },
 
@@ -287,7 +283,6 @@ const Anketa = {
             html += '</div>';
             container.innerHTML = html;
 
-            // 🔥 Apply effects to ALL cards (filled + empty)
             container.querySelectorAll('.anketa-card').forEach(card => this.applyEffects(card));
 
         } catch (err) {
@@ -317,7 +312,6 @@ const Anketa = {
                 ? `<div class="anketa-about">${aboutText.substring(0, 100)}${aboutText.length > 100 ? '…' : ''}</div>`
                 : '';
             
-            // 🔥 Длинный комментарий → класс long-about
             const longClass = aboutText.length > 50 ? ' long-about' : '';
             
             const isFaceitPremier = mode.id==='faceit'||mode.id==='premier';
@@ -350,7 +344,79 @@ const Anketa = {
         if (!link||link==='#') { App?.showCustomPopup?.('Ссылка не указана','Добавьте ссылку в настройках',null,null,'OK','',false); return; }
         (window.Telegram?.WebApp?.openLink||window.open)(link, '_blank');
     },
-    goToMode(modeId) { App.showScreen(modeId+'Screen',true); setTimeout(()=>{const b=document.querySelector(`#${modeId}Screen .mode-search-btn`);if(b){b.textContent='Создать карточку';b.onclick=()=>App.createCard(modeId);}},300); },
+
+    // 🔥 РЕДАКТИРОВАНИЕ — ЗАПОЛНЯЕТ ДАННЫЕ
+    goToMode(modeId) {
+        App.showScreen(modeId + 'Screen', true);
+        setTimeout(() => {
+            const btn = document.querySelector(`#${modeId}Screen .mode-search-btn`);
+            if (btn) {
+                btn.textContent = 'Обновить карточку';
+                btn.onclick = () => App.createCard(modeId);
+            }
+            // 🔥 Заполняем данные из кэша или API
+            this.fillEditForm(modeId);
+        }, 300);
+    },
+
+    fillEditForm(modeId) {
+        // Сначала пробуем из загруженных данных
+        const telegram_id = this.getTelegramId();
+        if (!telegram_id) return;
+
+        fetch(`${this.BACKEND_URL}/api/anketa/list`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegram_id: String(telegram_id) })
+        })
+        .then(r => r.json())
+        .then(data => {
+            const cards = data.anketas || [];
+            const card = cards.find(c => c.mode === modeId);
+            if (!card) return;
+
+            // Заполняем поля
+            if (modeId === 'faceit') {
+                const elo = document.getElementById('faceitELOInput');
+                const age = document.getElementById('faceitAge');
+                const link = document.getElementById('faceitLinkInput');
+                const about = document.getElementById('faceitAbout');
+                if (elo) elo.value = card.rank || '';
+                if (age) age.value = card.age || '';
+                if (link) link.value = card.link || '';
+                if (about) about.value = card.about || '';
+            } else if (modeId === 'premier') {
+                const rating = document.getElementById('premierRatingInput');
+                const age = document.getElementById('premierAge');
+                const link = document.getElementById('premierLinkInput');
+                const about = document.getElementById('premierAbout');
+                if (rating) rating.value = card.rank || '';
+                if (age) age.value = card.age || '';
+                if (link) link.value = card.link || '';
+                if (about) about.value = card.about || '';
+            } else if (modeId === 'prime') {
+                const rank = document.getElementById('primeRankSelect');
+                const age = document.getElementById('primeAge');
+                const link = document.getElementById('primeLinkInput');
+                const about = document.getElementById('primeAbout');
+                if (rank) rank.value = card.rank || '';
+                if (age) age.value = card.age || '';
+                if (link) link.value = card.link || '';
+                if (about) about.value = card.about || '';
+            } else if (modeId === 'public') {
+                const rank = document.getElementById('publicRankSelect');
+                const age = document.getElementById('publicAge');
+                const link = document.getElementById('publicLinkInput');
+                const about = document.getElementById('publicAbout');
+                if (rank) rank.value = card.rank || '';
+                if (age) age.value = card.age || '';
+                if (link) link.value = card.link || '';
+                if (about) about.value = card.about || '';
+            }
+        })
+        .catch(() => {});
+    },
+
     editAnketa(m) { this.goToMode(m); },
     deleteAnketa(m) { App.showCustomPopup('Удалить карточку?',`Карточка ${m.toUpperCase()} будет удалена.`,()=>{fetch(`${this.BACKEND_URL}/api/anketa/delete`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({telegram_id:String(this.getTelegramId()),mode:m})}).then(r=>r.json()).then(d=>{if(d.status==='ok')this.loadMyAnketas();});},null,'Удалить','Отмена',true); },
     loadLikes() {
@@ -367,4 +433,4 @@ document.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('an
 const origShow=window.App?.showScreen;
 if(origShow){window.App.showScreen=function(s,d){origShow.call(window.App,s,d);if(s==='anketaScreen')setTimeout(()=>Anketa.init(),200);};}
 window.Anketa=Anketa;
-console.log('✅ Anketa v15.2 PREMIUM FIX 2 готов');
+console.log('✅ Anketa v15.3 PREMIUM FINAL готов');
