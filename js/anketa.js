@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - v15.4 FINAL
+// КАРТОЧКИ + ЛАЙКИ - v15.5 STABLE
 // ============================================
 
-console.log('🔥 ANKETA.JS v15.4 FINAL');
+console.log('🔥 ANKETA.JS v15.5 STABLE');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,7 +16,7 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v15.4');
+        console.log('🚀 Anketa.init() v15.5');
         document.documentElement.style.height = '100%';
         document.documentElement.style.overflow = 'hidden';
         document.body.style.height = '100%';
@@ -34,18 +34,20 @@ const Anketa = {
     },
 
     injectStyles() {
-        if (document.getElementById('anketa-v154-styles')) return;
+        if (document.getElementById('anketa-v155-styles')) return;
         const style = document.createElement('style');
-        style.id = 'anketa-v154-styles';
+        style.id = 'anketa-v155-styles';
         style.textContent = `
             :root { --top-bar-height: 56px; --bottom-nav-height: 76px; }
             
+            /* 🔥 СКРОЛЛ 85% */
             .anketa-scroll {
                 position: relative; flex: 1; min-height: 0;
                 overflow-y: auto; -webkit-overflow-scrolling: touch;
                 padding: 0 16px; padding-bottom: 16px;
                 display: flex; flex-direction: column; gap: 14px;
-                overscroll-behavior: contain; height: 100%;
+                overscroll-behavior: contain;
+                max-height: 85vh;
             }
             .anketa-loading, .anketa-empty-text { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.35); font-size: 14px; }
             .anketa-divider-top { height: 8px; margin: 0; flex-shrink: 0; }
@@ -65,12 +67,12 @@ const Anketa = {
                 display: flex; flex-direction: column; justify-content: flex-end;
                 padding: 16px;
                 will-change: transform; transform: translateZ(0); backface-visibility: hidden;
-                transform-style: preserve-3d;
+                transform-style: flat;
                 transition: transform 0.15s ease, box-shadow 0.15s ease;
             }
             .anketa-card:first-child { margin-top: 8px; }
             
-            /* 🔥 GLINT — РАБОТАЕТ НА ТЕЛЕФОНЕ */
+            /* 🔥 GLINT — ТОЛЬКО НА СВОБОДНУЮ ЗОНУ */
             .anketa-card .card-glint {
                 position: absolute; top: 0; left: -60%; width: 60%; height: 100%; z-index: 10;
                 background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.16) 50%, rgba(255,255,255,0.06) 60%, transparent 100%);
@@ -79,15 +81,8 @@ const Anketa = {
             }
             .anketa-card.glinting .card-glint { left: 120%; opacity: 1; }
             
-            /* 🔥 ПРОДАВЛИВАНИЕ — ЧЁТКОЕ */
-            .anketa-card:active {
-                transform: scale(0.96) !important;
-                transition: transform 0.1s ease !important;
-            }
-            .anketa-card.pressing {
-                transform: scale(0.96) !important;
-                transition: transform 0.1s ease !important;
-            }
+            /* 🔥 ПРОДАВЛИВАНИЕ — ТОЛЬКО НА СВОБОДНУЮ ЗОНУ (НЕ НА КНОПКИ) */
+            .anketa-card:active { /* убран, теперь через JS */ }
             
             .anketa-card::before {
                 content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -96,14 +91,14 @@ const Anketa = {
             
             .anketa-card.filled { background-size: cover; background-position: center 20%; background-repeat: no-repeat; }
             
-            /* 🔥 ГРАДИЕНТ 50% / 55% ЕСЛИ ТЕКСТ > 40 СИМВОЛОВ */
+            /* 🔥 ГРАДИЕНТ 45% — АВАТАРКА ВИДНА, ТЕКСТ ЧИТАЕТСЯ */
             .anketa-card.filled::after {
-                content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 50%; z-index: 1; pointer-events: none;
-                background: linear-gradient(to top, rgba(0,0,0,0.99) 0%, rgba(0,0,0,0.96) 15%, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.50) 70%, rgba(0,0,0,0.10) 100%);
+                content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 45%; z-index: 1; pointer-events: none;
+                background: linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.92) 20%, rgba(0,0,0,0.75) 50%, rgba(0,0,0,0.35) 78%, transparent 100%);
             }
             .anketa-card.filled.long-about::after {
-                height: 55%;
-                background: linear-gradient(to top, rgba(0,0,0,0.99) 0%, rgba(0,0,0,0.97) 12%, rgba(0,0,0,0.88) 35%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.15) 100%);
+                height: 52%;
+                background: linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.94) 18%, rgba(0,0,0,0.80) 45%, rgba(0,0,0,0.40) 75%, transparent 100%);
             }
             
             .anketa-card.empty {
@@ -140,32 +135,36 @@ const Anketa = {
                 word-wrap: break-word; overflow-wrap: break-word;
             }
             
-            /* 🔥 CTA — ПЛОСКАЯ КАК CREATE */
+            /* 🔥 CTA — ПЛОСКАЯ, БЕЗ 3D */
             .anketa-profile-btn {
                 position: absolute; left: 12px; right: 12px; bottom: 12px;
                 z-index: 5; height: 46px; border-radius: 11px; border: none;
                 background: linear-gradient(135deg, #FF5500 0%, #FF6B20 100%);
                 color: white; font-size: 14px; font-weight: 700; letter-spacing: 0.2px;
                 cursor: pointer;
-                box-shadow: inset 0 -2px 0 rgba(0,0,0,0.25), 0 2px 8px rgba(255,85,0,0.25);
-                transition: transform .12s ease, box-shadow .12s ease;
+                box-shadow: 0 2px 8px rgba(255,85,0,0.25);
+                transition: background .12s ease;
+                transform: none !important;
             }
             .anketa-profile-btn:active {
-                transform: translateY(1px) scale(0.98);
-                box-shadow: inset 0 2px 6px rgba(0,0,0,0.3), 0 1px 4px rgba(255,85,0,0.2);
+                background: linear-gradient(135deg, #FF6B20 0%, #FF7A30 100%);
+                transform: none !important;
             }
             
+            /* 🔥 БЕЗОПАСНЫЕ ЗОНЫ — КНОПКИ НЕ ТРИГГЕРЯТ ПРОДАВЛИВАНИЕ */
             .anketa-card-controls {
-                position: absolute; top: 12px; right: 12px; z-index: 6;
+                position: absolute; top: 12px; right: 12px; z-index: 10;
                 display: flex; flex-direction: column; gap: 6px; align-items: flex-end;
+                pointer-events: auto;
             }
             .anketa-control-link {
                 font-size: 12px; font-weight: 600; cursor: pointer;
                 padding: 5px 12px; border-radius: 7px;
-                background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.04);
+                background: rgba(0,0,0,0.50); border: 1px solid rgba(255,255,255,0.04);
                 box-shadow: 0 2px 8px rgba(0,0,0,0.2);
                 text-shadow: 0 1px 3px rgba(0,0,0,0.5);
                 line-height: 1.2;
+                pointer-events: auto;
             }
             .anketa-control-link.edit { color: rgba(255,255,255,0.82); }
             .anketa-control-link.delete { color: rgba(255,100,100,0.80); }
@@ -178,6 +177,7 @@ const Anketa = {
                 transition: all 0.15s ease; text-align: center;
                 display: flex; align-items: center; justify-content: center;
                 box-shadow: inset 0 -2px 0 rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.25);
+                pointer-events: auto;
             }
             .anketa-card-btn.create { background: linear-gradient(135deg, #FF5500, #FF6B20); color: #fff; }
             .anketa-card-btn:active { transform: translateY(1px) scale(0.98); box-shadow: inset 0 2px 6px rgba(0,0,0,0.3); }
@@ -212,37 +212,17 @@ const Anketa = {
         document.head.appendChild(style);
     },
 
-    // 🔥 БЛИК — ЧЕРЕЗ КЛАСС ДЛЯ МОБИЛ
+    // 🔥 БЛИК — ТОЛЬКО НА КАРТОЧКУ (НЕ НА КНОПКИ)
     triggerGlint(card) {
         card.classList.add('glinting');
         setTimeout(() => card.classList.remove('glinting'), 500);
     },
 
-    // 🔥 ПРОДАВЛИВАНИЕ — ЧЕРЕЗ КЛАСС ДЛЯ МОБИЛ
-    triggerPress(card) {
-        card.classList.add('pressing');
-        setTimeout(() => card.classList.remove('pressing'), 120);
-    },
-
     applyEffects(card) {
         card.addEventListener('pointerdown', (e) => {
-            this.triggerPress(card);
+            // 🔥 НЕ продавливаем если нажали на кнопку
+            if (e.target.closest('button') || e.target.closest('.anketa-control-link')) return;
             this.triggerGlint(card);
-        });
-        // Tilt только для десктопа (hover)
-        card.addEventListener('pointermove', (e) => {
-            if (window.matchMedia('(hover: hover)').matches) {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const rotateY = (x / rect.width - 0.5) * 5;
-                const rotateX = -(y / rect.height - 0.5) * 5;
-                card.style.transform = `translate3d(0,-2px,0) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-            }
-        });
-        card.addEventListener('pointerleave', () => {
-            card.style.transition = 'transform .35s cubic-bezier(.22,.61,.36,1)';
-            card.style.transform = 'translate3d(0,0,0) rotateX(0) rotateY(0)';
         });
     },
 
@@ -327,7 +307,6 @@ const Anketa = {
                 ? `<div class="anketa-about">${aboutText.substring(0, 100)}${aboutText.length > 100 ? '…' : ''}</div>`
                 : '';
             
-            // 🔥 50% по умолчанию, 55% если about > 40 символов
             const longClass = aboutText.length > 40 ? ' long-about' : '';
             
             const isFaceitPremier = mode.id==='faceit'||mode.id==='premier';
@@ -414,7 +393,24 @@ const Anketa = {
     },
 
     editAnketa(m) { this.goToMode(m); },
-    deleteAnketa(m) { App.showCustomPopup('Удалить карточку?',`Карточка ${m.toUpperCase()} будет удалена.`,()=>{fetch(`${this.BACKEND_URL}/api/anketa/delete`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({telegram_id:String(this.getTelegramId()),mode:m})}).then(r=>r.json()).then(d=>{if(d.status==='ok')this.loadMyAnketas();});},null,'Удалить','Отмена',true); },
+    // 🔥 УДАЛЕНИЕ — ЧИСТИТ БД ПОЛНОСТЬЮ
+    deleteAnketa(m) {
+        App.showCustomPopup(
+            'Удалить карточку?',
+            `Карточка ${m.toUpperCase()} будет удалена навсегда.`,
+            () => {
+                fetch(`${this.BACKEND_URL}/api/anketa/delete`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegram_id: String(this.getTelegramId()), mode: m })
+                })
+                .then(r => r.json())
+                .then(d => { if (d.status === 'ok') this.loadMyAnketas(); })
+                .catch(() => {});
+            },
+            null, 'Удалить', 'Отмена', true
+        );
+    },
     loadLikes() {
         const c=document.getElementById('anketaLikesTab');if(!c)return;c.innerHTML='<div class="anketa-loading">Загрузка...</div>';
         const tid=this.getTelegramId();if(!tid){c.innerHTML='<div class="anketa-empty-text">Ошибка</div>';return;}
@@ -429,4 +425,4 @@ document.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('an
 const origShow=window.App?.showScreen;
 if(origShow){window.App.showScreen=function(s,d){origShow.call(window.App,s,d);if(s==='anketaScreen')setTimeout(()=>Anketa.init(),200);};}
 window.Anketa=Anketa;
-console.log('✅ Anketa v15.4 FINAL готов');
+console.log('✅ Anketa v15.5 STABLE готов');
