@@ -5181,24 +5181,39 @@ button:active { transform: scale(0.96); }
 }
 
 /* ============================================ */
-/* АНКЕТЫ — ЧИСТЫЕ СТИЛИ v16                    */
+/* АНКЕТЫ — ЧИСТЫЕ СТИЛИ v16 ФИНАЛ              */
 /* ============================================ */
 
+/* Экран анкет — flex-колонка */
+#anketaScreen {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    overflow: hidden !important; /* только на экране, не на body */
+}
+
+/* Контент — забирает всё пространство */
+#anketaContent {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Вкладки — скроллятся */
+#anketaMyTab, 
+#anketaLikesTab {
+    height: 100%;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+/* Скролл внутри вкладок */
 .anketa-scroll {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    padding: 0 16px 20px;
-}
-
-#anketaContent {
-    flex: 1;
+    padding: 0 16px 80px; /* отступ снизу чтобы не прилипало */
     min-height: 0;
-}
-
-#anketaMyTab, #anketaLikesTab {
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
 }
 
 .anketa-loading, 
@@ -5212,7 +5227,6 @@ button:active { transform: scale(0.96); }
 .anketa-divider-top { height: 8px; margin: 0; flex-shrink: 0; }
 .anketa-divider { height: 0; margin: 0; flex-shrink: 0; }
 
-/* Карточка — все стили задаются в JS (injectStyles), здесь только база */
 .anketa-card {
     position: relative;
     width: 100%;
