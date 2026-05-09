@@ -232,14 +232,14 @@ const Anketa = {
         container.innerHTML = '<div class="anketa-loading">Загрузка...</div>';
         const telegram_id = this.getTelegramId();
         if (!telegram_id) { container.innerHTML = '<div class="anketa-empty-text">Ошибка авторизации</div>'; return; }
-
+    
         const modes = [
             { id: 'faceit', name: 'FACEIT' },
             { id: 'premier', name: 'PREMIER' },
             { id: 'prime', name: 'PRIME' },
             { id: 'public', name: 'PUBLIC' }
         ];
-
+    
         try {
             const [profileRes, avatarRes, anketaRes, userRes] = await Promise.all([
                 fetch(`${this.BACKEND_URL}/api/profile/get`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({telegram_id:String(telegram_id)}) }),
@@ -251,49 +251,76 @@ const Anketa = {
             try { profileData.avatar = (await avatarRes.json()).avatar || null; } catch(e) {}
             try { profileData.player_id = (await userRes.json()).player_id || ''; } catch(e) {}
             const anketaData = await anketaRes.json();
-
+    
             const anketaMap = {};
             if (anketaData?.anketas) anketaData.anketas.forEach(a => { anketaMap[a.mode] = a; });
             const sorted = [...modes].sort((a,b) => (anketaMap[b.id]?1:0) - (anketaMap[a.id]?1:0)).slice(0,4);
-
+    
             let html = '<div class="anketa-scroll"><div class="anketa-divider-top"></div>';
             sorted.forEach((m, i) => {
                 html += this.buildSlot(m, anketaMap[m.id], profileData);
                 if (i < sorted.length - 1) html += '<div class="anketa-divider"></div>';
             });
             html += '</div>';
+            
+            // 🔥 СНАЧАЛА ВСТАВЛЯЕМ HTML
             container.innerHTML = html;
-
-            // 🔥 CSS TRANSITION — НАДЁЖНО НА ANDROID
+            
+            // 🔥 ЖДЁМ ПОКА DOM ОТРИСУЕТСЯ (ФИКС ДЛЯ TELEGRAM ANDROID)
+            // Используем тройной requestAnimationFrame для гарантии
             requestAnimationFrame(() => {
-                const cards = container.querySelectorAll('.anketa-card');
-                cards.forEach((card, index) => {
-                    // Начальное состояние
-                    card.classList.add('card-enter');
-                    
-                    // Запускаем переход
-                    setTimeout(() => {
-                        card.classList.remove('card-enter');
-                        card.classList.add('card-visible');
-                    }, index * 60 + 30);
-                    
-                    this.applyEffects(card);
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        const cards = container.querySelectorAll('.anketa-card');
+                        
+                        // 🔥 Сначала все карточки невидимы и сдвинуты
+                        cards.forEach(card => {
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateY(16px) scale(0.985)';
+                            card.style.transition = 'none';
+                        });
+                        
+                        // 🔥 Принудительный reflow
+                        container.offsetHeight;
+                        
+                        // 🔥 Теперь запускаем анимацию
+                        cards.forEach((card, index) => {
+                            setTimeout(() => {
+                                card.style.transition = 'transform 450ms cubic-bezier(0.22, 0.61, 0.36, 1), opacity 450ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+                                card.style.opacity = '1';
+                                card.style.transform = 'translateY(0) scale(1)';
+                                this.applyEffects(card);
+                            }, index * 70);
+                        });
+                    });
                 });
             });
-
+    
         } catch (err) {
             let html = '<div class="anketa-scroll"><div class="anketa-divider-top"></div>';
             modes.slice(0,4).forEach((m,i) => { html += this.buildSlot(m, null, {}); if (i<3) html += '<div class="anketa-divider"></div>'; });
-            html += '</div>'; container.innerHTML = html;
+            html += '</div>';
+            container.innerHTML = html;
+            
             requestAnimationFrame(() => {
-                const cards = container.querySelectorAll('.anketa-card');
-                cards.forEach((card, index) => {
-                    card.classList.add('card-enter');
-                    setTimeout(() => {
-                        card.classList.remove('card-enter');
-                        card.classList.add('card-visible');
-                    }, index * 60 + 30);
-                    this.applyEffects(card);
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        const cards = container.querySelectorAll('.anketa-card');
+                        cards.forEach(card => {
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateY(16px) scale(0.985)';
+                            card.style.transition = 'none';
+                        });
+                        container.offsetHeight;
+                        cards.forEach((card, index) => {
+                            setTimeout(() => {
+                                card.style.transition = 'transform 450ms cubic-bezier(0.22, 0.61, 0.36, 1), opacity 450ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+                                card.style.opacity = '1';
+                                card.style.transform = 'translateY(0) scale(1)';
+                                this.applyEffects(card);
+                            }, index * 70);
+                        });
+                    });
                 });
             });
         }
