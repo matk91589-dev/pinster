@@ -159,16 +159,16 @@
                 <div class="team-content" id="teamContent"></div>
             </div>
 
-            <!-- МОИ КАРТОЧКИ — ФИКС СКРОЛЛА -->
-            <div id="anketaScreen" class="screen anketa-screen" style="display:flex;flex-direction:column;height:100%;overflow:hidden;">
-                <div class="team-header" style="display:flex;align-items:center;justify-content:flex-start;position:relative;padding:12px 16px;flex-shrink:0;"><div style="flex:1;"></div></div>
-                <div class="team-tabs" style="flex-shrink:0;">
+            <!-- МОИ КАРТОЧКИ — ФИКС СКРОЛЛА v2 -->
+            <div id="anketaScreen" class="screen anketa-screen">
+                <div class="team-header" style="display:flex;align-items:center;justify-content:flex-start;position:relative;padding:12px 16px;"><div style="flex:1;"></div></div>
+                <div class="team-tabs">
                     <div class="team-tab active" onclick="Anketa.switchTab('my', this)">МОИ КАРТОЧКИ</div>
                     <div class="team-tab" onclick="Anketa.switchTab('likes', this)">ЛАЙКИ</div>
                 </div>
-                <div class="team-content" id="anketaContent" style="flex:1;min-height:0;overflow:hidden;">
-                    <div id="anketaMyTab" style="height:100%;overflow-y:auto;padding:8px 0;"><div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div></div>
-                    <div id="anketaLikesTab" style="display:none;height:100%;overflow-y:auto;padding:8px 0;"><div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div></div>
+                <div class="team-content" id="anketaContent">
+                    <div id="anketaMyTab" style="padding:8px 0;"><div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div></div>
+                    <div id="anketaLikesTab" style="display:none;padding:8px 0;"><div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div></div>
                 </div>
             </div>
 
