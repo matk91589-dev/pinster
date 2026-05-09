@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - v15.7 JS ANIMATION
+// КАРТОЧКИ + ЛАЙКИ - v16.0 TELEGRAM ANDROID FIX
 // ============================================
 
-console.log('🔥 ANKETA.JS v15.7 JS ANIMATION');
+console.log('🔥 ANKETA.JS v16.0 TELEGRAM ANDROID FIX');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,25 +16,25 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v15.7');
-        document.body.style.height = window.innerHeight + 'px';
+        console.log('🚀 Anketa.init() v16.0');
+        document.documentElement.style.height = '100%';
+        document.body.style.minHeight = '100dvh';
         document.body.style.overflow = 'hidden';
         document.body.style.overscrollBehavior = 'none';
         const screen = document.getElementById('anketaScreen');
         if (screen) {
-            screen.style.height = window.innerHeight + 'px';
+            screen.style.height = '100%';
             screen.style.display = 'flex';
             screen.style.flexDirection = 'column';
-            screen.style.overflow = 'hidden';
         }
         this.injectStyles();
         this.loadMyAnketas();
     },
 
     injectStyles() {
-        if (document.getElementById('anketa-v157-styles')) return;
+        if (document.getElementById('anketa-v16-styles')) return;
         const style = document.createElement('style');
-        style.id = 'anketa-v157-styles';
+        style.id = 'anketa-v16-styles';
         style.textContent = `
             .anketa-scroll {
                 flex: 1; min-height: 0;
@@ -47,20 +47,31 @@ const Anketa = {
             .anketa-divider-top { height: 8px; margin: 0; flex-shrink: 0; }
             .anketa-divider { height: 0; margin: 0; flex-shrink: 0; }
             
+            /* 🔥 КАРТОЧКА — ОПТИМИЗИРОВАНА ДЛЯ ANDROID */
             .anketa-card {
                 position: relative; width: 100%;
                 aspect-ratio: 16 / 20; max-height: 460px;
                 border-radius: 18px; overflow: hidden;
-                box-shadow: 0 20px 50px rgba(0,0,0,0.48), 0 8px 20px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(255,255,255,0.05);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
                 border: 1px solid rgba(255,255,255,0.06);
-                flex-shrink: 0; opacity: 0;
+                flex-shrink: 0;
+                opacity: 1;
                 background-color: #0a0a0f;
                 background-size: cover; background-position: center 20%; background-repeat: no-repeat;
                 display: flex; flex-direction: column; justify-content: flex-end;
                 padding: 16px;
-                will-change: transform, opacity;
-                transform: translate3d(0,0,0); backface-visibility: hidden;
-                transform-style: flat;
+                will-change: transform;
+                transform: translateZ(0) translateY(0) scale(1);
+                backface-visibility: hidden;
+                transition: transform 0.5s cubic-bezier(0.22,0.61,0.36,1), opacity 0.5s cubic-bezier(0.22,0.61,0.36,1);
+            }
+            .anketa-card.card-enter {
+                opacity: 0;
+                transform: translateZ(0) translateY(16px) scale(0.985);
+            }
+            .anketa-card.card-visible {
+                opacity: 1;
+                transform: translateZ(0) translateY(0) scale(1);
             }
             .anketa-card:first-child { margin-top: 8px; }
             
@@ -163,15 +174,17 @@ const Anketa = {
             .anketa-card-btn.create { background: linear-gradient(135deg, #FF5500, #FF6B20); color: #fff; }
             .anketa-card-btn:active { transform: translateY(1px) scale(0.98); box-shadow: inset 0 2px 6px rgba(0,0,0,0.3); }
             
+            /* 🔥 RIBBON — БЕЗ CLIP-PATH */
             .anketa-ribbon {
-                position: absolute; top: 0; left: 0; z-index: 6;
-                padding: 6px 16px 5px 12px;
+                position: absolute; top: -1px; left: -1px; z-index: 6;
+                padding: 7px 18px 6px 14px;
                 font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-                background: var(--ribbon-bg, rgba(18,18,24,0.92));
+                background: var(--ribbon-bg, rgba(18,18,24,0.95));
                 color: var(--ribbon-color, #FF5500);
-                clip-path: polygon(0 0, 100% 0, 86% 100%, 0 100%);
+                border-radius: 18px 0 10px 0;
                 box-shadow: 0 2px 6px rgba(0,0,0,0.3);
                 border-bottom: 1px solid var(--ribbon-color, #FF5500);
+                border-right: 1px solid var(--ribbon-color, #FF5500);
             }
             
             .anketa-likes-section { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.9); padding: 16px 16px 8px; }
@@ -251,22 +264,20 @@ const Anketa = {
             html += '</div>';
             container.innerHTML = html;
 
-            // 🔥 JS ANIMATION — РАБОТАЕТ ВЕЗДЕ
+            // 🔥 CSS TRANSITION — НАДЁЖНО НА ANDROID
             requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    const cards = container.querySelectorAll('.anketa-card');
-                    cards.forEach((card, index) => {
-                        card.animate([
-                            { opacity: 0, transform: 'translateY(16px) scale(0.985)' },
-                            { opacity: 1, transform: 'translateY(0) scale(1)' }
-                        ], {
-                            duration: 500,
-                            delay: index * 60,
-                            easing: 'cubic-bezier(0.22, 0.61, 0.36, 1)',
-                            fill: 'forwards'
-                        });
-                        this.applyEffects(card);
-                    });
+                const cards = container.querySelectorAll('.anketa-card');
+                cards.forEach((card, index) => {
+                    // Начальное состояние
+                    card.classList.add('card-enter');
+                    
+                    // Запускаем переход
+                    setTimeout(() => {
+                        card.classList.remove('card-enter');
+                        card.classList.add('card-visible');
+                    }, index * 60 + 30);
+                    
+                    this.applyEffects(card);
                 });
             });
 
@@ -275,20 +286,14 @@ const Anketa = {
             modes.slice(0,4).forEach((m,i) => { html += this.buildSlot(m, null, {}); if (i<3) html += '<div class="anketa-divider"></div>'; });
             html += '</div>'; container.innerHTML = html;
             requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    const cards = container.querySelectorAll('.anketa-card');
-                    cards.forEach((card, index) => {
-                        card.animate([
-                            { opacity: 0, transform: 'translateY(16px) scale(0.985)' },
-                            { opacity: 1, transform: 'translateY(0) scale(1)' }
-                        ], {
-                            duration: 500,
-                            delay: index * 60,
-                            easing: 'cubic-bezier(0.22, 0.61, 0.36, 1)',
-                            fill: 'forwards'
-                        });
-                        this.applyEffects(card);
-                    });
+                const cards = container.querySelectorAll('.anketa-card');
+                cards.forEach((card, index) => {
+                    card.classList.add('card-enter');
+                    setTimeout(() => {
+                        card.classList.remove('card-enter');
+                        card.classList.add('card-visible');
+                    }, index * 60 + 30);
+                    this.applyEffects(card);
                 });
             });
         }
@@ -342,14 +347,15 @@ const Anketa = {
         const tid=this.getTelegramId();if(!tid)return;
         fetch(`${this.BACKEND_URL}/api/anketa/list`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({telegram_id:String(tid)})})
         .then(r=>r.json()).then(data=>{const c=(data.anketas||[]).find(c=>c.mode===modeId);if(!c)return;
-            if(modeId==='faceit'){const e=document.getElementById('faceitELOInput');if(e)e.value=c.rank||'';const a=document.getElementById('faceitAge');if(a)a.value=c.age||'';const l=document.getElementById('faceitLinkInput');if(l)l.value=c.link||'';const ab=document.getElementById('faceitAbout');if(ab)ab.value=c.about||'';}
-            else if(modeId==='premier'){const r=document.getElementById('premierRatingInput');if(r)r.value=c.rank||'';const a=document.getElementById('premierAge');if(a)a.value=c.age||'';const l=document.getElementById('premierLinkInput');if(l)l.value=c.link||'';const ab=document.getElementById('premierAbout');if(ab)ab.value=c.about||'';}
-            else if(modeId==='prime'){const r=document.getElementById('primeRankSelect');if(r)r.value=c.rank||'';const a=document.getElementById('primeAge');if(a)a.value=c.age||'';const l=document.getElementById('primeLinkInput');if(l)l.value=c.link||'';const ab=document.getElementById('primeAbout');if(ab)ab.value=c.about||'';}
-            else if(modeId==='public'){const r=document.getElementById('publicRankSelect');if(r)r.value=c.rank||'';const a=document.getElementById('publicAge');if(a)a.value=c.age||'';const l=document.getElementById('publicLinkInput');if(l)l.value=c.link||'';const ab=document.getElementById('publicAbout');if(ab)ab.value=c.about||'';}
+            if(modeId==='faceit'){setVal('faceitELOInput',c.rank);setVal('faceitAge',c.age);setVal('faceitLinkInput',c.link);setVal('faceitAbout',c.about);}
+            else if(modeId==='premier'){setVal('premierRatingInput',c.rank);setVal('premierAge',c.age);setVal('premierLinkInput',c.link);setVal('premierAbout',c.about);}
+            else if(modeId==='prime'){setVal('primeRankSelect',c.rank);setVal('primeAge',c.age);setVal('primeLinkInput',c.link);setVal('primeAbout',c.about);}
+            else if(modeId==='public'){setVal('publicRankSelect',c.rank);setVal('publicAge',c.age);setVal('publicLinkInput',c.link);setVal('publicAbout',c.about);}
+            function setVal(id,v){const el=document.getElementById(id);if(el&&v!==undefined)el.value=v;}
         }).catch(()=>{});
     },
     editAnketa(m) { this.goToMode(m); },
-    deleteAnketa(m) { App.showCustomPopup('Удалить карточку?',`Карточка ${m.toUpperCase()} будет удалена навсегда.`,()=>{fetch(`${this.BACKEND_URL}/api/anketa/delete`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({telegram_id:String(this.getTelegramId()),mode:m})}).then(r=>r.json()).then(d=>{if(d.status==='ok')this.loadMyAnketas();});},null,'Удалить','Отмена',true); },
+    deleteAnketa(m) { App.showCustomPopup('Удалить карточку?',`Карточка ${m.toUpperCase()} будет удалена.`,()=>{fetch(`${this.BACKEND_URL}/api/anketa/delete`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({telegram_id:String(this.getTelegramId()),mode:m})}).then(r=>r.json()).then(d=>{if(d.status==='ok')this.loadMyAnketas();});},null,'Удалить','Отмена',true); },
     loadLikes() {
         const c=document.getElementById('anketaLikesTab');if(!c)return;c.innerHTML='<div class="anketa-loading">Загрузка...</div>';
         const tid=this.getTelegramId();if(!tid){c.innerHTML='<div class="anketa-empty-text">Ошибка</div>';return;}
@@ -364,4 +370,4 @@ document.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('an
 const origShow=window.App?.showScreen;
 if(origShow){window.App.showScreen=function(s,d){origShow.call(window.App,s,d);if(s==='anketaScreen')setTimeout(()=>Anketa.init(),200);};}
 window.Anketa=Anketa;
-console.log('✅ Anketa v15.7 JS ANIMATION готов');
+console.log('✅ Anketa v16.0 TELEGRAM ANDROID FIX готов');
