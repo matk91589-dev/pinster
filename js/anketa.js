@@ -18,16 +18,10 @@ const Anketa = {
     init() {
         console.log('🚀 Anketa.init() v16.0');
         
-        document.documentElement.style.height = '100%';
-        document.body.style.minHeight = '100dvh';
-        
         const screen = document.getElementById('anketaScreen');
         if (screen) {
-            screen.style.height = '100%';
             screen.style.display = 'flex';
             screen.style.flexDirection = 'column';
- 
-            screen.style.overflow = 'visible';
         }
         this.injectStyles();
         this.loadMyAnketas();
