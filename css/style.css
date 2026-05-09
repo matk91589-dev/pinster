@@ -5197,9 +5197,8 @@ button:active { transform: scale(0.96); }
 }
 
 #anketaMyTab, #anketaLikesTab {
-    height: 100%;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
 }
 
 .anketa-loading, 
