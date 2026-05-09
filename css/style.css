@@ -5184,22 +5184,12 @@ button:active { transform: scale(0.96); }
 /* АНКЕТЫ — ЧИСТЫЕ СТИЛИ v16                    */
 /* ============================================ */
 
-/* Скролл — на 80% высоты, не уходит под навигацию */
-/* Скролл — точный расчёт, не уходит */
 .anketa-scroll {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    
-    /* 🔥 ВЫСОТА = 100% экрана - header(56px) - tabs(44px) - bottom-nav(76px) - отступы */
-    height: calc(100vh - 176px);
-    max-height: calc(100vh - 176px);
-    
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 0 16px 16px;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
+    padding: 0 16px 20px;
+    min-height: 0;
 }
 
 .anketa-loading, 
