@@ -5185,14 +5185,21 @@ button:active { transform: scale(0.96); }
 /* ============================================ */
 
 /* Скролл — на 80% высоты, не уходит под навигацию */
+/* Скролл — точный расчёт, не уходит */
 .anketa-scroll {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    max-height: 80vh;
+    
+    /* 🔥 ВЫСОТА = 100% экрана - header(56px) - tabs(44px) - bottom-nav(76px) - отступы */
+    height: calc(100vh - 176px);
+    max-height: calc(100vh - 176px);
+    
     overflow-y: auto;
-    padding: 0 16px 100px;
+    overflow-x: hidden;
+    padding: 0 16px 16px;
     overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
 .anketa-loading, 
