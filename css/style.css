@@ -5189,7 +5189,17 @@ button:active { transform: scale(0.96); }
     flex-direction: column;
     gap: 14px;
     padding: 0 16px 20px;
+}
+
+#anketaContent {
+    flex: 1;
     min-height: 0;
+}
+
+#anketaMyTab, #anketaLikesTab {
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .anketa-loading, 
