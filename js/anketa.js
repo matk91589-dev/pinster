@@ -22,6 +22,20 @@ const Anketa = {
             screen.style.display = 'flex';
             screen.style.flexDirection = 'column';
             screen.style.overflow = 'hidden';
+            
+            // 🔥 ПЕРЕДАЁМ КОЛЁСИКО ВНУТРЬ
+            screen.addEventListener('wheel', (e) => {
+                const tab = document.getElementById('anketaMyTab');
+                if (tab && tab.style.display !== 'none') {
+                    tab.scrollTop += e.deltaY;
+                    e.preventDefault();
+                }
+                const likesTab = document.getElementById('anketaLikesTab');
+                if (likesTab && likesTab.style.display !== 'none') {
+                    likesTab.scrollTop += e.deltaY;
+                    e.preventDefault();
+                }
+            }, { passive: false });
         }
         this.injectStyles();
         this.loadMyAnketas();
