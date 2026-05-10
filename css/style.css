@@ -5180,3 +5180,22 @@ button:active { transform: scale(0.96); }
     object-position: center !important;
 }
 
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+.content {
+    height: 100%;
+}
+
+.screen {
+    height: 100%;
+    overflow: hidden;
+}
+
+.anketa-scroll {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+}
