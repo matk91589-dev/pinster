@@ -255,8 +255,9 @@ class SwipeRenderer {
     renderTransform(el, x, y, rotate) { el.style.transform = `translate3d(${x}px,${y}px,0) rotate(${rotate}deg)`; }
     renderProgress(progress) {
         if (this.back1) { this.back1.style.transition = 'none'; this.back1.style.transform = `translate3d(0,${11-progress*14}px,0) scale(${0.95+progress*0.06})`; this.back1.style.opacity = 0.48+progress*0.3; }
-        if (this.back2) { this.back2.style.transition = 'none'; this.back2.style.transform = `translate3d(0,${22-progress*10}px,0) scale(${0.9+progress*0.04})`; this.back2.style.opacity = 0.18+progress*0.12; }
-        const lp = Math.min(Math.max(Swipe.physics.x/110,0),1), np = Math.min(Math.max(-Swipe.physics.x/110,0),1);
+        if (this.back2) { this.back2.style.transition = 'none'; this.back2.style.transform = `translate3d(0,${22-progress*10}px,0) scale(${0.9+progress*0.04})`; this.back2.style.opacity = 0.18+progress*0.12; }    
+        const lp = Math.min(Math.max(Swipe.physics.x/110, 0), 1);
+        const np = Math.min(Math.max(-Swipe.physics.x/110, 0), 1);
         if (this.likeBadge) { this.likeBadge.style.opacity = lp; this.likeBadge.style.transform = `scale(${0.8+lp*0.3}) rotate(12deg)`; }
         if (this.nopeBadge) { this.nopeBadge.style.opacity = np; this.nopeBadge.style.transform = `scale(${0.8+np*0.3}) rotate(-12deg)`; }
     }
