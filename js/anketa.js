@@ -17,11 +17,11 @@ const Anketa = {
 
     init() {
         console.log('🚀 Anketa.init() v16.0');
-        
         const screen = document.getElementById('anketaScreen');
         if (screen) {
             screen.style.display = 'flex';
             screen.style.flexDirection = 'column';
+            screen.style.overflow = 'hidden';
         }
         this.injectStyles();
         this.loadMyAnketas();
