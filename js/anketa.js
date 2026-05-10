@@ -23,17 +23,34 @@ const Anketa = {
             screen.style.flexDirection = 'column';
             screen.style.overflow = 'hidden';
             
-            // 🔥 ПЕРЕДАЁМ КОЛЁСИКО ВНУТРЬ
+            // 🔥 ПЛАВНОЕ КОЛЁСИКО
+            let wheelAccum = 0;
+            let wheelRAF = null;
+            
             screen.addEventListener('wheel', (e) => {
-                const tab = document.getElementById('anketaMyTab');
-                if (tab && tab.style.display !== 'none') {
-                    tab.scrollTop += e.deltaY;
-                    e.preventDefault();
-                }
-                const likesTab = document.getElementById('anketaLikesTab');
-                if (likesTab && likesTab.style.display !== 'none') {
-                    likesTab.scrollTop += e.deltaY;
-                    e.preventDefault();
+                e.preventDefault();
+                wheelAccum += e.deltaY;
+                
+                if (!wheelRAF) {
+                    wheelRAF = requestAnimationFrame(() => {
+                        const tab = document.getElementById('anketaMyTab');
+                        const likesTab = document.getElementById('anketaLikesTab');
+                        const target = (likesTab && likesTab.style.display !== 'none') ? likesTab : tab;
+                        
+                        if (target) {
+                            // Плавный скролл
+                            const start = target.scrollTop;
+                            const end = Math.max(0, Math.min(start + wheelAccum, target.scrollHeight - target.clientHeight));
+                            
+                            target.scrollTo({
+                                top: end,
+                                behavior: 'instant'
+                            });
+                        }
+                        
+                        wheelAccum = 0;
+                        wheelRAF = null;
+                    });
                 }
             }, { passive: false });
         }
@@ -61,10 +78,11 @@ const Anketa = {
             .anketa-scroll {
                 flex: 1; min-height: 0;
                 overflow-y: auto; -webkit-overflow-scrolling: touch;
-                padding: 0 16px 100px;
+                padding: 0 16px 40px; /* 🔥 УМЕНЬШИЛ ОТСТУП СНИЗУ */
                 display: flex; flex-direction: column; gap: 14px;
                 overscroll-behavior: contain;
             }
+            
             .anketa-loading, .anketa-empty-text { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.35); font-size: 14px; }
             .anketa-divider-top { height: 8px; margin: 0; flex-shrink: 0; }
             .anketa-divider { height: 0; margin: 0; flex-shrink: 0; }
