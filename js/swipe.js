@@ -254,13 +254,33 @@ class SwipeRenderer {
 
     renderTransform(el, x, y, rotate) { el.style.transform = `translate3d(${x}px,${y}px,0) rotate(${rotate}deg)`; }
     renderProgress(progress) {
-        if (this.back1) { this.back1.style.transition = 'none'; this.back1.style.transform = `translate3d(0,${11-progress*14}px,0) scale(${0.95+progress*0.06})`; this.back1.style.opacity = 0.48+progress*0.3; }
-        if (this.back2) { this.back2.style.transition = 'none'; this.back2.style.transform = `translate3d(0,${22-progress*10}px,0) scale(${0.9+progress*0.04})`; this.back2.style.opacity = 0.18+progress*0.12; }    
-        const lp = Math.min(Math.max(Swipe.physics.x/110, 0), 1);
-        const np = Math.min(Math.max(-Swipe.physics.x/110, 0), 1);
-        if (this.likeBadge) { this.likeBadge.style.opacity = lp; this.likeBadge.style.transform = `scale(${0.8+lp*0.3}) rotate(12deg)`; }
-        if (this.nopeBadge) { this.nopeBadge.style.opacity = np; this.nopeBadge.style.transform = `scale(${0.8+np*0.3}) rotate(-12deg)`; }
-    }
+        if (this.back1) {
+            this.back1.style.transition = 'none';
+            const y1 = 11 - progress * 14;
+            const s1 = 0.95 + progress * 0.06;
+            this.back1.style.transform = `translate3d(0,${y1}px,0) scale(${s1})`;
+            this.back1.style.opacity = 0.48 + progress * 0.3;
+        }
+        if (this.back2) {
+            this.back2.style.transition = 'none';
+            const y2 = 22 - progress * 10;
+            const s2 = 0.9 + progress * 0.04;
+            this.back2.style.transform = `translate3d(0,${y2}px,0) scale(${s2})`;
+            this.back2.style.opacity = 0.18 + progress * 0.12;
+        }
+        const lp = Math.min(Math.max(Swipe.physics.x / 110, 0), 1);
+        const np = Math.min(Math.max(-Swipe.physics.x / 110, 0), 1);
+        if (this.likeBadge) {
+            this.likeBadge.style.opacity = lp;
+            const ls = 0.8 + lp * 0.3;
+            this.likeBadge.style.transform = `scale(${ls}) rotate(12deg)`;
+        }
+        if (this.nopeBadge) {
+            this.nopeBadge.style.opacity = np;
+            const ns = 0.8 + np * 0.3;
+            this.nopeBadge.style.transform = `scale(${ns}) rotate(-12deg)`;
+        }
+    },
     reset() {
         if (this.activeCard) { this.activeCard.style.transform = 'translate3d(0,0,0) rotate(0deg)'; this.activeCard.style.transition = ''; }
         if (this.likeBadge) { this.likeBadge.style.opacity = '0'; this.likeBadge.classList.remove('spring'); }
