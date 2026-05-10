@@ -374,7 +374,7 @@
         
         (function() {
             const version = window.BUILD_VERSION || Date.now();
-            const jsFiles = ['js/config.js','js/globals.js','js/app.js','js/settings.js','js/profile.js','js/avatar.js','js/friends.js','js/search.js','js/logo.js','js/team.js','js/anketa.js','js/swipe.js'];
+            const jsFiles = ['js/config.js','js/globals.js','js/app.js','js/settings.js','js/profile.js','js/avatar.js','js/friends.js','js/search.js','js/logo.js','js/team.js','js/anketa.js','js/swipe-core.js','js/swipe-renderer.js','js/swipe-ux.js','js/swipe-controller.js'];
             let loadedCount = 0;
             function loadScript(src) {
                 return new Promise((resolve) => {
