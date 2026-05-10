@@ -5180,32 +5180,3 @@ button:active { transform: scale(0.96); }
     object-position: center !important;
 }
 
-/* ============================================ */
-/* АНКЕТЫ — МИНИМУМ (не ломает другие экраны)   */
-/* ============================================ */
-
-.anketa-scroll {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 0 16px 100px;
-}
-
-.anketa-card {
-    position: relative;
-    width: 100%;
-    border-radius: 18px;
-    overflow: hidden;
-    flex-shrink: 0;
-}
-
-.anketa-loading, 
-.anketa-empty-text { 
-    text-align: center; 
-    padding: 40px 20px; 
-    color: rgba(255,255,255,0.35); 
-    font-size: 14px; 
-}
-
-.anketa-divider-top { height: 8px; margin: 0; flex-shrink: 0; }
-.anketa-divider { height: 0; margin: 0; flex-shrink: 0; }
