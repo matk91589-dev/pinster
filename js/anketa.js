@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - v16.1 SMOOTH SCROLL
+// КАРТОЧКИ + ЛАЙКИ - v17.1 TELEGRAM SMOOTH
 // ============================================
 
-console.log('🔥 ANKETA.JS v16.1 SMOOTH SCROLL');
+console.log('🔥 ANKETA.JS v17.1 TELEGRAM SMOOTH');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,63 +16,26 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v16.1');
+        console.log('🚀 Anketa.init() v17.1');
         const screen = document.getElementById('anketaScreen');
         if (screen) {
             screen.style.display = 'flex';
             screen.style.flexDirection = 'column';
-            screen.style.overflow = 'hidden';
-            this.setupSmoothWheel(screen);
         }
         this.injectStyles();
         this.loadMyAnketas();
     },
 
-    // 🔥 ПЛАВНОЕ КОЛЁСИКО
-    setupSmoothWheel(screen) {
-        let targetScroll = 0;
-        let currentScroll = 0;
-        let raf = null;
-
-        screen.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const tab = document.getElementById('anketaMyTab');
-            const likesTab = document.getElementById('anketaLikesTab');
-            const target = (likesTab && likesTab.style.display !== 'none') ? likesTab : tab;
-            if (!target) return;
-
-            targetScroll += e.deltaY;
-            targetScroll = Math.max(0, Math.min(targetScroll, target.scrollHeight - target.clientHeight));
-
-            if (!raf) {
-                raf = requestAnimationFrame(() => {
-                    const animate = () => {
-                        currentScroll += (targetScroll - currentScroll) * 0.2;
-                        target.scrollTop = currentScroll;
-                        if (Math.abs(targetScroll - currentScroll) > 0.5) {
-                            requestAnimationFrame(animate);
-                        } else {
-                            target.scrollTop = targetScroll;
-                            currentScroll = targetScroll;
-                            raf = null;
-                        }
-                    };
-                    animate();
-                });
-            }
-        }, { passive: false });
-    },
-
     injectStyles() {
-        if (document.getElementById('anketa-v16-styles')) return;
+        if (document.getElementById('anketa-v171-styles')) return;
         const style = document.createElement('style');
-        style.id = 'anketa-v16-styles';
+        style.id = 'anketa-v171-styles';
         style.textContent = `
             #anketaMyTab, #anketaLikesTab {
                 height: 100%;
                 overflow-y: auto !important;
                 -webkit-overflow-scrolling: touch !important;
-                scroll-behavior: smooth;
+                scroll-behavior: auto;
             }
             #anketaContent {
                 flex: 1;
@@ -82,17 +45,19 @@ const Anketa = {
         
             .anketa-scroll {
                 flex: 1; min-height: 0;
-                overflow-y: auto; -webkit-overflow-scrolling: touch;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
                 padding: 0 16px 24px;
                 display: flex; flex-direction: column;
                 gap: 0;
                 overscroll-behavior: contain;
+                scroll-behavior: auto;
+                scroll-snap-type: none;
             }
             
             .anketa-loading, .anketa-empty-text { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.35); font-size: 14px; }
             .anketa-divider-top { height: 8px; margin: 0; flex-shrink: 0; }
             
-            /* 🔥 РАЗДЕЛИТЕЛЬ — ТОНКАЯ СВЕТЯЩАЯСЯ ПОЛОСКА */
             .anketa-divider {
                 height: 1px;
                 margin: 16px 0;
@@ -101,12 +66,11 @@ const Anketa = {
                 border: none;
             }
             
-            /* 🔥 КАРТОЧКА */
+            /* 🔥 КАРТОЧКА — ЛЕГКАЯ */
             .anketa-card {
                 position: relative; width: 100%;
                 aspect-ratio: 16 / 20; max-height: 460px;
                 border-radius: 18px; overflow: hidden;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
                 border: 1px solid rgba(255,255,255,0.06);
                 flex-shrink: 0;
                 opacity: 1;
@@ -114,10 +78,10 @@ const Anketa = {
                 background-size: cover; background-position: center 20%; background-repeat: no-repeat;
                 display: flex; flex-direction: column; justify-content: flex-end;
                 padding: 16px;
+                transform: translateZ(0);
                 will-change: transform;
-                transform: translateZ(0) translateY(0) scale(1);
                 backface-visibility: hidden;
-                transition: transform 0.5s cubic-bezier(0.22,0.61,0.36,1), opacity 0.5s cubic-bezier(0.22,0.61,0.36,1);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.35);
             }
             .anketa-card:first-child { margin-top: 8px; }
             
@@ -128,11 +92,6 @@ const Anketa = {
                 transition: left 0.5s cubic-bezier(0.22,0.61,0.36,1), opacity 0.05s;
             }
             .anketa-card.glinting .card-glint { left: 120%; opacity: 1; }
-            
-            .anketa-card::before {
-                content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-                background: linear-gradient(155deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 18%, transparent 36%, transparent 100%);
-            }
             
             .anketa-card.filled { background-size: cover; background-position: center 20%; background-repeat: no-repeat; }
             
@@ -185,10 +144,6 @@ const Anketa = {
                 box-shadow: inset 0 -2px 0 rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.25);
                 pointer-events: auto;
             }
-            .anketa-profile-btn:active {
-                transform: translateY(1px) scale(0.98);
-                box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
-            }
             
             .anketa-card-controls {
                 position: absolute; top: 12px; right: 12px; z-index: 10;
@@ -199,7 +154,6 @@ const Anketa = {
                 font-size: 12px; font-weight: 600; cursor: pointer;
                 padding: 5px 12px; border-radius: 7px;
                 background: rgba(0,0,0,0.50); border: 1px solid rgba(255,255,255,0.04);
-                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
                 text-shadow: 0 1px 3px rgba(0,0,0,0.5);
                 line-height: 1.2;
                 pointer-events: auto;
@@ -218,7 +172,6 @@ const Anketa = {
                 pointer-events: auto;
             }
             .anketa-card-btn.create { background: linear-gradient(135deg, #FF5500, #FF6B20); color: #fff; }
-            .anketa-card-btn:active { transform: translateY(1px) scale(0.98); box-shadow: inset 0 2px 6px rgba(0,0,0,0.3); }
             
             .anketa-ribbon {
                 position: absolute; top: -1px; left: -1px; z-index: 6;
@@ -227,7 +180,6 @@ const Anketa = {
                 background: var(--ribbon-bg, rgba(18,18,24,0.95));
                 color: var(--ribbon-color, #FF5500);
                 border-radius: 18px 0 10px 0;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.3);
                 border-bottom: 1px solid var(--ribbon-color, #FF5500);
                 border-right: 1px solid var(--ribbon-color, #FF5500);
             }
@@ -311,25 +263,23 @@ const Anketa = {
             container.innerHTML = html;
             container.scrollTop = 0;
             
+            // 🔥 АНИМАЦИЯ ПОЯВЛЕНИЯ
             requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
+                const cards = container.querySelectorAll('.anketa-card');
+                cards.forEach(card => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(16px) scale(0.985)';
+                    card.style.transition = 'none';
+                });
+                container.offsetHeight;
+                cards.forEach((card, index) => {
+                    card.style.transition = 'transform 400ms cubic-bezier(0.22, 0.61, 0.36, 1), opacity 400ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+                    card.style.transitionDelay = `${index * 50}ms`;
                     requestAnimationFrame(() => {
-                        const cards = container.querySelectorAll('.anketa-card');
-                        cards.forEach(card => {
-                            card.style.opacity = '0';
-                            card.style.transform = 'translateY(16px) scale(0.985)';
-                            card.style.transition = 'none';
-                        });
-                        container.offsetHeight;
-                        cards.forEach((card, index) => {
-                            setTimeout(() => {
-                                card.style.transition = 'transform 450ms cubic-bezier(0.22, 0.61, 0.36, 1), opacity 450ms cubic-bezier(0.22, 0.61, 0.36, 1)';
-                                card.style.opacity = '1';
-                                card.style.transform = 'translateY(0) scale(1)';
-                                this.applyEffects(card);
-                            }, index * 70);
-                        });
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0) scale(1)';
                     });
+                    this.applyEffects(card);
                 });
             });
     
@@ -339,28 +289,6 @@ const Anketa = {
             html += '</div>';
             container.innerHTML = html;
             container.scrollTop = 0;
-            
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        const cards = container.querySelectorAll('.anketa-card');
-                        cards.forEach(card => {
-                            card.style.opacity = '0';
-                            card.style.transform = 'translateY(16px) scale(0.985)';
-                            card.style.transition = 'none';
-                        });
-                        container.offsetHeight;
-                        cards.forEach((card, index) => {
-                            setTimeout(() => {
-                                card.style.transition = 'transform 450ms cubic-bezier(0.22, 0.61, 0.36, 1), opacity 450ms cubic-bezier(0.22, 0.61, 0.36, 1)';
-                                card.style.opacity = '1';
-                                card.style.transform = 'translateY(0) scale(1)';
-                                this.applyEffects(card);
-                            }, index * 70);
-                        });
-                    });
-                });
-            });
         }
     },
 
@@ -379,7 +307,7 @@ const Anketa = {
             const aboutText = anketa.about?.trim() || '';
             const aboutHTML = aboutText ? `<div class="anketa-about">${aboutText.substring(0, 100)}${aboutText.length > 100 ? '…' : ''}</div>` : '';
             const longClass = aboutText.length > 40 ? ' long-about' : '';
-            const isFaceitPremier = mode.id==='faceit'||mode.id==='premier';
+            const isFaceitPremier = mode.id=='faceit'||mode.id=='premier';
             const buttonText = isFaceitPremier ? 'Открыть Faceit' : 'Открыть Steam';
             const profileLink = isFaceitPremier ? (profileData.faceit_link||anketa.link||'#') : (profileData.steam_link||anketa.link||'#');
 
@@ -404,7 +332,7 @@ const Anketa = {
     },
 
     openProfileLink(link, modeId) {
-        if (!link||link==='#') { App?.showCustomPopup?.('Ссылка не указана','Добавьте ссылку в настройках',null,null,'OK','',false); return; }
+        if (!link||link=='#') { App?.showCustomPopup?.('Ссылка не указана','Добавьте ссылку в настройках',null,null,'OK','',false); return; }
         (window.Telegram?.WebApp?.openLink||window.open)(link, '_blank');
     },
     goToMode(modeId) { App.showScreen(modeId+'Screen',true); setTimeout(()=>{const b=document.querySelector(`#${modeId}Screen .mode-search-btn`);if(b){b.textContent='Обновить карточку';b.onclick=()=>App.createCard(modeId);}this.fillEditForm(modeId);},300); },
@@ -412,27 +340,27 @@ const Anketa = {
         const tid=this.getTelegramId();if(!tid)return;
         fetch(`${this.BACKEND_URL}/api/anketa/list`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({telegram_id:String(tid)})})
         .then(r=>r.json()).then(data=>{const c=(data.anketas||[]).find(c=>c.mode===modeId);if(!c)return;
-            if(modeId==='faceit'){setVal('faceitELOInput',c.rank);setVal('faceitAge',c.age);setVal('faceitLinkInput',c.link);setVal('faceitAbout',c.about);}
-            else if(modeId==='premier'){setVal('premierRatingInput',c.rank);setVal('premierAge',c.age);setVal('premierLinkInput',c.link);setVal('premierAbout',c.about);}
-            else if(modeId==='prime'){setVal('primeRankSelect',c.rank);setVal('primeAge',c.age);setVal('primeLinkInput',c.link);setVal('primeAbout',c.about);}
-            else if(modeId==='public'){setVal('publicRankSelect',c.rank);setVal('publicAge',c.age);setVal('publicLinkInput',c.link);setVal('publicAbout',c.about);}
+            if(modeId=='faceit'){setVal('faceitELOInput',c.rank);setVal('faceitAge',c.age);setVal('faceitLinkInput',c.link);setVal('faceitAbout',c.about);}
+            else if(modeId=='premier'){setVal('premierRatingInput',c.rank);setVal('premierAge',c.age);setVal('premierLinkInput',c.link);setVal('premierAbout',c.about);}
+            else if(modeId=='prime'){setVal('primeRankSelect',c.rank);setVal('primeAge',c.age);setVal('primeLinkInput',c.link);setVal('primeAbout',c.about);}
+            else if(modeId=='public'){setVal('publicRankSelect',c.rank);setVal('publicAge',c.age);setVal('publicLinkInput',c.link);setVal('publicAbout',c.about);}
             function setVal(id,v){const el=document.getElementById(id);if(el&&v!==undefined)el.value=v;}
         }).catch(()=>{});
     },
     editAnketa(m) { this.goToMode(m); },
-    deleteAnketa(m) { App.showCustomPopup('Удалить карточку?',`Карточка ${m.toUpperCase()} будет удалена.`,()=>{fetch(`${this.BACKEND_URL}/api/anketa/delete`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({telegram_id:String(this.getTelegramId()),mode:m})}).then(r=>r.json()).then(d=>{if(d.status==='ok')this.loadMyAnketas();});},null,'Удалить','Отмена',true); },
+    deleteAnketa(m) { App.showCustomPopup('Удалить карточку?',`Карточка ${m.toUpperCase()} будет удалена.`,()=>{fetch(`${this.BACKEND_URL}/api/anketa/delete`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({telegram_id:String(this.getTelegramId()),mode:m})}).then(r=>r.json()).then(d=>{if(d.status=='ok')this.loadMyAnketas();});},null,'Удалить','Отмена',true); },
     loadLikes() {
         const c=document.getElementById('anketaLikesTab');if(!c)return;c.innerHTML='<div class="anketa-loading">Загрузка...</div>';
         const tid=this.getTelegramId();if(!tid){c.innerHTML='<div class="anketa-empty-text">Ошибка</div>';return;}
         fetch(`${this.BACKEND_URL}/api/likes/list`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({telegram_id:String(tid)})})
-        .then(r=>r.json()).then(d=>{if(d.status!=='ok'){c.innerHTML='<div class="anketa-empty-text">Ошибка</div>';return;}let h='';if(d.mutual?.length){h+='<div class="anketa-likes-section">❤️ Взаимные мэтчи</div>';d.mutual.forEach(m=>h+=this.buildLikeItem(m,'mutual'));}if(d.liked_me?.length){h+='<div class="anketa-likes-section">👀 Тебя лайкнули</div>';d.liked_me.forEach(m=>h+=this.buildLikeItem(m,'liked_me'));}if(d.i_liked?.length){h+='<div class="anketa-likes-section">👍 Ты лайкнул</div>';d.i_liked.forEach(m=>h+=this.buildLikeItem(m,'i_liked'));}c.innerHTML=h||'<div class="anketa-empty-text">Пока нет лайков</div>';}).catch(()=>{c.innerHTML='<div class="anketa-empty-text">Ошибка</div>';});
+        .then(r=>r.json()).then(d=>{if(d.status!='ok'){c.innerHTML='<div class="anketa-empty-text">Ошибка</div>';return;}let h='';if(d.mutual?.length){h+='<div class="anketa-likes-section">❤️ Взаимные мэтчи</div>';d.mutual.forEach(m=>h+=this.buildLikeItem(m,'mutual'));}if(d.liked_me?.length){h+='<div class="anketa-likes-section">👀 Тебя лайкнули</div>';d.liked_me.forEach(m=>h+=this.buildLikeItem(m,'liked_me'));}if(d.i_liked?.length){h+='<div class="anketa-likes-section">👍 Ты лайкнул</div>';d.i_liked.forEach(m=>h+=this.buildLikeItem(m,'i_liked'));}c.innerHTML=h||'<div class="anketa-empty-text">Пока нет лайков</div>';}).catch(()=>{c.innerHTML='<div class="anketa-empty-text">Ошибка</div>';});
     },
-    buildLikeItem(m,t){const av=m.avatar?`<img src="${m.avatar}">`:(m.nick||'?')[0].toUpperCase();let btn='';if(t==='mutual')btn='<span class="anketa-like-arrow">→</span>';else if(t==='liked_me')btn=`<button class="anketa-like-btn" onclick="Anketa.likeBack('${m.liker_player_id}')">❤️</button>`;else btn='<span class="anketa-like-arrow">→</span>';return`<div class="anketa-like-item"><div class="anketa-like-avatar">${av}</div><div class="anketa-like-info"><div class="anketa-like-nick">${m.nick||'Без имени'}</div><div class="anketa-like-mode">${m.mode||''} • ${m.rank||''}</div></div>${btn}</div>`;},
-    likeBack(lid){fetch(`${this.BACKEND_URL}/api/like`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({telegram_id:String(this.getTelegramId()),liked_player_id:lid})}).then(r=>r.json()).then(d=>{if(d.status==='match')App.showCustomPopup('❤️ Взаимный мэтч!','Проверь Telegram — бот прислал контакт!',null,null,'OK','',false);this.loadLikes();});}
+    buildLikeItem(m,t){const av=m.avatar?`<img src="${m.avatar}">`:(m.nick||'?')[0].toUpperCase();let btn='';if(t=='mutual')btn='<span class="anketa-like-arrow">→</span>';else if(t=='liked_me')btn=`<button class="anketa-like-btn" onclick="Anketa.likeBack('${m.liker_player_id}')">❤️</button>`;else btn='<span class="anketa-like-arrow">→</span>';return`<div class="anketa-like-item"><div class="anketa-like-avatar">${av}</div><div class="anketa-like-info"><div class="anketa-like-nick">${m.nick||'Без имени'}</div><div class="anketa-like-mode">${m.mode||''} • ${m.rank||''}</div></div>${btn}</div>`;},
+    likeBack(lid){fetch(`${this.BACKEND_URL}/api/like`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({telegram_id:String(this.getTelegramId()),liked_player_id:lid})}).then(r=>r.json()).then(d=>{if(d.status=='match')App.showCustomPopup('❤️ Взаимный мэтч!','Проверь Telegram — бот прислал контакт!',null,null,'OK','',false);this.loadLikes();});}
 };
 
 document.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('anketaScreen'))Anketa.init();});
 const origShow=window.App?.showScreen;
-if(origShow){window.App.showScreen=function(s,d){origShow.call(window.App,s,d);if(s==='anketaScreen')setTimeout(()=>Anketa.init(),200);};}
+if(origShow){window.App.showScreen=function(s,d){origShow.call(window.App,s,d);if(s=='anketaScreen')setTimeout(()=>Anketa.init(),200);};}
 window.Anketa=Anketa;
-console.log('✅ Anketa v16.1 SMOOTH SCROLL готов');
+console.log('✅ Anketa v17.1 TELEGRAM SMOOTH готов');
