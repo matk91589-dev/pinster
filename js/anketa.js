@@ -31,28 +31,30 @@ const Anketa = {
         const style = document.createElement('style');
         style.id = 'anketa-v171-styles';
         style.textContent = `
+            /* 🔥 ГЛАВНЫЙ СКРОЛЛ-КОНТЕЙНЕР */
             #anketaMyTab, #anketaLikesTab {
                 height: 100%;
                 overflow-y: auto !important;
                 -webkit-overflow-scrolling: touch !important;
+                touch-action: pan-y;
+                overscroll-behavior: contain;
                 scroll-behavior: auto;
             }
+            
+            /* 🔥 РОДИТЕЛЬ — НЕ БЛОКИРУЕМ */
             #anketaContent {
                 flex: 1;
                 min-height: 0;
-                overflow: hidden;
+                overflow: visible;
             }
         
+            /* 🔥 ВНУТРЕННИЙ КОНТЕЙНЕР — БЕЗ СКРОЛЛА */
             .anketa-scroll {
-                flex: 1; min-height: 0;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-                padding: 0 16px 24px;
-                display: flex; flex-direction: column;
+                display: flex;
+                flex-direction: column;
                 gap: 0;
-                overscroll-behavior: contain;
-                scroll-behavior: auto;
-                scroll-snap-type: none;
+                padding: 0 16px 24px;
+                min-height: 0;
             }
             
             .anketa-loading, .anketa-empty-text { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.35); font-size: 14px; }
@@ -66,7 +68,6 @@ const Anketa = {
                 border: none;
             }
             
-            /* 🔥 КАРТОЧКА — ЛЕГКАЯ */
             .anketa-card {
                 position: relative; width: 100%;
                 aspect-ratio: 16 / 20; max-height: 460px;
@@ -196,7 +197,7 @@ const Anketa = {
         `;
         document.head.appendChild(style);
     },
-
+    
     triggerGlint(card) {
         card.classList.add('glinting');
         setTimeout(() => card.classList.remove('glinting'), 500);
