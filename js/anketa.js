@@ -1,8 +1,8 @@
 // ============================================
-// КАРТОЧКИ + ЛАЙКИ - v16.0 TELEGRAM ANDROID FIX
+// КАРТОЧКИ + ЛАЙКИ - v16.1 SMOOTH SCROLL
 // ============================================
 
-console.log('🔥 ANKETA.JS v16.0 TELEGRAM ANDROID FIX');
+console.log('🔥 ANKETA.JS v16.1 SMOOTH SCROLL');
 
 const Anketa = {
     currentTab: 'my',
@@ -16,46 +16,51 @@ const Anketa = {
     },
 
     init() {
-        console.log('🚀 Anketa.init() v16.0');
+        console.log('🚀 Anketa.init() v16.1');
         const screen = document.getElementById('anketaScreen');
         if (screen) {
             screen.style.display = 'flex';
             screen.style.flexDirection = 'column';
             screen.style.overflow = 'hidden';
-            
-            // 🔥 ПЛАВНОЕ КОЛЁСИКО
-            let wheelAccum = 0;
-            let wheelRAF = null;
-            
-            screen.addEventListener('wheel', (e) => {
-                e.preventDefault();
-                wheelAccum += e.deltaY;
-                
-                if (!wheelRAF) {
-                    wheelRAF = requestAnimationFrame(() => {
-                        const tab = document.getElementById('anketaMyTab');
-                        const likesTab = document.getElementById('anketaLikesTab');
-                        const target = (likesTab && likesTab.style.display !== 'none') ? likesTab : tab;
-                        
-                        if (target) {
-                            // Плавный скролл
-                            const start = target.scrollTop;
-                            const end = Math.max(0, Math.min(start + wheelAccum, target.scrollHeight - target.clientHeight));
-                            
-                            target.scrollTo({
-                                top: end,
-                                behavior: 'instant'
-                            });
-                        }
-                        
-                        wheelAccum = 0;
-                        wheelRAF = null;
-                    });
-                }
-            }, { passive: false });
+            this.setupSmoothWheel(screen);
         }
         this.injectStyles();
         this.loadMyAnketas();
+    },
+
+    // 🔥 ПЛАВНОЕ КОЛЁСИКО
+    setupSmoothWheel(screen) {
+        let targetScroll = 0;
+        let currentScroll = 0;
+        let raf = null;
+
+        screen.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const tab = document.getElementById('anketaMyTab');
+            const likesTab = document.getElementById('anketaLikesTab');
+            const target = (likesTab && likesTab.style.display !== 'none') ? likesTab : tab;
+            if (!target) return;
+
+            targetScroll += e.deltaY;
+            targetScroll = Math.max(0, Math.min(targetScroll, target.scrollHeight - target.clientHeight));
+
+            if (!raf) {
+                raf = requestAnimationFrame(() => {
+                    const animate = () => {
+                        currentScroll += (targetScroll - currentScroll) * 0.2;
+                        target.scrollTop = currentScroll;
+                        if (Math.abs(targetScroll - currentScroll) > 0.5) {
+                            requestAnimationFrame(animate);
+                        } else {
+                            target.scrollTop = targetScroll;
+                            currentScroll = targetScroll;
+                            raf = null;
+                        }
+                    };
+                    animate();
+                });
+            }
+        }, { passive: false });
     },
 
     injectStyles() {
@@ -63,11 +68,11 @@ const Anketa = {
         const style = document.createElement('style');
         style.id = 'anketa-v16-styles';
         style.textContent = `
-            /* 🔥 СКРОЛЛ ВО ВКЛАДКАХ */
             #anketaMyTab, #anketaLikesTab {
                 height: 100%;
                 overflow-y: auto !important;
                 -webkit-overflow-scrolling: touch !important;
+                scroll-behavior: smooth;
             }
             #anketaContent {
                 flex: 1;
@@ -78,14 +83,23 @@ const Anketa = {
             .anketa-scroll {
                 flex: 1; min-height: 0;
                 overflow-y: auto; -webkit-overflow-scrolling: touch;
-                padding: 0 16px 40px; /* 🔥 УМЕНЬШИЛ ОТСТУП СНИЗУ */
-                display: flex; flex-direction: column; gap: 14px;
+                padding: 0 16px 24px;
+                display: flex; flex-direction: column;
+                gap: 0;
                 overscroll-behavior: contain;
             }
             
             .anketa-loading, .anketa-empty-text { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.35); font-size: 14px; }
             .anketa-divider-top { height: 8px; margin: 0; flex-shrink: 0; }
-            .anketa-divider { height: 0; margin: 0; flex-shrink: 0; }
+            
+            /* 🔥 РАЗДЕЛИТЕЛЬ — ТОНКАЯ СВЕТЯЩАЯСЯ ПОЛОСКА */
+            .anketa-divider {
+                height: 1px;
+                margin: 16px 0;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+                flex-shrink: 0;
+                border: none;
+            }
             
             /* 🔥 КАРТОЧКА */
             .anketa-card {
@@ -104,14 +118,6 @@ const Anketa = {
                 transform: translateZ(0) translateY(0) scale(1);
                 backface-visibility: hidden;
                 transition: transform 0.5s cubic-bezier(0.22,0.61,0.36,1), opacity 0.5s cubic-bezier(0.22,0.61,0.36,1);
-            }
-            .anketa-card.card-enter {
-                opacity: 0;
-                transform: translateZ(0) translateY(16px) scale(0.985);
-            }
-            .anketa-card.card-visible {
-                opacity: 1;
-                transform: translateZ(0) translateY(0) scale(1);
             }
             .anketa-card:first-child { margin-top: 8px; }
             
@@ -302,27 +308,19 @@ const Anketa = {
             });
             html += '</div>';
             
-            // 🔥 СНАЧАЛА ВСТАВЛЯЕМ HTML
             container.innerHTML = html;
+            container.scrollTop = 0;
             
-            // 🔥 ЖДЁМ ПОКА DOM ОТРИСУЕТСЯ (ФИКС ДЛЯ TELEGRAM ANDROID)
-            // Используем тройной requestAnimationFrame для гарантии
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
                         const cards = container.querySelectorAll('.anketa-card');
-                        
-                        // 🔥 Сначала все карточки невидимы и сдвинуты
                         cards.forEach(card => {
                             card.style.opacity = '0';
                             card.style.transform = 'translateY(16px) scale(0.985)';
                             card.style.transition = 'none';
                         });
-                        
-                        // 🔥 Принудительный reflow
                         container.offsetHeight;
-                        
-                        // 🔥 Теперь запускаем анимацию
                         cards.forEach((card, index) => {
                             setTimeout(() => {
                                 card.style.transition = 'transform 450ms cubic-bezier(0.22, 0.61, 0.36, 1), opacity 450ms cubic-bezier(0.22, 0.61, 0.36, 1)';
@@ -340,6 +338,7 @@ const Anketa = {
             modes.slice(0,4).forEach((m,i) => { html += this.buildSlot(m, null, {}); if (i<3) html += '<div class="anketa-divider"></div>'; });
             html += '</div>';
             container.innerHTML = html;
+            container.scrollTop = 0;
             
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
@@ -436,4 +435,4 @@ document.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('an
 const origShow=window.App?.showScreen;
 if(origShow){window.App.showScreen=function(s,d){origShow.call(window.App,s,d);if(s==='anketaScreen')setTimeout(()=>Anketa.init(),200);};}
 window.Anketa=Anketa;
-console.log('✅ Anketa v16.0 TELEGRAM ANDROID FIX готов');
+console.log('✅ Anketa v16.1 SMOOTH SCROLL готов');
