@@ -32,6 +32,18 @@ const Anketa = {
         const style = document.createElement('style');
         style.id = 'anketa-v16-styles';
         style.textContent = `
+            /* 🔥 СКРОЛЛ ВО ВКЛАДКАХ */
+            #anketaMyTab, #anketaLikesTab {
+                height: 100%;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+            #anketaContent {
+                flex: 1;
+                min-height: 0;
+                overflow: hidden;
+            }
+        
             .anketa-scroll {
                 flex: 1; min-height: 0;
                 overflow-y: auto; -webkit-overflow-scrolling: touch;
@@ -43,7 +55,7 @@ const Anketa = {
             .anketa-divider-top { height: 8px; margin: 0; flex-shrink: 0; }
             .anketa-divider { height: 0; margin: 0; flex-shrink: 0; }
             
-            /* 🔥 КАРТОЧКА — ОПТИМИЗИРОВАНА ДЛЯ ANDROID */
+            /* 🔥 КАРТОЧКА */
             .anketa-card {
                 position: relative; width: 100%;
                 aspect-ratio: 16 / 20; max-height: 460px;
@@ -170,7 +182,6 @@ const Anketa = {
             .anketa-card-btn.create { background: linear-gradient(135deg, #FF5500, #FF6B20); color: #fff; }
             .anketa-card-btn:active { transform: translateY(1px) scale(0.98); box-shadow: inset 0 2px 6px rgba(0,0,0,0.3); }
             
-            /* 🔥 RIBBON — БЕЗ CLIP-PATH */
             .anketa-ribbon {
                 position: absolute; top: -1px; left: -1px; z-index: 6;
                 padding: 7px 18px 6px 14px;
