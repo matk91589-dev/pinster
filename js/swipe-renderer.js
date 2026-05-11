@@ -1,7 +1,7 @@
 // ============================================
-// SWIPE RENDERER — ANKETA STYLE + SIDE BUTTONS
+// SWIPE RENDERER — ANKETA STYLE + SIDE BUTTONS v2
 // ============================================
-console.log('🔥 SWIPE-RENDERER загружен');
+console.log('🔥 SWIPE-RENDERER v2 загружен');
 
 var SwipeRenderer = function() {
     this.scene = null;
@@ -28,9 +28,9 @@ var SwipeRenderer = function() {
 };
 
 SwipeRenderer.prototype.injectStyles = function() {
-    if (document.getElementById('swipe-v12-styles')) return;
+    if (document.getElementById('swipe-v13-styles')) return;
     var s = document.createElement('style');
-    s.id = 'swipe-v12-styles';
+    s.id = 'swipe-v13-styles';
     s.textContent = '';
 
     // === SCREEN ===
@@ -41,27 +41,26 @@ SwipeRenderer.prototype.injectStyles = function() {
     s.textContent += '.swipe-bg-glow{position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity 0.3s ease}';
     s.textContent += '.swipe-bg-glow.anticipating{opacity:1.5!important}';
 
-    // === STACK — КАРТОЧКА НИЖЕ ЦЕНТРА, НО ВЫШЕ НАВИГАЦИИ ===
+    // === STACK ===
     s.textContent += '.swipe-stack{position:absolute;top:46%;left:50%;width:88vw;max-width:380px;height:460px;max-height:calc(100vh-220px);transform:translate(-50%,-50%);perspective:1400px;transform-style:preserve-3d;contain:layout paint style;isolation:isolate;z-index:1}';
 
-    // === ОБЁРТКА КАРТОЧКИ С КНОПКАМИ ===
+    // === ОБЁРТКА ===
     s.textContent += '.swipe-card-wrapper{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}';
 
-    // === КАРТОЧКА — ПОЛНОСТЬЮ КАК ANKETA.JS v17.1 ===
+    // === КАРТОЧКА ===
     s.textContent += '.swipe-card{position:relative;width:100%;aspect-ratio:16/20;max-height:460px;border-radius:18px;overflow:hidden;background-color:#0a0a0f;background-size:cover;background-position:center 20%;background-repeat:no-repeat;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;box-shadow:0 8px 20px rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.06);will-change:transform;transform:translate3d(0,0,0);backface-visibility:hidden;touch-action:none;flex-shrink:0}';
     s.textContent += '.swipe-card.back-2{transform:translate3d(0,22px,0) scale(0.9);opacity:0.18;z-index:0;filter:blur(3px)}';
     s.textContent += '.swipe-card.back-1{transform:translate3d(0,11px,0) scale(0.95);opacity:0.48;z-index:1;filter:blur(1px)}';
     s.textContent += '.swipe-card.active{transform:translate3d(0,0,0) scale(1);opacity:1;z-index:2}';
-    s.textContent += '.swipe-card.decision-snap{transition:transform 0.08s ease!important}';
+    s.textContent += '.swipe-card.decision-snap{transition:transform 0.06s ease!important}';
 
-    // === ГРАДИЕНТ СНИЗУ ===
+    // === 🔥 ГРАДИЕНТ — ТОЧНО КАК В ANKETA (черный, текст видно) ===
     s.textContent += '.swipe-card.filled::after{content:\'\';position:absolute;bottom:0;left:0;right:0;height:50%;background:linear-gradient(to top,rgba(0,0,0,0.99) 0%,rgba(0,0,0,0.95) 15%,rgba(0,0,0,0.82) 45%,rgba(0,0,0,0.45) 75%,transparent 100%);z-index:1;pointer-events:none}';
-    s.textContent += '.swipe-card.filled.long-about::after{height:55%;background:linear-gradient(to top,rgba(0,0,0,0.99) 0%,rgba(0,0,0,0.96) 12%,rgba(0,0,0,0.85) 40%,rgba(0,0,0,0.50) 72%,transparent 100%)}';
 
     // === RIBBON ===
     s.textContent += '.swipe-ribbon{position:absolute;top:-1px;left:-1px;z-index:6;padding:7px 18px 6px 14px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--ribbon-bg,rgba(18,18,24,0.95));color:var(--ribbon-color,#FF5500);border-radius:18px 0 10px 0;border-bottom:1px solid var(--ribbon-color,#FF5500);border-right:1px solid var(--ribbon-color,#FF5500)}';
 
-    // === ТЕКСТОВЫЙ БЛОК ===
+    // === ТЕКСТ ===
     s.textContent += '.swipe-text{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:3px;margin-bottom:56px;width:100%}';
     s.textContent += '.swipe-id{font-size:10px;font-weight:700;letter-spacing:0.8px;color:#FF5500;text-transform:uppercase}';
     s.textContent += '.swipe-nick{font-size:28px;font-weight:900;color:#FFF;text-shadow:0 2px 14px rgba(0,0,0,0.7),0 8px 28px rgba(0,0,0,0.6);letter-spacing:-0.3px;line-height:1.2;margin-top:2px}';
@@ -69,25 +68,25 @@ SwipeRenderer.prototype.injectStyles = function() {
     s.textContent += '.swipe-sep{color:rgba(255,255,255,0.5);font-size:14px;font-weight:700}';
     s.textContent += '.swipe-about{font-size:14px;color:rgba(255,255,255,0.85);line-height:1.5;max-width:100%;margin-top:8px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.6);word-wrap:break-word;overflow-wrap:break-word}';
 
-    // === КНОПКА ОТКРЫТЬ ПРОФИЛЬ ===
+    // === КНОПКА ПРОФИЛЯ ===
     s.textContent += '.swipe-profile-btn{position:absolute;left:12px;right:12px;bottom:12px;z-index:5;height:42px;border-radius:11px;border:none;background:linear-gradient(135deg,#FF5500 0%,#FF6B20 100%);color:white;font-size:13px;font-weight:600;letter-spacing:0.2px;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,0.25),0 2px 6px rgba(0,0,0,0.25);pointer-events:auto}';
 
     // === BADGES ===
-    s.textContent += '.swipe-badge{position:absolute;top:45%;padding:10px 18px;border-radius:14px;font-size:28px;font-weight:800;z-index:10;opacity:0;pointer-events:none;display:flex;align-items:center;gap:6px;text-shadow:0 2px 8px rgba(0,0,0,0.5)}';
-    s.textContent += '.swipe-badge.like{right:20px;color:#34FF8A;transform:translateY(-50%)}';
-    s.textContent += '.swipe-badge.skip{left:20px;color:#FF4D6D;transform:translateY(-50%)}';
+    s.textContent += '.swipe-badge{position:absolute;top:40%;padding:10px 18px;border-radius:14px;font-size:28px;font-weight:800;z-index:10;opacity:0;pointer-events:none;display:flex;align-items:center;gap:6px;text-shadow:0 2px 8px rgba(0,0,0,0.5)}';
+    s.textContent += '.swipe-badge.like{right:16px;color:#34FF8A;transform:translateY(-50%)}';
+    s.textContent += '.swipe-badge.skip{left:16px;color:#FF4D6D;transform:translateY(-50%)}';
 
-    // === КНОПКИ-ИКОНКИ СЕРДЕЧКО / КРЕСТИК (ПРИКЛЕЕНЫ К КАРТОЧКЕ) ===
-    s.textContent += '.swipe-action-btns{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);display:flex;gap:48px;z-index:20}';
-    s.textContent += '.swipe-action-btn{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease;box-shadow:0 4px 16px rgba(0,0,0,0.4)}';
-    s.textContent += '.swipe-action-btn:active{transform:scale(0.88)}';
-    s.textContent += '.swipe-action-btn.skip-btn{background:rgba(255,255,255,0.08);border:2px solid rgba(255,77,109,0.5);color:#FF4D6D}';
-    s.textContent += '.swipe-action-btn.skip-btn:active{background:rgba(255,77,109,0.2);border-color:#FF4D6D}';
-    s.textContent += '.swipe-action-btn.like-btn{background:rgba(255,85,0,0.15);border:2px solid rgba(255,85,0,0.5);color:#FF5500}';
-    s.textContent += '.swipe-action-btn.like-btn:active{background:rgba(255,85,0,0.3);border-color:#FF5500}';
-    s.textContent += '.swipe-action-btn.decision-active{transform:scale(1.15)!important}';
-    s.textContent += '.swipe-action-btn.skip-btn.decision-active{background:rgba(255,77,109,0.35)!important;border-color:#FF4D6D!important;box-shadow:0 0 24px rgba(255,77,109,0.4)!important}';
-    s.textContent += '.swipe-action-btn.like-btn.decision-active{background:rgba(255,85,0,0.4)!important;border-color:#FF5500!important;box-shadow:0 0 24px rgba(255,85,0,0.4)!important}';
+    // === 🔥 КНОПКИ ПО БОКАМ КАРТОЧКИ (ПО ЦЕНТРУ) ===
+    s.textContent += '.swipe-side-btns{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);pointer-events:none;z-index:25}';
+    s.textContent += '.swipe-side-btn{position:absolute;top:50%;width:48px;height:48px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s ease;pointer-events:auto;box-shadow:0 4px 14px rgba(0,0,0,0.4)}';
+    s.textContent += '.swipe-side-btn:active{transform:translateY(-50%) scale(0.85)!important}';
+    s.textContent += '.swipe-side-btn.skip-btn{left:-60px;transform:translateY(-50%);background:rgba(20,20,28,0.9);border:2px solid rgba(255,77,109,0.5);color:#FF4D6D}';
+    s.textContent += '.swipe-side-btn.skip-btn:active{background:rgba(255,77,109,0.3);border-color:#FF4D6D}';
+    s.textContent += '.swipe-side-btn.like-btn{right:-60px;transform:translateY(-50%);background:rgba(20,20,28,0.9);border:2px solid rgba(255,85,0,0.5);color:#FF5500}';
+    s.textContent += '.swipe-side-btn.like-btn:active{background:rgba(255,85,0,0.3);border-color:#FF5500}';
+    s.textContent += '.swipe-side-btn.decision-active{transform:translateY(-50%) scale(1.2)!important}';
+    s.textContent += '.swipe-side-btn.skip-btn.decision-active{background:rgba(255,77,109,0.4)!important;border-color:#FF4D6D!important;box-shadow:0 0 28px rgba(255,77,109,0.5)!important}';
+    s.textContent += '.swipe-side-btn.like-btn.decision-active{background:rgba(255,85,0,0.4)!important;border-color:#FF5500!important;box-shadow:0 0 28px rgba(255,85,0,0.5)!important}';
 
     // === FLASH / PULSE ===
     s.textContent += '.swipe-flash{position:fixed;inset:0;z-index:50;pointer-events:none;opacity:0}';
@@ -98,7 +97,7 @@ SwipeRenderer.prototype.injectStyles = function() {
     // === BACK ARROW ===
     s.textContent += '.back-arrow-swipe{z-index:30;position:absolute;top:max(16px,env(safe-area-inset-top,0px) + 16px);left:16px}';
 
-    // === HEART PARTICLE ===
+    // === HEART ===
     s.textContent += '.swipe-heart-particle{position:absolute;top:50%;left:50%;font-size:20px;pointer-events:none;z-index:20;animation:heartBurst 0.8s ease-out forwards}';
     s.textContent += '@keyframes heartBurst{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--bx),var(--by)) scale(0);opacity:0}}';
 
@@ -111,7 +110,7 @@ SwipeRenderer.prototype.injectStyles = function() {
     s.textContent += '.swipe-onboarding-zone.like{background:rgba(52,255,138,0.2);border:2px solid #34FF8A;color:#34FF8A}';
     s.textContent += '.swipe-onboarding-text{position:absolute;top:25%;color:rgba(255,255,255,0.8);font-size:13px;text-align:center;font-weight:500}';
 
-    // === IDLE WIGGLE ===
+    // === WIGGLE ===
     s.textContent += '@keyframes idleWiggle{0%,100%{transform:translate3d(0,0,0) rotate(0deg)}25%{transform:translate3d(0,0,0) rotate(2deg)}75%{transform:translate3d(0,0,0) rotate(-2deg)}}';
     s.textContent += '.swipe-card.wiggle{animation:idleWiggle 1.5s ease-in-out 2}';
 
@@ -149,7 +148,7 @@ SwipeRenderer.prototype.showCard = function(data, mode, nextCard, nextNextCard) 
         this.stackContainer.appendChild(this.makeCardElement(nextCard, mode, 'back-1', rc));
     }
 
-    // === АКТИВНАЯ КАРТОЧКА С ОБЁРТКОЙ ===
+    // === ОБЁРТКА ===
     var wrapper = document.createElement('div');
     wrapper.className = 'swipe-card-wrapper';
     this.cardWrapper = wrapper;
@@ -157,15 +156,14 @@ SwipeRenderer.prototype.showCard = function(data, mode, nextCard, nextNextCard) 
     this.activeCard = this.makeCardElement(data, mode, 'active', rc);
     wrapper.appendChild(this.activeCard);
 
-    // === КНОПКИ-ИКОНКИ ПОД КАРТОЧКОЙ ===
-    var actionBtns = document.createElement('div');
-    actionBtns.className = 'swipe-action-btns';
-    actionBtns.innerHTML = '<button class="swipe-action-btn skip-btn" id="swipeSkipBtn"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><button class="swipe-action-btn like-btn" id="swipeLikeBtn"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 21s-7-4.35-9.33-8.28C.36 8.94 2.4 4 6.72 4c2.28 0 3.72 1.44 5.28 3.12C13.56 5.44 15 4 17.28 4c4.32 0 6.36 4.94 4.05 8.72C19 16.65 12 21 12 21z"/></svg></button>';
-    wrapper.appendChild(actionBtns);
+    // === КНОПКИ ПО БОКАМ ===
+    var sideBtns = document.createElement('div');
+    sideBtns.className = 'swipe-side-btns';
+    sideBtns.innerHTML = '<button class="swipe-side-btn skip-btn" id="swipeSkipBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><button class="swipe-side-btn like-btn" id="swipeLikeBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 21s-7-4.35-9.33-8.28C.36 8.94 2.4 4 6.72 4c2.28 0 3.72 1.44 5.28 3.12C13.56 5.44 15 4 17.28 4c4.32 0 6.36 4.94 4.05 8.72C19 16.65 12 21 12 21z"/></svg></button>';
+    wrapper.appendChild(sideBtns);
 
-    // Сохраняем ссылки на кнопки
-    this.skipBtn = actionBtns.querySelector('#swipeSkipBtn');
-    this.likeBtn = actionBtns.querySelector('#swipeLikeBtn');
+    this.skipBtn = sideBtns.querySelector('#swipeSkipBtn');
+    this.likeBtn = sideBtns.querySelector('#swipeLikeBtn');
 
     var self = this;
     this.skipBtn.onclick = function(e) { e.stopPropagation(); Swipe.reject(); };
@@ -187,14 +185,10 @@ SwipeRenderer.prototype.showCard = function(data, mode, nextCard, nextNextCard) 
 
     this.stackContainer.appendChild(wrapper);
 
-    // === АНИМАЦИЯ ПОЯВЛЕНИЯ ===
     this.activeCard.animate([
         { transform: 'translate3d(0,16px,0) scale(0.985)', opacity: 0 },
         { transform: 'translate3d(0,0,0) scale(1)', opacity: 1 }
-    ], {
-        duration: 400,
-        easing: 'cubic-bezier(0.22,0.61,0.36,1)'
-    });
+    ], { duration: 350, easing: 'cubic-bezier(0.22,0.61,0.36,1)' });
 };
 
 SwipeRenderer.prototype.makeCardElement = function(data, mode, className, rc) {
@@ -209,12 +203,8 @@ SwipeRenderer.prototype.makeCardElement = function(data, mode, className, rc) {
         card.style.background = 'linear-gradient(150deg, #16161c 0%, #111117 65%, #14141a 100%)';
     }
 
-    var aboutText = data.about || '';
-    var longClass = aboutText.length > 40 ? ' long-about' : '';
-
-    // === СТАТЫ С ПРАВИЛЬНЫМИ ЛЕЙБЛАМИ ===
+    var modeName = (data.mode || mode || 'faceit').toLowerCase();
     var sp = [];
-    var modeName = mode || data.mode || 'faceit';
     sp.push('<span>' + modeName.toUpperCase() + '</span>');
 
     if (data.rank) {
@@ -230,15 +220,9 @@ SwipeRenderer.prototype.makeCardElement = function(data, mode, className, rc) {
         sp.push('<span>' + data.age + ' y.o.</span>');
     }
 
-    // === КНОПКА ОТКРЫТЬ ПРОФИЛЬ ===
     var isFaceitPremier = modeName === 'faceit' || modeName === 'premier';
     var buttonText = isFaceitPremier ? 'Открыть Faceit' : 'Открыть Steam';
-    var profileLink = '#';
-    if (isFaceitPremier) {
-        profileLink = data.faceit_link || '#';
-    } else {
-        profileLink = data.steam_link || '#';
-    }
+    var profileLink = isFaceitPremier ? (data.faceit_link || '#') : (data.steam_link || '#');
 
     var html = '';
     html += '<div class="swipe-ribbon">' + modeName.toUpperCase() + '</div>';
@@ -251,11 +235,6 @@ SwipeRenderer.prototype.makeCardElement = function(data, mode, className, rc) {
     html += '<button class="swipe-profile-btn" onclick="event.stopPropagation();SwipeRenderer.prototype.openProfileLink(\'' + profileLink + '\')">' + buttonText + '</button>';
 
     card.innerHTML = html;
-
-    if (longClass) {
-        card.className = card.className + longClass;
-    }
-
     return card;
 };
 
@@ -269,42 +248,28 @@ SwipeRenderer.prototype.openProfileLink = function(link) {
 };
 
 SwipeRenderer.prototype.renderTransform = function(el, x, y, rotate) {
-    // Двигаем всю обёртку с карточкой и кнопками
     if (this.cardWrapper) {
         this.cardWrapper.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) rotate(' + rotate + 'deg)';
+        this.cardWrapper.style.transition = 'none';
     }
 };
 
 SwipeRenderer.prototype.renderProgress = function(progress, physicsX) {
     var self = this;
-
     if (self.back1) {
         self.back1.style.transition = 'none';
-        var y1 = 11 - progress * 16;
-        var s1 = 0.95 + progress * 0.06;
-        var r1 = progress * 2 * (physicsX > 0 ? 1 : -1);
-        self.back1.style.transform = 'translate3d(' + (progress * 8) + 'px,' + y1 + 'px,0) scale(' + s1 + ') rotate(' + r1 + 'deg)';
+        self.back1.style.transform = 'translate3d(' + (progress * 8) + 'px,' + (11 - progress * 16) + 'px,0) scale(' + (0.95 + progress * 0.06) + ') rotate(' + (progress * 2 * (physicsX > 0 ? 1 : -1)) + 'deg)';
         self.back1.style.opacity = 0.48 + progress * 0.35;
     }
     if (self.back2) {
         self.back2.style.transition = 'none';
-        var y2 = 22 - progress * 12;
-        var s2 = 0.9 + progress * 0.04;
-        var r2 = progress * 1.5 * (physicsX > 0 ? 1 : -1);
-        self.back2.style.transform = 'translate3d(' + (progress * 4) + 'px,' + y2 + 'px,0) scale(' + s2 + ') rotate(' + r2 + 'deg)';
+        self.back2.style.transform = 'translate3d(' + (progress * 4) + 'px,' + (22 - progress * 12) + 'px,0) scale(' + (0.9 + progress * 0.04) + ') rotate(' + (progress * 1.5 * (physicsX > 0 ? 1 : -1)) + 'deg)';
         self.back2.style.opacity = 0.18 + progress * 0.15;
     }
-
     var lp = Math.min(Math.max(physicsX / 110, 0), 1);
     var sp = Math.min(Math.max(-physicsX / 110, 0), 1);
-    if (self.likeBadge) {
-        self.likeBadge.style.opacity = lp;
-        self.likeBadge.style.transform = 'translateY(-50%) scale(' + (0.8 + lp * 0.3) + ')';
-    }
-    if (self.skipBadge) {
-        self.skipBadge.style.opacity = sp;
-        self.skipBadge.style.transform = 'translateY(-50%) scale(' + (0.8 + sp * 0.3) + ')';
-    }
+    if (self.likeBadge) { self.likeBadge.style.opacity = lp; self.likeBadge.style.transform = 'translateY(-50%) scale(' + (0.8 + lp * 0.3) + ')'; }
+    if (self.skipBadge) { self.skipBadge.style.opacity = sp; self.skipBadge.style.transform = 'translateY(-50%) scale(' + (0.8 + sp * 0.3) + ')'; }
 };
 
 SwipeRenderer.prototype.reset = function() {
@@ -312,18 +277,10 @@ SwipeRenderer.prototype.reset = function() {
         this.cardWrapper.style.transform = 'translate3d(0,0,0) rotate(0deg)';
         this.cardWrapper.style.transition = '';
     }
-    if (this.likeBadge) { this.likeBadge.style.opacity = '0'; this.likeBadge.classList.remove('spring'); }
-    if (this.skipBadge) { this.skipBadge.style.opacity = '0'; this.skipBadge.classList.remove('spring'); }
-    if (this.back1) {
-        this.back1.style.transition = 'all 0.45s ease';
-        this.back1.style.transform = 'translate3d(0,11px,0) scale(0.95) rotate(0deg)';
-        this.back1.style.opacity = '0.48';
-    }
-    if (this.back2) {
-        this.back2.style.transition = 'all 0.45s ease';
-        this.back2.style.transform = 'translate3d(0,22px,0) scale(0.9) rotate(0deg)';
-        this.back2.style.opacity = '0.18';
-    }
+    if (this.likeBadge) { this.likeBadge.style.opacity = '0'; }
+    if (this.skipBadge) { this.skipBadge.style.opacity = '0'; }
+    if (this.back1) { this.back1.style.transition = 'all 0.45s ease'; this.back1.style.transform = 'translate3d(0,11px,0) scale(0.95)'; this.back1.style.opacity = '0.48'; }
+    if (this.back2) { this.back2.style.transition = 'all 0.45s ease'; this.back2.style.transform = 'translate3d(0,22px,0) scale(0.9)'; this.back2.style.opacity = '0.18'; }
     this.glowLayer.classList.remove('anticipating');
     if (this.skipBtn) this.skipBtn.classList.remove('decision-active');
     if (this.likeBtn) this.likeBtn.classList.remove('decision-active');
@@ -334,8 +291,6 @@ SwipeRenderer.prototype.fly = function(el, direction, physics) {
     var x = direction === 'right' ? 160 : -160;
     var y = direction === 'right' ? p.throwArcUp : p.throwArcDown;
     var rot = direction === 'right' ? p.throwRotation : -p.throwRotation;
-
-    // Двигаем обёртку
     if (this.cardWrapper) {
         this.cardWrapper.style.transition = 'transform ' + p.flyDuration + 's ' + p.flyEasing + ', opacity ' + p.flyDuration + 's ease, filter ' + p.flyDuration + 's ease';
         this.cardWrapper.style.filter = 'blur(' + p.throwBlur + 'px)';
@@ -345,24 +300,15 @@ SwipeRenderer.prototype.fly = function(el, direction, physics) {
 };
 
 SwipeRenderer.prototype.flash = function(color) {
-    this.flashEl.className = 'swipe-flash ' + color;
-    this.flashEl.style.transition = 'none';
-    this.flashEl.style.opacity = '1';
+    this.flashEl.className = 'swipe-flash ' + color; this.flashEl.style.transition = 'none'; this.flashEl.style.opacity = '1';
     var el = this.flashEl;
-    requestAnimationFrame(function() {
-        el.style.transition = 'opacity 0.15s ease';
-        el.style.opacity = '0';
-    });
+    requestAnimationFrame(function() { el.style.transition = 'opacity 0.15s ease'; el.style.opacity = '0'; });
 };
 
 SwipeRenderer.prototype.pulse = function(color) {
-    this.pulseEl.className = 'swipe-pulse ' + color + ' fire';
-    void this.pulseEl.offsetWidth;
-    this.pulseEl.style.animation = 'none';
+    this.pulseEl.className = 'swipe-pulse ' + color + ' fire'; void this.pulseEl.offsetWidth; this.pulseEl.style.animation = 'none';
     var el = this.pulseEl;
-    requestAnimationFrame(function() {
-        el.style.animation = 'pulseFire 0.5s ease-out forwards';
-    });
+    requestAnimationFrame(function() { el.style.animation = 'pulseFire 0.5s ease-out forwards'; });
 };
 
-console.log('✅ SWIPE-RENDERER готов');
+console.log('✅ SWIPE-RENDERER v2 готов');
