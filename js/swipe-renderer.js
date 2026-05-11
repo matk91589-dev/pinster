@@ -1,7 +1,7 @@
 // ============================================
-// SWIPE RENDERER — ANKETA STYLE + SIDE BUTTONS v2
+// SWIPE RENDERER — ANKETA STYLE + SIDE BUTTONS v3
 // ============================================
-console.log('🔥 SWIPE-RENDERER v2 загружен');
+console.log('🔥 SWIPE-RENDERER v3 загружен');
 
 var SwipeRenderer = function() {
     this.scene = null;
@@ -28,65 +28,65 @@ var SwipeRenderer = function() {
 };
 
 SwipeRenderer.prototype.injectStyles = function() {
-    if (document.getElementById('swipe-v13-styles')) return;
+    if (document.getElementById('swipe-v14-styles')) return;
     var s = document.createElement('style');
-    s.id = 'swipe-v13-styles';
+    s.id = 'swipe-v14-styles';
     s.textContent = '';
 
     // === SCREEN ===
-    s.textContent += '#swipeScreen{position:fixed;inset:0;background:#0a0a0f;overflow:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}';
+    s.textContent += '#swipeScreen{position:fixed;inset:0;background:#0a0a0f;overflow:hidden}';
 
     // === BACKGROUND ===
-    s.textContent += '.swipe-bg{position:fixed;inset:0;background-size:cover;background-position:center;filter:blur(80px);transform:scale(1.2);opacity:0.14;transition:background-image 0.6s ease;z-index:0}';
+    s.textContent += '.swipe-bg{position:fixed;inset:0;background-size:cover;background-position:center;filter:blur(80px);transform:scale(1.2);opacity:0.12;transition:background-image 0.6s ease;z-index:0}';
     s.textContent += '.swipe-bg-glow{position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity 0.3s ease}';
     s.textContent += '.swipe-bg-glow.anticipating{opacity:1.5!important}';
 
-    // === STACK ===
-    s.textContent += '.swipe-stack{position:absolute;top:46%;left:50%;width:88vw;max-width:380px;height:460px;max-height:calc(100vh-220px);transform:translate(-50%,-50%);perspective:1400px;transform-style:preserve-3d;contain:layout paint style;isolation:isolate;z-index:1}';
+    // === STACK — КАРТОЧКА НИЖЕ ===
+    s.textContent += '.swipe-stack{position:absolute;top:44%;left:50%;width:88vw;max-width:380px;height:460px;max-height:calc(100vh-200px);transform:translate(-50%,-50%);perspective:1400px;transform-style:preserve-3d;contain:layout paint style;isolation:isolate;z-index:1}';
 
     // === ОБЁРТКА ===
     s.textContent += '.swipe-card-wrapper{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}';
 
-    // === КАРТОЧКА ===
-    s.textContent += '.swipe-card{position:relative;width:100%;aspect-ratio:16/20;max-height:460px;border-radius:18px;overflow:hidden;background-color:#0a0a0f;background-size:cover;background-position:center 20%;background-repeat:no-repeat;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;box-shadow:0 8px 20px rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.06);will-change:transform;transform:translate3d(0,0,0);backface-visibility:hidden;touch-action:none;flex-shrink:0}';
-    s.textContent += '.swipe-card.back-2{transform:translate3d(0,22px,0) scale(0.9);opacity:0.18;z-index:0;filter:blur(3px)}';
-    s.textContent += '.swipe-card.back-1{transform:translate3d(0,11px,0) scale(0.95);opacity:0.48;z-index:1;filter:blur(1px)}';
+    // === КАРТОЧКА — БЕЗ ГРАНИЦ ===
+    s.textContent += '.swipe-card{position:relative;width:100%;aspect-ratio:16/20;max-height:460px;border-radius:18px;overflow:visible;background-color:#0a0a0f;background-size:cover;background-position:center 20%;background-repeat:no-repeat;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;box-shadow:0 10px 40px rgba(0,0,0,0.5);will-change:transform;transform:translate3d(0,0,0);backface-visibility:hidden;touch-action:none;flex-shrink:0}';
+    s.textContent += '.swipe-card.back-2{transform:translate3d(0,22px,0) scale(0.9);opacity:0.15;z-index:0;filter:blur(4px)}';
+    s.textContent += '.swipe-card.back-1{transform:translate3d(0,11px,0) scale(0.95);opacity:0.40;z-index:1;filter:blur(2px)}';
     s.textContent += '.swipe-card.active{transform:translate3d(0,0,0) scale(1);opacity:1;z-index:2}';
     s.textContent += '.swipe-card.decision-snap{transition:transform 0.06s ease!important}';
 
-    // === 🔥 ГРАДИЕНТ — ТОЧНО КАК В ANKETA (черный, текст видно) ===
-    s.textContent += '.swipe-card.filled::after{content:\'\';position:absolute;bottom:0;left:0;right:0;height:50%;background:linear-gradient(to top,rgba(0,0,0,0.99) 0%,rgba(0,0,0,0.95) 15%,rgba(0,0,0,0.82) 45%,rgba(0,0,0,0.45) 75%,transparent 100%);z-index:1;pointer-events:none}';
+    // === 🔥 ГРАДИЕНТ ЖИРНЫЙ ЧЁРНЫЙ ===
+    s.textContent += '.swipe-card.filled::after{content:\'\';position:absolute;bottom:0;left:0;right:0;height:55%;background:linear-gradient(to top,rgba(0,0,0,0.99) 0%,rgba(0,0,0,0.96) 20%,rgba(0,0,0,0.85) 45%,rgba(0,0,0,0.50) 72%,rgba(0,0,0,0.10) 100%);z-index:1;pointer-events:none;border-radius:0 0 18px 18px}';
 
     // === RIBBON ===
-    s.textContent += '.swipe-ribbon{position:absolute;top:-1px;left:-1px;z-index:6;padding:7px 18px 6px 14px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--ribbon-bg,rgba(18,18,24,0.95));color:var(--ribbon-color,#FF5500);border-radius:18px 0 10px 0;border-bottom:1px solid var(--ribbon-color,#FF5500);border-right:1px solid var(--ribbon-color,#FF5500)}';
+    s.textContent += '.swipe-ribbon{position:absolute;top:0;left:0;z-index:6;padding:7px 18px 6px 14px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--ribbon-bg,rgba(18,18,24,0.95));color:var(--ribbon-color,#FF5500);border-radius:18px 0 10px 0;border-bottom:1px solid var(--ribbon-color,#FF5500);border-right:1px solid var(--ribbon-color,#FF5500)}';
 
     // === ТЕКСТ ===
     s.textContent += '.swipe-text{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:3px;margin-bottom:56px;width:100%}';
-    s.textContent += '.swipe-id{font-size:10px;font-weight:700;letter-spacing:0.8px;color:#FF5500;text-transform:uppercase}';
-    s.textContent += '.swipe-nick{font-size:28px;font-weight:900;color:#FFF;text-shadow:0 2px 14px rgba(0,0,0,0.7),0 8px 28px rgba(0,0,0,0.6);letter-spacing:-0.3px;line-height:1.2;margin-top:2px}';
-    s.textContent += '.swipe-stats{font-size:14px;font-weight:700;color:rgba(255,255,255,0.9);display:flex;align-items:center;gap:8px;white-space:nowrap;margin-top:4px;flex-wrap:wrap;text-shadow:0 1px 4px rgba(0,0,0,0.6)}';
-    s.textContent += '.swipe-sep{color:rgba(255,255,255,0.5);font-size:14px;font-weight:700}';
-    s.textContent += '.swipe-about{font-size:14px;color:rgba(255,255,255,0.85);line-height:1.5;max-width:100%;margin-top:8px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.6);word-wrap:break-word;overflow-wrap:break-word}';
+    s.textContent += '.swipe-id{font-size:10px;font-weight:700;color:#FF5500;text-transform:uppercase}';
+    s.textContent += '.swipe-nick{font-size:28px;font-weight:900;color:#FFF;text-shadow:0 2px 14px rgba(0,0,0,0.7),0 8px 28px rgba(0,0,0,0.6)}';
+    s.textContent += '.swipe-stats{font-size:14px;font-weight:700;color:rgba(255,255,255,0.9);display:flex;align-items:center;gap:8px;text-shadow:0 1px 4px rgba(0,0,0,0.6)}';
+    s.textContent += '.swipe-sep{color:rgba(255,255,255,0.5)}';
+    s.textContent += '.swipe-about{font-size:14px;color:rgba(255,255,255,0.85);line-height:1.5;margin-top:8px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.6)}';
 
     // === КНОПКА ПРОФИЛЯ ===
-    s.textContent += '.swipe-profile-btn{position:absolute;left:12px;right:12px;bottom:12px;z-index:5;height:42px;border-radius:11px;border:none;background:linear-gradient(135deg,#FF5500 0%,#FF6B20 100%);color:white;font-size:13px;font-weight:600;letter-spacing:0.2px;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,0.25),0 2px 6px rgba(0,0,0,0.25);pointer-events:auto}';
+    s.textContent += '.swipe-profile-btn{position:absolute;left:12px;right:12px;bottom:12px;z-index:5;height:42px;border-radius:11px;border:none;background:linear-gradient(135deg,#FF5500,#FF6B20);color:#fff;font-size:13px;font-weight:600;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,0.25),0 2px 6px rgba(0,0,0,0.25)}';
 
     // === BADGES ===
-    s.textContent += '.swipe-badge{position:absolute;top:40%;padding:10px 18px;border-radius:14px;font-size:28px;font-weight:800;z-index:10;opacity:0;pointer-events:none;display:flex;align-items:center;gap:6px;text-shadow:0 2px 8px rgba(0,0,0,0.5)}';
-    s.textContent += '.swipe-badge.like{right:16px;color:#34FF8A;transform:translateY(-50%)}';
-    s.textContent += '.swipe-badge.skip{left:16px;color:#FF4D6D;transform:translateY(-50%)}';
+    s.textContent += '.swipe-badge{position:absolute;top:35%;padding:10px 18px;border-radius:14px;font-size:28px;font-weight:800;z-index:10;opacity:0;pointer-events:none;text-shadow:0 2px 8px rgba(0,0,0,0.5)}';
+    s.textContent += '.swipe-badge.like{right:12px;color:#34FF8A;transform:translateY(-50%)}';
+    s.textContent += '.swipe-badge.skip{left:12px;color:#FF4D6D;transform:translateY(-50%)}';
 
-    // === 🔥 КНОПКИ ПО БОКАМ КАРТОЧКИ (ПО ЦЕНТРУ) ===
+    // === 🔥 КНОПКИ ПРИКЛЕЕНЫ К КАРТОЧКЕ — БЕЗ ГРАНИЦ ===
     s.textContent += '.swipe-side-btns{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);pointer-events:none;z-index:25}';
-    s.textContent += '.swipe-side-btn{position:absolute;top:50%;width:48px;height:48px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s ease;pointer-events:auto;box-shadow:0 4px 14px rgba(0,0,0,0.4)}';
+    s.textContent += '.swipe-side-btn{position:absolute;top:50%;width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s ease;pointer-events:auto;box-shadow:0 4px 16px rgba(0,0,0,0.5)}';
     s.textContent += '.swipe-side-btn:active{transform:translateY(-50%) scale(0.85)!important}';
-    s.textContent += '.swipe-side-btn.skip-btn{left:-60px;transform:translateY(-50%);background:rgba(20,20,28,0.9);border:2px solid rgba(255,77,109,0.5);color:#FF4D6D}';
-    s.textContent += '.swipe-side-btn.skip-btn:active{background:rgba(255,77,109,0.3);border-color:#FF4D6D}';
-    s.textContent += '.swipe-side-btn.like-btn{right:-60px;transform:translateY(-50%);background:rgba(20,20,28,0.9);border:2px solid rgba(255,85,0,0.5);color:#FF5500}';
-    s.textContent += '.swipe-side-btn.like-btn:active{background:rgba(255,85,0,0.3);border-color:#FF5500}';
+    s.textContent += '.swipe-side-btn.skip-btn{left:-56px;transform:translateY(-50%);background:rgba(15,15,20,0.9);color:#FF4D6D}';
+    s.textContent += '.swipe-side-btn.skip-btn:active{background:#FF4D6D;color:#fff}';
+    s.textContent += '.swipe-side-btn.like-btn{right:-56px;transform:translateY(-50%);background:rgba(15,15,20,0.9);color:#FF5500}';
+    s.textContent += '.swipe-side-btn.like-btn:active{background:#FF5500;color:#fff}';
     s.textContent += '.swipe-side-btn.decision-active{transform:translateY(-50%) scale(1.2)!important}';
-    s.textContent += '.swipe-side-btn.skip-btn.decision-active{background:rgba(255,77,109,0.4)!important;border-color:#FF4D6D!important;box-shadow:0 0 28px rgba(255,77,109,0.5)!important}';
-    s.textContent += '.swipe-side-btn.like-btn.decision-active{background:rgba(255,85,0,0.4)!important;border-color:#FF5500!important;box-shadow:0 0 28px rgba(255,85,0,0.5)!important}';
+    s.textContent += '.swipe-side-btn.skip-btn.decision-active{background:#FF4D6D!important;color:#fff!important;box-shadow:0 0 30px rgba(255,77,109,0.6)!important}';
+    s.textContent += '.swipe-side-btn.like-btn.decision-active{background:#FF5500!important;color:#fff!important;box-shadow:0 0 30px rgba(255,85,0,0.6)!important}';
 
     // === FLASH / PULSE ===
     s.textContent += '.swipe-flash{position:fixed;inset:0;z-index:50;pointer-events:none;opacity:0}';
@@ -148,7 +148,6 @@ SwipeRenderer.prototype.showCard = function(data, mode, nextCard, nextNextCard) 
         this.stackContainer.appendChild(this.makeCardElement(nextCard, mode, 'back-1', rc));
     }
 
-    // === ОБЁРТКА ===
     var wrapper = document.createElement('div');
     wrapper.className = 'swipe-card-wrapper';
     this.cardWrapper = wrapper;
@@ -156,7 +155,7 @@ SwipeRenderer.prototype.showCard = function(data, mode, nextCard, nextNextCard) 
     this.activeCard = this.makeCardElement(data, mode, 'active', rc);
     wrapper.appendChild(this.activeCard);
 
-    // === КНОПКИ ПО БОКАМ ===
+    // Кнопки по бокам
     var sideBtns = document.createElement('div');
     sideBtns.className = 'swipe-side-btns';
     sideBtns.innerHTML = '<button class="swipe-side-btn skip-btn" id="swipeSkipBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><button class="swipe-side-btn like-btn" id="swipeLikeBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 21s-7-4.35-9.33-8.28C.36 8.94 2.4 4 6.72 4c2.28 0 3.72 1.44 5.28 3.12C13.56 5.44 15 4 17.28 4c4.32 0 6.36 4.94 4.05 8.72C19 16.65 12 21 12 21z"/></svg></button>';
@@ -164,7 +163,6 @@ SwipeRenderer.prototype.showCard = function(data, mode, nextCard, nextNextCard) 
 
     this.skipBtn = sideBtns.querySelector('#swipeSkipBtn');
     this.likeBtn = sideBtns.querySelector('#swipeLikeBtn');
-
     var self = this;
     this.skipBtn.onclick = function(e) { e.stopPropagation(); Swipe.reject(); };
     this.likeBtn.onclick = function(e) { e.stopPropagation(); Swipe.like(); };
@@ -172,21 +170,15 @@ SwipeRenderer.prototype.showCard = function(data, mode, nextCard, nextNextCard) 
     this.back1 = this.stackContainer.querySelector('.back-1');
     this.back2 = this.stackContainer.querySelector('.back-2');
 
-    // === BADGES ===
-    this.likeBadge = document.createElement('div');
-    this.likeBadge.className = 'swipe-badge like';
-    this.likeBadge.innerHTML = 'LIKE';
+    this.likeBadge = document.createElement('div'); this.likeBadge.className = 'swipe-badge like'; this.likeBadge.innerHTML = 'LIKE';
     this.activeCard.appendChild(this.likeBadge);
-
-    this.skipBadge = document.createElement('div');
-    this.skipBadge.className = 'swipe-badge skip';
-    this.skipBadge.innerHTML = 'SKIP';
+    this.skipBadge = document.createElement('div'); this.skipBadge.className = 'swipe-badge skip'; this.skipBadge.innerHTML = 'SKIP';
     this.activeCard.appendChild(this.skipBadge);
 
     this.stackContainer.appendChild(wrapper);
 
     this.activeCard.animate([
-        { transform: 'translate3d(0,16px,0) scale(0.985)', opacity: 0 },
+        { transform: 'translate3d(0,20px,0) scale(0.98)', opacity: 0 },
         { transform: 'translate3d(0,0,0) scale(1)', opacity: 1 }
     ], { duration: 350, easing: 'cubic-bezier(0.22,0.61,0.36,1)' });
 };
@@ -206,19 +198,13 @@ SwipeRenderer.prototype.makeCardElement = function(data, mode, className, rc) {
     var modeName = (data.mode || mode || 'faceit').toLowerCase();
     var sp = [];
     sp.push('<span>' + modeName.toUpperCase() + '</span>');
-
     if (data.rank) {
         var rankText = data.rank;
-        if (modeName === 'faceit') {
-            rankText = rankText + ' elo';
-        } else if (modeName === 'premier') {
-            rankText = rankText + ' rating';
-        }
+        if (modeName === 'faceit') rankText = rankText + ' elo';
+        else if (modeName === 'premier') rankText = rankText + ' rating';
         sp.push('<span>' + rankText + '</span>');
     }
-    if (data.age) {
-        sp.push('<span>' + data.age + ' y.o.</span>');
-    }
+    if (data.age) sp.push('<span>' + data.age + ' y.o.</span>');
 
     var isFaceitPremier = modeName === 'faceit' || modeName === 'premier';
     var buttonText = isFaceitPremier ? 'Открыть Faceit' : 'Открыть Steam';
@@ -240,11 +226,8 @@ SwipeRenderer.prototype.makeCardElement = function(data, mode, className, rc) {
 
 SwipeRenderer.prototype.openProfileLink = function(link) {
     if (!link || link === '#' || link === '') return;
-    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-        window.Telegram.WebApp.openLink(link);
-    } else {
-        window.open(link, '_blank');
-    }
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) window.Telegram.WebApp.openLink(link);
+    else window.open(link, '_blank');
 };
 
 SwipeRenderer.prototype.renderTransform = function(el, x, y, rotate) {
@@ -259,12 +242,12 @@ SwipeRenderer.prototype.renderProgress = function(progress, physicsX) {
     if (self.back1) {
         self.back1.style.transition = 'none';
         self.back1.style.transform = 'translate3d(' + (progress * 8) + 'px,' + (11 - progress * 16) + 'px,0) scale(' + (0.95 + progress * 0.06) + ') rotate(' + (progress * 2 * (physicsX > 0 ? 1 : -1)) + 'deg)';
-        self.back1.style.opacity = 0.48 + progress * 0.35;
+        self.back1.style.opacity = 0.40 + progress * 0.35;
     }
     if (self.back2) {
         self.back2.style.transition = 'none';
         self.back2.style.transform = 'translate3d(' + (progress * 4) + 'px,' + (22 - progress * 12) + 'px,0) scale(' + (0.9 + progress * 0.04) + ') rotate(' + (progress * 1.5 * (physicsX > 0 ? 1 : -1)) + 'deg)';
-        self.back2.style.opacity = 0.18 + progress * 0.15;
+        self.back2.style.opacity = 0.15 + progress * 0.15;
     }
     var lp = Math.min(Math.max(physicsX / 110, 0), 1);
     var sp = Math.min(Math.max(-physicsX / 110, 0), 1);
@@ -273,14 +256,11 @@ SwipeRenderer.prototype.renderProgress = function(progress, physicsX) {
 };
 
 SwipeRenderer.prototype.reset = function() {
-    if (this.cardWrapper) {
-        this.cardWrapper.style.transform = 'translate3d(0,0,0) rotate(0deg)';
-        this.cardWrapper.style.transition = '';
-    }
-    if (this.likeBadge) { this.likeBadge.style.opacity = '0'; }
-    if (this.skipBadge) { this.skipBadge.style.opacity = '0'; }
-    if (this.back1) { this.back1.style.transition = 'all 0.45s ease'; this.back1.style.transform = 'translate3d(0,11px,0) scale(0.95)'; this.back1.style.opacity = '0.48'; }
-    if (this.back2) { this.back2.style.transition = 'all 0.45s ease'; this.back2.style.transform = 'translate3d(0,22px,0) scale(0.9)'; this.back2.style.opacity = '0.18'; }
+    if (this.cardWrapper) { this.cardWrapper.style.transform = 'translate3d(0,0,0) rotate(0deg)'; this.cardWrapper.style.transition = ''; }
+    if (this.likeBadge) this.likeBadge.style.opacity = '0';
+    if (this.skipBadge) this.skipBadge.style.opacity = '0';
+    if (this.back1) { this.back1.style.transition = 'all 0.45s ease'; this.back1.style.transform = 'translate3d(0,11px,0) scale(0.95)'; this.back1.style.opacity = '0.40'; }
+    if (this.back2) { this.back2.style.transition = 'all 0.45s ease'; this.back2.style.transform = 'translate3d(0,22px,0) scale(0.9)'; this.back2.style.opacity = '0.15'; }
     this.glowLayer.classList.remove('anticipating');
     if (this.skipBtn) this.skipBtn.classList.remove('decision-active');
     if (this.likeBtn) this.likeBtn.classList.remove('decision-active');
@@ -311,4 +291,4 @@ SwipeRenderer.prototype.pulse = function(color) {
     requestAnimationFrame(function() { el.style.animation = 'pulseFire 0.5s ease-out forwards'; });
 };
 
-console.log('✅ SWIPE-RENDERER v2 готов');
+console.log('✅ SWIPE-RENDERER v3 готов');
