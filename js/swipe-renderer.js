@@ -1,7 +1,7 @@
 // ============================================
-// SWIPE RENDERER — v7 FULL BLEED
+// SWIPE RENDERER — v8 CENTERED VIEWPORT
 // ============================================
-console.log('🔥 SWIPE-RENDERER v7 загружен');
+console.log('🔥 SWIPE-RENDERER v8 загружен');
 
 var SwipeRenderer = function() {
     this.scene = null;
@@ -28,15 +28,15 @@ var SwipeRenderer = function() {
 };
 
 SwipeRenderer.prototype.injectStyles = function() {
-    if (document.getElementById('swipe-v18-styles')) return;
+    if (document.getElementById('swipe-v19-styles')) return;
     var s = document.createElement('style');
-    s.id = 'swipe-v18-styles';
+    s.id = 'swipe-v19-styles';
     s.textContent = '';
 
     // === VIEWPORT ===
     s.textContent += ':root{--tg-height:100vh}';
-    s.textContent += 'html{background:#0a0a0f;overscroll-behavior:none}';
-    s.textContent += 'body{background:#0a0a0f;overscroll-behavior:none}';
+    s.textContent += 'html{background:#0a0a0f;overscroll-behavior:none;height:100vh}';
+    s.textContent += 'body{background:#0a0a0f;overscroll-behavior:none;height:100vh}';
     s.textContent += '#swipeScreen{position:fixed;top:0;left:0;right:0;bottom:0;height:var(--tg-height);background:#0a0a0f;overflow:hidden;padding:0;margin:0}';
     s.textContent += '#swipeContainer{position:fixed;top:0;left:0;right:0;bottom:0;height:var(--tg-height);overflow:visible;padding:0;margin:0}';
 
@@ -45,8 +45,8 @@ SwipeRenderer.prototype.injectStyles = function() {
     s.textContent += '.swipe-bg-glow{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none;transition:opacity 0.3s ease}';
     s.textContent += '.swipe-bg-glow.anticipating{opacity:1.5!important}';
 
-    // === STACK — FULL BLEED ===
-    s.textContent += '.swipe-stack{position:absolute;top:54%;left:50%;width:min(92vw,420px);height:460px;transform:translate(-50%,-50%);perspective:1400px;transform-style:preserve-3d;isolation:isolate;z-index:1;overflow:visible}';
+    // === STACK — ЦЕНТРИРУЕТСЯ ЧЕРЕЗ JS ===
+    s.textContent += '.swipe-stack{position:absolute;top:0;left:50%;width:min(92vw,420px);height:460px;transform:translateX(-50%);perspective:1400px;transform-style:preserve-3d;isolation:isolate;z-index:1;overflow:visible}';
 
     // === ОБЁРТКА ===
     s.textContent += '.swipe-card-wrapper{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:visible}';
@@ -124,14 +124,30 @@ SwipeRenderer.prototype.injectStyles = function() {
 SwipeRenderer.prototype.initViewport = function() {
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.expand();
+        window.Telegram.WebApp.setBackgroundColor('#0a0a0f');
+        window.Telegram.WebApp.setHeaderColor('#0a0a0f');
         var tgHeight = window.Telegram.WebApp.viewportStableHeight;
         if (tgHeight) {
             document.documentElement.style.setProperty('--tg-height', tgHeight + 'px');
         }
     }
+    document.documentElement.style.height = '100vh';
     document.documentElement.style.background = '#0a0a0f';
+    document.body.style.height = '100vh';
     document.body.style.background = '#0a0a0f';
     document.body.style.overscrollBehavior = 'none';
+};
+
+// 🔥 ЦЕНТРИРОВАНИЕ ПО ВИДИМОЙ ОБЛАСТИ
+SwipeRenderer.prototype.centerStack = function() {
+    var h = (window.Telegram && window.Telegram.WebApp)
+        ? window.Telegram.WebApp.viewportStableHeight
+        : window.innerHeight;
+    var cardH = 460;
+    var top = (h - cardH) / 2;
+    if (this.stackContainer) {
+        this.stackContainer.style.top = top + 'px';
+    }
 };
 
 SwipeRenderer.prototype.buildScene = function() {
@@ -151,6 +167,10 @@ SwipeRenderer.prototype.buildScene = function() {
     this.stackContainer = document.createElement('div'); this.stackContainer.className = 'swipe-stack'; this.scene.appendChild(this.stackContainer);
     this.flashEl = document.createElement('div'); this.flashEl.className = 'swipe-flash'; this.scene.appendChild(this.flashEl);
     this.pulseEl = document.createElement('div'); this.pulseEl.className = 'swipe-pulse'; this.scene.appendChild(this.pulseEl);
+
+    this.centerStack();
+    var self = this;
+    window.addEventListener('resize', function() { self.centerStack(); });
 };
 
 SwipeRenderer.prototype.showCard = function(data, mode, nextCard, nextNextCard) {
@@ -185,6 +205,7 @@ SwipeRenderer.prototype.showCard = function(data, mode, nextCard, nextNextCard) 
     this.skipBadge = document.createElement('div'); this.skipBadge.className = 'swipe-badge skip'; this.skipBadge.innerHTML = 'SKIP'; this.activeCard.appendChild(this.skipBadge);
 
     this.stackContainer.appendChild(wrapper);
+    this.centerStack();
 
     this.activeCard.animate([
         { transform: 'translate3d(0,20px,0) scale(0.98)', opacity: 0 },
@@ -251,7 +272,6 @@ SwipeRenderer.prototype.reset = function() {
     if (this.likeBtn) this.likeBtn.classList.remove('decision-active');
 };
 
-// 🔥 FLY — через PX от viewport (не %)
 SwipeRenderer.prototype.fly = function(el, direction, physics) {
     var p = physics;
     var screenW = window.innerWidth;
@@ -269,4 +289,4 @@ SwipeRenderer.prototype.fly = function(el, direction, physics) {
 SwipeRenderer.prototype.flash = function(color) { this.flashEl.className = 'swipe-flash ' + color; this.flashEl.style.transition = 'none'; this.flashEl.style.opacity = '1'; var el = this.flashEl; requestAnimationFrame(function() { el.style.transition = 'opacity 0.15s ease'; el.style.opacity = '0'; }); };
 SwipeRenderer.prototype.pulse = function(color) { this.pulseEl.className = 'swipe-pulse ' + color + ' fire'; void this.pulseEl.offsetWidth; this.pulseEl.style.animation = 'none'; var el = this.pulseEl; requestAnimationFrame(function() { el.style.animation = 'pulseFire 0.5s ease-out forwards'; }); };
 
-console.log('✅ SWIPE-RENDERER v7 готов');
+console.log('✅ SWIPE-RENDERER v8 готов');
