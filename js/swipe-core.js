@@ -1,7 +1,7 @@
 // ============================================
-// SWIPE CORE — Physics + State Machine v3.1
+// SWIPE CORE — Physics + State Machine v3.2
 // ============================================
-console.log('🔥 SWIPE-CORE v3.1 загружен');
+console.log('🔥 SWIPE-CORE v3.2 загружен');
 
 var SwipeState = {
     IDLE: 'idle',
@@ -35,7 +35,7 @@ SwipeMachine.prototype.on = function(fn) {
 };
 
 // ============================================
-// PHYSICS ENGINE — SMOOTH & STABLE
+// PHYSICS ENGINE — iOS RUBBER BAND
 // ============================================
 var PhysicsEngine = function(config) {
     config = config || {};
@@ -43,29 +43,26 @@ var PhysicsEngine = function(config) {
     this.y = 0;
     this.targetX = 0;
     this.targetY = 0;
-    this.smoothing = config.smoothing || 0.44;           // 🔥 sweet spot 0.4–0.48
-    this.resistanceX = config.resistanceX || 170;        // 🔥 комфортно
+    this.smoothing = config.smoothing || 0.44;
+    this.resistanceX = config.resistanceX || 170;
     this.resistanceY = config.resistanceY || 95;
-    this.throwArcUp = config.throwArcUp !== undefined ? config.throwArcUp : -5;
+    this.throwArcUp = config.throwArcUp !== undefined ? config.throwArcUp : -4;
     this.throwArcDown = config.throwArcDown !== undefined ? config.throwArcDown : 3;
-    this.throwRotation = config.throwRotation !== undefined ? config.throwRotation : 30;
-    this.throwScale = config.throwScale !== undefined ? config.throwScale : 0.82;
+    this.throwRotation = config.throwRotation !== undefined ? config.throwRotation : 20;  // 🔥 30→20 дороже
+    this.throwScale = config.throwScale !== undefined ? config.throwScale : 0.84;
     this.throwBlur = config.throwBlur !== undefined ? config.throwBlur : 3;
     this.flyDuration = config.flyDuration !== undefined ? config.flyDuration : 0.30;
     this.flyEasing = config.flyEasing || 'cubic-bezier(0.22,0.61,0.36,1)';
     this.snapBackDuration = config.snapBackDuration !== undefined ? config.snapBackDuration : 0.28;
-    this.threshold = config.threshold !== undefined ? config.threshold : 88;            // 🔥 не слишком лёгкий
+    this.threshold = config.threshold !== undefined ? config.threshold : 88;
     this.velocityThreshold = config.velocityThreshold !== undefined ? config.velocityThreshold : 5;
     this.anticipationThreshold = 0.20;
     this.decisionThreshold = 0.58;
 };
 
-// 🔥 ПЛАВНАЯ КРИВАЯ — БЕЗ СКАЧКОВ
+// 🔥 iOS RUBBER BAND — tanh formula
 PhysicsEngine.prototype.applyResistance = function(v, max) {
-    var sign = v < 0 ? -1 : 1;
-    var abs = Math.abs(v);
-    var softened = abs * 0.82;
-    return sign * (softened / (1 + softened / max));
+    return max * Math.tanh(v / max);
 };
 
 PhysicsEngine.prototype.setTarget = function(dx, dy) {
@@ -95,8 +92,9 @@ PhysicsEngine.prototype.shouldCommit = function(velocityX) {
     return Math.abs(velocityX) > this.velocityThreshold || Math.abs(this.x) > this.threshold;
 };
 
+// 🔥 МЯГЧЕ — без micro-adjustments
 PhysicsEngine.prototype.isSettled = function() {
-    return Math.abs(this.targetX - this.x) < 0.6 && Math.abs(this.targetY - this.y) < 0.6;
+    return Math.abs(this.targetX - this.x) < 1.0 && Math.abs(this.targetY - this.y) < 1.0;
 };
 
 PhysicsEngine.prototype.reset = function() {
@@ -107,12 +105,12 @@ PhysicsEngine.prototype.reset = function() {
 };
 
 // ============================================
-// VELOCITY TRACKER — SMOOTH
+// VELOCITY TRACKER — CLEAN
 // ============================================
 var VelocityTracker = function(smoothing) {
     this.lastX = 0;
     this.vx = 0;
-    this.smoothing = smoothing || 0.32;  // 🔥 спокойный, без шума
+    this.smoothing = smoothing || 0.32;
 };
 
 VelocityTracker.prototype.update = function(x, dt) {
@@ -127,4 +125,4 @@ VelocityTracker.prototype.reset = function() {
     this.lastX = 0;
 };
 
-console.log('✅ SWIPE-CORE v3.1 готов');
+console.log('✅ SWIPE-CORE v3.2 готов');
