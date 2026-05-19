@@ -1,7 +1,7 @@
 // ============================================
-// SWIPE CORE — Physics + State Machine
+// SWIPE CORE — Physics + State Machine v2
 // ============================================
-console.log('🔥 SWIPE-CORE загружен');
+console.log('🔥 SWIPE-CORE v2 загружен');
 
 var SwipeState = {
     IDLE: 'idle',
@@ -18,9 +18,7 @@ var SwipeMachine = function() {
 };
 
 SwipeMachine.prototype.set = function(state) {
-    if (this.state === state) {
-        return;
-    }
+    if (this.state === state) return;
     var prev = this.state;
     this.state = state;
     for (var i = 0; i < this.listeners.length; i++) {
@@ -37,7 +35,7 @@ SwipeMachine.prototype.on = function(fn) {
 };
 
 // ============================================
-// PHYSICS ENGINE
+// PHYSICS ENGINE — FASTER
 // ============================================
 var PhysicsEngine = function(config) {
     config = config || {};
@@ -45,24 +43,25 @@ var PhysicsEngine = function(config) {
     this.y = 0;
     this.targetX = 0;
     this.targetY = 0;
-    this.smoothing = config.smoothing || 0.18;
-    this.resistanceX = config.resistanceX || 240;
-    this.resistanceY = config.resistanceY || 130;
-    this.throwArcUp = (config.throwArcUp !== undefined) ? config.throwArcUp : -8;
-    this.throwArcDown = (config.throwArcDown !== undefined) ? config.throwArcDown : 5;
-    this.throwRotation = (config.throwRotation !== undefined) ? config.throwRotation : 25;
-    this.throwScale = (config.throwScale !== undefined) ? config.throwScale : 0.88;
-    this.throwBlur = (config.throwBlur !== undefined) ? config.throwBlur : 5;
-    this.flyDuration = (config.flyDuration !== undefined) ? config.flyDuration : 0.55;
+    this.smoothing = config.smoothing || 0.35;     // 🔥 было 0.18 → 0.35 (резче)
+    this.resistanceX = config.resistanceX || 200;   // 🔥 было 240 → 200 (легче тащить)
+    this.resistanceY = config.resistanceY || 100;   // 🔥 было 130 → 100
+    this.throwArcUp = config.throwArcUp !== undefined ? config.throwArcUp : -6;
+    this.throwArcDown = config.throwArcDown !== undefined ? config.throwArcDown : 4;
+    this.throwRotation = config.throwRotation !== undefined ? config.throwRotation : 28;
+    this.throwScale = config.throwScale !== undefined ? config.throwScale : 0.85;
+    this.throwBlur = config.throwBlur !== undefined ? config.throwBlur : 4;
+    this.flyDuration = config.flyDuration !== undefined ? config.flyDuration : 0.4;  // 🔥 было 0.55 → 0.4
     this.flyEasing = config.flyEasing || 'cubic-bezier(0.19,1,0.22,1)';
-    this.snapBackDuration = (config.snapBackDuration !== undefined) ? config.snapBackDuration : 0.65;
-    this.threshold = (config.threshold !== undefined) ? config.threshold : 100;
-    this.velocityThreshold = (config.velocityThreshold !== undefined) ? config.velocityThreshold : 10;
-    this.anticipationThreshold = 0.25;
-    this.decisionThreshold = 0.7;
+    this.snapBackDuration = config.snapBackDuration !== undefined ? config.snapBackDuration : 0.45; // 🔥 было 0.65 → 0.45
+    this.threshold = config.threshold !== undefined ? config.threshold : 80;  // 🔥 было 100 → 80
+    this.velocityThreshold = config.velocityThreshold !== undefined ? config.velocityThreshold : 6; // 🔥 было 10 → 6
+    this.anticipationThreshold = 0.20;
+    this.decisionThreshold = 0.60;
 };
 
 PhysicsEngine.prototype.applyResistance = function(v, max) {
+    // 🔥 МЕНЬШЕ RESISTANCE — БЫСТРЕЕ
     return v / (1 + Math.abs(v) / max);
 };
 
@@ -94,7 +93,7 @@ PhysicsEngine.prototype.shouldCommit = function(velocityX) {
 };
 
 PhysicsEngine.prototype.isSettled = function() {
-    return Math.abs(this.targetX - this.x) < 0.3 && Math.abs(this.targetY - this.y) < 0.3;
+    return Math.abs(this.targetX - this.x) < 0.5 && Math.abs(this.targetY - this.y) < 0.5;
 };
 
 PhysicsEngine.prototype.reset = function() {
@@ -105,12 +104,12 @@ PhysicsEngine.prototype.reset = function() {
 };
 
 // ============================================
-// VELOCITY TRACKER
+// VELOCITY TRACKER — FASTER
 // ============================================
 var VelocityTracker = function(smoothing) {
     this.lastX = 0;
     this.vx = 0;
-    this.smoothing = smoothing || 0.25;
+    this.smoothing = smoothing || 0.5;  // 🔥 было 0.25 → 0.5 (быстрее реакция)
 };
 
 VelocityTracker.prototype.update = function(x, dt) {
@@ -125,4 +124,4 @@ VelocityTracker.prototype.reset = function() {
     this.lastX = 0;
 };
 
-console.log('✅ SWIPE-CORE готов');
+console.log('✅ SWIPE-CORE v2 готов');
