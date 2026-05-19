@@ -1,7 +1,7 @@
 // ============================================
-// SWIPE CORE — Physics + State Machine v3
+// SWIPE CORE — Physics + State Machine v3.1
 // ============================================
-console.log('🔥 SWIPE-CORE v3 загружен');
+console.log('🔥 SWIPE-CORE v3.1 загружен');
 
 var SwipeState = {
     IDLE: 'idle',
@@ -35,7 +35,7 @@ SwipeMachine.prototype.on = function(fn) {
 };
 
 // ============================================
-// PHYSICS ENGINE — ULTRA RESPONSIVE
+// PHYSICS ENGINE — SMOOTH & STABLE
 // ============================================
 var PhysicsEngine = function(config) {
     config = config || {};
@@ -43,27 +43,29 @@ var PhysicsEngine = function(config) {
     this.y = 0;
     this.targetX = 0;
     this.targetY = 0;
-    this.smoothing = config.smoothing || 0.62;           // 🔥 0.35 → 0.62 (почти instant)
-    this.resistanceX = config.resistanceX || 140;        // 🔥 200 → 140 (легче)
-    this.resistanceY = config.resistanceY || 80;         // 🔥 100 → 80
+    this.smoothing = config.smoothing || 0.44;           // 🔥 sweet spot 0.4–0.48
+    this.resistanceX = config.resistanceX || 170;        // 🔥 комфортно
+    this.resistanceY = config.resistanceY || 95;
     this.throwArcUp = config.throwArcUp !== undefined ? config.throwArcUp : -5;
     this.throwArcDown = config.throwArcDown !== undefined ? config.throwArcDown : 3;
     this.throwRotation = config.throwRotation !== undefined ? config.throwRotation : 30;
     this.throwScale = config.throwScale !== undefined ? config.throwScale : 0.82;
     this.throwBlur = config.throwBlur !== undefined ? config.throwBlur : 3;
-    this.flyDuration = config.flyDuration !== undefined ? config.flyDuration : 0.28;    // 🔥 0.4 → 0.28
+    this.flyDuration = config.flyDuration !== undefined ? config.flyDuration : 0.30;
     this.flyEasing = config.flyEasing || 'cubic-bezier(0.22,0.61,0.36,1)';
-    this.snapBackDuration = config.snapBackDuration !== undefined ? config.snapBackDuration : 0.26; // 🔥 0.45 → 0.26
-    this.threshold = config.threshold !== undefined ? config.threshold : 72;            // 🔥 80 → 72
-    this.velocityThreshold = config.velocityThreshold !== undefined ? config.velocityThreshold : 4; // 🔥 6 → 4
-    this.anticipationThreshold = 0.18;
-    this.decisionThreshold = 0.55;
+    this.snapBackDuration = config.snapBackDuration !== undefined ? config.snapBackDuration : 0.28;
+    this.threshold = config.threshold !== undefined ? config.threshold : 88;            // 🔥 не слишком лёгкий
+    this.velocityThreshold = config.velocityThreshold !== undefined ? config.velocityThreshold : 5;
+    this.anticipationThreshold = 0.20;
+    this.decisionThreshold = 0.58;
 };
 
-// 🔥 ULTRA-NATIVE RESISTANCE — мелкие движения без тормоза
+// 🔥 ПЛАВНАЯ КРИВАЯ — БЕЗ СКАЧКОВ
 PhysicsEngine.prototype.applyResistance = function(v, max) {
-    if (Math.abs(v) < 60) return v;  // первые 60px — 1:1 с пальцем
-    return v / (1 + Math.abs(v) / max);
+    var sign = v < 0 ? -1 : 1;
+    var abs = Math.abs(v);
+    var softened = abs * 0.82;
+    return sign * (softened / (1 + softened / max));
 };
 
 PhysicsEngine.prototype.setTarget = function(dx, dy) {
@@ -94,7 +96,7 @@ PhysicsEngine.prototype.shouldCommit = function(velocityX) {
 };
 
 PhysicsEngine.prototype.isSettled = function() {
-    return Math.abs(this.targetX - this.x) < 0.8 && Math.abs(this.targetY - this.y) < 0.8;
+    return Math.abs(this.targetX - this.x) < 0.6 && Math.abs(this.targetY - this.y) < 0.6;
 };
 
 PhysicsEngine.prototype.reset = function() {
@@ -105,12 +107,12 @@ PhysicsEngine.prototype.reset = function() {
 };
 
 // ============================================
-// VELOCITY TRACKER — INSTANT
+// VELOCITY TRACKER — SMOOTH
 // ============================================
 var VelocityTracker = function(smoothing) {
     this.lastX = 0;
     this.vx = 0;
-    this.smoothing = smoothing || 0.7;  // 🔥 0.5 → 0.7
+    this.smoothing = smoothing || 0.32;  // 🔥 спокойный, без шума
 };
 
 VelocityTracker.prototype.update = function(x, dt) {
@@ -125,4 +127,4 @@ VelocityTracker.prototype.reset = function() {
     this.lastX = 0;
 };
 
-console.log('✅ SWIPE-CORE v3 готов');
+console.log('✅ SWIPE-CORE v3.1 готов');
