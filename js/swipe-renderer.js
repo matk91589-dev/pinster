@@ -1,7 +1,7 @@
 // ============================================
-// SWIPE RENDERER — v9 FIXED SIZE + BACK ARROW
+// SWIPE RENDERER — v10 SINGLE ARROW + LOWER CARD
 // ============================================
-console.log('🔥 SWIPE-RENDERER v9 загружен');
+console.log('🔥 SWIPE-RENDERER v10 загружен');
 
 var SwipeRenderer = function() {
     this.scene = null;
@@ -29,44 +29,36 @@ var SwipeRenderer = function() {
 };
 
 SwipeRenderer.prototype.injectStyles = function() {
-    if (document.getElementById('swipe-v20-styles')) return;
+    if (document.getElementById('swipe-v21-styles')) return;
     var s = document.createElement('style');
-    s.id = 'swipe-v20-styles';
+    s.id = 'swipe-v21-styles';
     s.textContent = '';
 
-    // === VIEWPORT ===
     s.textContent += ':root{--tg-height:100vh}';
     s.textContent += 'html{background:#0a0a0f;overscroll-behavior:none;height:100vh}';
     s.textContent += 'body{background:#0a0a0f;overscroll-behavior:none;height:100vh}';
     s.textContent += '#swipeScreen{position:fixed;top:0;left:0;right:0;bottom:0;height:var(--tg-height);background:#0a0a0f;overflow:hidden;padding:0;margin:0}';
     s.textContent += '#swipeContainer{position:fixed;top:0;left:0;right:0;bottom:0;height:var(--tg-height);overflow:visible;padding:0;margin:0}';
 
-    // === BACKGROUND ===
     s.textContent += '.swipe-bg{position:fixed;top:0;left:0;right:0;bottom:0;background-size:cover;background-position:center;filter:blur(80px);transform:scale(1.2);opacity:0.12;transition:background-image 0.6s ease;z-index:0}';
     s.textContent += '.swipe-bg-glow{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none;transition:opacity 0.3s ease}';
     s.textContent += '.swipe-bg-glow.anticipating{opacity:1.5!important}';
 
-    // === STACK — ФИКСИРОВАННЫЙ РАЗМЕР ===
-    s.textContent += '.swipe-stack{position:absolute;top:0;left:50%;width:380px;height:475px;transform:translateX(-50%);perspective:1400px;transform-style:preserve-3d;isolation:isolate;z-index:1;overflow:visible}';
-    s.textContent += '@media(max-width:420px){.swipe-stack{width:92vw;height:calc(92vw * 1.25)}}';
+    s.textContent += '.swipe-stack{position:absolute;top:0;left:50%;width:380px;height:460px;transform:translateX(-50%);perspective:1400px;transform-style:preserve-3d;isolation:isolate;z-index:1;overflow:visible}';
+    s.textContent += '@media(max-width:420px){.swipe-stack{width:92vw;height:calc(92vw * 1.21)}}';
 
-    // === ОБЁРТКА ===
     s.textContent += '.swipe-card-wrapper{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:visible}';
 
-    // === КАРТОЧКА — ФИКСИРОВАННЫЙ РАЗМЕР ===
     s.textContent += '.swipe-card{position:relative;width:100%;height:100%;border-radius:18px;overflow:visible;background-color:#0a0a0f;background-size:cover;background-position:center 20%;background-repeat:no-repeat;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;box-shadow:0 10px 40px rgba(0,0,0,0.5);will-change:transform;transform:translate3d(0,0,0);backface-visibility:hidden;touch-action:none;flex-shrink:0}';
     s.textContent += '.swipe-card.back-2{transform:translate3d(0,22px,0) scale(0.9);opacity:0.15;z-index:0;filter:blur(4px)}';
     s.textContent += '.swipe-card.back-1{transform:translate3d(0,11px,0) scale(0.95);opacity:0.40;z-index:1;filter:blur(2px)}';
     s.textContent += '.swipe-card.active{transform:translate3d(0,0,0) scale(1);opacity:1;z-index:2}';
     s.textContent += '.swipe-card.decision-snap{transition:transform 0.06s ease!important}';
 
-    // === ГРАДИЕНТ ===
     s.textContent += '.swipe-card.filled::after{content:\'\';position:absolute;bottom:0;left:0;right:0;height:55%;background:linear-gradient(to top,rgba(0,0,0,0.99) 0%,rgba(0,0,0,0.96) 20%,rgba(0,0,0,0.85) 45%,rgba(0,0,0,0.50) 72%,rgba(0,0,0,0.10) 100%);z-index:1;pointer-events:none;border-radius:0 0 18px 18px}';
 
-    // === RIBBON ===
     s.textContent += '.swipe-ribbon{position:absolute;top:0;left:0;z-index:6;padding:7px 18px 6px 14px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--ribbon-bg,rgba(18,18,24,0.95));color:var(--ribbon-color,#FF5500);border-radius:18px 0 10px 0;border-bottom:1px solid var(--ribbon-color,#FF5500);border-right:1px solid var(--ribbon-color,#FF5500)}';
 
-    // === ТЕКСТ ===
     s.textContent += '.swipe-text{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:3px;margin-bottom:20px;width:100%}';
     s.textContent += '.swipe-id{font-size:10px;font-weight:700;color:#FF5500;text-transform:uppercase}';
     s.textContent += '.swipe-nick{font-size:28px;font-weight:900;color:#FFF;text-shadow:0 2px 14px rgba(0,0,0,0.7),0 8px 28px rgba(0,0,0,0.6)}';
@@ -74,15 +66,12 @@ SwipeRenderer.prototype.injectStyles = function() {
     s.textContent += '.swipe-sep{color:rgba(255,255,255,0.5)}';
     s.textContent += '.swipe-about{font-size:14px;color:rgba(255,255,255,0.85);line-height:1.5;margin-top:8px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.6)}';
 
-    // === КНОПКА ПРОФИЛЯ ===
     s.textContent += '.swipe-profile-btn{position:absolute;left:12px;right:12px;bottom:6px;z-index:5;height:42px;border-radius:11px;border:none;background:linear-gradient(135deg,#FF5500,#FF6B20);color:#fff;font-size:13px;font-weight:600;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,0.25),0 2px 6px rgba(0,0,0,0.25)}';
 
-    // === BADGES ===
     s.textContent += '.swipe-badge{position:absolute;top:35%;padding:10px 18px;border-radius:14px;font-size:28px;font-weight:800;z-index:10;opacity:0;pointer-events:none;text-shadow:0 2px 8px rgba(0,0,0,0.5)}';
     s.textContent += '.swipe-badge.like{right:12px;color:#34FF8A;transform:translateY(-50%)}';
     s.textContent += '.swipe-badge.skip{left:12px;color:#FF4D6D;transform:translateY(-50%)}';
 
-    // === КНОПКИ ПО БОКАМ ===
     s.textContent += '.swipe-side-btns{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);pointer-events:none;z-index:25}';
     s.textContent += '.swipe-side-btn{position:absolute;top:50%;width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s ease;pointer-events:auto;box-shadow:0 4px 16px rgba(0,0,0,0.5)}';
     s.textContent += '.swipe-side-btn:active{transform:translateY(-50%) scale(0.85)!important}';
@@ -94,22 +83,19 @@ SwipeRenderer.prototype.injectStyles = function() {
     s.textContent += '.swipe-side-btn.skip-btn.decision-active{background:#FF4D6D!important;color:#fff!important;box-shadow:0 0 30px rgba(255,77,109,0.6)!important}';
     s.textContent += '.swipe-side-btn.like-btn.decision-active{background:#FF5500!important;color:#fff!important;box-shadow:0 0 30px rgba(255,85,0,0.6)!important}';
 
-    // === FLASH / PULSE ===
     s.textContent += '.swipe-flash{position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;pointer-events:none;opacity:0}';
     s.textContent += '.swipe-pulse{position:fixed;top:50%;left:50%;width:180px;height:180px;border-radius:50%;z-index:45;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(0)}';
     s.textContent += '.swipe-pulse.fire{animation:pulseFire 0.5s ease-out forwards}';
     s.textContent += '@keyframes pulseFire{0%{transform:translate(-50%,-50%) scale(0.4);opacity:0.8}100%{transform:translate(-50%,-50%) scale(2);opacity:0}}';
 
-    // === 🔥 BACK ARROW — БЕЗ КРУЖКА, ПОД ХЕДЕРОМ ===
-    s.textContent += '.swipe-back-arrow{position:absolute;top:52px;left:16px;z-index:30;cursor:pointer;display:flex;align-items:center;justify-content:center;width:32px;height:32px;transition:transform 0.15s ease,opacity 0.15s ease}';
+    // 🔥 ОДНА СТРЕЛКА — БЕЗ КРУЖКА
+    s.textContent += '.swipe-back-arrow{position:absolute;top:10px;left:16px;z-index:30;cursor:pointer;display:flex;align-items:center;justify-content:center;width:32px;height:32px;transition:transform 0.15s ease,opacity 0.15s ease}';
     s.textContent += '.swipe-back-arrow:active{transform:scale(0.85);opacity:0.7}';
     s.textContent += '.swipe-back-arrow svg{width:28px;height:28px;stroke:#FF5500;stroke-width:2.5;fill:none}';
 
-    // === HEART ===
     s.textContent += '.swipe-heart-particle{position:absolute;top:50%;left:50%;font-size:20px;pointer-events:none;z-index:20;animation:heartBurst 0.8s ease-out forwards}';
     s.textContent += '@keyframes heartBurst{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--bx),var(--by)) scale(0);opacity:0}}';
 
-    // === ONBOARDING ===
     s.textContent += '.swipe-onboarding{position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;pointer-events:none;background:rgba(0,0,0,0.55);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s ease}';
     s.textContent += '.swipe-onboarding.show{opacity:1}';
     s.textContent += '.swipe-onboarding-zones{display:flex;width:100%;justify-content:space-between;padding:0 20px;position:absolute;top:50%;transform:translateY(-50%)}';
@@ -118,7 +104,6 @@ SwipeRenderer.prototype.injectStyles = function() {
     s.textContent += '.swipe-onboarding-zone.like{background:rgba(52,255,138,0.2);border:2px solid #34FF8A;color:#34FF8A}';
     s.textContent += '.swipe-onboarding-text{position:absolute;top:25%;color:rgba(255,255,255,0.8);font-size:13px;text-align:center;font-weight:500}';
 
-    // === WIGGLE ===
     s.textContent += '@keyframes idleWiggle{0%,100%{transform:translate3d(0,0,0) rotate(0deg)}25%{transform:translate3d(0,0,0) rotate(2deg)}75%{transform:translate3d(0,0,0) rotate(-2deg)}}';
     s.textContent += '.swipe-card.wiggle{animation:idleWiggle 1.5s ease-in-out 2}';
 
@@ -131,9 +116,7 @@ SwipeRenderer.prototype.initViewport = function() {
         window.Telegram.WebApp.setBackgroundColor('#0a0a0f');
         window.Telegram.WebApp.setHeaderColor('#0a0a0f');
         var tgHeight = window.Telegram.WebApp.viewportStableHeight;
-        if (tgHeight) {
-            document.documentElement.style.setProperty('--tg-height', tgHeight + 'px');
-        }
+        if (tgHeight) { document.documentElement.style.setProperty('--tg-height', tgHeight + 'px'); }
     }
     document.documentElement.style.height = '100vh';
     document.documentElement.style.background = '#0a0a0f';
@@ -142,14 +125,13 @@ SwipeRenderer.prototype.initViewport = function() {
     document.body.style.overscrollBehavior = 'none';
 };
 
+// 🔥 КАРТОЧКА НИЖЕ ЦЕНТРА
 SwipeRenderer.prototype.centerStack = function() {
     var h = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp.viewportStableHeight : window.innerHeight;
-    var cardH = 475;
-    var top = (h - cardH) / 2;
-    if (top < 56) top = 56; // не заезжает под хедер
-    if (this.stackContainer) {
-        this.stackContainer.style.top = top + 'px';
-    }
+    var cardH = 460;
+    var top = (h - cardH) / 2 + 30;
+    if (top < 60) top = 60;
+    if (this.stackContainer) { this.stackContainer.style.top = top + 'px'; }
 };
 
 SwipeRenderer.prototype.buildScene = function() {
@@ -165,11 +147,11 @@ SwipeRenderer.prototype.buildScene = function() {
 
     this.scene = container;
 
-    // 🔥 СТРЕЛКА НАЗАД — БЕЗ КРУЖКА
+    // 🔥 ОДНА СТРЕЛКА
     this.backArrow = document.createElement('div');
     this.backArrow.className = 'swipe-back-arrow';
     this.backArrow.innerHTML = '<svg viewBox="0 0 24 24"><path d="M15 18L9 12L15 6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    this.backArrow.onclick = function() { if (window.Swipe) Swipe.goBack(); };
+    this.backArrow.onclick = function() { if (window.App) App.goBack(); };
     this.scene.appendChild(this.backArrow);
 
     this.bgLayer = document.createElement('div'); this.bgLayer.className = 'swipe-bg'; this.scene.appendChild(this.bgLayer);
@@ -299,4 +281,4 @@ SwipeRenderer.prototype.fly = function(el, direction, physics) {
 SwipeRenderer.prototype.flash = function(color) { this.flashEl.className = 'swipe-flash ' + color; this.flashEl.style.transition = 'none'; this.flashEl.style.opacity = '1'; var el = this.flashEl; requestAnimationFrame(function() { el.style.transition = 'opacity 0.15s ease'; el.style.opacity = '0'; }); };
 SwipeRenderer.prototype.pulse = function(color) { this.pulseEl.className = 'swipe-pulse ' + color + ' fire'; void this.pulseEl.offsetWidth; this.pulseEl.style.animation = 'none'; var el = this.pulseEl; requestAnimationFrame(function() { el.style.animation = 'pulseFire 0.5s ease-out forwards'; }); };
 
-console.log('✅ SWIPE-RENDERER v9 готов');
+console.log('✅ SWIPE-RENDERER v10 готов');
