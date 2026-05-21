@@ -1,7 +1,7 @@
 // ============================================
-// SWIPE RENDERER — v10 SINGLE ARROW + LOWER CARD
+// SWIPE RENDERER — v11 HEART BUTTONS + NO COPY
 // ============================================
-console.log('🔥 SWIPE-RENDERER v10 загружен');
+console.log('🔥 SWIPE-RENDERER v11 загружен');
 
 var SwipeRenderer = function() {
     this.scene = null;
@@ -29,16 +29,19 @@ var SwipeRenderer = function() {
 };
 
 SwipeRenderer.prototype.injectStyles = function() {
-    if (document.getElementById('swipe-v21-styles')) return;
+    if (document.getElementById('swipe-v22-styles')) return;
     var s = document.createElement('style');
-    s.id = 'swipe-v21-styles';
+    s.id = 'swipe-v22-styles';
     s.textContent = '';
 
     s.textContent += ':root{--tg-height:100vh}';
     s.textContent += 'html{background:#0a0a0f;overscroll-behavior:none;height:100vh}';
     s.textContent += 'body{background:#0a0a0f;overscroll-behavior:none;height:100vh}';
-    s.textContent += '#swipeScreen{position:fixed;top:0;left:0;right:0;bottom:0;height:var(--tg-height);background:#0a0a0f;overflow:hidden;padding:0;margin:0}';
+    s.textContent += '#swipeScreen{position:fixed;top:0;left:0;right:0;bottom:0;height:var(--tg-height);background:#0a0a0f;overflow:visible;padding:0;margin:0}';
     s.textContent += '#swipeContainer{position:fixed;top:0;left:0;right:0;bottom:0;height:var(--tg-height);overflow:visible;padding:0;margin:0}';
+    
+    // 🔥 ЗАЩИТА ОТ КОПИРОВАНИЯ
+    s.textContent += '.swipe-card,.swipe-card *,.swipe-text,.swipe-text *,.swipe-nick,.swipe-stats,.swipe-about,.swipe-id{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}';
 
     s.textContent += '.swipe-bg{position:fixed;top:0;left:0;right:0;bottom:0;background-size:cover;background-position:center;filter:blur(80px);transform:scale(1.2);opacity:0.12;transition:background-image 0.6s ease;z-index:0}';
     s.textContent += '.swipe-bg-glow{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none;transition:opacity 0.3s ease}';
@@ -68,28 +71,28 @@ SwipeRenderer.prototype.injectStyles = function() {
 
     s.textContent += '.swipe-profile-btn{position:absolute;left:12px;right:12px;bottom:6px;z-index:5;height:42px;border-radius:11px;border:none;background:linear-gradient(135deg,#FF5500,#FF6B20);color:#fff;font-size:13px;font-weight:600;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,0.25),0 2px 6px rgba(0,0,0,0.25)}';
 
-    s.textContent += '.swipe-badge{position:absolute;top:35%;padding:10px 18px;border-radius:14px;font-size:28px;font-weight:800;z-index:10;opacity:0;pointer-events:none;text-shadow:0 2px 8px rgba(0,0,0,0.5)}';
-    s.textContent += '.swipe-badge.like{right:12px;color:#34FF8A;transform:translateY(-50%)}';
-    s.textContent += '.swipe-badge.skip{left:12px;color:#FF4D6D;transform:translateY(-50%)}';
+    // 🔥 БОЛЬШИЕ НАДПИСИ БЛИЖЕ К ЦЕНТРУ
+    s.textContent += '.swipe-badge{position:absolute;top:30%;padding:14px 22px;border-radius:16px;font-size:32px;font-weight:800;z-index:10;opacity:0;pointer-events:none;text-shadow:0 2px 10px rgba(0,0,0,0.6);letter-spacing:1px}';
+    s.textContent += '.swipe-badge.like{left:50%;transform:translateX(-50%) translateY(-50%);color:#34FF8A}';
+    s.textContent += '.swipe-badge.skip{left:50%;transform:translateX(-50%) translateY(-50%);color:#FF4D6D}';
 
-    s.textContent += '.swipe-side-btns{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);pointer-events:none;z-index:25}';
-    s.textContent += '.swipe-side-btn{position:absolute;top:50%;width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s ease;pointer-events:auto;box-shadow:0 4px 16px rgba(0,0,0,0.5)}';
-    s.textContent += '.swipe-side-btn:active{transform:translateY(-50%) scale(0.85)!important}';
-    s.textContent += '.swipe-side-btn.skip-btn{left:-56px;transform:translateY(-50%);background:rgba(15,15,20,0.9);color:#FF4D6D}';
-    s.textContent += '.swipe-side-btn.skip-btn:active{background:#FF4D6D;color:#fff}';
-    s.textContent += '.swipe-side-btn.like-btn{right:-56px;transform:translateY(-50%);background:rgba(15,15,20,0.9);color:#FF5500}';
-    s.textContent += '.swipe-side-btn.like-btn:active{background:#FF5500;color:#fff}';
-    s.textContent += '.swipe-side-btn.decision-active{transform:translateY(-50%) scale(1.2)!important}';
-    s.textContent += '.swipe-side-btn.skip-btn.decision-active{background:#FF4D6D!important;color:#fff!important;box-shadow:0 0 30px rgba(255,77,109,0.6)!important}';
-    s.textContent += '.swipe-side-btn.like-btn.decision-active{background:#FF5500!important;color:#fff!important;box-shadow:0 0 30px rgba(255,85,0,0.6)!important}';
+    // 🔥 КНОПКИ-СЕРДЕЧКИ ПО БОКАМ
+    s.textContent += '.swipe-heart-btns{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);pointer-events:none;z-index:25;display:flex;justify-content:space-between;padding:0 12px}';
+    s.textContent += '.swipe-heart-btn{width:56px;height:56px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease;pointer-events:auto;background:rgba(0,0,0,0.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}';
+    s.textContent += '.swipe-heart-btn:active{transform:scale(0.85)}';
+    s.textContent += '.swipe-heart-btn.skip-btn{border-color:rgba(255,77,109,0.5);color:rgba(255,77,109,0.6)}';
+    s.textContent += '.swipe-heart-btn.skip-btn:active{background:rgba(255,77,109,0.3);border-color:#FF4D6D;color:#FF4D6D}';
+    s.textContent += '.swipe-heart-btn.like-btn{border-color:rgba(255,85,0,0.5);color:rgba(255,85,0,0.6)}';
+    s.textContent += '.swipe-heart-btn.like-btn:active{background:rgba(255,85,0,0.3);border-color:#FF5500;color:#FF5500}';
+    s.textContent += '.swipe-heart-btn.like-btn.liked{background:#FF5500;border-color:#FF5500;color:#fff}';
+    s.textContent += '.swipe-heart-btn svg{width:26px;height:26px}';
 
     s.textContent += '.swipe-flash{position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;pointer-events:none;opacity:0}';
     s.textContent += '.swipe-pulse{position:fixed;top:50%;left:50%;width:180px;height:180px;border-radius:50%;z-index:45;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(0)}';
     s.textContent += '.swipe-pulse.fire{animation:pulseFire 0.5s ease-out forwards}';
     s.textContent += '@keyframes pulseFire{0%{transform:translate(-50%,-50%) scale(0.4);opacity:0.8}100%{transform:translate(-50%,-50%) scale(2);opacity:0}}';
 
-    // 🔥 ОДНА СТРЕЛКА — БЕЗ КРУЖКА
-    s.textContent += '.swipe-back-arrow{position:absolute;top:10px;left:16px;z-index:30;cursor:pointer;display:flex;align-items:center;justify-content:center;width:32px;height:32px;transition:transform 0.15s ease,opacity 0.15s ease}';
+    s.textContent += '.swipe-back-arrow{position:absolute;top:10px;left:16px;z-index:999;cursor:pointer;display:flex;align-items:center;justify-content:center;width:32px;height:32px;transition:transform 0.15s ease,opacity 0.15s ease}';
     s.textContent += '.swipe-back-arrow:active{transform:scale(0.85);opacity:0.7}';
     s.textContent += '.swipe-back-arrow svg{width:28px;height:28px;stroke:#FF5500;stroke-width:2.5;fill:none}';
 
@@ -98,11 +101,6 @@ SwipeRenderer.prototype.injectStyles = function() {
 
     s.textContent += '.swipe-onboarding{position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;pointer-events:none;background:rgba(0,0,0,0.55);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s ease}';
     s.textContent += '.swipe-onboarding.show{opacity:1}';
-    s.textContent += '.swipe-onboarding-zones{display:flex;width:100%;justify-content:space-between;padding:0 20px;position:absolute;top:50%;transform:translateY(-50%)}';
-    s.textContent += '.swipe-onboarding-zone{padding:16px 20px;border-radius:16px;font-size:16px;font-weight:700}';
-    s.textContent += '.swipe-onboarding-zone.skip{background:rgba(255,77,109,0.2);border:2px solid #FF4D6D;color:#FF4D6D}';
-    s.textContent += '.swipe-onboarding-zone.like{background:rgba(52,255,138,0.2);border:2px solid #34FF8A;color:#34FF8A}';
-    s.textContent += '.swipe-onboarding-text{position:absolute;top:25%;color:rgba(255,255,255,0.8);font-size:13px;text-align:center;font-weight:500}';
 
     s.textContent += '@keyframes idleWiggle{0%,100%{transform:translate3d(0,0,0) rotate(0deg)}25%{transform:translate3d(0,0,0) rotate(2deg)}75%{transform:translate3d(0,0,0) rotate(-2deg)}}';
     s.textContent += '.swipe-card.wiggle{animation:idleWiggle 1.5s ease-in-out 2}';
@@ -125,7 +123,6 @@ SwipeRenderer.prototype.initViewport = function() {
     document.body.style.overscrollBehavior = 'none';
 };
 
-// 🔥 КАРТОЧКА НИЖЕ ЦЕНТРА
 SwipeRenderer.prototype.centerStack = function() {
     var h = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp.viewportStableHeight : window.innerHeight;
     var cardH = 460;
@@ -142,18 +139,23 @@ SwipeRenderer.prototype.buildScene = function() {
     container.innerHTML = '';
     container.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;overflow:visible;padding:0!important;margin:0!important;';
 
-    var swipeScreen = document.getElementById('swipeScreen');
-    if (swipeScreen) { swipeScreen.style.padding = '0'; swipeScreen.style.margin = '0'; }
+    var swipeScreenEl = document.getElementById('swipeScreen');
+    if (swipeScreenEl) {
+        swipeScreenEl.style.padding = '0';
+        swipeScreenEl.style.margin = '0';
+        swipeScreenEl.style.overflow = 'visible';
+        
+        var oldArrow = swipeScreenEl.querySelector('.swipe-back-arrow');
+        if (oldArrow) oldArrow.remove();
+        
+        this.backArrow = document.createElement('div');
+        this.backArrow.className = 'swipe-back-arrow';
+        this.backArrow.innerHTML = '<svg viewBox="0 0 24 24"><path d="M15 18L9 12L15 6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        this.backArrow.onclick = function() { if (window.App) App.goBack(); };
+        swipeScreenEl.appendChild(this.backArrow);
+    }
 
     this.scene = container;
-
-    // 🔥 ОДНА СТРЕЛКА
-    this.backArrow = document.createElement('div');
-    this.backArrow.className = 'swipe-back-arrow';
-    this.backArrow.innerHTML = '<svg viewBox="0 0 24 24"><path d="M15 18L9 12L15 6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    this.backArrow.onclick = function() { if (window.App) App.goBack(); };
-    this.scene.appendChild(this.backArrow);
-
     this.bgLayer = document.createElement('div'); this.bgLayer.className = 'swipe-bg'; this.scene.appendChild(this.bgLayer);
     this.glowLayer = document.createElement('div'); this.glowLayer.className = 'swipe-bg-glow'; this.scene.appendChild(this.glowLayer);
     this.stackContainer = document.createElement('div'); this.stackContainer.className = 'swipe-stack'; this.scene.appendChild(this.stackContainer);
@@ -180,21 +182,31 @@ SwipeRenderer.prototype.showCard = function(data, mode, nextCard, nextNextCard) 
     this.activeCard = this.makeCardElement(data, mode, 'active', rc);
     wrapper.appendChild(this.activeCard);
 
-    var sideBtns = document.createElement('div'); sideBtns.className = 'swipe-side-btns';
-    sideBtns.innerHTML = '<button class="swipe-side-btn skip-btn" id="swipeSkipBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><button class="swipe-side-btn like-btn" id="swipeLikeBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 21s-7-4.35-9.33-8.28C.36 8.94 2.4 4 6.72 4c2.28 0 3.72 1.44 5.28 3.12C13.56 5.44 15 4 17.28 4c4.32 0 6.36 4.94 4.05 8.72C19 16.65 12 21 12 21z"/></svg></button>';
-    wrapper.appendChild(sideBtns);
+    // 🔥 КНОПКИ-СЕРДЕЧКИ
+    var heartBtns = document.createElement('div');
+    heartBtns.className = 'swipe-heart-btns';
+    heartBtns.innerHTML = '<button class="swipe-heart-btn skip-btn" id="swipeSkipHeart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5c-3-4-9-2-9 5s6 9 9 11"/><path d="M12 5c3-4 9-2 9 5s-6 9-9 11"/><line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="swipe-heart-btn like-btn" id="swipeLikeHeart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>';
+    wrapper.appendChild(heartBtns);
 
-    this.skipBtn = sideBtns.querySelector('#swipeSkipBtn');
-    this.likeBtn = sideBtns.querySelector('#swipeLikeBtn');
+    this.skipBtn = heartBtns.querySelector('#swipeSkipHeart');
+    this.likeBtn = heartBtns.querySelector('#swipeLikeHeart');
     var self = this;
     this.skipBtn.onclick = function(e) { e.stopPropagation(); Swipe.reject(); };
-    this.likeBtn.onclick = function(e) { e.stopPropagation(); Swipe.like(); };
+    this.likeBtn.onclick = function(e) {
+        e.stopPropagation();
+        this.classList.add('liked');
+        setTimeout(function() { this.classList.remove('liked'); }.bind(this), 600);
+        Swipe.like();
+    };
 
     this.back1 = this.stackContainer.querySelector('.back-1');
     this.back2 = this.stackContainer.querySelector('.back-2');
 
-    this.likeBadge = document.createElement('div'); this.likeBadge.className = 'swipe-badge like'; this.likeBadge.innerHTML = 'LIKE'; this.activeCard.appendChild(this.likeBadge);
-    this.skipBadge = document.createElement('div'); this.skipBadge.className = 'swipe-badge skip'; this.skipBadge.innerHTML = 'SKIP'; this.activeCard.appendChild(this.skipBadge);
+    // 🔥 НАДПИСИ БОЛЬШИЕ ПО ЦЕНТРУ
+    this.likeBadge = document.createElement('div'); this.likeBadge.className = 'swipe-badge like'; this.likeBadge.innerHTML = '❤️ LIKE';
+    this.activeCard.appendChild(this.likeBadge);
+    this.skipBadge = document.createElement('div'); this.skipBadge.className = 'swipe-badge skip'; this.skipBadge.innerHTML = '💔 SKIP';
+    this.activeCard.appendChild(this.skipBadge);
 
     this.stackContainer.appendChild(wrapper);
     this.centerStack();
@@ -249,8 +261,8 @@ SwipeRenderer.prototype.renderProgress = function(progress, physicsX) {
     if (self.back1) { self.back1.style.transition = 'none'; self.back1.style.transform = 'translate3d(' + (progress * 8) + 'px,' + (11 - progress * 16) + 'px,0) scale(' + (0.95 + progress * 0.06) + ') rotate(' + (progress * 2 * (physicsX > 0 ? 1 : -1)) + 'deg)'; self.back1.style.opacity = 0.40 + progress * 0.35; }
     if (self.back2) { self.back2.style.transition = 'none'; self.back2.style.transform = 'translate3d(' + (progress * 4) + 'px,' + (22 - progress * 12) + 'px,0) scale(' + (0.9 + progress * 0.04) + ') rotate(' + (progress * 1.5 * (physicsX > 0 ? 1 : -1)) + 'deg)'; self.back2.style.opacity = 0.15 + progress * 0.15; }
     var lp = Math.min(Math.max(physicsX / 110, 0), 1); var sp = Math.min(Math.max(-physicsX / 110, 0), 1);
-    if (self.likeBadge) { self.likeBadge.style.opacity = lp; self.likeBadge.style.transform = 'translateY(-50%) scale(' + (0.8 + lp * 0.3) + ')'; }
-    if (self.skipBadge) { self.skipBadge.style.opacity = sp; self.skipBadge.style.transform = 'translateY(-50%) scale(' + (0.8 + sp * 0.3) + ')'; }
+    if (self.likeBadge) { self.likeBadge.style.opacity = lp; }
+    if (self.skipBadge) { self.skipBadge.style.opacity = sp; }
 };
 
 SwipeRenderer.prototype.reset = function() {
@@ -260,8 +272,6 @@ SwipeRenderer.prototype.reset = function() {
     if (this.back1) { this.back1.style.transition = 'all 0.45s ease'; this.back1.style.transform = 'translate3d(0,11px,0) scale(0.95)'; this.back1.style.opacity = '0.40'; }
     if (this.back2) { this.back2.style.transition = 'all 0.45s ease'; this.back2.style.transform = 'translate3d(0,22px,0) scale(0.9)'; this.back2.style.opacity = '0.15'; }
     this.glowLayer.classList.remove('anticipating');
-    if (this.skipBtn) this.skipBtn.classList.remove('decision-active');
-    if (this.likeBtn) this.likeBtn.classList.remove('decision-active');
 };
 
 SwipeRenderer.prototype.fly = function(el, direction, physics) {
@@ -281,4 +291,4 @@ SwipeRenderer.prototype.fly = function(el, direction, physics) {
 SwipeRenderer.prototype.flash = function(color) { this.flashEl.className = 'swipe-flash ' + color; this.flashEl.style.transition = 'none'; this.flashEl.style.opacity = '1'; var el = this.flashEl; requestAnimationFrame(function() { el.style.transition = 'opacity 0.15s ease'; el.style.opacity = '0'; }); };
 SwipeRenderer.prototype.pulse = function(color) { this.pulseEl.className = 'swipe-pulse ' + color + ' fire'; void this.pulseEl.offsetWidth; this.pulseEl.style.animation = 'none'; var el = this.pulseEl; requestAnimationFrame(function() { el.style.animation = 'pulseFire 0.5s ease-out forwards'; }); };
 
-console.log('✅ SWIPE-RENDERER v10 готов');
+console.log('✅ SWIPE-RENDERER v11 готов');
