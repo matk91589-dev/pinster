@@ -3,39 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Pingster — Telegram Mini App</title>
+    <meta name="telegram-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Pingster — CS2 Team Finder</title>
     
     <script>
         window.BUILD_VERSION = Date.now();
-        console.log('🔄 Версия сборки:', window.BUILD_VERSION);
+        console.log('🔄 Build:', window.BUILD_VERSION);
+        
+        // 🔥 Проверка фич Telegram Mini App
+        window.TG_FEATURES = {
+            fullscreen: false,
+            nativeChat: false,
+            deviceStorage: false,
+            version: '0.0'
+        };
     </script>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        body { background-color: #0D0F15; margin: 0; padding: 0; }
-        #app-loader { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0D0F15; z-index: 999999; display: flex; align-items: center; justify-content: center; transition: opacity 0.3s ease; }
-        .loader-spinner { width: 44px; height: 44px; border: 3px solid rgba(255,85,0,0.2); border-top: 3px solid #FF5500; border-radius: 50%; animation: loaderSpin 0.8s linear infinite; }
+        /* ===== БАЗА ===== */
+        body { 
+            background-color: #0D0F15; 
+            margin: 0; 
+            padding: 0;
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* ===== ЗАГРУЗЧИК ===== */
+        #app-loader { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: #0D0F15; z-index: 999999; 
+            display: flex; align-items: center; justify-content: center; 
+            transition: opacity 0.3s ease; 
+        }
+        .loader-spinner { 
+            width: 44px; height: 44px; 
+            border: 3px solid rgba(255,85,0,0.2); 
+            border-top: 3px solid #FF5500; 
+            border-radius: 50%; 
+            animation: loaderSpin 0.8s linear infinite; 
+        }
         @keyframes loaderSpin { to { transform: rotate(360deg); } }
+        
+        /* ===== ИКОНКИ ===== */
         .icon-settings.active svg { stroke: #FF5500 !important; }
+        .icon-svg { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        
+        /* ===== ССЫЛКИ С КОПИРОВАНИЕМ ===== */
         .link-with-copy { position: relative; display: flex; align-items: center; width: 100%; }
         .link-with-copy .input-field { width: 100%; padding-right: 40px !important; }
-        .copy-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; padding: 6px; z-index: 5; }
-        .copy-btn svg { width: 18px; height: 18px; stroke: #9BA1B0; }
+        .copy-btn { 
+            position: absolute; right: 8px; top: 50%; transform: translateY(-50%); 
+            background: transparent; border: none; cursor: pointer; padding: 6px; z-index: 5; 
+            transition: all 0.2s ease;
+        }
+        .copy-btn svg { width: 18px; height: 18px; stroke: #9BA1B0; transition: stroke 0.2s ease; }
+        .copy-btn.copied svg { stroke: #4CAF50; }
         .input-label span { color: #FF3B30 !important; font-weight: 600 !important; font-size: 11px !important; margin-left: 4px !important; }
         .screen { position: relative; }
         
+        /* ===== ПОПАПЫ ===== */
         .popup-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
             z-index: 1000; display: flex; align-items: center; justify-content: center;
+            animation: fadeIn 0.2s ease;
         }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
         .popup-card {
             background: linear-gradient(145deg, #1c1c24, #16161c);
             border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
             padding: 32px 24px; text-align: center; max-width: 320px; width: 85%;
             box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            animation: popupIn 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
         }
+        @keyframes popupIn { 
+            from { transform: scale(0.85); opacity: 0; } 
+            to { transform: scale(1); opacity: 1; } 
+        }
+        
         .popup-card-icon {
             width: 64px; height: 64px; margin: 0 auto 16px;
             background: rgba(255,85,0,0.1); border-radius: 50%;
@@ -47,16 +98,65 @@
             width: 100%; height: 48px; border-radius: 12px; border: none;
             background: #FF5500; color: #fff; font-size: 14px; font-weight: 600;
             cursor: pointer; margin-bottom: 10px;
+            transition: transform 0.15s ease, background 0.15s ease;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .popup-card-btn:active { transform: scale(0.97); background: #FF6B1A; }
-        .popup-card-close { background: transparent; border: none; color: rgba(255,255,255,0.4); font-size: 13px; cursor: pointer; }
+        .popup-card-btn.secondary {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.7);
+        }
+        .popup-card-close { 
+            background: transparent; border: none; 
+            color: rgba(255,255,255,0.4); font-size: 13px; cursor: pointer; 
+            padding: 8px;
+        }
         
+        /* ===== СВАЙП ===== */
         .swipe-container {
             display: flex; flex-direction: column; align-items: center;
             justify-content: flex-start; padding: 20px 0; width: 100%; height: 100%; overflow-y: auto;
         }
-
+        
+        /* ===== КНОПКА НАТИВНОГО ЧАТА ===== */
+        .native-chat-btn {
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            height: 38px; padding: 0 16px; border-radius: 10px; border: none;
+            background: linear-gradient(135deg, #FF5500, #FF6B20);
+            color: #fff; font-size: 12px; font-weight: 600; cursor: pointer;
+            flex-shrink: 0; white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(255,85,0,0.3);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .native-chat-btn:active { 
+            transform: scale(0.95); 
+            box-shadow: 0 1px 4px rgba(255,85,0,0.2);
+        }
+        .native-chat-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+        
+        /* ===== МЭТЧ ПОПАП ===== */
+        .match-popup-icon {
+            animation: matchBounce 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+        @keyframes matchBounce {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
         #anketaMyTab, #anketaLikesTab { transition: opacity 0.2s ease; }
+        
+        /* ===== СИНХРОНИЗАЦИЯ ===== */
+        #syncIndicator {
+            position: fixed; top: 10px; right: 10px;
+            background: #FF5500; color: #fff;
+            padding: 4px 10px; border-radius: 8px;
+            font-size: 11px; font-weight: 600;
+            z-index: 9999; opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex; align-items: center; gap: 4px;
+        }
+        #syncIndicator.visible { opacity: 1; }
     </style>
     
     <link rel="stylesheet" href="css/style.css">
@@ -64,30 +164,182 @@
 <body>
     <div id="app-loader"><div class="loader-spinner"></div></div>
     
+    <!-- 🔥 ИНДИКАТОР СИНХРОНИЗАЦИИ -->
+    <div id="syncIndicator">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+            <path d="M21 12a9 9 0 0 1-9 9m0-18a9 9 0 0 1 9 9" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        Синхр...
+    </div>
+    
+    <!-- 🔥 SVG ИКОНКИ (СПРАЙТ) -->
+    <svg style="display:none;" xmlns="http://www.w3.org/2000/svg">
+        <!-- Чат -->
+        <symbol id="icon-chat" viewBox="0 0 24 24">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" 
+                  stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/>
+        </symbol>
+        
+        <!-- Сердце (лайк) -->
+        <symbol id="icon-heart" viewBox="0 0 24 24">
+            <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" 
+                  stroke="currentColor" stroke-width="2" fill="none"/>
+        </symbol>
+        
+        <!-- Сердце заполненное -->
+        <symbol id="icon-heart-filled" viewBox="0 0 24 24">
+            <path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" 
+                  fill="currentColor"/>
+        </symbol>
+        
+        <!-- Мэтч -->
+        <symbol id="icon-match" viewBox="0 0 24 24">
+            <path d="M12 3l2.5 6.5L21 9l-4 5 1.5 7L12 17.5 5.5 21 7 14 3 9l6.5.5z" 
+                  stroke="currentColor" stroke-width="1.5" fill="none"/>
+        </symbol>
+        
+        <!-- Профиль -->
+        <symbol id="icon-profile" viewBox="0 0 24 24">
+            <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
+            <path d="M4 21c2-4 14-4 16 0" stroke="currentColor" stroke-width="2" fill="none"/>
+        </symbol>
+        
+        <!-- Копировать -->
+        <symbol id="icon-copy" viewBox="0 0 24 24">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" fill="none"/>
+        </symbol>
+        
+        <!-- Настройки -->
+        <symbol id="icon-settings" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z" 
+                  fill="none" stroke="currentColor" stroke-width="2"/>
+        </symbol>
+        
+        <!-- Редактировать -->
+        <symbol id="icon-edit" viewBox="0 0 24 24">
+            <path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" stroke-width="2" fill="none"/>
+        </symbol>
+        
+        <!-- Домой -->
+        <symbol id="icon-home" viewBox="0 0 24 24">
+            <path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z" 
+                  fill="none" stroke="currentColor" stroke-width="2"/>
+        </symbol>
+        
+        <!-- Карточки -->
+        <symbol id="icon-cards" viewBox="0 0 24 24">
+            <path d="M4 6V4h5M20 6V4h-5M4 18v2h5M20 18v2h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="12" cy="10" r="2.2" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M8 16.5c1.5-2.5 6.5-2.5 8 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </symbol>
+        
+        <!-- Стрелка -->
+        <symbol id="icon-arrow" viewBox="0 0 24 24">
+            <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </symbol>
+    </svg>
+    
     <script>
+        // 🔥 Вспомогательные функции
         window.copyToClipboard = function(text, btnElement) {
             if (!text || text === '' || text === 'Не указана') return;
             navigator.clipboard.writeText(text).then(() => {
-                if (btnElement) { btnElement.classList.add('copied'); setTimeout(() => btnElement.classList.remove('copied'), 1500); }
+                if (btnElement) { 
+                    btnElement.classList.add('copied'); 
+                    setTimeout(() => btnElement.classList.remove('copied'), 1500); 
+                }
             }).catch(() => {});
         };
+        
         window.copyFieldValue = function(fieldId, btnElement) {
             const input = document.getElementById(fieldId);
             if (!input || !input.value) return;
             navigator.clipboard.writeText(input.value).then(() => {
-                btnElement.classList.add('copied'); setTimeout(() => btnElement.classList.remove('copied'), 1500);
+                btnElement.classList.add('copied'); 
+                setTimeout(() => btnElement.classList.remove('copied'), 1500);
             }).catch(() => {});
         };
+        
+        // 🔥 НАТИВНЫЙ ЧАТ TELEGRAM
+        window.openNativeChat = function(username, nickname) {
+            console.log('🚀 Opening native chat with @' + username);
+            
+            if (window.Telegram?.WebApp?.requestChat) {
+                try {
+                    window.Telegram.WebApp.requestChat({ username: username });
+                    window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('medium');
+                    return;
+                } catch(e) {
+                    console.log('⚠️ requestChat failed:', e);
+                }
+            }
+            
+            // Фолбек
+            if (username) {
+                window.open('https://t.me/' + username, '_blank');
+            }
+        };
+        
+        // 🔥 DEVICE STORAGE
+        window.saveToDeviceStorage = function(key, value, callback) {
+            try {
+                if (window.Telegram?.WebApp?.CloudStorage) {
+                    window.Telegram.WebApp.CloudStorage.setItem(key, JSON.stringify(value), 
+                        (err, success) => {
+                            if (err) {
+                                localStorage.setItem(key, JSON.stringify(value));
+                            }
+                            if (callback) callback(!err);
+                        }
+                    );
+                } else {
+                    localStorage.setItem(key, JSON.stringify(value));
+                    if (callback) callback(true);
+                }
+            } catch(e) {
+                localStorage.setItem(key, JSON.stringify(value));
+                if (callback) callback(true);
+            }
+        };
+        
+        window.loadFromDeviceStorage = function(key, callback) {
+            try {
+                if (window.Telegram?.WebApp?.CloudStorage) {
+                    window.Telegram.WebApp.CloudStorage.getItem(key, (err, value) => {
+                        if (!err && value) {
+                            callback(JSON.parse(value));
+                        } else {
+                            const local = localStorage.getItem(key);
+                            callback(local ? JSON.parse(local) : null);
+                        }
+                    });
+                } else {
+                    const local = localStorage.getItem(key);
+                    callback(local ? JSON.parse(local) : null);
+                }
+            } catch(e) {
+                const local = localStorage.getItem(key);
+                callback(local ? JSON.parse(local) : null);
+            }
+        };
+        
+        // 🔥 ИНИЦИАЛИЗАЦИЯ ПРОФИЛЯ
         (function() {
             const version = Date.now();
             document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-                if (link.href && !link.href.includes('telegram')) link.href = link.href.split('?')[0] + '?v=' + version;
+                if (link.href && !link.href.includes('telegram')) 
+                    link.href = link.href.split('?')[0] + '?v=' + version;
             });
+            
             let telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
             if (telegramId) {
                 localStorage.setItem('telegram_id', telegramId);
                 fetch('https://matk91589-dev-pingster-backend-cee8.twc1.net/api/profile/get', {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
+                    method: 'POST', 
+                    headers: {'Content-Type':'application/json'},
                     body: JSON.stringify({telegram_id:telegramId})
                 }).then(r=>r.json()).then(data=>{
                     if(data.status=='ok'){
@@ -103,9 +355,13 @@
     
     <div class="phone-frame">
         <header class="header">
-            <div class="logo" onclick="Logo.handleClick()"><span class="ping">Ping</span><span class="ster">ster</span></div>
+            <div class="logo" onclick="Logo.handleClick()">
+                <span class="ping">Ping</span><span class="ster">ster</span>
+            </div>
             <div id="settingsIcon" class="icon-settings" onclick="App.openSettings()">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 3.4-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V22H9v-.6a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-3.4.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H2V9h.6a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-3.4.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2h6v.6a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1 2 3.4-.1.1a1.6 1.6 0 0 0-.3 1.8V9H22v4h-.6a1.6 1.6 0 0 0-1 1.5z"/></svg>
+                <svg viewBox="0 0 24 24" class="icon-svg">
+                    <use href="#icon-settings"/>
+                </svg>
             </div>
         </header>
 
@@ -124,22 +380,85 @@
 
             <!-- ПРОФИЛЬ -->
             <div id="profileScreen" class="screen profile-screen">
-                <div class="title-row"><div class="title-left"><div class="section-title">Ваш профиль</div><div class="edit-controls"><div id="editToggle" class="edit-title-icon" onclick="Profile.toggleEditMode()"><svg viewBox="0 0 24 24"><path d="M12 20h9" stroke="white" stroke-width="2"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="white" stroke-width="2"/></svg></div><div id="applyBtn" class="apply-btn" onclick="Profile.applyChanges()">Применить</div></div></div></div>
-                <div class="profile-header"><div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()"><div class="tg-avatar-svg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M6 16c0-2.5 3-3 6-3s6 .5 6 3" stroke="#ffffff" stroke-width="2" fill="none"/></svg></div></div><div class="profile-info"><div class="profile-name-label">ваш никнейм</div><div class="profile-name-row"><span id="profileName" class="profile-name" onclick="Profile.editName()">-</span></div></div></div>
+                <div class="title-row">
+                    <div class="title-left">
+                        <div class="section-title">Ваш профиль</div>
+                        <div class="edit-controls">
+                            <div id="editToggle" class="edit-title-icon" onclick="Profile.toggleEditMode()">
+                                <svg viewBox="0 0 24 24" class="icon-svg"><use href="#icon-edit"/></svg>
+                            </div>
+                            <div id="applyBtn" class="apply-btn" onclick="Profile.applyChanges()">Применить</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-header">
+                    <div id="profileAvatar" class="profile-avatar" onclick="Avatar.select()">
+                        <div class="tg-avatar-svg">
+                            <svg viewBox="0 0 24 24" class="icon-svg"><use href="#icon-profile"/></svg>
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name-label">ваш никнейм</div>
+                        <div class="profile-name-row">
+                            <span id="profileName" class="profile-name" onclick="Profile.editName()">-</span>
+                        </div>
+                    </div>
+                </div>
                 <div class="stats-row">
-                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input id="ratingValue" placeholder="0" value="0" readonly disabled><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
-                    <div class="stat-card"><div class="stat-label">Возраст</div><div class="stat-value"><input id="ageValue" placeholder="0-100" maxlength="3" readonly></div></div>
+                    <div class="stat-card">
+                        <div class="stat-label">Репутация</div>
+                        <div class="stat-value">
+                            <input id="ratingValue" placeholder="0" value="0" readonly disabled>
+                            <span class="heart-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24"><use href="#icon-heart"/></svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Возраст</div>
+                        <div class="stat-value">
+                            <input id="ageValue" placeholder="0-100" maxlength="3" readonly>
+                        </div>
+                    </div>
                 </div>
                 <div class="profile-stats">
-                    <div class="profile-stat-card"><div class="profile-stat-label">Ссылка Steam</div><div class="link-with-copy"><input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" readonly><button class="copy-btn" onclick="copyToClipboard(document.getElementById('steamDisplay').value, this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div></div>
-                    <div class="profile-stat-card"><div class="profile-stat-label">Ссылка Faceit</div><div class="link-with-copy"><input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit" readonly><button class="copy-btn" onclick="copyToClipboard(document.getElementById('faceitLinkDisplay').value, this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div></div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-label">Ссылка Steam</div>
+                        <div class="link-with-copy">
+                            <input type="text" class="profile-stat-value" id="steamDisplay" placeholder="введите ссылку на ваш профиль steam" readonly>
+                            <button class="copy-btn" onclick="copyToClipboard(document.getElementById('steamDisplay').value, this)">
+                                <svg viewBox="0 0 24 24" width="18" height="18"><use href="#icon-copy"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-label">Ссылка Faceit</div>
+                        <div class="link-with-copy">
+                            <input type="text" class="profile-stat-value" id="faceitLinkDisplay" placeholder="введите ссылку на ваш faceit" readonly>
+                            <button class="copy-btn" onclick="copyToClipboard(document.getElementById('faceitLinkDisplay').value, this)">
+                                <svg viewBox="0 0 24 24" width="18" height="18"><use href="#icon-copy"/></svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="friends-section"><div class="friends-header"><span class="friends-title">Ваши тиммейты: 0</span><div class="friends-actions"><div class="friends-arrow" onclick="Team.showTeamPage()"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="#FF5500" stroke-width="2" fill="none"/></svg></div></div></div><div class="friends-list" id="friendsList"></div></div>
+                <div class="friends-section">
+                    <div class="friends-header">
+                        <span class="friends-title">Ваши тиммейты: 0</span>
+                        <div class="friends-actions">
+                            <div class="friends-arrow" onclick="Team.showTeamPage()">
+                                <svg width="20" height="20" viewBox="0 0 24 24"><use href="#icon-arrow"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="friends-list" id="friendsList"></div>
+                </div>
             </div>
 
             <!-- КОМАНДА -->
             <div id="teamScreen" class="screen team-screen">
-                <div class="team-header" style="display:flex;align-items:center;justify-content:flex-start;position:relative;padding:12px 16px;"><div style="flex:1;"></div></div>
+                <div class="team-header" style="display:flex;align-items:center;justify-content:flex-start;position:relative;padding:12px 16px;">
+                    <div style="flex:1;"></div>
+                </div>
                 <div class="team-tabs">
                     <div class="team-tab active" onclick="Team.switchTab('friends', this)">ВАШИ ТИММЕЙТЫ</div>
                     <div class="team-tab" onclick="Team.switchTab('leaderboard', this)">ЛИДЕРБОРД</div>
@@ -149,14 +468,20 @@
 
             <!-- МОИ КАРТОЧКИ -->
             <div id="anketaScreen" class="screen anketa-screen">
-                <div class="team-header" style="display:flex;align-items:center;justify-content:flex-start;position:relative;padding:12px 16px;"><div style="flex:1;"></div></div>
+                <div class="team-header" style="display:flex;align-items:center;justify-content:flex-start;position:relative;padding:12px 16px;">
+                    <div style="flex:1;"></div>
+                </div>
                 <div class="team-tabs">
                     <div class="team-tab active" onclick="Anketa.switchTab('my', this)">МОИ КАРТОЧКИ</div>
                     <div class="team-tab" onclick="Anketa.switchTab('likes', this)">ЛАЙКИ</div>
                 </div>
                 <div class="team-content" id="anketaContent">
-                    <div id="anketaMyTab" style="padding:8px 0;"><div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div></div>
-                    <div id="anketaLikesTab" style="display:none;padding:8px 0;"><div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div></div>
+                    <div id="anketaMyTab" style="padding:8px 0;">
+                        <div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div>
+                    </div>
+                    <div id="anketaLikesTab" style="display:none;padding:8px 0;">
+                        <div style="text-align:center;padding:20px;color:#8E97A6;">Загрузка...</div>
+                    </div>
                 </div>
             </div>
 
@@ -167,11 +492,11 @@
                 <div class="input-label">Faceit ELO <span>*обязательно</span></div>
                 <input type="number" class="search-input-field" id="faceitELOInput" placeholder="0-5000">
                 <div class="stats-row">
-                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
+                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><use href="#icon-heart"/></svg></span></div></div>
                     <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="faceitAge" placeholder="0-100" maxlength="3"></div></div>
                 </div>
                 <div class="input-label">Ссылка Faceit</div>
-                <div class="link-with-copy"><input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit"><button class="copy-btn" onclick="copyFieldValue('faceitLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
+                <div class="link-with-copy"><input type="text" class="input-field" id="faceitLinkInput" placeholder="Ссылка на Faceit"><button class="copy-btn" onclick="copyFieldValue('faceitLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#icon-copy"/></svg></button></div>
                 <div class="input-label">О себе</div>
                 <div class="comment-section"><textarea class="comment-input" id="faceitAbout" placeholder="Введите комментарий"></textarea></div>
                 <button class="mode-search-btn" onclick="App.createCard('faceit')">Создать карточку</button>
@@ -184,11 +509,11 @@
                 <div class="input-label">CS Rating <span>*обязательно</span></div>
                 <input type="number" class="search-input-field" id="premierRatingInput" placeholder="0-40000">
                 <div class="stats-row">
-                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
+                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><use href="#icon-heart"/></svg></span></div></div>
                     <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="premierAge" placeholder="0-100" maxlength="3"></div></div>
                 </div>
                 <div class="input-label">Ссылка Steam</div>
-                <div class="link-with-copy"><input type="text" class="input-field" id="premierLinkInput" placeholder="Ссылка на Steam"><button class="copy-btn" onclick="copyFieldValue('premierLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
+                <div class="link-with-copy"><input type="text" class="input-field" id="premierLinkInput" placeholder="Ссылка на Steam"><button class="copy-btn" onclick="copyFieldValue('premierLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#icon-copy"/></svg></button></div>
                 <div class="input-label">О себе</div>
                 <div class="comment-section"><textarea class="comment-input" id="premierAbout" placeholder="Введите комментарий"></textarea></div>
                 <button class="mode-search-btn" onclick="App.createCard('premier')">Создать карточку</button>
@@ -209,11 +534,11 @@
                     <option>Supreme Master First Class</option><option>Global Elite</option>
                 </select>
                 <div class="stats-row">
-                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
+                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><use href="#icon-heart"/></svg></span></div></div>
                     <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="primeAge" placeholder="0-100" maxlength="3"></div></div>
                 </div>
                 <div class="input-label">Ссылка Steam</div>
-                <div class="link-with-copy"><input type="text" class="input-field" id="primeLinkInput" placeholder="Ссылка на Steam"><button class="copy-btn" onclick="copyFieldValue('primeLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
+                <div class="link-with-copy"><input type="text" class="input-field" id="primeLinkInput" placeholder="Ссылка на Steam"><button class="copy-btn" onclick="copyFieldValue('primeLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#icon-copy"/></svg></button></div>
                 <div class="input-label">О себе</div>
                 <div class="comment-section"><textarea class="comment-input" id="primeAbout" placeholder="Введите комментарий"></textarea></div>
                 <button class="mode-search-btn" onclick="App.createCard('prime')">Создать карточку</button>
@@ -234,11 +559,11 @@
                     <option>Supreme Master First Class</option><option>Global Elite</option>
                 </select>
                 <div class="stats-row">
-                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14 4 8C4 5.79086 5.79086 4 8 4C9.65685 4 11 5.34315 11 7C11 5.34315 12.3431 4 14 4C16.2091 4 18 5.79086 18 8C18 14 12 21 12 21Z" stroke="white" stroke-width="2" fill="none"/></svg></span></div></div>
+                    <div class="stat-card"><div class="stat-label">Репутация</div><div class="stat-value"><input type="text" placeholder="0" value="0" readonly><span class="heart-icon"><svg width="20" height="20" viewBox="0 0 24 24"><use href="#icon-heart"/></svg></span></div></div>
                     <div class="stat-card"><div class="stat-label">Возраст <span>*обязательно</span></div><div class="stat-value"><input type="text" id="publicAge" placeholder="0-100" maxlength="3"></div></div>
                 </div>
                 <div class="input-label">Ссылка Steam</div>
-                <div class="link-with-copy"><input type="text" class="input-field" id="publicLinkInput" placeholder="Ссылка на Steam"><button class="copy-btn" onclick="copyFieldValue('publicLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="#ffffff" stroke-width="2" fill="none"/></svg></button></div>
+                <div class="link-with-copy"><input type="text" class="input-field" id="publicLinkInput" placeholder="Ссылка на Steam"><button class="copy-btn" onclick="copyFieldValue('publicLinkInput', this)"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#icon-copy"/></svg></button></div>
                 <div class="input-label">О себе</div>
                 <div class="comment-section"><textarea class="comment-input" id="publicAbout" placeholder="Введите комментарий"></textarea></div>
                 <button class="mode-search-btn" onclick="App.createCard('public')">Создать карточку</button>
@@ -260,15 +585,15 @@
                 </div>
                 <div class="settings-section">
                     <div class="settings-section-title">ОСНОВНЫЕ</div>
-                    <div class="settings-row" onclick="App.goToCards('my')"><span class="settings-row-label">Мои карточки</span><span class="settings-arrow">→</span></div>
-                    <div class="settings-row" onclick="App.goToCards('likes')"><span class="settings-row-label">Лайки</span><span class="settings-arrow">→</span></div>
-                    <div class="settings-row" onclick="App.goToTeam('friends')"><span class="settings-row-label">Мои тиммейты</span><span class="settings-arrow">→</span></div>
-                    <div class="settings-row" onclick="App.goToTeam('leaderboard')"><span class="settings-row-label">Лидерборд</span><span class="settings-arrow">→</span></div>
+                    <div class="settings-row" onclick="App.goToCards('my')"><span class="settings-row-label">Мои карточки</span><span class="settings-arrow"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#icon-arrow"/></svg></span></div>
+                    <div class="settings-row" onclick="App.goToCards('likes')"><span class="settings-row-label">Лайки</span><span class="settings-arrow"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#icon-arrow"/></svg></span></div>
+                    <div class="settings-row" onclick="App.goToTeam('friends')"><span class="settings-row-label">Мои тиммейты</span><span class="settings-arrow"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#icon-arrow"/></svg></span></div>
+                    <div class="settings-row" onclick="App.goToTeam('leaderboard')"><span class="settings-row-label">Лидерборд</span><span class="settings-arrow"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#icon-arrow"/></svg></span></div>
                 </div>
                 <div class="settings-section">
                     <div class="settings-section-title">СОЦСЕТИ</div>
-                    <a href="https://t.me/pingster_team_channel" target="_blank" class="settings-row-link"><span class="settings-row-label">Telegram канал</span><span class="settings-arrow">→</span></a>
-                    <a href="https://tiktok.com/@pingster_team" target="_blank" class="settings-row-link"><span class="settings-row-label">TikTok</span><span class="settings-arrow">→</span></a>
+                    <a href="https://t.me/pingster_team_channel" target="_blank" class="settings-row-link"><span class="settings-row-label">Telegram канал</span><span class="settings-arrow"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#icon-arrow"/></svg></span></a>
+                    <a href="https://tiktok.com/@pingster_team" target="_blank" class="settings-row-link"><span class="settings-row-label">TikTok</span><span class="settings-arrow"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#icon-arrow"/></svg></span></a>
                 </div>
                 <div class="settings-section">
                     <div class="settings-section-title">ПОДДЕРЖКА</div>
@@ -287,21 +612,15 @@
 
         <nav class="bottom-nav">
             <div class="nav-item active" onclick="App.showScreen('mainScreen', true)" id="navMain">
-                <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/></svg></span>
+                <span class="nav-icon"><svg viewBox="0 0 24 24"><use href="#icon-home"/></svg></span>
                 <span class="nav-label">Главная</span>
             </div>
             <div class="nav-item" onclick="App.showScreen('anketaScreen', true)" id="navCards">
-                <span class="nav-icon">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4 6V4h5M20 6V4h-5M4 18v2h5M20 18v2h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                        <circle cx="12" cy="10" r="2.2" stroke="currentColor" stroke-width="1.8"/>
-                        <path d="M8 16.5c1.5-2.5 6.5-2.5 8 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                    </svg>
-                </span>
+                <span class="nav-icon"><svg viewBox="0 0 24 24"><use href="#icon-cards"/></svg></span>
                 <span class="nav-label">Карточки</span>
             </div>
             <div class="nav-item" onclick="App.showScreen('profileScreen', true)" id="navProfile">
-                <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c2-4 14-4 16 0"/></svg></span>
+                <span class="nav-icon"><svg viewBox="0 0 24 24"><use href="#icon-profile"/></svg></span>
                 <span class="nav-label">Профиль</span>
             </div>
         </nav>
@@ -314,7 +633,10 @@
             if (s) s.classList.toggle('active', c && c.id === 'settingsScreen');
         }
         if (!window.App) window.App = {};
-        window.App.openSettings = function() { window.App.showScreen('settingsScreen', true); setTimeout(updateSettingsIcon, 50); };
+        window.App.openSettings = function() { 
+            window.App.showScreen('settingsScreen', true); 
+            setTimeout(updateSettingsIcon, 50); 
+        };
         
         window.App.goToCards = function(tab) {
             App.showScreen('anketaScreen', true);
@@ -338,7 +660,12 @@
         
         (function() {
             var version = window.BUILD_VERSION || Date.now();
-            var jsFiles = ['js/config.js','js/globals.js','js/app.js','js/settings.js','js/profile.js','js/avatar.js','js/friends.js','js/search.js','js/logo.js','js/team.js','js/anketa.js','js/swipe-core.js','js/swipe-renderer.js','js/swipe-ux.js','js/swipe-controller.js'];
+            var jsFiles = [
+                'js/config.js','js/globals.js','js/app.js','js/settings.js',
+                'js/profile.js','js/avatar.js','js/friends.js','js/search.js',
+                'js/logo.js','js/team.js','js/anketa.js',
+                'js/swipe-core.js','js/swipe-renderer.js','js/swipe-ux.js','js/swipe-controller.js'
+            ];
             var loadedCount = 0;
             function loadScript(src) {
                 return new Promise(function(resolve) {
