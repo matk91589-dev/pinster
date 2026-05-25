@@ -22,6 +22,26 @@
     </script>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            
+            // 🔥 СРАЗУ после ready() — убирает верхнюю панель
+            if (tg.requestFullscreen) {
+                tg.requestFullscreen();
+            } else {
+                tg.expand();
+            }
+
+            if (tg.disableVerticalSwipes) {
+                tg.disableVerticalSwipes();
+            }
+            
+            tg.setBackgroundColor('#0D0F15');
+            tg.setHeaderColor('#0D0F15');
+        }
+    </script>
     
     <style>
         /* ===== БАЗА ===== */
