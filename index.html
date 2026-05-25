@@ -27,12 +27,7 @@
         if (tg) {
             tg.ready();
             
-            // 🔥 СРАЗУ после ready() — убирает верхнюю панель
-            if (tg.requestFullscreen) {
-                tg.requestFullscreen();
-            } else {
-                tg.expand();
-            }
+            tg.expand();
 
             if (tg.disableVerticalSwipes) {
                 tg.disableVerticalSwipes();
