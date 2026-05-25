@@ -5179,3 +5179,22 @@ button:active { transform: scale(0.96); }
     object-fit: cover !important;
     object-position: center !important;
 }
+
+/* 🔥 Хедер с учётом статус-бара — стильно */
+.header {
+    padding-top: calc(12px + env(safe-area-inset-top, 0px));
+    background: rgba(13, 15, 21, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 🔥 Контент не заезжает под хедер */
+.content {
+    padding-top: 60px; /* высота хедера */
+}
+
+/* 🔥 Нижняя панель с учётом системных кнопок */
+.bottom-nav {
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+}
